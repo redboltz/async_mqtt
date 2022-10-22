@@ -1,2 +1,2 @@
-# async_mqtt_cpp
-Asynchronous MQTT communication library based on Boost.Asio
+# async_mqtt
+Asynchronous MQTT communication library for C++17 based on Boost.Asio.

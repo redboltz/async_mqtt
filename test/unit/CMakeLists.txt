@@ -1,0 +1,66 @@
+list(APPEND check_PROGRAMS
+    ut_buffer.cpp
+)
+
+find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)
+
+foreach(source_file ${check_PROGRAMS})
+    get_filename_component(source_file_we ${source_file} NAME_WE)
+    add_executable(${source_file_we} ${source_file})
+    target_compile_definitions(
+        ${source_file_we}
+        PUBLIC
+        $<IF:$<BOOL:${ASYMC_MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>
+    )
+    target_link_libraries(
+        ${source_file_we} async_mqtt_iface Boost::unit_test_framework
+    )
+    if(WIN32 AND MQTT_USE_STATIC_OPENSSL)
+        TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
+    endif()
+
+    if(ASYNCMQTT_USE_LOG)
+        target_compile_definitionss(
+            ${source_file_we}
+            PUBLIC
+            $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+        )
+        target_link_libraries(
+            ${source_file_we} Boost::log
+        )
+    endif()
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        if(ASYNC_MQTT_CODECOV)
+            set_property(
+                TARGET ${source_file_we}
+                APPEND_STRING PROPERTY COMPILE_FLAGS " -O0 -g --coverage -fno-inline"
+            )
+            set_property(
+                TARGET ${source_file_we}
+                APPEND_STRING PROPERTY LINK_FLAGS " --coverage"
+            )
+        endif()
+    endif()
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+            STRING(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        else()
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+        endif()
+    endif()
+
+    # Running test with arguments
+    # CTEST_ARGS="--log_level=all" ctest -V
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        add_test(
+            NAME ${source_file_we}
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${source_file_we}
+        )
+    else()
+        add_test(
+            NAME ${source_file_we}
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../args_provider.sh ${CMAKE_CURRENT_BINARY_DIR}/${source_file_we}
+        )
+    endif()
+    set_tests_properties(${source_file_we} PROPERTIES TIMEOUT 400)
+endforeach()
