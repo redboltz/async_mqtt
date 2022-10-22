@@ -1,0 +1,13 @@
+set(Boost_USE_MULTITHREADED ON)
+include(CMakeFindDependencyMacro)
+find_dependency((Threads)
+find_dependency((Boost 1.74.0 COMPONENTS @ASYNC_MQTT_BOOST_COMPONENTS@)
+@ASYNC_MQTT_DEPENDS_OPENSSL@
+@ASYNC_MQTT_DEPENDS_ZLIB@
+
+if(NOT TARGET @PROJECT_NAME@::@PROJECT_NAME@)
+  get_filename_component(CURRENT_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+  include("${CURRENT_CMAKE_DIR}/async_mqtt_ifaceTargets.cmake")
+endif()
+
+set(@PROJECT_NAME@_LIBRARIES @PROJECT_NAME@::@PROJECT_NAME@)

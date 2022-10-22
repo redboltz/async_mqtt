@@ -1,0 +1,27 @@
+{
+    # Configure username/login
+    "authentication": [
+        {
+            "name": "u1",
+            "method": "plain_password",
+            "password": "passforu1"
+        },
+        {
+            "name": "u2",
+            "method": "sha256",
+            "salt": "mysalt",
+            "digest": "fc1e1b5c61f33b0c44993552563201253570505e9781c1e811e3cd1906868842"
+        }
+    ],
+    # Give access to topics
+    "authorization": [
+        {
+            # Specified users and groups are denied to subscribe and publish on this topic
+            "topic": "#",
+            "allow": {
+                "sub": ["u1"],
+                "pub": ["u1"]
+            }
+        }
+    ]
+}

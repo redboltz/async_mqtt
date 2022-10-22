@@ -1,0 +1,205 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+    - main
+    - develop
+    tags:
+    - '*'
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        pattern: [0, 1, 2, 3]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install Dependencies
+      run: |
+        brew install boost openssl lcov llvm
+    - name: Configure
+      env:
+        OPENSSL_ROOT_DIR: /usr/local/opt/openssl
+        S_CFLAGS:      -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
+        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        S_LDFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
+        NS_CFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        PROF_CXXFLAGS: -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -fprofile-arcs -ftest-coverage
+        NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+      run: |
+        [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \
+        export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
+        [ ${{ matrix.pattern }} == 2 ] && \
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 3 ] && \
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${PROF_CXXFLAGS} "&& export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON "
+        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        FLAGS="{$FLAGS} -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
+        cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
+    - name: Check Header Dependencies
+      run: |
+        cmake --build ${{ runner.temp }} --parallel $(sysctl -n hw.ncpu) --clean-first --target check_deps
+    - name: Compile
+      env:
+        CXXFLAGS: -Werror -pedantic -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+      run: |
+        cmake --build ${{ runner.temp }} --parallel $(sysctl -n hw.ncpu) --clean-first
+    - name: Test
+      working-directory: ${{ runner.temp }}
+      run: |
+        CTEST_ARGS="--log_level=all -- trace" ctest -V
+    - name: Generate Coverage
+      if: matrix.pattern == 3
+      working-directory: ${{ runner.temp }}
+      run: |
+        export PATH="/usr/local/opt/llvm/bin:$PATH"
+        lcov --capture --directory ${{ runner.temp }} --output-file coverage.info --gcov-tool ${{ github.workspace }}/llvm-gcov.sh
+        lcov --list coverage.info # debug info
+        lcov --remove coverage.info '/usr/*' '/home/runner/work/async_mqtt/async_mqtt/usr/*' '/home/runner/work/async_mqtt/async_mqtt/test/*' --output-file coverage.info # filter system-files
+        lcov --list coverage.info # debug info
+    - name: Upload coverage to Codecov
+      if: matrix.pattern == 3
+      uses: codecov/codecov-action@v3
+      with:
+        files: ${{ runner.temp }}/coverage.info
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pattern: [0, 1, 2, 3, 4]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Cache boost
+      id: cache-boost
+      uses: actions/cache@v3
+      with:
+        path: usr
+        key: ${{ runner.os }}-boost-20230507
+    - name: Build boost
+      if: steps.cache-boost.outputs.cache-hit != 'true'
+      run: ./.github/depends/boost.sh -b 64 -t gcc
+    - name: Configure
+      env:
+        S_CFLAGS:      -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
+        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        S_LDFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
+        NS_CFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        PROF_CXXFLAGS: -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -fprofile-arcs -ftest-coverage
+        NS_CXXFLAGS_GCC:  -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+      run: |
+        [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \
+        export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
+        [ ${{ matrix.pattern }} == 2 ] && \
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 3 ] && \
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${NS_CXXFLAGS} "&& export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 4 ] && \
+        gcc --version \
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${NS_CXXFLAGS_GCC} "&& export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON "
+        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 4 ] && FLAGS="-DCMAKE_CXX_COMPILER=g++-12  -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        FLAGS="$FLAGS -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
+         echo "begin"
+         echo  ${{env.BOOST_ROOT}}
+         echo "end"
+         ls -al /home/runner/work/async_mqtt/async_mqtt/usr
+         BOOST_ROOT=/home/runner/work/async_mqtt/async_mqtt/usr cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
+    - name: Check Header Dependencies
+      run: |
+        cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
+    - name: Compile
+      run: |
+        VERBOSE=1 cmake --build ${{ runner.temp }} --clean-first --target broker
+        VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(nproc)
+    - name: Test
+      working-directory: ${{ runner.temp }}
+      run: |
+        CTEST_ARGS="--log_level=all -- trace" ctest -V
+
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        pattern: [0, 1, 2]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Cache boost
+      id: cache-boost
+      uses: actions/cache@v3
+      with:
+        path:  D:\a\async_mqtt\async_mqtt\boost
+        key: ${{ runner.os }}-boost-20230507
+    - name: install boost
+      if: steps.cache-boost.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.81.0/boost_1_81_0-msvc-14.3-64.exe"
+         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
+        Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=$PWD\boost"
+
+    - name: Build and test
+      shell: powershell
+      run: |
+        echo ${{ matrix.pattern }}
+        if (${{ matrix.pattern }} -eq 0) {
+          $BUILD_TOOLS        = "OFF"
+          $BUILD_EXAMPLES     = "OFF"
+          $BUILD_UNIT_TESTS   = "ON"
+          $BUILD_SYSTEM_TESTS = "OFF"
+        }
+        if (${{ matrix.pattern }} -eq 1) {
+          $BUILD_TOOLS        = "ON"
+          $BUILD_EXAMPLES     = "OFF"
+          $BUILD_UNIT_TESTS   = "OFF"
+          $BUILD_SYSTEM_TESTS = "ON"
+        }
+        if (${{ matrix.pattern }} -eq 2) {
+          $BUILD_TOOLS        = "OFF"
+          $BUILD_EXAMPLES     = "ON"
+          $BUILD_UNIT_TESTS   = "OFF"
+          $BUILD_SYSTEM_TESTS = "OFF"
+        }
+        $env:BOOST_ROOT="$PWD\boost"
+        mkdir build
+        cd build
+        $env:CL="/D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ASIO_NO_DEPRECATED /bigobj /EHsc"
+        $env:PATH="$env:BOOST_ROOT\lib64-msvc-14.3;"+$env:PATH
+        cmake -A x64 -G "Visual Studio 17 2022" -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_LOG=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS="$BUILD_SYSTEM_TESTS" -DASYNC_MQTT_BUILD_UNIT_TESTS="$BUILD_UNIT_TESTS" -DASYNC_MQTT_BUILD_EXAMPLES="$BUILD_EXAMPLES" -DASYNC_MQTT_BUILD_TOOLS="$BUILD_TOOLS" ..
+        if (!$?) {
+          return Write-Error "cmake failed"
+        }
+        cmake --build . --config Release
+        if (!$?) {
+          return Write-Error "cmake --build failed"
+        }
+        if ("$BUILD_TOOLS" -eq "ON") {
+            cd tool\Release
+            $env:PATH="$PWD;"+$env:PATH
+            cd ..\..
+        }
+        # If you want to debug a specific test file with logs, do as follows instead of execute ctest
+        # st_mqtt_connect.exe --log_level=all
+        if ("$BUILD_SYSTEM_TESTS" -eq "ON") {
+            cp test\system\st_broker.conf .
+            cp test\system\st_auth.json .
+        }
+        ctest -V -C Release
+        if (!$?) {
+          return Write-Error "ctest -V -C Release failed"
+        }
