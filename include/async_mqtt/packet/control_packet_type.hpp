@@ -29,7 +29,7 @@ enum class control_packet_type : std::uint8_t {
     unsubscribe = 0b10100000, // 10
     unsuback    = 0b10110000, // 11
     pingreq     = 0b11000000, // 12
-    pingresp    = 0b11010000, // 13
+    pingresp    = 0b11010000, // 13、
     disconnect  = 0b11100000, // 14
     auth        = 0b11110000, // 15
 

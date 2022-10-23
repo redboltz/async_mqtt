@@ -9,6 +9,8 @@
 
 #include <async_mqtt/async_write.hpp>
 #include <async_mqtt/async_read.hpp>
+#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 
 namespace as = boost::asio;
 
@@ -19,7 +21,7 @@ int main() {
     as::ip::tcp::socket s{ioc};
 
     auto packet =
-        async_mqtt::publish_packet{
+        async_mqtt::v3_1_1::publish_packet{
             42,
             async_mqtt::allocate_buffer("topic1"),
             async_mqtt::allocate_buffer("payload"),
@@ -30,7 +32,7 @@ int main() {
         [&]
         (boost::system::error_code const& ec) {
             std::cout << "connect: " << ec.message() << std::endl;
-            async_mqtt::async_write(
+            async_mqtt::async_write_packet(
                 s,
                 async_mqtt::force_move(packet),
                 [&]
@@ -39,12 +41,22 @@ int main() {
                     async_mqtt::async_read_packet(
                         s,
                         [&]
-                        (boost::system::error_code const& ec, async_mqtt::buffer packet) mutable {
-                            std::cout << "read: " << ec.message() << " " << packet.size() << std::endl;
-                            auto pub = async_mqtt::publish_packet(force_move(packet));
-                            std::cout << "size:" << pub.size() << std::endl;
-                            std::cout << "topic:" << pub.topic() << std::endl;
-                            std::cout << "payload:" << pub.payload_as_buffer() << std::endl;
+                        (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
+                            std::cout << "read: " << ec.message() << " " << buf.size() << std::endl;
+                            auto packet = async_mqtt::buffer_to_packet_variant<2>(
+                                force_move(buf),
+                                async_mqtt::protocol_version::v3_1_1
+                            );
+                            async_mqtt::visit(
+                                async_mqtt::overload {
+                                    [&](async_mqtt::v3_1_1::publish_packet const& p) {
+                                        std::cout << "size:" << p.size() << std::endl;
+                                        std::cout << "topic:" << p.topic() << std::endl;
+                                        std::cout << "payload:" << p.payload_as_buffer() << std::endl;
+                                    }
+                                },
+                                packet
+                            );
                         }
                     );
                 }

@@ -22,7 +22,7 @@
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 
-namespace async_mqtt {
+namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
@@ -317,6 +317,6 @@ private:
 
 using publish_packet = basic_publish_packet<2>;
 
-} // namespace async_mqtt
+} // namespace async_mqtt::v3_1_1
 
 #endif // ASYNC_MQTT_PACKET_HPP

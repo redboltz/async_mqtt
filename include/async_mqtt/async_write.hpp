@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_ASYNC_WRITE_HPP)
 #define ASYNC_MQTT_ASYNC_WRITE_HPP
 
-#include <async_mqtt/packet/publish.hpp>
+#include <async_mqtt/move.hpp>
 
 namespace async_mqtt {
 
@@ -15,14 +15,15 @@ namespace as = boost::asio;
 
 template <
     typename Stream,
+    typename Packet, // add concept later TBD
     typename CompletionToken,
     typename std::enable_if_t<
         std::is_invocable<CompletionToken, boost::system::error_code, std::size_t>::value
     >* = nullptr
 >
-auto async_write(
+auto async_write_packet(
     Stream& stream,
-    publish_packet packet,
+    Packet&& packet,
     CompletionToken&& token
 ) {
     auto cbs = packet.const_buffer_sequence();
@@ -30,7 +31,7 @@ auto async_write(
         async_write(
             stream,
             force_move(cbs),
-            [token = std::forward<CompletionToken>(token), packet = force_move(packet)]
+            [token = std::forward<CompletionToken>(token), packet = std::forward<Packet>(packet)]
             (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                 force_move(token)(ec, bytes_transferred);
             }
