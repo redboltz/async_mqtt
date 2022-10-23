@@ -240,6 +240,7 @@ private:
             std::size_t bytes_transferred = 0
         ) {
             if (ec) {
+                strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
                 if (exe == as::system_executor()) {
                     self.complete(ec, bytes_transferred);
@@ -280,6 +281,7 @@ private:
             } break;
             case bind: {
                 state = complete;
+                strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
                 if (exe == as::system_executor()) {
                     self.complete(ec, bytes_transferred);
