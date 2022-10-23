@@ -41,6 +41,10 @@ int main() {
                         [&]
                         (boost::system::error_code const& ec, async_mqtt::buffer packet) mutable {
                             std::cout << "read: " << ec.message() << " " << packet.size() << std::endl;
+                            auto pub = async_mqtt::publish_packet(force_move(packet));
+                            std::cout << "size:" << pub.size() << std::endl;
+                            std::cout << "topic:" << pub.topic() << std::endl;
+                            std::cout << "payload:" << pub.payload_as_buffer() << std::endl;
                         }
                     );
                 }

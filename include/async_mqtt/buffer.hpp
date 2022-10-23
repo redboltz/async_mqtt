@@ -388,6 +388,11 @@ public:
         return lhs.view_ >= rhs.view_;
     }
 
+    friend
+    std::ostream& operator<<(std::ostream& o, buffer const& buf) {
+        o << buf.view_;
+        return o;
+    }
 private:
     std::string_view view_;
     any life_;

@@ -17,7 +17,7 @@ template <typename T>
 T endian_load(char const* buf) {
     static_vector<unsigned char, sizeof(T)> usbuf(sizeof(T));
     std::copy(buf, buf + sizeof(T), usbuf.data());
-    return boost::endian::endian_load<T, sizeof(T), boost::endian::order::big>(usbuf);
+    return boost::endian::endian_load<T, sizeof(T), boost::endian::order::big>(usbuf.data());
 }
 
 template <typename T>

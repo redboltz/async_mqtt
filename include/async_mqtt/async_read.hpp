@@ -94,13 +94,16 @@ struct async_read_packet_impl {
             else {
                 // remaining_length end
                 rl += (hrl[received - 1] & 0b01111111) * mul;
-                spa = make_shared_ptr_array(received + rl);
-                std::copy(hrl.get(), hrl.get() + received, spa.get());
                 if (rl == 0) {
-                    self.complete(ec, buffer{spa.get(), spa.get() + received, spa});
+                    auto ptr = hrl.get();
+                    self.complete(ec, buffer{ptr, ptr + received, force_move(hrl)});
                 }
                 else {
                     state = complete;
+
+                    spa = make_shared_ptr_array(received + rl);
+                    std::copy(hrl.get(), hrl.get() + received, spa.get());
+
                     auto& a_spa{spa};
                     async_read(
                         stream,
@@ -110,9 +113,10 @@ struct async_read_packet_impl {
                 }
             }
             break;
-        case complete:
-            self.complete(ec, buffer{spa.get(), spa.get() + received + rl, spa});
-            break;
+        case complete: {
+            auto ptr = spa.get();
+            self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+        } break;
         }
     }
 };

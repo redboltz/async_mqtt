@@ -97,7 +97,12 @@ public:
 
         auto it = buf.begin();
         // it is updated as consmed position
-        auto len = variable_bytes_to_val(it, buf.end());
+        if (auto len_opt = variable_bytes_to_val(it, buf.end())) {
+            remaining_length_ = *len_opt;
+        }
+        else {
+            throw remaining_length_error();
+        }
 
         std::copy(
             buf.begin(),
@@ -133,7 +138,7 @@ public:
         };
 
         if (!buf.empty()) {
-            payloads_.emplace_back(as::buffer(buf));
+            payloads_.emplace_back(force_move(buf));
         }
     }
 
@@ -272,7 +277,7 @@ public:
             payloads_.begin(),
             payloads_.end(),
             std::size_t(0),
-            [](std::size_t s, as::const_buffer const& payload) {
+            [](std::size_t s, buffer const& payload) {
                 return s += payload.size();
             }
         );
@@ -289,7 +294,7 @@ public:
             std::copy(b, e, it);
             it += s;
         }
-        return buffer(string_view(ptr, size), force_move(spa));
+        return buffer(ptr, size, force_move(spa));
     }
 
     /**
