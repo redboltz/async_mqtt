@@ -9,8 +9,6 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/async_write.hpp>
-
 namespace as = boost::asio;
 
 int main() {
