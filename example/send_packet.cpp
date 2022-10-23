@@ -7,8 +7,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
-#include <async_mqtt/async_write.hpp>
-#include <async_mqtt/async_read.hpp>
+#include <async_mqtt/stream.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 
@@ -19,6 +18,7 @@ int main() {
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
     as::ip::tcp::socket s{ioc};
+    async_mqtt::stream<as::ip::tcp::socket> strm{s};
 
     auto packet =
         async_mqtt::v3_1_1::publish_packet{
@@ -32,14 +32,12 @@ int main() {
         [&]
         (boost::system::error_code const& ec) {
             std::cout << "connect: " << ec.message() << std::endl;
-            async_mqtt::async_write_packet(
-                s,
+            strm.async_write_packet(
                 async_mqtt::force_move(packet),
                 [&]
                 (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                     std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
-                    async_mqtt::async_read_packet(
-                        s,
+                    strm.async_read_packet(
                         [&]
                         (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
                             std::cout << "read: " << ec.message() << " " << buf.size() << std::endl;
