@@ -92,20 +92,33 @@ private:
         shared_ptr_array spa;
         boost::system::error_code last_ec;
 
-        enum { header, remaining_length, bind, complete } state = header;
+        enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
-            state = header;
-            // read fixed_header
-            auto& a_hrl{hrl};
-            async_read(
-                strm.nl_,
-                as::buffer(&a_hrl[received], 1),
-                force_move(self)
-            );
+            switch (state) {
+            case dispatch:
+                state = header;
+                as::dispatch(
+                    strm.strand_,
+                    force_move(self)
+                );
+                break;
+            case header: {
+                // read fixed_header
+                auto& a_hrl{hrl};
+                async_read(
+                    strm.nl_,
+                    as::buffer(&a_hrl[received], 1),
+                    force_move(self)
+                );
+            } break;
+            default:
+                BOOST_ASSERT(false);
+                break;
+            }
         }
 
         template <typename Self>
@@ -206,6 +219,9 @@ private:
                     self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
                 }
             } break;
+            default:
+                BOOST_ASSERT(false);
+                break;
             }
         }
     };
@@ -246,12 +262,10 @@ private:
                 if (strm.queue_->stopped()) {
                     strm.queue_->restart();
                     as::dispatch(
-                        as::bind_executor(
-                            strm.strand_,
-                            [this] {
-                                strm.queue_->poll_one();
-                            }
-                        )
+                        strm.strand_,
+                        [this] {
+                            strm.queue_->poll_one();
+                        }
                     );
                 }
                 break;
