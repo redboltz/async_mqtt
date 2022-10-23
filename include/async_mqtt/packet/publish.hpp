@@ -50,20 +50,21 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
-          remaining_length_{
+          remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
               + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
-          }
+          )
     {
+        topic_name_length_buf_.resize(2);
         endian_store(
             boost::numeric_cast<std::uint16_t>(topic_name.size()),
             topic_name_length_buf_.data()
         );
-        auto b = as::buffer_sequence_begin(payloads);
-        auto e = as::buffer_sequence_end(payloads);
+        auto b = buffer_sequence_begin(payloads);
+        auto e = buffer_sequence_end(payloads);
         auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
         payloads_.reserve(num_of_payloads);
         for (; b != e; ++b) {
@@ -81,7 +82,7 @@ public:
         if (pubopts.get_qos() == qos::at_least_once ||
             pubopts.get_qos() == qos::exactly_once) {
             packet_id_.reserve(PacketIdBytes);
-            endian_store(packet_id, packet_id_);
+            endian_store(packet_id, packet_id_.data());
         }
     }
 
@@ -151,7 +152,9 @@ public:
         if (!packet_id_.empty()) {
             ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
         }
-        std::copy(payloads_.begin(), payloads_.end(), std::back_inserter(ret));
+        for (auto const& payload : payloads_) {
+            ret.emplace_back(as::buffer(payload));
+        }
         return ret;
     }
 

@@ -9,16 +9,22 @@
 
 #include <boost/endian/conversion.hpp>
 
+#include <async_mqtt/static_vector.hpp>
+
 namespace async_mqtt {
 
 template <typename T>
 T endian_load(char const* buf) {
-    return boost::endian::endian_load<T, sizeof(T), boost::endian::order::big>(buf);
+    static_vector<unsigned char, sizeof(T)> usbuf(sizeof(T));
+    std::copy(buf, buf + sizeof(T), usbuf.data());
+    return boost::endian::endian_load<T, sizeof(T), boost::endian::order::big>(usbuf);
 }
 
 template <typename T>
 void endian_store(T val, char* buf) {
-    return boost::endian::endian_load<T, sizeof(T), boost::endian::order::big>(buf, val);
+    static_vector<unsigned char, sizeof(T)> usbuf(sizeof(T));
+    boost::endian::endian_store<T, sizeof(T), boost::endian::order::big>(usbuf.data(), val);
+    std::copy(usbuf.begin(), usbuf.end(), buf);
 }
 
 } // namespace async_mqtt

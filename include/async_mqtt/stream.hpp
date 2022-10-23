@@ -20,6 +20,8 @@ public:
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
 
+
+
 };
 
 } // namespace async_mqtt

@@ -111,7 +111,7 @@ public:
         >* = nullptr
     >
     buffer(It first, End last, any life)
-        : view_{&*first, &*first + std::distance(first, last)},
+        : view_{&*first, static_cast<std::size_t>(std::distance(first, last))},
           life_{force_move(life)}
     {}
 

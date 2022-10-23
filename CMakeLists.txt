@@ -20,8 +20,13 @@ endif()
 include_directories(include)
 
 option(ASYNC_MQTT_BUILD_TESTS "Enable building test applications" ON)
+option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" ON)
+
+
 set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include)
+
+add_subdirectory(example)
 
 if(ASYNC_MQTT_BUILD_TESTS)
     message(STATUS "Tests enabled")

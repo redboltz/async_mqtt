@@ -26,7 +26,7 @@ foreach(source_file ${check_PROGRAMS})
         TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
     endif()
 
-    if(ASYNCMQTT_USE_LOG)
+    if(ASYNC_MQTT_USE_LOG)
         target_compile_definitionss(
             ${source_file_we}
             PUBLIC
