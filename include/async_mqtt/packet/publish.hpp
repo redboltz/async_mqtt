@@ -8,13 +8,19 @@
 #define ASYNC_MQTT_PACKET_PUBLISH_HPP
 
 #include <utility>
+#include <numeric>
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/move.hpp>
 #include <async_mqtt/static_vector.hpp>
+#include <async_mqtt/endian_convert.hpp>
+#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/pubopts.hpp>
 
 namespace async_mqtt {
 
@@ -23,6 +29,7 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_publish_packet {
 public:
+    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     template <
         typename BufferSequence,
         typename std::enable_if<
@@ -31,17 +38,18 @@ public:
         >::type = nullptr
     >
     basic_publish_packet(
-        typename packet_id_type<PacketIdBytes>::type packet_id,
+        packet_id_t packet_id,
         buffer topic_name,
         BufferSequence payloads,
-        publish_options pubopts
+        pub::opts pubopts
     )
         : fixed_header_{
-              make_fixed_header(control_packet_type::publish, 0b0000) |
-              pubopts.operator std::uint8_t()
+              static_cast<std::uint8_t>(
+                  make_fixed_header(control_packet_type::publish, 0b0000) |
+                  std::uint8_t(pubopts)
+              )
           },
           topic_name_{force_move(topic_name)},
-          topic_name_length_buf_{ num_to_2bytes(boost::numeric_cast<std::uint16_t>(topic_name.size())) },
           remaining_length_{
               2                      // topic name length
               + topic_name_.size()   // topic name
@@ -50,6 +58,10 @@ public:
                  : 0)
           }
     {
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name.size()),
+            topic_name_length_buf_.data()
+        );
         auto b = as::buffer_sequence_begin(payloads);
         auto e = as::buffer_sequence_end(payloads);
         auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
@@ -59,17 +71,17 @@ public:
             remaining_length_ += payload.size();
             payloads_.push_back(payload);
         }
-
+#if 0 // TBD
         utf8string_check(topic_name_);
-
-        auto rb = remaining_bytes(remaining_length_);
+#endif
+        auto rb = val_to_variable_bytes(remaining_length_);
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
         }
         if (pubopts.get_qos() == qos::at_least_once ||
             pubopts.get_qos() == qos::exactly_once) {
             packet_id_.reserve(PacketIdBytes);
-            add_packet_id_to_buf<PacketIdBytes>::apply(packet_id_, packet_id);
+            endian_store(packet_id, packet_id_);
         }
     }
 
@@ -81,25 +93,28 @@ public:
         buf.remove_prefix(1);
 
         if (buf.empty()) throw remaining_length_error();
-        auto len_consumed = remaining_length(buf.begin(), buf.end());
-        remaining_length_ = std::get<0>(len_consumed);
-        auto consumed = std::get<1>(len_consumed);
+
+        auto it = buf.begin();
+        // it is updated as consmed position
+        auto len = variable_bytes_to_val(it, buf.end());
 
         std::copy(
             buf.begin(),
-            std::next(buf.begin(), static_cast<string_view::difference_type>(consumed)),
+            it,
             std::back_inserter(remaining_length_buf_));
-        buf.remove_prefix(consumed);
+        buf.remove_prefix(std::distance(buf.begin(), it));
 
         if (buf.size() < 2) throw remaining_length_error();
         std::copy(buf.begin(), std::next(buf.begin(), 2), std::back_inserter(topic_name_length_buf_));
-        auto topic_name_length = make_uint16_t(topic_name_length_buf_.begin(), topic_name_length_buf_.end());
+        auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
         buf.remove_prefix(2);
 
         if (buf.size() < topic_name_length) throw remaining_length_error();
 
-        topic_name_ = as::buffer(buf.substr(0, topic_name_length));
+        topic_name_ = buf.substr(0, topic_name_length);
+#if 0 // TBD
         utf8string_check(topic_name_);
+#endif
         buf.remove_prefix(topic_name_length);
 
         switch (qos_value) {
@@ -179,11 +194,11 @@ public:
         ret.append(remaining_length_buf_.data(), remaining_length_buf_.size());
 
         ret.append(topic_name_length_buf_.data(), topic_name_length_buf_.size());
-        ret.append(get_pointer(topic_name_), get_size(topic_name_));
+        ret.append(topic_name_.data(), topic_name_.size());
 
         ret.append(packet_id_.data(), packet_id_.size());
         for (auto const& payload : payloads_) {
-            ret.append(get_pointer(payload), get_size(payload));
+            ret.append(payload.data(), payload.size());
         }
 
         return ret;
@@ -193,16 +208,16 @@ public:
      * @brief Get packet id
      * @return packet_id
      */
-    typename packet_id_type<PacketIdBytes>::type packet_id() const {
-        return make_packet_id<PacketIdBytes>::apply(packet_id_.begin(), packet_id_.end());
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_.data());
     }
 
     /**
      * @brief Get publish_options
      * @return publish_options.
      */
-    constexpr publish_options get_options() const {
-        return publish_options(fixed_header_);
+    constexpr pub::opts get_options() const {
+        return pub::opts(fixed_header_);
     }
 
     /**
@@ -210,7 +225,7 @@ public:
      * @return qos
      */
     constexpr qos get_qos() const {
-        return publish::get_qos(fixed_header_);
+        return pub::get_qos(fixed_header_);
     }
 
     /**
@@ -218,7 +233,7 @@ public:
      * @return true if retain, otherwise return false.
      */
     constexpr bool is_retain() const {
-        return publish::is_retain(fixed_header_);
+        return pub::is_retain(fixed_header_);
     }
 
     /**
@@ -226,28 +241,23 @@ public:
      * @return true if dup, otherwise return false.
      */
     constexpr bool is_dup() const {
-        return publish::is_dup(fixed_header_);
+        return pub::is_dup(fixed_header_);
     }
 
     /**
      * @brief Get topic name
      * @return topic name
      */
-    constexpr string_view topic() const {
-        return string_view(get_pointer(topic_name_), get_size(topic_name_));
+    constexpr buffer const& topic() const {
+        return topic_name_;
     }
 
     /**
      * @brief Get payload
      * @return payload
      */
-    std::vector<string_view> payload() const {
-        std::vector<string_view> ret;
-        ret.reserve(payloads_.size());
-        for (auto const& payload : payloads_) {
-            ret.emplace_back(get_pointer(payload), get_size(payload));
-        }
-        return ret;
+    std::vector<buffer> payload() const {
+        return payloads_;
     }
 
     /**
@@ -270,8 +280,8 @@ public:
         auto ptr = spa.get();
         auto it = ptr;
         for (auto const& payload : payloads_) {
-            auto b = get_pointer(payload);
-            auto s = get_size(payload);
+            auto b = payload.data();
+            auto s = payload.size();;
             auto e = b + s;
             std::copy(b, e, it);
             it += s;
@@ -284,7 +294,7 @@ public:
      * @param dup flag value to set
      */
     constexpr void set_dup(bool dup) {
-        publish::set_dup(fixed_header_, dup);
+        pub::set_dup(fixed_header_, dup);
     }
 
 private:
@@ -293,7 +303,7 @@ private:
     static_vector<char, 2> topic_name_length_buf_;
     static_vector<char, PacketIdBytes> packet_id_;
     std::vector<buffer> payloads_;
-    std::size_t remaining_length_;
+    std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 };
 

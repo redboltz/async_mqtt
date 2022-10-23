@@ -1,5 +1,12 @@
+# Copyright Takatoshi Kondo 2022
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
 list(APPEND check_PROGRAMS
     ut_buffer.cpp
+    ut_packet.cpp
 )
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)
@@ -13,7 +20,7 @@ foreach(source_file ${check_PROGRAMS})
         $<IF:$<BOOL:${ASYMC_MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>
     )
     target_link_libraries(
-        ${source_file_we} async_mqtt_iface Boost::unit_test_framework
+        ${source_file_we} Boost::unit_test_framework
     )
     if(WIN32 AND MQTT_USE_STATIC_OPENSSL)
         TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
