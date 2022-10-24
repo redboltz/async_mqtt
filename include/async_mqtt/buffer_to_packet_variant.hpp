@@ -7,13 +7,16 @@
 #if !defined(ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP
 
+#include <async_mqtt/util/optional.hpp>
+
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol_version.hpp>
 
 namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
-basic_packet_variant<PacketIdBytes> buffer_to_packet_variant(buffer buf, protocol_version ver) {
+optional<basic_packet_variant<PacketIdBytes>> buffer_to_packet_variant(buffer buf, protocol_version ver) {
     BOOST_ASSERT(buf.size() >= 2);
     switch (get_control_packet_type(buf[0])) {
     case control_packet_type::publish:
@@ -26,6 +29,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_packet_variant(buffer buf, protoco
     default:
         break;
     }
+    return nullopt;
 }
 
 } // namespace async_mqtt

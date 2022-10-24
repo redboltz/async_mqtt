@@ -7,6 +7,8 @@
 #if !defined(ASYNC_MQTT_PACKET_PUBOPTS_HPP)
 #define ASYNC_MQTT_PACKET_PUBOPTS_HPP
 
+#include <boost/assert.hpp>
+
 #include <async_mqtt/packet/qos.hpp>
 
 namespace async_mqtt {

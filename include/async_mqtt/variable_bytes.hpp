@@ -7,8 +7,11 @@
 #if !defined(ASYNC_MQTT_VARIABLE_BYTES_HPP)
 #define ASYNC_MQTT_VARIABLE_BYTES_HPP
 
-#include <async_mqtt/static_vector.hpp>
-#include <async_mqtt/optional.hpp>
+#include <cstdint>
+
+#include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/optional.hpp>
+#include <async_mqtt/util/is_iterator.hpp>
 
 namespace async_mqtt {
 

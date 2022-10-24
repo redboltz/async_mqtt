@@ -10,13 +10,21 @@
 #include <utility>
 #include <type_traits>
 
+#include <boost/system/error_code.hpp>
+#include <boost/asio/strand.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/compose.hpp>
+#include <boost/asio/bind_executor.hpp>
+
 #include <async_mqtt/core/stream_traits.hpp>
-#include <async_mqtt/optional.hpp>
+#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/ws_fixed_size_async_read.hpp>
 
 namespace async_mqtt {
 
 namespace as = boost::asio;
+namespace sys = boost::system;
 
 template <typename NextLayer>
 class stream {
@@ -25,8 +33,24 @@ public:
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
 
-    stream(NextLayer& nl)
-        :nl_{nl}
+    auto const& next_layer() const {
+        return nl_;
+    }
+    auto& next_layer() {
+        return nl_;
+    }
+
+    auto const& lowest_layer() const {
+        return nl_.lowest_layer();
+    }
+    auto& lowest_layer() {
+        return nl_.lowest_layer();
+    }
+
+    template <typename... Args>
+    explicit
+    stream(Args&&... args)
+        :nl_{std::forward<Args>(args)...}
     {
         queue_.emplace();
         queue_->stop();
@@ -35,18 +59,18 @@ public:
     template <
         typename CompletionToken,
         typename std::enable_if_t<
-            std::is_invocable<CompletionToken, boost::system::error_code, buffer>::value
+            std::is_invocable<CompletionToken, sys::error_code, buffer>::value
         >* = nullptr
     >
-    auto async_read_packet(
+    auto read_packet(
         CompletionToken&& token
     ) {
         return
             as::async_compose<
                 CompletionToken,
-                void(boost::system::error_code const&, buffer)
+                void(sys::error_code const&, buffer)
             >(
-                async_read_packet_impl{
+                read_packet_impl{
                     *this
                 },
                 token
@@ -58,19 +82,19 @@ public:
         typename Packet, // add concept later TBD
         typename CompletionToken,
         typename std::enable_if_t<
-            std::is_invocable<CompletionToken, boost::system::error_code, std::size_t>::value
+            std::is_invocable<CompletionToken, sys::error_code, std::size_t>::value
         >* = nullptr
     >
-    auto async_write_packet(
+    auto write_packet(
         Packet&& packet,
         CompletionToken&& token
     ) {
         return
             as::async_compose<
                 CompletionToken,
-                void(boost::system::error_code const&, std::size_t)
+                void(sys::error_code const&, std::size_t)
             >(
-                async_write_packet_impl<Packet>{
+                write_packet_impl<Packet>{
                     *this,
                     std::forward<Packet>(packet)
                 },
@@ -78,10 +102,17 @@ public:
             );
     }
 
+    as::strand<executor_type> const& get_strand() const {
+        return strand_;
+    }
+    as::strand<executor_type>& get_strand() {
+        return strand_;
+    }
+
 private:
 
-    struct async_read_packet_impl {
-        async_read_packet_impl(this_type& strm):strm{strm}
+    struct read_packet_impl {
+        read_packet_impl(this_type& strm):strm{strm}
         {}
 
         this_type& strm;
@@ -90,7 +121,7 @@ private:
         std::uint32_t mul = 1;
         std::uint32_t rl = 0;
         shared_ptr_array spa;
-        boost::system::error_code last_ec;
+        sys::error_code last_ec;
 
         enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
 
@@ -124,7 +155,7 @@ private:
         template <typename Self>
         void operator()(
             Self& self,
-            boost::system::error_code const& ec,
+            sys::error_code const& ec,
             std::size_t bytes_transferred
         ) {
             if (ec) {
@@ -164,7 +195,7 @@ private:
                     // remaining_length continues
                     if (received == 5) {
                         self.complete(
-                            boost::system::errc::make_error_code(boost::system::errc::protocol_error),
+                            sys::errc::make_error_code(sys::errc::protocol_error),
                             buffer{}
                         );
                         return;
@@ -227,16 +258,16 @@ private:
     };
 
     template <typename Packet>
-    struct async_write_packet_impl {
+    struct write_packet_impl {
         this_type& strm;
         Packet packet;
-        boost::system::error_code last_ec = boost::system::error_code{};
+        sys::error_code last_ec = sys::error_code{};
         enum { initiate, write, bind, complete } state = initiate;
 
         template <typename Self>
         void operator()(
             Self& self,
-            boost::system::error_code const& ec = boost::system::error_code{},
+            sys::error_code const& ec = sys::error_code{},
             std::size_t bytes_transferred = 0
         ) {
             if (ec) {
@@ -301,7 +332,8 @@ private:
         }
     };
 
-    next_layer_type& nl_;
+private:
+    next_layer_type nl_;
     as::strand<executor_type> strand_{nl_.get_executor()};
     optional<as::io_context> queue_;
 };

@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <ostream>
 
-#include <async_mqtt/optional.hpp>
+#include <async_mqtt/util/optional.hpp>
 
 namespace async_mqtt {
 

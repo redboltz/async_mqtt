@@ -82,6 +82,23 @@ auto async_read(
     );
 }
 
+template <
+    typename NextLayer,
+    typename ConstBufferSequence,
+    typename CompletionToken,
+    typename std::enable_if_t<
+        as::is_const_buffer_sequence<ConstBufferSequence>::value &&
+        std::is_invocable<CompletionToken, boost::system::error_code, std::size_t>::value
+    >* = nullptr
+>
+auto async_write(
+    bs::websocket::stream<NextLayer>& stream,
+    ConstBufferSequence const& cbs,
+    CompletionToken&& token
+) {
+    return stream.async_write(cbs, std::forward<CompletionToken>(token));
+}
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_WS_FIXED_SIZE_ASYNC_READ_HPP

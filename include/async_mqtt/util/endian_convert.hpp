@@ -9,7 +9,7 @@
 
 #include <boost/endian/conversion.hpp>
 
-#include <async_mqtt/static_vector.hpp>
+#include <async_mqtt/util/static_vector.hpp>
 
 namespace async_mqtt {
 

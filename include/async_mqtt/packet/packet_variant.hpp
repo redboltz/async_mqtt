@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP
 
-#include <async_mqtt/variant.hpp>
+#include <async_mqtt/util/variant.hpp>
 #include <async_mqtt/packet/publish.hpp>
 
 namespace async_mqtt {

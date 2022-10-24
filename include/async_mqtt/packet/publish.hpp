@@ -14,10 +14,12 @@
 
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
-#include <async_mqtt/move.hpp>
-#include <async_mqtt/static_vector.hpp>
-#include <async_mqtt/endian_convert.hpp>
 #include <async_mqtt/variable_bytes.hpp>
+
+#include <async_mqtt/util/move.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
+
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>

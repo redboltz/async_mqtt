@@ -8,8 +8,8 @@
 #define ASYNC_MQTT_PACKET_HPP
 
 #include <async_mqtt/buffer.hpp>
-#include <async_mqtt/static_vector.hpp>
-#include <async_mqtt/fixed_header.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/packet/fixed_header.hpp>
 
 namespace async_mqtt {
 
@@ -20,7 +20,7 @@ public:
     /**
      * @brief Create empty header_packet_id_packet.
      */
-    constexpr header_only_packet(control_packet_type type, std::uint8_t flags)
+    header_only_packet(control_packet_type type, std::uint8_t flags)
         : packet_ { static_cast<char>(make_fixed_header(type, flags)), 0 }
     {}
 
@@ -29,7 +29,7 @@ public:
      *        it is for boost asio APIs
      * @return const buffer sequence
      */
-    constexpr std::vector<as::const_buffer, 1> const_buffer_sequence() const {
+    std::vector<as::const_buffer> const_buffer_sequence() const {
         return { as::buffer(packet_.data(), packet_.size()) };
     }
 

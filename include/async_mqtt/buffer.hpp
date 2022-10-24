@@ -11,10 +11,10 @@
 
 #include <boost/asio/buffer.hpp>
 
-#include <async_mqtt/move.hpp>
-#include <async_mqtt/any.hpp>
-#include <async_mqtt/shared_ptr_array.hpp>
-#include <async_mqtt/is_iterator.hpp>
+#include <async_mqtt/util/move.hpp>
+#include <async_mqtt/util/any.hpp>
+#include <async_mqtt/util/shared_ptr_array.hpp>
+#include <async_mqtt/util/is_iterator.hpp>
 
 namespace async_mqtt {
 

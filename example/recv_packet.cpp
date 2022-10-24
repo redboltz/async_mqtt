@@ -29,12 +29,14 @@ int main() {
                 [&]
                 (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                     std::cout << "read : " << ec.message() << " " << bytes_transferred << std::endl;
+                    if (ec) return;
                     wstr = rstr.substr(0, bytes_transferred);
                     s.async_write_some(
                         as::buffer(wstr),
                         [&]
                         (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                             std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
+                            if (ec) return;
                             do_echo();
                         }
                     );
@@ -46,6 +48,7 @@ int main() {
         s,
         [&](boost::system::error_code const& ec) {
             std::cout << "accept: " << ec.message() << std::endl;
+            if (ec) return;
             do_echo();
         }
     );
