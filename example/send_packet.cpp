@@ -43,21 +43,23 @@ int main() {
                         (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
                             std::cout << "read: " << ec.message() << " " << buf.size() << std::endl;
                             if (ec) return;
-                            if (auto packet = async_mqtt::buffer_to_packet_variant<2>(
+                            if (auto pv_opt = async_mqtt::buffer_to_packet_variant(
                                     force_move(buf),
                                     async_mqtt::protocol_version::v3_1_1
                                 )
                             ) {
-                                async_mqtt::visit(
+                                pv_opt->visit(
                                     async_mqtt::overload {
                                         [&](async_mqtt::v3_1_1::publish_packet const& p) {
                                             std::cout << "size:" << p.size() << std::endl;
                                             std::cout << "topic:" << p.topic() << std::endl;
                                             std::cout << "payload:" << p.payload_as_buffer() << std::endl;
                                         }
-                                    },
-                                    *packet
+                                    }
                                 );
+                            }
+                            else {
+                                std::cout << "protocol error" << std::endl;
                             }
                         }
                     );

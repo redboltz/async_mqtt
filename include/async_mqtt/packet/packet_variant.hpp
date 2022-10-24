@@ -13,41 +13,77 @@
 namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
-using basic_packet_variant = variant<
+class basic_packet_variant {
+public:
+    template <typename Packet>
+    basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
+    {}
+
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        return visit(
+            [] (auto const& p) {
+                return p.const_buffer_sequence();
+            }
+        );
+    }
+
+    template <typename Func>
+    auto visit(Func&& func) const {
+        return
+            async_mqtt::visit(
+                std::forward<Func>(func),
+                var_
+            );
+    }
+
+    template <typename Func>
+    auto visit(Func&& func) {
+        return
+            async_mqtt::visit(
+                std::forward<Func>(func),
+                var_
+            );
+    }
+
+private:
+    using variant_t = variant<
 #if 0
-    v3_1_1::connect_packet,
-    v3_1_1::connack_packet,
+        v3_1_1::connect_packet,
+        v3_1_1::connack_packet,
 #endif
-    v3_1_1::basic_publish_packet<PacketIdBytes> // add comma later
+        v3_1_1::basic_publish_packet<PacketIdBytes> // add comma later
 #if 0
-    v3_1_1::basic_puback_packet<PacketIdBytes>,
-    v3_1_1::basic_pubrec_packet<PacketIdBytes>,
-    v3_1_1::basic_pubrel_packet<PacketIdBytes>,
-    v3_1_1::basic_pubcomp_packet<PacketIdBytes>,
-    v3_1_1::basic_subscribe_packet<PacketIdBytes>,
-    v3_1_1::basic_suback_packet<PacketIdBytes>,
-    v3_1_1::basic_unsubscribe_packet<PacketIdBytes>,
-    v3_1_1::basic_unsuback_packet<PacketIdBytes>,
-    v3_1_1::pingreq_packet,
-    v3_1_1::pingresp_packet,
-    v3_1_1::disconnect_packet,
-    v5::connect_packet,
-    v5::connack_packet,
-    v5::basic_publish_packet<PacketIdBytes>,
-    v5::basic_puback_packet<PacketIdBytes>,
-    v5::basic_pubrec_packet<PacketIdBytes>,
-    v5::basic_pubrel_packet<PacketIdBytes>,
-    v5::basic_pubcomp_packet<PacketIdBytes>,
-    v5::basic_subscribe_packet<PacketIdBytes>,
-    v5::basic_suback_packet<PacketIdBytes>,
-    v5::basic_unsubscribe_packet<PacketIdBytes>,
-    v5::basic_unsuback_packet<PacketIdBytes>,
-    v5::pingreq_packet,
-    v5::pingresp_packet,
-    v5::disconnect_packet,
-    v5::auth_packet
+        v3_1_1::basic_puback_packet<PacketIdBytes>,
+        v3_1_1::basic_pubrec_packet<PacketIdBytes>,
+        v3_1_1::basic_pubrel_packet<PacketIdBytes>,
+        v3_1_1::basic_pubcomp_packet<PacketIdBytes>,
+        v3_1_1::basic_subscribe_packet<PacketIdBytes>,
+        v3_1_1::basic_suback_packet<PacketIdBytes>,
+        v3_1_1::basic_unsubscribe_packet<PacketIdBytes>,
+        v3_1_1::basic_unsuback_packet<PacketIdBytes>,
+        v3_1_1::pingreq_packet,
+        v3_1_1::pingresp_packet,
+        v3_1_1::disconnect_packet,
+        v5::connect_packet,
+        v5::connack_packet,
+        v5::basic_publish_packet<PacketIdBytes>,
+        v5::basic_puback_packet<PacketIdBytes>,
+        v5::basic_pubrec_packet<PacketIdBytes>,
+        v5::basic_pubrel_packet<PacketIdBytes>,
+        v5::basic_pubcomp_packet<PacketIdBytes>,
+        v5::basic_subscribe_packet<PacketIdBytes>,
+        v5::basic_suback_packet<PacketIdBytes>,
+        v5::basic_unsubscribe_packet<PacketIdBytes>,
+        v5::basic_unsuback_packet<PacketIdBytes>,
+        v5::pingreq_packet,
+        v5::pingresp_packet,
+        v5::disconnect_packet,
+        v5::auth_packet
 #endif
 >;
+
+    variant_t var_;
+};
 
 using packet_variant = basic_packet_variant<2>;
 

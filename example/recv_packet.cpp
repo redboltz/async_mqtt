@@ -9,13 +9,17 @@
 
 #include <boost/asio.hpp>
 
+#include <async_mqtt/stream.hpp>
+#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
+
 namespace as = boost::asio;
 
 int main() {
     as::io_context ioc;
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
-    as::ip::tcp::socket s{ioc};
+    async_mqtt::stream<as::ip::tcp::socket> ams{ioc};
     as::ip::tcp::acceptor ac{ioc, endpoint};
 
     std::string rstr;
@@ -24,28 +28,35 @@ int main() {
     std::function<void()> do_echo;
     do_echo =
         [&] {
-            s.async_read_some(
-                as::buffer(rstr),
+            ams.read_packet(
                 [&]
-                (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
-                    std::cout << "read : " << ec.message() << " " << bytes_transferred << std::endl;
+                (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
+                    std::cout << "read : " << ec.message() << " " << buf.size() << std::endl;
                     if (ec) return;
-                    wstr = rstr.substr(0, bytes_transferred);
-                    s.async_write_some(
-                        as::buffer(wstr),
-                        [&]
-                        (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
-                            std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
-                            if (ec) return;
-                            do_echo();
-                        }
-                    );
+                    if (auto pv_opt = async_mqtt::buffer_to_packet_variant(
+                            force_move(buf),
+                            async_mqtt::protocol_version::v3_1_1
+                        )
+                    ) {
+                        ams.write_packet(
+                            *pv_opt,
+                            [&]
+                            (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
+                                std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
+                                if (ec) return;
+                                do_echo();
+                            }
+                        );
+                    }
+                    else {
+                        std::cout << "protocol error" << std::endl;
+                    }
                 }
             );
         };
 
     ac.async_accept(
-        s,
+        ams.next_layer(),
         [&](boost::system::error_code const& ec) {
             std::cout << "accept: " << ec.message() << std::endl;
             if (ec) return;
