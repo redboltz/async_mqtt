@@ -35,7 +35,7 @@ int main() {
             auto const& cbs = packet.const_buffer_sequence();
             ams.write_packet(
                 cbs,
-                [&, cbs, packet = async_mqtt::force_move(packet)]
+                [&, packet = async_mqtt::force_move(packet)]
                 (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                     std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                     if (ec) return;

@@ -26,13 +26,13 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace sys = boost::system;
 
-template <typename NextLayer, std::size_t PacketIdBytes>
-class basic_stream {
+template <typename NextLayer>
+class stream {
 public:
-    using this_type = basic_stream<NextLayer, PacketIdBytes>;
+    using this_type = stream<NextLayer>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
-
+    using strand_type = as::strand<executor_type>;
     auto const& next_layer() const {
         return nl_;
     }
@@ -49,7 +49,7 @@ public:
 
     template <typename... Args>
     explicit
-    basic_stream(Args&&... args)
+    stream(Args&&... args)
         :nl_{std::forward<Args>(args)...}
     {
         queue_.emplace();
@@ -103,10 +103,10 @@ public:
             );
     }
 
-    as::strand<executor_type> const& get_strand() const {
+    strand_type const& strand() const {
         return strand_;
     }
-    as::strand<executor_type>& get_strand() {
+    strand_type& strand() {
         return strand_;
     }
 
@@ -342,12 +342,9 @@ private:
 
 private:
     next_layer_type nl_;
-    as::strand<executor_type> strand_{nl_.get_executor()};
+    strand_type strand_{nl_.get_executor()};
     optional<as::io_context> queue_;
 };
-
-template <typename NextLayer>
-using stream = basic_stream<NextLayer, 2>;
 
 } // namespace async_mqtt
 

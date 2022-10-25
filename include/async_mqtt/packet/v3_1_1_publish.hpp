@@ -23,6 +23,7 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
+#include <async_mqtt/packet/copy_to_static_vector.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -52,15 +53,15 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
-          remaining_length_(
+          remaining_length_{
               2                      // topic name length
               + topic_name_.size()   // topic name
               + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
-          )
+          }
     {
-        topic_name_length_buf_.resize(2);
+        topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
         endian_store(
             boost::numeric_cast<std::uint16_t>(topic_name.size()),
             topic_name_length_buf_.data()
@@ -83,20 +84,20 @@ public:
         }
         if (pubopts.get_qos() == qos::at_least_once ||
             pubopts.get_qos() == qos::exactly_once) {
-            packet_id_.reserve(PacketIdBytes);
+            packet_id_.resize(packet_id_.capacity());
             endian_store(packet_id, packet_id_.data());
         }
     }
 
-    // Used in test code, and to deserialize stored packets.
     basic_publish_packet(buffer buf) {
+        // fixed_header
         if (buf.empty())  throw remaining_length_error();
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
         qos qos_value = get_qos();
         buf.remove_prefix(1);
 
+        // remaining_length
         if (buf.empty()) throw remaining_length_error();
-
         auto it = buf.begin();
         // it is updated as consmed position
         if (auto len_opt = variable_bytes_to_val(it, buf.end())) {
@@ -105,26 +106,25 @@ public:
         else {
             throw remaining_length_error();
         }
-
         std::copy(
             buf.begin(),
             it,
             std::back_inserter(remaining_length_buf_));
         buf.remove_prefix(std::distance(buf.begin(), it));
 
-        if (buf.size() < 2) throw remaining_length_error();
-        std::copy(buf.begin(), std::next(buf.begin(), 2), std::back_inserter(topic_name_length_buf_));
-        auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
-        buf.remove_prefix(2);
+        // topic_name_length
+        copy_advance(buf, topic_name_length_buf_);
+        topic_name_length_ = endian_load<std::uint16_t>(topic_name_length_buf_.data());
 
+        // topic_name
         if (buf.size() < topic_name_length) throw remaining_length_error();
-
         topic_name_ = buf.substr(0, topic_name_length);
 #if 0 // TBD
         utf8string_check(topic_name_);
 #endif
         buf.remove_prefix(topic_name_length);
 
+        // packet_id
         switch (qos_value) {
         case qos::at_most_once:
             break;
@@ -139,6 +139,7 @@ public:
             break;
         };
 
+        // payload
         if (!buf.empty()) {
             payloads_.emplace_back(force_move(buf));
         }
