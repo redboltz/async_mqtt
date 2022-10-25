@@ -7,7 +7,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/packet/publish.hpp>
+#include <async_mqtt/packet/v3_1_1_publish.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

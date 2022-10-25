@@ -56,7 +56,7 @@ int main() {
                                             std::cout << "topic:" << p.topic() << std::endl;
                                             std::cout << "payload:" << p.payload_as_buffer() << std::endl;
                                         },
-                                        [](async_mqtt::monostate const&) {}
+                                        [](auto const&) {}
                                     }
 
                                 );

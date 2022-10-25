@@ -53,13 +53,13 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
-          remaining_length_{
+          remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
               + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
-          }
+          )
     {
         topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
         endian_store(

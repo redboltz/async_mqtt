@@ -51,7 +51,7 @@ public:
           },
           connect_flags_{0},
           // protocol name length, protocol name, protocol level, connect flag, client id length, client id, keep alive
-          remaining_length_{
+          remaining_length_(
               2 +                     // protocol name length
               4 +                     // protocol name
               1 +                     // protocol level
@@ -59,7 +59,7 @@ public:
               2 +                     // keep alive
               2 +                     // client id length
               client_id.size()        // client id
-          },
+          ),
           protocol_name_and_level_{0x00, 0x04, 'M', 'Q', 'T', 'T', 0x04},
           client_id_{force_move(client_id)},
           client_id_length_buf_(2),
@@ -146,7 +146,7 @@ public:
 
         // protocol name and level
         copy_advance(buf, protocol_name_and_level_);
-        boost::container::static_vector<char, 7> expected_protocol_name_and_level {
+        static_vector<char, 7> expected_protocol_name_and_level {
             0, 4, 'M', 'Q', 'T', 'T', 4
         };
         if (protocol_name_and_level_ != expected_protocol_name_and_level) {
@@ -343,23 +343,23 @@ private:
     char connect_flags_;
 
     std::size_t remaining_length_;
-    boost::container::static_vector<char, 4> remaining_length_buf_;
+    static_vector<char, 4> remaining_length_buf_;
 
-    boost::container::static_vector<char, 7> protocol_name_and_level_;
+    static_vector<char, 7> protocol_name_and_level_;
     buffer client_id_;
-    boost::container::static_vector<char, 2> client_id_length_buf_;
+    static_vector<char, 2> client_id_length_buf_;
 
     buffer will_topic_name_;
-    boost::container::static_vector<char, 2> will_topic_name_length_buf_;
+    static_vector<char, 2> will_topic_name_length_buf_;
     buffer will_message_;
-    boost::container::static_vector<char, 2> will_message_length_buf_;
+    static_vector<char, 2> will_message_length_buf_;
 
     buffer user_name_;
-    boost::container::static_vector<char, 2> user_name_length_buf_;
+    static_vector<char, 2> user_name_length_buf_;
     buffer password_;
-    boost::container::static_vector<char, 2> password_length_buf_;
+    static_vector<char, 2> password_length_buf_;
 
-    boost::container::static_vector<char, 2> keep_alive_buf_;
+    static_vector<char, 2> keep_alive_buf_;
 };
 
 } // namespace async_mqtt::v3_1_1

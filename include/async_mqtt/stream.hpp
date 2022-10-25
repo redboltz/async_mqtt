@@ -18,6 +18,7 @@
 
 #include <async_mqtt/core/stream_traits.hpp>
 #include <async_mqtt/util/optional.hpp>
+#include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
 
@@ -118,7 +119,6 @@ private:
 
         this_type& strm;
         std::size_t received = 0;
-        shared_ptr_array hrl = make_shared_ptr_array(5);
         std::uint32_t mul = 1;
         std::uint32_t rl = 0;
         shared_ptr_array spa;
@@ -141,7 +141,7 @@ private:
             } break;
             case header: {
                 // read fixed_header
-                auto address = &hrl[received];
+                auto address = &strm.header_remaining_length_buf_[received];
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
@@ -183,7 +183,7 @@ private:
                 ++received;
                 // read the first remaining_length
                 {
-                    auto address = &hrl[received];
+                    auto address = &strm.header_remaining_length_buf_[received];
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
@@ -195,7 +195,7 @@ private:
             case remaining_length:
                 BOOST_ASSERT(bytes_transferred == 1);
                 ++received;
-                if (hrl[received - 1] & 0b10000000) {
+                if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
                     // remaining_length continues
                     if (received == 5) {
                         self.complete(
@@ -204,9 +204,9 @@ private:
                         );
                         return;
                     }
-                    rl += (hrl[received - 1] & 0b01111111) * mul;
+                    rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
                     mul *= 128;
-                    auto address = &hrl[received];
+                    auto address = &strm.header_remaining_length_buf_[received];
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
@@ -216,17 +216,25 @@ private:
                 }
                 else {
                     // remaining_length end
-                    rl += (hrl[received - 1] & 0b01111111) * mul;
+                    rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
+
+                    spa = make_shared_ptr_array(received + rl);
+                    std::copy(
+                        strm.header_remaining_length_buf_.data(),
+                        strm.header_remaining_length_buf_.data() + received, spa.get()
+                    );
+
                     if (rl == 0) {
-                        auto ptr = hrl.get();
-                        self.complete(ec, buffer{ptr, ptr + received, force_move(hrl)});
+                        auto exe = as::get_associated_executor(self);
+                        if (exe == as::system_executor()) {
+                            auto ptr = spa.get();
+                            self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                            return;
+                        }
+                        as::dispatch(exe, force_move(self));
                     }
                     else {
                         state = bind;
-
-                        spa = make_shared_ptr_array(received + rl);
-                        std::copy(hrl.get(), hrl.get() + received, spa.get());
-
                         auto address = &spa[received];
                         auto& a_strm{strm};
                         async_read(
@@ -344,6 +352,7 @@ private:
     next_layer_type nl_;
     strand_type strand_{nl_.get_executor()};
     optional<as::io_context> queue_;
+    static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
 };
 
 } // namespace async_mqtt
