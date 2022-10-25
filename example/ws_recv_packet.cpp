@@ -5,8 +5,13 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
+
 #include <boost/asio.hpp>
 #include <boost/beast/websocket.hpp>
+
+#include <async_mqtt/stream.hpp>
+#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 
 namespace as = boost::asio;
 namespace bs = boost::beast;
@@ -16,38 +21,43 @@ int main() {
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
     as::ip::tcp::acceptor ac{ioc, endpoint};
-    bs::websocket::stream<as::ip::tcp::socket> ws{ioc};
+    async_mqtt::stream<bs::websocket::stream<as::ip::tcp::socket>> ams{ioc};
 
 
     std::function <void()> do_echo;
 
     do_echo =
         [&] {
-            auto wsfb = std::make_shared<bs::flat_buffer>();
-            ws.async_read(
-                *wsfb,
-                [&, wsfb]
-                (boost::system::error_code ec, std::size_t bytes_transferred) {
-                    std::cout << "read : " << ec.message() << " " << bytes_transferred << std::endl;
+            ams.read_packet(
+                [&]
+                (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
+                    std::cout << "read : " << ec.message() << " " << buf.size() << std::endl;
                     if (ec) return;
-                    auto buf = std::make_shared<std::vector<char>>(wsfb->size());
-                    as::buffer_copy(as::buffer(*buf), wsfb->data(), wsfb->size());
-                    ws.async_write(
-                        as::buffer(*buf),
-                        [&, buf]
-                        (boost::system::error_code ec, std::size_t bytes_transferred) {
-                            std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
-                            if (ec) return;
-                            do_echo();
-                        }
-                    );
-                    wsfb->consume(wsfb->size());
+                    if (auto pv = async_mqtt::buffer_to_packet_variant(
+                            force_move(buf),
+                            async_mqtt::protocol_version::v3_1_1
+                        )
+                    ) {
+                        auto const& cbs = pv.const_buffer_sequence();
+                        ams.write_packet(
+                            cbs,
+                            [&, cbs, pv = async_mqtt::force_move(pv)]
+                            (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
+                                std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
+                                if (ec) return;
+                                do_echo();
+                            }
+                        );
+                    }
+                    else {
+                        std::cout << "protocol error" << std::endl;
+                    }
                 }
             );
         };
 
     ac.async_accept(
-        ws.next_layer(),
+        ams.next_layer().next_layer(),
         [&]
         (boost::system::error_code ec) {
             std::cout << "tcp accept : " << ec.message() << std::endl;
@@ -56,7 +66,7 @@ int main() {
                 auto sb = std::make_shared<boost::asio::streambuf>();
                 auto request = std::make_shared<bs::http::request<boost::beast::http::string_body>>();
                 bs::http::async_read(
-                    ws.next_layer(),
+                    ams.next_layer().next_layer(),
                     *sb,
                     *request,
                     [&, sb, request]
@@ -68,8 +78,8 @@ int main() {
                             bs::websocket::permessage_deflate opt;
                             opt.client_enable = true;
                             opt.server_enable = true;
-                            ws.set_option(opt);
-                            ws.async_accept(
+                            ams.next_layer().set_option(opt);
+                            ams.next_layer().async_accept(
                                 *request,
                                 [&, request]
                                 (boost::system::error_code ec) {

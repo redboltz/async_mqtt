@@ -21,8 +21,14 @@ public:
 
     std::vector<as::const_buffer> const_buffer_sequence() const {
         return visit(
-            [] (auto const& p) {
-                return p.const_buffer_sequence();
+            overload {
+                [] (auto const& p) {
+                    return p.const_buffer_sequence();
+                },
+                [] (monostate const&) {
+                    BOOST_ASSERT(false);
+                    return std::vector<as::const_buffer>{};
+                }
             }
         );
     }
@@ -45,8 +51,13 @@ public:
             );
     }
 
+    operator bool() {
+        return var_.index() != 0;
+    }
+
 private:
     using variant_t = variant<
+        monostate,
 #if 0
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,

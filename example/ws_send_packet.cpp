@@ -45,9 +45,10 @@ int main() {
                 (boost::system::error_code const& ec) {
                     std::cout << "handshake: " << ec.message() << std::endl;
                     if (ec) return;
+                    auto const& cbs = packet.const_buffer_sequence();
                     ams.write_packet(
-                        async_mqtt::force_move(packet),
-                        [&]
+                        cbs,
+                        [&, cbs, packet = async_mqtt::force_move(packet)]
                         (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                             std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                             if (ec) return;
@@ -56,19 +57,21 @@ int main() {
                                 (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
                                     std::cout << "read: " << ec.message() << " " << buf.size() << std::endl;
                                     if (ec) return;
-                                    if (auto pv_opt = async_mqtt::buffer_to_packet_variant(
+                                    if (auto pv = async_mqtt::buffer_to_packet_variant(
                                             force_move(buf),
                                             async_mqtt::protocol_version::v3_1_1
                                         )
                                     ) {
-                                        pv_opt->visit(
+                                        pv.visit(
                                             async_mqtt::overload {
                                                 [&](async_mqtt::v3_1_1::publish_packet const& p) {
                                                     std::cout << "size:" << p.size() << std::endl;
                                                     std::cout << "topic:" << p.topic() << std::endl;
                                                     std::cout << "payload:" << p.payload_as_buffer() << std::endl;
-                                                }
-                                            }
+                                                },
+                                                    [](async_mqtt::monostate const&) {}
+                                                    }
+
                                         );
                                     }
                                     else {

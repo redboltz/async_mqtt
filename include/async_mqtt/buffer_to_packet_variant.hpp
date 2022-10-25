@@ -16,7 +16,7 @@
 namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
-optional<basic_packet_variant<PacketIdBytes>> buffer_to_basic_packet_variant(buffer buf, protocol_version ver) {
+basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, protocol_version ver) {
     BOOST_ASSERT(buf.size() >= 2);
     switch (get_control_packet_type(buf[0])) {
     case control_packet_type::publish:
@@ -27,13 +27,12 @@ optional<basic_packet_variant<PacketIdBytes>> buffer_to_basic_packet_variant(buf
             break;
         }
     default:
-        break;
+        return monostate{};
     }
-    return nullopt;
 }
 
 inline
-optional<packet_variant> buffer_to_packet_variant(buffer buf, protocol_version ver) {
+packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver) {
     return buffer_to_basic_packet_variant<2>(force_move(buf), ver);
 }
 

@@ -33,14 +33,15 @@ int main() {
                 (boost::system::error_code const& ec, async_mqtt::buffer buf) mutable {
                     std::cout << "read : " << ec.message() << " " << buf.size() << std::endl;
                     if (ec) return;
-                    if (auto pv_opt = async_mqtt::buffer_to_packet_variant(
+                    if (auto pv = async_mqtt::buffer_to_packet_variant(
                             force_move(buf),
                             async_mqtt::protocol_version::v3_1_1
                         )
                     ) {
+                        auto const& cbs = pv.const_buffer_sequence();
                         ams.write_packet(
-                            *pv_opt,
-                            [&]
+                            cbs,
+                            [&, cbs, pv = async_mqtt::force_move(pv)]
                             (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                                 std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                                 if (ec) return;

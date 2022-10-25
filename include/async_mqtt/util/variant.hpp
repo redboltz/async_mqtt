@@ -12,6 +12,7 @@
 namespace async_mqtt {
 
 using std::variant;
+using std::monostate;
 using std::visit;
 
 // overload for std::visit lambda expressions

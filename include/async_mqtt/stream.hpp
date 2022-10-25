@@ -26,10 +26,10 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace sys = boost::system;
 
-template <typename NextLayer>
-class stream {
+template <typename NextLayer, std::size_t PacketIdBytes>
+class basic_stream {
 public:
-    using this_type = stream<NextLayer>;
+    using this_type = basic_stream<NextLayer, PacketIdBytes>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
 
@@ -49,7 +49,7 @@ public:
 
     template <typename... Args>
     explicit
-    stream(Args&&... args)
+    basic_stream(Args&&... args)
         :nl_{std::forward<Args>(args)...}
     {
         queue_.emplace();
@@ -79,14 +79,15 @@ public:
     }
 
     template <
-        typename Packet, // add concept later TBD
+        typename ConstBufferSequence,
         typename CompletionToken,
         typename std::enable_if_t<
+            as::is_const_buffer_sequence<ConstBufferSequence>::value &&
             std::is_invocable<CompletionToken, sys::error_code, std::size_t>::value
         >* = nullptr
     >
     auto write_packet(
-        Packet&& packet,
+        ConstBufferSequence const& packet,
         CompletionToken&& token
     ) {
         return
@@ -94,9 +95,9 @@ public:
                 CompletionToken,
                 void(sys::error_code const&, std::size_t)
             >(
-                write_packet_impl<Packet>{
+                write_packet_impl<ConstBufferSequence>{
                     *this,
-                    std::forward<Packet>(packet)
+                    packet
                 },
                 token
             );
@@ -130,18 +131,20 @@ private:
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = header;
+                auto& a_strm{strm};
                 as::dispatch(
-                    strm.strand_,
+                    a_strm.strand_,
                     force_move(self)
                 );
-                break;
+            } break;
             case header: {
                 // read fixed_header
                 auto& a_hrl{hrl};
+                auto& a_strm{strm};
                 async_read(
-                    strm.nl_,
+                    a_strm.nl_,
                     as::buffer(&a_hrl[received], 1),
                     force_move(self)
                 );
@@ -181,8 +184,9 @@ private:
                 // read the first remaining_length
                 {
                     auto& a_hrl{hrl};
+                    auto& a_strm{strm};
                     async_read(
-                        strm.nl_,
+                        a_strm.nl_,
                         as::buffer(&a_hrl[received], 1),
                         force_move(self)
                     );
@@ -203,8 +207,9 @@ private:
                     rl += (hrl[received - 1] & 0b01111111) * mul;
                     mul *= 128;
                     auto& a_hrl{hrl};
+                    auto& a_strm{strm};
                     async_read(
-                        strm.nl_,
+                        a_strm.nl_,
                         as::buffer(&a_hrl[received], 1),
                         force_move(self)
                     );
@@ -223,8 +228,9 @@ private:
                         std::copy(hrl.get(), hrl.get() + received, spa.get());
 
                         auto& a_spa{spa};
+                        auto& a_strm{strm};
                         async_read(
-                            strm.nl_,
+                            a_strm.nl_,
                             as::buffer(&a_spa[received], rl),
                             force_move(self)
                         );
@@ -257,10 +263,10 @@ private:
         }
     };
 
-    template <typename Packet>
+    template <typename ConstBufferSequence>
     struct write_packet_impl {
         this_type& strm;
-        Packet packet;
+        ConstBufferSequence packet;
         sys::error_code last_ec = sys::error_code{};
         enum { initiate, write, bind, complete } state = initiate;
 
@@ -283,30 +289,32 @@ private:
                 return;
             }
             switch (state) {
-            case initiate:
+            case initiate: {
                 state = write;
-                strm.queue_->post(
+                auto& a_strm{strm};
+n                a_strm.queue_->post(
                     as::bind_executor(
-                        strm.strand_,
+                        a_strm.strand_,
                         force_move(self)
                     )
                 );
-                if (strm.queue_->stopped()) {
-                    strm.queue_->restart();
+                if (a_strm.queue_->stopped()) {
+                    a_strm.queue_->restart();
                     as::dispatch(
-                        strm.strand_,
-                        [this] {
-                            strm.queue_->poll_one();
+                        a_strm.strand_,
+                        [&a_strm] {
+                            a_strm.queue_->poll_one();
                         }
                     );
                 }
-                break;
+            } break;
             case write: {
                 state = bind;
-                auto cbs = packet.const_buffer_sequence();
+                auto& a_strm{strm};
+                auto& a_packet{packet};
                 async_write(
-                    strm.nl_,
-                    force_move(cbs),
+                    a_strm.nl_,
+                    a_packet,
                     force_move(self)
                 );
             } break;
@@ -337,6 +345,9 @@ private:
     as::strand<executor_type> strand_{nl_.get_executor()};
     optional<as::io_context> queue_;
 };
+
+template <typename NextLayer>
+using stream = basic_stream<NextLayer, 2>;
 
 } // namespace async_mqtt
 
