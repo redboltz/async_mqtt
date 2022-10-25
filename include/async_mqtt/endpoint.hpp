@@ -24,7 +24,7 @@ public:
     using packet_id_type = typename packet_id_type<PacketIdBytes>::type;
     using stream_type = stream<NextLayer>;
     using strand_type = typename stream_type::strand_type;
-
+    using variant_type = basic_packet_variant<PacketIdBytes>;
     template <typename... Args>
     basic_endpoint(
         connection_mode mode,
@@ -65,7 +65,8 @@ public:
         );
     }
 
-    void recv(basic_packet_variant<PacketIdBytes> const& pv) {
+    // recv and check protocol and call CompToken with variant_type
+    void recv(variant_type const& pv) {
         pv.visit(
             overload {
                 [&](async_mqtt::v3_1_1::publish_packet const& p) {

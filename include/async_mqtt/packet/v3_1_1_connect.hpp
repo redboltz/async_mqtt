@@ -129,20 +129,7 @@ public:
         buf.remove_prefix(1);
 
         // remaining_length
-        if (buf.empty()) throw remaining_length_error();
-        auto it = buf.begin();
-        // it is updated as consmed position
-        if (auto len_opt = variable_bytes_to_val(it, buf.end())) {
-            remaining_length_ = *len_opt;
-        }
-        else {
-            throw remaining_length_error();
-        }
-        std::copy(
-            buf.begin(),
-            it,
-            std::back_inserter(remaining_length_buf_));
-        buf.remove_prefix(std::distance(buf.begin(), it));
+        remaining_length_ = copy_advance_variable_length(buf, remaining_length_buf_);
 
         // protocol name and level
         copy_advance(buf, protocol_name_and_level_);
