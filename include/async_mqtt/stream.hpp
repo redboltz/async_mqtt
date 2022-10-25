@@ -87,7 +87,7 @@ public:
         >* = nullptr
     >
     auto write_packet(
-        ConstBufferSequence const& packet,
+        ConstBufferSequence packet,
         CompletionToken&& token
     ) {
         return
@@ -141,11 +141,11 @@ private:
             } break;
             case header: {
                 // read fixed_header
-                auto& a_hrl{hrl};
+                auto address = &hrl[received];
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
-                    as::buffer(&a_hrl[received], 1),
+                    as::buffer(address, 1),
                     force_move(self)
                 );
             } break;
@@ -183,11 +183,11 @@ private:
                 ++received;
                 // read the first remaining_length
                 {
-                    auto& a_hrl{hrl};
+                    auto address = &hrl[received];
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
-                        as::buffer(&a_hrl[received], 1),
+                        as::buffer(address, 1),
                         force_move(self)
                     );
                 }
@@ -206,11 +206,11 @@ private:
                     }
                     rl += (hrl[received - 1] & 0b01111111) * mul;
                     mul *= 128;
-                    auto& a_hrl{hrl};
+                    auto address = &hrl[received];
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
-                        as::buffer(&a_hrl[received], 1),
+                        as::buffer(address, 1),
                         force_move(self)
                     );
                 }
@@ -227,11 +227,11 @@ private:
                         spa = make_shared_ptr_array(received + rl);
                         std::copy(hrl.get(), hrl.get() + received, spa.get());
 
-                        auto& a_spa{spa};
+                        auto address = &spa[received];
                         auto& a_strm{strm};
                         async_read(
                             a_strm.nl_,
-                            as::buffer(&a_spa[received], rl),
+                            as::buffer(address, rl),
                             force_move(self)
                         );
                     }
@@ -292,7 +292,7 @@ private:
             case initiate: {
                 state = write;
                 auto& a_strm{strm};
-n                a_strm.queue_->post(
+                a_strm.queue_->post(
                     as::bind_executor(
                         a_strm.strand_,
                         force_move(self)
@@ -311,7 +311,7 @@ n                a_strm.queue_->post(
             case write: {
                 state = bind;
                 auto& a_strm{strm};
-                auto& a_packet{packet};
+                auto a_packet{force_move(packet)};
                 async_write(
                     a_strm.nl_,
                     a_packet,

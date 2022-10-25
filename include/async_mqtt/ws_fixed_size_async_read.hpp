@@ -45,7 +45,7 @@ struct async_read_impl {
             self.complete(ec, received);
         }
         else {
-            auto& a_mb{mb};
+            auto a_mb{force_move(mb)};
             stream.async_read_some(
                 a_mb,
                 std::move(self)
