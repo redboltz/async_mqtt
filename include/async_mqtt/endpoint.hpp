@@ -10,7 +10,8 @@
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 
-include <async_mqtt/stream.hpp>
+#include <async_mqtt/stream.hpp>
+#include <async_mqtt/packet_id_manager.hpp>
 
 namespace async_mqtt {
 
@@ -20,9 +21,9 @@ template <typename NextLayer, std::size_t PacketIdBytes>
 class basic_endpoint {
 public:
     using this_type = basic_endpoint<NextLayer, PacketIdBytes>;
-    using packet_id_type = packet_id_type<PacketIdBytes>::type;
+    using packet_id_type = typename packet_id_type<PacketIdBytes>::type;
     using stream_type = stream<NextLayer>;
-    using strand_type = stream_type::strand_type;
+    using strand_type = typename stream_type::strand_type;
 
     template <typename... Args>
     basic_endpoint(
@@ -51,7 +52,6 @@ public:
         typename Packet,
         typename CompletionToken,
         typename std::enable_if_t<
-            as::is_const_buffer_sequence<ConstBufferSequence>::value &&
             std::is_invocable<CompletionToken, sys::error_code, std::size_t>::value
         >* = nullptr
     >

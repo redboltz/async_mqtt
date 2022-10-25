@@ -10,12 +10,13 @@
 #include <algorithm>
 
 #include <async_mqtt/buffer.hpp>
-#include <async_mqtt/static_vector.hpp>
+#include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
-void copy_advance(buffer& buf, static_vector& sv) {
+template <std::size_t N>
+void copy_advance(buffer& buf, static_vector<char, N>& sv) {
     if (buf.size() < sv.capacity()) throw remaining_length_error();
     std::copy(
         buf.begin(),

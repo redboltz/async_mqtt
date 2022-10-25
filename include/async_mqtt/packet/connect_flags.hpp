@@ -33,10 +33,12 @@ constexpr bool has_will_flag(char v) {
     return (v & will_flag) != 0;
 }
 
-constexpr retain has_will_retain(char v) {
-    return   ((v & will_retain) != 0)
-           ? retain::yes
-           : retain::no;
+constexpr pub::retain has_will_retain(char v) {
+    return
+        [&] {
+            if (v & will_retain) return pub::retain::yes;
+            return pub::retain::no;
+        }();
 }
 
 constexpr bool has_password_flag(char v) {

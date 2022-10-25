@@ -7,13 +7,13 @@
 #if !defined(ASYNC_MQTT_PACKET_ID_MANAGER_HPP)
 #define ASYNC_MQTT_PACKET_ID_MANAGER_HPP
 
-#include <async_mqtt/value_allocator.hpp>
+#include <async_mqtt/util/value_allocator.hpp>
 
 namespace async_mqtt {
 
 template <typename PacketId>
 class packet_id_manager {
-    using packet_id_t = PacketId;
+    using packet_id_type = PacketId;
 
 public:
 
@@ -25,7 +25,7 @@ public:
      *        Or you can call release_packet_id to release it.
      * @return packet id
      */
-    optional<packet_id_t> acquire_unique_id() {
+    optional<packet_id_type> acquire_unique_id() {
         return va_.allocate();
     }
 
@@ -36,7 +36,7 @@ public:
      *        Or you can call release_packet_id to release it.
      * @return If packet_id is successfully registerd then return true, otherwise return false.
      */
-    bool register_id(packet_id_t packet_id) {
+    bool register_id(packet_id_type packet_id) {
         return va_.use(packet_id);
     }
 
@@ -46,7 +46,7 @@ public:
      *                   only the packet_id gotten by acquire_unique_packet_id, or
      *                   register_packet_id is permitted.
      */
-    void release_id(packet_id_t packet_id) {
+    void release_id(packet_id_type packet_id) {
         va_.deallocate(packet_id);
     }
 
@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    value_allocator<packet_id_t> va_ {1, std::numeric_limits<packet_id_t>::max()};
+    value_allocator<packet_id_type> va_ {1, std::numeric_limits<packet_id_type>::max()};
 };
 
 } // namespace async_mqtt

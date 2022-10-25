@@ -25,7 +25,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
             return v3_1_1::basic_publish_packet<PacketIdBytes>(force_move(buf));
         case protocol_version::v5:
             break;
-        case protocol_version::undetermind:
+        case protocol_version::undetermined:
             if (buf.size() >= 7) {
                 switch (static_cast<protocol_version>(buf[6])) {
                 case protocol_version::v3_1_1:

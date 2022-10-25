@@ -14,7 +14,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 
-#include <async_mqtt/optional.hpp>
+#include <async_mqtt/util/optional.hpp>
 
 namespace async_mqtt {
 

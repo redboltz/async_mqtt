@@ -114,7 +114,7 @@ public:
 
         // topic_name_length
         copy_advance(buf, topic_name_length_buf_);
-        topic_name_length_ = endian_load<std::uint16_t>(topic_name_length_buf_.data());
+        auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
 
         // topic_name
         if (buf.size() < topic_name_length) throw remaining_length_error();

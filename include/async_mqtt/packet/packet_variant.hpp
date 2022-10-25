@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP
 
 #include <async_mqtt/util/variant.hpp>
+#include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 
 namespace async_mqtt {
@@ -15,6 +16,7 @@ namespace async_mqtt {
 template <std::size_t PacketIdBytes>
 class basic_packet_variant {
 public:
+    basic_packet_variant() = default;
     template <typename Packet>
     basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
     {}
@@ -58,8 +60,8 @@ public:
 private:
     using variant_t = variant<
         monostate,
-#if 0
         v3_1_1::connect_packet,
+#if 0
         v3_1_1::connack_packet,
 #endif
         v3_1_1::basic_publish_packet<PacketIdBytes> // add comma later
