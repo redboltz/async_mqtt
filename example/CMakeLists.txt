@@ -1,6 +1,7 @@
 list(APPEND exec_PROGRAMS
     send_packet.cpp
     recv_packet.cpp
+    ep_send_packet.cpp
     ws_send_packet.cpp
     ws_recv_packet.cpp
 )

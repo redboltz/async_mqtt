@@ -21,6 +21,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
+#include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
@@ -34,6 +35,16 @@ public:
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
     using strand_type = as::strand<executor_type>;
+
+    template <typename... Args>
+    explicit
+    stream(Args&&... args)
+        :nl_{std::forward<Args>(args)...}
+    {
+        queue_.emplace();
+        queue_->stop();
+    }
+
     auto const& next_layer() const {
         return nl_;
     }
@@ -48,19 +59,17 @@ public:
         return nl_.lowest_layer();
     }
 
-    template <typename... Args>
-    explicit
-    stream(Args&&... args)
-        :nl_{std::forward<Args>(args)...}
-    {
-        queue_.emplace();
-        queue_->stop();
+    auto get_executor() const {
+        return nl_.get_executor();
+    }
+    auto get_executor() {
+        return nl_.get_executor();
     }
 
     template <
         typename CompletionToken,
         typename std::enable_if_t<
-            std::is_invocable<CompletionToken, sys::error_code, buffer>::value
+            std::is_invocable<CompletionToken, error_code, buffer>::value
         >* = nullptr
     >
     auto read_packet(
@@ -69,14 +78,13 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(sys::error_code const&, buffer)
+                void(error_code const&, buffer)
             >(
                 read_packet_impl{
                     *this
                 },
                 token
             );
-
     }
 
     template <
@@ -84,7 +92,7 @@ public:
         typename CompletionToken,
         typename std::enable_if_t<
             as::is_const_buffer_sequence<ConstBufferSequence>::value &&
-            std::is_invocable<CompletionToken, sys::error_code, std::size_t>::value
+            std::is_invocable<CompletionToken, error_code, std::size_t>::value
         >* = nullptr
     >
     auto write_packet(
@@ -94,7 +102,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(sys::error_code const&, std::size_t)
+                void(error_code const&, std::size_t)
             >(
                 write_packet_impl<ConstBufferSequence>{
                     *this,
@@ -122,7 +130,7 @@ private:
         std::uint32_t mul = 1;
         std::uint32_t rl = 0;
         shared_ptr_array spa;
-        sys::error_code last_ec;
+        error_code last_ec;
 
         enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
 
@@ -158,7 +166,7 @@ private:
         template <typename Self>
         void operator()(
             Self& self,
-            sys::error_code const& ec,
+            error_code const& ec,
             std::size_t bytes_transferred
         ) {
             if (ec) {
@@ -275,13 +283,13 @@ private:
     struct write_packet_impl {
         this_type& strm;
         ConstBufferSequence packet;
-        sys::error_code last_ec = sys::error_code{};
+        error_code last_ec = error_code{};
         enum { initiate, write, bind, complete } state = initiate;
 
         template <typename Self>
         void operator()(
             Self& self,
-            sys::error_code const& ec = sys::error_code{},
+            error_code const& ec = error_code{},
             std::size_t bytes_transferred = 0
         ) {
             if (ec) {
