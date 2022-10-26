@@ -91,20 +91,40 @@ public:
 
     basic_publish_packet(buffer buf) {
         // fixed_header
-        if (buf.empty())  throw remaining_length_error();
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet fixed_header doesn't exist"
+            );
+        }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
         qos qos_value = get_qos();
         buf.remove_prefix(1);
 
         // remaining_length
-        remaining_length_ = copy_advance_variable_length(buf, remaining_length_buf_);
+        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v3_1_1::publish_packet remaining length is invalid");
+        }
 
         // topic_name_length
-        copy_advance(buf, topic_name_length_buf_);
+        if (!copy_advance(buf, topic_name_length_buf_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet length of topic_name is invalid"
+            );
+        }
         auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
 
         // topic_name
-        if (buf.size() < topic_name_length) throw remaining_length_error();
+        if (buf.size() < topic_name_length) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet topic_name doesn't match its length"
+            );
+        }
         topic_name_ = buf.substr(0, topic_name_length);
 #if 0 // TBD
         utf8string_check(topic_name_);
@@ -117,12 +137,18 @@ public:
             break;
         case qos::at_least_once:
         case qos::exactly_once:
-            if (buf.size() < PacketIdBytes) throw remaining_length_error();
-            std::copy(buf.begin(), std::next(buf.begin(), PacketIdBytes), std::back_inserter(packet_id_));
-            buf.remove_prefix(PacketIdBytes);
+            if (!copy_advance(buf, packet_id_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::publish_packet packet_id doesn't exist"
+                );
+            }
             break;
         default:
-            throw protocol_error();
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet qos is invalid"
+            );
             break;
         };
 

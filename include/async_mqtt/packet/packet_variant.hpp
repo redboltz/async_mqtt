@@ -10,6 +10,7 @@
 #include <async_mqtt/util/variant.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
@@ -27,7 +28,7 @@ public:
                 [] (auto const& p) {
                     return p.const_buffer_sequence();
                 },
-                [] (monostate const&) {
+                [] (system_error const&) {
                     BOOST_ASSERT(false);
                     return std::vector<as::const_buffer>{};
                 }
@@ -59,7 +60,7 @@ public:
 
 private:
     using variant_t = variant<
-        monostate,
+        system_error,
         v3_1_1::connect_packet,
 #if 0
         v3_1_1::connack_packet,

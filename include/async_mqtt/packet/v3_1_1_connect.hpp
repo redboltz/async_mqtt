@@ -106,7 +106,12 @@ public:
                 boost::numeric_cast<std::uint16_t>(will_topic_name_.size()),
                 will_topic_name_length_buf_.data()
             );
-            if (w.value().message().size() > 0xffffL) throw will_message_length_error();
+            if (w.value().message().size() > 0xffffL) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will message too long"
+                );
+            }
             will_message_ = force_move(w.value().message());
             endian_store(
                 boost::numeric_cast<std::uint16_t>(will_message_.size()),
@@ -124,40 +129,80 @@ public:
 
     connect_packet(buffer buf) {
         // fixed_header
-        if (buf.empty())  throw remaining_length_error();
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet fixed_header doesn't exist"
+            );
+        }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
         buf.remove_prefix(1);
 
         // remaining_length
-        remaining_length_ = copy_advance_variable_length(buf, remaining_length_buf_);
+        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v3_1_1::connect_packet remaining length is invalid");
+        }
 
         // protocol name and level
-        copy_advance(buf, protocol_name_and_level_);
+        if (!copy_advance(buf, protocol_name_and_level_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet length of protocol_name or level is invalid"
+            );
+        }
         static_vector<char, 7> expected_protocol_name_and_level {
             0, 4, 'M', 'Q', 'T', 'T', 4
         };
         if (protocol_name_and_level_ != expected_protocol_name_and_level) {
-            throw protocol_error();
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet contents of protocol_name or level is invalid"
+            );
         }
 
         // connect_flags
-        if (buf.size() < 1) throw remaining_length_error();
+        if (buf.size() < 1) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet connect_flags doesn't exist"
+            );
+        }
         connect_flags_ = buf.front();
         if (connect_flags_ & 0b00000001) {
-            throw protocol_error();
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet connect_flags reserved bit0 is 1 (must be 0)"
+            );
         }
         buf.remove_prefix(1);
 
         // keep_alive
-        copy_advance(buf, keep_alive_buf_);
+        if (!copy_advance(buf, keep_alive_buf_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet keep_alive is invalid"
+            );
+        }
 
         // client_id_length
-        copy_advance(buf, client_id_length_buf_);
+        if (!copy_advance(buf, client_id_length_buf_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet length of client_id is invalid"
+            );
+        }
         auto client_id_length = endian_load<std::uint16_t>(client_id_length_buf_.data());
-        buf.remove_prefix(2);
 
         // client_id
-        if (buf.size() < client_id_length) throw remaining_length_error();
+        if (buf.size() < client_id_length) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet client_id doesn't match its length"
+            );
+        }
         client_id_ = buf.substr(0, client_id_length);
 #if 0 // TBD
         utf8string_check(client_id_);
@@ -167,11 +212,21 @@ public:
         // will
         if (connect_flags::has_will_flag(connect_flags_)) {
             // will_topic_name_length
-            copy_advance(buf, will_topic_name_length_buf_);
+            if (!copy_advance(buf, will_topic_name_length_buf_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet length of will_topic_name is invalid"
+                );
+            }
             auto will_topic_name_length = endian_load<std::uint16_t>(will_topic_name_length_buf_.data());
 
             // will_topic_name
-            if (buf.size() < will_topic_name_length) throw remaining_length_error();
+            if (buf.size() < will_topic_name_length) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will_topic_name doesn't match its length"
+                );
+            }
             will_topic_name_ = buf.substr(0, will_topic_name_length);
 #if 0 // TBD
             utf8string_check(will_topic_name_);
@@ -179,11 +234,21 @@ public:
             buf.remove_prefix(will_topic_name_length);
 
             // will_message_length
-            copy_advance(buf, will_message_length_buf_);
+            if (!copy_advance(buf, will_message_length_buf_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet length of will_message is invalid"
+                );
+            }
             auto will_message_length = endian_load<std::uint16_t>(will_message_length_buf_.data());
 
             // will_message
-            if (buf.size() < will_message_length) throw remaining_length_error();
+            if (buf.size() < will_message_length) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will_message doesn't match its length"
+                );
+            }
             will_message_ = buf.substr(0, will_message_length);
             buf.remove_prefix(will_message_length);
         }
@@ -191,11 +256,21 @@ public:
         // user_name
         if (connect_flags::has_user_name_flag(connect_flags_)) {
             // user_name_topic_name_length
-            copy_advance(buf, user_name_length_buf_);
+            if (!copy_advance(buf, user_name_length_buf_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet length of user_name is invalid"
+                );
+            }
             auto user_name_length = endian_load<std::uint16_t>(user_name_length_buf_.data());
 
             // user_name
-            if (buf.size() < user_name_length) throw remaining_length_error();
+            if (buf.size() < user_name_length) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet user_name doesn't match its length"
+                );
+            }
             user_name_ = buf.substr(0, user_name_length);
 #if 0 // TBD
             utf8string_check(user_name_);
@@ -206,11 +281,21 @@ public:
         // password
         if (connect_flags::has_password_flag(connect_flags_)) {
             // password_topic_name_length
-            copy_advance(buf, password_length_buf_);
+            if (!copy_advance(buf, password_length_buf_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet length of password is invalid"
+                );
+            }
             auto password_length = endian_load<std::uint16_t>(password_length_buf_.data());
 
             // password
-            if (buf.size() < password_length) throw remaining_length_error();
+            if (buf.size() == password_length) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet password doesn't match its length"
+                );
+            }
             password_ = buf.substr(0, password_length);
             buf.remove_prefix(password_length);
         }

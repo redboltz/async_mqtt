@@ -9,26 +9,28 @@
 
 #include <algorithm>
 
-#include <async_mqtt/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/optional.hpp>
+#include <async_mqtt/buffer.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
 template <std::size_t N>
-void copy_advance(buffer& buf, static_vector<char, N>& sv) {
-    if (buf.size() < sv.capacity()) throw remaining_length_error();
+bool copy_advance(buffer& buf, static_vector<char, N>& sv) {
+    if (buf.size() < sv.capacity()) return false;
     std::copy(
         buf.begin(),
         std::next(buf.begin(), sv.capacity()),
         std::back_inserter(sv)
     );
     buf.remove_prefix(sv.capacity());
+    return true;
 }
 
 inline
-std::uint32_t copy_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
-    if (buf.empty()) throw remaining_length_error();
+optional<std::uint32_t> copy_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
+    if (buf.empty()) return nullopt;
     std::uint32_t variable_length = 0;
     auto it = buf.begin();
     // it is updated as consmed position
@@ -36,7 +38,7 @@ std::uint32_t copy_advance_variable_length(buffer& buf, static_vector<char, 4>& 
         variable_length = *len_opt;
     }
     else {
-        throw remaining_length_error();
+        return nullopt;
     }
     std::copy(
         buf.begin(),
