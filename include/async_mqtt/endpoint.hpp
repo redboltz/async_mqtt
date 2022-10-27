@@ -14,26 +14,36 @@
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 namespace async_mqtt {
 
-enum class connection_mode { client, server };
+enum class role {
+    client = 0b01,
+    server = 0b10,
+    both   = 0b11
+};
 
-template <typename NextLayer, std::size_t PacketIdBytes>
+constexpr bool is_client(role r) {
+    return static_cast<int>(r) & static_cast<int>(role::client);
+}
+constexpr bool is_server(role r) {
+    return static_cast<int>(r) & static_cast<int>(role::server);
+}
+
+template <typename NextLayer, role Role, std::size_t PacketIdBytes>
 class basic_endpoint {
 public:
-    using this_type = basic_endpoint<NextLayer, PacketIdBytes>;
+    using this_type = basic_endpoint<NextLayer, Role, PacketIdBytes>;
     using packet_id_type = typename packet_id_type<PacketIdBytes>::type;
     using stream_type = stream<NextLayer>;
     using strand_type = typename stream_type::strand_type;
     using variant_type = basic_packet_variant<PacketIdBytes>;
     template <typename... Args>
     basic_endpoint(
-        connection_mode mode,
         protocol_version ver,
         Args&&... args
-    ): mode_{mode},
-       protocol_version_{ver},
+    ): protocol_version_{ver},
        stream_{std::forward<Args>(args)...}
     {
     }
@@ -63,6 +73,11 @@ public:
         Packet&& packet,
         CompletionToken&& token
     ) {
+        static_assert(
+            (is_client(Role) && is_client_sendable<Packet>()) ||
+            (is_server(Role) && is_server_sendable<Packet>()),
+            "Packet cannot be send by MQTT protocol"
+        );
         return
             as::async_compose<
                 CompletionToken,
@@ -176,14 +191,13 @@ private:
     };
 
 private:
-    optional<connection_mode> mode_;
     protocol_version protocol_version_;
     stream_type stream_;
     packet_id_manager<packet_id_type> pid_man_;
 };
 
-template <typename NextLayer>
-using endpoint = basic_endpoint<NextLayer, 2>;
+template <typename NextLayer, role Role>
+using endpoint = basic_endpoint<NextLayer, Role, 2>;
 
 } // namespace async_mqtt
 

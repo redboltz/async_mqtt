@@ -34,7 +34,7 @@ public:
     using this_type = stream<NextLayer>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
-    using strand_type = as::strand<executor_type>;
+    using strand_type = as::strand<as::any_io_executor>;
 
     template <typename... Args>
     explicit
@@ -59,10 +59,10 @@ public:
         return nl_.lowest_layer();
     }
 
-    auto get_executor() const {
+    as::any_io_executor get_executor() const {
         return nl_.get_executor();
     }
-    auto get_executor() {
+    as::any_io_executor get_executor() {
         return nl_.get_executor();
     }
 
@@ -106,7 +106,7 @@ public:
             >(
                 write_packet_impl<ConstBufferSequence>{
                     *this,
-                    packet
+                    force_move(packet)
                 },
                 token
             );
@@ -148,13 +148,17 @@ private:
                 );
             } break;
             case header: {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
                     as::buffer(address, 1),
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             default:
@@ -170,6 +174,7 @@ private:
             std::size_t bytes_transferred
         ) {
             if (ec) {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 auto exe = as::get_associated_executor(self);
                 if (exe == as::system_executor()) {
                     self.complete(ec, buffer{});
@@ -186,6 +191,7 @@ private:
 
             switch (state) {
             case header:
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 BOOST_ASSERT(bytes_transferred == 1);
                 state = remaining_length;
                 ++received;
@@ -196,11 +202,15 @@ private:
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
-                        force_move(self)
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
                     );
                 }
                 break;
             case remaining_length:
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 BOOST_ASSERT(bytes_transferred == 1);
                 ++received;
                 if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
@@ -219,7 +229,10 @@ private:
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
-                        force_move(self)
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
                     );
                 }
                 else {
@@ -248,12 +261,16 @@ private:
                         async_read(
                             a_strm.nl_,
                             as::buffer(address, rl),
-                            force_move(self)
+                            as::bind_executor(
+                                a_strm.strand_,
+                                force_move(self)
+                            )
                         );
                     }
                 }
                 break;
             case bind: {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = complete;
                 auto exe = as::get_associated_executor(self);
                 if (exe == as::system_executor()) {
@@ -293,6 +310,7 @@ private:
             std::size_t bytes_transferred = 0
         ) {
             if (ec) {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
                 if (exe == as::system_executor()) {
@@ -316,25 +334,25 @@ private:
                 );
                 if (a_strm.queue_->stopped()) {
                     a_strm.queue_->restart();
-                    as::dispatch(
-                        a_strm.strand_,
-                        [&a_strm] {
-                            a_strm.queue_->poll_one();
-                        }
-                    );
+                    a_strm.queue_->poll_one();
                 }
             } break;
             case write: {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = bind;
                 auto& a_strm{strm};
                 auto a_packet{force_move(packet)};
                 async_write(
                     a_strm.nl_,
                     a_packet,
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             case bind: {
+                // BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = complete;
                 strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
@@ -358,7 +376,7 @@ private:
 
 private:
     next_layer_type nl_;
-    strand_type strand_{nl_.get_executor()};
+    strand_type strand_{get_executor()};
     optional<as::io_context> queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
 };
