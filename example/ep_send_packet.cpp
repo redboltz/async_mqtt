@@ -8,6 +8,7 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/predefined_underlying_layer.hpp>
 
 namespace as = boost::asio;
 
@@ -15,7 +16,7 @@ int main() {
     as::io_context ioc;
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
-    async_mqtt::endpoint<as::ip::tcp::socket, async_mqtt::role::client> amep{
+    async_mqtt::endpoint<async_mqtt::protocol::mqtt, async_mqtt::role::client> amep{
         async_mqtt::protocol_version::v3_1_1,
         ioc
     };

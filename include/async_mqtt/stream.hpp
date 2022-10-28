@@ -106,7 +106,7 @@ public:
             >(
                 write_packet_impl<ConstBufferSequence>{
                     *this,
-                    packet
+                   force_move(packet)
                 },
                 token
             );
@@ -205,7 +205,10 @@ private:
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
-                        force_move(self)
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
                     );
                 }
                 break;
@@ -229,7 +232,10 @@ private:
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
-                        force_move(self)
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
                     );
                 }
                 else {
@@ -258,7 +264,10 @@ private:
                         async_read(
                             a_strm.nl_,
                             as::buffer(address, rl),
-                            force_move(self)
+                            as::bind_executor(
+                                a_strm.strand_,
+                                force_move(self)
+                            )
                         );
                     }
                 }
@@ -320,11 +329,9 @@ private:
             case initiate: {
                 state = write;
                 auto& a_strm{strm};
-                a_strm.queue_->post(
-                    as::bind_executor(
-                        a_strm.strand_,
-                        force_move(self)
-                    )
+                as::post(
+                    a_strm.strand_,
+                    force_move(self)
                 );
                 if (a_strm.queue_->stopped()) {
                     a_strm.queue_->restart();
@@ -339,7 +346,10 @@ private:
                 async_write(
                     a_strm.nl_,
                     a_packet,
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             case bind: {
@@ -365,7 +375,8 @@ private:
         }
     };
 
-private:
+    //private:
+public:
     next_layer_type nl_;
     strand_type strand_{nl_.get_executor()};
     optional<as::io_context> queue_;

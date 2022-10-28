@@ -28,39 +28,31 @@ struct async_read_impl {
     MutableBufferSequence mb;
     std::size_t received = 0;
     as::executor_work_guard<typename Stream::executor_type> wg{stream.get_executor()};
-    boost::system::error_code last_ec = boost::system::error_code{};
-    std::size_t last_bytes_transferred = 0;
 
     template <typename Self>
     void operator()(
-        Self& self
+        Self& self,
+        boost::system::error_code ec = boost::system::error_code{},
+        std::size_t bytes_transferred = 0
     ) {
-        if (last_ec) {
-            self.complete(last_ec, received);
+        if (ec) {
+            self.complete(ec, received);
             return;
         }
-        received += last_bytes_transferred;
-        mb += last_bytes_transferred;
+        received += bytes_transferred;
+        mb += bytes_transferred;
         if (mb.size() == 0) {
-            self.complete(last_ec, received);
+            self.complete(ec, received);
         }
         else {
             auto a_mb{force_move(mb)};
+            auto exe = as::get_associated_executor(self);
             stream.async_read_some(
                 a_mb,
-                [this, self = force_move(self)]
-                (
-                    boost::system::error_code const& ec = boost::system::error_code{},
-                    std::size_t bytes_transferred = 0
-                ) mutable {
-                    last_ec = ec;
-                    last_bytes_transferred = bytes_transferred;
-                    auto exe = as::get_associated_executor(self);
-                    as::dispatch(
-                        exe,
-                        force_move(self)
-                    );
-                }
+                as::bind_executor(
+                    exe,
+                    force_move(self)
+                )
             );
         }
     }

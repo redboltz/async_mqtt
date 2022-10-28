@@ -10,6 +10,7 @@
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/predefined_underlying_layer.hpp>
 
 namespace as = boost::asio;
 
@@ -17,7 +18,7 @@ int main() {
     as::io_context ioc;
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
-    async_mqtt::stream<as::ip::tcp::socket> ams{ioc};
+    async_mqtt::stream<async_mqtt::protocol::mqtt> ams{ioc.get_executor()};
 
     auto packet =
         async_mqtt::v3_1_1::publish_packet{
