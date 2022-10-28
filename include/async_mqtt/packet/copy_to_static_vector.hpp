@@ -13,6 +13,7 @@
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/exception.hpp>
+#include <async_mqtt/variable_bytes.hpp>
 
 namespace async_mqtt {
 

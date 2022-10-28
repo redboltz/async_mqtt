@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP)
 #define ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP
 
-#include <boost/asio.hpp>
-#include <boost/beast.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/websocket/stream_fwd.hpp>
 
 namespace async_mqtt {
 
@@ -19,6 +19,15 @@ namespace protocol {
 
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
 using ws = bs::websocket::stream<mqtt>;
+
+#if defined(ASYNC_MQTT_USE_TLS)
+
+#include <boost/asio/ssl/stream.hpp>
+
+using mqtts = as::ssl::stream<mqtt>;
+using wss = bs::websocket::stream<mqtts>;
+
+#endif // defined(ASYNC_MQTT_USE_TLS)
 
 } // namespace procotol
 
