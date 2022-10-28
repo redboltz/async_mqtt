@@ -49,10 +49,9 @@ int main() {
                 (boost::system::error_code const& ec) {
                     std::cout << "handshake: " << ec.message() << std::endl;
                     if (ec) return;
-                    auto const& cbs = packet.const_buffer_sequence();
                     ams.write_packet(
-                        cbs,
-                        [&, packet = async_mqtt::force_move(packet)]
+                        async_mqtt::force_move(packet),
+                        [&]
                         (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                             std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                             if (ec) return;

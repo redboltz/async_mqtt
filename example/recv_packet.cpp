@@ -39,10 +39,9 @@ int main() {
                             async_mqtt::protocol_version::v3_1_1
                         )
                     ) {
-                        auto const& cbs = pv.const_buffer_sequence();
                         ams.write_packet(
-                            cbs,
-                            [&, pv = async_mqtt::force_move(pv)]
+                            force_move(pv),
+                            [&]
                             (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                                 std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                                 if (ec) return;

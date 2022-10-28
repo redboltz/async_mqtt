@@ -133,9 +133,8 @@ private:
             switch (state) {
             case initiate: {
                 state = complete;
-                auto cbs = packet.const_buffer_sequence();
                 ep.stream_.write_packet(
-                    force_move(cbs),
+                    force_move(packet),
                     force_move(self)
                 );
             } break;

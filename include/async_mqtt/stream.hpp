@@ -88,15 +88,14 @@ public:
     }
 
     template <
-        typename ConstBufferSequence,
+        typename Packet,
         typename CompletionToken,
         typename std::enable_if_t<
-            as::is_const_buffer_sequence<ConstBufferSequence>::value &&
             std::is_invocable<CompletionToken, error_code, std::size_t>::value
         >* = nullptr
     >
     auto write_packet(
-        ConstBufferSequence packet,
+        Packet packet,
         CompletionToken&& token
     ) {
         return
@@ -104,7 +103,7 @@ public:
                 CompletionToken,
                 void(error_code const&, std::size_t)
             >(
-                write_packet_impl<ConstBufferSequence>{
+                write_packet_impl<Packet>{
                     *this,
                    force_move(packet)
                 },
@@ -299,10 +298,10 @@ private:
         }
     };
 
-    template <typename ConstBufferSequence>
+    template <typename Packet>
     struct write_packet_impl {
         this_type& strm;
-        ConstBufferSequence packet;
+        Packet packet;
         error_code last_ec = error_code{};
         enum { initiate, write, bind, complete } state = initiate;
 
@@ -342,10 +341,10 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = bind;
                 auto& a_strm{strm};
-                auto a_packet{force_move(packet)};
+                auto cbs = packet.const_buffer_sequence();
                 async_write(
                     a_strm.nl_,
-                    a_packet,
+                    cbs,
                     as::bind_executor(
                         a_strm.strand_,
                         force_move(self)
