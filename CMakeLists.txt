@@ -9,6 +9,11 @@ project(async_mqtt_iface VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(ASYNC_MQTT_USE_TLS "Enable building TLS code" OFF)
+option(ASYNC_MQTT_BUILD_TESTS "Enable building test applications" ON)
+option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" ON)
+
 # Don't use GNU extensions
 set(CMAKE_CXX_EXTENSIONS OFF)
 message(STATUS "Setting minimum C++ standard to C++17")
@@ -17,19 +22,55 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
-include_directories(include)
+if(ASYNC_MQTT_USE_STATIC_BOOST)
+    message(STATUS "Staticly linking with Boost")
+    set(Boost_USE_STATIC_LIBS TRUE)
+else()
+    message(STATUS "Dynamically linking with Boost")
+    set(Boost_USE_STATIC_LIBS FALSE)
+endif()
 
-option(ASYNC_MQTT_BUILD_TESTS "Enable building test applications" ON)
-option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" ON)
+if(ASYNC_MQTT_USE_STATIC_OPENSSL)
+    message(STATUS "Staticly linking with Openssl")
+    set(OPENSSL_USE_STATIC_LIBS TRUE)
+else()
+    message(STATUS "Dynamically linking with Openssl")
+    set(OPENSSL_USE_STATIC_LIBS FALSE)
+endif()
 
+set(Boost_USE_MULTITHREADED ON)
+find_package(Threads REQUIRED)
+
+if(ASYNC_MQTT_USE_TLS)
+    message(STATUS "TLS enabled")
+else()
+    message(STATUS "TLS disabled")
+endif()
+
+if(ASYNC_MQTT_USE_TLS)
+    find_package(OpenSSL REQUIRED)
+    set(ASYNC_MQTT_DEPENDS_OPENSSL "FIND_DEPENDENCY (OpenSSL)")
+    if(ASYNC_MQTT_USE_STATIC_OPENSSL)
+        find_package(ZLIB REQUIRED)
+        set(ASYNC_MQTT_DEPENDS_ZLIB "FIND_DEPENDENCY (ZLIB)")
+    endif()
+endif()
+
+
+#include_directories(include)
 
 set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include)
 
-add_subdirectory(example)
+if(ASYNC_MQTT_BUILD_EXAMPLES)
+    message(STATUS "Examples enabled")
+    add_subdirectory(example)
+endif()
 
 if(ASYNC_MQTT_BUILD_TESTS)
     message(STATUS "Tests enabled")
     enable_testing()
     add_subdirectory(test)
 endif()
+
+include(cmake/createcmakeconfig.cmake)

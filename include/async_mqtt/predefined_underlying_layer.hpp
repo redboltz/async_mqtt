@@ -7,7 +7,8 @@
 #if !defined(ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP)
 #define ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP
 
-#include <boost/asio/ip/tcp.hpp>
+//#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/ssl.hpp>
 #include <boost/beast/websocket/stream_fwd.hpp>
 
 namespace async_mqtt {
