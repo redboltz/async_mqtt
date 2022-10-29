@@ -10,6 +10,7 @@
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/predefined_underlying_layer.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/util/hex_dump.hpp>
 
 namespace as = boost::asio;
 
@@ -35,9 +36,7 @@ int main() {
         (async_mqtt::error_code const& ec) {
             std::cout << "connect: " << ec.message() << std::endl;
             if (ec) return;
-            auto cbs = packet.const_buffer_sequence();
-            auto r = async_mqtt::make_packet_range(cbs);
-            std::cout << async_mqtt::hex_fump(std::cout, r.first, r.second);
+            std::cout << async_mqtt::hex_dump(packet) << std::endl;;
             amep.send(
                 async_mqtt::force_move(packet),
                 [&]
@@ -47,9 +46,7 @@ int main() {
                     amep.recv(
                         [&]
                         (async_mqtt::packet_variant pv) mutable {
-                            auto cbs = pv.const_buffer_sequence();
-                            auto r = async_mqtt::make_packet_range(cbs);
-                            std::cout << async_mqtt::hex_fump(std::cout, r.first, r.second);
+                            std::cout << async_mqtt::hex_dump(pv) << std::endl;;
                             pv.visit(
                                 async_mqtt::overload {
                                     [&](async_mqtt::v3_1_1::publish_packet const& p) {

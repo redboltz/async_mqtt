@@ -25,7 +25,7 @@
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
-namespace async_mqtt::v3_1_1 {
+namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
@@ -94,7 +94,7 @@ public:
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::publish_packet fixed_header doesn't exist"
+                "v5::publish_packet fixed_header doesn't exist"
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
@@ -106,14 +106,14 @@ public:
             remaining_length_ = *vl_opt;
         }
         else {
-            throw make_error(errc::bad_message, "v3_1_1::publish_packet remaining length is invalid");
+            throw make_error(errc::bad_message, "v5::publish_packet remaining length is invalid");
         }
 
         // topic_name_length
         if (!copy_advance(buf, topic_name_length_buf_)) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::publish_packet length of topic_name is invalid"
+                "v5::publish_packet length of topic_name is invalid"
             );
         }
         auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
@@ -122,7 +122,7 @@ public:
         if (buf.size() < topic_name_length) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::publish_packet topic_name doesn't match its length"
+                "v5::publish_packet topic_name doesn't match its length"
             );
         }
         topic_name_ = buf.substr(0, topic_name_length);
@@ -140,14 +140,14 @@ public:
             if (!copy_advance(buf, packet_id_)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::publish_packet packet_id doesn't exist"
+                    "v5::publish_packet packet_id doesn't exist"
                 );
             }
             break;
         default:
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::publish_packet qos is invalid"
+                "v5::publish_packet qos is invalid"
             );
             break;
         };
@@ -308,6 +308,6 @@ private:
 
 using publish_packet = basic_publish_packet<2>;
 
-} // namespace async_mqtt::v3_1_1
+} // namespace async_mqtt::v5
 
 #endif // ASYNC_MQTT_PACKET_HPP
