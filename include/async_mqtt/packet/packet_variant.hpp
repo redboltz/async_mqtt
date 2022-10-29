@@ -9,6 +9,7 @@
 
 #include <async_mqtt/util/variant.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
+#include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/exception.hpp>
 
@@ -62,9 +63,7 @@ private:
     using variant_t = variant<
         system_error,
         v3_1_1::connect_packet,
-#if 0
         v3_1_1::connack_packet,
-#endif
         v3_1_1::basic_publish_packet<PacketIdBytes> // add comma later
 #if 0
         v3_1_1::basic_puback_packet<PacketIdBytes>,

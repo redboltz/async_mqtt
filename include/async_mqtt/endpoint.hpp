@@ -172,6 +172,8 @@ private:
                     overload {
                         [&](async_mqtt::v3_1_1::connect_packet const& p) {
                         },
+                        [&](async_mqtt::v3_1_1::connack_packet const& p) {
+                        },
                         [&](async_mqtt::v3_1_1::publish_packet const& p) {
                             // if auto
                             //    if qos 1

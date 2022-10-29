@@ -137,6 +137,13 @@ public:
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
         buf.remove_prefix(1);
+        auto cpt_opt = get_control_packet_type_with_check(fixed_header_);
+        if (!cpt_opt || *cpt_opt != control_packet_type::connect) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet fixed_header is invalid"
+            );
+        }
 
         // remaining_length
         if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
@@ -368,46 +375,6 @@ public:
             2 +                   // will message length, will message
             2 +                   // user name length, user name
             2;                    // password length, password
-    }
-
-    /**
-     * @brief Create one continuours buffer.
-     *        All sequence of buffers are concatinated.
-     *        It is useful to store to file/database.
-     * @return continuous buffer
-     */
-    std::string continuous_buffer() const {
-        std::string ret;
-
-        ret.reserve(size());
-
-        ret.push_back(static_cast<char>(fixed_header_));
-        ret.append(remaining_length_buf_.data(), remaining_length_buf_.size());
-        ret.append(protocol_name_and_level_.data(), protocol_name_and_level_.size());
-        ret.push_back(connect_flags_);
-        ret.append(keep_alive_buf_.data(), keep_alive_buf_.size());
-
-        ret.append(client_id_length_buf_.data(), client_id_length_buf_.size());
-        ret.append(client_id_.data(), client_id_.size());
-
-        if (connect_flags::has_will_flag(connect_flags_)) {
-            ret.append(will_topic_name_length_buf_.data(), will_topic_name_length_buf_.size());
-            ret.append(will_topic_name_.data(), will_topic_name_.size());
-            ret.append(will_message_length_buf_.data(), will_message_length_buf_.size());
-            ret.append(will_message_.data(), will_message_.size());
-        }
-
-        if (connect_flags::has_user_name_flag(connect_flags_)) {
-            ret.append(user_name_length_buf_.data(), user_name_length_buf_.size());
-            ret.append(user_name_.data(), user_name_.size());
-        }
-
-        if (connect_flags::has_password_flag(connect_flags_)) {
-            ret.append(password_length_buf_.data(), password_length_buf_.size());
-            ret.append(password_.data(), password_.size());
-        }
-
-        return ret;
     }
 
 private:
