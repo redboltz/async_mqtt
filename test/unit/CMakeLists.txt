@@ -14,6 +14,7 @@ find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)
 foreach(source_file ${check_PROGRAMS})
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
+    target_link_libraries(${source_file_we} async_mqtt_iface)
     target_compile_definitions(
         ${source_file_we}
         PUBLIC
@@ -22,7 +23,7 @@ foreach(source_file ${check_PROGRAMS})
     target_link_libraries(
         ${source_file_we} Boost::unit_test_framework
     )
-    if(WIN32 AND MQTT_USE_STATIC_OPENSSL)
+    if(WIN32 AND ASYNC_MQTT_USE_STATIC_OPENSSL)
         TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
     endif()
 
@@ -30,7 +31,7 @@ foreach(source_file ${check_PROGRAMS})
         target_compile_definitionss(
             ${source_file_we}
             PUBLIC
-            $<IF:$<BOOL:${MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+            $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
         )
         target_link_libraries(
             ${source_file_we} Boost::log
