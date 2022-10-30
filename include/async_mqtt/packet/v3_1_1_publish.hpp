@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_PUBLISH_HPP)
-#define ASYNC_MQTT_PACKET_PUBLISH_HPP
+#if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP)
+#define ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP
 
 #include <utility>
 #include <numeric>
@@ -310,4 +310,4 @@ using publish_packet = basic_publish_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#endif // ASYNC_MQTT_PACKET_HPP
+#endif // ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP

@@ -20,12 +20,12 @@
 #include <boost/operators.hpp>
 
 #include <async_mqtt/util/optional.hpp>
+#include <async_mqtt/util/move.hpp>
+#include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/packet/property_id.hpp>
-#include <async_mqtt/packet/subscribe_options.hpp>
-#include <async_mqtt/variable_length.hpp>
+#include <async_mqtt/variable_bytes.hpp>
 #include <async_mqtt/buffer.hpp>
-#include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt {
 
@@ -45,23 +45,29 @@ enum class ostream_format {
 
 template <std::size_t N>
 struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
-    explicit n_bytes_property(property::id id)
-        :id_(id) {}
+    n_bytes_property(property::id id, boost::container::static_vector<char, N> const& buf)
+        :id_(id), buf_{buf} {}
 
-    template <typename It>
-    n_bytes_property(property::id id, It b, It e)
-        :id_(id), buf_(force_move(b), force_move(e)) {}
+    template <typename It, typename End>
+    n_bytes_property(property::id id, It b, End e)
+        :id_{id}, buf_(b, e) {}
 
-    n_bytes_property(property::id id, boost::container::static_vector<char, N> buf)
-        :id_(id), buf_(force_move(buf)) {}
+    n_bytes_property(property::id id, buffer const& buf)
+        :id_{id} {
+        BOOST_ASSERT(buf.size() >= N);
+        buf_.insert(buf_.end(), (buf.begin(), std::next(buf.begin(), N)));
+    }
 
     /**
      * @brief Add const buffer sequence into the given buffer.
      * @param v buffer to add
      */
-    void add_const_buffer_sequence(std::vector<as::const_buffer>& v) const {
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> v;
+        v.reserve(num_of_const_buffer_sequence());
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(buf_.data(), buf_.size()));
+        return v;
     }
 
     /**
@@ -112,25 +118,35 @@ struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
 
     static constexpr ostream_format const of_ = ostream_format::direct;
     property::id id_;
-    boost::container::static_vector<char, N> buf_;
+    static_vector<char, N> buf_;
 };
 
 struct binary_property : private boost::totally_ordered<binary_property> {
     binary_property(property::id id, buffer buf)
-        :id_(id),
-         buf_(force_move(buf)),
-         length_{ num_to_2bytes(boost::numeric_cast<std::uint16_t>(buf_.size())) } {
-             if (buf_.size() > 0xffff) throw property_length_error();
-         }
+        :id_{id},
+         buf_{force_move(buf)},
+         length_(2)
+    {
+        if (buf_.size() > 0xffff) {
+            throw make_error(
+                errc::bad_message,
+                "property::binary_property length is invalid"
+            );
+        }
+        endian_store(boost::numeric_cast<std::uint16_t>(buf_.size()), length_.data());
+    }
 
     /**
      * @brief Add const buffer sequence into the given buffer.
      * @param v buffer to add
      */
-    void add_const_buffer_sequence(std::vector<as::const_buffer>& v) const {
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> v;
+        v.reserve(num_of_const_buffer_sequence());
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(length_.data(), length_.size()));
         v.emplace_back(as::buffer(buf_.data(), buf_.size()));
+        return v;
     }
 
     /**
@@ -172,7 +188,7 @@ struct binary_property : private boost::totally_ordered<binary_property> {
      * @return number of element of const_buffer_sequence
      */
     static constexpr std::size_t num_of_const_buffer_sequence() {
-        return 2;
+        return 3;
     }
 
     constexpr buffer const& val() const {
@@ -190,32 +206,35 @@ struct binary_property : private boost::totally_ordered<binary_property> {
     static constexpr ostream_format const of_ = ostream_format::json_like;
     property::id id_;
     buffer buf_;
-    boost::container::static_vector<char, 2> length_;
+    static_vector<char, 2> length_;
 };
 
 struct string_property : binary_property {
-    string_property(property::id id, buffer buf, bool already_checked)
+    string_property(property::id id, buffer buf)
         :binary_property(id, force_move(buf)) {
-        if (!already_checked) {
-            auto r = utf8string::validate_contents(this->val());
-            if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
-        }
+#if 0 // TDB
+        auto r = utf8string::validate_contents(this->val());
+        if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
+#endif
     }
 };
 
 struct variable_property : private boost::totally_ordered<variable_property> {
-    variable_property(property::id id, std::size_t value)
-        :id_(id)  {
-        variable_push(value_, value);
+    variable_property(property::id id, std::uint32_t value)
+        :id_{id}  {
+        value_ = val_to_variable_bytes(value);
     }
 
     /**
      * @brief Add const buffer sequence into the given buffer.
      * @param v buffer to add
      */
-    void add_const_buffer_sequence(std::vector<as::const_buffer>& v) const {
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> v;
+        v.reserve(num_of_const_buffer_sequence());
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(value_.data(), value_.size()));
+        return v;
     }
 
     /**
@@ -256,8 +275,11 @@ struct variable_property : private boost::totally_ordered<variable_property> {
         return 2;
     }
 
-    constexpr std::size_t val() const {
-        return std::get<0>(variable_length(value_));
+    std::size_t val() const {
+        auto it{value_.begin()};
+        auto val_opt{variable_bytes_to_val(it, value_.end())};
+        BOOST_ASSERT(val_opt);
+        return *val_opt;
     }
 
     friend bool operator<(variable_property const& lhs, variable_property const& rhs) {
@@ -274,7 +296,7 @@ struct variable_property : private boost::totally_ordered<variable_property> {
 
     static constexpr ostream_format const of_ = ostream_format::direct;
     property::id id_;
-    boost::container::static_vector<char, 4> value_;
+    static_vector<char, 4> value_;
 };
 
 } // namespace detail
@@ -289,11 +311,20 @@ public:
     };
 
     payload_format_indicator(payload_format fmt = binary)
-        : detail::n_bytes_property<1>(id::payload_format_indicator, { fmt == binary ? char(0) : char(1) } ) {}
+        : detail::n_bytes_property<1>{
+              id::payload_format_indicator,
+              {
+                  [&] {
+                      if (fmt == binary) return  char(0);
+                      return char(1);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    payload_format_indicator(It b, It e)
-        : detail::n_bytes_property<1>(id::payload_format_indicator, b, e) {}
+    template <typename It, typename End>
+    payload_format_indicator(It b, End e)
+        : detail::n_bytes_property<1>{id::payload_format_indicator, b, e} {}
 
     payload_format val() const {
         return (  (buf_.front() == 0)
@@ -310,27 +341,27 @@ public:
     using recv = message_expiry_interval;
     using store = message_expiry_interval;
     message_expiry_interval(std::uint32_t val)
-        : detail::n_bytes_property<4>(id::message_expiry_interval, num_to_4bytes(val) ) {}
+        : detail::n_bytes_property<4>{id::message_expiry_interval, endian_static_vector(val)} {}
 
-    template <typename It>
-    message_expiry_interval(It b, It e)
+    template <typename It, typename End>
+    message_expiry_interval(It b, End e)
         : detail::n_bytes_property<4>(id::message_expiry_interval, b, e) {}
 
     std::uint32_t val() const {
-        return make_uint32_t(buf_.begin(), buf_.end());
+        return endian_load<std::uint32_t>(buf_.data());
     }
 };
 
 class content_type : public detail::string_property {
 public:
-    explicit content_type(buffer val, bool already_checked = false)
-        : detail::string_property(id::content_type, force_move(val), already_checked) {}
+    explicit content_type(buffer val)
+        : detail::string_property(id::content_type, force_move(val)) {}
 };
 
 class response_topic : public detail::string_property {
 public:
-    explicit response_topic(buffer val, bool already_checked = false)
-        : detail::string_property(id::response_topic, force_move(val), already_checked) {}
+    explicit response_topic(buffer val)
+        : detail::string_property(id::response_topic, force_move(val)) {}
 };
 
 class correlation_data : public detail::binary_property {
@@ -351,24 +382,23 @@ class session_expiry_interval : public detail::n_bytes_property<4> {
 public:
     using recv = session_expiry_interval;
     using store = session_expiry_interval;
-    session_expiry_interval(session_expiry_interval_t val)
-        : detail::n_bytes_property<4>(id::session_expiry_interval, { num_to_4bytes(val) } ) {
-        static_assert(sizeof(session_expiry_interval_t) == 4, "sizeof(sesion_expiry_interval) should be 4");
+    session_expiry_interval(std::uint32_t val)
+        : detail::n_bytes_property<4>{id::session_expiry_interval, endian_static_vector(val)} {
     }
 
     template <typename It>
     session_expiry_interval(It b, It e)
         : detail::n_bytes_property<4>(id::session_expiry_interval, b, e) {}
 
-    session_expiry_interval_t val() const {
-        return make_uint32_t(buf_.begin(), buf_.end());
+    std::uint32_t val() const {
+        return endian_load<std::uint32_t>(buf_.data());
     }
 };
 
 class assigned_client_identifier : public detail::string_property {
 public:
-    explicit assigned_client_identifier(buffer val, bool already_checked = false)
-        : detail::string_property(id::assigned_client_identifier, force_move(val), already_checked) {}
+    explicit assigned_client_identifier(buffer val)
+        : detail::string_property{id::assigned_client_identifier, force_move(val)} {}
 };
 
 class server_keep_alive : public detail::n_bytes_property<2> {
@@ -376,21 +406,21 @@ public:
     using recv = server_keep_alive;
     using store = server_keep_alive;
     server_keep_alive(std::uint16_t val)
-        : detail::n_bytes_property<2>(id::server_keep_alive, { num_to_2bytes(val) } ) {}
+        : detail::n_bytes_property<2>{id::server_keep_alive, endian_static_vector(val)} {}
 
-    template <typename It>
-    server_keep_alive(It b, It e)
+    template <typename It, typename End>
+    server_keep_alive(It b, End e)
         : detail::n_bytes_property<2>(id::server_keep_alive, b, e) {}
 
     std::uint16_t val() const {
-        return make_uint16_t(buf_.begin(), buf_.end());
+        return endian_load<uint16_t>(buf_.data());
     }
 };
 
 class authentication_method : public detail::string_property {
 public:
-    explicit authentication_method(buffer val, bool already_checked = false)
-        : detail::string_property(id::authentication_method, force_move(val), already_checked) {}
+    explicit authentication_method(buffer val)
+        : detail::string_property{id::authentication_method, force_move(val)} {}
 };
 
 class authentication_data : public detail::binary_property {
@@ -420,14 +450,14 @@ public:
     using recv = will_delay_interval;
     using store = will_delay_interval;
     will_delay_interval(std::uint32_t val)
-        : detail::n_bytes_property<4>(id::will_delay_interval, { num_to_4bytes(val) } ) {}
+        : detail::n_bytes_property<4>{id::will_delay_interval, endian_static_vector(val)} {}
 
-    template <typename It>
-    will_delay_interval(It b, It e)
-        : detail::n_bytes_property<4>(id::will_delay_interval, b, e) {}
+    template <typename It, typename End>
+    will_delay_interval(It b, End e)
+        : detail::n_bytes_property<4>{id::will_delay_interval, b, e} {}
 
     std::uint32_t val() const {
-        return make_uint32_t(buf_.begin(), buf_.end());
+        return endian_load<uint32_t>(buf_.data());
     }
 };
 
@@ -449,35 +479,35 @@ public:
 
 class response_information : public detail::string_property {
 public:
-    explicit response_information(buffer val, bool already_checked = false)
-        : detail::string_property(id::response_information, force_move(val), already_checked) {}
+    explicit response_information(buffer val)
+        : detail::string_property{id::response_information, force_move(val)} {}
 };
 
 class server_reference : public detail::string_property {
 public:
-    explicit server_reference(buffer val, bool already_checked = false)
-        : detail::string_property(id::server_reference, force_move(val), already_checked) {}
+    explicit server_reference(buffer val)
+        : detail::string_property{id::server_reference, force_move(val)} {}
 };
 
 class reason_string : public detail::string_property {
 public:
-    explicit reason_string(buffer val, bool already_checked = false)
-        : detail::string_property(id::reason_string, force_move(val), already_checked) {}
+    explicit reason_string(buffer val)
+        : detail::string_property{id::reason_string, force_move(val)} {}
 };
 
 class receive_maximum : public detail::n_bytes_property<2> {
 public:
     using recv = receive_maximum;
     using store = receive_maximum;
-    receive_maximum(receive_maximum_t val)
-        : detail::n_bytes_property<2>(id::receive_maximum, { num_to_2bytes(val) } ) {}
+    receive_maximum(std::uint16_t val)
+        : detail::n_bytes_property<2>{id::receive_maximum, endian_static_vector(val)} {}
 
-    template <typename It>
-    receive_maximum(It b, It e)
-        : detail::n_bytes_property<2>(id::receive_maximum, b, e) {}
+    template <typename It, typename End>
+    receive_maximum(It b, End e)
+        : detail::n_bytes_property<2>{id::receive_maximum, b, e} {}
 
-    receive_maximum_t val() const {
-        return make_uint16_t(buf_.begin(), buf_.end());
+    std::uint16_t val() const {
+        return endian_load<std::uint16_t>(buf_.data());
     }
 };
 
@@ -486,15 +516,15 @@ class topic_alias_maximum : public detail::n_bytes_property<2> {
 public:
     using recv = topic_alias_maximum;
     using store = topic_alias_maximum;
-    topic_alias_maximum(topic_alias_t val)
-        : detail::n_bytes_property<2>(id::topic_alias_maximum, { num_to_2bytes(val) } ) {}
+    topic_alias_maximum(std::uint16_t val)
+        : detail::n_bytes_property<2>{id::topic_alias_maximum, endian_static_vector(val)} {}
 
-    template <typename It>
-    topic_alias_maximum(It b, It e)
-        : detail::n_bytes_property<2>(id::topic_alias_maximum, b, e) {}
+    template <typename It, typename End>
+    topic_alias_maximum(It b, End e)
+        : detail::n_bytes_property<2>{id::topic_alias_maximum, b, e} {}
 
-    topic_alias_t val() const {
-        return make_uint16_t(buf_.begin(), buf_.end());
+    std::uint16_t val() const {
+        return endian_load<std::uint16_t>(buf_.data());
     }
 };
 
@@ -503,15 +533,15 @@ class topic_alias : public detail::n_bytes_property<2> {
 public:
     using recv = topic_alias;
     using store = topic_alias;
-    topic_alias(topic_alias_t val)
-        : detail::n_bytes_property<2>(id::topic_alias, { num_to_2bytes(val) } ) {}
+    topic_alias(std::uint16_t val)
+        : detail::n_bytes_property<2>{id::topic_alias, endian_static_vector(val)} {}
 
-    template <typename It>
-    topic_alias(It b, It e)
+    template <typename It, typename End>
+    topic_alias(It b, End e)
         : detail::n_bytes_property<2>(id::topic_alias, b, e) {}
 
-    topic_alias_t val() const {
-        return make_uint16_t(buf_.begin(), buf_.end());
+    std::uint16_t val() const {
+        return endian_load<std::uint16_t>(buf_.data());
     }
 };
 
@@ -522,12 +552,16 @@ public:
     maximum_qos(qos value)
         : detail::n_bytes_property<1>(id::maximum_qos, { static_cast<char>(value) } ) {
         if (value != qos::at_most_once &&
-            value != qos::at_least_once &&
-            value != qos::exactly_once) throw property_parse_error();
+            value != qos::at_least_once) {
+            throw make_error(
+                errc::bad_message,
+                "property::maximum_qos value is invalid"
+            );
+        }
     }
 
-    template <typename It>
-    maximum_qos(It b, It e)
+    template <typename It, typename End>
+    maximum_qos(It b, End e)
         : detail::n_bytes_property<1>(id::maximum_qos, b, e) {}
 
     std::uint8_t val() const {
@@ -556,19 +590,35 @@ public:
 
 class user_property : private boost::totally_ordered<user_property> {
 public:
-    user_property(buffer key, buffer val, bool key_already_checked = false, bool val_already_checked = false)
-        : key_(force_move(key), key_already_checked), val_(force_move(val), val_already_checked) {}
+    user_property(buffer key, buffer val)
+        : key_(force_move(key)), val_(force_move(val)) {
+        if (key_.size() > 0xffff) {
+            throw make_error(
+                errc::bad_message,
+                "property::user_property key length is invalid"
+            );
+        }
+        if (val_.size() > 0xffff) {
+            throw make_error(
+                errc::bad_message,
+                "property::user_property val length is invalid"
+            );
+        }
+    }
 
     /**
      * @brief Add const buffer sequence into the given buffer.
      * @param v buffer to add
      */
-    void add_const_buffer_sequence(std::vector<as::const_buffer>& v) const {
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> v;
+        v.reserve(num_of_const_buffer_sequence());
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(key_.len.data(), key_.len.size()));
         v.emplace_back(as::buffer(key_.buf));
         v.emplace_back(as::buffer(val_.len.data(), val_.len.size()));
         v.emplace_back(as::buffer(val_.buf));
+        return v;
     }
 
     template <typename It>
@@ -646,21 +696,21 @@ public:
 
 private:
     struct len_str {
-        explicit len_str(buffer b, bool already_checked = false)
-            : buf(force_move(b)),
-              len{ num_to_2bytes(boost::numeric_cast<std::uint16_t>(buf.size())) }
+        explicit len_str(buffer b)
+            : buf{force_move(b)},
+              len{endian_static_vector(boost::numeric_cast<std::uint16_t>(buf.size()))}
         {
-            if (!already_checked) {
-                auto r = utf8string::validate_contents(buf);
-                if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
-            }
+#if 0 // TBD
+            auto r = utf8string::validate_contents(buf);
+            if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
+#endif
         }
 
         std::size_t size() const {
             return len.size() + buf.size();
         }
         buffer buf;
-        boost::container::static_vector<char, 2> len;
+        static_vector<char, 2> len;
     };
 
 private:
@@ -674,14 +724,14 @@ public:
     using recv = maximum_packet_size;
     using store = maximum_packet_size;
     maximum_packet_size(std::uint32_t val)
-        : detail::n_bytes_property<4>(id::maximum_packet_size, { num_to_4bytes(val) } ) {}
+        : detail::n_bytes_property<4>{id::maximum_packet_size, endian_static_vector(val)} {}
 
-    template <typename It>
-    maximum_packet_size(It b, It e)
+    template <typename It, typename End>
+    maximum_packet_size(It b, End e)
         : detail::n_bytes_property<4>(id::maximum_packet_size, b, e) {}
 
     std::uint32_t val() const {
-        return make_uint32_t(buf_.begin(), buf_.end());
+        return endian_load<std::uint32_t>(buf_.data());
     }
 };
 

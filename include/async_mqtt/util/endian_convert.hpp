@@ -27,6 +27,15 @@ void endian_store(T val, char* buf) {
     std::copy(usbuf.begin(), usbuf.end(), buf);
 }
 
+template <typename T>
+static_vector<char, sizeof(T)> endian_static_vector(T val) {
+    static_vector<unsigned char, sizeof(T)> usbuf(sizeof(T));
+    boost::endian::endian_store<T, sizeof(T), boost::endian::order::big>(usbuf.data(), val);
+    static_vector<char, sizeof(T)> cbuf(sizeof(T));
+    std::copy(usbuf.begin(), usbuf.end(), cbuf.begin());
+    return cbuf;
+}
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_ENDIAN_CONVERT_HPP

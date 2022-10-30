@@ -53,7 +53,6 @@ variable_bytes_to_val(It& it, End e) {
     return val;
 }
 
-
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_VARIABLE_BYTES_HPP

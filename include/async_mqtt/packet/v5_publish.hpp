@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_PUBLISH_HPP)
-#define ASYNC_MQTT_PACKET_PUBLISH_HPP
+#if !defined(ASYNC_MQTT_PACKET_V5_PUBLISH_HPP)
+#define ASYNC_MQTT_PACKET_V5_PUBLISH_HPP
 
 #include <utility>
 #include <numeric>
@@ -24,6 +24,7 @@
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/property_variant.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -44,7 +45,8 @@ public:
         packet_id_t packet_id,
         buffer topic_name,
         BufferSequence payloads,
-        pub::opts pubopts
+        pub::opts pubopts,
+        properties props
     )
         : fixed_header_{
               static_cast<std::uint8_t>(
@@ -53,6 +55,17 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
+          property_length_(
+              std::accumulate(
+                  props.begin(),
+                  props.end(),
+                  std::size_t(0U),
+                  [](std::size_t total, property_variant const& pv) {
+                      return total + pv.size();
+                  }
+              )
+          ),
+          props_(force_move(props)),
           remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
@@ -78,6 +91,14 @@ public:
 #if 0 // TBD
         utf8string_check(topic_name_);
 #endif
+
+        auto pb = val_to_variable_bytes(property_length_);
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+
+        remaining_length_ += property_length_buf_.size() + property_length_;
+
         auto rb = val_to_variable_bytes(remaining_length_);
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
@@ -152,6 +173,18 @@ public:
             break;
         };
 
+        // property_length
+        if (auto vl_opt = copy_advance_variable_length(buf, property_length_buf_)) {
+            property_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v5::publish_packet property length is invalid");
+        }
+
+        // property
+        props_ = make_properties(buf);
+        buf.remove_prefix(property_length_);
+
         // payload
         if (!buf.empty()) {
             payloads_.emplace_back(force_move(buf));
@@ -173,6 +206,8 @@ public:
         if (!packet_id_.empty()) {
             ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
         }
+        auto props_cbs = const_buffer_sequence(props_);
+        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
         for (auto const& payload : payloads_) {
             ret.emplace_back(as::buffer(payload));
         }
@@ -200,6 +235,15 @@ public:
             1 +                   // remaining length
             2 +                   // topic name length, topic name
             (packet_id_.empty() ? 0 : 1) +  // packet_id
+            1 +                   // property length
+            std::accumulate(
+                props_.begin(),
+                props_.end(),
+                std::size_t(0U),
+                [](std::size_t total, property_variant const& pv) {
+                    return total + pv.num_of_const_buffer_sequence();
+                }
+            ) +
             payloads_.size();
     }
 
@@ -301,6 +345,9 @@ private:
     buffer topic_name_;
     static_vector<char, 2> topic_name_length_buf_;
     static_vector<char, PacketIdBytes> packet_id_;
+    std::uint32_t property_length_;
+    static_vector<char, 4> property_length_buf_;
+    properties props_;
     std::vector<buffer> payloads_;
     std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
@@ -310,4 +357,4 @@ using publish_packet = basic_publish_packet<2>;
 
 } // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_HPP
+#endif // ASYNC_MQTT_PACKET_V5_PUBLISH_HPP

@@ -11,6 +11,7 @@
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
@@ -22,20 +23,6 @@ public:
     template <typename Packet>
     basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
     {}
-
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        return visit(
-            overload {
-                [] (auto const& p) {
-                    return p.const_buffer_sequence();
-                },
-                [] (system_error const&) {
-                    BOOST_ASSERT(false);
-                    return std::vector<as::const_buffer>{};
-                }
-            }
-        );
-    }
 
     template <typename Func>
     auto visit(Func&& func) const {
@@ -55,6 +42,20 @@ public:
             );
     }
 
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        return visit(
+            overload {
+                [] (auto const& p) {
+                    return p.const_buffer_sequence();
+                },
+                [] (system_error const&) {
+                    BOOST_ASSERT(false);
+                    return std::vector<as::const_buffer>{};
+                }
+            }
+        );
+    }
+
     operator bool() {
         return var_.index() != 0;
     }
@@ -64,7 +65,7 @@ private:
         system_error,
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,
-        v3_1_1::basic_publish_packet<PacketIdBytes> // add comma later
+        v3_1_1::basic_publish_packet<PacketIdBytes>,
 #if 0
         v3_1_1::basic_puback_packet<PacketIdBytes>,
         v3_1_1::basic_pubrec_packet<PacketIdBytes>,
@@ -79,7 +80,9 @@ private:
         v3_1_1::disconnect_packet,
         v5::connect_packet,
         v5::connack_packet,
-        v5::basic_publish_packet<PacketIdBytes>,
+#endif
+        v5::basic_publish_packet<PacketIdBytes>  // add comma later
+#if 0
         v5::basic_puback_packet<PacketIdBytes>,
         v5::basic_pubrec_packet<PacketIdBytes>,
         v5::basic_pubrel_packet<PacketIdBytes>,
