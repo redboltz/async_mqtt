@@ -174,18 +174,20 @@ private:
                         },
                         [&](async_mqtt::v3_1_1::connack_packet const& p) {
                         },
-                        [&](async_mqtt::v3_1_1::publish_packet const& p) {
+                        [&](async_mqtt::v3_1_1::basic_publish_packet<PacketIdBytes> const& p) {
                             // if auto
                             //    if qos 1
                             //       send puback
                             //    if qos2
                             //       send pubrec
                         },
-                        [&](async_mqtt::v3_1_1::subscribe_packet const& p) {
+                        [&](async_mqtt::v3_1_1::basic_puback_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](async_mqtt::v3_1_1::basic_subscribe_packet<PacketIdBytes> const& p) {
                         },
                         [&](async_mqtt::v5::connect_packet const& p) {
                         },
-                        [&](async_mqtt::v5::publish_packet const& p) {
+                        [&](async_mqtt::v5::basic_publish_packet<PacketIdBytes> const& p) {
                             // if auto
                             //    if qos 1
                             //       send puback

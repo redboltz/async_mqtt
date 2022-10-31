@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
+#if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBACK_HPP)
+#define ASYNC_MQTT_PACKET_V3_1_1_PUBACK_HPP
 
 #include <utility>
 #include <numeric>
@@ -17,51 +17,41 @@
 #include <async_mqtt/util/static_vector.hpp>
 
 #include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/session_present.hpp>
-#include <async_mqtt/packet/connect_return_code.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
-class connack_packet {
+template <std::size_t PacketIdBytes>
+class basic_puback_packet {
 public:
-    connack_packet(
-        bool session_present,
-        connect_return_code return_code
+    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+    basic_puback_packet(
+        packet_id_t packet_id
     )
-        : all_{
-              static_cast<char>(make_fixed_header(control_packet_type::connack, 0b0000)),
-              0b0010,
-              static_cast<char>(session_present ? 1 : 0),
-              static_cast<char>(return_code)
-        }
+        : all_(all_.capacity())
     {
+        all_[0] = static_cast<char>(make_fixed_header(control_packet_type::puback, 0b0000));
+        all_[1] = 0b0010;
+        endian_store(packet_id, &all_[2]);
     }
 
-    connack_packet(buffer buf) {
+    basic_puback_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connack_packet fixed_header doesn't exist"
+                "v3_1_1::puback_packet fixed_header doesn't exist"
             );
         }
         all_.push_back(buf.front());
         buf.remove_prefix(1);
-        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(all_.back()));
-        if (!cpt_opt || *cpt_opt != control_packet_type::connack) {
-            throw make_error(
-                errc::bad_message,
-                "v3_1_1::connack_packet fixed_header is invalid"
-            );
-        }
 
         // remaining_length
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connack_packet remaining_length doesn't exist"
+                "v3_1_1::puback_packet remaining_length doesn't exist"
             );
         }
         all_.push_back(buf.front());
@@ -69,27 +59,18 @@ public:
         if (static_cast<std::uint8_t>(all_.back()) != 0b00000010) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connack_packet remaining_length is invalid"
+                "v3_1_1::puback_packet remaining_length is invalid"
             );
         }
 
         // variable header
-        if (buf.size() != 2) {
+        if (buf.size() != PacketIdBytes) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connack_packet variable header doesn't match its length"
+                "v3_1_1::puback_packet variable header doesn't match its length"
             );
         }
-        all_.push_back(buf.front());
-        buf.remove_prefix(1);
-        if ((static_cast<std::uint8_t>(all_.back()) & 0b11111110)!= 0) {
-            throw make_error(
-                errc::bad_message,
-                "v3_1_1::connack_packet connect acknowledge flags is invalid"
-            );
-        }
-        all_.push_back(buf.front());
-        buf.remove_prefix(1);
+        std::copy(buf.begin(), buf.end(), std::back_inserter(all_));
     }
 
     /**
@@ -120,18 +101,16 @@ public:
         return 1; // all
     }
 
-    bool session_present() const {
-        return is_session_present(all_[2]);
-    }
-
-    connect_return_code code() const {
-        return static_cast<connect_return_code>(all_[3]);
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(&all_[2]);
     }
 
 private:
-    boost::container::static_vector<char, 4> all_;
+    boost::container::static_vector<char, 2 + PacketIdBytes> all_;
 };
+
+using puback_packet = basic_puback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
+#endif // ASYNC_MQTT_PACKET_V3_1_1_PUBACK_HPP

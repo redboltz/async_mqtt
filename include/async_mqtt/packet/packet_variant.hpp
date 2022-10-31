@@ -11,6 +11,7 @@
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/packet/v3_1_1_puback.hpp>
 #include <async_mqtt/packet/v3_1_1_subscribe.hpp>
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
@@ -68,8 +69,8 @@ private:
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,
         v3_1_1::basic_publish_packet<PacketIdBytes>,
-#if 0
         v3_1_1::basic_puback_packet<PacketIdBytes>,
+#if 0
         v3_1_1::basic_pubrec_packet<PacketIdBytes>,
         v3_1_1::basic_pubrel_packet<PacketIdBytes>,
         v3_1_1::basic_pubcomp_packet<PacketIdBytes>,
