@@ -43,10 +43,15 @@ enum class ostream_format {
     json_like
 };
 
+// N is 1,2, or 4 in property usecases
+// But this class template can accept any N.
 template <std::size_t N>
 struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
     n_bytes_property(property::id id, boost::container::static_vector<char, N> const& buf)
-        :id_(id), buf_{buf} {}
+        : id_{id},
+          buf_{buf} // very small size copy
+    {
+    }
 
     template <typename It, typename End>
     n_bytes_property(property::id id, It b, End e)
@@ -68,20 +73,6 @@ struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(buf_.data(), buf_.size()));
         return v;
-    }
-
-    /**
-     * @brief Copy the internal information to the range between b and e
-     *        it is for boost asio APIs
-     * @param b begin of the range to fill
-     * @param e end of the range to fill
-     */
-    template <typename It>
-    void fill(It b, It e) const {
-        (void)e; // Avoid warning in release builds about unused variable
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(b, e)) >= size());
-        *b++ = static_cast<typename std::iterator_traits<It>::value_type>(id_);
-        std::copy(buf_.begin(), buf_.end(), b);
     }
 
     /**
@@ -125,7 +116,7 @@ struct binary_property : private boost::totally_ordered<binary_property> {
     binary_property(property::id id, buffer buf)
         :id_{id},
          buf_{force_move(buf)},
-         length_(2)
+         length_(2) // size 2
     {
         if (buf_.size() > 0xffff) {
             throw make_error(
@@ -147,24 +138,6 @@ struct binary_property : private boost::totally_ordered<binary_property> {
         v.emplace_back(as::buffer(length_.data(), length_.size()));
         v.emplace_back(as::buffer(buf_.data(), buf_.size()));
         return v;
-    }
-
-    /**
-     * @brief Copy the internal information to the range between b and e
-     *        it is for boost asio APIs
-     * @param b begin of the range to fill
-     * @param e end of the range to fill
-     */
-    template <typename It>
-    void fill(It b, It e) const {
-        (void)e; // Avoid warning in release builds about unused variable
-        using dt = typename It::difference_type;
-
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(b, e)) >= size());
-        *b++ = static_cast<typename std::iterator_traits<It>::value_type>(id_);
-        std::copy(length_.begin(), length_.end(), b);
-        std::advance(b, static_cast<dt>(length_.size()));
-        std::copy(buf_.begin(), buf_.end(), b);
     }
 
     /**
@@ -211,7 +184,7 @@ struct binary_property : private boost::totally_ordered<binary_property> {
 
 struct string_property : binary_property {
     string_property(property::id id, buffer buf)
-        :binary_property(id, force_move(buf)) {
+        :binary_property{id, force_move(buf)} {
 #if 0 // TDB
         auto r = utf8string::validate_contents(this->val());
         if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
@@ -235,20 +208,6 @@ struct variable_property : private boost::totally_ordered<variable_property> {
         v.emplace_back(as::buffer(&id_, 1));
         v.emplace_back(as::buffer(value_.data(), value_.size()));
         return v;
-    }
-
-    /**
-     * @brief Copy the internal information to the range between b and e
-     *        it is for boost asio APIs
-     * @param b begin of the range to fill
-     * @param e end of the range to fill
-     */
-    template <typename It>
-    void fill(It b, It e) const {
-        (void)e; // Avoid warning in release builds about unused variable
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(b, e)) >= size());
-        *b++ = static_cast<typename std::iterator_traits<It>::value_type>(id_);
-        std::copy(value_.begin(), value_.end(), b);
     }
 
     /**
@@ -345,7 +304,7 @@ public:
 
     template <typename It, typename End>
     message_expiry_interval(It b, End e)
-        : detail::n_bytes_property<4>(id::message_expiry_interval, b, e) {}
+        : detail::n_bytes_property<4>{id::message_expiry_interval, b, e} {}
 
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
@@ -355,27 +314,27 @@ public:
 class content_type : public detail::string_property {
 public:
     explicit content_type(buffer val)
-        : detail::string_property(id::content_type, force_move(val)) {}
+        : detail::string_property{id::content_type, force_move(val)} {}
 };
 
 class response_topic : public detail::string_property {
 public:
     explicit response_topic(buffer val)
-        : detail::string_property(id::response_topic, force_move(val)) {}
+        : detail::string_property{id::response_topic, force_move(val)} {}
 };
 
 class correlation_data : public detail::binary_property {
 public:
     explicit correlation_data(buffer val)
-        : detail::binary_property(id::correlation_data, force_move(val)) {}
+        : detail::binary_property{id::correlation_data, force_move(val)} {}
 };
 
 class subscription_identifier : public detail::variable_property {
 public:
     using recv = subscription_identifier;
     using store = subscription_identifier;
-    subscription_identifier(std::size_t subscription_id)
-        : detail::variable_property(id::subscription_identifier, subscription_id) {}
+    subscription_identifier(std::uint32_t subscription_id)
+        : detail::variable_property{id::subscription_identifier, subscription_id} {}
 };
 
 class session_expiry_interval : public detail::n_bytes_property<4> {
@@ -388,7 +347,7 @@ public:
 
     template <typename It>
     session_expiry_interval(It b, It e)
-        : detail::n_bytes_property<4>(id::session_expiry_interval, b, e) {}
+        : detail::n_bytes_property<4>{id::session_expiry_interval, b, e} {}
 
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
@@ -410,7 +369,7 @@ public:
 
     template <typename It, typename End>
     server_keep_alive(It b, End e)
-        : detail::n_bytes_property<2>(id::server_keep_alive, b, e) {}
+        : detail::n_bytes_property<2>{id::server_keep_alive, b, e} {}
 
     std::uint16_t val() const {
         return endian_load<uint16_t>(buf_.data());
@@ -426,7 +385,7 @@ public:
 class authentication_data : public detail::binary_property {
 public:
     explicit authentication_data(buffer val)
-        : detail::binary_property(id::authentication_data, force_move(val)) {}
+        : detail::binary_property{id::authentication_data, force_move(val)} {}
 };
 
 class request_problem_information : public detail::n_bytes_property<1> {
@@ -434,11 +393,19 @@ public:
     using recv = request_problem_information;
     using store = request_problem_information;
     request_problem_information(bool value)
-        : detail::n_bytes_property<1>(id::request_problem_information, { value ? char(1) : char(0) } ) {}
-
-    template <typename It>
-    request_problem_information(It b, It e)
-        : detail::n_bytes_property<1>(id::request_problem_information, b, e) {}
+        : detail::n_bytes_property<1>{
+              id::request_problem_information,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
+    template <typename It, typename End>
+    request_problem_information(It b, End e)
+        : detail::n_bytes_property<1>{id::request_problem_information, b, e} {}
 
     bool val() const {
         return buf_.front() == 1;
@@ -466,10 +433,19 @@ public:
     using recv = request_response_information;
     using store = request_response_information;
     request_response_information(bool value)
-        : detail::n_bytes_property<1>(id::request_response_information, { value ? char(1) : char(0) } ) {}
+        : detail::n_bytes_property<1>{
+              id::request_response_information,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    request_response_information(It b, It e)
+    template <typename It, typename End>
+    request_response_information(It b, End e)
         : detail::n_bytes_property<1>(id::request_response_information, b, e) {}
 
     bool val() const {
@@ -550,7 +526,7 @@ public:
     using recv = maximum_qos;
     using store = maximum_qos;
     maximum_qos(qos value)
-        : detail::n_bytes_property<1>(id::maximum_qos, { static_cast<char>(value) } ) {
+        : detail::n_bytes_property<1>{id::maximum_qos, {static_cast<char>(value)}} {
         if (value != qos::at_most_once &&
             value != qos::at_least_once) {
             throw make_error(
@@ -562,7 +538,7 @@ public:
 
     template <typename It, typename End>
     maximum_qos(It b, End e)
-        : detail::n_bytes_property<1>(id::maximum_qos, b, e) {}
+        : detail::n_bytes_property<1>{id::maximum_qos, b, e} {}
 
     std::uint8_t val() const {
         return static_cast<std::uint8_t>(buf_.front());
@@ -576,11 +552,20 @@ public:
     using recv = retain_available;
     using store = retain_available;
     retain_available(bool value)
-        : detail::n_bytes_property<1>(id::retain_available, { value ? char(1) : char(0) } ) {}
+        : detail::n_bytes_property<1>{
+              id::retain_available,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    retain_available(It b, It e)
-        : detail::n_bytes_property<1>(id::retain_available, b, e) {}
+    template <typename It, typename End>
+    retain_available(It b, End e)
+        : detail::n_bytes_property<1>{id::retain_available, b, e} {}
 
     bool val() const {
         return buf_.front() == 1;
@@ -591,7 +576,7 @@ public:
 class user_property : private boost::totally_ordered<user_property> {
 public:
     user_property(buffer key, buffer val)
-        : key_(force_move(key)), val_(force_move(val)) {
+        : key_{force_move(key)}, val_{force_move(val)} {
         if (key_.size() > 0xffff) {
             throw make_error(
                 errc::bad_message,
@@ -619,31 +604,6 @@ public:
         v.emplace_back(as::buffer(val_.len.data(), val_.len.size()));
         v.emplace_back(as::buffer(val_.buf));
         return v;
-    }
-
-    template <typename It>
-    void fill(It b, It e) const {
-        (void)e; // Avoid warning in release builds about unused variable
-        using dt = typename It::difference_type;
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(b, e)) >= size());
-
-        *b++ = static_cast<typename std::iterator_traits<It>::value_type>(id_);
-        {
-            std::copy(key_.len.begin(), key_.len.end(), b);
-            std::advance(b, static_cast<dt>(key_.len.size()));
-            auto ptr = key_.buf.data();
-            auto size = key_.buf.size();
-            std::copy(ptr, std::next(ptr, static_cast<dt>(size)), b);
-            std::advance(b, static_cast<dt>(size));
-        }
-        {
-            std::copy(val_.len.begin(), val_.len.end(), b);
-            std::advance(b, static_cast<dt>(val_.len.size()));
-            auto ptr = val_.buf.data();
-            auto size = val_.buf.size();
-            std::copy(ptr, std::next(ptr, static_cast<dt>(size)), b);
-            std::advance(b, static_cast<dt>(size));
-        }
     }
 
     /**
@@ -728,7 +688,7 @@ public:
 
     template <typename It, typename End>
     maximum_packet_size(It b, End e)
-        : detail::n_bytes_property<4>(id::maximum_packet_size, b, e) {}
+        : detail::n_bytes_property<4>{id::maximum_packet_size, b, e} {}
 
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
@@ -741,11 +701,20 @@ public:
     using recv = wildcard_subscription_available;
     using store = wildcard_subscription_available;
     wildcard_subscription_available(bool value)
-        : detail::n_bytes_property<1>(id::wildcard_subscription_available, { value ? char(1) : char(0) } ) {}
+        : detail::n_bytes_property<1>{
+              id::wildcard_subscription_available,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    wildcard_subscription_available(It b, It e)
-        : detail::n_bytes_property<1>(id::wildcard_subscription_available, b, e) {}
+    template <typename It, typename End>
+    wildcard_subscription_available(It b, End e)
+        : detail::n_bytes_property<1>{id::wildcard_subscription_available, b, e} {}
 
     bool val() const {
         return buf_.front() == 1;
@@ -758,11 +727,20 @@ public:
     using recv = subscription_identifier_available;
     using store = subscription_identifier_available;
     subscription_identifier_available(bool value)
-        : detail::n_bytes_property<1>(id::subscription_identifier_available, { value ? char(1) : char(0) } ) {}
+        : detail::n_bytes_property<1>{
+              id::subscription_identifier_available,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    subscription_identifier_available(It b, It e)
-        : detail::n_bytes_property<1>(id::subscription_identifier_available, b, e) {}
+    template <typename It, typename End>
+    subscription_identifier_available(It b, End e)
+        : detail::n_bytes_property<1>{id::subscription_identifier_available, b, e} {}
 
     bool val() const {
         return buf_.front() == 1;
@@ -775,11 +753,20 @@ public:
     using recv = shared_subscription_available;
     using store = shared_subscription_available;
     shared_subscription_available(bool value)
-        : detail::n_bytes_property<1>(id::shared_subscription_available, { value ? char(1) : char(0) } ) {}
+        : detail::n_bytes_property<1>{
+              id::shared_subscription_available,
+              {
+                  [&] {
+                      if (value) return char(1);
+                      return char(0);
+                  }()
+              }
+          }
+    {}
 
-    template <typename It>
-    shared_subscription_available(It b, It e)
-        : detail::n_bytes_property<1>(id::shared_subscription_available, b, e) {}
+    template <typename It, typename End>
+    shared_subscription_available(It b, End e)
+        : detail::n_bytes_property<1>{id::shared_subscription_available, b, e} {}
 
     bool val() const {
         return buf_.front() == 1;
@@ -811,7 +798,10 @@ template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::binary_string, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
     // Note this only compiles because both strings below are the same length.
-    o << ((p.val() == payload_format_indicator::binary) ? "binary" : "string");
+    o << [&] {
+             if (p.val() == payload_format_indicator::binary) return "binary";
+             return "string";
+         }();
     return o;
 }
 
