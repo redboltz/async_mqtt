@@ -20,6 +20,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
+#include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
@@ -55,16 +56,7 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
-          property_length_(
-              std::accumulate(
-                  props.begin(),
-                  props.end(),
-                  std::size_t(0U),
-                  [](std::size_t total, property_variant const& pv) {
-                      return total + pv.size();
-                  }
-              )
-          ),
+          property_length_(async_mqtt::size(props)),
           props_(force_move(props)),
           remaining_length_(
               2                      // topic name length
@@ -237,14 +229,7 @@ public:
             2 +                   // topic name length, topic name
             (packet_id_.empty() ? 0 : 1) +  // packet_id
             1 +                   // property length
-            std::accumulate(
-                props_.begin(),
-                props_.end(),
-                std::size_t(0U),
-                [](std::size_t total, property_variant const& pv) {
-                    return total + pv.num_of_const_buffer_sequence();
-                }
-            ) +
+            async_mqtt::size(props_) +
             payloads_.size();
     }
 
@@ -265,30 +250,6 @@ public:
     }
 
     /**
-     * @brief Get qos
-     * @return qos
-     */
-    constexpr qos qos() const {
-        return pub::get_qos(fixed_header_);
-    }
-
-    /**
-     * @brief Check retain flag
-     * @return true if retain, otherwise return false.
-     */
-    constexpr bool retain() const {
-        return pub::is_retain(fixed_header_);
-    }
-
-    /**
-     * @brief Check dup flag
-     * @return true if dup, otherwise return false.
-     */
-    constexpr bool dup() const {
-        return pub::is_dup(fixed_header_);
-    }
-
-    /**
      * @brief Get topic name
      * @return topic name
      */
@@ -300,37 +261,12 @@ public:
      * @brief Get payload
      * @return payload
      */
-    std::vector<buffer> payload() const {
+    std::vector<buffer> const& payload() const {
         return payloads_;
     }
 
-    /**
-     * @brief Get payload as single buffer
-     * @return payload
-     */
-    buffer payload_as_buffer() const {
-        auto size = std::accumulate(
-            payloads_.begin(),
-            payloads_.end(),
-            std::size_t(0),
-            [](std::size_t s, buffer const& payload) {
-                return s += payload.size();
-            }
-        );
-
-        if (size == 0) return buffer();
-
-        auto spa = make_shared_ptr_array(size);
-        auto ptr = spa.get();
-        auto it = ptr;
-        for (auto const& payload : payloads_) {
-            auto b = payload.data();
-            auto s = payload.size();;
-            auto e = b + s;
-            std::copy(b, e, it);
-            it += s;
-        }
-        return buffer(ptr, size, force_move(spa));
+    auto payload_range() const {
+        return make_packet_range(payloads_);
     }
 
     /**
@@ -339,6 +275,10 @@ public:
      */
     constexpr void set_dup(bool dup) {
         pub::set_dup(fixed_header_, dup);
+    }
+
+    properties const& props() const {
+        return props_;
     }
 
 private:

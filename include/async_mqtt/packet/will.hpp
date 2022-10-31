@@ -4,14 +4,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_WILL_HPP)
-#define ASYNC_MQTT_WILL_HPP
+#if !defined(ASYNC_MQTT_PACKET_WILL_HPP)
+#define ASYNC_MQTT_PACKET_WILL_HPP
 
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
-
-// TBD
-// #include <mqtt/property_variant.hpp>
+#include <async_mqtt/packet/property_variant.hpp>
 
 namespace async_mqtt {
 
@@ -30,13 +28,13 @@ public:
      */
     will(buffer topic,
          buffer message,
-         pub::opts pubopts = {} //,
-         //v5::properties props = {}
+         pub::opts pubopts = {},
+         properties props = {}
     )
-        :topic_(force_move(topic)),
-         message_(force_move(message)),
-         pubopts_(pubopts) //,
-         // props_(force_move(props))
+        :topic_{force_move(topic)},
+         message_{force_move(message)},
+         pubopts_{pubopts},
+         props_{force_move(props)}
     {}
 
     constexpr buffer const& topic() const {
@@ -51,28 +49,26 @@ public:
     constexpr buffer& message() {
         return message_;
     }
-    constexpr pub::retain get_retain() const {
+    constexpr pub::retain retain() const {
         return pubopts_.retain();
     }
-    constexpr qos get_qos() const {
+    constexpr qos qos() const {
         return pubopts_.qos();
     }
-#if 0
-    constexpr v5::properties const& props() const {
+    constexpr properties const& props() const {
         return props_;
     }
-    constexpr v5::properties& props() {
+    constexpr properties& props() {
         return props_;
     }
-#endif
 
 private:
     buffer topic_;
     buffer message_;
     pub::opts pubopts_;
-    //v5::properties props_;
+    properties props_;
 };
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_WILL_HPP
+#endif // ASYNC_MQTT_PACKET_WILL_HPP

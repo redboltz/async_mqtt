@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP
+#if !defined(ASYNC_MQTT_PACKET_V5_CONNECT_HPP)
+#define ASYNC_MQTT_PACKET_V5_CONNECT_HPP
 
 #include <utility>
 #include <numeric>
@@ -25,7 +25,7 @@
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/will.hpp>
 
-namespace async_mqtt::v3_1_1 {
+namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
@@ -44,12 +44,15 @@ public:
         bool clean_session,
         optional<will> w,
         optional<buffer> user_name,
-        optional<buffer> password
+        optional<buffer> password,
+        properties props
     )
         : fixed_header_{
               static_cast<std::uint8_t>(make_fixed_header(control_packet_type::connect, 0b0000))
           },
           connect_flags_{0},
+          property_length_(async_mqtt::size(props)),
+          props_(force_move(props)),
           // protocol name length, protocol name, protocol level, connect flag, client id length, client id, keep alive
           remaining_length_(
               2 +                     // protocol name length
@@ -93,6 +96,14 @@ public:
             );
             remaining_length_ += 2 + password_.size();
         }
+
+        auto pb = val_to_variable_bytes(property_length_);
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+
+        remaining_length_ += property_length_buf_.size() + property_length_;
+
         if (w) {
             connect_flags_ |= connect_flags::mask_will_flag;
             if (w->retain() == pub::retain::yes) connect_flags_ |= connect_flags::mask_will_retain;
@@ -109,7 +120,7 @@ public:
             if (w->message().size() > 0xffffL) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet will message too long"
+                    "v5::connect_packet will message too long"
                 );
             }
             will_message_ = force_move(w->message());
@@ -118,7 +129,17 @@ public:
                 will_message_length_buf_.data()
             );
 
-            remaining_length_ += 2 + will_topic_.size() + 2 + will_message_.size();
+            will_props_ = force_move(w->props());
+
+            auto pb = val_to_variable_bytes(will_property_length_);
+            for (auto e : pb) {
+                will_property_length_buf_.push_back(e);
+            }
+
+            remaining_length_ +=
+                will_property_length_buf_.size() + will_property_length_ +
+                2 + will_topic_.size() +
+                2 + will_message_.size();
         }
 
         auto rb = val_to_variable_bytes(remaining_length_);
@@ -132,7 +153,7 @@ public:
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet fixed_header doesn't exist"
+                "v5::connect_packet fixed_header doesn't exist"
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
@@ -141,7 +162,7 @@ public:
         if (!cpt_opt || *cpt_opt != control_packet_type::connect) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet fixed_header is invalid"
+                "v5::connect_packet fixed_header is invalid"
             );
         }
 
@@ -150,14 +171,14 @@ public:
             remaining_length_ = *vl_opt;
         }
         else {
-            throw make_error(errc::bad_message, "v3_1_1::connect_packet remaining length is invalid");
+            throw make_error(errc::bad_message, "v5::connect_packet remaining length is invalid");
         }
 
         // protocol name and level
         if (!copy_advance(buf, protocol_name_and_level_)) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet length of protocol_name or level is invalid"
+                "v5::connect_packet length of protocol_name or level is invalid"
             );
         }
         static_vector<char, 7> expected_protocol_name_and_level {
@@ -166,7 +187,7 @@ public:
         if (protocol_name_and_level_ != expected_protocol_name_and_level) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet contents of protocol_name or level is invalid"
+                "v5::connect_packet contents of protocol_name or level is invalid"
             );
         }
 
@@ -174,14 +195,14 @@ public:
         if (buf.size() < 1) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet connect_flags doesn't exist"
+                "v5::connect_packet connect_flags doesn't exist"
             );
         }
         connect_flags_ = buf.front();
         if (connect_flags_ & 0b00000001) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet connect_flags reserved bit0 is 1 (must be 0)"
+                "v5::connect_packet connect_flags reserved bit0 is 1 (must be 0)"
             );
         }
         buf.remove_prefix(1);
@@ -190,7 +211,7 @@ public:
         if (!copy_advance(buf, keep_alive_buf_)) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet keep_alive is invalid"
+                "v5::connect_packet keep_alive is invalid"
             );
         }
 
@@ -198,7 +219,7 @@ public:
         if (!copy_advance(buf, client_id_length_buf_)) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet length of client_id is invalid"
+                "v5::connect_packet length of client_id is invalid"
             );
         }
         auto client_id_length = endian_load<std::uint16_t>(client_id_length_buf_.data());
@@ -207,7 +228,7 @@ public:
         if (buf.size() < client_id_length) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::connect_packet client_id doesn't match its length"
+                "v5::connect_packet client_id doesn't match its length"
             );
         }
         client_id_ = buf.substr(0, client_id_length);
@@ -222,7 +243,7 @@ public:
             if (!copy_advance(buf, will_topic_length_buf_)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet length of will_topic is invalid"
+                    "v5::connect_packet length of will_topic is invalid"
                 );
             }
             auto will_topic_length = endian_load<std::uint16_t>(will_topic_length_buf_.data());
@@ -231,7 +252,7 @@ public:
             if (buf.size() < will_topic_length) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet will_topic doesn't match its length"
+                    "v5::connect_packet will_topic doesn't match its length"
                 );
             }
             will_topic_ = buf.substr(0, will_topic_length);
@@ -244,7 +265,7 @@ public:
             if (!copy_advance(buf, will_message_length_buf_)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet length of will_message is invalid"
+                    "v5::connect_packet length of will_message is invalid"
                 );
             }
             auto will_message_length = endian_load<std::uint16_t>(will_message_length_buf_.data());
@@ -253,7 +274,7 @@ public:
             if (buf.size() < will_message_length) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet will_message doesn't match its length"
+                    "v5::connect_packet will_message doesn't match its length"
                 );
             }
             will_message_ = buf.substr(0, will_message_length);
@@ -266,7 +287,7 @@ public:
             if (!copy_advance(buf, user_name_length_buf_)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet length of user_name is invalid"
+                    "v5::connect_packet length of user_name is invalid"
                 );
             }
             auto user_name_length = endian_load<std::uint16_t>(user_name_length_buf_.data());
@@ -275,7 +296,7 @@ public:
             if (buf.size() < user_name_length) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet user_name doesn't match its length"
+                    "v5::connect_packet user_name doesn't match its length"
                 );
             }
             user_name_ = buf.substr(0, user_name_length);
@@ -291,7 +312,7 @@ public:
             if (!copy_advance(buf, password_length_buf_)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet length of password is invalid"
+                    "v5::connect_packet length of password is invalid"
                 );
             }
             auto password_length = endian_load<std::uint16_t>(password_length_buf_.data());
@@ -300,7 +321,7 @@ public:
             if (buf.size() == password_length) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::connect_packet password doesn't match its length"
+                    "v5::connect_packet password doesn't match its length"
                 );
             }
             password_ = buf.substr(0, password_length);
@@ -429,6 +450,10 @@ private:
     std::uint8_t fixed_header_;
     char connect_flags_;
 
+    std::uint32_t property_length_;
+    static_vector<char, 4> property_length_buf_;
+    properties props_;
+
     std::size_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 
@@ -440,6 +465,9 @@ private:
     static_vector<char, 2> will_topic_length_buf_;
     buffer will_message_;
     static_vector<char, 2> will_message_length_buf_;
+    std::uint32_t will_property_length_;
+    static_vector<char, 4> will_property_length_buf_;
+    properties will_props_;
 
     buffer user_name_;
     static_vector<char, 2> user_name_length_buf_;
@@ -449,6 +477,6 @@ private:
     static_vector<char, 2> keep_alive_buf_;
 };
 
-} // namespace async_mqtt::v3_1_1
+} // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP
+#endif // ASYNC_MQTT_PACKET_V5_CONNECT_HPP

@@ -183,6 +183,8 @@ private:
                         },
                         [&](async_mqtt::v3_1_1::subscribe_packet const& p) {
                         },
+                        [&](async_mqtt::v5::connect_packet const& p) {
+                        },
                         [&](async_mqtt::v5::publish_packet const& p) {
                             // if auto
                             //    if qos 1

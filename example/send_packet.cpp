@@ -54,7 +54,11 @@ int main() {
                                         [&](async_mqtt::v3_1_1::publish_packet const& p) {
                                             std::cout << "size:" << p.size() << std::endl;
                                             std::cout << "topic:" << p.topic() << std::endl;
-                                            std::cout << "payload:" << p.payload_as_buffer() << std::endl;
+                                            std::cout << "payload:";
+                                            for (auto const& p : p.payload()) {
+                                                std::cout << p;
+                                            }
+                                            std::cout << std::endl;
                                         },
                                         [](auto const&) {}
                                     }

@@ -17,15 +17,15 @@ namespace async_mqtt {
 
 namespace as = boost::asio;
 
-template <template <typename...> typename Container>
-using packet_iterator = as::buffers_iterator<Container<as::const_buffer>>;
+template <template <typename...> typename Container, typename Buffer>
+using packet_iterator = as::buffers_iterator<Container<Buffer>>;
 
-template <template <typename...> typename Container>
-std::pair<packet_iterator<Container>, packet_iterator<Container>>
-make_packet_range(Container<as::const_buffer> const& cbs) {
+template <template <typename...> typename Container, typename Buffer>
+std::pair<packet_iterator<Container, Buffer>, packet_iterator<Container, Buffer>>
+make_packet_range(Container<Buffer> const& cbs) {
     return {
-        packet_iterator<Container>::begin(cbs),
-        packet_iterator<Container>::end(cbs)
+        packet_iterator<Container, Buffer>::begin(cbs),
+        packet_iterator<Container, Buffer>::end(cbs)
     };
 }
 

@@ -20,6 +20,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
+#include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
@@ -98,7 +99,7 @@ public:
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        qos qos_value = get_qos();
+        auto qos_value = qos();
         buf.remove_prefix(1);
 
         // remaining_length
@@ -215,32 +216,8 @@ public:
      * @brief Get publish_options
      * @return publish_options.
      */
-    constexpr pub::opts get_options() const {
+    constexpr pub::opts opts() const {
         return pub::opts(fixed_header_);
-    }
-
-    /**
-     * @brief Get qos
-     * @return qos
-     */
-    constexpr qos get_qos() const {
-        return pub::get_qos(fixed_header_);
-    }
-
-    /**
-     * @brief Check retain flag
-     * @return true if retain, otherwise return false.
-     */
-    constexpr bool is_retain() const {
-        return pub::is_retain(fixed_header_);
-    }
-
-    /**
-     * @brief Check dup flag
-     * @return true if dup, otherwise return false.
-     */
-    constexpr bool is_dup() const {
-        return pub::is_dup(fixed_header_);
     }
 
     /**
@@ -259,33 +236,8 @@ public:
         return payloads_;
     }
 
-    /**
-     * @brief Get payload as single buffer
-     * @return payload
-     */
-    buffer payload_as_buffer() const {
-        auto size = std::accumulate(
-            payloads_.begin(),
-            payloads_.end(),
-            std::size_t(0),
-            [](std::size_t s, buffer const& payload) {
-                return s += payload.size();
-            }
-        );
-
-        if (size == 0) return buffer();
-
-        auto spa = make_shared_ptr_array(size);
-        auto ptr = spa.get();
-        auto it = ptr;
-        for (auto const& payload : payloads_) {
-            auto b = payload.data();
-            auto s = payload.size();;
-            auto e = b + s;
-            std::copy(b, e, it);
-            it += s;
-        }
-        return buffer(ptr, size, force_move(spa));
+    auto payload_range() const {
+        return make_packet_range(payloads_);
     }
 
     /**

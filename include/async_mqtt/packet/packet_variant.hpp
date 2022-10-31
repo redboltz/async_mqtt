@@ -12,6 +12,7 @@
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/v3_1_1_subscribe.hpp>
+#include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/exception.hpp>
 
@@ -81,7 +82,9 @@ private:
         v3_1_1::pingreq_packet,
         v3_1_1::pingresp_packet,
         v3_1_1::disconnect_packet,
+#endif
         v5::connect_packet,
+#if 0
         v5::connack_packet,
 #endif
         v5::basic_publish_packet<PacketIdBytes>  // add comma later
