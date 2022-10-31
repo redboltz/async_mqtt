@@ -24,11 +24,14 @@ int main() {
     };
 
     auto packet =
-        async_mqtt::v3_1_1::publish_packet{
+        async_mqtt::v5::publish_packet{
             42,
             async_mqtt::allocate_buffer("topic1"),
             async_mqtt::allocate_buffer("payload"),
-            async_mqtt::pub::opts{}
+            async_mqtt::pub::opts{},
+            async_mqtt::properties{
+                async_mqtt::property::message_expiry_interval{1234}
+            }
         };
     amep.stream().next_layer().async_connect(
         endpoint,

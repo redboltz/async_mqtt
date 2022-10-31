@@ -206,6 +206,7 @@ public:
         if (!packet_id_.empty()) {
             ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
         }
+        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
         auto props_cbs = async_mqtt::const_buffer_sequence(props_);
         std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
         for (auto const& payload : payloads_) {
