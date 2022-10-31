@@ -11,6 +11,7 @@
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/packet/v3_1_1_subscribe.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/exception.hpp>
 

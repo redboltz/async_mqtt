@@ -34,6 +34,13 @@ inline std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v) {
     return o;
 }
 
+
+/**
+ * @brief hexdump the packet.
+ *        Usage. std::cout << hex_dump(p) << std::endl;
+ * @param p packet to dump. p must be valid packet. packet_variant system_error cannot be accepted.
+ * @return id
+ */
 template <typename Packet>
 hex_dump_t<Packet> hex_dump(Packet const& p) {
     return hex_dump_t<Packet>{p};

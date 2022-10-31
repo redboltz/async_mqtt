@@ -49,7 +49,9 @@ int main() {
                     amep.recv(
                         [&]
                         (async_mqtt::packet_variant pv) mutable {
-                            std::cout << async_mqtt::hex_dump(pv) << std::endl;;
+                            if (pv) {
+                                std::cout << async_mqtt::hex_dump(pv) << std::endl;
+                            }
                             pv.visit(
                                 async_mqtt::overload {
                                     [&](async_mqtt::v3_1_1::publish_packet const& p) {

@@ -18,7 +18,6 @@
 
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
