@@ -33,6 +33,7 @@ int main() {
                 async_mqtt::property::message_expiry_interval{1234}
             }
         };
+
     amep.stream().next_layer().async_connect(
         endpoint,
         [&]

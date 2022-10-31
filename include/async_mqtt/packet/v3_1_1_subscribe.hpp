@@ -90,8 +90,8 @@ public:
         ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
 
         for (auto const& e : entries_) {
-            ret.emplace_back(as::buffer(e.topic_name_length_buf_.data(), e.topic_name_length_buf_.size()));
-            ret.emplace_back(as::buffer(e.topic_name_));
+            ret.emplace_back(as::buffer(e.topic_length_buf_.data(), e.topic_length_buf_.size()));
+            ret.emplace_back(as::buffer(e.topic_));
             ret.emplace_back(as::buffer(&e.opts_, 1));
         }
 

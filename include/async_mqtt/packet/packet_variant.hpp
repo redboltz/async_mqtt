@@ -72,7 +72,9 @@ private:
         v3_1_1::basic_pubrec_packet<PacketIdBytes>,
         v3_1_1::basic_pubrel_packet<PacketIdBytes>,
         v3_1_1::basic_pubcomp_packet<PacketIdBytes>,
+#endif
         v3_1_1::basic_subscribe_packet<PacketIdBytes>,
+#if 0
         v3_1_1::basic_suback_packet<PacketIdBytes>,
         v3_1_1::basic_unsubscribe_packet<PacketIdBytes>,
         v3_1_1::basic_unsuback_packet<PacketIdBytes>,
