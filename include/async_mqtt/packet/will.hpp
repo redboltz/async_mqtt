@@ -52,10 +52,10 @@ public:
         return message_;
     }
     constexpr pub::retain get_retain() const {
-        return pubopts_.get_retain();
+        return pubopts_.retain();
     }
     constexpr qos get_qos() const {
-        return pubopts_.get_qos();
+        return pubopts_.qos();
     }
 #if 0
     constexpr v5::properties const& props() const {

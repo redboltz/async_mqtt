@@ -69,7 +69,7 @@ public:
           remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
-              + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
+              + (  (pubopts.qos() == qos::at_least_once || pubopts.qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
           )
@@ -103,8 +103,8 @@ public:
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
         }
-        if (pubopts.get_qos() == qos::at_least_once ||
-            pubopts.get_qos() == qos::exactly_once) {
+        if (pubopts.qos() == qos::at_least_once ||
+            pubopts.qos() == qos::exactly_once) {
             packet_id_.resize(packet_id_.capacity());
             endian_store(packet_id, packet_id_.data());
         }
@@ -119,7 +119,7 @@ public:
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        qos qos_value = get_qos();
+        auto qos_value = qos();
         buf.remove_prefix(1);
 
         // remaining_length
@@ -260,7 +260,7 @@ public:
      * @brief Get publish_options
      * @return publish_options.
      */
-    constexpr pub::opts get_options() const {
+    constexpr pub::opts opts() const {
         return pub::opts(fixed_header_);
     }
 
@@ -268,7 +268,7 @@ public:
      * @brief Get qos
      * @return qos
      */
-    constexpr qos get_qos() const {
+    constexpr qos qos() const {
         return pub::get_qos(fixed_header_);
     }
 
@@ -276,7 +276,7 @@ public:
      * @brief Check retain flag
      * @return true if retain, otherwise return false.
      */
-    constexpr bool is_retain() const {
+    constexpr bool retain() const {
         return pub::is_retain(fixed_header_);
     }
 
@@ -284,7 +284,7 @@ public:
      * @brief Check dup flag
      * @return true if dup, otherwise return false.
      */
-    constexpr bool is_dup() const {
+    constexpr bool dup() const {
         return pub::is_dup(fixed_header_);
     }
 

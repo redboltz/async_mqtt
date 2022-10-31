@@ -69,12 +69,12 @@ struct opts final {
     constexpr opts& operator|=(dup rhs)             { return (*this = (*this | rhs)); }
     constexpr opts& operator|=(qos rhs)             { return (*this = (*this | rhs)); }
 
-    constexpr retain get_retain() const
-    { return static_cast<retain>(data_ & 0b00000001); }
-    constexpr dup get_dup() const
-    { return static_cast<dup>(data_ & 0b00001000); }
-    constexpr qos get_qos() const
-    { return static_cast<qos>((data_ & 0b00000110) >> 1); }
+    constexpr retain retain() const
+    { return static_cast<enum retain>(data_ & 0b00000001); }
+    constexpr dup dup() const
+    { return static_cast<enum dup>(data_ & 0b00001000); }
+    constexpr qos qos() const
+    { return static_cast<enum qos>((data_ & 0b00000110) >> 1); }
 
     explicit constexpr operator std::uint8_t() const { return data_; }
 

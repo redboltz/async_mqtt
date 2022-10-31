@@ -22,7 +22,7 @@ namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
 class basic_subscribe_packet {
-private:
+public:
     struct entry {
         entry(buffer topic, sub::opts opts)
             : topic_{force_move(topic)},
@@ -30,8 +30,12 @@ private:
               opts_{opts}
         {}
 
-        qos get_qos() const {
-            return opts_.get_qos();
+        buffer topic() const {
+            return topic_;
+        }
+
+        qos qos() const {
+            return opts_.qos();
         }
 
         static_vector<char, 2> topic_length_buf_;
@@ -39,7 +43,6 @@ private:
         sub::opts opts_;
     };
 
-public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     basic_subscribe_packet(
         std::vector<topic_subopts> params,
@@ -116,6 +119,14 @@ public:
             1 +                   // remaining length
             1 +                   // packet id
             entries_.size() * 3;  // topic name length, topic name, qos
+    }
+
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_);
+    }
+
+    std::vector<entry> const& entries() const {
+        return entries_;
     }
 
 private:
