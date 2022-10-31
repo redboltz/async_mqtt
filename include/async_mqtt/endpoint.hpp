@@ -181,6 +181,13 @@ private:
                             //    if qos2
                             //       send pubrec
                         },
+                        [&](async_mqtt::v5::publish_packet const& p) {
+                            // if auto
+                            //    if qos 1
+                            //       send puback
+                            //    if qos2
+                            //       send pubrec
+                        },
                         [&](system_error const& e) {
                         }
                     }
