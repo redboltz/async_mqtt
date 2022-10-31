@@ -183,6 +183,12 @@ private:
                         },
                         [&](async_mqtt::v3_1_1::basic_puback_packet<PacketIdBytes> const& p) {
                         },
+                        [&](async_mqtt::v3_1_1::basic_pubrec_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](async_mqtt::v3_1_1::basic_pubrel_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](async_mqtt::v3_1_1::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                        },
                         [&](async_mqtt::v3_1_1::basic_subscribe_packet<PacketIdBytes> const& p) {
                         },
                         [&](async_mqtt::v5::connect_packet const& p) {
