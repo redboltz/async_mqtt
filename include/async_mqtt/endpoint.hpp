@@ -7,11 +7,11 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
-#include <deque>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/stream.hpp>
+#include <async_mqtt/store.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
@@ -284,6 +284,7 @@ private:
             case write:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
+                ep.store_.add(packet);
                 ep.stream_.write_packet(
                     force_move(packet),
                     force_move(self)
@@ -354,6 +355,7 @@ private:
                             }
                         },
                         [&](v3_1_1::basic_puback_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v3_1_1_puback, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::basic_pubrec_packet<PacketIdBytes> const& p) {
@@ -373,6 +375,7 @@ private:
                             }
                         },
                         [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v3_1_1_pubcomp, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::basic_subscribe_packet<PacketIdBytes> const& p) {
@@ -402,7 +405,7 @@ private:
     protocol_version protocol_version_;
     stream_type stream_;
     packet_id_manager<packet_id_t> pid_man_;
-    std::deque<packet_variant> store_;
+    store<PacketIdBytes> store_;
     bool auto_pub_response_ = false;
 };
 

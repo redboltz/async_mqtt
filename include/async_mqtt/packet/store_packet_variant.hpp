@@ -17,7 +17,7 @@
 
 namespace async_mqtt {
 
-enum class store_packet_erase {
+enum class response_packet {
     v3_1_1_puback,
     v3_1_1_pubrec,
     v3_1_1_pubcomp,
@@ -31,16 +31,16 @@ class basic_store_packet_variant {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
-    basic_store_packet_variant(v3_1_1::publish packet)
-        :erase_{
+    basic_store_packet_variant(v3_1_1::basic_publish_packet<PacketIdBytes> packet)
+        :res_{
              [&] {
                  switch (packet.opts().qos()) {
                  case qos::at_least_once:
-                     return v3_1_1_puback;
+                     return response_packet::v3_1_1_puback;
                  case qos::exactly_once:
-                     return v3_1_1_pubrec;
+                     return response_packet::v3_1_1_pubrec;
                  default:
-                     BOOST_ASSET(false);
+                     BOOST_ASSERT(false);
                      break;
                  }
              }()
@@ -48,21 +48,21 @@ public:
          var_{force_move(packet)}
     {}
 
-    basic_store_packet_variant(v3_1_1::pubrel packet)
-        :erase_{v3_1_1_pubcomp},
+    basic_store_packet_variant(v3_1_1::basic_pubrel_packet<PacketIdBytes> packet)
+        :res_{response_packet::v3_1_1_pubcomp},
          var_{force_move(packet)}
     {}
 
-    basic_store_packet_variant(v5::publish packet)
-        :erase_{
+    basic_store_packet_variant(v5::basic_publish_packet<PacketIdBytes> packet)
+        :res_{
              [&] {
                  switch (packet.opts().qos()) {
                  case qos::at_least_once:
-                     return v5_puback;
+                     return response_packet::v5_puback;
                  case qos::exactly_once:
-                     return v5_pubrec;
+                     return response_packet::v5_pubrec;
                  default:
-                     BOOST_ASSET(false);
+                     BOOST_ASSERT(false);
                      break;
                  }
              }()
@@ -70,8 +70,8 @@ public:
          var_{force_move(packet)}
     {}
 
-    basic_store_packet_variant(v5::pubrel packet)
-        :erase_{v5_pubcomp},
+    basic_store_packet_variant(v5::basic_pubrel_packet<PacketIdBytes> packet)
+        :res_{response_packet::v5_pubcomp},
          var_{force_move(packet)}
     {}
 
@@ -117,8 +117,8 @@ public:
         );
     }
 
-    store_packet_erase erase_trigger() const {
-        return erase_;
+    response_packet response_packet_type() const {
+        return res_;
     }
 
 private:
@@ -126,10 +126,10 @@ private:
         v3_1_1::basic_publish_packet<PacketIdBytes>,
         v3_1_1::basic_pubrel_packet<PacketIdBytes>,
         v5::basic_publish_packet<PacketIdBytes>,
-        v5::basic_pubrel_packet<PacketIdBytes>,
->;
+        v5::basic_pubrel_packet<PacketIdBytes>
+    >;
 
-    store_packet_erase erase_;
+    response_packet res_;
     variant_t var_;
 };
 
