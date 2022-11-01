@@ -143,10 +143,7 @@ private:
                 auto& a_strm{strm};
                 as::dispatch(
                     a_strm.strand_,
-                    as::bind_executor(
-                        a_strm.strand_,
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             } break;
             case header: {

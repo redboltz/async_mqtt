@@ -382,16 +382,20 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
+    constexpr std::size_t num_of_const_buffer_sequence() const {
         return
             1 +                   // fixed header
             1 +                   // remaining length
             1 +                   // protocol name and level
             1 +                   // connect flags
             1 +                   // keep alive
+            1 +                   // property length
+            async_mqtt::num_of_const_buffer_sequence(props_) +
 
             2 +                   // client id length, client id
 
+            1 +                   // will_property length
+            async_mqtt::num_of_const_buffer_sequence(will_props_) +
             2 +                   // will topic name length, will topic name
             2 +                   // will message length, will message
             2 +                   // user name length, user name

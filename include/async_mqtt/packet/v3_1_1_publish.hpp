@@ -209,6 +209,7 @@ public:
      * @return packet_id
      */
     packet_id_t packet_id() const {
+        BOOST_ASSERT(!packet_id_.empty());
         return endian_load<packet_id_t>(packet_id_.data());
     }
 

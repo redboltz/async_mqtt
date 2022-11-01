@@ -229,7 +229,7 @@ public:
             2 +                   // topic name length, topic name
             (packet_id_.empty() ? 0 : 1) +  // packet_id
             1 +                   // property length
-            async_mqtt::size(props_) +
+            async_mqtt::num_of_const_buffer_sequence(props_) +
             payloads_.size();
     }
 

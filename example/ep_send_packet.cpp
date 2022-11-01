@@ -23,52 +23,58 @@ int main() {
         ioc
     };
 
-    auto packet =
-        async_mqtt::v5::publish_packet{
-            42,
-            async_mqtt::allocate_buffer("topic1"),
-            async_mqtt::allocate_buffer("payload"),
-            async_mqtt::pub::opts{},
-            async_mqtt::properties{
-                async_mqtt::property::message_expiry_interval{1234}
-            }
-        };
-
     amep.stream().next_layer().async_connect(
         endpoint,
         [&]
         (async_mqtt::error_code const& ec) {
             std::cout << "connect: " << ec.message() << std::endl;
             if (ec) return;
-            std::cout << async_mqtt::hex_dump(packet) << std::endl;;
-            amep.send(
-                async_mqtt::force_move(packet),
-                [&]
-                (async_mqtt::error_code const& ec) mutable {
-                    std::cout << "write: " << ec.message() << std::endl;
-                    if (ec) return;
-                    amep.recv(
-                        [&]
-                        (async_mqtt::packet_variant pv) mutable {
-                            if (pv) {
-                                std::cout << async_mqtt::hex_dump(pv) << std::endl;
-                            }
-                            pv.visit(
-                                async_mqtt::overload {
-                                    [&](async_mqtt::v3_1_1::publish_packet const& p) {
-                                        std::cout << "size:" << p.size() << std::endl;
-                                        std::cout << "topic:" << p.topic() << std::endl;
-                                        std::cout << "payload:";
-                                        for (auto const& p : p.payload()) {
-                                            std::cout << p;
-                                        }
-                                        std::cout << std::endl;
-                                    },
-                                    [](auto const&) {}
+
+            amep.acquire_unique_packet_id(
+                [&](auto pid_opt) {
+                    if (pid_opt) {
+                        auto packet =
+                            async_mqtt::v5::publish_packet{
+                                *pid_opt,
+                                async_mqtt::allocate_buffer("topic1"),
+                                async_mqtt::allocate_buffer("payload"),
+                                async_mqtt::qos::at_least_once,
+                                async_mqtt::properties{
+                                    async_mqtt::property::message_expiry_interval{1234}
                                 }
-                            );
-                        }
-                    );
+                            };
+                        std::cout << async_mqtt::hex_dump(packet) << std::endl;;
+                        amep.send(
+                            async_mqtt::force_move(packet),
+                            [&]
+                            (async_mqtt::error_code const& ec) mutable {
+                                std::cout << "write: " << ec.message() << std::endl;
+                                if (ec) return;
+                                amep.recv(
+                                    [&]
+                                    (async_mqtt::packet_variant pv) mutable {
+                                        if (pv) {
+                                            std::cout << async_mqtt::hex_dump(pv) << std::endl;
+                                        }
+                                        pv.visit(
+                                            async_mqtt::overload {
+                                                [&](async_mqtt::v3_1_1::publish_packet const& p) {
+                                                    std::cout << "size:" << p.size() << std::endl;
+                                                    std::cout << "topic:" << p.topic() << std::endl;
+                                                    std::cout << "payload:";
+                                                    for (auto const& p : p.payload()) {
+                                                        std::cout << p;
+                                                    }
+                                                    std::cout << std::endl;
+                                                },
+                                                [](auto const&) {}
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
                 }
             );
         }

@@ -18,6 +18,7 @@
 #include <async_mqtt/packet/v3_1_1_subscribe.hpp>
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
+#include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
@@ -89,11 +90,13 @@ private:
 #if 0
         v5::connack_packet,
 #endif
-        v5::basic_publish_packet<PacketIdBytes>  // add comma later
+        v5::basic_publish_packet<PacketIdBytes>,
 #if 0
         v5::basic_puback_packet<PacketIdBytes>,
         v5::basic_pubrec_packet<PacketIdBytes>,
-        v5::basic_pubrel_packet<PacketIdBytes>,
+#endif
+        v5::basic_pubrel_packet<PacketIdBytes>   // add comma later
+#if 0
         v5::basic_pubcomp_packet<PacketIdBytes>,
         v5::basic_subscribe_packet<PacketIdBytes>,
         v5::basic_suback_packet<PacketIdBytes>,

@@ -563,6 +563,19 @@ std::size_t size(properties const& props) {
         );
 }
 
+inline
+std::size_t num_of_const_buffer_sequence(properties const& props) {
+    return
+        std::accumulate(
+            props.begin(),
+            props.end(),
+            std::size_t(0U),
+            [](std::size_t total, property_variant const& pv) {
+                return total + pv.num_of_const_buffer_sequence();
+            }
+        );
+}
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PACKET_PROPERTY_VARIANT_HPP
