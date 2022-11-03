@@ -24,6 +24,8 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
+#include <async_mqtt/util/json_like_out.hpp>
+
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/packet/qos.hpp>
 #include <async_mqtt/packet/property_id.hpp>
@@ -779,21 +781,34 @@ public:
 template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::direct, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
-    o << p.val();
+    o <<
+        "{" <<
+        "id:" << p.id() << "," <<
+        "val:" << p.val() <<
+        "}";
     return o;
 }
 
 template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::int_cast, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
-    o << static_cast<int>(p.val());
+    o <<
+        "{" <<
+        "id:" << p.id() << "," <<
+        "val:" << static_cast<int>(p.val()) <<
+        "}";
     return o;
 }
 
 template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::key_val, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
-    o << p.key() << ':' << p.val();
+    o <<
+        "{" <<
+        "id:" << p.id() << "," <<
+        "key:" << p.key() << "," <<
+        "val:" << p.val() <<
+        "}";
     return o;
 }
 
@@ -801,56 +816,26 @@ template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::binary_string, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
     // Note this only compiles because both strings below are the same length.
-    o << [&] {
+    o <<
+        "{" <<
+        "id:" << p.id() << "," <<
+        "val:" <<
+        [&] {
              if (p.val() == payload_format_indicator::binary) return "binary";
              return "string";
-         }();
+        }() <<
+        "}";
     return o;
 }
 
 template <typename Property>
 std::enable_if_t< Property::of_ == detail::ostream_format::json_like, std::ostream& >
 operator<<(std::ostream& o, Property const& p) {
-    auto const& v = p.val();
-    for (auto const c : v) {
-        switch (c) {
-        case '\\':
-            o << "\\\\";
-            break;
-        case '"':
-            o << "\\\"";
-            break;
-        case '/':
-            o << "\\/";
-            break;
-        case '\b':
-            o << "\\b";
-            break;
-        case '\f':
-            o << "\\f";
-            break;
-        case '\n':
-            o << "\\n";
-            break;
-        case '\r':
-            o << "\\r";
-            break;
-        case '\t':
-            o << "\\t";
-            break;
-        default: {
-            unsigned int code = static_cast<unsigned int>(c);
-            if (code < 0x20 || code >= 0x7f) {
-                std::ios::fmtflags flags(o.flags());
-                o << "\\u" << std::hex << std::setw(4) << std::setfill('0') << (code & 0xff);
-                o.flags(flags);
-            }
-            else {
-                o << c;
-            }
-        } break;
-        }
-    }
+    o <<
+        "{" <<
+        "id:" << p.id() << "," <<
+        "val:" << json_like_out(p.val()) <<
+        "}";
     return o;
 }
 

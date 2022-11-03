@@ -139,6 +139,21 @@ private:
 
 using properties = std::vector<property_variant>;
 
+inline std::ostream& operator<<(std::ostream& o, properties const& props) {
+    o << "[";
+    auto it = props.cbegin();
+    auto end = props.cend();
+
+    if (it != end) {
+        o << *it++;
+    }
+    for (; it != end; ++it) {
+        o << "," << *it;
+    }
+    o << "]";
+    return o;
+}
+
 inline
 property_variant make_property_variant(buffer buf) {
     if (buf.empty()) {

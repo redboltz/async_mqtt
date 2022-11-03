@@ -10,6 +10,7 @@
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/util/json_like_out.hpp>
 
 namespace async_mqtt {
 
@@ -82,6 +83,17 @@ private:
     pub::opts pubopts_;
     properties props_;
 };
+
+inline std::ostream& operator<<(std::ostream& o, will const& val) {
+    o << "{" <<
+        "topic:" << val.topic() << "," <<
+        "message:" << json_like_out(val.message()) << "," <<
+        "qos:" << val.qos() << "," <<
+        "retain:" << val.retain() << "," <<
+        "props:" << val.props() <<
+        "}";
+    return o;
+}
 
 } // namespace async_mqtt
 

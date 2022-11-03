@@ -16,7 +16,7 @@ namespace async_mqtt {
 
 template <typename Packet>
 struct hex_dump_t {
-    hex_dump_t(Packet const&p):p{p} {}
+    hex_dump_t(Packet const& p):p{p} {}
 
     Packet const& p;
 };
