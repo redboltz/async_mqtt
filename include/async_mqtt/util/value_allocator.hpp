@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_VALUE_ALLOCATOR_HPP)
-#define ASYNC_MQTT_VALUE_ALLOCATOR_HPP
+#if !defined(ASYNC_MQTT_UTIL_VALUE_ALLOCATOR_HPP)
+#define ASYNC_MQTT_UTIL_VALUE_ALLOCATOR_HPP
 
 #include <ostream>
 #include <limits>
@@ -281,4 +281,4 @@ private:
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_VALUE_ALLOCATOR_HPP
+#endif // ASYNC_MQTT_UTIL_VALUE_ALLOCATOR_HPP

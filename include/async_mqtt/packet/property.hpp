@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <numeric>
 #include <iosfwd>
 #include <iomanip>
 
@@ -22,7 +23,9 @@
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/exception.hpp>
+#include <async_mqtt/packet/qos.hpp>
 #include <async_mqtt/packet/property_id.hpp>
 #include <async_mqtt/variable_bytes.hpp>
 #include <async_mqtt/buffer.hpp>

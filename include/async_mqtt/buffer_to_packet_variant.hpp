@@ -43,6 +43,8 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
                 return make_error(errc::bad_message, "connect_packet protocol_version doesn't exist");
             }
         } break;
+    case control_packet_type::connack:
+        break;
     case control_packet_type::publish:
         switch (ver) {
         case protocol_version::v3_1_1:
@@ -50,6 +52,31 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
         default:
             return make_error(errc::bad_message, "packet mismatched to the protocol_version");
         }
+        break;
+    case control_packet_type::puback:
+        break;
+    case control_packet_type::pubrec:
+        break;
+    case control_packet_type::pubrel:
+        break;
+    case control_packet_type::pubcomp:
+        break;
+    case control_packet_type::subscribe:
+        break;
+    case control_packet_type::suback:
+        break;
+    case control_packet_type::unsubscribe:
+        break;
+    case control_packet_type::unsuback:
+        break;
+    case control_packet_type::pingreq:
+        break;
+    case control_packet_type::pingresp:
+        break;
+    case control_packet_type::disconnect:
+        break;
+    case control_packet_type::auth:
+        break;
     default:
         return make_error(errc::bad_message, "control_packet_type is invalid");
     }

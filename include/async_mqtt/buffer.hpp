@@ -363,6 +363,10 @@ public:
         return life_;
     }
 
+    operator as::const_buffer() const {
+        return as::buffer(view_.data(), view_.size());
+    }
+
     friend
     constexpr bool operator==(buffer const& lhs, buffer const& rhs ) noexcept {
         return lhs.view_ == rhs.view_;

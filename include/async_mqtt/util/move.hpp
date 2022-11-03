@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_MOVE_HPP)
-#define ASYNC_MQTT_MOVE_HPP
+#if !defined(ASYNC_MQTT_UTIL_MOVE_HPP)
+#define ASYNC_MQTT_UTIL_MOVE_HPP
 
 #include <utility>
 #include <type_traits>
@@ -22,4 +22,4 @@ force_move(T&& t) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_MOVE_HPP
+#endif // ASYNC_MQTT_UTIL_MOVE_HPP

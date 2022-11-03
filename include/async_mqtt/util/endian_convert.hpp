@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_ENDIAN_CONVERT_HPP)
-#define ASYNC_MQTT_ENDIAN_CONVERT_HPP
+#if !defined(ASYNC_MQTT_UTIL_ENDIAN_CONVERT_HPP)
+#define ASYNC_MQTT_UTIL_ENDIAN_CONVERT_HPP
 
 #include <boost/endian/conversion.hpp>
 
@@ -38,4 +38,4 @@ static_vector<char, sizeof(T)> endian_static_vector(T val) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_ENDIAN_CONVERT_HPP
+#endif // ASYNC_MQTT_UTIL_ENDIAN_CONVERT_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_ANY_HPP)
-#define ASYNC_MQTT_ANY_HPP
+#if !defined(ASYNC_MQTT_UTIL_ANY_HPP)
+#define ASYNC_MQTT_UTIL_ANY_HPP
 
 #include <any>
 
@@ -16,4 +16,4 @@ using std::any_cast;
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_ANY_HPP
+#endif // ASYNC_MQTT_UTIL_ANY_HPP

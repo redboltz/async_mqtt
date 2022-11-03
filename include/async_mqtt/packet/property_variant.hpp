@@ -15,7 +15,13 @@ namespace async_mqtt {
 
 class property_variant {
 public:
-    template <typename Property>
+    template <
+        typename Property,
+        std::enable_if_t<
+            !std::is_same_v<std::decay_t<Property>, property_variant>,
+            std::nullptr_t
+        >* = nullptr
+    >
     property_variant(Property&& property):var_{std::forward<Property>(property)}
     {}
 
@@ -81,6 +87,19 @@ public:
 
     operator bool() {
         return var_.index() != 0;
+    }
+
+    friend bool operator==(property_variant const& lhs, property_variant const& rhs) {
+        return lhs.var_ == rhs.var_;
+    }
+    friend bool operator<(property_variant const& lhs, property_variant const& rhs) {
+        return lhs.var_ < rhs.var_;
+    }
+    friend std::ostream& operator<<(std::ostream& o, property_variant const& v) {
+        v.visit(
+            [&] (auto const& p) { o << p; }
+        );
+        return o;
     }
 
 private:

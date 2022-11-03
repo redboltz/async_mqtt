@@ -15,7 +15,9 @@
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
 
+#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 
 namespace async_mqtt::v3_1_1 {
@@ -46,6 +48,13 @@ public:
         }
         all_.push_back(buf.front());
         buf.remove_prefix(1);
+        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(all_.back()));
+        if (!cpt_opt || *cpt_opt != control_packet_type::puback) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::puback_packet fixed_header is invalid"
+            );
+        }
 
         // remaining_length
         if (buf.empty()) {

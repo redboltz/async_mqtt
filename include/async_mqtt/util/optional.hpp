@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_OPTIONAL_HPP)
-#define ASYNC_MQTT_OPTIONAL_HPP
+#if !defined(ASYNC_MQTT_UTIL_OPTIONAL_HPP)
+#define ASYNC_MQTT_UTIL_OPTIONAL_HPP
 
 #include <optional>
 
@@ -18,4 +18,4 @@ static constexpr auto nullopt = std::nullopt;
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_OPTIONAL_HPP
+#endif // ASYNC_MQTT_UTIL_OPTIONAL_HPP

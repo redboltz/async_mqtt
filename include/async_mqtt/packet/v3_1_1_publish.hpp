@@ -20,7 +20,6 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-#include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
@@ -99,8 +98,15 @@ public:
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        auto qos_value = qos();
+        auto qos_value = pub::get_qos(fixed_header_);
         buf.remove_prefix(1);
+        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
+        if (!cpt_opt || *cpt_opt != control_packet_type::publish) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet fixed_header is invalid"
+            );
+        }
 
         // remaining_length
         if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
@@ -108,6 +114,9 @@ public:
         }
         else {
             throw make_error(errc::bad_message, "v3_1_1::publish_packet remaining length is invalid");
+        }
+        if (remaining_length_ != buf.size()) {
+            throw make_error(errc::bad_message, "v3_1_1::publish_packet remaining length doesn't match buf.size()");
         }
 
         // topic_name_length
@@ -233,12 +242,8 @@ public:
      * @brief Get payload
      * @return payload
      */
-    std::vector<buffer> payload() const {
+    std::vector<buffer> const& payload() const {
         return payloads_;
-    }
-
-    auto payload_range() const {
-        return make_packet_range(payloads_);
     }
 
     /**

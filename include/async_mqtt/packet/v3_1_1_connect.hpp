@@ -31,17 +31,10 @@ namespace as = boost::asio;
 
 class connect_packet {
 public:
-    template <
-        typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<BufferSequence>::value,
-            std::nullptr_t
-        >::type = nullptr
-    >
     connect_packet(
+        bool clean_session,
         std::uint16_t keep_alive_sec,
         buffer client_id,
-        bool clean_session,
         optional<will> w,
         optional<buffer> user_name,
         optional<buffer> password
@@ -78,19 +71,13 @@ public:
 #endif
             connect_flags_ |= connect_flags::mask_user_name_flag;
             user_name_ = force_move(user_name.value());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(user_name_.size()),
-                user_name_length_buf_.data()
-            );
+            user_name_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(user_name_.size()));
             remaining_length_ += 2 + user_name_.size();
         }
         if (password) {
             connect_flags_ |= connect_flags::mask_password_flag;
             password_ = force_move(password.value());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(password_.size()),
-                password_length_buf_.data()
-            );
+            password_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(password_.size()));
             remaining_length_ += 2 + password_.size();
         }
         if (w) {
@@ -102,10 +89,7 @@ public:
             utf8string_check(w->topic());
 #endif
             will_topic_ = force_move(w->topic());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(will_topic_.size()),
-                will_topic_length_buf_.data()
-            );
+            will_topic_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_topic_.size()));
             if (w->message().size() > 0xffffL) {
                 throw make_error(
                     errc::bad_message,
@@ -113,10 +97,7 @@ public:
                 );
             }
             will_message_ = force_move(w->message());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(will_message_.size()),
-                will_message_length_buf_.data()
-            );
+            will_message_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_message_.size()));
 
             remaining_length_ += 2 + will_topic_.size() + 2 + will_message_.size();
         }
@@ -151,6 +132,9 @@ public:
         }
         else {
             throw make_error(errc::bad_message, "v3_1_1::connect_packet remaining length is invalid");
+        }
+        if (remaining_length_ != buf.size()) {
+            throw make_error(errc::bad_message, "v3_1_1::connect_packet remaining length doesn't match buf.size()");
         }
 
         // protocol name and level
@@ -297,7 +281,7 @@ public:
             auto password_length = endian_load<std::uint16_t>(password_length_buf_.data());
 
             // password
-            if (buf.size() == password_length) {
+            if (buf.size() != password_length) {
                 throw make_error(
                     errc::bad_message,
                     "v3_1_1::connect_packet password doesn't match its length"

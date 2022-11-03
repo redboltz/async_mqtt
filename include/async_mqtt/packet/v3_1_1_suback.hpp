@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
+#if !defined(ASYNC_MQTT_PACKET_V3_1_1_SUBACK_HPP)
+#define ASYNC_MQTT_PACKET_V3_1_1_SUBACK_HPP
 
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
@@ -15,62 +15,44 @@
 
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
+#include <async_mqtt/packet/reason_code.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
-class basic_subscribe_packet {
+class basic_suback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
-    basic_subscribe_packet(
-        packet_id_t packet_id,
-        std::vector<topic_subopts> params
+    basic_suback_packet(
+        std::vector<suback_return_code> params,
+        packet_id_t packet_id
     )
-        : fixed_header_{make_fixed_header(control_packet_type::subscribe, 0b0010)},
+        : fixed_header_{make_fixed_header(control_packet_type::suback, 0b0000)},
           entries_{force_move(params)},
-          remaining_length_{PacketIdBytes}
+          remaining_length_{PacketIdBytes + entries_.size()}
     {
         endian_store(packet_id, packet_id_.data());
-
-        for (auto const& e : entries_) {
-            auto size = e.topic().size();
-            if (size > 0xffff) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::subscribe_packet length of topic is invalid"
-                );
-            }
-            remaining_length_ +=
-                2 +                     // topic name length
-                size +                  // topic name
-                1;                      // opts
-            // TBD add opts checking here
-
-#if 0 // TBD
-            utf8string_check(e.topic());
-#endif
-        }
 
         remaining_length_buf_ = endian_static_vector(remaining_length_);
     }
 
-    basic_subscribe_packet(buffer buf) {
+    basic_suback_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::subscribe_packet fixed_header doesn't exist"
+                "v3_1_1::suback_packet fixed_header doesn't exist"
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
         buf.remove_prefix(1);
         auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
-        if (!cpt_opt || *cpt_opt != control_packet_type::subscribe) {
+        if (!cpt_opt || *cpt_opt != control_packet_type::suback) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::subscribe_packet fixed_header is invalid"
+                "v3_1_1::suback_packet fixed_header is invalid"
             );
         }
 
@@ -79,46 +61,26 @@ public:
             remaining_length_ = *vl_opt;
         }
         else {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet remaining length is invalid");
+            throw make_error(errc::bad_message, "v3_1_1::suback_packet remaining length is invalid");
         }
         if (remaining_length_ != buf.size()) {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet remaining length doesn't match buf.size()");
+            throw make_error(errc::bad_message, "v3_1_1::suback_packet remaining length doesn't match buf.size()");
         }
 
         if (remaining_length_ == 0) {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet doesn't have entries");
+            throw make_error(errc::bad_message, "v3_1_1::suback_packet doesn't have entries");
         }
 
         while (!buf.empty()) {
-            // topic_length
-            static_vector<char, 2> topic_length_buf;
-            if (!copy_advance(buf, topic_length_buf)) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::subscribe_packet length of topic is invalid"
-                );
-            }
-            auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
-
-            // topic
-            if (buf.size() < topic_length) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::subscribe_packet topic doesn't match its length"
-                );
-            }
-            auto topic = buf.substr(0, topic_length);
-            buf.remove_prefix(topic_length);
-
-            // opts
+            // suback_return_code
             if (buf.empty()) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet subscribe options  doesn't exist"
+                    "v3_1_1::suback_packet suback_return_code  doesn't exist"
                 );
             }
-            auto opts = static_cast<sub::opts>(buf.back());
-            entries_.emplace_back(force_move(topic), opts);
+            auto rc = static_cast<suback_return_code>(buf.back());
+            entries_.emplace_back(rc);
             buf.remove_prefix(1);
         }
     }
@@ -138,11 +100,7 @@ public:
 
         ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
 
-        for (auto const& e : entries_) {
-            ret.emplace_back(as::buffer(e.topic_length_buf().data(), e.topic_length_buf().size()));
-            ret.emplace_back(as::buffer(e.topic()));
-            ret.emplace_back(as::buffer(&e.opts(), 1));
-        }
+        ret.emplace_back(as::buffer(entries_.data(), entries_.size()));
 
         return ret;
     }
@@ -167,27 +125,27 @@ public:
             1 +                   // fixed header
             1 +                   // remaining length
             1 +                   // packet id
-            entries_.size() * 3;  // topic name length, topic name, qos
+            entries_.size();      // suback_return_code
     }
 
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(packet_id_);
     }
 
-    std::vector<topic_subopts> const& entries() const {
+    std::vector<suback_return_code> const& entries() const {
         return entries_;
     }
 
 private:
     std::uint8_t fixed_header_;
-    std::vector<topic_subopts> entries_;
+    std::vector<suback_return_code> entries_;
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
     std::size_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 };
 
-using subscribe_packet = basic_subscribe_packet<2>;
+using suback_packet = basic_suback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
+#endif // ASYNC_MQTT_PACKET_V3_1_1_SUBACK_HPP

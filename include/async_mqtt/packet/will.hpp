@@ -62,6 +62,20 @@ public:
         return props_;
     }
 
+    friend
+    bool operator==(will const& lhs, will const& rhs) {
+        return
+            std::tie(lhs.topic_, lhs.message_, lhs.pubopts_, lhs.props_) ==
+            std::tie(rhs.topic_, rhs.message_, rhs.pubopts_, rhs.props_);
+    }
+
+    friend
+    bool operator<(will const& lhs, will const& rhs) {
+        return
+            std::tie(lhs.topic_, lhs.message_, lhs.pubopts_, lhs.props_) <
+            std::tie(rhs.topic_, rhs.message_, rhs.pubopts_, rhs.props_);
+    }
+
 private:
     buffer topic_;
     buffer message_;

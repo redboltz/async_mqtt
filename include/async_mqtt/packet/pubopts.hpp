@@ -78,6 +78,9 @@ struct opts final {
 
     explicit constexpr operator std::uint8_t() const { return data_; }
 
+    constexpr bool operator==(opts rhs) const { return data_ == rhs.data_; }
+    constexpr bool operator<(opts rhs) const { return data_ < rhs.data_; }
+
 private:
     std::uint8_t data_ = 0; // defaults to retain::no, dup::no, qos::at_most_once
 };

@@ -13,20 +13,42 @@
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/assert.hpp>
+#include <boost/operators.hpp>
 
 namespace async_mqtt {
 
 namespace sys = boost::system;
 
-using sys::system_error;
-using sys::error_code;
+//using system_error = sys::system_error;
+
+struct system_error : sys::system_error, private boost::totally_ordered<system_error> {
+    using sys::system_error::system_error;
+};
+
+using error_code = sys::error_code;
 namespace errc = sys::errc;
 
 template <typename WhatArg>
-inline sys::system_error make_error(errc::errc_t ec, WhatArg&& wa) {
+inline system_error make_error(errc::errc_t ec, WhatArg&& wa) {
     return system_error(make_error_code(ec), std::forward<WhatArg>(wa));
 }
 
+inline bool operator==(system_error const& lhs, system_error const& rhs) {
+    return
+        std::tuple<error_code, std::string_view>(lhs.code(), lhs.what()) ==
+        std::tuple<error_code, std::string_view>(rhs.code(), rhs.what());
+}
+
+inline bool operator<(system_error const& lhs, system_error const& rhs) {
+    return
+        std::tuple<error_code, std::string_view>(lhs.code(), lhs.what()) <
+        std::tuple<error_code, std::string_view>(rhs.code(), rhs.what());
+}
+
+inline std::ostream& operator<<(std::ostream& o, system_error const& v) {
+    o << v.what();
+    return o;
+}
 
 } // namespace async_mqtt
 
