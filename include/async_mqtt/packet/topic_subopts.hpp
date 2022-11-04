@@ -12,6 +12,7 @@
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/packet/subopts.hpp>
 
 namespace async_mqtt {
@@ -49,6 +50,21 @@ public:
     static_vector<char, 2> const& topic_length_buf() const {
         return topic_length_buf_;
     }
+
+    friend
+    bool operator<(topic_subopts const& lhs, topic_subopts const& rhs) {
+        return
+            std::tie(lhs.topic_, lhs.opts_) <
+            std::tie(rhs.topic_, rhs.opts_);
+    }
+
+    friend
+    bool operator==(topic_subopts const& lhs, topic_subopts const& rhs) {
+        return
+            std::tie(lhs.topic_, lhs.opts_) ==
+            std::tie(rhs.topic_, rhs.opts_);
+    }
+
 private:
     static_vector<char, 2> topic_length_buf_;
     buffer topic_;

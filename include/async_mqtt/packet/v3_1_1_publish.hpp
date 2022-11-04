@@ -53,6 +53,7 @@ public:
               )
           },
           topic_name_{force_move(topic_name)},
+          packet_id_(PacketIdBytes),
           remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
@@ -84,12 +85,15 @@ public:
         }
         if (pubopts.qos() == qos::at_least_once ||
             pubopts.qos() == qos::exactly_once) {
-            packet_id_.resize(packet_id_.capacity());
             endian_store(packet_id, packet_id_.data());
+        }
+        else {
+            endian_store(0, packet_id_.data());
         }
     }
 
-    basic_publish_packet(buffer buf) {
+    basic_publish_packet(buffer buf)
+        : packet_id_(PacketIdBytes) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
@@ -109,7 +113,7 @@ public:
         }
 
         // remaining_length
-        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
             remaining_length_ = *vl_opt;
         }
         else {
@@ -120,7 +124,7 @@ public:
         }
 
         // topic_name_length
-        if (!copy_advance(buf, topic_name_length_buf_)) {
+        if (!insert_advance(buf, topic_name_length_buf_)) {
             throw make_error(
                 errc::bad_message,
                 "v3_1_1::publish_packet length of topic_name is invalid"
@@ -144,6 +148,7 @@ public:
         // packet_id
         switch (qos_value) {
         case qos::at_most_once:
+            endian_store(packet_id_t{0}, packet_id_.data());
             break;
         case qos::at_least_once:
         case qos::exactly_once:
@@ -180,7 +185,7 @@ public:
         ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
         ret.emplace_back(as::buffer(topic_name_length_buf_.data(), topic_name_length_buf_.size()));
         ret.emplace_back(as::buffer(topic_name_));
-        if (!packet_id_.empty()) {
+        if (packet_id() != 0) {
             ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
         }
         for (auto const& payload : payloads_) {
@@ -209,7 +214,10 @@ public:
             1 +                   // fixed header
             1 +                   // remaining length
             2 +                   // topic name length, topic name
-            (packet_id_.empty() ? 0 : 1) +  // packet_id
+            [&] {
+                if (packet_id() == 0) return 0;
+                return 1;
+            }() +
             payloads_.size();
     }
 
@@ -218,7 +226,6 @@ public:
      * @return packet_id
      */
     packet_id_t packet_id() const {
-        BOOST_ASSERT(!packet_id_.empty());
         return endian_load<packet_id_t>(packet_id_.data());
     }
 

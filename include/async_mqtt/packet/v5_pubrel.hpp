@@ -67,7 +67,7 @@ public:
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
 
         // remaining_length
-        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
             remaining_length_ = *vl_opt;
         }
         else {
@@ -75,7 +75,7 @@ public:
         }
 
         // packet_id
-        if (!copy_advance(buf, packet_id_)) {
+        if (!insert_advance(buf, packet_id_)) {
             throw make_error(
                 errc::bad_message,
                 "v5::pubrel_packet packet_id doesn't exist"
@@ -83,7 +83,7 @@ public:
         }
 
         // property_length
-        if (auto vl_opt = copy_advance_variable_length(buf, property_length_buf_)) {
+        if (auto vl_opt = insert_advance_variable_length(buf, property_length_buf_)) {
             property_length_ = *vl_opt;
         }
         else {

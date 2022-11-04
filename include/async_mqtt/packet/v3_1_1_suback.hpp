@@ -57,7 +57,7 @@ public:
         }
 
         // remaining_length
-        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
             remaining_length_ = *vl_opt;
         }
         else {

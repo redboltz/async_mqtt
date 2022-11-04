@@ -70,6 +70,10 @@ struct opts final {
     { return static_cast<enum qos>(data_ & 0b00000011); }
 
     explicit constexpr operator std::uint8_t() const { return data_; }
+
+    constexpr bool operator==(opts rhs) const { return data_ == rhs.data_; }
+    constexpr bool operator<(opts rhs) const { return data_ < rhs.data_; }
+
 private:
     std::uint8_t data_;
 };

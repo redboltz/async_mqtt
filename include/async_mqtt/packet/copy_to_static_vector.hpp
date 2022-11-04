@@ -23,6 +23,18 @@ bool copy_advance(buffer& buf, static_vector<char, N>& sv) {
     std::copy(
         buf.begin(),
         std::next(buf.begin(), sv.capacity()),
+        sv.begin()
+    );
+    buf.remove_prefix(sv.capacity());
+    return true;
+}
+
+template <std::size_t N>
+bool insert_advance(buffer& buf, static_vector<char, N>& sv) {
+    if (buf.size() < sv.capacity()) return false;
+    std::copy(
+        buf.begin(),
+        std::next(buf.begin(), sv.capacity()),
         std::back_inserter(sv)
     );
     buf.remove_prefix(sv.capacity());
@@ -30,7 +42,7 @@ bool copy_advance(buffer& buf, static_vector<char, N>& sv) {
 }
 
 inline
-optional<std::uint32_t> copy_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
+optional<std::uint32_t> insert_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
     if (buf.empty()) return nullopt;
     std::uint32_t variable_length = 0;
     auto it = buf.begin();

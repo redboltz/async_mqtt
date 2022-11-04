@@ -8,11 +8,13 @@ list(APPEND check_PROGRAMS
     ut_buffer.cpp
     ut_prop_variant.cpp
     ut_packet_v3_1_1_connect.cpp
+    ut_packet_v3_1_1_connack.cpp
     ut_packet_v3_1_1_publish.cpp
     ut_packet_v3_1_1_puback.cpp
     ut_packet_v3_1_1_pubrec.cpp
     ut_packet_v3_1_1_pubrel.cpp
     ut_packet_v3_1_1_pubcomp.cpp
+    ut_packet_v3_1_1_subscribe.cpp
     ut_system_error.cpp
 )
 

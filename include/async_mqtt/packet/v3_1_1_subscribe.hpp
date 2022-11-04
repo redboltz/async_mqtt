@@ -13,8 +13,11 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
+#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
+#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/packet/copy_to_static_vector.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -53,7 +56,7 @@ public:
 #endif
         }
 
-        remaining_length_buf_ = endian_static_vector(remaining_length_);
+        remaining_length_buf_ = val_to_variable_bytes(remaining_length_);
     }
 
     basic_subscribe_packet(buffer buf) {
@@ -75,7 +78,7 @@ public:
         }
 
         // remaining_length
-        if (auto vl_opt = copy_advance_variable_length(buf, remaining_length_buf_)) {
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
             remaining_length_ = *vl_opt;
         }
         else {
@@ -85,6 +88,14 @@ public:
             throw make_error(errc::bad_message, "v3_1_1::subscribe_packet remaining length doesn't match buf.size()");
         }
 
+        // packet_id
+        if (!copy_advance(buf, packet_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::subscribe_packet packet_id doesn't exist"
+            );
+        }
+
         if (remaining_length_ == 0) {
             throw make_error(errc::bad_message, "v3_1_1::subscribe_packet doesn't have entries");
         }
@@ -92,7 +103,7 @@ public:
         while (!buf.empty()) {
             // topic_length
             static_vector<char, 2> topic_length_buf;
-            if (!copy_advance(buf, topic_length_buf)) {
+            if (!insert_advance(buf, topic_length_buf)) {
                 throw make_error(
                     errc::bad_message,
                     "v3_1_1::subscribe_packet length of topic is invalid"
@@ -117,7 +128,7 @@ public:
                     "v3_1_1::subscribe_packet subscribe options  doesn't exist"
                 );
             }
-            auto opts = static_cast<sub::opts>(buf.back());
+            auto opts = static_cast<sub::opts>(buf.front());
             entries_.emplace_back(force_move(topic), opts);
             buf.remove_prefix(1);
         }
@@ -171,7 +182,7 @@ public:
     }
 
     packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_);
+        return endian_load<packet_id_t>(packet_id_.data());
     }
 
     std::vector<topic_subopts> const& entries() const {
@@ -182,7 +193,7 @@ private:
     std::uint8_t fixed_header_;
     std::vector<topic_subopts> entries_;
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
-    std::size_t remaining_length_;
+    std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 };
 

@@ -113,7 +113,7 @@ private:
     std::uint8_t fixed_header_;
     std::vector<buffer> entries_;
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
-    std::size_t remaining_length_;
+    std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 };
 
