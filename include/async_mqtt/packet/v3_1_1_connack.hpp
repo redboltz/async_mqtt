@@ -129,7 +129,7 @@ public:
     }
 
 private:
-    boost::container::static_vector<char, 4> all_;
+    static_vector<char, 4> all_;
 };
 
 } // namespace async_mqtt::v3_1_1

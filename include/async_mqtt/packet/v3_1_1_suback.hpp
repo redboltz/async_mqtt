@@ -12,10 +12,13 @@
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
 
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
+#include <async_mqtt/packet/suback_return_code.hpp>
+#include <async_mqtt/packet/packet_id_type.hpp>
+#include <async_mqtt/packet/copy_to_static_vector.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -26,8 +29,8 @@ class basic_suback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     basic_suback_packet(
-        std::vector<suback_return_code> params,
-        packet_id_t packet_id
+        packet_id_t packet_id,
+        std::vector<suback_return_code> params
     )
         : fixed_header_{make_fixed_header(control_packet_type::suback, 0b0000)},
           entries_{force_move(params)},
@@ -35,7 +38,7 @@ public:
     {
         endian_store(packet_id, packet_id_.data());
 
-        remaining_length_buf_ = endian_static_vector(remaining_length_);
+        remaining_length_buf_ = val_to_variable_bytes(remaining_length_);
     }
 
     basic_suback_packet(buffer buf) {
@@ -67,6 +70,14 @@ public:
             throw make_error(errc::bad_message, "v3_1_1::suback_packet remaining length doesn't match buf.size()");
         }
 
+        // packet_id
+        if (!copy_advance(buf, packet_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::subscribe_packet packet_id doesn't exist"
+            );
+        }
+
         if (remaining_length_ == 0) {
             throw make_error(errc::bad_message, "v3_1_1::suback_packet doesn't have entries");
         }
@@ -79,7 +90,7 @@ public:
                     "v3_1_1::suback_packet suback_return_code  doesn't exist"
                 );
             }
-            auto rc = static_cast<suback_return_code>(buf.back());
+            auto rc = static_cast<suback_return_code>(buf.front());
             entries_.emplace_back(rc);
             buf.remove_prefix(1);
         }
@@ -129,7 +140,7 @@ public:
     }
 
     packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_);
+        return endian_load<packet_id_t>(packet_id_.data());
     }
 
     std::vector<suback_return_code> const& entries() const {

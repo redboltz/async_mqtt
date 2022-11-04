@@ -7,37 +7,30 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/packet/v3_1_1_connack.hpp>
+#include <async_mqtt/packet/v3_1_1_pingreq.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
-BOOST_AUTO_TEST_CASE(v3_1_1_connack) {
-    auto p = am::v3_1_1::connack_packet{
-        true,   // session_present
-        am::connect_return_code::not_authorized
-    };
-
-    BOOST_TEST(p.session_present());
-    BOOST_TEST(p.code() == am::connect_return_code::not_authorized);
+BOOST_AUTO_TEST_CASE(v3_1_1_pingreq) {
+    auto p = am::v3_1_1::pingreq_packet();
 
     {
         auto cbs = p.const_buffer_sequence();
         char expected[] {
-            0x20, // fixed_header
-            0x02, // remaining_length
-            0x01, // session_present
-            0x05, // connect_return_code
-                };
+            char(0xc0),                         // fixed_header
+            0x00,                               // remaining_length
+        };
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::connack_packet(buf);
-        BOOST_TEST(p.session_present());
-        BOOST_TEST(p.code() == am::connect_return_code::not_authorized);
+        auto p = am::v3_1_1::pingreq_packet(buf);
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 

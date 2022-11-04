@@ -382,6 +382,10 @@ private:
                         },
                         [&](v3_1_1::basic_suback_packet<PacketIdBytes> const& p) {
                         },
+                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes> const& p) {
+                        },
                         [&](v5::connect_packet const& p) {
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes> const& p) {

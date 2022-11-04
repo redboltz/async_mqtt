@@ -9,7 +9,6 @@
 
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/util/hex_dump.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

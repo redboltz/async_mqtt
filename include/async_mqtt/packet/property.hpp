@@ -52,7 +52,7 @@ enum class ostream_format {
 // But this class template can accept any N.
 template <std::size_t N>
 struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
-    n_bytes_property(property::id id, boost::container::static_vector<char, N> const& buf)
+    n_bytes_property(property::id id, static_vector<char, N> const& buf)
         : id_{id},
           buf_{buf} // very small size copy
     {

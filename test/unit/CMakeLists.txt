@@ -15,6 +15,11 @@ list(APPEND check_PROGRAMS
     ut_packet_v3_1_1_pubrel.cpp
     ut_packet_v3_1_1_pubcomp.cpp
     ut_packet_v3_1_1_subscribe.cpp
+    ut_packet_v3_1_1_suback.cpp
+    ut_packet_v3_1_1_unsubscribe.cpp
+    ut_packet_v3_1_1_unsuback.cpp
+    ut_packet_v3_1_1_pingreq.cpp
+    ut_packet_v3_1_1_pingresp.cpp
     ut_system_error.cpp
 )
 

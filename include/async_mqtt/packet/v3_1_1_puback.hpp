@@ -117,7 +117,7 @@ public:
     }
 
 private:
-    boost::container::static_vector<char, 2 + PacketIdBytes> all_;
+    static_vector<char, 2 + PacketIdBytes> all_;
 };
 
 using puback_packet = basic_puback_packet<2>;

@@ -14,14 +14,12 @@
 namespace async_mqtt {
 
 enum class connect_return_code : std::uint8_t {
-
     accepted                      = 0,
     unacceptable_protocol_version = 1,
     identifier_rejected           = 2,
     server_unavailable            = 3,
     bad_user_name_or_password     = 4,
     not_authorized                = 5,
-
 };
 
 constexpr
@@ -47,4 +45,4 @@ std::ostream& operator<<(std::ostream& os, connect_return_code val)
 
 } // namespace async_mqtt
 
-#endif // MQTT_CONNECT_RETURN_CODE_HPP
+#endif // ASYNC_MQTT_PACKET_CONNECT_RETURN_CODE_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBREL_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_PUBREL_HPP
+#if !defined(ASYNC_MQTT_PACKET_V3_1_1_UNSUBACK_HPP)
+#define ASYNC_MQTT_PACKET_V3_1_1_UNSUBACK_HPP
 
 #include <utility>
 #include <numeric>
@@ -27,34 +27,34 @@ namespace async_mqtt::v3_1_1 {
 namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
-class basic_pubrel_packet {
+class basic_unsuback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
-    basic_pubrel_packet(
+    basic_unsuback_packet(
         packet_id_t packet_id
     )
         : all_(all_.capacity())
     {
-        all_[0] = static_cast<char>(make_fixed_header(control_packet_type::pubrel, 0b0010));
+        all_[0] = static_cast<char>(make_fixed_header(control_packet_type::unsuback, 0b0000));
         all_[1] = boost::numeric_cast<char>(PacketIdBytes);
         endian_store(packet_id, &all_[2]);
     }
 
-    basic_pubrel_packet(buffer buf) {
+    basic_unsuback_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::pubrel_packet fixed_header doesn't exist"
+                "v3_1_1::unsuback_packet fixed_header doesn't exist"
             );
         }
         all_.push_back(buf.front());
         buf.remove_prefix(1);
         auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(all_.back()));
-        if (!cpt_opt || *cpt_opt != control_packet_type::pubrel) {
+        if (!cpt_opt || *cpt_opt != control_packet_type::unsuback) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::pubrel_packet fixed_header is invalid"
+                "v3_1_1::unsuback_packet fixed_header is invalid"
             );
         }
 
@@ -62,7 +62,7 @@ public:
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::pubrel_packet remaining_length doesn't exist"
+                "v3_1_1::unsuback_packet remaining_length doesn't exist"
             );
         }
         all_.push_back(buf.front());
@@ -70,7 +70,7 @@ public:
         if (static_cast<std::uint8_t>(all_.back()) != PacketIdBytes) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::pubrel_packet remaining_length is invalid"
+                "v3_1_1::unsuback_packet remaining_length is invalid"
             );
         }
 
@@ -78,7 +78,7 @@ public:
         if (buf.size() != PacketIdBytes) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::pubrel_packet variable header doesn't match its length"
+                "v3_1_1::unsuback_packet variable header doesn't match its length"
             );
         }
         std::copy(buf.begin(), buf.end(), std::back_inserter(all_));
@@ -120,8 +120,8 @@ private:
     static_vector<char, 2 + PacketIdBytes> all_;
 };
 
-using pubrel_packet = basic_pubrel_packet<2>;
+using unsuback_packet = basic_unsuback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_PUBREL_HPP
+#endif // ASYNC_MQTT_PACKET_V3_1_1_UNSUBACK_HPP

@@ -7,11 +7,14 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/endian_convert.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
@@ -35,6 +38,15 @@ public:
           entries_{force_move(params)},
           remaining_length_{PacketIdBytes}
     {
+        topic_length_buf_entries_.reserve(entries_.size());
+        for (auto const& e : entries_) {
+            topic_length_buf_entries_.push_back(
+                endian_static_vector(
+                    boost::numeric_cast<std::uint16_t>(e.topic().size())
+                )
+            );
+        }
+
         endian_store(packet_id, packet_id_.data());
 
         for (auto const& e : entries_) {
@@ -110,6 +122,7 @@ public:
                 );
             }
             auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
+            topic_length_buf_entries_.push_back(topic_length_buf);
 
             // topic
             if (buf.size() < topic_length) {
@@ -149,10 +162,13 @@ public:
 
         ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
 
+        BOOST_ASSERT(entries_.size() == topic_length_buf_entries_.size());
+        auto it = topic_length_buf_entries_.begin();
         for (auto const& e : entries_) {
-            ret.emplace_back(as::buffer(e.topic_length_buf().data(), e.topic_length_buf().size()));
+            ret.emplace_back(as::buffer(it->data(), it->size()));
             ret.emplace_back(as::buffer(e.topic()));
             ret.emplace_back(as::buffer(&e.opts(), 1));
+            ++it;
         }
 
         return ret;
@@ -191,6 +207,7 @@ public:
 
 private:
     std::uint8_t fixed_header_;
+    std::vector<static_vector<char, 2>> topic_length_buf_entries_;
     std::vector<topic_subopts> entries_;
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
     std::uint32_t remaining_length_;
