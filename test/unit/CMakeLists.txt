@@ -20,6 +20,8 @@ list(APPEND check_PROGRAMS
     ut_packet_v3_1_1_unsuback.cpp
     ut_packet_v3_1_1_pingreq.cpp
     ut_packet_v3_1_1_pingresp.cpp
+    ut_packet_v3_1_1_disconnect.cpp
+    ut_packet_v5_connect.cpp
     ut_system_error.cpp
 )
 

@@ -155,7 +155,7 @@ inline std::ostream& operator<<(std::ostream& o, properties const& props) {
 }
 
 inline
-property_variant make_property_variant(buffer buf) {
+property_variant make_property_variant(buffer& buf) {
     if (buf.empty()) {
         return make_error(
             errc::bad_message,
@@ -561,16 +561,38 @@ property_variant make_property_variant(buffer buf) {
 }
 
 inline
-properties make_properties(buffer const& buf) {
+properties make_properties(buffer& buf) {
     properties props;
-    while (true) {
-        if (auto pv = make_property_variant(buf)) {
-            props.push_back(force_move(pv));
+    auto it = buf.begin();
+    if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+        buf.remove_prefix(std::distance(buf.begin(), it));
+        if (buf.size() < *pl_opt) {
+            throw make_error(
+                errc::bad_message,
+                "properties_don't match its length"
+            );
         }
-        else {
-            throw pv;
+
+        auto work_buf{buf};
+        work_buf.remove_suffix(work_buf.size() - *pl_opt);
+        auto work_buf = buf.substr(0, *pl_opt);
+        while (!work_buf.empty()) {
+            if (auto pv = make_property_variant(work_buf)) {
+                props.push_back(force_move(pv));
+            }
+            else {
+                throw pv;
+            }
         }
+        buf.remove_prefix(*pl_opt);
     }
+    else {
+        throw make_error(
+            errc::bad_message,
+            "property_length is invalid"
+        );
+    }
+
     return props;
 }
 

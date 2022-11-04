@@ -31,17 +31,10 @@ namespace as = boost::asio;
 
 class connect_packet {
 public:
-    template <
-        typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<BufferSequence>::value,
-            std::nullptr_t
-        >::type = nullptr
-    >
     connect_packet(
+        bool clean_start,
         std::uint16_t keep_alive_sec,
         buffer client_id,
-        bool clean_session,
         optional<will> w,
         optional<buffer> user_name,
         optional<buffer> password,
@@ -63,7 +56,7 @@ public:
               2 +                     // client id length
               client_id.size()        // client id
           ),
-          protocol_name_and_level_{0x00, 0x04, 'M', 'Q', 'T', 'T', 0x04},
+          protocol_name_and_level_{0x00, 0x04, 'M', 'Q', 'T', 'T', 0x05},
           client_id_{force_move(client_id)},
           client_id_length_buf_(2),
           keep_alive_buf_(2)
@@ -74,26 +67,20 @@ public:
 #if 0 // TBD
         utf8string_check(client_id_);
 #endif
-        if (clean_session) connect_flags_ |= connect_flags::mask_clean_session;
+        if (clean_start) connect_flags_ |= connect_flags::mask_clean_start;
         if (user_name) {
 #if 0 // TBD
             utf8string_check(user_name.value());
 #endif
             connect_flags_ |= connect_flags::mask_user_name_flag;
             user_name_ = force_move(user_name.value());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(user_name_.size()),
-                user_name_length_buf_.data()
-            );
+            user_name_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(user_name_.size()));
             remaining_length_ += 2 + user_name_.size();
         }
         if (password) {
             connect_flags_ |= connect_flags::mask_password_flag;
             password_ = force_move(password.value());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(password_.size()),
-                password_length_buf_.data()
-            );
+            password_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(password_.size()));
             remaining_length_ += 2 + password_.size();
         }
 
@@ -113,10 +100,7 @@ public:
             utf8string_check(w->topic());
 #endif
             will_topic_ = force_move(w->topic());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(will_topic_.size()),
-                will_topic_length_buf_.data()
-            );
+            will_topic_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_topic_.size()));
             if (w->message().size() > 0xffffL) {
                 throw make_error(
                     errc::bad_message,
@@ -124,13 +108,9 @@ public:
                 );
             }
             will_message_ = force_move(w->message());
-            endian_store(
-                boost::numeric_cast<std::uint16_t>(will_message_.size()),
-                will_message_length_buf_.data()
-            );
-
+            will_message_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_message_.size()));
             will_props_ = force_move(w->props());
-
+            will_property_length_ = async_mqtt::size(will_props_);
             auto pb = val_to_variable_bytes(will_property_length_);
             for (auto e : pb) {
                 will_property_length_buf_.push_back(e);
@@ -173,6 +153,9 @@ public:
         else {
             throw make_error(errc::bad_message, "v5::connect_packet remaining length is invalid");
         }
+        if (remaining_length_ != buf.size()) {
+            throw make_error(errc::bad_message, "v5::connect_packet remaining length doesn't match buf.size()");
+        }
 
         // protocol name and level
         if (!insert_advance(buf, protocol_name_and_level_)) {
@@ -182,7 +165,7 @@ public:
             );
         }
         static_vector<char, 7> expected_protocol_name_and_level {
-            0, 4, 'M', 'Q', 'T', 'T', 4
+            0, 4, 'M', 'Q', 'T', 'T', 5
         };
         if (protocol_name_and_level_ != expected_protocol_name_and_level) {
             throw make_error(
@@ -215,6 +198,9 @@ public:
             );
         }
 
+        // property
+        props_ = make_properties(buf);
+
         // client_id_length
         if (!insert_advance(buf, client_id_length_buf_)) {
             throw make_error(
@@ -239,6 +225,8 @@ public:
 
         // will
         if (connect_flags::has_will_flag(connect_flags_)) {
+            // will_property
+            will_props_ = make_properties(buf);
             // will_topic_length
             if (!insert_advance(buf, will_topic_length_buf_)) {
                 throw make_error(
@@ -318,7 +306,7 @@ public:
             auto password_length = endian_load<std::uint16_t>(password_length_buf_.data());
 
             // password
-            if (buf.size() == password_length) {
+            if (buf.size() != password_length) {
                 throw make_error(
                     errc::bad_message,
                     "v5::connect_packet password doesn't match its length"
@@ -344,10 +332,17 @@ public:
         ret.emplace_back(as::buffer(&connect_flags_, 1));
         ret.emplace_back(as::buffer(keep_alive_buf_.data(), keep_alive_buf_.size()));
 
+        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
+        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
+        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
+
         ret.emplace_back(as::buffer(client_id_length_buf_.data(), client_id_length_buf_.size()));
         ret.emplace_back(as::buffer(client_id_));
 
         if (connect_flags::has_will_flag(connect_flags_)) {
+            ret.emplace_back(as::buffer(will_property_length_buf_.data(), will_property_length_buf_.size()));
+            auto will_props_cbs = async_mqtt::const_buffer_sequence(will_props_);
+            std::move(will_props_cbs.begin(), will_props_cbs.end(), std::back_inserter(ret));
             ret.emplace_back(as::buffer(will_topic_length_buf_.data(), will_topic_length_buf_.size()));
             ret.emplace_back(as::buffer(will_topic_));
             ret.emplace_back(as::buffer(will_message_length_buf_.data(), will_message_length_buf_.size()));
@@ -402,8 +397,8 @@ public:
             2;                    // password length, password
     }
 
-    bool clean_session() const {
-        return connect_flags::has_clean_session(connect_flags_);
+    bool clean_start() const {
+        return connect_flags::has_clean_start(connect_flags_);
     }
 
     std::uint16_t keep_alive() const {
@@ -442,7 +437,7 @@ public:
                     will_topic_,
                     will_message_,
                     opts,
-                    properties{}
+                    will_props_
                 };
         }
         else {

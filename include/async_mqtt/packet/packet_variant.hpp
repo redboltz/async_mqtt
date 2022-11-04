@@ -19,6 +19,9 @@
 #include <async_mqtt/packet/v3_1_1_suback.hpp>
 #include <async_mqtt/packet/v3_1_1_unsubscribe.hpp>
 #include <async_mqtt/packet/v3_1_1_unsuback.hpp>
+#include <async_mqtt/packet/v3_1_1_pingreq.hpp>
+#include <async_mqtt/packet/v3_1_1_pingresp.hpp>
+#include <async_mqtt/packet/v3_1_1_disconnect.hpp>
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/packet/v5_pubrel.hpp>
@@ -84,11 +87,9 @@ private:
         v3_1_1::basic_suback_packet<PacketIdBytes>,
         v3_1_1::basic_unsubscribe_packet<PacketIdBytes>,
         v3_1_1::basic_unsuback_packet<PacketIdBytes>,
-#if 0
         v3_1_1::pingreq_packet,
         v3_1_1::pingresp_packet,
         v3_1_1::disconnect_packet,
-#endif
         v5::connect_packet,
 #if 0
         v5::connack_packet,

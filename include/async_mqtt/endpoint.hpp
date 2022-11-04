@@ -386,6 +386,12 @@ private:
                         },
                         [&](v3_1_1::basic_unsuback_packet<PacketIdBytes> const& p) {
                         },
+                        [&](v3_1_1::pingreq_packet const& p) {
+                        },
+                        [&](v3_1_1::pingresp_packet const& p) {
+                        },
+                        [&](v3_1_1::disconnect_packet const& p) {
+                        },
                         [&](v5::connect_packet const& p) {
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes> const& p) {
