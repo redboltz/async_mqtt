@@ -37,4 +37,27 @@ BOOST_AUTO_TEST_CASE(v3_1_1_pubrec) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(v3_1_1_pubrec_pid4) {
+    auto p = am::v3_1_1::basic_pubrec_packet<4>(
+        0x12345678 // packet_id
+    );
+
+    BOOST_TEST(p.packet_id() == 0x12345678);
+
+    {
+        auto cbs = p.const_buffer_sequence();
+        char expected[] {
+            0x50,                               // fixed_header
+            0x04,                               // remaining_length
+            0x12, 0x34, 0x56, 0x78              // packet_id
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+
+        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        auto p = am::v3_1_1::basic_pubrec_packet<4>(buf);
+        BOOST_TEST(p.packet_id() == 0x12345678);
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

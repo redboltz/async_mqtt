@@ -10,6 +10,8 @@
 #include <utility>
 #include <numeric>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -34,7 +36,7 @@ public:
         : all_(all_.capacity())
     {
         all_[0] = static_cast<char>(make_fixed_header(control_packet_type::pubrel, 0b0010));
-        all_[1] = 0b0010;
+        all_[1] = boost::numeric_cast<char>(PacketIdBytes);
         endian_store(packet_id, &all_[2]);
     }
 
@@ -65,7 +67,7 @@ public:
         }
         all_.push_back(buf.front());
         buf.remove_prefix(1);
-        if (static_cast<std::uint8_t>(all_.back()) != 0b00000010) {
+        if (static_cast<std::uint8_t>(all_.back()) != PacketIdBytes) {
             throw make_error(
                 errc::bad_message,
                 "v3_1_1::pubrel_packet remaining_length is invalid"
