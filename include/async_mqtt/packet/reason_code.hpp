@@ -14,38 +14,6 @@
 
 namespace async_mqtt {
 
-enum class suback_return_code : std::uint8_t {
-    success_maximum_qos_0                  = 0x00,
-    success_maximum_qos_1                  = 0x01,
-    success_maximum_qos_2                  = 0x02,
-    failure                                = 0x80,
-};
-
-constexpr
-char const* suback_return_code_to_str(suback_return_code v) {
-    switch(v)
-    {
-    case suback_return_code::success_maximum_qos_0: return "success_maximum_qos_0";
-    case suback_return_code::success_maximum_qos_1: return "success_maximum_qos_1";
-    case suback_return_code::success_maximum_qos_2: return "success_maximum_qos_2";
-    case suback_return_code::failure:               return "failure";
-    default:                                        return "unknown_suback_return_code";
-    }
-}
-
-inline
-std::ostream& operator<<(std::ostream& os, suback_return_code val)
-{
-    os << suback_return_code_to_str(val);
-    return os;
-}
-
-constexpr suback_return_code qos_to_suback_return_code(qos q) {
-    return static_cast<suback_return_code>(q);
-}
-
-namespace v5 {
-
 enum class connect_reason_code : std::uint8_t {
     success                       = 0x00,
     unspecified_error             = 0x80,
@@ -415,7 +383,6 @@ std::ostream& operator<<(std::ostream& os, auth_reason_code val)
     return os;
 }
 
-} // v5
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PACKET_REASON_CODE_HPP

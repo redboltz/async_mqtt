@@ -24,6 +24,7 @@
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/will.hpp>
+#include <async_mqtt/packet/property_variant.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -44,8 +45,6 @@ public:
               static_cast<std::uint8_t>(make_fixed_header(control_packet_type::connect, 0b0000))
           },
           connect_flags_{0},
-          property_length_(async_mqtt::size(props)),
-          props_(force_move(props)),
           // protocol name length, protocol name, protocol level, connect flag, client id length, client id, keep alive
           remaining_length_(
               2 +                     // protocol name length
@@ -59,7 +58,9 @@ public:
           protocol_name_and_level_{0x00, 0x04, 'M', 'Q', 'T', 'T', 0x05},
           client_id_{force_move(client_id)},
           client_id_length_buf_(2),
-          keep_alive_buf_(2)
+          keep_alive_buf_(2),
+          property_length_(async_mqtt::size(props)),
+          props_{force_move(props)}
     {
         endian_store(keep_alive_sec, keep_alive_buf_.data());
         endian_store(boost::numeric_cast<std::uint16_t>(client_id_.size()), client_id_length_buf_.data());
@@ -225,6 +226,15 @@ public:
 
         // will
         if (connect_flags::has_will_flag(connect_flags_)) {
+            auto will_qos = connect_flags::will_qos(connect_flags_);
+            if (will_qos != qos::at_most_once &&
+                will_qos != qos::at_least_once &&
+                will_qos != qos::exactly_once) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet will_qos is invalid"
+                );
+            }
             // will_property
             will_props_ = make_properties(buf);
             // will_topic_length
@@ -268,7 +278,22 @@ public:
             will_message_ = buf.substr(0, will_message_length);
             buf.remove_prefix(will_message_length);
         }
-
+        else {
+            auto will_retain = connect_flags::will_retain(connect_flags_);
+            auto will_qos = connect_flags::will_qos(connect_flags_);
+            if (will_retain == pub::retain::yes) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet combination of will_flag and will_retain is invalid"
+                );
+            }
+            if (will_qos != qos::at_most_once) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet combination of will_flag and will_qos is invalid"
+                );
+            }
+        }
         // user_name
         if (connect_flags::has_user_name_flag(connect_flags_)) {
             // user_name_topic_name_length
@@ -449,10 +474,6 @@ private:
     std::uint8_t fixed_header_;
     char connect_flags_;
 
-    std::uint32_t property_length_;
-    static_vector<char, 4> property_length_buf_;
-    properties props_;
-
     std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 
@@ -474,6 +495,10 @@ private:
     static_vector<char, 2> password_length_buf_;
 
     static_vector<char, 2> keep_alive_buf_;
+
+    std::uint32_t property_length_;
+    static_vector<char, 4> property_length_buf_;
+    properties props_;
 };
 
 } // namespace async_mqtt::v5

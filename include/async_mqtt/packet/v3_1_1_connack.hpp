@@ -89,7 +89,12 @@ public:
             );
         }
         all_.push_back(buf.front());
-        buf.remove_prefix(1);
+        if (static_cast<std::uint8_t>(all_.back()) > 5) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connack_packet connect_return_code is invalid"
+            );
+        }
     }
 
     /**

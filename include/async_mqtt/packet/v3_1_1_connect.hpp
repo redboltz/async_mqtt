@@ -202,6 +202,15 @@ public:
 
         // will
         if (connect_flags::has_will_flag(connect_flags_)) {
+            auto will_qos = connect_flags::will_qos(connect_flags_);
+            if (will_qos != qos::at_most_once &&
+                will_qos != qos::at_least_once &&
+                will_qos != qos::exactly_once) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will_qos is invalid"
+                );
+            }
             // will_topic_length
             if (!insert_advance(buf, will_topic_length_buf_)) {
                 throw make_error(
@@ -243,7 +252,22 @@ public:
             will_message_ = buf.substr(0, will_message_length);
             buf.remove_prefix(will_message_length);
         }
-
+        else {
+            auto will_retain = connect_flags::will_retain(connect_flags_);
+            auto will_qos = connect_flags::will_qos(connect_flags_);
+            if (will_retain == pub::retain::yes) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet combination of will_flag and will_retain is invalid"
+                );
+            }
+            if (will_qos != qos::at_most_once) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet combination of will_flag and will_qos is invalid"
+                );
+            }
+        }
         // user_name
         if (connect_flags::has_user_name_flag(connect_flags_)) {
             // user_name_topic_name_length

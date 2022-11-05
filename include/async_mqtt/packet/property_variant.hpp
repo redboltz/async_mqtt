@@ -573,8 +573,6 @@ properties make_properties(buffer& buf) {
             );
         }
 
-        auto work_buf{buf};
-        work_buf.remove_suffix(work_buf.size() - *pl_opt);
         auto work_buf = buf.substr(0, *pl_opt);
         while (!work_buf.empty()) {
             if (auto pv = make_property_variant(work_buf)) {

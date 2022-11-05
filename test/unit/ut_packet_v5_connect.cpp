@@ -9,7 +9,6 @@
 
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/util/hex_dump.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
@@ -38,7 +37,6 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
             am::property::user_property("mykey", "myval")
         }
     };
-    std::cout << am::hex_dump(p) << std::endl;
 
     BOOST_TEST(p.clean_start());
     BOOST_TEST(p.keep_alive() == 0x1234);

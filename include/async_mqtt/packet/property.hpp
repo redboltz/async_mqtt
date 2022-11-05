@@ -190,7 +190,7 @@ struct binary_property : private boost::totally_ordered<binary_property> {
 struct string_property : binary_property {
     string_property(property::id id, buffer buf)
         :binary_property{id, force_move(buf)} {
-#if 0 // TDB
+#if 0 // TBD
         auto r = utf8string::validate_contents(this->val());
         if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
 #endif
