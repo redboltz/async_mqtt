@@ -41,11 +41,22 @@ public:
           property_length_(async_mqtt::size(props)),
           props_(force_move(props))
     {
+        using namespace std::literals;
         endian_store(packet_id, packet_id_.data());
 
         auto pb = val_to_variable_bytes(property_length_);
         for (auto e : pb) {
             property_length_buf_.push_back(e);
+        }
+
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::pubrel, id)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::pubrel_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
         }
 
         remaining_length_ += property_length_buf_.size() + property_length_;
@@ -94,7 +105,7 @@ public:
         if (buf.size() != property_length_) {
             throw make_error(errc::bad_message, "v5::pubrel_packet props don't match their length");
         }
-        props_ = make_properties(buf);
+        props_ = make_properties(buf, property_location::pubrel);
     }
 
     /**

@@ -67,6 +67,7 @@ public:
                  : 0)
           )
     {
+        using namespace std::literals;
         topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
         endian_store(
             boost::numeric_cast<std::uint16_t>(topic_name.size()),
@@ -88,6 +89,16 @@ public:
         auto pb = val_to_variable_bytes(property_length_);
         for (auto e : pb) {
             property_length_buf_.push_back(e);
+        }
+
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::publish, id)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::publish_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
         }
 
         remaining_length_ += property_length_buf_.size() + property_length_;
@@ -182,7 +193,7 @@ public:
                 );
             }
             auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf);
+            props_ = make_properties(prop_buf, property_location::publish);
             buf.remove_prefix(property_length_);
         }
         else {

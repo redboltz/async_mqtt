@@ -15,15 +15,17 @@ BOOST_AUTO_TEST_SUITE(ut_packet)
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_connack) {
+    auto props = am::properties{
+        am::property::session_expiry_interval(0x0fffffff)
+    };
     auto p = am::v5::connack_packet{
         true,   // session_present
         am::connect_reason_code::not_authorized,
-        am::properties{
-            am::property::session_expiry_interval(0x0fffffff)
-        }
+        props
     };
     BOOST_TEST(p.session_present());
     BOOST_TEST(p.code() == am::connect_reason_code::not_authorized);
+    BOOST_TEST(p.props() == props);
 
     {
         auto cbs = p.const_buffer_sequence();
@@ -42,6 +44,7 @@ BOOST_AUTO_TEST_CASE(v5_connack) {
         auto p = am::v5::connack_packet(buf);
         BOOST_TEST(p.session_present());
         BOOST_TEST(p.code() == am::connect_reason_code::not_authorized);
+        BOOST_TEST(p.props() == props);
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);

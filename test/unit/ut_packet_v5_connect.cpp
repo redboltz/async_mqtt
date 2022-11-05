@@ -25,6 +25,11 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         }
     };
 
+    auto props = am::properties{
+        am::property::session_expiry_interval(0x0fffffff),
+        am::property::user_property("mykey", "myval")
+    };
+
     auto p = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -32,10 +37,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         w,
         am::allocate_buffer("user1"),
         am::allocate_buffer("pass1"),
-        am::properties{
-            am::property::session_expiry_interval(0x0fffffff),
-            am::property::user_property("mykey", "myval")
-        }
+        props
     };
 
     BOOST_TEST(p.clean_start());
@@ -47,6 +49,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     BOOST_TEST(*p.user_name() == "user1");
     BOOST_TEST(p.password().has_value());
     BOOST_TEST(*p.password() == "pass1");
+    BOOST_TEST(p.props() == props);
     {
         auto cbs = p.const_buffer_sequence();
         char expected[] {
@@ -90,6 +93,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(*p.user_name() == "user1");
         BOOST_TEST(p.password().has_value());
         BOOST_TEST(*p.password() == "pass1");
+        BOOST_TEST(p.props() == props);
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);

@@ -62,6 +62,7 @@ public:
           property_length_(async_mqtt::size(props)),
           props_{force_move(props)}
     {
+        using namespace std::literals;
         endian_store(keep_alive_sec, keep_alive_buf_.data());
         endian_store(boost::numeric_cast<std::uint16_t>(client_id_.size()), client_id_length_buf_.data());
 
@@ -90,6 +91,16 @@ public:
             property_length_buf_.push_back(e);
         }
 
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::connect, id)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
+        }
+
         remaining_length_ += property_length_buf_.size() + property_length_;
 
         if (w) {
@@ -115,6 +126,16 @@ public:
             auto pb = val_to_variable_bytes(will_property_length_);
             for (auto e : pb) {
                 will_property_length_buf_.push_back(e);
+            }
+
+            for (auto const& prop : will_props_) {
+                auto id = prop.id();
+                if (!validate_property(property_location::will, id)) {
+                    throw make_error(
+                        errc::bad_message,
+                        "v5::connect_packet will_property "s + id_to_str(id) + " is not allowed"
+                    );
+                }
             }
 
             remaining_length_ +=
@@ -212,7 +233,7 @@ public:
                 );
             }
             auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf);
+            props_ = make_properties(prop_buf, property_location::connect);
             buf.remove_prefix(property_length_);
         }
         else {
@@ -270,7 +291,7 @@ public:
                     );
                 }
                 auto prop_buf = buf.substr(0, will_property_length_);
-                will_props_ = make_properties(prop_buf);
+                will_props_ = make_properties(prop_buf, property_location::will);
                 buf.remove_prefix(will_property_length_);
             }
             else {
@@ -511,6 +532,10 @@ public:
         else {
             return nullopt;
         }
+    }
+
+    properties const& props() const {
+        return props_;
     }
 
 private:

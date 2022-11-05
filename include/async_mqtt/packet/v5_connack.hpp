@@ -47,9 +47,20 @@ public:
           property_length_{async_mqtt::size(props)},
           props_{force_move(props)}
     {
+        using namespace std::literals;
         auto pb = val_to_variable_bytes(property_length_);
         for (auto e : pb) {
             property_length_buf_.push_back(e);
+        }
+
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::connack, id)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connack_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
         }
 
         remaining_length_ += property_length_buf_.size() + property_length_;
@@ -152,7 +163,7 @@ public:
                 );
             }
             auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf);
+            props_ = make_properties(prop_buf, property_location::connack);
             buf.remove_prefix(property_length_);
         }
         else {
@@ -221,6 +232,10 @@ public:
 
     connect_reason_code code() const {
         return reason_code_;
+    }
+
+    properties const& props() const {
+        return props_;
     }
 
 private:

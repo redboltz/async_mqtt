@@ -9,6 +9,7 @@
 
 #include <async_mqtt/util/variant.hpp>
 #include <async_mqtt/packet/property.hpp>
+#include <async_mqtt/packet/validate_property.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
@@ -41,6 +42,20 @@ public:
                 std::forward<Func>(func),
                 var_
             );
+    }
+
+    property::id id() const {
+        return visit(
+            overload {
+                [] (auto const& p) {
+                    return p.id();
+                },
+                [] (system_error const&) {
+                    BOOST_ASSERT(false);
+                    return property::id(0);
+                }
+            }
+        );
     }
 
     std::size_t num_of_const_buffer_sequence() const {
@@ -155,7 +170,7 @@ inline std::ostream& operator<<(std::ostream& o, properties const& props) {
 }
 
 inline
-property_variant make_property_variant(buffer& buf) {
+property_variant make_property_variant(buffer& buf, property_location loc) {
     if (buf.empty()) {
         return make_error(
             errc::bad_message,
@@ -164,7 +179,14 @@ property_variant make_property_variant(buffer& buf) {
     }
 
     try {
+        using namespace std::literals;
         auto id = static_cast<property::id>(buf.front());
+        if (!validate_property(loc, id)) {
+            return make_error(
+                errc::bad_message,
+                "property "s + property::id_to_str(id) + " is not allowed in " + property_location_to_str(loc)
+            );
+        }
         buf.remove_prefix(1);
         switch (id) {
         case property::id::payload_format_indicator: {
@@ -561,10 +583,10 @@ property_variant make_property_variant(buffer& buf) {
 }
 
 inline
-properties make_properties(buffer buf) {
+properties make_properties(buffer buf, property_location loc) {
     properties props;
     while (!buf.empty()) {
-        if (auto pv = make_property_variant(buf)) {
+        if (auto pv = make_property_variant(buf, loc)) {
             props.push_back(force_move(pv));
         }
         else {

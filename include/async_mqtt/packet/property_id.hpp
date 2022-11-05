@@ -45,7 +45,7 @@ enum class id {
 };
 
 constexpr char const* id_to_str(id v) {
-    switch(v) {
+    switch (v) {
     case id::payload_format_indicator:           return "payload_format_indicator";
     case id::message_expiry_interval:            return "message_expiry_interval";
     case id::content_type:                       return "content_type";
