@@ -200,7 +200,27 @@ public:
         }
 
         // property
-        props_ = make_properties(buf);
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::distance(buf.begin(), it));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::connect_packet property_length is invalid"
+            );
+        }
 
         // client_id_length
         if (!insert_advance(buf, client_id_length_buf_)) {
@@ -226,6 +246,7 @@ public:
 
         // will
         if (connect_flags::has_will_flag(connect_flags_)) {
+            // will_qos
             auto will_qos = connect_flags::will_qos(connect_flags_);
             if (will_qos != qos::at_most_once &&
                 will_qos != qos::at_least_once &&
@@ -235,8 +256,30 @@ public:
                     "v5::connect_packet will_qos is invalid"
                 );
             }
+
             // will_property
-            will_props_ = make_properties(buf);
+            auto it = buf.begin();
+            if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+                will_property_length_ = *pl_opt;
+                std::copy(buf.begin(), it, std::back_inserter(will_property_length_buf_));
+                buf.remove_prefix(std::distance(buf.begin(), it));
+                if (buf.size() < will_property_length_) {
+                    throw make_error(
+                        errc::bad_message,
+                        "v5::connect_packet properties_don't match its length"
+                    );
+                }
+                auto prop_buf = buf.substr(0, will_property_length_);
+                will_props_ = make_properties(prop_buf);
+                buf.remove_prefix(will_property_length_);
+            }
+            else {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connect_packet property_length is invalid"
+                );
+            }
+
             // will_topic_length
             if (!insert_advance(buf, will_topic_length_buf_)) {
                 throw make_error(

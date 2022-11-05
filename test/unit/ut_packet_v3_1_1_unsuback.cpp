@@ -34,6 +34,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_unsuback) {
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
         auto p = am::v3_1_1::unsuback_packet(buf);
         BOOST_TEST(p.packet_id() == 0x1234);
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 
@@ -57,6 +61,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_unsuback_pid4) {
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
         auto p = am::v3_1_1::basic_unsuback_packet<4>(buf);
         BOOST_TEST(p.packet_id() == 0x12345678);
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 

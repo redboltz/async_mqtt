@@ -42,6 +42,11 @@ BOOST_AUTO_TEST_CASE(v5_connack) {
         auto p = am::v5::connack_packet(buf);
         BOOST_TEST(p.session_present());
         BOOST_TEST(p.code() == am::connect_reason_code::not_authorized);
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
     }
 }
 

@@ -115,7 +115,6 @@ public:
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        auto qos_value = qos();
         buf.remove_prefix(1);
 
         // remaining_length
@@ -149,7 +148,7 @@ public:
         buf.remove_prefix(topic_name_length);
 
         // packet_id
-        switch (qos_value) {
+        switch (pub::get_qos(fixed_header_)) {
         case qos::at_most_once:
             endian_store(packet_id_t{0}, packet_id_.data());
             break;
@@ -170,17 +169,28 @@ public:
             break;
         };
 
-        // property_length
-        if (auto vl_opt = insert_advance_variable_length(buf, property_length_buf_)) {
-            property_length_ = *vl_opt;
+        // property
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::distance(buf.begin(), it));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::publish_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf);
+            buf.remove_prefix(property_length_);
         }
         else {
-            throw make_error(errc::bad_message, "v5::publish_packet property length is invalid");
+            throw make_error(
+                errc::bad_message,
+                "v5::publish_packet property_length is invalid"
+            );
         }
-
-        // property
-        props_ = make_properties(buf);
-        buf.remove_prefix(property_length_);
 
         // payload
         if (!buf.empty()) {

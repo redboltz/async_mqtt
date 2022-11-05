@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_pingresp) {
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
         auto p = am::v3_1_1::pingresp_packet(buf);
+
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));

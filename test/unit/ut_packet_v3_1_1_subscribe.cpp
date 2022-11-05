@@ -45,6 +45,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_subscribe) {
         auto p = am::v3_1_1::subscribe_packet(buf);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 
@@ -79,6 +83,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_subscribe_pid4) {
         auto p = am::v3_1_1::basic_subscribe_packet<4>(buf);
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 

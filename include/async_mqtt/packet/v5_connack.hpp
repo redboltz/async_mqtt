@@ -138,8 +138,30 @@ public:
             );
             break;
         }
+
         // property
-        props_ = make_properties(buf);
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::distance(buf.begin(), it));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::connack_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::connack_packet property_length is invalid"
+            );
+        }
+
         if (!buf.empty()) {
             throw make_error(
                 errc::bad_message,

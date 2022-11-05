@@ -74,6 +74,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_connect) {
         BOOST_TEST(*p.user_name() == "user1");
         BOOST_TEST(p.password().has_value());
         BOOST_TEST(*p.password() == "pass1");
+
+        auto cbs2 = p.const_buffer_sequence();
+        auto [b2, e2] = am::make_packet_range(cbs2);
+        BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
 }
 
