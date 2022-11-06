@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
+#if !defined(ASYNC_MQTT_PACKET_V5_SUBSCRIBE_HPP)
+#define ASYNC_MQTT_PACKET_V5_SUBSCRIBE_HPP
 
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -19,10 +19,11 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
-#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/packet/reason_code.hpp>
+#include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
-namespace async_mqtt::v3_1_1 {
+namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
@@ -32,12 +33,16 @@ public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     basic_subscribe_packet(
         packet_id_t packet_id,
-        std::vector<topic_subopts> params
+        std::vector<topic_subopts> params,
+        properties props
     )
         : fixed_header_{make_fixed_header(control_packet_type::subscribe, 0b0010)},
           entries_{force_move(params)},
-          remaining_length_{PacketIdBytes}
+          remaining_length_{PacketIdBytes},
+          property_length_(async_mqtt::size(props)),
+          props_{force_move(props)}
     {
+        using namespace std::literals;
         topic_length_buf_entries_.reserve(entries_.size());
         for (auto const& e : entries_) {
             topic_length_buf_entries_.push_back(
@@ -49,12 +54,29 @@ public:
 
         endian_store(packet_id, packet_id_.data());
 
-        for (auto const& e : entries_) {
-            // reserved bits check
-            if (static_cast<std::uint8_t>(e.opts()) & 0b11111100) {
+        auto pb = val_to_variable_bytes(property_length_);
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::subscribe, id)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet subopts is invalid"
+                    "v5::subscribe_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
+        }
+
+        remaining_length_ += property_length_buf_.size() + property_length_;
+
+        for (auto const& e : entries_) {
+            // reserved bits check
+            if (static_cast<std::uint8_t>(e.opts()) & 0b11000000) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::subscribe_packet subopts is invalid"
                 );
             }
             switch (e.opts().qos()) {
@@ -65,7 +87,7 @@ public:
             default:
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet qos is invalid"
+                    "v5::subscribe_packet qos is invalid"
                 );
                 break;
             }
@@ -74,7 +96,7 @@ public:
             if (size > 0xffff) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet length of topic is invalid"
+                    "v5::subscribe_packet length of topic is invalid"
                 );
             }
             remaining_length_ +=
@@ -96,7 +118,7 @@ public:
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::subscribe_packet fixed_header doesn't exist"
+                "v5::subscribe_packet fixed_header doesn't exist"
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
@@ -105,7 +127,7 @@ public:
         if (!cpt_opt || *cpt_opt != control_packet_type::subscribe) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::subscribe_packet fixed_header is invalid"
+                "v5::subscribe_packet fixed_header is invalid"
             );
         }
 
@@ -114,22 +136,45 @@ public:
             remaining_length_ = *vl_opt;
         }
         else {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet remaining length is invalid");
+            throw make_error(errc::bad_message, "v5::subscribe_packet remaining length is invalid");
         }
         if (remaining_length_ != buf.size()) {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet remaining length doesn't match buf.size()");
+            throw make_error(errc::bad_message, "v5::subscribe_packet remaining length doesn't match buf.size()");
         }
 
         // packet_id
         if (!copy_advance(buf, packet_id_)) {
             throw make_error(
                 errc::bad_message,
-                "v3_1_1::subscribe_packet packet_id doesn't exist"
+                "v5::subscribe_packet packet_id doesn't exist"
+            );
+        }
+
+        // property
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::distance(buf.begin(), it));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::subscribe_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf, property_location::subscribe);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::subscribe_packet property_length is invalid"
             );
         }
 
         if (remaining_length_ == 0) {
-            throw make_error(errc::bad_message, "v3_1_1::subscribe_packet doesn't have entries");
+            throw make_error(errc::bad_message, "v5::subscribe_packet doesn't have entries");
         }
 
         while (!buf.empty()) {
@@ -138,7 +183,7 @@ public:
             if (!insert_advance(buf, topic_length_buf)) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet length of topic is invalid"
+                    "v5::subscribe_packet length of topic is invalid"
                 );
             }
             auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
@@ -148,7 +193,7 @@ public:
             if (buf.size() < topic_length) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet topic doesn't match its length"
+                    "v5::subscribe_packet topic doesn't match its length"
                 );
             }
             auto topic = buf.substr(0, topic_length);
@@ -158,14 +203,15 @@ public:
             if (buf.empty()) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet subscribe options  doesn't exist"
+                    "v5::subscribe_packet subscribe options  doesn't exist"
                 );
             }
             auto opts = static_cast<sub::opts>(buf.front());
-            if (static_cast<std::uint8_t>(opts) & 0b11111100) {
+            // reserved bits check
+            if (static_cast<std::uint8_t>(opts) & 0b11000000) {
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet subopts is invalid"
+                    "v5::subscribe_packet subopts is invalid"
                 );
             }
             switch (opts.qos()) {
@@ -176,7 +222,7 @@ public:
             default:
                 throw make_error(
                     errc::bad_message,
-                    "v3_1_1::subscribe_packet qos is invalid"
+                    "v5::subscribe_packet qos is invalid"
                 );
                 break;
             }
@@ -200,7 +246,11 @@ public:
 
         ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
 
-        BOOST_ASSERT(entries_.size() == topic_length_buf_entries_.size());
+        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
+        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
+        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
+
+            BOOST_ASSERT(entries_.size() == topic_length_buf_entries_.size());
         auto it = topic_length_buf_entries_.begin();
         for (auto const& e : entries_) {
             ret.emplace_back(as::buffer(it->data(), it->size()));
@@ -232,7 +282,13 @@ public:
             1 +                   // fixed header
             1 +                   // remaining length
             1 +                   // packet id
-            entries_.size() * 3;  // topic name length, topic name, qos
+            [&] () -> std::size_t {
+                if (property_length_buf_.size() == 0) return 0;
+                return
+                    1 +                   // property length
+                    async_mqtt::num_of_const_buffer_sequence(props_);
+            }() +
+            entries_.size() * 3;  // topic name length, topic name, opts
     }
 
     packet_id_t packet_id() const {
@@ -243,6 +299,10 @@ public:
         return entries_;
     }
 
+    properties const& props() const {
+        return props_;
+    }
+
 private:
     std::uint8_t fixed_header_;
     std::vector<static_vector<char, 2>> topic_length_buf_entries_;
@@ -250,10 +310,14 @@ private:
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
     std::uint32_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
+
+    std::uint32_t property_length_ = 0;
+    static_vector<char, 4> property_length_buf_;
+    properties props_;
 };
 
 using subscribe_packet = basic_subscribe_packet<2>;
 
-} // namespace async_mqtt::v3_1_1
+} // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
+#endif // ASYNC_MQTT_PACKET_V5_SUBSCRIBE_HPP

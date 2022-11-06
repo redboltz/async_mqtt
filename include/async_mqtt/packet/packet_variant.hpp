@@ -23,8 +23,13 @@
 #include <async_mqtt/packet/v3_1_1_pingresp.hpp>
 #include <async_mqtt/packet/v3_1_1_disconnect.hpp>
 #include <async_mqtt/packet/v5_connect.hpp>
+#include <async_mqtt/packet/v5_connack.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
+#include <async_mqtt/packet/v5_puback.hpp>
+#include <async_mqtt/packet/v5_pubrec.hpp>
 #include <async_mqtt/packet/v5_pubrel.hpp>
+#include <async_mqtt/packet/v5_pubcomp.hpp>
+#include <async_mqtt/packet/v5_subscribe.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
@@ -91,18 +96,14 @@ private:
         v3_1_1::pingresp_packet,
         v3_1_1::disconnect_packet,
         v5::connect_packet,
-#if 0
         v5::connack_packet,
-#endif
         v5::basic_publish_packet<PacketIdBytes>,
-#if 0
         v5::basic_puback_packet<PacketIdBytes>,
         v5::basic_pubrec_packet<PacketIdBytes>,
-#endif
-        v5::basic_pubrel_packet<PacketIdBytes>   // add comma later
-#if 0
+        v5::basic_pubrel_packet<PacketIdBytes>,
         v5::basic_pubcomp_packet<PacketIdBytes>,
-        v5::basic_subscribe_packet<PacketIdBytes>,
+        v5::basic_subscribe_packet<PacketIdBytes>
+#if 0
         v5::basic_suback_packet<PacketIdBytes>,
         v5::basic_unsubscribe_packet<PacketIdBytes>,
         v5::basic_unsuback_packet<PacketIdBytes>,

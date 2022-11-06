@@ -394,6 +394,8 @@ private:
                         },
                         [&](v5::connect_packet const& p) {
                         },
+                        [&](v5::connack_packet const& p) {
+                        },
                         [&](v5::basic_publish_packet<PacketIdBytes> const& p) {
                             // if auto
                             //    if qos 1
@@ -401,7 +403,15 @@ private:
                             //    if qos2
                             //       send pubrec
                         },
+                        [&](v5::basic_puback_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::basic_pubrec_packet<PacketIdBytes> const& p) {
+                        },
                         [&](v5::basic_pubrel_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::basic_subscribe_packet<PacketIdBytes> const& p) {
                         },
                         [&](system_error const& e) {
                         }
