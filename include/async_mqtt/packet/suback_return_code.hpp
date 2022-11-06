@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <ostream>
 
+#include <async_mqtt/packet/qos.hpp>
 
 namespace async_mqtt {
 
