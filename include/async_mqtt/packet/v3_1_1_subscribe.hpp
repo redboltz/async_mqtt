@@ -50,6 +50,19 @@ public:
         endian_store(packet_id, packet_id_.data());
 
         for (auto const& e : entries_) {
+            switch (e.opts().qos()) {
+            case qos::at_most_once:
+            case qos::at_least_once:
+            case qos::exactly_once:
+                break;
+            default:
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::subscribe_packet qos is invalid"
+                );
+                break;
+            }
+
             auto size = e.topic().size();
             if (size > 0xffff) {
                 throw make_error(
@@ -142,6 +155,18 @@ public:
                 );
             }
             auto opts = static_cast<sub::opts>(buf.front());
+            switch (opts.qos()) {
+            case qos::at_most_once:
+            case qos::at_least_once:
+            case qos::exactly_once:
+                break;
+            default:
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::subscribe_packet qos is invalid"
+                );
+                break;
+            }
             entries_.emplace_back(force_move(topic), opts);
             buf.remove_prefix(1);
         }

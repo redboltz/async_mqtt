@@ -83,12 +83,20 @@ public:
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
         }
-        if (pubopts.qos() == qos::at_least_once ||
-            pubopts.qos() == qos::exactly_once) {
-            endian_store(packet_id, packet_id_.data());
-        }
-        else {
+        switch (pubopts.qos()) {
+        case qos::at_most_once:
             endian_store(0, packet_id_.data());
+            break;
+        case qos::at_least_once:
+        case qos::exactly_once:
+            endian_store(packet_id, packet_id_.data());
+            break;
+        default:
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::publish_packet qos is invalid"
+            );
+            break;
         }
     }
 

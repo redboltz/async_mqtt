@@ -24,6 +24,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_connect.cpp
     ut_packet_v5_connack.cpp
     ut_packet_v5_publish.cpp
+    ut_packet_v5_pubrel.cpp
     ut_system_error.cpp
 )
 
