@@ -27,6 +27,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_puback.cpp
     ut_packet_v5_pubrec.cpp
     ut_packet_v5_pubrel.cpp
+    ut_packet_v5_pubcomp.cpp
     ut_system_error.cpp
 )
 
