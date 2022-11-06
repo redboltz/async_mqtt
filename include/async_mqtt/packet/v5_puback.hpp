@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V5_PUBREL_HPP)
-#define ASYNC_MQTT_PACKET_V5_PUBREL_HPP
+#if !defined(ASYNC_MQTT_PACKET_V5_PUBACK_HPP)
+#define ASYNC_MQTT_PACKET_V5_PUBACK_HPP
 
 #include <utility>
 #include <numeric>
@@ -31,45 +31,45 @@ namespace async_mqtt::v5 {
 namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
-class basic_pubrel_packet {
+class basic_puback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
-    basic_pubrel_packet(
+    basic_puback_packet(
         packet_id_t packet_id,
-        pubrel_reason_code reason_code,
+        puback_reason_code reason_code,
         properties props
-    ) : basic_pubrel_packet{
+    ) : basic_puback_packet{
             packet_id,
-            optional<pubrel_reason_code>(reason_code),
+            optional<puback_reason_code>(reason_code),
             force_move(props)
         }
     {}
 
-    basic_pubrel_packet(
+    basic_puback_packet(
         packet_id_t packet_id
-    ) : basic_pubrel_packet{
+    ) : basic_puback_packet{
             packet_id,
             nullopt,
             properties{}
         }
     {}
 
-    basic_pubrel_packet(
+    basic_puback_packet(
         packet_id_t packet_id,
-        pubrel_reason_code reason_code
-    ) : basic_pubrel_packet{
+        puback_reason_code reason_code
+    ) : basic_puback_packet{
             packet_id,
-            optional<pubrel_reason_code>(reason_code),
+            optional<puback_reason_code>(reason_code),
             properties{}
         }
     {}
 
-    basic_pubrel_packet(buffer buf) {
+    basic_puback_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v5::pubrel_packet fixed_header doesn't exist"
+                "v5::puback_packet fixed_header doesn't exist"
             );
         }
         fixed_header_ = static_cast<std::uint8_t>(buf.front());
@@ -80,42 +80,49 @@ public:
             remaining_length_ = *vl_opt;
         }
         else {
-            throw make_error(errc::bad_message, "v5::pubrel_packet remaining length is invalid");
+            throw make_error(errc::bad_message, "v5::puback_packet remaining length is invalid");
         }
 
         // packet_id
         if (!insert_advance(buf, packet_id_)) {
             throw make_error(
                 errc::bad_message,
-                "v5::pubrel_packet packet_id doesn't exist"
+                "v5::puback_packet packet_id doesn't exist"
             );
         }
 
         if (remaining_length_ == 2) {
             if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::pubrel_packet remaining length is invalid");
+                throw make_error(errc::bad_message, "v5::puback_packet remaining length is invalid");
             }
             return;
         }
 
         // connect_reason_code
-        reason_code_.emplace(static_cast<pubrel_reason_code>(buf.front()));
+        reason_code_.emplace(static_cast<puback_reason_code>(buf.front()));
         buf.remove_prefix(1);
         switch (*reason_code_) {
-        case pubrel_reason_code::success:
-        case pubrel_reason_code::packet_identifier_not_found:
+        case puback_reason_code::success:
+        case puback_reason_code::no_matching_subscribers:
+        case puback_reason_code::unspecified_error:
+        case puback_reason_code::implementation_specific_error:
+        case puback_reason_code::not_authorized:
+        case puback_reason_code::topic_name_invalid:
+        case puback_reason_code::packet_identifier_in_use:
+        case puback_reason_code::quota_exceeded:
+        case puback_reason_code::payload_format_invalid:
             break;
         default:
             throw make_error(
                 errc::bad_message,
-                "v5::pubrel_packet connect reason_code is invalid"
+                "v5::puback_packet connect reason_code is invalid"
             );
             break;
         }
 
         if (remaining_length_ == 3) {
             if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::pubrel_packet remaining length is invalid");
+                throw make_error(errc::bad_message, "v5::puback_packet remaining length is invalid");
             }
             return;
         }
@@ -129,24 +136,24 @@ public:
             if (buf.size() < property_length_) {
                 throw make_error(
                     errc::bad_message,
-                    "v5::pubrel_packet properties_don't match its length"
+                    "v5::puback_packet properties_don't match its length"
                 );
             }
             auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf, property_location::pubrel);
+            props_ = make_properties(prop_buf, property_location::puback);
             buf.remove_prefix(property_length_);
         }
         else {
             throw make_error(
                 errc::bad_message,
-                "v5::pubrel_packet property_length is invalid"
+                "v5::puback_packet property_length is invalid"
             );
         }
 
         if (!buf.empty()) {
             throw make_error(
                 errc::bad_message,
-                "v5::pubrel_packet properties don't match its length"
+                "v5::puback_packet properties don't match its length"
             );
         }
     }
@@ -210,9 +217,9 @@ public:
         return endian_load<packet_id_t>(packet_id_.data());
     }
 
-    pubrel_reason_code code() const {
+    puback_reason_code code() const {
         if (reason_code_) return *reason_code_;
-        return pubrel_reason_code::success;
+        return puback_reason_code::success;
     }
 
     properties const& props() const {
@@ -220,13 +227,13 @@ public:
     }
 
 private:
-    basic_pubrel_packet(
+    basic_puback_packet(
         packet_id_t packet_id,
-        optional<pubrel_reason_code> reason_code,
+        optional<puback_reason_code> reason_code,
         properties props
     )
         : fixed_header_{
-              static_cast<char>(make_fixed_header(control_packet_type::pubrel, 0b0010))
+              static_cast<char>(make_fixed_header(control_packet_type::puback, 0b0000))
           },
           remaining_length_{
               PacketIdBytes
@@ -260,10 +267,10 @@ private:
 
         for (auto const& prop : props_) {
             auto id = prop.id();
-            if (!validate_property(property_location::pubrel, id)) {
+            if (!validate_property(property_location::puback, id)) {
                 throw make_error(
                     errc::bad_message,
-                    "v5::pubrel_packet property "s + id_to_str(id) + " is not allowed"
+                    "v5::puback_packet property "s + id_to_str(id) + " is not allowed"
                 );
             }
         }
@@ -277,15 +284,15 @@ private:
     static_vector<char, 4> remaining_length_buf_;
     static_vector<char, PacketIdBytes> packet_id_;
 
-    optional<pubrel_reason_code> reason_code_;
+    optional<puback_reason_code> reason_code_;
 
     std::uint32_t property_length_ = 0;
     static_vector<char, 4> property_length_buf_;
     properties props_;
 };
 
-using pubrel_packet = basic_pubrel_packet<2>;
+using puback_packet = basic_puback_packet<2>;
 
 } // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_V5_PUBREL_HPP
+#endif // ASYNC_MQTT_PACKET_V5_PUBACK_HPP
