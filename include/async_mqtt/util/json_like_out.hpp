@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_UTIL_JSON_LIKE_OUT_HPP
 
 #include <ostream>
+#include <iomanip>
 
 #include <async_mqtt/buffer.hpp>
 
