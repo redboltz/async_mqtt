@@ -154,6 +154,32 @@ constexpr bool is_server_sendable() {
         std::is_same_v<v5::auth_packet, Packet>;
 }
 
+template <typename Packet>
+constexpr bool is_connect() {
+    return
+        std::is_same_v<v3_1_1::connect_packet, Packet> ||
+        std::is_same_v<v5::connect_packet, Packet>;
+}
+
+template <typename Packet>
+constexpr bool is_publish() {
+    return
+        is_instance_of<v3_1_1::basic_publish_packet, Packet>::value ||
+        is_instance_of<v5::basic_publish_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_pubrel() {
+    return
+        is_instance_of<v3_1_1::basic_pubrel_packet, Packet>::value ||
+        is_instance_of<v5::basic_pubrel_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_storable() {
+    return is_publish<Packet>() || is_pubrel<Packet>();
+}
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PACKET_PACKET_TRAITS_HPP

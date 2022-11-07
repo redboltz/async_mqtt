@@ -12,6 +12,8 @@
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
+#include <async_mqtt/topic_alias_send.hpp>
+#include <async_mqtt/topic_alias_recv.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
@@ -135,7 +137,7 @@ public:
         typename Packet,
         typename CompletionToken,
         typename std::enable_if_t<
-            std::is_invocable<CompletionToken, error_code>::value
+            std::is_invocable<CompletionToken, system_error>::value
         >* = nullptr
     >
     auto send(
@@ -150,7 +152,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(error_code)
+                void(system_error)
             >(
                 send_impl<Packet>{
                     *this,
@@ -284,7 +286,57 @@ private:
             case write:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
-                ep.store_.add(packet);
+                // qos1/2 and session_present
+                if constexpr(is_storable<Packet>()) {
+                    if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                        if (packet.topic().empty()) {
+                            // re-generate topic for storing from topic_alias
+                            optional<topic_alias_t> ta_opt;
+                            for (auto const& prop : packet.props()) {
+                                prop.visit(
+                                    overload {
+                                        [&](property::topic_alias const& p) {
+                                            ta_opt.emplace(p.val());
+                                        },
+                                        [](auto const&){}
+                                    }
+                                );
+                            }
+                            if (!ta_opt) {
+                                self.complete(
+                                    make_error(
+                                        errc::bad_message,
+                                        "topic is empty but topic_alias not set"
+                                    )
+                                );
+                                return;
+                            }
+                            if (!ep.topic_alias_send_) {
+                                self.complete(
+                                    make_error(
+                                        errc::bad_message,
+                                        "topic is empty but topic_alias_maximum is 0"
+                                    )
+                                );
+                                return;
+                            }
+                            auto topic = ep.topic_alias_send_->find(*ta_opt);
+                            if (topic.empty()) {
+                                self.complete(
+                                    make_error(
+                                        errc::bad_message,
+                                        "topic is empty but topic_alias is not registered"
+                                    )
+                                );
+                                return;
+                            }
+                        }
+                        else {
+                            // auto applying topic_alias
+                        }
+                    }
+                    ep.store_.add(packet);
+                }
                 ep.stream_.write_packet(
                     force_move(packet),
                     force_move(self)
@@ -340,13 +392,13 @@ private:
                                 case qos::at_least_once: {
                                     ep.send(
                                         v3_1_1::basic_puback_packet<PacketIdBytes>(p.packet_id()),
-                                        [](error_code const&){}
+                                        [](system_error const&){}
                                     );
                                 } break;
                                 case qos::exactly_once: {
                                     ep.send(
                                         v3_1_1::basic_pubrec_packet<PacketIdBytes>(p.packet_id()),
-                                        [](error_code const&){}
+                                        [](system_error const&){}
                                     );
                                 } break;
                                 default:
@@ -359,10 +411,11 @@ private:
                             ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::basic_pubrec_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v3_1_1_pubrec, p.packet_id());
                             if (ep.auto_pub_response_) {
                                 ep.send(
                                     v3_1_1::basic_pubrel_packet<PacketIdBytes>(p.packet_id()),
-                                    [](error_code const&){}
+                                    [](system_error const&){}
                                 );
                             }
                         },
@@ -370,7 +423,7 @@ private:
                             if (ep.auto_pub_response_) {
                                 ep.send(
                                     v3_1_1::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
-                                    [](error_code const&){}
+                                    [](system_error const&){}
                                 );
                             }
                         },
@@ -395,21 +448,70 @@ private:
                         [&](v5::connect_packet const& p) {
                         },
                         [&](v5::connack_packet const& p) {
+                            for (auto const& prop : p.props()) {
+                                prop.visit(
+                                    overload {
+                                        [&](property::topic_alias_maximum const& p) {
+                                            if (p.val() > 0) {
+                                                ep.topic_alias_send_.emplace(p.val());
+                                            }
+                                        },
+                                        [](auto const&) {
+                                        }
+                                    }
+                                );
+                            }
+                            if (p.session_present()) {
+                            }
+                            else {
+                                ep.pid_man_.clear();
+                                ep.store_.clear();
+                            }
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes> const& p) {
-                            // if auto
-                            //    if qos 1
-                            //       send puback
-                            //    if qos2
-                            //       send pubrec
+                            if (ep.auto_pub_response_) {
+                                switch (p.opts().qos()) {
+                                case qos::at_least_once: {
+                                    ep.send(
+                                        v5::basic_puback_packet<PacketIdBytes>(p.packet_id()),
+                                        [](system_error const&){}
+                                    );
+                                } break;
+                                case qos::exactly_once: {
+                                    ep.send(
+                                        v5::basic_pubrec_packet<PacketIdBytes>(p.packet_id()),
+                                        [](system_error const&){}
+                                    );
+                                } break;
+                                default:
+                                    break;
+                                }
+                            }
                         },
                         [&](v5::basic_puback_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v5_puback, p.packet_id());
+                            ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v5::basic_pubrec_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v5_pubrec, p.packet_id());
+                            if (ep.auto_pub_response_) {
+                                ep.send(
+                                    v5::basic_pubrel_packet<PacketIdBytes>(p.packet_id()),
+                                    [](system_error const&){}
+                                );
+                            }
                         },
                         [&](v5::basic_pubrel_packet<PacketIdBytes> const& p) {
+                            if (ep.auto_pub_response_) {
+                                ep.send(
+                                    v5::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
+                                    [](system_error const&){}
+                                );
+                            }
                         },
                         [&](v5::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                            ep.store_.erase(response_packet::v5_pubcomp, p.packet_id());
+                            ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v5::basic_subscribe_packet<PacketIdBytes> const& p) {
                         },
@@ -443,6 +545,11 @@ private:
     packet_id_manager<packet_id_t> pid_man_;
     store<PacketIdBytes> store_;
     bool auto_pub_response_ = false;
+    bool auto_map_topic_alias_send_ = false;
+    bool auto_replace_topic_alias_send_ = false;
+
+    optional<topic_alias_send> topic_alias_send_;
+    optional<topic_alias_recv> topic_alias_recv_;
 };
 
 template <typename NextLayer, role Role>

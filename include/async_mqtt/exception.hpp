@@ -18,15 +18,22 @@
 namespace async_mqtt {
 
 namespace sys = boost::system;
+using error_code = sys::error_code;
+namespace errc = sys::errc;
 
 //using system_error = sys::system_error;
 
 struct system_error : sys::system_error, private boost::totally_ordered<system_error> {
-    using sys::system_error::system_error;
+    using base_type = sys::system_error;
+    using base_type::base_type;
+    system_error(error_code const& ec)
+        : base_type(ec)
+    {}
+    operator bool() const {
+        return code() != errc::success;
+    }
 };
 
-using error_code = sys::error_code;
-namespace errc = sys::errc;
 
 template <typename WhatArg>
 inline system_error make_error(errc::errc_t ec, WhatArg&& wa) {

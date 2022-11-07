@@ -34,7 +34,6 @@ int main() {
                 [&](auto pid_opt) {
                     if (pid_opt) {
                         auto packet =
-#if 0
                             async_mqtt::v5::publish_packet{
                                 *pid_opt,
                                 async_mqtt::allocate_buffer("topic1"),
@@ -44,20 +43,13 @@ int main() {
                                     async_mqtt::property::message_expiry_interval{1234}
                                 }
                             };
-#endif
-                            async_mqtt::v3_1_1::publish_packet(
-                                1234, // packet_id
-                                async_mqtt::allocate_buffer("topic1"),
-                                async_mqtt::allocate_buffer("payload1"),
-                                async_mqtt::qos::exactly_once | async_mqtt::pub::retain::yes | async_mqtt::pub::dup::yes
-                            );
 
                         std::cout << async_mqtt::hex_dump(packet) << std::endl;;
                         amep.send(
                             async_mqtt::force_move(packet),
                             [&]
-                            (async_mqtt::error_code const& ec) mutable {
-                                std::cout << "write: " << ec.message() << std::endl;
+                            (async_mqtt::system_error const& ec) mutable {
+                                std::cout << "write: " << ec.what() << std::endl;
                                 if (ec) return;
                                 amep.recv(
                                     [&]

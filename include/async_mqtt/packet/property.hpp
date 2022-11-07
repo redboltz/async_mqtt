@@ -481,11 +481,25 @@ public:
     using recv = receive_maximum;
     using store = receive_maximum;
     receive_maximum(std::uint16_t val)
-        : detail::n_bytes_property<2>{id::receive_maximum, endian_static_vector(val)} {}
+        : detail::n_bytes_property<2>{id::receive_maximum, endian_static_vector(val)} {
+        if (val == 0) {
+            throw make_error(
+                errc::bad_message,
+                "property::receive_maximum value is invalid"
+            );
+        }
+    }
 
     template <typename It, typename End>
     receive_maximum(It b, End e)
-        : detail::n_bytes_property<2>{id::receive_maximum, b, e} {}
+        : detail::n_bytes_property<2>{id::receive_maximum, b, e} {
+        if (val() == 0) {
+            throw make_error(
+                errc::bad_message,
+                "property::receive_maximum value is invalid"
+            );
+        }
+    }
 
     std::uint16_t val() const {
         return endian_load<std::uint16_t>(buf_.data());

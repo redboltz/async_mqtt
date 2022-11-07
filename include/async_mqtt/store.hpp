@@ -13,6 +13,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 
 #include <async_mqtt/packet/store_packet_variant.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 namespace async_mqtt {
 
@@ -26,19 +27,13 @@ public:
 
     template <typename Packet>
     bool add(Packet const& packet) {
-        if constexpr(
-            std::is_same_v<Packet, v3_1_1::basic_publish_packet<PacketIdBytes>> ||
-            std::is_same_v<Packet, v5::basic_publish_packet<PacketIdBytes>>
-        ) {
+        if constexpr(is_publish<Packet>()) {
             if (packet.opts().qos() == qos::at_least_once ||
                 packet.opts().qos() == qos::exactly_once) {
                 return elems_.push_back(packet).second;
             }
         }
-        else if constexpr(
-            std::is_same_v<Packet, v3_1_1::basic_pubrel_packet<PacketIdBytes>> ||
-            std::is_same_v<Packet, v5::basic_pubrel_packet<PacketIdBytes>>
-        ) {
+        else if constexpr(is_pubrel<Packet>()) {
             return elems_.push_back(packet).second;
         }
         return false;
