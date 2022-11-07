@@ -30,6 +30,13 @@
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/packet/v5_pubcomp.hpp>
 #include <async_mqtt/packet/v5_subscribe.hpp>
+#include <async_mqtt/packet/v5_suback.hpp>
+#include <async_mqtt/packet/v5_unsubscribe.hpp>
+#include <async_mqtt/packet/v5_unsuback.hpp>
+#include <async_mqtt/packet/v5_pingreq.hpp>
+#include <async_mqtt/packet/v5_pingresp.hpp>
+#include <async_mqtt/packet/v5_disconnect.hpp>
+#include <async_mqtt/packet/v5_auth.hpp>
 #include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
@@ -102,8 +109,7 @@ private:
         v5::basic_pubrec_packet<PacketIdBytes>,
         v5::basic_pubrel_packet<PacketIdBytes>,
         v5::basic_pubcomp_packet<PacketIdBytes>,
-        v5::basic_subscribe_packet<PacketIdBytes>
-#if 0
+        v5::basic_subscribe_packet<PacketIdBytes>,
         v5::basic_suback_packet<PacketIdBytes>,
         v5::basic_unsubscribe_packet<PacketIdBytes>,
         v5::basic_unsuback_packet<PacketIdBytes>,
@@ -111,7 +117,6 @@ private:
         v5::pingresp_packet,
         v5::disconnect_packet,
         v5::auth_packet
-#endif
 >;
 
     variant_t var_;

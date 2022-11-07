@@ -34,7 +34,7 @@ public:
         properties props
     )
         : fixed_header_{
-              static_cast<std::uint8_t>(make_fixed_header(control_packet_type::connack, 0b0000))
+              make_fixed_header(control_packet_type::connack, 0b0000)
           },
           remaining_length_(
               1 + // connect acknowledge flags

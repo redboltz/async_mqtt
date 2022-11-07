@@ -32,6 +32,10 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_suback.cpp
     ut_packet_v5_unsubscribe.cpp
     ut_packet_v5_unsuback.cpp
+    ut_packet_v5_pingreq.cpp
+    ut_packet_v5_pingresp.cpp
+    ut_packet_v5_disconnect.cpp
+    ut_packet_v5_auth.cpp
     ut_system_error.cpp
 )
 

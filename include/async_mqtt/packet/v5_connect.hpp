@@ -42,7 +42,7 @@ public:
         properties props
     )
         : fixed_header_{
-              static_cast<std::uint8_t>(make_fixed_header(control_packet_type::connect, 0b0000))
+              make_fixed_header(control_packet_type::connect, 0b0000)
           },
           connect_flags_{0},
           // protocol name length, protocol name, protocol level, connect flag, client id length, client id, keep alive

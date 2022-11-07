@@ -413,6 +413,20 @@ private:
                         },
                         [&](v5::basic_subscribe_packet<PacketIdBytes> const& p) {
                         },
+                        [&](v5::basic_suback_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::basic_unsubscribe_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::basic_unsuback_packet<PacketIdBytes> const& p) {
+                        },
+                        [&](v5::pingreq_packet const& p) {
+                        },
+                        [&](v5::pingresp_packet const& p) {
+                        },
+                        [&](v5::disconnect_packet const& p) {
+                        },
+                        [&](v5::auth_packet const& p) {
+                        },
                         [&](system_error const& e) {
                         }
                     }

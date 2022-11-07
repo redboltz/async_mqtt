@@ -233,7 +233,7 @@ private:
         properties props
     )
         : fixed_header_{
-              static_cast<char>(make_fixed_header(control_packet_type::puback, 0b0000))
+              make_fixed_header(control_packet_type::puback, 0b0000)
           },
           remaining_length_{
               PacketIdBytes

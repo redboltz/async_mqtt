@@ -46,12 +46,9 @@ public:
         BufferSequence payloads,
         pub::opts pubopts
     )
-        : fixed_header_{
-              static_cast<std::uint8_t>(
-                  make_fixed_header(control_packet_type::publish, 0b0000) |
-                  std::uint8_t(pubopts)
-              )
-          },
+        : fixed_header_(
+              make_fixed_header(control_packet_type::publish, 0b0000) | std::uint8_t(pubopts)
+          ),
           topic_name_{force_move(topic_name)},
           packet_id_(PacketIdBytes),
           remaining_length_(
