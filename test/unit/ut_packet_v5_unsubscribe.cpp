@@ -7,23 +7,22 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/packet/v5_subscribe.hpp>
+#include <async_mqtt/packet/v5_unsubscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
-
-BOOST_AUTO_TEST_SUITE(ut_packet)
+#incT_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
-BOOST_AUTO_TEST_CASE(v5_subscribe) {
-    std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
+    std::vector<am::buffer> args {
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("topic2"),
     };
 
     auto props = am::properties{
-        am::property::subscription_identifier(0x0fffffff)
+        am::property::user_property("mykey", "myval")
     };
-    auto p = am::v5::subscribe_packet{
+    auto p = am::v5::unsubscribe_packet{
         0x1234,         // packet_id
         args,
         props
@@ -35,21 +34,21 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     {
         auto cbs = p.const_buffer_sequence();
         char expected[] {
-            char(0x82),                                     // fixed_header
-            0x1a,                                           // remaining_length
+            char(0xa2),                                     // fixed_header
+            0x22,                                           // remaining_length
             0x12, 0x34,                                     // packet_id
-            0x05,                                           // property_length
-            0x0b, char(0xff), char(0xff), char(0xff), 0x7f, // subscription_identifier
+            0x0f,                                           // property_length
+            0x26,                                           // user_property
+            0x00, 0x05, 0x6d, 0x79, 0x6b, 0x65, 0x79,       // mykey
+            0x00, 0x05, 0x6d, 0x79, 0x76, 0x61, 0x6c,       // myval
             0x00, 0x06, 0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic1
-            0x24,                                           // opts1
             0x00, 0x06, 0x74, 0x6f, 0x70, 0x69, 0x63, 0x32, // topic2
-            0x0a                                            // opts2
         };
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::subscribe_packet(buf);
+        auto p = am::v5::unsubscribe_packet(buf);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
         BOOST_TEST(p.props() == props);
@@ -60,16 +59,16 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     }
 }
 
-BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
-    std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+BOOST_AUTO_TEST_CASE(v5_unsubscribe_pid4) {
+    std::vector<am::buffer> args {
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("topic2"),
     };
 
     auto props = am::properties{
-        am::property::subscription_identifier(0x0fffffff)
+        am::property::user_property("mykey", "myval")
     };
-    auto p = am::v5::basic_subscribe_packet<4>{
+    auto p = am::v5::basic_unsubscribe_packet<4>{
         0x12345678,         // packet_id
         args,
         props
@@ -80,21 +79,21 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
     {
         auto cbs = p.const_buffer_sequence();
         char expected[] {
-            char(0x82),                                     // fixed_header
-            0x1c,                                           // remaining_length
+            char(0xa2),                                     // fixed_header
+            0x24,                                           // remaining_length
             0x12, 0x34, 0x56, 0x78,                         // packet_id
-            0x05,                                           // property_length
-            0x0b, char(0xff), char(0xff), char(0xff), 0x7f, // subscription_identifier
+            0x0f,                                           // property_length
+            0x26,                                           // user_property
+            0x00, 0x05, 0x6d, 0x79, 0x6b, 0x65, 0x79,       // mykey
+            0x00, 0x05, 0x6d, 0x79, 0x76, 0x61, 0x6c,       // myval
             0x00, 0x06, 0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic1
-            0x24,                                           // opts1
             0x00, 0x06, 0x74, 0x6f, 0x70, 0x69, 0x63, 0x32, // topic2
-            0x0a                                            // opts2
         };
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::basic_subscribe_packet<4>(buf);
+        auto p = am::v5::basic_unsubscribe_packet<4>(buf);
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
 
