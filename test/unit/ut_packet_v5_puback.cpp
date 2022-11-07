@@ -26,7 +26,6 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.code() == am::puback_reason_code::packet_identifier_in_use);
     BOOST_TEST(p.props() == props);
-
     {
         auto cbs = p.const_buffer_sequence();
         char expected[] {
