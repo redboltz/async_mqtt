@@ -31,6 +31,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_subscribe.cpp
     ut_packet_v5_suback.cpp
     ut_packet_v5_unsubscribe.cpp
+    ut_packet_v5_unsuback.cpp
     ut_system_error.cpp
 )
 
