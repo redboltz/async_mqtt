@@ -286,57 +286,93 @@ private:
             case write:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
+                if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+                    ep.need_store_ = !packet.clean_session();
+                }
+                else if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+                    ep.need_store_ = !packet.clean_start();
+                }
                 // qos1/2 and session_present
-                if constexpr(is_storable<Packet>()) {
-                    if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
-                        if (packet.topic().empty()) {
-                            // re-generate topic for storing from topic_alias
-                            optional<topic_alias_t> ta_opt;
-                            for (auto const& prop : packet.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias const& p) {
-                                            ta_opt.emplace(p.val());
-                                        },
-                                        [](auto const&){}
+                else if constexpr(is_publish<Packet>()) {
+                    if (ep.need_store_ &&
+                        (packet.opts().qos() == qos::at_least_once ||
+                         packet.opts().qos() == qos::exactly_once)
+                    ) {
+                        if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                            if (packet.topic().empty()) {
+                                // re-generate topic for storing from topic_alias
+                                optional<topic_alias_t> ta_opt;
+                                for (auto const& prop : packet.props()) {
+                                    prop.visit(
+                                        overload {
+                                            [&](property::topic_alias const& p) {
+                                                ta_opt.emplace(p.val());
+                                            },
+                                            [](auto const&){}
+                                        }
+                                    );
+                                }
+                                if (!ta_opt) {
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "topic is empty but topic_alias not set"
+                                        )
+                                    );
+                                    return;
+                                }
+                                if (!ep.topic_alias_send_) {
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "topic is empty but topic_alias_maximum is 0"
+                                        )
+                                    );
+                                    return;
+                                }
+                                auto topic = ep.topic_alias_send_->find(*ta_opt);
+                                if (topic.empty()) {
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "topic is empty but topic_alias is not registered"
+                                        )
+                                    );
+                                    return;
+                                }
+
+                                auto props = packet.props();
+                                auto it = props.cbegin();
+                                auto end = props.cend();
+                                for (; it != end; ++it) {
+                                    if (it->id() == property::id::topic_alias) {
+                                        props.erase(it);
+                                        break;
                                     }
-                                );
-                            }
-                            if (!ta_opt) {
-                                self.complete(
-                                    make_error(
-                                        errc::bad_message,
-                                        "topic is empty but topic_alias not set"
+                                }
+                                ep.store_.add(
+                                    Packet(
+                                        packet.packet_id(),
+                                        allocate_buffer(topic),
+                                        packet.payload(),
+                                        packet.opts(),
+                                        force_move(props)
                                     )
                                 );
-                                return;
                             }
-                            if (!ep.topic_alias_send_) {
-                                self.complete(
-                                    make_error(
-                                        errc::bad_message,
-                                        "topic is empty but topic_alias_maximum is 0"
-                                    )
-                                );
-                                return;
-                            }
-                            auto topic = ep.topic_alias_send_->find(*ta_opt);
-                            if (topic.empty()) {
-                                self.complete(
-                                    make_error(
-                                        errc::bad_message,
-                                        "topic is empty but topic_alias is not registered"
-                                    )
-                                );
-                                return;
+                            else {
+                                ep.store_.add(packet);
                             }
                         }
                         else {
-                            // auto applying topic_alias
+                            ep.store_.add(packet);
                         }
                     }
-                    ep.store_.add(packet);
                 }
+                else if constexpr(is_pubrel<Packet>()) {
+                    if (ep.need_store_) ep.store_.add(packet);
+                }
+
                 ep.stream_.write_packet(
                     force_move(packet),
                     force_move(self)
@@ -382,8 +418,10 @@ private:
                             if (p.session_present()) {
                             }
                             else {
-                                ep.pid_man_.clear();
-                                ep.store_.clear();
+                                if (!ep.need_store_) {
+                                    ep.pid_man_.clear();
+                                    ep.store_.clear();
+                                }
                             }
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes> const& p) {
@@ -464,8 +502,10 @@ private:
                             if (p.session_present()) {
                             }
                             else {
-                                ep.pid_man_.clear();
-                                ep.store_.clear();
+                                if (!ep.need_store_) {
+                                    ep.pid_man_.clear();
+                                    ep.store_.clear();
+                                }
                             }
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes> const& p) {
@@ -543,7 +583,10 @@ private:
     protocol_version protocol_version_;
     stream_type stream_;
     packet_id_manager<packet_id_t> pid_man_;
+
+    bool need_store_ = false;
     store<PacketIdBytes> store_;
+
     bool auto_pub_response_ = false;
     bool auto_map_topic_alias_send_ = false;
     bool auto_replace_topic_alias_send_ = false;
