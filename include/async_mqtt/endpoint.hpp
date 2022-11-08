@@ -12,6 +12,7 @@
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
+#include <async_mqtt/log.hpp>
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/topic_alias_recv.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
@@ -184,7 +185,7 @@ public:
     }
 
 
-private:
+private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
         this_type& ep;
@@ -283,64 +284,28 @@ private:
                     force_move(self)
                 );
                 break;
-            case write:
+            case write: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
+                bool topic_alias_validated = false;
                 if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
                     ep.need_store_ = !packet.clean_session();
                 }
                 else if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
                     ep.need_store_ = !packet.clean_start();
                 }
-                // qos1/2 and session_present
+                // store publish/pubrel packet
                 else if constexpr(is_publish<Packet>()) {
                     if (ep.need_store_ &&
                         (packet.opts().qos() == qos::at_least_once ||
                          packet.opts().qos() == qos::exactly_once)
                     ) {
                         if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                            auto ta_opt = get_topic_alias();
                             if (packet.topic().empty()) {
-                                // re-generate topic for storing from topic_alias
-                                optional<topic_alias_t> ta_opt;
-                                for (auto const& prop : packet.props()) {
-                                    prop.visit(
-                                        overload {
-                                            [&](property::topic_alias const& p) {
-                                                ta_opt.emplace(p.val());
-                                            },
-                                            [](auto const&){}
-                                        }
-                                    );
-                                }
-                                if (!ta_opt) {
-                                    self.complete(
-                                        make_error(
-                                            errc::bad_message,
-                                            "topic is empty but topic_alias not set"
-                                        )
-                                    );
-                                    return;
-                                }
-                                if (!ep.topic_alias_send_) {
-                                    self.complete(
-                                        make_error(
-                                            errc::bad_message,
-                                            "topic is empty but topic_alias_maximum is 0"
-                                        )
-                                    );
-                                    return;
-                                }
-                                auto topic = ep.topic_alias_send_->find(*ta_opt);
-                                if (topic.empty()) {
-                                    self.complete(
-                                        make_error(
-                                            errc::bad_message,
-                                            "topic is empty but topic_alias is not registered"
-                                        )
-                                    );
-                                    return;
-                                }
-
+                                auto topic_opt = validate_topic_alias(self, ta_opt);
+                                if (!topic_opt) return;
+                                topic_alias_validated = true;
                                 auto props = packet.props();
                                 auto it = props.cbegin();
                                 auto end = props.cend();
@@ -350,10 +315,12 @@ private:
                                         break;
                                     }
                                 }
+                                // add new packet that doesn't have topic_aliass to store
+                                // the original packet still use topic alias to send
                                 ep.store_.add(
                                     Packet(
                                         packet.packet_id(),
-                                        allocate_buffer(topic),
+                                        allocate_buffer(*topic_opt),
                                         packet.payload(),
                                         packet.opts(),
                                         force_move(props)
@@ -373,17 +340,118 @@ private:
                     if (ep.need_store_) ep.store_.add(packet);
                 }
 
+                // apply topic_alias
+                if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                    auto ta_opt = get_topic_alias();
+                    if (packet.topic().empty()) {
+                        if (!topic_alias_validated &&
+                            !validate_topic_alias(self, ta_opt)) return;
+                        // use topic_alias set by user
+                    }
+                    else {
+                        if (ta_opt) {
+                            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "topia alias : "
+                                << packet.topic() << " - " << *ta_opt
+                                << " is registered." ;
+                            ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt);
+                        }
+                        else if (ep.auto_map_topic_alias_send_) {
+                            if (ep.topic_alias_send_) {
+                                if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
+                                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << "topia alias : " << packet.topic() << " - " << ta_opt.value()
+                                        << " is found." ;
+                                    ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
+                                    packet.remove_topic_add_topic_alias(*ta_opt);
+                                }
+                                else {
+                                    auto lru_ta = ep.topic_alias_send_->get_lru_alias();
+                                    ep.topic_alias_send_->insert_or_update(packet.topic(), lru_ta); // remap topic alias
+                                    packet.add_topic_alias(*ta_opt);
+                                }
+                            }
+                        }
+                        else if (ep.auto_replace_topic_alias_send_) {
+                            if (ep.topic_alias_send_) {
+                                if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
+                                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << "topia alias : " << packet.topic() << " - " << ta_opt.value()
+                                        << " is found." ;
+                                    ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
+                                    packet.remove_topic_add_topic_alias(*ta_opt);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 ep.stream_.write_packet(
                     force_move(packet),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ec);
                 break;
             }
         }
+
+        optional<topic_alias_t> get_topic_alias() const {
+            for (auto const& prop : packet.props()) {
+                prop.visit(
+                    overload {
+                        [&](property::topic_alias const& p) -> optional<topic_alias_t> {
+                            return p.val();
+                        },
+                        [](auto const&) -> optional<topic_alias_t> {
+                            return nullopt;
+                        }
+                    }
+                );
+            }
+            return nullopt;
+        }
+
+        template <typename Self>
+        std::optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) const {
+            if (!ta_opt) {
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "topic is empty but topic_alias doesn't set"
+                    )
+                );
+                return nullopt;
+            }
+
+            if (!ep.topic_alias_send_) {
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "topic is empty but topic_alias_maximum is 0"
+                    )
+                );
+                return nullopt;
+            }
+
+            auto topic = ep.topic_alias_send_->find(*ta_opt);
+            if (topic.empty()) {
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "topic is empty but topic_alias is not registered"
+                    )
+                );
+                return nullopt;
+            }
+            return topic;
+        }
+
     };
 
     struct recv_impl {

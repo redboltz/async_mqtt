@@ -367,6 +367,10 @@ public:
         return as::buffer(view_.data(), view_.size());
     }
 
+    operator std::string_view() const {
+        return view_;
+    }
+
     friend
     constexpr bool operator==(buffer const& lhs, buffer const& rhs ) noexcept {
         return lhs.view_ == rhs.view_;

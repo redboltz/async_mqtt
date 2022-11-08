@@ -15,6 +15,7 @@
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/type.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -104,6 +105,7 @@ public:
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
         }
+
         if (pubopts.qos() == qos::at_least_once ||
             pubopts.qos() == qos::exactly_once) {
             endian_store(packet_id, packet_id_.data());
@@ -305,6 +307,67 @@ public:
 
     properties const& props() const {
         return props_;
+    }
+
+    void remove_topic_add_topic_alias(topic_alias_t val) {
+        // add topic_alias property
+        auto prop{property::topic_alias{val}};
+        auto prop_size = prop.size();
+        property_length_ += prop_size;
+        props_.push_back(force_move(prop));
+
+        // update property_length_buf
+        auto old_property_length_buf_size = property_length_buf_.size();
+        property_length_buf_.clear();
+        auto pb = val_to_variable_bytes(property_length_);
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+        auto new_property_length_buf_size = property_length_buf_.size();
+
+        // remove topic_name
+        auto old_topic_name_size = topic_name_.size();
+        topic_name_ = buffer{};
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
+            topic_name_length_buf_.data()
+        );
+
+        // update remaining_length
+        remaining_length_ +=
+            (new_property_length_buf_size - old_property_length_buf_size) -
+            old_topic_name_size;
+        remaining_length_buf_.clear();
+        auto rb = val_to_variable_bytes(remaining_length_);
+        for (auto e : rb) {
+            remaining_length_buf_.push_back(e);
+        }
+    }
+
+    void add_topic_alias(topic_alias_t val) {
+        // add topic_alias property
+        auto prop{property::topic_alias{val}};
+        auto prop_size = prop.size();
+        property_length_ += prop_size;
+        props_.push_back(force_move(prop));
+
+        // update property_length_buf
+        auto old_property_length_buf_size = property_length_buf_.size();
+        property_length_buf_.clear();
+        auto pb = val_to_variable_bytes(property_length_);
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+        auto new_property_length_buf_size = property_length_buf_.size();
+
+        // update remaining_length
+        remaining_length_ +=
+            (new_property_length_buf_size - old_property_length_buf_size);
+        remaining_length_buf_.clear();
+        auto rb = val_to_variable_bytes(remaining_length_);
+        for (auto e : rb) {
+            remaining_length_buf_.push_back(e);
+        }
     }
 
 private:
