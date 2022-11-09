@@ -57,7 +57,7 @@ int main() {
                 as::use_future);
             auto se_send = f_send.get();
             std::cout << "write: " << se_send.what() << std::endl;
-            if (se_send) {
+            if (!se_send) {
                 auto f_recv = amep.recv(as::use_future);
                 auto pv = f_recv.get();
                 if (pv) {

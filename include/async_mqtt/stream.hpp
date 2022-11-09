@@ -20,6 +20,7 @@
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/exception.hpp>
 
@@ -160,6 +161,15 @@ private:
                     )
                 );
             } break;
+            case complete: {
+                if (last_ec) {
+                    self.complete(last_ec, buffer{});
+                }
+                else {
+                    auto ptr = spa.get();
+                    self.complete(last_ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                }
+            } break;
             default:
                 BOOST_ASSERT(false);
                 break;
@@ -175,16 +185,16 @@ private:
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 auto exe = as::get_associated_executor(self);
-                if (exe == as::system_executor()) {
-                    self.complete(ec, buffer{});
+                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
+                    state = complete;
+                    last_ec = ec;
+                    as::dispatch(
+                        exe,
+                        force_move(self)
+                    );
                     return;
                 }
-                state = complete;
-                last_ec = ec;
-                as::dispatch(
-                    exe,
-                    force_move(self)
-                );
+                self.complete(ec, buffer{});
                 return;
             }
 
@@ -246,12 +256,13 @@ private:
 
                     if (rl == 0) {
                         auto exe = as::get_associated_executor(self);
-                        if (exe == as::system_executor()) {
-                            auto ptr = spa.get();
-                            self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                        if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
+                            as::dispatch(exe, force_move(self));
                             return;
                         }
-                        as::dispatch(exe, force_move(self));
+                        auto ptr = spa.get();
+                        self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                        return;
                     }
                     else {
                         state = bind;
@@ -270,23 +281,18 @@ private:
                 break;
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                state = complete;
                 auto exe = as::get_associated_executor(self);
-                if (exe == as::system_executor()) {
-                    auto ptr = spa.get();
-                    self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
+                    state = complete;
+                    last_ec = ec;
+                    as::dispatch(
+                        exe,
+                        force_move(self)
+                    );
                     return;
                 }
-                as::dispatch(exe, force_move(self));
-            } break;
-            case complete: {
-                if (last_ec) {
-                    self.complete(last_ec, buffer{});
-                }
-                else {
-                    auto ptr = spa.get();
-                    self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
-                }
+                auto ptr = spa.get();
+                self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
             } break;
             default:
                 BOOST_ASSERT(false);
@@ -312,13 +318,15 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
-                if (exe == as::system_executor()) {
-                    self.complete(ec, bytes_transferred);
-                    return;
+                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
+                    state = complete;
+                    last_ec = ec;
+                    as::dispatch(
+                        exe,
+                        force_move(self)
+                    );
                 }
-                state = complete;
-                last_ec = ec;
-                as::dispatch(exe, force_move(self));
+                self.complete(ec, bytes_transferred);
                 return;
             }
             switch (state) {
@@ -350,21 +358,22 @@ private:
             } break;
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                state = complete;
                 strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
-                if (exe == as::system_executor()) {
-                    self.complete(ec, bytes_transferred);
+                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
+                    state = complete;
+                    last_ec = ec;
+                    as::dispatch(exe, force_move(self));
                     return;
                 }
-                as::dispatch(exe, force_move(self));
+                self.complete(ec, bytes_transferred);
             } break;
             case complete:
                 if (last_ec) {
                     self.complete(last_ec, 0);
                 }
                 else {
-                    self.complete(ec, bytes_transferred);
+                    self.complete(last_ec, bytes_transferred);
                 }
                 break;
             }
