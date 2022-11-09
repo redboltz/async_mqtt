@@ -4,6 +4,7 @@ list(APPEND exec_PROGRAMS
     ep_send_packet.cpp
     ws_send_packet.cpp
     ws_recv_packet.cpp
+    future.cpp
 )
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS program_options)

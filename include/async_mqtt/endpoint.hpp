@@ -204,6 +204,29 @@ public:
             );
     }
 
+    template <
+        typename CompletionToken,
+        typename std::enable_if_t<
+            std::is_invocable<CompletionToken>::value
+        >* = nullptr
+    >
+    auto restore(
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+                void()
+            >(
+                recv_impl{
+                    *this,
+                    force_move(pvs)
+                },
+                token
+            );
+    }
+
 private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
@@ -312,6 +335,7 @@ private: // compose operation impl
                 bool topic_alias_validated = false;
 
                 if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+                    ep.initialize();
                     if (packet.clean_session()) {
                         ep.pid_man_.clear();
                         ep.store_.clear();
@@ -324,16 +348,11 @@ private: // compose operation impl
                 }
 
                 if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
+                    ep.initialize();
                     if (packet.clean_start()) {
                         ep.pid_man_.clear();
                         ep.store_.clear();
                     }
-                    ep.topic_alias_send_ = nullopt;
-                    ep.topic_alias_recv_ = nullopt;
-
-                    // initialized. will be overwritten if session_expiry_interval > 0
-                    ep.need_store_ = false;
-
                     for (auto const& prop : packet.props()) {
                         prop.visit(
                             overload {
@@ -573,10 +592,10 @@ private: // compose operation impl
                     // do internal protocol processing
                     overload {
                         [&](v3_1_1::connect_packet& p) {
-                            ep.topic_alias_send_ = nullopt;
+                            ep.initialize();
                         },
                         [&](v5::connect_packet& p) {
-                            ep.topic_alias_send_ = nullopt;
+                            ep.initialize();
                             for (auto const& prop : p.props()) {
                                 prop.visit(
                                     overload {
@@ -872,6 +891,38 @@ private: // compose operation impl
         }
     };
 
+    struct restore_impl {
+        this_type& ep;
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
+        enum { dispatch, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case dispatch:
+                state = complete;
+                as::dispatch(
+                    ep.strand(),
+                    force_move(self)
+                );
+                break;
+            case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                for (auto& pv : pvs) {
+                    pv.visit(
+                        [&](auto& p) {
+                            ep.store_.add(force_move(p));
+                        }
+                    );
+                }
+                self.complete();
+                break;
+            }
+        }
+    };
+
 private:
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet) {
@@ -931,6 +982,15 @@ private:
                 );
             }
         );
+    }
+
+    void initialize() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        publish_send_count_ = 0;
+        publish_queue_.clear();
+        topic_alias_send_ = nullopt;
+        topic_alias_recv_ = nullopt;
+        need_store_ = false;
     }
 
 private:
