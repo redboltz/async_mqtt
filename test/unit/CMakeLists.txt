@@ -58,7 +58,7 @@ foreach(source_file ${check_PROGRAMS})
     endif()
 
     if(ASYNC_MQTT_USE_LOG)
-        target_compile_definitionss(
+        target_compile_definitions(
             ${source_file_we}
             PUBLIC
             $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
