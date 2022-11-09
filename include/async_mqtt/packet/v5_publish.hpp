@@ -370,6 +370,25 @@ public:
         }
     }
 
+    void add_topic(buffer topic) {
+        BOOST_ASSERT(topic_name_.empty());
+
+        // add topic
+        topic_name_ = force_move(topic);
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
+            topic_name_length_buf_.data()
+        );
+
+        // update remaining_length
+        remaining_length_ += topic_name_.size();
+        remaining_length_buf_.clear();
+        auto rb = val_to_variable_bytes(remaining_length_);
+        for (auto e : rb) {
+            remaining_length_buf_.push_back(e);
+        }
+    }
+
 private:
     std::uint8_t fixed_header_;
     buffer topic_name_;

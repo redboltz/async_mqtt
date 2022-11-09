@@ -35,6 +35,22 @@ constexpr bool is_server(role r) {
     return static_cast<int>(r) & static_cast<int>(role::server);
 }
 
+inline optional<topic_alias_t> get_topic_alias(properties const& props) {
+    for (auto const& prop : props) {
+        prop.visit(
+            overload {
+                [&](property::topic_alias const& p) -> optional<topic_alias_t> {
+                    return p.val();
+                },
+                    [](auto const&) -> optional<topic_alias_t> {
+                        return nullopt;
+                    }
+            }
+        );
+    }
+    return nullopt;
+}
+
 template <typename NextLayer, role Role, std::size_t PacketIdBytes>
 class basic_endpoint {
 public:
@@ -66,6 +82,8 @@ public:
     strand_type& strand() {
         return stream().strand();
     }
+
+    // async functions
 
     template <
         typename CompletionToken,
@@ -184,7 +202,6 @@ public:
             );
     }
 
-
 private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
@@ -290,9 +307,24 @@ private: // compose operation impl
                 bool topic_alias_validated = false;
                 if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
                     ep.need_store_ = !packet.clean_session();
+                    ep.topic_alias_send_ = nullopt;
                 }
-                else if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+                else if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
                     ep.need_store_ = !packet.clean_start();
+                    ep.topic_alias_send_ = nullopt;
+                    ep.topic_alias_recv_ = nullopt;
+                    for (auto const& prop : packet.props()) {
+                        prop.visit(
+                            overload {
+                                [&](property::topic_alias_maximum const& p) {
+                                    if (p.val() != 0) {
+                                        ep.topic_alias_recv_.emplace(p.val());
+                                    }
+                                },
+                                [](auto const&){}
+                            }
+                        );
+                    }
                 }
                 // store publish/pubrel packet
                 else if constexpr(is_publish<Packet>()) {
@@ -301,7 +333,7 @@ private: // compose operation impl
                          packet.opts().qos() == qos::exactly_once)
                     ) {
                         if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
-                            auto ta_opt = get_topic_alias();
+                            auto ta_opt = get_topic_alias(packet.props());
                             if (packet.topic().empty()) {
                                 auto topic_opt = validate_topic_alias(self, ta_opt);
                                 if (!topic_opt) return;
@@ -342,7 +374,7 @@ private: // compose operation impl
 
                 // apply topic_alias
                 if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
-                    auto ta_opt = get_topic_alias();
+                    auto ta_opt = get_topic_alias(packet.props());
                     if (packet.topic().empty()) {
                         if (!topic_alias_validated &&
                             !validate_topic_alias(self, ta_opt)) return;
@@ -351,7 +383,7 @@ private: // compose operation impl
                     else {
                         if (ta_opt) {
                             ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                 << "topia alias : "
                                 << packet.topic() << " - " << *ta_opt
                                 << " is registered." ;
@@ -361,7 +393,7 @@ private: // compose operation impl
                             if (ep.topic_alias_send_) {
                                 if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
                                     ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                         << "topia alias : " << packet.topic() << " - " << ta_opt.value()
                                         << " is found." ;
                                     ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
@@ -378,7 +410,7 @@ private: // compose operation impl
                             if (ep.topic_alias_send_) {
                                 if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
                                     ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                         << "topia alias : " << packet.topic() << " - " << ta_opt.value()
                                         << " is found." ;
                                     ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
@@ -401,29 +433,13 @@ private: // compose operation impl
             }
         }
 
-        optional<topic_alias_t> get_topic_alias() const {
-            for (auto const& prop : packet.props()) {
-                prop.visit(
-                    overload {
-                        [&](property::topic_alias const& p) -> optional<topic_alias_t> {
-                            return p.val();
-                        },
-                        [](auto const&) -> optional<topic_alias_t> {
-                            return nullopt;
-                        }
-                    }
-                );
-            }
-            return nullopt;
-        }
-
         template <typename Self>
         std::optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) const {
             if (!ta_opt) {
                 self.complete(
                     make_error(
                         errc::bad_message,
-                        "topic is empty but topic_alias doesn't set"
+                        "topic is empty but topic_alias isn't set"
                     )
                 );
                 return nullopt;
@@ -480,9 +496,10 @@ private: // compose operation impl
                 v.visit(
                     // do internal protocol processing
                     overload {
-                        [&](v3_1_1::connect_packet const& p) {
+                        [&](v3_1_1::connect_packet& p) {
+                            ep.topic_alias_send_ = nullopt;
                         },
-                        [&](v3_1_1::connack_packet const& p) {
+                        [&](v3_1_1::connack_packet& p) {
                             if (p.session_present()) {
                             }
                             else {
@@ -492,7 +509,7 @@ private: // compose operation impl
                                 }
                             }
                         },
-                        [&](v3_1_1::basic_publish_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
                             if (ep.auto_pub_response_) {
                                 switch (p.opts().qos()) {
                                 case qos::at_least_once: {
@@ -512,11 +529,11 @@ private: // compose operation impl
                                 }
                             }
                         },
-                        [&](v3_1_1::basic_puback_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v3_1_1_puback, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v3_1_1::basic_pubrec_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v3_1_1_pubrec, p.packet_id());
                             if (ep.auto_pub_response_) {
                                 ep.send(
@@ -525,7 +542,7 @@ private: // compose operation impl
                                 );
                             }
                         },
-                        [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
                             if (ep.auto_pub_response_) {
                                 ep.send(
                                     v3_1_1::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
@@ -533,27 +550,41 @@ private: // compose operation impl
                                 );
                             }
                         },
-                        [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v3_1_1_pubcomp, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>& p) {
                         },
-                        [&](v3_1_1::basic_suback_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
                         },
-                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>& p) {
                         },
-                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes> const& p) {
+                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
                         },
-                        [&](v3_1_1::pingreq_packet const& p) {
+                        [&](v3_1_1::pingreq_packet& p) {
                         },
-                        [&](v3_1_1::pingresp_packet const& p) {
+                        [&](v3_1_1::pingresp_packet& p) {
                         },
-                        [&](v3_1_1::disconnect_packet const& p) {
+                        [&](v3_1_1::disconnect_packet& p) {
                         },
-                        [&](v5::connect_packet const& p) {
+                        [&](v5::connect_packet& p) {
+                            ep.topic_alias_send_ = nullopt;
+                            for (auto const& prop : p.props()) {
+                                prop.visit(
+                                    overload {
+                                        [&](property::topic_alias_maximum const& p) {
+                                            if (p.val() > 0) {
+                                                ep.topic_alias_send_.emplace(p.val());
+                                            }
+                                        },
+                                        [](auto const&) {
+                                        }
+                                    }
+                                );
+                            }
                         },
-                        [&](v5::connack_packet const& p) {
+                        [&](v5::connack_packet& p) {
                             for (auto const& prop : p.props()) {
                                 prop.visit(
                                     overload {
@@ -576,18 +607,18 @@ private: // compose operation impl
                                 }
                             }
                         },
-                        [&](v5::basic_publish_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_publish_packet<PacketIdBytes>& p) {
                             if (ep.auto_pub_response_) {
                                 switch (p.opts().qos()) {
                                 case qos::at_least_once: {
                                     ep.send(
-                                        v5::basic_puback_packet<PacketIdBytes>(p.packet_id()),
+                                        v5::basic_puback_packet<PacketIdBytes>{p.packet_id()},
                                         [](system_error const&){}
                                     );
                                 } break;
                                 case qos::exactly_once: {
                                     ep.send(
-                                        v5::basic_pubrec_packet<PacketIdBytes>(p.packet_id()),
+                                        v5::basic_pubrec_packet<PacketIdBytes>{p.packet_id()},
                                         [](system_error const&){}
                                     );
                                 } break;
@@ -595,12 +626,67 @@ private: // compose operation impl
                                     break;
                                 }
                             }
+
+                            if (p.topic().empty()) {
+                                if (auto ta_opt = get_topic_alias(p.props())) {
+                                    // extract topic from topic_alias
+                                    if (*ta_opt == 0 ||
+                                        *ta_opt > ep.topic_alias_recv_->max()) {
+                                        ep.send(
+                                            v5::disconnect_packet{
+                                                disconnect_reason_code::topic_alias_invalid
+                                            },
+                                            [](system_error const&){}
+                                        );
+                                        // TBD self.complete(error);
+                                    }
+                                    else {
+                                        auto topic = ep.topic_alias_recv_->find(*ta_opt);
+                                        if (topic.empty()) {
+                                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                                << "no matching topic alias: "
+                                                << *ta_opt;
+                                            ep.send(
+                                                v5::disconnect_packet{
+                                                    disconnect_reason_code::topic_alias_invalid
+                                                },
+                                                [](system_error const&){}
+                                            );
+                                            // TBD self.complete(error);
+                                        }
+                                        else {
+                                            p.add_topic(allocate_buffer(topic));
+                                        }
+                                    }
+                                }
+                                else {
+                                    ASYNC_MQTT_LOG("mqtt_impl", error)
+                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                        << "topic is empty but topic_alias isn't set";
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::topic_alias_invalid
+                                        },
+                                        [](system_error const&){}
+                                    );
+                                    // TBD self.complete(error);
+                                }
+                            }
+                            else {
+                                if (auto ta_opt = get_topic_alias(p.props())) {
+                                    // extract topic from topic_alias
+                                    if (ep.topic_alias_recv_) {
+                                        ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                                    }
+                                }
+                            }
                         },
-                        [&](v5::basic_puback_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_puback_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v5_puback, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v5::basic_pubrec_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v5_pubrec, p.packet_id());
                             if (ep.auto_pub_response_) {
                                 ep.send(
@@ -609,7 +695,7 @@ private: // compose operation impl
                                 );
                             }
                         },
-                        [&](v5::basic_pubrel_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
                             if (ep.auto_pub_response_) {
                                 ep.send(
                                     v5::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
@@ -617,27 +703,27 @@ private: // compose operation impl
                                 );
                             }
                         },
-                        [&](v5::basic_pubcomp_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
                             ep.store_.erase(response_packet::v5_pubcomp, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v5::basic_subscribe_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_subscribe_packet<PacketIdBytes>& p) {
                         },
-                        [&](v5::basic_suback_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_suback_packet<PacketIdBytes>& p) {
                         },
-                        [&](v5::basic_unsubscribe_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_unsubscribe_packet<PacketIdBytes>& p) {
                         },
-                        [&](v5::basic_unsuback_packet<PacketIdBytes> const& p) {
+                        [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
                         },
-                        [&](v5::pingreq_packet const& p) {
+                        [&](v5::pingreq_packet& p) {
                         },
-                        [&](v5::pingresp_packet const& p) {
+                        [&](v5::pingresp_packet& p) {
                         },
-                        [&](v5::disconnect_packet const& p) {
+                        [&](v5::disconnect_packet& p) {
                         },
-                        [&](v5::auth_packet const& p) {
+                        [&](v5::auth_packet& p) {
                         },
-                        [&](system_error const& e) {
+                        [&](system_error& e) {
                         }
                     }
                 );
