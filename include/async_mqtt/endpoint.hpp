@@ -59,7 +59,7 @@ public:
     using this_type = basic_endpoint<NextLayer, Role, PacketIdBytes>;
     using stream_type = stream<NextLayer>;
     using strand_type = typename stream_type::strand_type;
-    using variant_type = basic_packet_variant<PacketIdBytes>;
+    using packet_variant_type = basic_packet_variant<PacketIdBytes>;
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     template <typename... Args>
@@ -186,7 +186,7 @@ public:
     template <
         typename CompletionToken,
         typename std::enable_if_t<
-            std::is_invocable<CompletionToken, variant_type>::value
+            std::is_invocable<CompletionToken, packet_variant_type>::value
         >* = nullptr
     >
     auto recv(
@@ -195,7 +195,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(variant_type)
+                void(packet_variant_type)
             >(
                 recv_impl{
                     *this
