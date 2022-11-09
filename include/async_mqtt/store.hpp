@@ -51,6 +51,13 @@ public:
         elems_.clear();
     }
 
+    template <typename Func>
+    void for_each(Func const& func) {
+        for (auto const& e : elems_) {
+            func(e);
+        }
+    }
+
 private:
     struct tag_seq{};
     struct tag_res_id{};

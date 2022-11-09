@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_ENDPOINT_HPP
 
 #include <set>
+#include <deque>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
@@ -165,8 +166,8 @@ public:
         CompletionToken&& token
     ) {
         static_assert(
-            (is_client(Role) && is_client_sendable<Packet>()) ||
-            (is_server(Role) && is_server_sendable<Packet>()),
+            (is_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
+            (is_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
             "Packet cannot be send by MQTT protocol"
         );
         return
@@ -222,6 +223,7 @@ private: // compose operation impl
                 );
                 break;
             case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.pid_man_.acquire_unique_id());
                 break;
             }
@@ -246,6 +248,7 @@ private: // compose operation impl
                 );
                 break;
             case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.pid_man_.register_id(packet_id));
                 break;
             }
@@ -270,6 +273,7 @@ private: // compose operation impl
                 );
                 break;
             case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
                 ep.pid_man_.release_id(packet_id);
                 self.complete();
                 break;
@@ -306,14 +310,54 @@ private: // compose operation impl
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
                 bool topic_alias_validated = false;
+
                 if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
-                    ep.need_store_ = !packet.clean_session();
+                    if (packet.clean_session()) {
+                        ep.pid_man_.clear();
+                        ep.store_.clear();
+                        ep.need_store_ = false;
+                    }
+                    else {
+                        ep.need_store_ = true;
+                    }
                     ep.topic_alias_send_ = nullopt;
                 }
-                else if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
-                    ep.need_store_ = !packet.clean_start();
+
+                if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
+                    if (packet.clean_start()) {
+                        ep.pid_man_.clear();
+                        ep.store_.clear();
+                    }
                     ep.topic_alias_send_ = nullopt;
                     ep.topic_alias_recv_ = nullopt;
+
+                    // initialized. will be overwritten if session_expiry_interval > 0
+                    ep.need_store_ = false;
+
+                    for (auto const& prop : packet.props()) {
+                        prop.visit(
+                            overload {
+                                [&](property::topic_alias_maximum const& p) {
+                                    if (p.val() != 0) {
+                                        ep.topic_alias_recv_.emplace(p.val());
+                                    }
+                                },
+                                [&](property::receive_maximum const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.publish_recv_max_ = p.val();
+                                },
+                                [&](property::session_expiry_interval const& p) {
+                                    if (p.val() != 0) {
+                                        ep.need_store_ = true;
+                                    }
+                                },
+                                [](auto const&){}
+                            }
+                        );
+                    }
+                }
+
+                if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
                     for (auto const& prop : packet.props()) {
                         prop.visit(
                             overload {
@@ -331,26 +375,9 @@ private: // compose operation impl
                         );
                     }
                 }
-                else if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
-                    for (auto const& prop : packet.props()) {
-                        prop.visit(
-                            overload {
-                                [&](property::topic_alias_maximum const& p) {
-                                    if (p.val() != 0) {
-                                        ep.topic_alias_recv_.emplace(p.val());
-                                    }
-                                },
-                                [&](property::receive_maximum const& p) {
-                                    BOOST_ASSERT(p.val() != 0);
-                                    ep.publish_recv_max_ = p.val();
-                                },
-                                [](auto const&){}
-                            }
-                        );
-                    }
-                }
+
                 // store publish/pubrel packet
-                else if constexpr(is_publish<Packet>()) {
+                if constexpr(is_publish<Packet>()) {
                     if (ep.need_store_ &&
                         (packet.opts().qos() == qos::at_least_once ||
                          packet.opts().qos() == qos::exactly_once)
@@ -391,12 +418,9 @@ private: // compose operation impl
                         }
                     }
                 }
-                else if constexpr(is_pubrel<Packet>()) {
-                    if (ep.need_store_) ep.store_.add(packet);
-                }
 
-                // apply topic_alias
                 if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                    // apply topic_alias
                     auto ta_opt = get_topic_alias(packet.props());
                     if (packet.topic().empty()) {
                         if (!topic_alias_validated &&
@@ -442,6 +466,35 @@ private: // compose operation impl
                             }
                         }
                     }
+
+                    // receive_maximum for sending
+                    if (ep.enqueue_publish(packet)) {
+                        self.complete(
+                            make_error(
+                                errc::success,
+                                "publish_packet is enqueued due to receive_maximum for sending"
+                            )
+                        );
+                        return;
+                    }
+                }
+
+                if constexpr(is_instance_of<v5::basic_puback_packet, Packet>::value) {
+                    ep.publish_recv_.erase(packet.packet_id());
+                }
+
+                if constexpr(is_instance_of<v5::basic_pubrec_packet, Packet>::value) {
+                    if (is_error(packet.code())) {
+                        ep.publish_recv_.erase(packet.packet_id());
+                    }
+                }
+
+                if constexpr(is_pubrel<Packet>()) {
+                    if (ep.need_store_) ep.store_.add(packet);
+                }
+
+                if constexpr(is_instance_of<v5::basic_pubcomp_packet, Packet>::value) {
+                    ep.publish_recv_.erase(packet.packet_id());
                 }
 
                 ep.stream_.write_packet(
@@ -458,6 +511,7 @@ private: // compose operation impl
 
         template <typename Self>
         std::optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) const {
+            BOOST_ASSERT(ep.strand().running_in_this_thread());
             if (!ta_opt) {
                 self.complete(
                     make_error(
@@ -490,7 +544,6 @@ private: // compose operation impl
             }
             return topic;
         }
-
     };
 
     struct recv_impl {
@@ -544,6 +597,7 @@ private: // compose operation impl
                         },
                         [&](v3_1_1::connack_packet& p) {
                             if (p.session_present()) {
+                                ep.send_stored();
                             }
                             else {
                                 if (!ep.need_store_) {
@@ -553,6 +607,14 @@ private: // compose operation impl
                             }
                         },
                         [&](v5::connack_packet& p) {
+                            if (p.session_present()) {
+                                ep.send_stored();
+                            }
+                            else {
+                                ep.pid_man_.clear();
+                                ep.store_.clear();
+                            }
+
                             for (auto const& prop : p.props()) {
                                 prop.visit(
                                     overload {
@@ -569,14 +631,6 @@ private: // compose operation impl
                                         }
                                     }
                                 );
-                            }
-                            if (p.session_present()) {
-                            }
-                            else {
-                                if (!ep.need_store_) {
-                                    ep.pid_man_.clear();
-                                    ep.store_.clear();
-                                }
                             }
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
@@ -601,7 +655,7 @@ private: // compose operation impl
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes>& p) {
                             switch (p.opts().qos()) {
-                            case qos::at_least_once:
+                            case qos::at_least_once: {
                                 if (ep.publish_recv_.size() == ep.publish_recv_max_) {
                                     ep.send(
                                         v5::disconnect_packet{
@@ -612,15 +666,16 @@ private: // compose operation impl
                                     // TBD self.complete(error);
                                     return;
                                 }
-                                ep.publish_recv_.insert(p.packet_id());
+                                auto packet_id = p.packet_id();
+                                ep.publish_recv_.insert(packet_id);
                                 if (ep.auto_pub_response_) {
                                     ep.send(
-                                        v5::basic_puback_packet<PacketIdBytes>{p.packet_id()},
+                                        v5::basic_puback_packet<PacketIdBytes>{packet_id},
                                         [](system_error const&){}
                                     );
                                 }
-                                break;
-                            case qos::exactly_once:
+                            } break;
+                            case qos::exactly_once: {
                                 if (ep.publish_recv_.size() == ep.publish_recv_max_) {
                                     ep.send(
                                         v5::disconnect_packet{
@@ -631,14 +686,15 @@ private: // compose operation impl
                                     // TBD self.complete(error);
                                     return;
                                 }
-                                ep.publish_recv_.insert(p.packet_id());
+                                auto packet_id = p.packet_id();
+                                ep.publish_recv_.insert(packet_id);
                                 if (ep.auto_pub_response_) {
                                     ep.send(
-                                        v5::basic_pubrec_packet<PacketIdBytes>{p.packet_id()},
+                                        v5::basic_pubrec_packet<PacketIdBytes>{packet_id},
                                         [](system_error const&){}
                                     );
                                 }
-                                break;
+                            } break;
                             default:
                                 break;
                             }
@@ -699,13 +755,16 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v3_1_1_puback, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
+                            ep.pid_man_.release_id(packet_id);
                         },
                         [&](v5::basic_puback_packet<PacketIdBytes>& p) {
-                            ep.publish_recv_.erase(p.packet_id());
-                            ep.store_.erase(response_packet::v5_puback, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v5_puback, packet_id);
+                            ep.pid_man_.release_id(packet_id);
+                            --ep.publish_send_count_;
+                            send_publish_from_queue();
                         },
                         [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
@@ -721,12 +780,13 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             ep.store_.erase(response_packet::v5_pubrec, packet_id);
                             if (is_error(p.code())) {
-                                ep.publish_recv_.erase(packet_id);
                                 ep.pid_man_.release_id(packet_id);
+                                --ep.publish_send_count_;
+                                send_publish_from_queue();
                             }
                             else if (ep.auto_pub_response_) {
                                 ep.send(
-                                    v5::basic_pubrel_packet<PacketIdBytes>(p.packet_id()),
+                                    v5::basic_pubrel_packet<PacketIdBytes>(packet_id),
                                     [](system_error const&){}
                                 );
                             }
@@ -748,13 +808,16 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v3_1_1_pubcomp, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
+                            ep.pid_man_.release_id(packet_id);
+                            --ep.publish_send_count_;
+                            send_publish_from_queue();
                         },
                         [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
-                            ep.publish_recv_.erase(p.packet_id());
-                            ep.store_.erase(response_packet::v5_pubcomp, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v5_pubcomp, packet_id);
+                            ep.pid_man_.release_id(packet_id);
                         },
                         [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>& p) {
                         },
@@ -794,7 +857,81 @@ private: // compose operation impl
             } break;
             }
         }
+
+        void send_publish_from_queue() {
+            BOOST_ASSERT(ep.strand().running_in_this_thread());
+            while (!ep.publish_queue_.empty() &&
+                   ep.publish_send_count_ != ep.publish_send_max_) {
+                ++ep.publish_send_count_;
+                ep.send(
+                    force_move(ep.publish_queue_.front()),
+                    [](system_error const&){}
+                );
+                ep.publish_queue_.pop_front();
+            }
+        }
     };
+
+private:
+
+    bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        if (packet.opts().qos() == qos::at_least_once ||
+            packet.opts().qos() == qos::exactly_once
+        ) {
+            if (publish_send_count_ == publish_send_max_) {
+                publish_queue_.push_back(force_move(packet));
+                return true;
+            }
+            else {
+                ++publish_send_count_;
+                if (!publish_queue_.empty()) {
+                    publish_queue_.push_back(force_move(packet));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void send_stored() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        store_.for_each(
+            [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
+                pv.visit(
+                    // copy packet because the stored packets need to be preserved
+                    // until receiving puback/pubrec/pubcomp
+                    overload {
+                        [&](v3_1_1::basic_publish_packet<PacketIdBytes> p) {
+                            send(
+                                p,
+                                [](system_error const&){}
+                            );
+                        },
+                        [&](v5::basic_publish_packet<PacketIdBytes> p) {
+                            if (enqueue_publish(p)) return;
+                            send(
+                                p,
+                                [](system_error const&){}
+                            );
+                        },
+                        [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> p) {
+                            send(
+                                p,
+                                [](system_error const&){}
+                            );
+                        },
+                        [&](v5::basic_pubrel_packet<PacketIdBytes> p) {
+                            send(
+                                p,
+                                [](system_error const&){}
+                            );
+                        }
+                    }
+                );
+            }
+        );
+    }
 
 private:
     protocol_version protocol_version_;
@@ -814,8 +951,9 @@ private:
     receive_maximum_t publish_send_max_{receive_maximum_max};
     receive_maximum_t publish_recv_max_{receive_maximum_max};
     receive_maximum_t publish_send_count_{0};
-    std::set<packet_id_t> publish_recv_;
 
+    std::set<packet_id_t> publish_recv_;
+    std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
 };
 
 template <typename NextLayer, role Role>
