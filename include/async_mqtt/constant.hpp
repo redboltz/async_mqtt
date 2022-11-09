@@ -16,7 +16,7 @@ namespace async_mqtt {
 
 static constexpr session_expiry_interval_t session_never_expire = 0xffffffffUL;
 static constexpr topic_alias_t topic_alias_max = 0xffff;
-static constexpr std::size_t packet_size_no_limit =
+static constexpr std::uint32_t packet_size_no_limit =
     1 + // fixed header
     4 + // remaining length
     128 * 128 * 128 * 128; // maximum value of remainin length

@@ -314,7 +314,7 @@ private: // compose operation impl
         void operator()(
             Self& self,
             error_code const& ec = error_code{},
-            std::size_t bytes_transferred = 0
+            std::size_t /*bytes_transferred*/ = 0
         ) {
             if (ec) {
                 self.complete(ec);
@@ -365,6 +365,10 @@ private: // compose operation impl
                                     BOOST_ASSERT(p.val() != 0);
                                     ep.publish_recv_max_ = p.val();
                                 },
+                                [&](property::maximum_packet_size const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.maximum_packet_size_recv_ = p.val();
+                                },
                                 [&](property::session_expiry_interval const& p) {
                                     if (p.val() != 0) {
                                         ep.need_store_ = true;
@@ -388,6 +392,10 @@ private: // compose operation impl
                                 [&](property::receive_maximum const& p) {
                                     BOOST_ASSERT(p.val() != 0);
                                     ep.publish_recv_max_ = p.val();
+                                },
+                                [&](property::maximum_packet_size const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.maximum_packet_size_recv_ = p.val();
                                 },
                                 [](auto const&){}
                             }
@@ -416,23 +424,28 @@ private: // compose operation impl
                                         break;
                                     }
                                 }
-                                // add new packet that doesn't have topic_aliass to store
-                                // the original packet still use topic alias to send
-                                ep.store_.add(
+
+                                auto store_packet =
                                     Packet(
                                         packet.packet_id(),
                                         allocate_buffer(*topic_opt),
                                         packet.payload(),
                                         packet.opts(),
                                         force_move(props)
-                                    )
-                                );
+                                    );
+                                if (!validate_maximum_packet_size(self, store_packet)) return;
+
+                                // add new packet that doesn't have topic_aliass to store
+                                // the original packet still use topic alias to send
+                                ep.store_.add(force_move(store_packet));
                             }
                             else {
+                                if (!validate_maximum_packet_size(self, packet)) return;
                                 ep.store_.add(packet);
                             }
                         }
                         else {
+                            if (!validate_maximum_packet_size(self, packet)) return;
                             ep.store_.add(packet);
                         }
                     }
@@ -516,6 +529,10 @@ private: // compose operation impl
                     ep.publish_recv_.erase(packet.packet_id());
                 }
 
+                if (!validate_maximum_packet_size(self, packet)) {
+                    return;
+                }
+
                 ep.stream_.write_packet(
                     force_move(packet),
                     force_move(self)
@@ -563,6 +580,23 @@ private: // compose operation impl
             }
             return topic;
         }
+
+        template <typename Self, typename PacketArg>
+        bool validate_maximum_packet_size(Self& self, PacketArg const& packet_arg) const {
+            if (packet_arg.size() > ep.maximum_packet_size_send_) {
+                ASYNC_MQTT_LOG("mqtt_impl", error)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                    << "packet size over maximum_packet_size for sending";
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "packet size is over maximum_packet_size for sending"
+                    )
+                );
+                return false;
+            }
+            return true;
+        }
     };
 
     struct recv_impl {
@@ -587,11 +621,29 @@ private: // compose operation impl
                 break;
             case complete: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
+                if (buf.size() > ep.maximum_packet_size_recv_) {
+                    if (ep.protocol_version_ == protocol_version::v5) {
+                        ep.send(
+                            v5::disconnect_packet{
+                                disconnect_reason_code::packet_too_large
+                            },
+                            [](system_error const&){}
+                        );
+                    }
+                    self.complete(
+                        make_error(
+                            errc::bad_message,
+                            "too large packet received"
+                        )
+                    );
+                    return;
+                }
+
                 auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, ep.protocol_version_);
                 v.visit(
                     // do internal protocol processing
                     overload {
-                        [&](v3_1_1::connect_packet& p) {
+                        [&](v3_1_1::connect_packet&) {
                             ep.initialize();
                         },
                         [&](v5::connect_packet& p) {
@@ -607,6 +659,10 @@ private: // compose operation impl
                                         [&](property::receive_maximum const& p) {
                                             BOOST_ASSERT(p.val() != 0);
                                             ep.publish_send_max_ = p.val();
+                                        },
+                                        [&](property::maximum_packet_size const& p) {
+                                            BOOST_ASSERT(p.val() != 0);
+                                            ep.maximum_packet_size_send_ = p.val();
                                         },
                                         [](auto const&) {
                                         }
@@ -646,6 +702,10 @@ private: // compose operation impl
                                             BOOST_ASSERT(p.val() != 0);
                                             ep.publish_send_max_ = p.val();
                                         },
+                                        [&](property::maximum_packet_size const& p) {
+                                            BOOST_ASSERT(p.val() != 0);
+                                            ep.maximum_packet_size_send_ = p.val();
+                                        },
                                         [](auto const&) {
                                         }
                                     }
@@ -682,7 +742,12 @@ private: // compose operation impl
                                         },
                                         [](system_error const&){}
                                     );
-                                    // TBD self.complete(error);
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "receive maximum exceeded"
+                                        )
+                                    );
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -702,7 +767,12 @@ private: // compose operation impl
                                         },
                                         [](system_error const&){}
                                     );
-                                    // TBD self.complete(error);
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "receive maximum exceeded"
+                                        )
+                                    );
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -729,7 +799,12 @@ private: // compose operation impl
                                             },
                                             [](system_error const&){}
                                         );
-                                        // TBD self.complete(error);
+                                        self.complete(
+                                            make_error(
+                                                errc::bad_message,
+                                                "topic alias invalid"
+                                            )
+                                        );
                                     }
                                     else {
                                         auto topic = ep.topic_alias_recv_->find(*ta_opt);
@@ -744,7 +819,12 @@ private: // compose operation impl
                                                 },
                                                 [](system_error const&){}
                                             );
-                                            // TBD self.complete(error);
+                                            self.complete(
+                                                make_error(
+                                                    errc::bad_message,
+                                                    "topic alias invalid"
+                                                )
+                                            );
                                         }
                                         else {
                                             p.add_topic(allocate_buffer(topic));
@@ -761,7 +841,12 @@ private: // compose operation impl
                                         },
                                         [](system_error const&){}
                                     );
-                                    // TBD self.complete(error);
+                                    self.complete(
+                                        make_error(
+                                            errc::bad_message,
+                                            "topic alias invalid"
+                                        )
+                                    );
                                 }
                             }
                             else {
@@ -838,37 +923,37 @@ private: // compose operation impl
                             ep.store_.erase(response_packet::v5_pubcomp, packet_id);
                             ep.pid_man_.release_id(packet_id);
                         },
-                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>& p) {
+                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v5::basic_subscribe_packet<PacketIdBytes>& p) {
+                        [&](v5::basic_subscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
+                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>&) {
                         },
-                        [&](v5::basic_suback_packet<PacketIdBytes>& p) {
+                        [&](v5::basic_suback_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>& p) {
+                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v5::basic_unsubscribe_packet<PacketIdBytes>& p) {
+                        [&](v5::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
+                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>&) {
                         },
-                        [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
+                        [&](v5::basic_unsuback_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::pingreq_packet& p) {
+                        [&](v3_1_1::pingreq_packet&) {
                         },
-                        [&](v5::pingreq_packet& p) {
+                        [&](v5::pingreq_packet&) {
                         },
-                        [&](v3_1_1::pingresp_packet& p) {
+                        [&](v3_1_1::pingresp_packet&) {
                         },
-                        [&](v5::pingresp_packet& p) {
+                        [&](v5::pingresp_packet&) {
                         },
-                        [&](v3_1_1::disconnect_packet& p) {
+                        [&](v3_1_1::disconnect_packet&) {
                         },
-                        [&](v5::disconnect_packet& p) {
+                        [&](v5::disconnect_packet&) {
                         },
-                        [&](v5::auth_packet& p) {
+                        [&](v5::auth_packet&) {
                         },
-                        [&](system_error& e) {
+                        [&](system_error&) {
                         }
                     }
                 );
@@ -1014,6 +1099,9 @@ private:
 
     std::set<packet_id_t> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
+
+    std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
+    std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 };
 
 template <typename NextLayer, role Role>

@@ -703,11 +703,25 @@ public:
     using recv = maximum_packet_size;
     using store = maximum_packet_size;
     maximum_packet_size(std::uint32_t val)
-        : detail::n_bytes_property<4>{id::maximum_packet_size, endian_static_vector(val)} {}
+        : detail::n_bytes_property<4>{id::maximum_packet_size, endian_static_vector(val)} {
+        if (val == 0) {
+            throw make_error(
+                errc::bad_message,
+                "property::maximum_packet_size value is invalid"
+            );
+        }
+    }
 
     template <typename It, typename End>
     maximum_packet_size(It b, End e)
-        : detail::n_bytes_property<4>{id::maximum_packet_size, b, e} {}
+        : detail::n_bytes_property<4>{id::maximum_packet_size, b, e} {
+        if (val() == 0) {
+            throw make_error(
+                errc::bad_message,
+                "property::maximum_packet_size value is invalid"
+            );
+        }
+    }
 
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
