@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
+#include <set>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
@@ -321,6 +322,28 @@ private: // compose operation impl
                                         ep.topic_alias_recv_.emplace(p.val());
                                     }
                                 },
+                                [&](property::receive_maximum const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.publish_recv_max_ = p.val();
+                                },
+                                [](auto const&){}
+                            }
+                        );
+                    }
+                }
+                else if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
+                    for (auto const& prop : packet.props()) {
+                        prop.visit(
+                            overload {
+                                [&](property::topic_alias_maximum const& p) {
+                                    if (p.val() != 0) {
+                                        ep.topic_alias_recv_.emplace(p.val());
+                                    }
+                                },
+                                [&](property::receive_maximum const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.publish_recv_max_ = p.val();
+                                },
                                 [](auto const&){}
                             }
                         );
@@ -499,7 +522,54 @@ private: // compose operation impl
                         [&](v3_1_1::connect_packet& p) {
                             ep.topic_alias_send_ = nullopt;
                         },
+                        [&](v5::connect_packet& p) {
+                            ep.topic_alias_send_ = nullopt;
+                            for (auto const& prop : p.props()) {
+                                prop.visit(
+                                    overload {
+                                        [&](property::topic_alias_maximum const& p) {
+                                            if (p.val() > 0) {
+                                                ep.topic_alias_send_.emplace(p.val());
+                                            }
+                                        },
+                                        [&](property::receive_maximum const& p) {
+                                            BOOST_ASSERT(p.val() != 0);
+                                            ep.publish_send_max_ = p.val();
+                                        },
+                                        [](auto const&) {
+                                        }
+                                    }
+                                );
+                            }
+                        },
                         [&](v3_1_1::connack_packet& p) {
+                            if (p.session_present()) {
+                            }
+                            else {
+                                if (!ep.need_store_) {
+                                    ep.pid_man_.clear();
+                                    ep.store_.clear();
+                                }
+                            }
+                        },
+                        [&](v5::connack_packet& p) {
+                            for (auto const& prop : p.props()) {
+                                prop.visit(
+                                    overload {
+                                        [&](property::topic_alias_maximum const& p) {
+                                            if (p.val() > 0) {
+                                                ep.topic_alias_send_.emplace(p.val());
+                                            }
+                                        },
+                                        [&](property::receive_maximum const& p) {
+                                            BOOST_ASSERT(p.val() != 0);
+                                            ep.publish_send_max_ = p.val();
+                                        },
+                                        [](auto const&) {
+                                        }
+                                    }
+                                );
+                            }
                             if (p.session_present()) {
                             }
                             else {
@@ -529,102 +599,48 @@ private: // compose operation impl
                                 }
                             }
                         },
-                        [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v3_1_1_puback, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
-                        },
-                        [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v3_1_1_pubrec, p.packet_id());
-                            if (ep.auto_pub_response_) {
-                                ep.send(
-                                    v3_1_1::basic_pubrel_packet<PacketIdBytes>(p.packet_id()),
-                                    [](system_error const&){}
-                                );
-                            }
-                        },
-                        [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
-                            if (ep.auto_pub_response_) {
-                                ep.send(
-                                    v3_1_1::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
-                                    [](system_error const&){}
-                                );
-                            }
-                        },
-                        [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v3_1_1_pubcomp, p.packet_id());
-                            ep.pid_man_.release_id(p.packet_id());
-                        },
-                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>& p) {
-                        },
-                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
-                        },
-                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>& p) {
-                        },
-                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
-                        },
-                        [&](v3_1_1::pingreq_packet& p) {
-                        },
-                        [&](v3_1_1::pingresp_packet& p) {
-                        },
-                        [&](v3_1_1::disconnect_packet& p) {
-                        },
-                        [&](v5::connect_packet& p) {
-                            ep.topic_alias_send_ = nullopt;
-                            for (auto const& prop : p.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias_maximum const& p) {
-                                            if (p.val() > 0) {
-                                                ep.topic_alias_send_.emplace(p.val());
-                                            }
-                                        },
-                                        [](auto const&) {
-                                        }
-                                    }
-                                );
-                            }
-                        },
-                        [&](v5::connack_packet& p) {
-                            for (auto const& prop : p.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias_maximum const& p) {
-                                            if (p.val() > 0) {
-                                                ep.topic_alias_send_.emplace(p.val());
-                                            }
-                                        },
-                                        [](auto const&) {
-                                        }
-                                    }
-                                );
-                            }
-                            if (p.session_present()) {
-                            }
-                            else {
-                                if (!ep.need_store_) {
-                                    ep.pid_man_.clear();
-                                    ep.store_.clear();
-                                }
-                            }
-                        },
                         [&](v5::basic_publish_packet<PacketIdBytes>& p) {
-                            if (ep.auto_pub_response_) {
-                                switch (p.opts().qos()) {
-                                case qos::at_least_once: {
+                            switch (p.opts().qos()) {
+                            case qos::at_least_once:
+                                if (ep.publish_recv_.size() == ep.publish_recv_max_) {
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::receive_maximum_exceeded
+                                        },
+                                        [](system_error const&){}
+                                    );
+                                    // TBD self.complete(error);
+                                    return;
+                                }
+                                ep.publish_recv_.insert(p.packet_id());
+                                if (ep.auto_pub_response_) {
                                     ep.send(
                                         v5::basic_puback_packet<PacketIdBytes>{p.packet_id()},
                                         [](system_error const&){}
                                     );
-                                } break;
-                                case qos::exactly_once: {
+                                }
+                                break;
+                            case qos::exactly_once:
+                                if (ep.publish_recv_.size() == ep.publish_recv_max_) {
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::receive_maximum_exceeded
+                                        },
+                                        [](system_error const&){}
+                                    );
+                                    // TBD self.complete(error);
+                                    return;
+                                }
+                                ep.publish_recv_.insert(p.packet_id());
+                                if (ep.auto_pub_response_) {
                                     ep.send(
                                         v5::basic_pubrec_packet<PacketIdBytes>{p.packet_id()},
                                         [](system_error const&){}
                                     );
-                                } break;
-                                default:
-                                    break;
                                 }
+                                break;
+                            default:
+                                break;
                             }
 
                             if (p.topic().empty()) {
@@ -682,15 +698,43 @@ private: // compose operation impl
                                 }
                             }
                         },
+                        [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
+                            ep.store_.erase(response_packet::v3_1_1_puback, p.packet_id());
+                            ep.pid_man_.release_id(p.packet_id());
+                        },
                         [&](v5::basic_puback_packet<PacketIdBytes>& p) {
+                            ep.publish_recv_.erase(p.packet_id());
                             ep.store_.erase(response_packet::v5_puback, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
-                            ep.store_.erase(response_packet::v5_pubrec, p.packet_id());
+                        [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v3_1_1_pubrec, packet_id);
                             if (ep.auto_pub_response_) {
                                 ep.send(
+                                    v3_1_1::basic_pubrel_packet<PacketIdBytes>(packet_id),
+                                    [](system_error const&){}
+                                );
+                            }
+                        },
+                        [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
+                            auto packet_id = p.packet_id();
+                            ep.store_.erase(response_packet::v5_pubrec, packet_id);
+                            if (is_error(p.code())) {
+                                ep.publish_recv_.erase(packet_id);
+                                ep.pid_man_.release_id(packet_id);
+                            }
+                            else if (ep.auto_pub_response_) {
+                                ep.send(
                                     v5::basic_pubrel_packet<PacketIdBytes>(p.packet_id()),
+                                    [](system_error const&){}
+                                );
+                            }
+                        },
+                        [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
+                            if (ep.auto_pub_response_) {
+                                ep.send(
+                                    v3_1_1::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
                                     [](system_error const&){}
                                 );
                             }
@@ -703,21 +747,40 @@ private: // compose operation impl
                                 );
                             }
                         },
+                        [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
+                            ep.store_.erase(response_packet::v3_1_1_pubcomp, p.packet_id());
+                            ep.pid_man_.release_id(p.packet_id());
+                        },
                         [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
+                            ep.publish_recv_.erase(p.packet_id());
                             ep.store_.erase(response_packet::v5_pubcomp, p.packet_id());
                             ep.pid_man_.release_id(p.packet_id());
                         },
+                        [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>& p) {
+                        },
                         [&](v5::basic_subscribe_packet<PacketIdBytes>& p) {
+                        },
+                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
                         },
                         [&](v5::basic_suback_packet<PacketIdBytes>& p) {
                         },
+                        [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>& p) {
+                        },
                         [&](v5::basic_unsubscribe_packet<PacketIdBytes>& p) {
+                        },
+                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
                         },
                         [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
                         },
+                        [&](v3_1_1::pingreq_packet& p) {
+                        },
                         [&](v5::pingreq_packet& p) {
                         },
+                        [&](v3_1_1::pingresp_packet& p) {
+                        },
                         [&](v5::pingresp_packet& p) {
+                        },
+                        [&](v3_1_1::disconnect_packet& p) {
                         },
                         [&](v5::disconnect_packet& p) {
                         },
@@ -742,11 +805,17 @@ private:
     store<PacketIdBytes> store_;
 
     bool auto_pub_response_ = false;
+
     bool auto_map_topic_alias_send_ = false;
     bool auto_replace_topic_alias_send_ = false;
-
     optional<topic_alias_send> topic_alias_send_;
     optional<topic_alias_recv> topic_alias_recv_;
+
+    receive_maximum_t publish_send_max_{receive_maximum_max};
+    receive_maximum_t publish_recv_max_{receive_maximum_max};
+    receive_maximum_t publish_send_count_{0};
+    std::set<packet_id_t> publish_recv_;
+
 };
 
 template <typename NextLayer, role Role>
