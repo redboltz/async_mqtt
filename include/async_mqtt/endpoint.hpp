@@ -9,6 +9,7 @@
 
 #include <set>
 #include <deque>
+#include <atomic>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
@@ -28,6 +29,13 @@ enum class role {
     client = 0b01,
     server = 0b10,
     both   = 0b11
+};
+
+enum class connection_status {
+    connecting,
+    connected,
+    disconnecting,
+    disconnected
 };
 
 constexpr bool is_client(role r) {
@@ -332,217 +340,261 @@ private: // compose operation impl
             case write: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
-                bool topic_alias_validated = false;
-
-                if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
-                    ep.initialize();
-                    if (packet.clean_session()) {
-                        ep.pid_man_.clear();
-                        ep.store_.clear();
-                        ep.need_store_ = false;
-                    }
-                    else {
-                        ep.need_store_ = true;
-                    }
-                    ep.topic_alias_send_ = nullopt;
-                }
-
-                if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
-                    ep.initialize();
-                    if (packet.clean_start()) {
-                        ep.pid_man_.clear();
-                        ep.store_.clear();
-                    }
-                    for (auto const& prop : packet.props()) {
-                        prop.visit(
-                            overload {
-                                [&](property::topic_alias_maximum const& p) {
-                                    if (p.val() != 0) {
-                                        ep.topic_alias_recv_.emplace(p.val());
-                                    }
-                                },
-                                [&](property::receive_maximum const& p) {
-                                    BOOST_ASSERT(p.val() != 0);
-                                    ep.publish_recv_max_ = p.val();
-                                },
-                                [&](property::maximum_packet_size const& p) {
-                                    BOOST_ASSERT(p.val() != 0);
-                                    ep.maximum_packet_size_recv_ = p.val();
-                                },
-                                [&](property::session_expiry_interval const& p) {
-                                    if (p.val() != 0) {
-                                        ep.need_store_ = true;
-                                    }
-                                },
-                                [](auto const&){}
+                if constexpr(std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>>) {
+                    packet.visit(
+                        [&](auto& actual_packet) {
+                            if (process_send_packet(self, actual_packet)) {
+                                ep.stream_.write_packet(
+                                    force_move(actual_packet),
+                                    force_move(self)
+                                );
                             }
+                        }
+                    );
+                }
+                else {
+                    if (process_send_packet(self, packet)) {
+                        ep.stream_.write_packet(
+                            force_move(packet),
+                            force_move(self)
                         );
                     }
                 }
-
-                if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
-                    for (auto const& prop : packet.props()) {
-                        prop.visit(
-                            overload {
-                                [&](property::topic_alias_maximum const& p) {
-                                    if (p.val() != 0) {
-                                        ep.topic_alias_recv_.emplace(p.val());
-                                    }
-                                },
-                                [&](property::receive_maximum const& p) {
-                                    BOOST_ASSERT(p.val() != 0);
-                                    ep.publish_recv_max_ = p.val();
-                                },
-                                [&](property::maximum_packet_size const& p) {
-                                    BOOST_ASSERT(p.val() != 0);
-                                    ep.maximum_packet_size_recv_ = p.val();
-                                },
-                                [](auto const&){}
-                            }
-                        );
-                    }
-                }
-
-                // store publish/pubrel packet
-                if constexpr(is_publish<Packet>()) {
-                    if (ep.need_store_ &&
-                        (packet.opts().qos() == qos::at_least_once ||
-                         packet.opts().qos() == qos::exactly_once)
-                    ) {
-                        if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
-                            auto ta_opt = get_topic_alias(packet.props());
-                            if (packet.topic().empty()) {
-                                auto topic_opt = validate_topic_alias(self, ta_opt);
-                                if (!topic_opt) return;
-                                topic_alias_validated = true;
-                                auto props = packet.props();
-                                auto it = props.cbegin();
-                                auto end = props.cend();
-                                for (; it != end; ++it) {
-                                    if (it->id() == property::id::topic_alias) {
-                                        props.erase(it);
-                                        break;
-                                    }
-                                }
-
-                                auto store_packet =
-                                    Packet(
-                                        packet.packet_id(),
-                                        allocate_buffer(*topic_opt),
-                                        packet.payload(),
-                                        packet.opts(),
-                                        force_move(props)
-                                    );
-                                if (!validate_maximum_packet_size(self, store_packet)) return;
-
-                                // add new packet that doesn't have topic_aliass to store
-                                // the original packet still use topic alias to send
-                                ep.store_.add(force_move(store_packet));
-                            }
-                            else {
-                                if (!validate_maximum_packet_size(self, packet)) return;
-                                ep.store_.add(packet);
-                            }
-                        }
-                        else {
-                            if (!validate_maximum_packet_size(self, packet)) return;
-                            ep.store_.add(packet);
-                        }
-                    }
-                }
-
-                if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
-                    // apply topic_alias
-                    auto ta_opt = get_topic_alias(packet.props());
-                    if (packet.topic().empty()) {
-                        if (!topic_alias_validated &&
-                            !validate_topic_alias(self, ta_opt)) return;
-                        // use topic_alias set by user
-                    }
-                    else {
-                        if (ta_opt) {
-                            ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                                << "topia alias : "
-                                << packet.topic() << " - " << *ta_opt
-                                << " is registered." ;
-                            ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt);
-                        }
-                        else if (ep.auto_map_topic_alias_send_) {
-                            if (ep.topic_alias_send_) {
-                                if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
-                                    ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                                        << "topia alias : " << packet.topic() << " - " << ta_opt.value()
-                                        << " is found." ;
-                                    ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
-                                    packet.remove_topic_add_topic_alias(*ta_opt);
-                                }
-                                else {
-                                    auto lru_ta = ep.topic_alias_send_->get_lru_alias();
-                                    ep.topic_alias_send_->insert_or_update(packet.topic(), lru_ta); // remap topic alias
-                                    packet.add_topic_alias(*ta_opt);
-                                }
-                            }
-                        }
-                        else if (ep.auto_replace_topic_alias_send_) {
-                            if (ep.topic_alias_send_) {
-                                if (auto ta_opt = ep.topic_alias_send_->find(packet.topic())) {
-                                    ASYNC_MQTT_LOG("mqtt_impl", trace)
-                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                                        << "topia alias : " << packet.topic() << " - " << ta_opt.value()
-                                        << " is found." ;
-                                    ep.topic_alias_send_->insert_or_update(packet.topic(), *ta_opt); // update
-                                    packet.remove_topic_add_topic_alias(*ta_opt);
-                                }
-                            }
-                        }
-                    }
-
-                    // receive_maximum for sending
-                    if (ep.enqueue_publish(packet)) {
-                        self.complete(
-                            make_error(
-                                errc::success,
-                                "publish_packet is enqueued due to receive_maximum for sending"
-                            )
-                        );
-                        return;
-                    }
-                }
-
-                if constexpr(is_instance_of<v5::basic_puback_packet, Packet>::value) {
-                    ep.publish_recv_.erase(packet.packet_id());
-                }
-
-                if constexpr(is_instance_of<v5::basic_pubrec_packet, Packet>::value) {
-                    if (is_error(packet.code())) {
-                        ep.publish_recv_.erase(packet.packet_id());
-                    }
-                }
-
-                if constexpr(is_pubrel<Packet>()) {
-                    if (ep.need_store_) ep.store_.add(packet);
-                }
-
-                if constexpr(is_instance_of<v5::basic_pubcomp_packet, Packet>::value) {
-                    ep.publish_recv_.erase(packet.packet_id());
-                }
-
-                if (!validate_maximum_packet_size(self, packet)) {
-                    return;
-                }
-
-                ep.stream_.write_packet(
-                    force_move(packet),
-                    force_move(self)
-                );
             } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ec);
                 break;
             }
+        }
+
+        template <typename Self, typename ActualPacket>
+        bool process_send_packet(Self& self, ActualPacket& actual_packet) {
+            bool topic_alias_validated = false;
+
+            if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+                ep.initialize();
+                ep.status_ = connection_status::connecting;
+                if (actual_packet.clean_session()) {
+                    ep.pid_man_.clear();
+                    ep.store_.clear();
+                    ep.need_store_ = false;
+                }
+                else {
+                    ep.need_store_ = true;
+                }
+                ep.topic_alias_send_ = nullopt;
+            }
+
+            if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
+                ep.initialize();
+                ep.status_ = connection_status::connecting;
+                if (actual_packet.clean_start()) {
+                    ep.pid_man_.clear();
+                    ep.store_.clear();
+                }
+                for (auto const& prop : actual_packet.props()) {
+                    prop.visit(
+                        overload {
+                            [&](property::topic_alias_maximum const& p) {
+                                if (p.val() != 0) {
+                                    ep.topic_alias_recv_.emplace(p.val());
+                                }
+                            },
+                            [&](property::receive_maximum const& p) {
+                                BOOST_ASSERT(p.val() != 0);
+                                ep.publish_recv_max_ = p.val();
+                            },
+                            [&](property::maximum_packet_size const& p) {
+                                BOOST_ASSERT(p.val() != 0);
+                                ep.maximum_packet_size_recv_ = p.val();
+                            },
+                            [&](property::session_expiry_interval const& p) {
+                                if (p.val() != 0) {
+                                    ep.need_store_ = true;
+                                }
+                            },
+                            [](auto const&){}
+                        }
+                    );
+                }
+            }
+
+            if constexpr(std::is_same_v<v3_1_1::connack_packet, Packet>) {
+                if (actual_packet.code() == connect_return_code::accepted) {
+                    ep.status_ = connection_status::connected;
+                }
+                else {
+                    ep.status_ = connection_status::disconnecting;
+                }
+            }
+
+            if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
+                if (actual_packet.code() == connect_reason_code::success) {
+                    ep.status_ = connection_status::connected;
+                    for (auto const& prop : actual_packet.props()) {
+                        prop.visit(
+                            overload {
+                                [&](property::topic_alias_maximum const& p) {
+                                    if (p.val() != 0) {
+                                        ep.topic_alias_recv_.emplace(p.val());
+                                    }
+                                },
+                                [&](property::receive_maximum const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.publish_recv_max_ = p.val();
+                                },
+                                [&](property::maximum_packet_size const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    ep.maximum_packet_size_recv_ = p.val();
+                                },
+                                [](auto const&){}
+                            }
+                        );
+                    }
+                }
+                else {
+                    ep.status_ = connection_status::disconnecting;
+                }
+            }
+
+            // store publish/pubrel packet
+            if constexpr(is_publish<Packet>()) {
+                if (ep.need_store_ &&
+                    (actual_packet.opts().qos() == qos::at_least_once ||
+                     actual_packet.opts().qos() == qos::exactly_once)
+                ) {
+                    if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                        auto ta_opt = get_topic_alias(actual_packet.props());
+                        if (actual_packet.topic().empty()) {
+                            auto topic_opt = validate_topic_alias(self, ta_opt);
+                            if (!topic_opt) return false;
+                            topic_alias_validated = true;
+                            auto props = actual_packet.props();
+                            auto it = props.cbegin();
+                            auto end = props.cend();
+                            for (; it != end; ++it) {
+                                if (it->id() == property::id::topic_alias) {
+                                    props.erase(it);
+                                    break;
+                                }
+                            }
+
+                            auto store_packet =
+                                Packet(
+                                    actual_packet.packet_id(),
+                                    allocate_buffer(*topic_opt),
+                                    actual_packet.payload(),
+                                    actual_packet.opts(),
+                                    force_move(props)
+                                );
+                            if (!validate_maximum_packet_size(self, store_packet)) return false;
+                             // add new packet that doesn't have topic_aliass to store
+                            // the original packet still use topic alias to send
+                            ep.store_.add(force_move(store_packet));
+                        }
+                        else {
+                            if (!validate_maximum_packet_size(self, actual_packet)) return false;
+                            ep.store_.add(actual_packet);
+                        }
+                    }
+                    else {
+                        if (!validate_maximum_packet_size(self, actual_packet)) return false;
+                        ep.store_.add(actual_packet);
+                    }
+                }
+            }
+
+            if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                // apply topic_alias
+                auto ta_opt = get_topic_alias(actual_packet.props());
+                if (actual_packet.topic().empty()) {
+                    if (!topic_alias_validated &&
+                        !validate_topic_alias(self, ta_opt)) return false;
+                    // use topic_alias set by user
+                }
+                else {
+                    if (ta_opt) {
+                        ASYNC_MQTT_LOG("mqtt_impl", trace)
+                            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                            << "topia alias : "
+                            << actual_packet.topic() << " - " << *ta_opt
+                            << " is registered." ;
+                        ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
+                    }
+                    else if (ep.auto_map_topic_alias_send_) {
+                        if (ep.topic_alias_send_) {
+                            if (auto ta_opt = ep.topic_alias_send_->find(actual_packet.topic())) {
+                                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "topia alias : " << actual_packet.topic() << " - " << ta_opt.value()
+                                    << " is found." ;
+                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt); // update
+                                actual_packet.remove_topic_add_topic_alias(*ta_opt);
+                            }
+                            else {
+                                auto lru_ta = ep.topic_alias_send_->get_lru_alias();
+                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alia                                  actual_packet.add_topic_alias(*ta_opt);
+                            }
+                        }
+                    }
+                    else if (ep.auto_replace_topic_alias_send_) {
+                        if (ep.topic_alias_send_) {
+                            if (auto ta_opt = ep.topic_alias_send_->find(actual_packet.topic())) {
+                                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "topia alias : " << actual_packet.topic() << " - " << ta_opt.value()
+                                    << " is found." ;
+                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt); // update
+                                actual_packet.remove_topic_add_topic_alias(*ta_opt);
+                            }
+                        }
+                    }
+                }
+
+                // receive_maximum for sending
+                if (ep.enqueue_publish(actual_packet)) {
+                    self.complete(
+                        make_error(
+                            errc::success,
+                            "publish_packet is enqueued due to receive_maximum for sending"
+                        )
+                    );
+                    return false;
+                }
+            }
+
+            if constexpr(is_instance_of<v5::basic_puback_packet, Packet>::value) {
+                ep.publish_recv_.erase(actual_packet.packet_id());
+            }
+
+            if constexpr(is_instance_of<v5::basic_pubrec_packet, Packet>::value) {
+                if (is_error(actual_packet.code())) {
+                    ep.publish_recv_.erase(actual_packet.packet_id());
+                }
+            }
+
+            if constexpr(is_pubrel<Packet>()) {
+                if (ep.need_store_) ep.store_.add(actual_packet);
+            }
+
+            if constexpr(is_instance_of<v5::basic_pubcomp_packet, Packet>::value) {
+                ep.publish_recv_.erase(actual_packet.packet_id());
+            }
+
+            if (!validate_maximum_packet_size(self, actual_packet)) {
+                return false;
+            }
+
+            if constexpr(std::is_same_v<v3_1_1::disconnect_packet, Packet>) {
+                ep.status_ = connection_status::disconnecting;
+            }
+
+            if constexpr(std::is_same_v<v5::disconnect_packet, Packet>) {
+                ep.status_ = connection_status::disconnecting;
+            }
+
+            return true;
         }
 
         template <typename Self>
@@ -671,6 +723,7 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::connack_packet& p) {
+                            ep.status_ = connection_status::connected;
                             if (p.session_present()) {
                                 ep.send_stored();
                             }
@@ -682,6 +735,7 @@ private: // compose operation impl
                             }
                         },
                         [&](v5::connack_packet& p) {
+                            ep.status_ = connection_status::connected;
                             if (p.session_present()) {
                                 ep.send_stored();
                             }
@@ -948,12 +1002,15 @@ private: // compose operation impl
                         [&](v5::pingresp_packet&) {
                         },
                         [&](v3_1_1::disconnect_packet&) {
+                            ep.status_ = connection_status::disconnecting;
                         },
                         [&](v5::disconnect_packet&) {
+                            ep.status_ = connection_status::disconnecting;
                         },
                         [&](v5::auth_packet&) {
                         },
                         [&](system_error&) {
+                            ep.status_ = connection_status::disconnected;
                         }
                     }
                 );
@@ -1102,6 +1159,8 @@ private:
 
     std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
+
+    std::atomic<connection_status> status_{connection_status::disconnected};
 };
 
 template <role Role, typename NextLayer>
