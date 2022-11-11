@@ -12,48 +12,56 @@
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-class basic_endpoint_variant {
-    using endpoint_variant_type = std::variant<basic_endpoint<NextLayer, Role, PacketIdBytes>...>;
+class basic_endpoint_wp_variant;
+
+template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
+class basic_endpoint_sp_variant {
+    using ep_sp_t =
+        std::variant<
+            std::shared_ptr<
+                basic_endpoint<Role, PacketIdBytes, NextLayer>
+            >...
+        >;
 
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
-    template <typename NextLayerArg>
-    basic_endpoint_variant(basic_endpoint<NextLayerArg, Role, PacketIdBytes> ep)
+    template <typename Endpoint>
+    basic_endpoint_sp_variant(std::shared_ptr<Endpoint> ep)
         : ep_{force_move(ep)}
     {}
 
-    auto const& stream() const {
+    decltype(auto) stream() const {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.stream();
+            [&](auto& ep) -> decltype(auto) {
+                return ep->stream();
             },
             ep_
         );
     }
 
-    auto& stream() {
+    decltype(auto) stream() {
         return std::visit(
-            [&](auto& ep) {
-                return ep.stream();
+            [&](auto& ep) -> decltype(auto) {
+                return ep->stream();
             },
             ep_
         );
     }
 
-    auto const& strand() const {
+    decltype(auto) strand() const {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.stream().strand();
+            [&](auto& ep) -> decltype(auto) {
+                return ep->stream().strand();
             },
             ep_
         );
     }
-    auto& strand() {
+    decltype(auto) strand() {
         return std::visit(
-            [&](auto& ep) {
-                return ep.stream().strand();
+            [&](auto& ep) -> decltype(auto) {
+                return ep->stream().strand();
             },
             ep_
         );
@@ -71,8 +79,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.acquire_unique_packet_id(
+            [&](auto& ep) {
+                return ep->acquire_unique_packet_id(
                     std::forward<CompletionToken>(token)
                 );
             },
@@ -91,8 +99,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.register_packet_id(
+            [&](auto& ep) {
+                return ep->register_packet_id(
                     packet_id,
                     std::forward<CompletionToken>(token)
                 );
@@ -112,8 +120,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.release_packet_id(
+            [&](auto& ep) {
+                return ep->release_packet_id(
                     packet_id,
                     std::forward<CompletionToken>(token)
                 );
@@ -134,8 +142,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.send(
+            [&](auto& ep) {
+                return ep->send(
                     std::forward<Packet>(packet),
                     std::forward<CompletionToken>(token)
                 );
@@ -154,8 +162,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.recv(
+            [&](auto& ep) {
+                return ep->recv(
                     std::forward<CompletionToken>(token)
                 );
             },
@@ -174,8 +182,8 @@ public:
         CompletionToken&& token
     ) {
         return std::visit(
-            [&](auto const& ep) {
-                return ep.restore(
+            [&](auto& ep) {
+                return ep->restore(
                     force_move(pvs),
                     std::forward<CompletionToken>(token)
                 );
@@ -184,12 +192,79 @@ public:
         );
     }
 
+    operator bool() const {
+        return std::visit(
+            [&](auto& ep) {
+                return static_cast<bool>(ep);
+            },
+            ep_
+        );
+    }
+
 private:
-    endpoint_variant_type ep_;
+    friend
+    class basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...>;
+
+    ep_sp_t ep_;
 };
 
 template <role Role, typename... NextLayer>
-using endpoint_variant = basic_endpoint_variant<Role, 2, NextLayer...>;
+using endpoint_sp_variant = basic_endpoint_sp_variant<Role, 2, NextLayer...>;
+
+
+template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
+class basic_endpoint_wp_variant {
+    using this_type = basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...>;
+    using ep_wp_t =
+        std::variant<
+            std::weak_ptr<
+                basic_endpoint<Role, PacketIdBytes, NextLayer>
+            >...
+        >;
+    using sp_t = basic_endpoint_sp_variant<Role, PacketIdBytes, NextLayer...>;
+
+public:
+    template <typename Endpoint>
+    basic_endpoint_wp_variant(std::shared_ptr<Endpoint> sp)
+        : ep_{sp}
+    {}
+
+    basic_endpoint_wp_variant(sp_t& sp) {
+        std::visit(
+            [&](auto& ep) {
+                ep_ = ep;
+            },
+            sp.ep_
+        );
+    }
+
+public:
+    sp_t
+    lock() {
+        return std::visit(
+            [&](auto& ep) -> sp_t {
+                return ep.lock();
+            },
+            ep_
+        );
+    }
+
+    bool owner_before(this_type const& other) const {
+        return std::visit(
+            [&](auto const& lhs, auto const& rhs) {
+                return lhs.owner_before(rhs);
+            },
+            ep_,
+            other.ep_
+        );
+    }
+
+private:
+    ep_wp_t ep_;
+};
+
+template <role Role, typename... NextLayer>
+using endpoint_wp_variant = basic_endpoint_wp_variant<Role, 2, NextLayer...>;
 
 } // namespace async_mqtt
 

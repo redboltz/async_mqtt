@@ -37,14 +37,23 @@ public:
     using executor_type = async_mqtt::executor_type<next_layer_type>;
     using strand_type = as::strand<executor_type>;
 
-    template <typename... Args>
+    template <
+        typename T,
+        typename... Args,
+        std::enable_if_t<!std::is_same_v<std::decay_t<T>, this_type>>* = nullptr
+    >
     explicit
-    stream(Args&&... args)
-        :nl_{std::forward<Args>(args)...}
+    stream(T&& t, Args&&... args)
+        :nl_{std::forward<T>(t), std::forward<Args>(args)...}
     {
         queue_.emplace();
         queue_->stop();
     }
+
+    stream(this_type&&) = delete;
+    stream(this_type const&) = delete;
+    this_type& operator=(this_type&&) = delete;
+    this_type& operator=(this_type const&) = delete;
 
     auto const& next_layer() const {
         return nl_;

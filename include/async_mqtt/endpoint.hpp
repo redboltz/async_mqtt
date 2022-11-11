@@ -53,10 +53,10 @@ inline optional<topic_alias_t> get_topic_alias(properties const& props) {
     return nullopt;
 }
 
-template <typename NextLayer, role Role, std::size_t PacketIdBytes>
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint {
 public:
-    using this_type = basic_endpoint<NextLayer, Role, PacketIdBytes>;
+    using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
     using stream_type = stream<NextLayer>;
     using strand_type = typename stream_type::strand_type;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
@@ -162,7 +162,7 @@ public:
         >* = nullptr
     >
     auto send(
-        Packet&& packet,
+        Packet packet,
         CompletionToken&& token
     ) {
         static_assert(
@@ -177,7 +177,7 @@ public:
             >(
                 send_impl<Packet>{
                     *this,
-                    std::forward<Packet>(packet)
+                    force_move(packet)
                 },
                 token
             );
@@ -1104,8 +1104,8 @@ private:
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 };
 
-template <typename NextLayer, role Role>
-using endpoint = basic_endpoint<NextLayer, Role, 2>;
+template <role Role, typename NextLayer>
+using endpoint = basic_endpoint<Role, 2, NextLayer>;
 
 } // namespace async_mqtt
 

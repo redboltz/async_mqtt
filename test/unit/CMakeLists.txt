@@ -37,6 +37,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_disconnect.cpp
     ut_packet_v5_auth.cpp
     ut_system_error.cpp
+    ut_ep_topic_alias.cpp
 )
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)

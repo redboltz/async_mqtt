@@ -22,9 +22,9 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
     case control_packet_type::connect:
         switch (ver) {
         case protocol_version::v3_1_1:
-            return v3_1_1::basic_publish_packet<PacketIdBytes>(force_move(buf));
+            return v3_1_1::connect_packet(force_move(buf));
         case protocol_version::v5:
-            return v5::basic_publish_packet<PacketIdBytes>(force_move(buf));
+            return v5::connect_packet(force_move(buf));
             break;
         case protocol_version::undetermined:
             if (buf.size() >= 7) {
