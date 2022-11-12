@@ -173,11 +173,14 @@ public:
         Packet packet,
         CompletionToken&& token
     ) {
-        static_assert(
-            (is_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
-            (is_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
-            "Packet cannot be send by MQTT protocol"
-        );
+        if constexpr(!std::is_same_v<Packet, basic_packet_variant<PacketIdBytes>>) {
+            static_assert(
+                (is_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
+                (is_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
+                "Packet cannot be send by MQTT protocol"
+            );
+        }
+
         return
             as::async_compose<
                 CompletionToken,
@@ -342,13 +345,16 @@ private: // compose operation impl
                 state = complete;
                 if constexpr(std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>>) {
                     packet.visit(
-                        [&](auto& actual_packet) {
-                            if (process_send_packet(self, actual_packet)) {
-                                ep.stream_.write_packet(
-                                    force_move(actual_packet),
-                                    force_move(self)
-                                );
-                            }
+                        overload {
+                            [&](auto& actual_packet) {
+                                if (process_send_packet(self, actual_packet)) {
+                                    ep.stream_.write_packet(
+                                        force_move(actual_packet),
+                                        force_move(self)
+                                    );
+                                }
+                            },
+                            [&](system_error&) {}
                         }
                     );
                 }
@@ -370,9 +376,21 @@ private: // compose operation impl
 
         template <typename Self, typename ActualPacket>
         bool process_send_packet(Self& self, ActualPacket& actual_packet) {
+            if ((is_client(Role) && !is_client_sendable<std::decay_t<ActualPacket>>()) ||
+                (is_server(Role) && !is_server_sendable<std::decay_t<ActualPacket>>())
+            ) {
+                self.complete(
+                    make_error(
+                        errc::protocol_error,
+                        "Packet cannot be send by MQTT protocol"
+                    )
+                );
+                return false;
+            }
+
             bool topic_alias_validated = false;
 
-            if constexpr(std::is_same_v<v3_1_1::connect_packet, Packet>) {
+            if constexpr(std::is_same_v<v3_1_1::connect_packet, std::decay_t<ActualPacket>>) {
                 ep.initialize();
                 ep.status_ = connection_status::connecting;
                 if (actual_packet.clean_session()) {
@@ -386,7 +404,7 @@ private: // compose operation impl
                 ep.topic_alias_send_ = nullopt;
             }
 
-            if constexpr(std::is_same_v<v5::connect_packet, Packet>) {
+            if constexpr(std::is_same_v<v5::connect_packet, std::decay_t<ActualPacket>>) {
                 ep.initialize();
                 ep.status_ = connection_status::connecting;
                 if (actual_packet.clean_start()) {
@@ -420,7 +438,7 @@ private: // compose operation impl
                 }
             }
 
-            if constexpr(std::is_same_v<v3_1_1::connack_packet, Packet>) {
+            if constexpr(std::is_same_v<v3_1_1::connack_packet, std::decay_t<ActualPacket>>) {
                 if (actual_packet.code() == connect_return_code::accepted) {
                     ep.status_ = connection_status::connected;
                 }
@@ -429,7 +447,7 @@ private: // compose operation impl
                 }
             }
 
-            if constexpr(std::is_same_v<v5::connack_packet, Packet>) {
+            if constexpr(std::is_same_v<v5::connack_packet, std::decay_t<ActualPacket>>) {
                 if (actual_packet.code() == connect_reason_code::success) {
                     ep.status_ = connection_status::connected;
                     for (auto const& prop : actual_packet.props()) {
@@ -459,12 +477,12 @@ private: // compose operation impl
             }
 
             // store publish/pubrel packet
-            if constexpr(is_publish<Packet>()) {
+            if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
                 if (ep.need_store_ &&
                     (actual_packet.opts().qos() == qos::at_least_once ||
                      actual_packet.opts().qos() == qos::exactly_once)
                 ) {
-                    if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+                    if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
                         auto ta_opt = get_topic_alias(actual_packet.props());
                         if (actual_packet.topic().empty()) {
                             auto topic_opt = validate_topic_alias(self, ta_opt);
@@ -481,7 +499,7 @@ private: // compose operation impl
                             }
 
                             auto store_packet =
-                                Packet(
+                                ActualPacket(
                                     actual_packet.packet_id(),
                                     allocate_buffer(*topic_opt),
                                     actual_packet.payload(),
@@ -505,7 +523,7 @@ private: // compose operation impl
                 }
             }
 
-            if constexpr(is_instance_of<v5::basic_publish_packet, Packet>::value) {
+            if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
                 // apply topic_alias
                 auto ta_opt = get_topic_alias(actual_packet.props());
                 if (actual_packet.topic().empty()) {
@@ -564,34 +582,31 @@ private: // compose operation impl
                 }
             }
 
-            if constexpr(is_instance_of<v5::basic_puback_packet, Packet>::value) {
+            if constexpr(is_instance_of<v5::basic_puback_packet, std::decay_t<ActualPacket>>::value) {
                 ep.publish_recv_.erase(actual_packet.packet_id());
             }
 
-            if constexpr(is_instance_of<v5::basic_pubrec_packet, Packet>::value) {
+
+            if constexpr(is_instance_of<v5::basic_pubrec_packet, std::decay_t<ActualPacket>>::value) {
                 if (is_error(actual_packet.code())) {
                     ep.publish_recv_.erase(actual_packet.packet_id());
                 }
             }
 
-            if constexpr(is_pubrel<Packet>()) {
+            if constexpr(is_pubrel<std::decay_t<ActualPacket>>()) {
                 if (ep.need_store_) ep.store_.add(actual_packet);
             }
 
-            if constexpr(is_instance_of<v5::basic_pubcomp_packet, Packet>::value) {
+            if constexpr(is_instance_of<v5::basic_pubcomp_packet, std::decay_t<ActualPacket>>::value) {
                 ep.publish_recv_.erase(actual_packet.packet_id());
+            }
+
+            if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
+                ep.status_ = connection_status::disconnecting;
             }
 
             if (!validate_maximum_packet_size(self, actual_packet)) {
                 return false;
-            }
-
-            if constexpr(std::is_same_v<v3_1_1::disconnect_packet, Packet>) {
-                ep.status_ = connection_status::disconnecting;
-            }
-
-            if constexpr(std::is_same_v<v5::disconnect_packet, Packet>) {
-                ep.status_ = connection_status::disconnecting;
             }
 
             return true;

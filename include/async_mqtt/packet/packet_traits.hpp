@@ -175,8 +175,52 @@ constexpr bool is_pubrel() {
 }
 
 template <typename Packet>
-constexpr bool is_storable() {
-    return is_publish<Packet>() || is_pubrel<Packet>();
+constexpr bool is_subscribe() {
+    return
+        is_instance_of<v3_1_1::basic_subscribe_packet, Packet>::value ||
+        is_instance_of<v5::basic_subscribe_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_suback() {
+    return
+        is_instance_of<v3_1_1::basic_suback_packet, Packet>::value ||
+        is_instance_of<v5::basic_suback_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_unsubscribe() {
+    return
+        is_instance_of<v3_1_1::basic_unsubscribe_packet, Packet>::value ||
+        is_instance_of<v5::basic_unsubscribe_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_unsuback() {
+    return
+        is_instance_of<v3_1_1::basic_unsuback_packet, Packet>::value ||
+        is_instance_of<v5::basic_unsuback_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_pingreq() {
+    return
+        std::is_same_v<v3_1_1::pingreq_packet, Packet> ||
+        std::is_same_v<v5::pingreq_packet, Packet>;
+}
+
+template <typename Packet>
+constexpr bool is_pingresp() {
+    return
+        std::is_same_v<v3_1_1::pingresp_packet, Packet> ||
+        std::is_same_v<v5::pingresp_packet, Packet>;
+}
+
+template <typename Packet>
+constexpr bool is_disconnect() {
+    return
+        std::is_same_v<v3_1_1::disconnect_packet, Packet> ||
+        std::is_same_v<v5::disconnect_packet, Packet>;
 }
 
 } // namespace async_mqtt

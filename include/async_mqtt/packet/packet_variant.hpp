@@ -45,7 +45,15 @@ template <std::size_t PacketIdBytes>
 class basic_packet_variant {
 public:
     basic_packet_variant() = default;
-    template <typename Packet>
+    template <
+        typename Packet,
+        std::enable_if_t<
+            !std::is_same_v<
+                std::decay_t<Packet>,
+                basic_packet_variant<PacketIdBytes>
+            >
+        >* = nullptr
+    >
     basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
     {}
 

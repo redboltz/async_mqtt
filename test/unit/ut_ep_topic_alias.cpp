@@ -22,7 +22,7 @@ namespace am = async_mqtt;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v5_ta1) {
-    auto p = am::v5::connect_packet{
+    am::packet_variant p = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
         am::allocate_buffer("cid1"),
@@ -58,6 +58,7 @@ BOOST_AUTO_TEST_CASE(v5_ta1) {
             std::cout << am::hex_dump(wp) << std::endl;
         }
     );
+
 
     auto f_send = ep.send(
         p,
