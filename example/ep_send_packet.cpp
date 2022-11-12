@@ -25,8 +25,11 @@ int main() {
         async_mqtt::protocol_version::v3_1_1,
         ioc
     );
-    async_mqtt::endpoint_sp_variant<async_mqtt::role::client, async_mqtt::protocol::mqtt>
-        amep1{amep_sp};
+    auto amep1 = async_mqtt::endpoint_sp_variant<async_mqtt::role::client, async_mqtt::protocol::mqtt>::create(
+        async_mqtt::protocol_version::v3_1_1,
+        ioc
+    );
+    // amep1{amep_sp};
     //amep1{async_mqtt::force_move(amep_sp)};
 
     async_mqtt::endpoint_wp_variant<async_mqtt::role::client, async_mqtt::protocol::mqtt>

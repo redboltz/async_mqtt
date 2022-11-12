@@ -133,7 +133,6 @@ constexpr bool is_server_sendable() {
     return
         std::is_same_v<v3_1_1::connack_packet, Packet> ||
         std::is_same_v<v3_1_1::pingresp_packet, Packet> ||
-        std::is_same_v<v3_1_1::disconnect_packet, Packet> ||
         is_instance_of<v3_1_1::basic_publish_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_puback_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_pubrec_packet, Packet>::value ||

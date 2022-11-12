@@ -16,21 +16,28 @@ class basic_endpoint_wp_variant;
 
 template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
 class basic_endpoint_sp_variant {
+public:
+    using this_type = basic_endpoint_sp_variant<Role, PacketIdBytes, NextLayer...>;
     using ep_sp_t =
         std::variant<
             std::shared_ptr<
                 basic_endpoint<Role, PacketIdBytes, NextLayer>
             >...
         >;
-
-public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
-    template <typename Endpoint>
-    basic_endpoint_sp_variant(std::shared_ptr<Endpoint> ep)
-        : ep_{force_move(ep)}
-    {}
+    template <typename... Args>
+    static this_type create(
+        protocol_version ver,
+        Args&&... args
+    ) {
+        return
+            std::make_shared<basic_endpoint<Role, PacketIdBytes, NextLayer...>>(
+                ver,
+                std::forward<Args>(args)...
+            );
+    }
 
     decltype(auto) stream() const {
         return std::visit(
@@ -202,6 +209,12 @@ public:
     }
 
 private:
+
+    template <typename Endpoint>
+    basic_endpoint_sp_variant(std::shared_ptr<Endpoint> ep)
+        : ep_{force_move(ep)}
+    {}
+
     friend
     class basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...>;
 
