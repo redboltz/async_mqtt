@@ -373,16 +373,6 @@ BOOST_AUTO_TEST_CASE(invalid_v3_1_1) {
         }
     );
     {
-        auto ec = ep.send(pingresp, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::protocol_error);
-    }
-
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant) {
-            BOOST_TEST(false);
-        }
-    );
-    {
         auto ec = ep.send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
@@ -397,7 +387,58 @@ BOOST_AUTO_TEST_CASE(invalid_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
 #endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
+
+    // runtime error due to connot send packet
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(connack), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(suback), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(unsuback), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(pingresp), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
 
     // runtime error due to send before sending connect
     ep.stream().next_layer().set_write_packet_checker(
