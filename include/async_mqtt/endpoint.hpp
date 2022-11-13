@@ -776,47 +776,51 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::connack_packet& p) {
-                            ep.status_ = connection_status::connected;
-                            if (p.session_present()) {
-                                ep.send_stored();
-                            }
-                            else {
-                                if (!ep.need_store_) {
-                                    ep.pid_man_.clear();
-                                    ep.store_.clear();
+                            if (p.code() == connect_return_code::accepted) {
+                                ep.status_ = connection_status::connected;
+                                if (p.session_present()) {
+                                    ep.send_stored();
+                                }
+                                else {
+                                    if (!ep.need_store_) {
+                                        ep.pid_man_.clear();
+                                        ep.store_.clear();
+                                    }
                                 }
                             }
                         },
                         [&](v5::connack_packet& p) {
-                            ep.status_ = connection_status::connected;
-                            if (p.session_present()) {
-                                ep.send_stored();
-                            }
-                            else {
-                                ep.pid_man_.clear();
-                                ep.store_.clear();
-                            }
+                            if (p.code() == connect_reason_code::success) {
+                                ep.status_ = connection_status::connected;
+                                if (p.session_present()) {
+                                    ep.send_stored();
+                                }
+                                else {
+                                    ep.pid_man_.clear();
+                                    ep.store_.clear();
+                                }
 
-                            for (auto const& prop : p.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias_maximum const& p) {
-                                            if (p.val() > 0) {
-                                                ep.topic_alias_send_.emplace(p.val());
+                                for (auto const& prop : p.props()) {
+                                    prop.visit(
+                                        overload {
+                                            [&](property::topic_alias_maximum const& p) {
+                                                if (p.val() > 0) {
+                                                    ep.topic_alias_send_.emplace(p.val());
+                                                }
+                                            },
+                                            [&](property::receive_maximum const& p) {
+                                                BOOST_ASSERT(p.val() != 0);
+                                                ep.publish_send_max_ = p.val();
+                                            },
+                                            [&](property::maximum_packet_size const& p) {
+                                                BOOST_ASSERT(p.val() != 0);
+                                                ep.maximum_packet_size_send_ = p.val();
+                                            },
+                                            [](auto const&) {
                                             }
-                                        },
-                                        [&](property::receive_maximum const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            ep.publish_send_max_ = p.val();
-                                        },
-                                        [&](property::maximum_packet_size const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            ep.maximum_packet_size_send_ = p.val();
-                                        },
-                                        [](auto const&) {
                                         }
-                                    }
-                                );
+                                    );
+                                }
                             }
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
