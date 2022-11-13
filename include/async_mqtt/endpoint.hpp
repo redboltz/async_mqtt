@@ -376,6 +376,7 @@ private: // compose operation impl
 
         template <typename Self, typename ActualPacket>
         bool process_send_packet(Self& self, ActualPacket& actual_packet) {
+            // MQTT protocol sendable packet check
             if ((is_client(Role) && !is_client_sendable<std::decay_t<ActualPacket>>()) ||
                 (is_server(Role) && !is_server_sendable<std::decay_t<ActualPacket>>())
             ) {
@@ -388,6 +389,42 @@ private: // compose operation impl
                 return false;
             }
 
+            // connection status check
+            if constexpr(is_connect<ActualPacket>()) {
+                if (ep.status_ != connection_status::disconnected) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "connect_packet can only be send on connection_status::disconnected"
+                        )
+                    );
+                    return false;
+                }
+            }
+            else if constexpr(is_connack<ActualPacket>()) {
+                if (ep.status_ != connection_status::connecting) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "connsck_packet can only be send on connection_status::connecting"
+                        )
+                    );
+                    return false;
+                }
+            }
+            else {
+                if (ep.status_ != connection_status::connected) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "packet can only be send on connection_status::connected"
+                        )
+                    );
+                    return false;
+                }
+            }
+
+            // sending process
             bool topic_alias_validated = false;
 
             if constexpr(std::is_same_v<v3_1_1::connect_packet, std::decay_t<ActualPacket>>) {
@@ -677,6 +714,7 @@ private: // compose operation impl
             buffer buf = buffer{}
         ) {
             if (ec) {
+                ep.status_ = connection_status::disconnected;
                 self.complete(system_error{ec});
                 return;
             }

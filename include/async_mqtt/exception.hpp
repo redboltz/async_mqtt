@@ -27,7 +27,7 @@ struct system_error : sys::system_error, private boost::totally_ordered<system_e
     using base_type = sys::system_error;
     using base_type::base_type;
     system_error(error_code const& ec)
-        : base_type(ec)
+        : base_type{ec}
     {}
     operator bool() const {
         return code() != errc::success;

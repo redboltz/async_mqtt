@@ -23,8 +23,13 @@ struct stub_socket {
     using packet_iterator = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator, packet_iterator>;
 
-    stub_socket(as::io_context& ioc, std::deque<packet_variant> recv_pvs)
-        :ioc_{ioc},
+    stub_socket(
+        protocol_version version,
+        as::io_context& ioc,
+        std::deque<packet_variant> recv_pvs
+    )
+        :version_{version},
+         ioc_{ioc},
          recv_pvs_{force_move(recv_pvs)}
     {}
 
@@ -54,7 +59,7 @@ struct stub_socket {
         auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
         auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
         auto buf = allocate_buffer(it, end);
-        auto pv = buffer_to_packet_variant(buf, protocol_version::v5);
+        auto pv = buffer_to_packet_variant(buf, version_);
         if (write_packet_checker_) write_packet_checker_(pv);
         token(boost::system::error_code{}, std::distance(it, end));
     }
@@ -64,9 +69,14 @@ struct stub_socket {
         MutableBufferSequence const& mb,
         CompletionToken&& token
     ) {
-        std::cout << mb.size() << std::endl;
+        // empty
         if (recv_pvs_it_ == recv_pvs_.end()) {
             token(errc::make_error_code(errc::no_message), 0);
+            return;
+        }
+        if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
+            ++recv_pvs_it_;
+            token(ec->code(), 0);
             return;
         }
 
@@ -82,6 +92,12 @@ struct stub_socket {
                 token(errc::make_error_code(errc::no_message), 0);
                 return;
             }
+            if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
+                ++recv_pvs_it_;
+                token(ec->code(), 0);
+                return;
+            }
+            cbs_ = recv_pvs_it_->const_buffer_sequence();
             pv_r_ = make_packet_range(cbs_);
         }
 
@@ -94,6 +110,7 @@ struct stub_socket {
 
 private:
 
+    protocol_version version_;
     as::io_context& ioc_;
     pv_queue_t recv_pvs_;
     pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();

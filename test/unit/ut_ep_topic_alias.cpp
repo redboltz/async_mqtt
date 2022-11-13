@@ -44,7 +44,9 @@ BOOST_AUTO_TEST_CASE(v5_ta1) {
         am::protocol_version::v5,
         ioc,
         std::deque<am::packet_variant> {
-            p, p
+            p,
+            am::make_error(am::errc::network_reset, "pseudo close"),
+            p
         }
     };
 
@@ -59,18 +61,33 @@ BOOST_AUTO_TEST_CASE(v5_ta1) {
         }
     );
 
-
-    auto f_send = ep.send(
-        p,
-        as::use_future
-    );
-
-
-    auto ec = f_send.get();
+    {
+        auto f_send = ep.send(
+            p,
+            as::use_future
+        );
 
 
-    BOOST_TEST(!ec);
-    std::cout << ec.what() << std::endl;
+        auto ec = f_send.get();
+
+
+        BOOST_TEST(!ec);
+        std::cout << ec.what() << std::endl;
+    }
+
+    {
+        auto f_send = ep.send(
+            p,
+            as::use_future
+        );
+
+
+        auto ec = f_send.get();
+
+
+        BOOST_TEST(!ec);
+        std::cout << ec.what() << std::endl;
+    }
 
     {
         auto f_recv = ep.recv(as::use_future);

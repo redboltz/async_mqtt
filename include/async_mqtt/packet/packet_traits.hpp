@@ -161,6 +161,13 @@ constexpr bool is_connect() {
 }
 
 template <typename Packet>
+constexpr bool is_connack() {
+    return
+        std::is_same_v<v3_1_1::connack_packet, Packet> ||
+        std::is_same_v<v5::connack_packet, Packet>;
+}
+
+template <typename Packet>
 constexpr bool is_publish() {
     return
         is_instance_of<v3_1_1::basic_publish_packet, Packet>::value ||

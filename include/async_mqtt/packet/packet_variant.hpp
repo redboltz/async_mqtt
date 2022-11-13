@@ -75,6 +75,16 @@ public:
             );
     }
 
+    template <typename T>
+    decltype(auto) get_if() {
+        return std::get_if<T>(&var_);
+    }
+
+    template <typename T>
+    decltype(auto) get_if() const {
+        return std::get_if<T>(&var_);
+    }
+
     std::vector<as::const_buffer> const_buffer_sequence() const {
         return visit(
             overload {
@@ -82,7 +92,6 @@ public:
                     return p.const_buffer_sequence();
                 },
                 [] (system_error const&) {
-                    BOOST_ASSERT(false);
                     return std::vector<as::const_buffer>{};
                 }
             }
