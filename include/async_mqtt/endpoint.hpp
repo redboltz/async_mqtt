@@ -412,6 +412,18 @@ private: // compose operation impl
                     return false;
                 }
             }
+            else if constexpr(std::is_same_v<v5::auth_packet, Packet>) {
+                if (ep.status_ != connection_status::connected &&
+                    ep.status_ != connection_status::connecting) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "packet can only be send on connection_status::connected"
+                        )
+                    );
+                    return false;
+                }
+            }
             else {
                 if (ep.status_ != connection_status::connected) {
                     self.complete(
