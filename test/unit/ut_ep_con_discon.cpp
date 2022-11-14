@@ -24,7 +24,7 @@ namespace as = boost::asio;
 
 // v3_1_1
 
-BOOST_AUTO_TEST_CASE(valid_v3_1_1) {
+BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(valid_v3_1_1) {
     th.join();
 }
 
-BOOST_AUTO_TEST_CASE(invalid_v3_1_1) {
+BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -706,10 +706,674 @@ BOOST_AUTO_TEST_CASE(invalid_v3_1_1) {
     th.join();
 }
 
+BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto connect = am::v3_1_1::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::allocate_buffer("user1"),
+        am::allocate_buffer("pass1")
+    };
+
+    auto connack = am::v3_1_1::connack_packet{
+        true,   // session_present
+        am::connect_return_code::accepted
+    };
+
+    auto publish = am::v3_1_1::publish_packet(
+        0x1234, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
+    );
+
+    auto puback = am::v3_1_1::puback_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubrec = am::v3_1_1::pubrec_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubrel = am::v3_1_1::pubrel_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubcomp = am::v3_1_1::pubcomp_packet(
+        0x1234 // packet_id
+    );
+
+    auto suback = am::v3_1_1::suback_packet{
+        0x1234,         // packet_id
+        std::vector<am::suback_return_code> {
+            am::suback_return_code::success_maximum_qos_1,
+            am::suback_return_code::failure
+        }
+    };
+
+    auto unsuback = am::v3_1_1::unsuback_packet(
+        0x1234 // packet_id
+    );
+
+    auto pingresp = am::v3_1_1::pingresp_packet();
+
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
+
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc,
+        std::deque<am::packet_variant> {
+            // receive packets
+            connect,
+            close,
+            connect,
+            close,
+        }
+    };
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send valid packets
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(publish, wp));
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(puback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubrec, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubrel, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubcomp, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(suback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(unsuback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pingresp, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+
+    // recv close
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+    }
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send publish behalf of valid packets
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(publish, wp));
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv close
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+    }
+
+    guard.reset();
+    th.join();
+}
+
+BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto connect = am::v3_1_1::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::allocate_buffer("user1"),
+        am::allocate_buffer("pass1")
+    };
+
+    auto connack = am::v3_1_1::connack_packet{
+        false,   // session_present
+        am::connect_return_code::not_authorized
+    };
+
+    auto disconnect = am::v3_1_1::disconnect_packet{};
+
+    auto publish = am::v3_1_1::publish_packet(
+        0x1234, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
+    );
+
+    auto puback = am::v3_1_1::puback_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubrec = am::v3_1_1::pubrec_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubrel = am::v3_1_1::pubrel_packet(
+        0x1234 // packet_id
+    );
+
+    auto pubcomp = am::v3_1_1::pubcomp_packet(
+        0x1234 // packet_id
+    );
+
+    auto subscribe = am::v3_1_1::subscribe_packet{
+        0x1234,         // packet_id
+        std::vector<am::topic_subopts> {
+            {am::allocate_buffer("topic1"), am::qos::at_most_once},
+            {am::allocate_buffer("topic2"), am::qos::exactly_once},
+        }
+    };
+
+    auto suback = am::v3_1_1::suback_packet{
+        0x1234,         // packet_id
+        std::vector<am::suback_return_code> {
+            am::suback_return_code::success_maximum_qos_1,
+            am::suback_return_code::failure
+        }
+    };
+
+    auto unsubscribe = am::v3_1_1::unsubscribe_packet{
+        0x1234,         // packet_id
+        std::vector<am::buffer> {
+            am::allocate_buffer("topic1"),
+            am::allocate_buffer("topic2"),
+        }
+    };
+
+    auto unsuback = am::v3_1_1::unsuback_packet(
+        0x1234 // packet_id
+    );
+
+    auto pingreq = am::v3_1_1::pingreq_packet();
+    auto pingresp = am::v3_1_1::pingresp_packet();
+
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
+
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc,
+        std::deque<am::packet_variant> {
+            // receive packets
+            connect,
+        }
+    };
+
+    // send protocol error packets
+
+    // compile error as expected
+#if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(subscribe, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsubscribe, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingreq, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+#endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
+
+    // runtime error due to connot send packet
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(connect), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(subscribe), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(unsubscribe), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(pingreq), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // runtime error due to send before receiving connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // runtime error due to send before sending connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // runtime error due to send before receiving connack with not_authorized
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    guard.reset();
+    th.join();
+}
 
 // v5
 
-BOOST_AUTO_TEST_CASE(valid_v5) {
+BOOST_AUTO_TEST_CASE(valid_client_v5) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -842,6 +1506,16 @@ BOOST_AUTO_TEST_CASE(valid_v5) {
     }
 
     // send valid packets
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(auth, wp));
+        }
+    );
+    {
+        auto ec = ep.send(auth, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
@@ -978,7 +1652,7 @@ BOOST_AUTO_TEST_CASE(valid_v5) {
     th.join();
 }
 
-BOOST_AUTO_TEST_CASE(invalid_v5) {
+BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -1460,4 +2134,756 @@ BOOST_AUTO_TEST_CASE(invalid_v5) {
     guard.reset();
     th.join();
 }
+
+BOOST_AUTO_TEST_CASE(valid_server_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::allocate_buffer("user1"),
+        am::allocate_buffer("pass1"),
+        am::properties{}
+    };
+
+    auto connack = am::v5::connack_packet{
+        true,   // session_present
+        am::connect_reason_code::success,
+        am::properties{}
+    };
+
+    auto disconnect = am::v5::disconnect_packet{
+        am::disconnect_reason_code::normal_disconnection,
+        am::properties{}
+    };
+
+    auto publish = am::v5::publish_packet(
+        0x1234, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto puback = am::v5::puback_packet(
+        0x1234, // packet_id
+        am::puback_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubrec = am::v5::pubrec_packet(
+        0x1234, // packet_id
+        am::pubrec_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubrel = am::v5::pubrel_packet(
+        0x1234, // packet_id
+        am::pubrel_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubcomp = am::v5::pubcomp_packet(
+        0x1234, // packet_id
+        am::pubcomp_reason_code::success,
+        am::properties{}
+    );
+
+    auto suback = am::v5::suback_packet{
+        0x1234,         // packet_id
+        std::vector<am::suback_reason_code> {
+            am::suback_reason_code::granted_qos_1,
+            am::suback_reason_code::unspecified_error
+        },
+        am::properties{}
+    };
+
+    auto unsuback = am::v5::unsuback_packet(
+        0x1234, // packet_id
+        std::vector<am::unsuback_reason_code> {
+            am::unsuback_reason_code::no_subscription_existed,
+            am::unsuback_reason_code::unspecified_error
+        },
+        am::properties{}
+    );
+
+    auto pingresp = am::v5::pingresp_packet();
+
+    auto auth = am::v5::auth_packet{
+        am::auth_reason_code::continue_authentication,
+        am::properties{}
+    };
+
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
+
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc,
+        std::deque<am::packet_variant> {
+            // receive packets
+            connect,
+            close,
+            connect,
+            close,
+        }
+    };
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // send auth
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(auth, wp));
+        }
+    );
+    {
+        auto ec = ep.send(auth, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send valid packets
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(auth, wp));
+        }
+    );
+    {
+        auto ec = ep.send(auth, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(publish, wp));
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(puback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubrec, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubrel, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pubcomp, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(suback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(unsuback, wp));
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(pingresp, wp));
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+
+    // recv close
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+    }
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send publish behalf of valid packets
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(publish, wp));
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv close
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+    }
+
+    guard.reset();
+    th.join();
+}
+
+BOOST_AUTO_TEST_CASE(invalid_server_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::allocate_buffer("user1"),
+        am::allocate_buffer("pass1"),
+        am::properties{}
+    };
+
+    auto connack = am::v5::connack_packet{
+        false,   // session_present
+        am::connect_reason_code::not_authorized,
+        am::properties{}
+    };
+
+    auto disconnect = am::v5::disconnect_packet{
+        am::disconnect_reason_code::normal_disconnection,
+        am::properties{}
+    };
+
+    auto publish = am::v5::publish_packet(
+        0x1234, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto puback = am::v5::puback_packet(
+        0x1234, // packet_id
+        am::puback_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubrec = am::v5::pubrec_packet(
+        0x1234, // packet_id
+        am::pubrec_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubrel = am::v5::pubrel_packet(
+        0x1234, // packet_id
+        am::pubrel_reason_code::success,
+        am::properties{}
+    );
+
+    auto pubcomp = am::v5::pubcomp_packet(
+        0x1234, // packet_id
+        am::pubcomp_reason_code::success,
+        am::properties{}
+    );
+
+    auto subscribe = am::v5::subscribe_packet{
+        0x1234,         // packet_id
+        std::vector<am::topic_subopts> {
+            {am::allocate_buffer("topic1"), am::qos::at_most_once},
+            {am::allocate_buffer("topic2"), am::qos::exactly_once},
+        },
+        am::properties{}
+    };
+
+    auto suback = am::v5::suback_packet{
+        0x1234,         // packet_id
+        std::vector<am::suback_reason_code> {
+            am::suback_reason_code::granted_qos_1,
+            am::suback_reason_code::unspecified_error
+        },
+        am::properties{}
+    };
+
+    auto unsubscribe = am::v5::unsubscribe_packet{
+        0x1234,         // packet_id
+        std::vector<am::buffer> {
+            am::allocate_buffer("topic1"),
+            am::allocate_buffer("topic2"),
+        },
+        am::properties{}
+    };
+
+
+    auto unsuback = am::v5::unsuback_packet(
+        0x1234, // packet_id
+        std::vector<am::unsuback_reason_code> {
+            am::unsuback_reason_code::no_subscription_existed,
+            am::unsuback_reason_code::unspecified_error
+        },
+        am::properties{}
+    );
+
+    auto pingreq = am::v5::pingreq_packet();
+    auto pingresp = am::v5::pingresp_packet();
+
+    auto auth = am::v5::auth_packet{
+        am::auth_reason_code::continue_authentication,
+        am::properties{}
+    };
+
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
+
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc,
+        std::deque<am::packet_variant> {
+            // receive packets
+            connect
+        }
+    };
+
+    // send protocol error packets
+
+    // compile error as expected
+#if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(subscribe, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsubscribe, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingreq, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+#endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
+
+    // runtime error due to connot send packet
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(connect), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(subscribe), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(unsubscribe), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(am::packet_variant(pingreq), as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // runtime error due to send before receiving connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(auth, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // runtime error due to send before sending connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // runtime error due to send before receiving connack with not_authorized
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(publish, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(puback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrec, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubrel, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pubcomp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(suback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(unsuback, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto ec = ep.send(pingresp, as::use_future).get();
+        BOOST_TEST(ec.code() == am::errc::protocol_error);
+    }
+
+    guard.reset();
+    th.join();
+}
+
 BOOST_AUTO_TEST_SUITE_END()

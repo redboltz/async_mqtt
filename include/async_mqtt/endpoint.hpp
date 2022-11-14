@@ -762,9 +762,11 @@ private: // compose operation impl
                     overload {
                         [&](v3_1_1::connect_packet&) {
                             ep.initialize();
+                            ep.status_ = connection_status::connecting;
                         },
                         [&](v5::connect_packet& p) {
                             ep.initialize();
+                            ep.status_ = connection_status::connecting;
                             for (auto const& prop : p.props()) {
                                 prop.visit(
                                     overload {
