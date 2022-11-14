@@ -335,6 +335,7 @@ public:
 
         // update remaining_length
         remaining_length_ +=
+            prop_size +
             (new_property_length_buf_size - old_property_length_buf_size) -
             old_topic_name_size;
         remaining_length_buf_.clear();
@@ -362,6 +363,7 @@ public:
 
         // update remaining_length
         remaining_length_ +=
+            prop_size +
             (new_property_length_buf_size - old_property_length_buf_size);
         remaining_length_buf_.clear();
         auto rb = val_to_variable_bytes(remaining_length_);

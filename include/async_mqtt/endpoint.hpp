@@ -94,6 +94,14 @@ public:
         return stream().strand();
     }
 
+    void set_auto_map_topic_alias_send(bool val) {
+        auto_map_topic_alias_send_ = val;
+    }
+
+    void set_auto_replace_topic_alias_send(bool val) {
+        auto_replace_topic_alias_send_ = val;
+    }
+
     // async functions
 
     template <
@@ -607,7 +615,7 @@ private: // compose operation impl
                             else {
                                 auto lru_ta = ep.topic_alias_send_->get_lru_alias();
                                 ep.topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alias
-                                actual_packet.add_topic_alias(*ta_opt);
+                                actual_packet.add_topic_alias(lru_ta);
                             }
                         }
                     }
