@@ -39,6 +39,7 @@ list(APPEND check_PROGRAMS
     ut_system_error.cpp
     ut_ep_con_discon.cpp
     ut_ep_topic_alias.cpp
+    ut_ep_store.cpp
 )
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)

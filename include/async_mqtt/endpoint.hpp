@@ -786,6 +786,7 @@ private: // compose operation impl
                     return;
                 }
 
+                bool complete_called = false;
                 auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, ep.protocol_version_);
                 v.visit(
                     // do internal protocol processing
@@ -903,6 +904,7 @@ private: // compose operation impl
                                             "receive maximum exceeded"
                                         )
                                     );
+                                    complete_called = true;
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -928,6 +930,7 @@ private: // compose operation impl
                                             "receive maximum exceeded"
                                         )
                                     );
+                                    complete_called = true;
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -960,6 +963,7 @@ private: // compose operation impl
                                                 "topic alias invalid"
                                             )
                                         );
+                                    complete_called = true;
                                     }
                                     else {
                                         auto topic = ep.topic_alias_recv_->find(*ta_opt);
@@ -980,6 +984,7 @@ private: // compose operation impl
                                                     "topic alias invalid"
                                                 )
                                             );
+                                            complete_called = true;
                                         }
                                         else {
                                             p.add_topic(allocate_buffer(topic));
@@ -1002,13 +1007,32 @@ private: // compose operation impl
                                             "topic alias invalid"
                                         )
                                     );
+                                    complete_called = true;
                                 }
                             }
                             else {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
-                                    // extract topic from topic_alias
-                                    if (ep.topic_alias_recv_) {
-                                        ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                                    if (*ta_opt == 0 ||
+                                        *ta_opt > ep.topic_alias_recv_->max()) {
+                                        ep.send(
+                                            v5::disconnect_packet{
+                                                disconnect_reason_code::topic_alias_invalid
+                                            },
+                                            [](system_error const&){}
+                                        );
+                                        self.complete(
+                                            make_error(
+                                                errc::bad_message,
+                                                "topic alias invalid"
+                                            )
+                                        );
+                                        complete_called = true;
+                                    }
+                                    else {
+                                        // extract topic from topic_alias
+                                        if (ep.topic_alias_recv_) {
+                                            ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                                        }
                                     }
                                 }
                             }
@@ -1115,7 +1139,7 @@ private: // compose operation impl
                         }
                     }
                 );
-                self.complete(force_move(v));
+                if (!complete_called) self.complete(force_move(v));
             } break;
             }
         }
