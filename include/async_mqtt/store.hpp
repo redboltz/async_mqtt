@@ -58,6 +58,13 @@ public:
         }
     }
 
+    std::vector<store_packet_t> get_stored() const {
+        std::vector<store_packet_t> ret;
+        ret.reserve(elems_.size());
+        std::copy(elems_.begin(), elems_.end(), std::back_inserter(ret));
+        return ret;
+    }
+
 private:
     struct tag_seq{};
     struct tag_res_id{};

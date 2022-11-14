@@ -225,10 +225,7 @@ public:
     }
 
     template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken>::value
-        >* = nullptr
+        typename CompletionToken
     >
     auto restore(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
@@ -239,9 +236,30 @@ public:
                 CompletionToken,
                 void()
             >(
-                recv_impl{
+                restore_impl{
                     *this,
                     force_move(pvs)
+                },
+                token
+            );
+    }
+
+    template <
+        typename CompletionToken,
+        typename std::enable_if_t<
+            std::is_invocable<CompletionToken, std::vector<basic_store_packet_variant<PacketIdBytes>>>::value
+        >* = nullptr
+    >
+    auto get_stored(
+        CompletionToken&& token
+    ) const {
+        return
+            as::async_compose<
+                CompletionToken,
+                void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+            >(
+                get_stored_impl{
+                    *this
                 },
                 token
             );
@@ -361,6 +379,10 @@ private: // compose operation impl
                                         force_move(actual_packet),
                                         force_move(self)
                                     );
+                                    if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
+                                        // server send connack after connack sent
+                                        ep.send_stored();
+                                    }
                                 }
                             },
                             [&](system_error&) {}
@@ -373,6 +395,10 @@ private: // compose operation impl
                             force_move(packet),
                             force_move(self)
                         );
+                        if constexpr(is_connack<Packet>()) {
+                            // server send connack after connack sent
+                            ep.send_stored();
+                        }
                     }
                 }
             } break;
@@ -567,16 +593,21 @@ private: // compose operation impl
                             if (!validate_maximum_packet_size(self, store_packet)) return false;
                              // add new packet that doesn't have topic_aliass to store
                             // the original packet still use topic alias to send
+                            store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
                         }
                         else {
                             if (!validate_maximum_packet_size(self, actual_packet)) return false;
-                            ep.store_.add(actual_packet);
+                            auto store_packet{actual_packet};
+                            store_packet.set_dup(true);
+                            ep.store_.add(store_packet);
                         }
                     }
                     else {
                         if (!validate_maximum_packet_size(self, actual_packet)) return false;
-                        ep.store_.add(actual_packet);
+                        auto store_packet{actual_packet};
+                        store_packet.set_dup(true);
+                        ep.store_.add(store_packet);
                     }
                 }
             }
@@ -791,9 +822,15 @@ private: // compose operation impl
                 v.visit(
                     // do internal protocol processing
                     overload {
-                        [&](v3_1_1::connect_packet&) {
+                        [&](v3_1_1::connect_packet& p) {
                             ep.initialize();
                             ep.status_ = connection_status::connecting;
+                            if (p.clean_session()) {
+                                ep.need_store_ = false;
+                            }
+                            else {
+                                ep.need_store_ = true;
+                            }
                         },
                         [&](v5::connect_packet& p) {
                             ep.initialize();
@@ -813,6 +850,11 @@ private: // compose operation impl
                                         [&](property::maximum_packet_size const& p) {
                                             BOOST_ASSERT(p.val() != 0);
                                             ep.maximum_packet_size_send_ = p.val();
+                                        },
+                                        [&](property::session_expiry_interval const& p) {
+                                            if (p.val() != 0) {
+                                                ep.need_store_ = true;
+                                            }
                                         },
                                         [](auto const&) {
                                         }
@@ -1185,6 +1227,30 @@ private: // compose operation impl
                     );
                 }
                 self.complete();
+                break;
+            }
+        }
+    };
+
+    struct get_stored_impl {
+        this_type const& ep;
+        enum { dispatch, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case dispatch:
+                state = complete;
+                as::dispatch(
+                    ep.strand(),
+                    force_move(self)
+                );
+                break;
+            case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                self.complete(ep.store_.get_stored());
                 break;
             }
         }
