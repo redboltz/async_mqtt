@@ -46,19 +46,20 @@ constexpr bool is_server(role r) {
 }
 
 inline optional<topic_alias_t> get_topic_alias(properties const& props) {
+    optional<topic_alias_t> ta_opt;
     for (auto const& prop : props) {
         prop.visit(
             overload {
-                [&](property::topic_alias const& p) -> optional<topic_alias_t> {
-                    return p.val();
+                [&](property::topic_alias const& p) {
+                    ta_opt.emplace(p.val());
                 },
-                    [](auto const&) -> optional<topic_alias_t> {
-                        return nullopt;
-                    }
+                [](auto const&) {
+                }
             }
         );
+        if (ta_opt) return ta_opt;
     }
-    return nullopt;
+    return ta_opt;
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -582,12 +583,17 @@ private: // compose operation impl
                 }
                 else {
                     if (ta_opt) {
-                        ASYNC_MQTT_LOG("mqtt_impl", trace)
-                            << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                            << "topia alias : "
-                            << actual_packet.topic() << " - " << *ta_opt
-                            << " is registered." ;
-                        ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
+                        if (validate_topic_alias_range(self, *ta_opt)) {
+                            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                << "topia alias : "
+                                << actual_packet.topic() << " - " << *ta_opt
+                                << " is registered." ;
+                            ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
+                        }
+                        else {
+                            return false;
+                        }
                     }
                     else if (ep.auto_map_topic_alias_send_) {
                         if (ep.topic_alias_send_) {
@@ -596,12 +602,12 @@ private: // compose operation impl
                                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                     << "topia alias : " << actual_packet.topic() << " - " << ta_opt.value()
                                     << " is found." ;
-                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt); // update
                                 actual_packet.remove_topic_add_topic_alias(*ta_opt);
                             }
                             else {
                                 auto lru_ta = ep.topic_alias_send_->get_lru_alias();
-                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alia                                  actual_packet.add_topic_alias(*ta_opt);
+                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alias
+                                actual_packet.add_topic_alias(*ta_opt);
                             }
                         }
                     }
@@ -612,7 +618,6 @@ private: // compose operation impl
                                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                     << "topia alias : " << actual_packet.topic() << " - " << ta_opt.value()
                                     << " is found." ;
-                                ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt); // update
                                 actual_packet.remove_topic_add_topic_alias(*ta_opt);
                             }
                         }
@@ -662,6 +667,29 @@ private: // compose operation impl
         }
 
         template <typename Self>
+        bool validate_topic_alias_range(Self& self, topic_alias_t ta) const {
+            if (!ep.topic_alias_send_) {
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "topic_alias is set but topic_alias_maximum is 0"
+                    )
+                );
+                return false;
+            }
+            if (ta == 0 || ta > ep.topic_alias_send_->max()) {
+                self.complete(
+                    make_error(
+                        errc::bad_message,
+                        "topic_alias is set but out of range"
+                    )
+                );
+                return false;
+            }
+            return true;
+        }
+
+        template <typename Self>
         std::optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) const {
             BOOST_ASSERT(ep.strand().running_in_this_thread());
             if (!ta_opt) {
@@ -674,13 +702,7 @@ private: // compose operation impl
                 return nullopt;
             }
 
-            if (!ep.topic_alias_send_) {
-                self.complete(
-                    make_error(
-                        errc::bad_message,
-                        "topic is empty but topic_alias_maximum is 0"
-                    )
-                );
+            if (!validate_topic_alias_range(self, *ta_opt)) {
                 return nullopt;
             }
 

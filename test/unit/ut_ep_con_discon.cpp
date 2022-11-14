@@ -12,7 +12,6 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/util/hex_dump.hpp>
 
 #include "stub_socket.hpp"
 #include "packet_compare.hpp"
