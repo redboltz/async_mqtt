@@ -574,17 +574,34 @@ private: // compose operation impl
                             ep.store_.add(force_move(store_packet));
                         }
                         else {
-                            if (!validate_maximum_packet_size(self, actual_packet)) return false;
-                            auto store_packet{actual_packet};
+                            auto props = actual_packet.props();
+                            auto it = props.cbegin();
+                            auto end = props.cend();
+                            for (; it != end; ++it) {
+                                if (it->id() == property::id::topic_alias) {
+                                    props.erase(it);
+                                    break;
+                                }
+                            }
+
+                            auto store_packet =
+                                ActualPacket(
+                                    actual_packet.packet_id(),
+                                    actual_packet.topic(),
+                                    actual_packet.payload(),
+                                    actual_packet.opts(),
+                                    force_move(props)
+                                );
+                            if (!validate_maximum_packet_size(self, store_packet)) return false;
                             store_packet.set_dup(true);
-                            ep.store_.add(store_packet);
+                            ep.store_.add(force_move(store_packet));
                         }
                     }
                     else {
                         if (!validate_maximum_packet_size(self, actual_packet)) return false;
                         auto store_packet{actual_packet};
                         store_packet.set_dup(true);
-                        ep.store_.add(store_packet);
+                        ep.store_.add(force_move(store_packet));
                     }
                 }
             }
