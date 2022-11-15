@@ -104,13 +104,9 @@ public:
 
     // async functions
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, optional<packet_id_t>>::value
-        >* = nullptr
-    >
-    auto acquire_unique_packet_id(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(optional<packet_id_t>)>::return_type
+    acquire_unique_packet_id(
         CompletionToken&& token
     ) {
         return
@@ -125,13 +121,9 @@ public:
             );
     }
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, bool>::value
-        >* = nullptr
-    >
-    auto register_packet_id(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(bool)>::return_type
+    register_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
     ) {
@@ -148,13 +140,9 @@ public:
             );
     }
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken>::value
-        >* = nullptr
-    >
-    auto release_packet_id(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    release_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
     ) {
@@ -171,14 +159,9 @@ public:
             );
     }
 
-    template <
-        typename Packet,
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, system_error>::value
-        >* = nullptr
-    >
-    auto send(
+    template <typename Packet, typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(system_error)>::return_type
+    send(
         Packet packet,
         CompletionToken&& token
     ) {
@@ -203,13 +186,9 @@ public:
             );
     }
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, packet_variant_type>::value
-        >* = nullptr
-    >
-    auto recv(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
+     recv(
         CompletionToken&& token
     ) {
         return
@@ -224,10 +203,9 @@ public:
             );
     }
 
-    template <
-        typename CompletionToken
-    >
-    auto restore(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    restore(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
         CompletionToken&& token
     ) {
@@ -244,13 +222,12 @@ public:
             );
     }
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, std::vector<basic_store_packet_variant<PacketIdBytes>>>::value
-        >* = nullptr
-    >
-    auto get_stored(
+    template <typename CompletionToken>
+    typename as::async_result<
+        std::decay_t<CompletionToken>,
+        void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+    >::return_type
+     get_stored(
         CompletionToken&& token
     ) const {
         return

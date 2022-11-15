@@ -65,11 +65,11 @@ template <
     typename MutableBufferSequence,
     typename CompletionToken,
     typename std::enable_if_t<
-        as::is_mutable_buffer_sequence<MutableBufferSequence>::value &&
-        std::is_invocable<CompletionToken, boost::system::error_code, std::size_t>::value
+        as::is_mutable_buffer_sequence<MutableBufferSequence>::value
     >* = nullptr
 >
-auto async_read(
+typename as::async_result<std::decay_t<CompletionToken>, void(boost::system::error_code const&, std::size_t)>::return_type
+async_read(
     bs::websocket::stream<NextLayer>& stream,
     MutableBufferSequence const& mb,
     CompletionToken&& token
@@ -92,11 +92,11 @@ template <
     typename ConstBufferSequence,
     typename CompletionToken,
     typename std::enable_if_t<
-        as::is_const_buffer_sequence<ConstBufferSequence>::value &&
-        std::is_invocable<CompletionToken, boost::system::error_code, std::size_t>::value
+        as::is_const_buffer_sequence<ConstBufferSequence>::value
     >* = nullptr
 >
-auto async_write(
+typename as::async_result<std::decay_t<CompletionToken>, void(boost::system::error_code const&, std::size_t)>::return_type
+async_write(
     bs::websocket::stream<NextLayer>& stream,
     ConstBufferSequence const& cbs,
     CompletionToken&& token

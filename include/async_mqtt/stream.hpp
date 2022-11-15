@@ -76,13 +76,9 @@ public:
         return nl_.get_executor();
     }
 
-    template <
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, error_code, buffer>::value
-        >* = nullptr
-    >
-    auto read_packet(
+    template <typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(error_code, buffer)>::return_type
+    read_packet(
         CompletionToken&& token
     ) {
         return
@@ -97,14 +93,9 @@ public:
             );
     }
 
-    template <
-        typename Packet,
-        typename CompletionToken,
-        typename std::enable_if_t<
-            std::is_invocable<CompletionToken, error_code, std::size_t>::value
-        >* = nullptr
-    >
-    auto write_packet(
+    template <typename Packet, typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(error_code, std::size_t)>::return_type
+    write_packet(
         Packet packet,
         CompletionToken&& token
     ) {
