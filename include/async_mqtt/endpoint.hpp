@@ -174,15 +174,10 @@ public:
         }
 
         return
-            as::async_compose<
-                CompletionToken,
-                void(system_error)
-            >(
-                send_impl<Packet>{
-                    *this,
-                    force_move(packet)
-                },
-                token
+            send(
+                std::forward<Packet>(packet),
+                false, // not from queue
+                std::forward<CompletionToken>(token)
             );
     }
 
@@ -323,6 +318,7 @@ private: // compose operation impl
     struct send_impl {
         this_type& ep;
         Packet packet;
+        bool from_queue = false;
         enum { dispatch, write, complete } state = dispatch;
 
         template <typename Self>
@@ -658,7 +654,7 @@ private: // compose operation impl
                 }
 
                 // receive_maximum for sending
-                if (ep.enqueue_publish(actual_packet)) {
+                if (!from_queue && ep.enqueue_publish(actual_packet)) {
                     self.complete(
                         make_error(
                             errc::success,
@@ -1184,9 +1180,9 @@ private: // compose operation impl
             BOOST_ASSERT(ep.strand().running_in_this_thread());
             while (!ep.publish_queue_.empty() &&
                    ep.publish_send_count_ != ep.publish_send_max_) {
-                ++ep.publish_send_count_;
                 ep.send(
                     force_move(ep.publish_queue_.front()),
+                    true, // from queue
                     [](system_error const&){}
                 );
                 ep.publish_queue_.pop_front();
@@ -1251,6 +1247,27 @@ private: // compose operation impl
     };
 
 private:
+
+    template <typename Packet, typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void(system_error)>::return_type
+    send(
+        Packet packet,
+        bool from_queue,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+                void(system_error)
+            >(
+                send_impl<Packet>{
+                    *this,
+                    force_move(packet),
+                    from_queue
+                },
+                token
+            );
+    }
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet) {
         BOOST_ASSERT(strand().running_in_this_thread());
