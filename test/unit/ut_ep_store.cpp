@@ -33,6 +33,13 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc,
+    };
+
     auto connect = am::v3_1_1::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
@@ -61,8 +68,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         am::qos::at_most_once
     );
 
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v3_1_1::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once
@@ -71,8 +80,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     auto publish1dup{publish1};
     publish1dup.set_dup(true);
 
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v3_1_1::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload2"),
         am::qos::exactly_once
@@ -82,23 +93,21 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     publish2dup.set_dup(true);
 
     auto pubrec2 = am::v3_1_1::pubrec_packet(
-        0x2 // packet_id
+        *pid_opt2
     );
 
     auto pubrel2 = am::v3_1_1::pubrel_packet(
-        0x2 // packet_id
+        *pid_opt2
     );
 
-    auto pubrel5 = am::v3_1_1::pubrel_packet(
-        0x5 // packet_id
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto pubrel3 = am::v3_1_1::pubrel_packet(
+        *pid_opt3
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack_sp_false,
             close,
@@ -109,7 +118,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
             close,
             connack_sp_false,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -222,14 +231,14 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         BOOST_TEST(!ec);
     }
 
-    // send pubrel5
+    // send pubrel3
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel5, wp));
+            BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
     );
     {
-        auto ec = ep.send(pubrel5, as::use_future).get();
+        auto ec = ep.send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -264,7 +273,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
                 BOOST_TEST(am::packet_compare(pubrel2, wp));
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel5, wp));
+                BOOST_TEST(am::packet_compare(pubrel3, wp));
                 p.set_value();
                 break;
             default:
@@ -323,6 +332,31 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep1{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep2{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep3{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep4{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect_no_clean = am::v3_1_1::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
@@ -360,8 +394,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
         am::qos::at_most_once
     );
 
+    auto pid_opt1 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v3_1_1::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once
@@ -370,8 +406,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     auto publish1dup{publish1};
     publish1dup.set_dup(true);
 
+    auto pid_opt2 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v3_1_1::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload2"),
         am::qos::exactly_once
@@ -381,61 +419,47 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     publish2dup.set_dup(true);
 
     auto pubrec2 = am::v3_1_1::pubrec_packet(
-        0x2 // packet_id
+        *pid_opt2
     );
 
     auto pubrel2 = am::v3_1_1::pubrel_packet(
-        0x2 // packet_id
+        *pid_opt2
     );
 
-    auto pubrel5 = am::v3_1_1::pubrel_packet(
-        0x5 // packet_id
+    auto pid_opt3 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto pubrel3 = am::v3_1_1::pubrel_packet(
+        *pid_opt3
     );
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep1{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep1.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep2{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep2.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             pubrec2,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep3{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep3.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep4{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep4.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_clean,
         }
-    };
+    );
 
     // recv connect_no_clean
     {
@@ -534,6 +558,11 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
     f.get();
     BOOST_TEST(index == 3);
+    {
+        auto pid_opt = ep2.acquire_unique_packet_id(as::use_future).get();
+        BOOST_TEST(pid_opt.has_value());
+        BOOST_TEST(*pid_opt == 3); // 1 and 2 are used by publish(dup)
+    }
 
     // recv pubrec2
     {
@@ -552,14 +581,14 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
         BOOST_TEST(!ec);
     }
 
-    // send pubrel5
+    // send pubrel3
     ep2.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel5, wp));
+            BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
     );
     {
-        auto ec = ep2.send(pubrel5, as::use_future).get();
+        auto ec = ep2.send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -598,7 +627,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
                 BOOST_TEST(am::packet_compare(pubrel2, wp));
                 break;
             case 3:
-                BOOST_TEST(am::packet_compare(pubrel5, wp));
+                BOOST_TEST(am::packet_compare(pubrel3, wp));
                 p.set_value();
                 break;
             default:
@@ -613,6 +642,11 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
     f.get();
     BOOST_TEST(index == 4);
+    {
+        auto pid_opt = ep3.acquire_unique_packet_id(as::use_future).get();
+        BOOST_TEST(pid_opt.has_value());
+        BOOST_TEST(*pid_opt == 4); // 1, 2 and 3 are used by publish(dup) and pubrel
+    }
 
     // recv close
     {
@@ -668,6 +702,13 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
@@ -702,8 +743,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         am::properties{}
     );
 
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once,
@@ -713,8 +756,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     auto publish1dup{publish1};
     publish1dup.set_dup(true);
 
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload2"),
         am::qos::exactly_once,
@@ -724,24 +769,22 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     auto publish2dup{publish2};
     publish2dup.set_dup(true);
 
-    auto pubrec2 = am::v5::pubrec_packet(
-        0x2 // packet_id
+    auto pubrec2 = am::v3_1_1::pubrec_packet(
+        *pid_opt2
     );
 
-    auto pubrel2 = am::v5::pubrel_packet(
-        0x2 // packet_id
+    auto pubrel2 = am::v3_1_1::pubrel_packet(
+        *pid_opt2
     );
 
-    auto pubrel5 = am::v5::pubrel_packet(
-        0x5 // packet_id
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto pubrel3 = am::v3_1_1::pubrel_packet(
+        *pid_opt3
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack_sp_false,
             close,
@@ -752,7 +795,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             close,
             connack_sp_false,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -865,14 +908,14 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         BOOST_TEST(!ec);
     }
 
-    // send pubrel5
+    // send pubrel3
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel5, wp));
+            BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
     );
     {
-        auto ec = ep.send(pubrel5, as::use_future).get();
+        auto ec = ep.send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -907,7 +950,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
                 BOOST_TEST(am::packet_compare(pubrel2, wp));
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel5, wp));
+                BOOST_TEST(am::packet_compare(pubrel3, wp));
                 p.set_value();
                 break;
             default:
@@ -966,6 +1009,31 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep1{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep2{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep3{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep4{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect_no_clean = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
@@ -1010,8 +1078,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         am::properties{}
     );
 
+    auto pid_opt1 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once,
@@ -1021,8 +1091,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     auto publish1dup{publish1};
     publish1dup.set_dup(true);
 
+    auto pid_opt2 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload2"),
         am::qos::exactly_once,
@@ -1032,62 +1104,48 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     auto publish2dup{publish2};
     publish2dup.set_dup(true);
 
-    auto pubrec2 = am::v5::pubrec_packet(
-        0x2 // packet_id
+    auto pubrec2 = am::v3_1_1::pubrec_packet(
+        *pid_opt2
     );
 
-    auto pubrel2 = am::v5::pubrel_packet(
-        0x2 // packet_id
+    auto pubrel2 = am::v3_1_1::pubrel_packet(
+        *pid_opt2
     );
 
-    auto pubrel5 = am::v5::pubrel_packet(
-        0x5 // packet_id
+    auto pid_opt3 = ep1.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto pubrel3 = am::v3_1_1::pubrel_packet(
+        *pid_opt3
     );
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep1{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep1.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep2{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep2.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             pubrec2,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep3{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep3.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_no_clean,
             close,
         }
-    };
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep4{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    );
+    ep4.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect_clean,
         }
-    };
+    );
 
     // recv connect_no_clean
     {
@@ -1187,6 +1245,12 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     f.get();
     BOOST_TEST(index == 3);
 
+    {
+        auto pid_opt = ep2.acquire_unique_packet_id(as::use_future).get();
+        BOOST_TEST(pid_opt.has_value());
+        BOOST_TEST(*pid_opt == 3); // 1 and 2 are used by publish(dup)
+    }
+
     // recv pubrec2
     {
         auto pv = ep2.recv(as::use_future).get();
@@ -1204,14 +1268,14 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(!ec);
     }
 
-    // send pubrel5
+    // send pubrel3
     ep2.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel5, wp));
+            BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
     );
     {
-        auto ec = ep2.send(pubrel5, as::use_future).get();
+        auto ec = ep2.send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1250,7 +1314,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
                 BOOST_TEST(am::packet_compare(pubrel2, wp));
                 break;
             case 3:
-                BOOST_TEST(am::packet_compare(pubrel5, wp));
+                BOOST_TEST(am::packet_compare(pubrel3, wp));
                 p.set_value();
                 break;
             default:
@@ -1265,6 +1329,11 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
     f.get();
     BOOST_TEST(index == 4);
+    {
+        auto pid_opt = ep3.acquire_unique_packet_id(as::use_future).get();
+        BOOST_TEST(pid_opt.has_value());
+        BOOST_TEST(*pid_opt == 4); // 1, 2 and 3 are used by publish(dup) and pubrel
+    }
 
     // recv close
     {
@@ -1318,6 +1387,13 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
@@ -1356,8 +1432,10 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         am::properties{}
     );
 
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once,
@@ -1367,7 +1445,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
 
     auto publish1no_ta = am::v5::publish_packet(
-        0x1, // packet_id
+        *pid_opt1,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_least_once,
@@ -1377,8 +1455,10 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     auto publish1no_ta_dup{publish1no_ta};
     publish1no_ta_dup.set_dup(true);
 
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::buffer{},
         am::allocate_buffer("payload2"),
         am::qos::exactly_once,
@@ -1388,7 +1468,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
 
     auto publish2no_ta = am::v5::publish_packet(
-        0x2, // packet_id
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload2"),
         am::qos::exactly_once,
@@ -1398,24 +1478,22 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     auto publish2no_ta_dup{publish2no_ta};
     publish2no_ta_dup.set_dup(true);
 
-    auto pubrec2 = am::v5::pubrec_packet(
-        0x2 // packet_id
+    auto pubrec2 = am::v3_1_1::pubrec_packet(
+        *pid_opt2
     );
 
-    auto pubrel2 = am::v5::pubrel_packet(
-        0x2 // packet_id
+    auto pubrel2 = am::v3_1_1::pubrel_packet(
+        *pid_opt2
     );
 
-    auto pubrel5 = am::v5::pubrel_packet(
-        0x5 // packet_id
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto pubrel3 = am::v3_1_1::pubrel_packet(
+        *pid_opt3
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack_sp_false,
             close,
@@ -1426,7 +1504,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
             close,
             connack_sp_false,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -1539,14 +1617,14 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         BOOST_TEST(!ec);
     }
 
-    // send pubrel5
+    // send pubrel3
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel5, wp));
+            BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
     );
     {
-        auto ec = ep.send(pubrel5, as::use_future).get();
+        auto ec = ep.send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1581,7 +1659,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
                 BOOST_TEST(am::packet_compare(pubrel2, wp));
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel5, wp));
+                BOOST_TEST(am::packet_compare(pubrel3, wp));
                 p.set_value();
                 break;
             default:

@@ -40,6 +40,7 @@ list(APPEND check_PROGRAMS
     ut_ep_con_discon.cpp
     ut_ep_topic_alias.cpp
     ut_ep_recv_max.cpp
+    ut_ep_size_max.cpp
     ut_ep_store.cpp
 )
 

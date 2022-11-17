@@ -32,6 +32,13 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -120,16 +127,12 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -239,6 +242,13 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -327,16 +337,12 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect,
         }
-    };
+    );
 
     // recv connect
     {
@@ -446,6 +452,13 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -548,16 +561,13 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
         }
-    };
+    );
+
     ep.set_auto_map_topic_alias_send(true);
 
     // send connect
@@ -657,6 +667,13 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -703,16 +720,13 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
         }
-    };
+    );
+
     ep.set_auto_replace_topic_alias_send(true);
 
     // send connect
@@ -789,6 +803,13 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         [&] {
             ioc.run();
         }
+    };
+
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
     };
 
     auto connect = am::v5::connect_packet{
@@ -886,12 +907,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
             publish_reg_t1,
@@ -907,7 +924,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
             publish_upd_t3,
             publish_use_ta1,
         }
-    };
+    );
 
     auto init =
         [&] {
@@ -1020,6 +1037,13 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -1115,12 +1139,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect,
             publish_reg_t1,
@@ -1136,7 +1156,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
             publish_upd_t3,
             publish_use_ta1,
         }
-    };
+    );
 
     auto init =
         [&] {

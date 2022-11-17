@@ -1212,7 +1212,15 @@ private: // compose operation impl
                 for (auto& pv : pvs) {
                     pv.visit(
                         [&](auto& p) {
-                            ep.store_.add(force_move(p));
+                            if (ep.pid_man_.register_id(p.packet_id())) {
+                                ep.store_.add(force_move(p));
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", error)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "packet_id:" << p.packet_id()
+                                    << " has already been used. Skip it";
+                            }
                         }
                     );
                 }

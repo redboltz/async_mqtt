@@ -25,16 +25,19 @@ struct stub_socket {
 
     stub_socket(
         protocol_version version,
-        as::io_context& ioc,
-        std::deque<packet_variant> recv_pvs
+        as::io_context& ioc
     )
         :version_{version},
-         ioc_{ioc},
-         recv_pvs_{force_move(recv_pvs)}
+         ioc_{ioc}
     {}
 
     void set_write_packet_checker(std::function<void(packet_variant const& pv)> c) {
         write_packet_checker_ = force_move(c);
+    }
+
+    void set_recv_packets(std::deque<packet_variant> recv_pvs) {
+        recv_pvs_ = force_move(recv_pvs);
+        recv_pvs_it_ = recv_pvs_.begin();
     }
 
 #if 0

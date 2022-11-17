@@ -33,6 +33,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
@@ -49,31 +56,34 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     auto disconnect = am::v3_1_1::disconnect_packet{};
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v3_1_1::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
     auto puback = am::v3_1_1::puback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrec = am::v3_1_1::pubrec_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrel = am::v3_1_1::pubrel_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubcomp = am::v3_1_1::pubcomp_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto subscribe = am::v3_1_1::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -81,7 +91,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     };
 
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -92,19 +102,15 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
             close,
             connack,
             close,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -270,6 +276,13 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
@@ -286,31 +299,34 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
 
     auto disconnect = am::v3_1_1::disconnect_packet{};
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v3_1_1::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
     auto puback = am::v3_1_1::puback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrec = am::v3_1_1::pubrec_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrel = am::v3_1_1::pubrel_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubcomp = am::v3_1_1::pubcomp_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto subscribe = am::v3_1_1::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -318,7 +334,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     };
 
     auto suback = am::v3_1_1::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_return_code> {
             am::suback_return_code::success_maximum_qos_1,
             am::suback_return_code::failure
@@ -326,7 +342,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     };
 
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -334,7 +350,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     };
 
     auto unsuback = am::v3_1_1::unsuback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pingreq = am::v3_1_1::pingreq_packet();
@@ -342,16 +358,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack
         }
-    };
+    );
 
     // send protocol error packets
 
@@ -715,6 +727,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
@@ -729,31 +748,34 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         am::connect_return_code::accepted
     };
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v3_1_1::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
     auto puback = am::v3_1_1::puback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrec = am::v3_1_1::pubrec_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrel = am::v3_1_1::pubrel_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubcomp = am::v3_1_1::pubcomp_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto suback = am::v3_1_1::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_return_code> {
             am::suback_return_code::success_maximum_qos_1,
             am::suback_return_code::failure
@@ -761,26 +783,22 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     };
 
     auto unsuback = am::v3_1_1::unsuback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pingresp = am::v3_1_1::pingresp_packet();
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect,
             close,
             connect,
             close,
         }
-    };
+    );
 
     // recv connect
     {
@@ -935,6 +953,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
@@ -951,31 +976,34 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
 
     auto disconnect = am::v3_1_1::disconnect_packet{};
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v3_1_1::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
     auto puback = am::v3_1_1::puback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrec = am::v3_1_1::pubrec_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubrel = am::v3_1_1::pubrel_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pubcomp = am::v3_1_1::pubcomp_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto subscribe = am::v3_1_1::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -983,7 +1011,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     };
 
     auto suback = am::v3_1_1::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_return_code> {
             am::suback_return_code::success_maximum_qos_1,
             am::suback_return_code::failure
@@ -991,7 +1019,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     };
 
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -999,7 +1027,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     };
 
     auto unsuback = am::v3_1_1::unsuback_packet(
-        0x1234 // packet_id
+        *pid_opt
     );
 
     auto pingreq = am::v3_1_1::pingreq_packet();
@@ -1007,16 +1035,12 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect,
         }
-    };
+    );
 
     // send protocol error packets
 
@@ -1382,6 +1406,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -1403,8 +1434,11 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         am::properties{}
     };
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v5::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1412,31 +1446,31 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     );
 
     auto puback = am::v5::puback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::puback_reason_code::success,
         am::properties{}
     );
 
     auto pubrec = am::v5::pubrec_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrec_reason_code::success,
         am::properties{}
     );
 
     auto pubrel = am::v5::pubrel_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrel_reason_code::success,
         am::properties{}
     );
 
     auto pubcomp = am::v5::pubcomp_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubcomp_reason_code::success,
         am::properties{}
     );
 
     auto subscribe = am::v5::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -1445,7 +1479,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     };
 
     auto unsubscribe = am::v5::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -1462,19 +1496,15 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack,
             close,
             connack,
             close,
         }
-    };
+    );
 
     // send connect
     ep.stream().next_layer().set_write_packet_checker(
@@ -1661,6 +1691,13 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     };
 
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -1682,8 +1719,11 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         am::properties{}
     };
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v5::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1691,31 +1731,31 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     );
 
     auto puback = am::v5::puback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::puback_reason_code::success,
         am::properties{}
     );
 
     auto pubrec = am::v5::pubrec_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrec_reason_code::success,
         am::properties{}
     );
 
     auto pubrel = am::v5::pubrel_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrel_reason_code::success,
         am::properties{}
     );
 
     auto pubcomp = am::v5::pubcomp_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubcomp_reason_code::success,
         am::properties{}
     );
 
     auto subscribe = am::v5::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -1724,7 +1764,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     };
 
     auto suback = am::v5::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_reason_code> {
             am::suback_reason_code::granted_qos_1,
             am::suback_reason_code::unspecified_error
@@ -1733,7 +1773,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     };
 
     auto unsubscribe = am::v5::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -1743,7 +1783,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
 
 
     auto unsuback = am::v5::unsuback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         std::vector<am::unsuback_reason_code> {
             am::unsuback_reason_code::no_subscription_existed,
             am::unsuback_reason_code::unspecified_error
@@ -1761,16 +1801,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connack
         }
-    };
+    );
 
     // send protocol error packets
 
@@ -2144,6 +2180,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -2165,8 +2208,11 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         am::properties{}
     };
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v5::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -2174,31 +2220,31 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     );
 
     auto puback = am::v5::puback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::puback_reason_code::success,
         am::properties{}
     );
 
     auto pubrec = am::v5::pubrec_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrec_reason_code::success,
         am::properties{}
     );
 
     auto pubrel = am::v5::pubrel_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrel_reason_code::success,
         am::properties{}
     );
 
     auto pubcomp = am::v5::pubcomp_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubcomp_reason_code::success,
         am::properties{}
     );
 
     auto suback = am::v5::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_reason_code> {
             am::suback_reason_code::granted_qos_1,
             am::suback_reason_code::unspecified_error
@@ -2207,7 +2253,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     };
 
     auto unsuback = am::v5::unsuback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         std::vector<am::unsuback_reason_code> {
             am::unsuback_reason_code::no_subscription_existed,
             am::unsuback_reason_code::unspecified_error
@@ -2224,19 +2270,15 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect,
             close,
             connect,
             close,
         }
-    };
+    );
 
     // recv connect
     {
@@ -2412,6 +2454,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     };
 
+    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -2433,8 +2482,11 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         am::properties{}
     };
 
+    auto pid_opt = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt.has_value());
+
     auto publish = am::v5::publish_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -2442,31 +2494,31 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     );
 
     auto puback = am::v5::puback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::puback_reason_code::success,
         am::properties{}
     );
 
     auto pubrec = am::v5::pubrec_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrec_reason_code::success,
         am::properties{}
     );
 
     auto pubrel = am::v5::pubrel_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubrel_reason_code::success,
         am::properties{}
     );
 
     auto pubcomp = am::v5::pubcomp_packet(
-        0x1234, // packet_id
+        *pid_opt,
         am::pubcomp_reason_code::success,
         am::properties{}
     );
 
     auto subscribe = am::v5::subscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::topic_subopts> {
             {am::allocate_buffer("topic1"), am::qos::at_most_once},
             {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -2475,7 +2527,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     };
 
     auto suback = am::v5::suback_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::suback_reason_code> {
             am::suback_reason_code::granted_qos_1,
             am::suback_reason_code::unspecified_error
@@ -2484,7 +2536,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     };
 
     auto unsubscribe = am::v5::unsubscribe_packet{
-        0x1234,         // packet_id
+        *pid_opt,
         std::vector<am::buffer> {
             am::allocate_buffer("topic1"),
             am::allocate_buffer("topic2"),
@@ -2494,7 +2546,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
 
 
     auto unsuback = am::v5::unsuback_packet(
-        0x1234, // packet_id
+        *pid_opt,
         std::vector<am::unsuback_reason_code> {
             am::unsuback_reason_code::no_subscription_existed,
             am::unsuback_reason_code::unspecified_error
@@ -2512,16 +2564,12 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
-        version,
-        // for stub_socket args
-        version,
-        ioc,
-        std::deque<am::packet_variant> {
+    ep.stream().next_layer().set_recv_packets(
+        {
             // receive packets
             connect
         }
-    };
+    );
 
     // send protocol error packets
 
