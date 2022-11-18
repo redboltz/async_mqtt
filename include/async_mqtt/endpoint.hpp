@@ -196,7 +196,7 @@ public:
 
     template <typename CompletionToken>
     typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
-     recv(
+    recv(
         CompletionToken&& token
     ) {
         return
@@ -205,6 +205,21 @@ public:
                 void(packet_variant_type)
             >(
                 recv_impl{
+                    *this
+                },
+                token
+            );
+    }
+
+    template<typename CompletionToken>
+    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    close(CompletionToken&& token) {
+        return
+            as::async_compose<
+                CompletionToken,
+                void()
+            >(
+                close_impl{
                     *this
                 },
                 token
@@ -235,7 +250,7 @@ public:
         std::decay_t<CompletionToken>,
         void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
     >::return_type
-     get_stored(
+    get_stored(
         CompletionToken&& token
     ) const {
         return
@@ -848,7 +863,8 @@ private: // compose operation impl
                             v5::disconnect_packet{
                                 disconnect_reason_code::packet_too_large
                             },
-                            [](system_error const&){}
+                            [](system_error const&){
+                            }
                         );
                     }
                     self.complete(
@@ -1260,6 +1276,28 @@ private: // compose operation impl
                     [](system_error const&){}
                 );
                 ep.publish_queue_.pop_front();
+            }
+        }
+    };
+
+    struct close_impl {
+        this_type& ep;
+        enum { initiate, complete } state = initiate;
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& = error_code{}
+        ) {
+            switch (state) {
+            case initiate:
+                state = complete;
+                ep.stream_.close(force_move(self));
+                break;
+            case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                self.complete();
+                break;
             }
         }
     };

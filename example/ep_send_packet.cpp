@@ -100,6 +100,11 @@ int main() {
                                                         std::cout << p;
                                                     }
                                                     std::cout << std::endl;
+                                                    amep.close(
+                                                        [] {
+                                                            std::cout << "closed" << std::endl;
+                                                        }
+                                                    );
                                                 },
                                                 [](auto const&) {}
                                             }

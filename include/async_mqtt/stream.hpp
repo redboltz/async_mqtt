@@ -120,9 +120,7 @@ public:
         return strand_;
     }
 
-    template<
-        typename CompletionToken
-    >
+    template<typename CompletionToken>
     typename as::async_result<std::decay_t<CompletionToken>, void(error_code)>::return_type
     close(CompletionToken&& token) {
         return
