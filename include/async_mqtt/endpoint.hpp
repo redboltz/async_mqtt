@@ -94,6 +94,14 @@ public:
         return stream().strand();
     }
 
+    void set_auto_pub_response(bool val) {
+        auto_pub_response_ = val;
+    }
+
+    void set_auto_ping_response(bool val) {
+        auto_ping_response_ = val;
+    }
+
     void set_auto_map_topic_alias_send(bool val) {
         auto_map_topic_alias_send_ = val;
     }
@@ -543,7 +551,13 @@ private: // compose operation impl
                         auto ta_opt = get_topic_alias(actual_packet.props());
                         if (actual_packet.topic().empty()) {
                             auto topic_opt = validate_topic_alias(self, ta_opt);
-                            if (!topic_opt) return false;
+                            if (!topic_opt) {
+                                auto packet_id = actual_packet.packet_id();
+                                if (actual_packet.packet_id() != 0) {
+                                    ep.pid_man_.release_id(packet_id);
+                                }
+                                return false;
+                            }
                             topic_alias_validated = true;
                             auto props = actual_packet.props();
                             auto it = props.cbegin();
@@ -563,8 +577,14 @@ private: // compose operation impl
                                     actual_packet.opts(),
                                     force_move(props)
                                 );
-                            if (!validate_maximum_packet_size(self, store_packet)) return false;
-                             // add new packet that doesn't have topic_aliass to store
+                            if (!validate_maximum_packet_size(self, store_packet)) {
+                                auto packet_id = actual_packet.packet_id();
+                                if (actual_packet.packet_id() != 0) {
+                                    ep.pid_man_.release_id(packet_id);
+                                }
+                                return false;
+                            }
+                            // add new packet that doesn't have topic_aliass to store
                             // the original packet still use topic alias to send
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
@@ -588,13 +608,25 @@ private: // compose operation impl
                                     actual_packet.opts(),
                                     force_move(props)
                                 );
-                            if (!validate_maximum_packet_size(self, store_packet)) return false;
+                            if (!validate_maximum_packet_size(self, store_packet)) {
+                                auto packet_id = actual_packet.packet_id();
+                                if (actual_packet.packet_id() != 0) {
+                                    ep.pid_man_.release_id(packet_id);
+                                }
+                                return false;
+                            }
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
                         }
                     }
                     else {
-                        if (!validate_maximum_packet_size(self, actual_packet)) return false;
+                        if (!validate_maximum_packet_size(self, actual_packet)) {
+                            auto packet_id = actual_packet.packet_id();
+                            if (actual_packet.packet_id() != 0) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
+                            return false;
+                        }
                         auto store_packet{actual_packet};
                         store_packet.set_dup(true);
                         ep.store_.add(force_move(store_packet));
@@ -607,7 +639,13 @@ private: // compose operation impl
                 auto ta_opt = get_topic_alias(actual_packet.props());
                 if (actual_packet.topic().empty()) {
                     if (!topic_alias_validated &&
-                        !validate_topic_alias(self, ta_opt)) return false;
+                        !validate_topic_alias(self, ta_opt)) {
+                        auto packet_id = actual_packet.packet_id();
+                        if (actual_packet.packet_id() != 0) {
+                            ep.pid_man_.release_id(packet_id);
+                        }
+                        return false;
+                    }
                     // use topic_alias set by user
                 }
                 else {
@@ -621,6 +659,10 @@ private: // compose operation impl
                             ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
                         }
                         else {
+                            auto packet_id = actual_packet.packet_id();
+                            if (actual_packet.packet_id() != 0) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
                             return false;
                         }
                     }
@@ -689,6 +731,12 @@ private: // compose operation impl
             }
 
             if (!validate_maximum_packet_size(self, actual_packet)) {
+                if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
+                    auto packet_id = actual_packet.packet_id();
+                    if (actual_packet.packet_id() != 0) {
+                        ep.pid_man_.release_id(packet_id);
+                    }
+                }
                 return false;
             }
 
@@ -869,13 +917,6 @@ private: // compose operation impl
                         [&](v5::connack_packet& p) {
                             if (p.code() == connect_reason_code::success) {
                                 ep.status_ = connection_status::connected;
-                                if (p.session_present()) {
-                                    ep.send_stored();
-                                }
-                                else {
-                                    ep.pid_man_.clear();
-                                    ep.store_.clear();
-                                }
 
                                 for (auto const& prop : p.props()) {
                                     prop.visit(
@@ -897,6 +938,14 @@ private: // compose operation impl
                                             }
                                         }
                                     );
+                                }
+
+                                if (p.session_present()) {
+                                    ep.send_stored();
+                                }
+                                else {
+                                    ep.pid_man_.clear();
+                                    ep.store_.clear();
                                 }
                             }
                         },
@@ -1138,21 +1187,41 @@ private: // compose operation impl
                         },
                         [&](v5::basic_subscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>&) {
+                        [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
+                            ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v5::basic_suback_packet<PacketIdBytes>&) {
+                        [&](v5::basic_suback_packet<PacketIdBytes>& p) {
+                            ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
                         [&](v5::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
-                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>&) {
+                        [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
+                            ep.pid_man_.release_id(p.packet_id());
                         },
-                        [&](v5::basic_unsuback_packet<PacketIdBytes>&) {
+                        [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
+                            ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::pingreq_packet&) {
+                            if constexpr(is_server(Role)) {
+                                if (ep.auto_ping_response_) {
+                                    ep.send(
+                                        v3_1_1::pingresp_packet(),
+                                        [](system_error const&){}
+                                    );
+                                }
+                            }
                         },
                         [&](v5::pingreq_packet&) {
+                            if constexpr(is_server(Role)) {
+                                if (ep.auto_ping_response_) {
+                                    ep.send(
+                                        v5::pingresp_packet(),
+                                        [](system_error const&){}
+                                    );
+                                }
+                            }
                         },
                         [&](v3_1_1::pingresp_packet&) {
                         },
@@ -1301,6 +1370,10 @@ private:
         BOOST_ASSERT(strand().running_in_this_thread());
         store_.for_each(
             [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
+                if (pv.size() > maximum_packet_size_send_) {
+                    pid_man_.release_id(pv.packet_id());
+                    return false;
+                }
                 pv.visit(
                     // copy packet because the stored packets need to be preserved
                     // until receiving puback/pubrec/pubcomp
@@ -1332,6 +1405,7 @@ private:
                         }
                     }
                 );
+                return true;
             }
         );
     }
@@ -1354,6 +1428,7 @@ private:
     store<PacketIdBytes> store_;
 
     bool auto_pub_response_ = false;
+    bool auto_ping_response_ = false;
 
     bool auto_map_topic_alias_send_ = false;
     bool auto_replace_topic_alias_send_ = false;
@@ -1371,6 +1446,10 @@ private:
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 
     std::atomic<connection_status> status_{connection_status::disconnected};
+
+    as::stready_timer tim_pingreq_send_{strand()};
+    as::stready_timer tim_pingreq_recv_{strand()};
+    as::stready_timer tim_pingresp_recv_{strand()};
 };
 
 template <role Role, typename NextLayer>

@@ -53,8 +53,13 @@ public:
 
     template <typename Func>
     void for_each(Func const& func) {
-        for (auto const& e : elems_) {
-            func(e);
+        for (auto it = elems_.begin(); it != elems_.end();) {
+            if (func(*it)) {
+                ++it;
+            }
+            else {
+                it = elems_.erase(it);
+            }
         }
     }
 

@@ -230,6 +230,15 @@ constexpr bool is_disconnect() {
         std::is_same_v<v5::disconnect_packet, Packet>;
 }
 
+template <typename Packet>
+constexpr bool own_packet_id() {
+    return
+        is_publish<Packet>() ||
+        is_pubrel<Packet>() ||
+        is_subscribe<Packet>() ||
+        is_unsubscribe<Packet>();
+}
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PACKET_PACKET_TRAITS_HPP

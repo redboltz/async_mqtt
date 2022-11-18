@@ -117,6 +117,16 @@ public:
         );
     }
 
+    std::size_t size() const {
+        return visit(
+            overload {
+                [] (auto const& p) -> std::size_t {
+                    return p.size();
+                }
+            }
+        );
+    }
+
     response_packet response_packet_type() const {
         return res_;
     }

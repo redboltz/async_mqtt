@@ -47,11 +47,13 @@ BOOST_AUTO_TEST_CASE(client_send) {
         am::nullopt, // will
         am::allocate_buffer("user1"),
         am::allocate_buffer("pass1"),
-        am::properties{}
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
     };
 
     auto connack = am::v5::connack_packet{
-        false,   // session_present
+        true,   // session_present
         am::connect_reason_code::success,
         am::properties{
             am::property::maximum_packet_size{21}
@@ -70,57 +72,25 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
     std::cout << am::hex_dump(publish_1_q1) << std::endl;
 
+    // size: 22bytes
     auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
         am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        am::allocate_buffer("payload1+"),
         am::qos::at_least_once,
         am::properties{}
     );
 
-    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
-    auto publish_3_q2 = am::v5::publish_packet(
-        *pid_opt3,
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once,
-        am::properties{}
-    );
-
-    auto publish_4_q0 = am::v5::publish_packet(
-        0x0, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::at_most_once,
-        am::properties{}
-    );
-
-    auto puback2 = am::v5::puback_packet(
-        0x2 // packet_id
-    );
-
-    auto pubrec3 = am::v5::pubrec_packet(
-        0x3 // packet_id
-    );
-
-    auto pubrel3 = am::v5::pubrel_packet(
-        0x3 // packet_id
-    );
-
-    auto pubcomp3 = am::v5::pubcomp_packet(
-        0x3 // packet_id
-    );
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
-            puback2,
-            pubrec3,
-            pubcomp3,
+            close,
+            connack,
         }
     );
 
@@ -154,84 +124,13 @@ BOOST_AUTO_TEST_CASE(client_send) {
 
     // send publish_2
     ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish_2_q1, wp));
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
         }
     );
     {
         auto ec = ep.send(publish_2_q1, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
-
-    bool pub3_send = false;
-    std::promise<void> p;
-    auto f = p.get_future();
-    // send publish_3
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish_3_q2, wp));
-            pub3_send = true;
-            p.set_value();
-        }
-    );
-    {
-        auto ec = ep.send(publish_3_q2, as::use_future).get();
-        BOOST_TEST(!ec);
-        BOOST_TEST(!pub3_send);
-    }
-
-    // send publish_4
-    bool pub4_send = false;
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish_4_q0, wp));
-            pub4_send = true;
-        }
-    );
-    {
-        auto ec = ep.send(publish_4_q0, as::use_future).get();
-        BOOST_TEST(!ec);
-        BOOST_TEST(pub4_send);
-    }
-
-    // set send publish_3 checker again
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish_3_q2, wp));
-            pub3_send = true;
-            p.set_value();
-        }
-    );
-
-    // recv puback2
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(puback2, pv));
-    }
-
-    f.get();
-
-    // recv pubrec3
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec3, pv));
-    }
-
-    // send pubrel3
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
-        }
-    );
-    {
-        auto ec = ep.send(pubrel3, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
-
-    // recv pubcomp3
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubcomp3, pv));
+        BOOST_TEST(ec.code() == am::errc::bad_message);
     }
 
     guard.reset();
