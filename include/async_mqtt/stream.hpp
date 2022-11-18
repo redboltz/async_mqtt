@@ -23,16 +23,17 @@
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/exception.hpp>
+#include <async_mqtt/teardown.hpp>
 
 namespace async_mqtt {
 
 namespace as = boost::asio;
 namespace sys = boost::system;
 
-template <typename NextLayer>
+template <role_type Role, typename NextLayer>
 class stream {
 public:
-    using this_type = stream<NextLayer>;
+    using this_type = stream<Role, NextLayer>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
     using strand_type = as::strand<executor_type>;
@@ -117,6 +118,23 @@ public:
     }
     strand_type& strand() {
         return strand_;
+    }
+
+    template<
+        typename CompletionToken
+    >
+    typename as::async_result<std::decay_t<CompletionToken>, void(error_code)>::return_type
+    close(CompletionToken&& token) {
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const&)
+            >(
+                close_impl{
+                    *this
+                },
+                token
+            );
     }
 
 private:
@@ -375,6 +393,40 @@ private:
                 else {
                     self.complete(last_ec, bytes_transferred);
                 }
+                break;
+            }
+        }
+    };
+
+    struct close_impl {
+        this_type& strm;
+        enum { dispatch, close, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec = error_code{}
+        ) {
+            switch (state) {
+            case dispatch: {
+                state = close;
+                auto& a_strm{strm};
+                as::dispatch(
+                    a_strm.strand_,
+                    force_move(self)
+                );
+            } break;
+            case close: {
+                state = complete;
+                auto& a_strm{strm};
+                async_teardown(
+                    Role,
+                    a_strm.nl_,
+                    force_move(self)
+                );
+            } break;
+            case complete:
+                self.complete(ec);
                 break;
             }
         }

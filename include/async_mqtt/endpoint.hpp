@@ -28,7 +28,8 @@ namespace async_mqtt {
 enum class role {
     client = 0b01,
     server = 0b10,
-    both   = 0b11
+    client_any_send   = 0b11,
+    server_any_send   = 0b111,
 };
 
 enum class connection_status {
@@ -38,10 +39,10 @@ enum class connection_status {
     disconnected
 };
 
-constexpr bool is_client(role r) {
+constexpr bool can_send_as_client(role r) {
     return static_cast<int>(r) & static_cast<int>(role::client);
 }
-constexpr bool is_server(role r) {
+constexpr bool can_send_as_server(role r) {
     return static_cast<int>(r) & static_cast<int>(role::server);
 }
 
@@ -66,7 +67,11 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint {
 public:
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
-    using stream_type = stream<NextLayer>;
+    using stream_type =
+        stream<
+            Role == role::client || Role == role::client_any_send ? role_type::client : role_type::server,
+            NextLayer
+        >;
     using strand_type = typename stream_type::strand_type;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
@@ -175,8 +180,8 @@ public:
     ) {
         if constexpr(!std::is_same_v<Packet, basic_packet_variant<PacketIdBytes>>) {
             static_assert(
-                (is_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
-                (is_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
+                (can_send_as_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
+                (can_send_as_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
                 "Packet cannot be send by MQTT protocol"
             );
         }
@@ -393,8 +398,8 @@ private: // compose operation impl
         template <typename Self, typename ActualPacket>
         bool process_send_packet(Self& self, ActualPacket& actual_packet) {
             // MQTT protocol sendable packet check
-            if ((is_client(Role) && !is_client_sendable<std::decay_t<ActualPacket>>()) ||
-                (is_server(Role) && !is_server_sendable<std::decay_t<ActualPacket>>())
+            if ((can_send_as_client(Role) && !is_client_sendable<std::decay_t<ActualPacket>>()) ||
+                (can_send_as_server(Role) && !is_server_sendable<std::decay_t<ActualPacket>>())
             ) {
                 self.complete(
                     make_error(
@@ -1204,7 +1209,7 @@ private: // compose operation impl
                             ep.pid_man_.release_id(p.packet_id());
                         },
                         [&](v3_1_1::pingreq_packet&) {
-                            if constexpr(is_server(Role)) {
+                            if constexpr(can_send_as_server(Role)) {
                                 if (ep.auto_ping_response_) {
                                     ep.send(
                                         v3_1_1::pingresp_packet(),
@@ -1214,7 +1219,7 @@ private: // compose operation impl
                             }
                         },
                         [&](v5::pingreq_packet&) {
-                            if constexpr(is_server(Role)) {
+                            if constexpr(can_send_as_server(Role)) {
                                 if (ep.auto_ping_response_) {
                                     ep.send(
                                         v5::pingresp_packet(),
@@ -1447,9 +1452,9 @@ private:
 
     std::atomic<connection_status> status_{connection_status::disconnected};
 
-    as::stready_timer tim_pingreq_send_{strand()};
-    as::stready_timer tim_pingreq_recv_{strand()};
-    as::stready_timer tim_pingresp_recv_{strand()};
+    as::steady_timer tim_pingreq_send_{strand()};
+    as::steady_timer tim_pingreq_recv_{strand()};
+    as::steady_timer tim_pingresp_recv_{strand()};
 };
 
 template <role Role, typename NextLayer>

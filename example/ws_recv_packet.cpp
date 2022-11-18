@@ -22,7 +22,7 @@ int main() {
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
     as::ip::tcp::acceptor ac{ioc, endpoint};
-    async_mqtt::stream<async_mqtt::protocol::ws> ams{ioc.get_executor()};
+    async_mqtt::stream<async_mqtt::role_type::server, async_mqtt::protocol::ws> ams{ioc.get_executor()};
 
 
     std::function <void()> do_echo;
