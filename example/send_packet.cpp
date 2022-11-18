@@ -59,6 +59,13 @@ int main() {
                                                 std::cout << p;
                                             }
                                             std::cout << std::endl;
+
+                                            ams.close(
+                                                [&]
+                                                (boost::system::error_code const& ec) {
+                                                    std::cout << ec.message() << std::endl;
+                                                }
+                                            );
                                         },
                                         [](auto const&) {}
                                     }

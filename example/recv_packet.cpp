@@ -45,7 +45,13 @@ int main() {
                             (boost::system::error_code const& ec, std::size_t bytes_transferred) mutable {
                                 std::cout << "write: " << ec.message() << " " << bytes_transferred << std::endl;
                                 if (ec) return;
-                                do_echo();
+                                // do_echo();
+                                ams.close(
+                                    [&]
+                                    (boost::system::error_code const& ec) {
+                                        std::cout << ec.message() << std::endl;
+                                    }
+                                );
                             }
                         );
                     }
