@@ -56,44 +56,6 @@ BOOST_AUTO_TEST_CASE(client) {
         }
     };
 
-    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
-    auto publish_1_q1 = am::v5::publish_packet(
-        *pid_opt1,
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::at_least_once,
-        am::properties{}
-    );
-
-    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
-    auto publish_2_q1 = am::v5::publish_packet(
-        *pid_opt2,
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::at_least_once,
-        am::properties{}
-    );
-
-    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
-    auto publish_3_q2 = am::v5::publish_packet(
-        *pid_opt3,
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once,
-        am::properties{}
-    );
-
-    auto publish_4_q0 = am::v5::publish_packet(
-        0x0, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::at_most_once,
-        am::properties{}
-    );
-
     auto puback2 = am::v5::puback_packet(
         0x2 // packet_id
     );
@@ -136,6 +98,44 @@ BOOST_AUTO_TEST_CASE(client) {
         auto pv = ep.recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
+
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_1_q1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_2_q1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_3_q2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once,
+        am::properties{}
+    );
+
+    auto publish_4_q0 = am::v5::publish_packet(
+        0x0, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_most_once,
+        am::properties{}
+    );
 
     // send publish_1
     ep.stream().next_layer().set_write_packet_checker(
@@ -269,6 +269,30 @@ BOOST_AUTO_TEST_CASE(server) {
         am::properties{}
     };
 
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connect,
+        }
+    );
+
+    // recv connect
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect, pv));
+    }
+
+    // send connack
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connack, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
     auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
@@ -326,29 +350,11 @@ BOOST_AUTO_TEST_CASE(server) {
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connect,
             puback2,
             pubrec3,
             pubcomp3,
         }
     );
-
-    // recv connect
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
-    }
-
-    // send connack
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
-        }
-    );
-    {
-        auto ec = ep.send(connack, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
 
     // send publish_1
     ep.stream().next_layer().set_write_packet_checker(
