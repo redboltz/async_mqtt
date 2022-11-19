@@ -57,76 +57,6 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     };
 
-    auto publish_reg_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_reg_t2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_use_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_reg_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_use_ta3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_upd_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1} // update
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
@@ -150,6 +80,90 @@ BOOST_AUTO_TEST_CASE(send_client) {
         auto pv = ep.recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
+
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_reg_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_reg_t2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt4 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt4.has_value());
+    auto publish_use_ta2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt5 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt5.has_value());
+    auto publish_reg_t3 = am::v5::publish_packet(
+        *pid_opt5,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt6 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt6.has_value());
+    auto publish_use_ta3 = am::v5::publish_packet(
+        *pid_opt6,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt7 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt7.has_value());
+    auto publish_upd_t3 = am::v5::publish_packet(
+        *pid_opt7,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
 
     // send publish_reg_t1
     ep.stream().next_layer().set_write_packet_checker(
@@ -267,76 +281,6 @@ BOOST_AUTO_TEST_CASE(send_server) {
         am::properties{}
     };
 
-    auto publish_reg_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_reg_t2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_use_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_reg_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_use_ta3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_upd_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1} // update
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
@@ -360,6 +304,90 @@ BOOST_AUTO_TEST_CASE(send_server) {
         auto ec = ep.send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
+
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_reg_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_reg_t2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt4 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt4.has_value());
+    auto publish_use_ta2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt5 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt5.has_value());
+    auto publish_reg_t3 = am::v5::publish_packet(
+        *pid_opt5,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt6 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt6.has_value());
+    auto publish_use_ta3 = am::v5::publish_packet(
+        *pid_opt6,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt7 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt7.has_value());
+    auto publish_upd_t3 = am::v5::publish_packet(
+        *pid_opt7,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
 
     // send publish_reg_t1
     ep.stream().next_layer().set_write_packet_checker(
@@ -477,90 +505,6 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     };
 
-    auto publish_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{}
-    );
-
-    auto publish_mapped_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_t2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{}
-    );
-
-    auto publish_mapped_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_use_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{}
-    );
-
-    auto publish_mapped_ta1_2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1_2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
@@ -586,6 +530,96 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         auto pv = ep.recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
+
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto publish_mapped_ta1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_t2 = am::v5::publish_packet(
+        *pid_opt2,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto publish_mapped_ta2 = am::v5::publish_packet(
+        *pid_opt2,
+        am::allocate_buffer("topic2"),
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto publish_use_ta2 = am::v5::publish_packet(
+        *pid_opt2,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_t3 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto publish_mapped_ta1_2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic3"),
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_use_ta1_2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
 
     // send publish_t1
     ep.stream().next_layer().set_write_packet_checker(
@@ -692,34 +726,6 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     };
 
-    auto publish_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{}
-    );
-
-    auto publish_map_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
@@ -745,6 +751,36 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         auto pv = ep.recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
+
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto publish_map_ta1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
 
     // send publish_t1
     ep.stream().next_layer().set_write_packet_checker(
@@ -837,92 +873,10 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    auto publish_reg_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_reg_t2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_use_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_reg_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_use_ta3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_upd_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1} // update
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
-            publish_reg_t1,
-            publish_use_ta1,
-            publish_reg_t2,
-            publish_use_ta2,
-            publish_reg_t3,  // error and disconnect
-            close,
-            connack,
-            publish_use_ta3, // error and disconnect
-            close,
-            connack,
-            publish_upd_t3,
-            publish_use_ta1,
         }
     );
 
@@ -948,6 +902,150 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     init();
 
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_reg_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_exp_t1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_reg_t2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt4 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt4.has_value());
+    auto publish_use_ta2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto publish_exp_t2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt5 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt5.has_value());
+    auto publish_reg_t3 = am::v5::publish_packet(
+        *pid_opt5,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt6 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt6.has_value());
+    auto publish_use_ta3 = am::v5::publish_packet(
+        *pid_opt6,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt7 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt7.has_value());
+    auto publish_upd_t3 = am::v5::publish_packet(
+        *pid_opt7,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
+
+    auto pid_opt8 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt8.has_value());
+    auto publish_use_ta1_t3 = am::v5::publish_packet(
+        *pid_opt8,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_exp_t3 = am::v5::publish_packet(
+        *pid_opt8,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
+
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            publish_reg_t1,
+            publish_use_ta1,
+            publish_reg_t2,
+            publish_use_ta2,
+            publish_reg_t3,  // error and disconnect
+            close,
+            connack,
+            publish_use_ta3, // error and disconnect
+            close,
+            connack,
+            publish_upd_t3,
+            publish_use_ta1_t3,
+        }
+    );
+
     // recv publish_reg_t1
     {
         auto pv = ep.recv(as::use_future).get();
@@ -957,7 +1055,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv publish_use_ta1
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_reg_t1, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t1, pv));
     }
 
     // recv publish_reg_t2
@@ -969,7 +1067,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv publish_use_ta2
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_reg_t2, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t2, pv));
     }
 
     // internal auto send disconnect
@@ -1019,7 +1117,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv publish_use_ta1
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_upd_t3, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t3, pv));
     }
 
 
@@ -1069,92 +1167,10 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    auto publish_reg_t1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_use_ta1 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1}
-        }
-    );
-
-    auto publish_reg_t2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_use_ta2 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{2}
-        }
-    );
-
-    auto publish_reg_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_use_ta3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::buffer{},
-        am::buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{3} // over
-        }
-    );
-
-    auto publish_upd_t3 = am::v5::publish_packet(
-        0x1234, // packet_id
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload1"),
-        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
-        am::properties{
-            am::property::topic_alias{1} // update
-        }
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
-            publish_reg_t1,
-            publish_use_ta1,
-            publish_reg_t2,
-            publish_use_ta2,
-            publish_reg_t3,  // error and disconnect
-            close,
-            connect,
-            publish_use_ta3, // error and disconnect
-            close,
-            connect,
-            publish_upd_t3,
-            publish_use_ta1,
         }
     );
 
@@ -1181,6 +1197,150 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     init();
 
+    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish_reg_t1 = am::v5::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
+    auto publish_use_ta1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_exp_t1 = am::v5::publish_packet(
+        *pid_opt2,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
+    auto publish_reg_t2 = am::v5::publish_packet(
+        *pid_opt3,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt4 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt4.has_value());
+    auto publish_use_ta2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto publish_exp_t2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{2}
+        }
+    );
+
+    auto pid_opt5 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt5.has_value());
+    auto publish_reg_t3 = am::v5::publish_packet(
+        *pid_opt5,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt6 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt6.has_value());
+    auto publish_use_ta3 = am::v5::publish_packet(
+        *pid_opt6,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{3} // over
+        }
+    );
+
+    auto pid_opt7 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt7.has_value());
+    auto publish_upd_t3 = am::v5::publish_packet(
+        *pid_opt7,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
+
+    auto pid_opt8 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt8.has_value());
+    auto publish_use_ta1_t3 = am::v5::publish_packet(
+        *pid_opt8,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto publish_exp_t3 = am::v5::publish_packet(
+        *pid_opt8,
+        am::allocate_buffer("topic3"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1} // update
+        }
+    );
+
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            publish_reg_t1,
+            publish_use_ta1,
+            publish_reg_t2,
+            publish_use_ta2,
+            publish_reg_t3,  // error and disconnect
+            close,
+            connect,
+            publish_use_ta3, // error and disconnect
+            close,
+            connect,
+            publish_upd_t3,
+            publish_use_ta1_t3,
+        }
+    );
+
     // recv publish_reg_t1
     {
         auto pv = ep.recv(as::use_future).get();
@@ -1190,7 +1350,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     // recv publish_use_ta1
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_reg_t1, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t1, pv));
     }
 
     // recv publish_reg_t2
@@ -1202,7 +1362,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     // recv publish_use_ta2
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_reg_t2, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t2, pv));
     }
 
     // internal auto send disconnect
@@ -1252,7 +1412,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     // recv publish_use_ta1
     {
         auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_upd_t3, pv));
+        BOOST_TEST(am::packet_compare(publish_exp_t3, pv));
     }
 
 
