@@ -573,7 +573,7 @@ private: // compose operation impl
                             auto topic_opt = validate_topic_alias(self, ta_opt);
                             if (!topic_opt) {
                                 auto packet_id = actual_packet.packet_id();
-                                if (actual_packet.packet_id() != 0) {
+                                if (packet_id != 0) {
                                     ep.pid_man_.release_id(packet_id);
                                 }
                                 return false;
@@ -599,7 +599,7 @@ private: // compose operation impl
                                 );
                             if (!validate_maximum_packet_size(self, store_packet)) {
                                 auto packet_id = actual_packet.packet_id();
-                                if (actual_packet.packet_id() != 0) {
+                                if (packet_id != 0) {
                                     ep.pid_man_.release_id(packet_id);
                                 }
                                 return false;
@@ -630,7 +630,7 @@ private: // compose operation impl
                                 );
                             if (!validate_maximum_packet_size(self, store_packet)) {
                                 auto packet_id = actual_packet.packet_id();
-                                if (actual_packet.packet_id() != 0) {
+                                if (packet_id != 0) {
                                     ep.pid_man_.release_id(packet_id);
                                 }
                                 return false;
@@ -642,7 +642,7 @@ private: // compose operation impl
                     else {
                         if (!validate_maximum_packet_size(self, actual_packet)) {
                             auto packet_id = actual_packet.packet_id();
-                            if (actual_packet.packet_id() != 0) {
+                            if (packet_id != 0) {
                                 ep.pid_man_.release_id(packet_id);
                             }
                             return false;
@@ -661,7 +661,7 @@ private: // compose operation impl
                     if (!topic_alias_validated &&
                         !validate_topic_alias(self, ta_opt)) {
                         auto packet_id = actual_packet.packet_id();
-                        if (actual_packet.packet_id() != 0) {
+                        if (packet_id != 0) {
                             ep.pid_man_.release_id(packet_id);
                         }
                         return false;
@@ -680,7 +680,7 @@ private: // compose operation impl
                         }
                         else {
                             auto packet_id = actual_packet.packet_id();
-                            if (actual_packet.packet_id() != 0) {
+                            if (packet_id != 0) {
                                 ep.pid_man_.release_id(packet_id);
                             }
                             return false;
@@ -753,7 +753,7 @@ private: // compose operation impl
             if (!validate_maximum_packet_size(self, actual_packet)) {
                 if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
                     auto packet_id = actual_packet.packet_id();
-                    if (actual_packet.packet_id() != 0) {
+                    if (packet_id != 0) {
                         ep.pid_man_.release_id(packet_id);
                     }
                 }
@@ -836,7 +836,8 @@ private: // compose operation impl
 
     struct recv_impl {
         this_type& ep;
-        enum { initiate, complete } state = initiate;
+        optional<system_error> decided_error = nullopt;
+        enum { initiate, disconnect, close, complete } state = initiate;
 
         template <typename Self>
         void operator()(
@@ -858,25 +859,24 @@ private: // compose operation impl
             case complete: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 if (buf.size() > ep.maximum_packet_size_recv_) {
-                    if (ep.protocol_version_ == protocol_version::v5) {
-                        ep.send(
-                            v5::disconnect_packet{
-                                disconnect_reason_code::packet_too_large
-                            },
-                            [](system_error const&){
-                            }
-                        );
-                    }
-                    self.complete(
+                    // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
+                    BOOST_ASSERT(ep.protocol_version_ == protocol_version::v5);
+                    state = disconnect;
+                    decided_error.emplace(
                         make_error(
                             errc::bad_message,
                             "too large packet received"
                         )
                     );
+                    ep.send(
+                        v5::disconnect_packet{
+                            disconnect_reason_code::packet_too_large
+                        },
+                        force_move(self)
+                    );
                     return;
                 }
 
-                bool complete_called = false;
                 auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, ep.protocol_version_);
                 v.visit(
                     // do internal protocol processing
@@ -994,19 +994,19 @@ private: // compose operation impl
                             switch (p.opts().qos()) {
                             case qos::at_least_once: {
                                 if (ep.publish_recv_.size() == ep.publish_recv_max_) {
-                                    ep.send(
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::receive_maximum_exceeded
-                                        },
-                                        [](system_error const&){}
-                                    );
-                                    self.complete(
+                                    state = disconnect;
+                                    decided_error.emplace(
                                         make_error(
                                             errc::bad_message,
                                             "receive maximum exceeded"
                                         )
                                     );
-                                    complete_called = true;
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::receive_maximum_exceeded
+                                        },
+                                        force_move(self)
+                                    );
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -1020,19 +1020,19 @@ private: // compose operation impl
                             } break;
                             case qos::exactly_once: {
                                 if (ep.publish_recv_.size() == ep.publish_recv_max_) {
-                                    ep.send(
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::receive_maximum_exceeded
-                                        },
-                                        [](system_error const&){}
-                                    );
-                                    self.complete(
+                                    state = disconnect;
+                                    decided_error.emplace(
                                         make_error(
                                             errc::bad_message,
                                             "receive maximum exceeded"
                                         )
                                     );
-                                    complete_called = true;
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::receive_maximum_exceeded
+                                        },
+                                        force_move(self)
+                                    );
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
@@ -1053,19 +1053,20 @@ private: // compose operation impl
                                     // extract topic from topic_alias
                                     if (*ta_opt == 0 ||
                                         *ta_opt > ep.topic_alias_recv_->max()) {
-                                        ep.send(
-                                            v5::disconnect_packet{
-                                                disconnect_reason_code::topic_alias_invalid
-                                            },
-                                            [](system_error const&){}
-                                        );
-                                        self.complete(
+                                        state = disconnect;
+                                        decided_error.emplace(
                                             make_error(
                                                 errc::bad_message,
                                                 "topic alias invalid"
                                             )
                                         );
-                                    complete_called = true;
+                                        ep.send(
+                                            v5::disconnect_packet{
+                                                disconnect_reason_code::topic_alias_invalid
+                                            },
+                                            force_move(self)
+                                        );
+                                        return;
                                     }
                                     else {
                                         auto topic = ep.topic_alias_recv_->find(*ta_opt);
@@ -1074,19 +1075,20 @@ private: // compose operation impl
                                                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                                 << "no matching topic alias: "
                                                 << *ta_opt;
-                                            ep.send(
-                                                v5::disconnect_packet{
-                                                    disconnect_reason_code::topic_alias_invalid
-                                                },
-                                                [](system_error const&){}
-                                            );
-                                            self.complete(
+                                            state = disconnect;
+                                            decided_error.emplace(
                                                 make_error(
                                                     errc::bad_message,
                                                     "topic alias invalid"
                                                 )
                                             );
-                                            complete_called = true;
+                                            ep.send(
+                                                v5::disconnect_packet{
+                                                    disconnect_reason_code::topic_alias_invalid
+                                                },
+                                                force_move(self)
+                                            );
+                                            return;
                                         }
                                         else {
                                             p.add_topic(allocate_buffer(topic));
@@ -1097,38 +1099,40 @@ private: // compose operation impl
                                     ASYNC_MQTT_LOG("mqtt_impl", error)
                                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                                         << "topic is empty but topic_alias isn't set";
-                                    ep.send(
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::topic_alias_invalid
-                                        },
-                                        [](system_error const&){}
-                                    );
-                                    self.complete(
+                                    state = disconnect;
+                                    decided_error.emplace(
                                         make_error(
                                             errc::bad_message,
                                             "topic alias invalid"
                                         )
                                     );
-                                    complete_called = true;
+                                    ep.send(
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::topic_alias_invalid
+                                        },
+                                        force_move(self)
+                                    );
+                                    return;
                                 }
                             }
                             else {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
                                     if (*ta_opt == 0 ||
                                         *ta_opt > ep.topic_alias_recv_->max()) {
-                                        ep.send(
-                                            v5::disconnect_packet{
-                                                disconnect_reason_code::topic_alias_invalid
-                                            },
-                                            [](system_error const&){}
-                                        );
-                                        self.complete(
+                                        state = disconnect;
+                                        decided_error.emplace(
                                             make_error(
                                                 errc::bad_message,
                                                 "topic alias invalid"
                                             )
                                         );
-                                        complete_called = true;
+                                        ep.send(
+                                            v5::disconnect_packet{
+                                                disconnect_reason_code::topic_alias_invalid
+                                            },
+                                            force_move(self)
+                                        );
+                                        return;
                                     }
                                     else {
                                         // extract topic from topic_alias
@@ -1261,9 +1265,26 @@ private: // compose operation impl
                         }
                     }
                 );
-                if (!complete_called) self.complete(force_move(v));
+                if (!decided_error) self.complete(force_move(v));
             } break;
+            case close:
+                BOOST_ASSERT(decided_error);
+                self.complete(*decided_error);
+                break;
+            default:
+                BOOST_ASSERT(false);
+                break;
             }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const&
+        ) {
+            BOOST_ASSERT(state == disconnect);
+            state = close;
+            ep.close(force_move(self));
         }
 
         void send_publish_from_queue() {

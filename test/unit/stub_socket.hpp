@@ -38,6 +38,12 @@ struct stub_socket {
     void set_recv_packets(std::deque<packet_variant> recv_pvs) {
         recv_pvs_ = force_move(recv_pvs);
         recv_pvs_it_ = recv_pvs_.begin();
+        pv_r_ = nullopt;
+
+    }
+
+    void set_close_checker(std::function<void()> c) {
+        close_checker_ = force_move(c);
     }
 
 #if 0
@@ -111,6 +117,12 @@ struct stub_socket {
         token(errc::make_error_code(errc::success), mb.size());
     }
 
+    template<typename TeardownHandler>
+    void async_teardown(TeardownHandler&& handler) const {
+        if (close_checker_) close_checker_();
+        handler(boost::system::error_code{});
+    }
+
 private:
 
     protocol_version version_;
@@ -120,6 +132,7 @@ private:
     std::vector<as::const_buffer> cbs_;
     optional<packet_range> pv_r_;
     std::function<void(packet_variant const& pv)> write_packet_checker_;
+    std::function<void()> close_checker_;
 };
 
 template <typename MutableBufferSequence, typename CompletionToken>
@@ -130,6 +143,14 @@ void async_read(
 ) {
     socket.async_read_some(mb, std::forward<CompletionToken>(token));
 }
+
+template<typename TeardownHandler>
+void async_teardown(
+    role_type,
+    stub_socket& socket,
+    TeardownHandler&& handler) {
+    socket.async_teardown(std::forward<TeardownHandler>(handler));
+ }
 
 } // namespace async_mqtt
 
