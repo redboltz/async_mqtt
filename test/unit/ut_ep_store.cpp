@@ -59,6 +59,30 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         am::connect_return_code::accepted
     };
 
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connack_sp_false,
+        }
+    );
+
+    // send connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connect, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv connack_sp_false
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+    }
+
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
     auto publish0 = am::v3_1_1::publish_packet(
@@ -109,7 +133,6 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connack_sp_false,
             close,
             connack_sp_true,
             pubrec2,
@@ -119,23 +142,6 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
             connack_sp_false,
         }
     );
-
-    // send connect
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
-        }
-    );
-    {
-        auto ec = ep.send(connect, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
-
-    // recv connack_sp_false
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
-    }
 
     // send publish0
     ep.stream().next_layer().set_write_packet_checker(
@@ -387,6 +393,30 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
+    ep1.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connect_no_clean,
+        }
+    );
+
+    // recv connect_no_clean
+    {
+        auto pv = ep1.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+    }
+
+    // send connack_sp_false
+    ep1.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+        }
+    );
+    {
+        auto ec = ep1.send(connack_sp_false, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
     auto publish0 = am::v3_1_1::publish_packet(
         0x0, // packet_id
         am::allocate_buffer("topic1"),
@@ -435,7 +465,6 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     ep1.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connect_no_clean,
             close,
         }
     );
@@ -460,23 +489,6 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
             connect_clean,
         }
     );
-
-    // recv connect_no_clean
-    {
-        auto pv = ep1.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
-    }
-
-    // send connack_sp_false
-    ep1.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
-        }
-    );
-    {
-        auto ec = ep1.send(connack_sp_false, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
 
     // send publish0
     ep1.stream().next_layer().set_write_packet_checker(
@@ -735,6 +747,30 @@ BOOST_AUTO_TEST_CASE(v5_client) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connack_sp_false,
+        }
+    );
+
+    // send connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connect, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv connack_sp_false
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+    }
+
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
         am::allocate_buffer("topic1"),
@@ -786,7 +822,6 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connack_sp_false,
             close,
             connack_sp_true,
             pubrec2,
@@ -796,23 +831,6 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             connack_sp_false,
         }
     );
-
-    // send connect
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
-        }
-    );
-    {
-        auto ec = ep.send(connect, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
-
-    // recv connack_sp_false
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
-    }
 
     // send publish0
     ep.stream().next_layer().set_write_packet_checker(
@@ -1070,6 +1088,30 @@ BOOST_AUTO_TEST_CASE(v5_server) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
+    ep1.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connect_no_clean,
+        }
+    );
+
+    // recv connect_no_clean
+    {
+        auto pv = ep1.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+    }
+
+    // send connack_sp_false
+    ep1.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+        }
+    );
+    {
+        auto ec = ep1.send(connack_sp_false, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
         am::allocate_buffer("topic1"),
@@ -1121,7 +1163,6 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     ep1.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connect_no_clean,
             close,
         }
     );
@@ -1146,23 +1187,6 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             connect_clean,
         }
     );
-
-    // recv connect_no_clean
-    {
-        auto pv = ep1.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
-    }
-
-    // send connack_sp_false
-    ep1.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
-        }
-    );
-    {
-        auto ec = ep1.send(connack_sp_false, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
 
     // send publish0
     ep1.stream().next_layer().set_write_packet_checker(
@@ -1424,6 +1448,30 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connack_sp_false,
+        }
+    );
+
+    // send connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connect, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv connack_sp_false
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+    }
+
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
         am::allocate_buffer("topic1"),
@@ -1495,7 +1543,6 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
-            connack_sp_false,
             close,
             connack_sp_true,
             pubrec2,
@@ -1505,23 +1552,6 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
             connack_sp_false,
         }
     );
-
-    // send connect
-    ep.stream().next_layer().set_write_packet_checker(
-        [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
-        }
-    );
-    {
-        auto ec = ep.send(connect, as::use_future).get();
-        BOOST_TEST(!ec);
-    }
-
-    // recv connack_sp_false
-    {
-        auto pv = ep.recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
-    }
 
     // send publish0
     ep.stream().next_layer().set_write_packet_checker(
