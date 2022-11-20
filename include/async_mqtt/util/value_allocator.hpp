@@ -248,6 +248,16 @@ public:
     }
 
     /**
+     * @brief Check the value is used.
+     * @param value The value to check
+     * @return If value is used then true, otherwise false
+     */
+    bool is_used(value_type value) const {
+        auto it = pool_.find(value_interval{value});
+        return it == pool_.end();
+    }
+
+    /**
      * @brief Clear all allocated or used values.
      */
     void clear() {

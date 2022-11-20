@@ -41,6 +41,14 @@ public:
     }
 
     /**
+     * @brief Check packet_id is used.
+     * @return If packet_id is used then return true, otherwise return false.
+     */
+    bool is_used_id(packet_id_type packet_id) const {
+        return va_.is_used(packet_id);
+    }
+
+    /**
      * @brief Release packet_id.
      * @param packet_id packet id to release.
      *                   only the packet_id gotten by acquire_unique_packet_id, or

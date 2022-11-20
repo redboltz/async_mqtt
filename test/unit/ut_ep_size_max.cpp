@@ -256,6 +256,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
     {
         auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
     BOOST_TEST(close_called);

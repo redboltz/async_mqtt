@@ -762,8 +762,10 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         am::properties{}
     );
 
+    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt2.has_value());
     auto publish_map_ta1 = am::v5::publish_packet(
-        *pid_opt1,
+        *pid_opt2,
         am::allocate_buffer("topic1"),
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -772,8 +774,30 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
 
+    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt3.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt1,
+        *pid_opt3,
+        am::buffer{},
+        am::buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
+    auto pid_opt4 = ep.acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt4.has_value());
+    auto publish_t1_2 = am::v5::publish_packet(
+        *pid_opt4,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{}
+    );
+
+    auto publish_exp_ta1 = am::v5::publish_packet(
+        *pid_opt4,
         am::buffer{},
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -819,11 +843,11 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             // auto use
-            BOOST_TEST(am::packet_compare(publish_use_ta1, wp));
+            BOOST_TEST(am::packet_compare(publish_exp_ta1, wp));
         }
     );
     {
-        auto ec = ep.send(publish_t1, as::use_future).get();
+        auto ec = ep.send(publish_t1_2, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1070,9 +1094,15 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         BOOST_TEST(am::packet_compare(publish_exp_t2, pv));
     }
 
+
+    bool close_called = false;
+    ep.stream().next_layer().set_close_checker(
+        [&] { close_called = true; }
+    );
     // internal auto send disconnect
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
+            BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
@@ -1082,6 +1112,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
+    BOOST_TEST(close_called);
+
     // recv close
     {
         auto pv = ep.recv(as::use_future).get();
@@ -1089,9 +1121,15 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     }
 
     init();
+
+    close_called = false;
+    ep.stream().next_layer().set_close_checker(
+        [&] { close_called = true; }
+    );
     // internal auto send disconnect
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
+            BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
@@ -1101,6 +1139,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
+    BOOST_TEST(close_called);
+
     // recv close
     {
         auto pv = ep.recv(as::use_future).get();
@@ -1365,9 +1405,14 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         BOOST_TEST(am::packet_compare(publish_exp_t2, pv));
     }
 
+    bool close_called = false;
+    ep.stream().next_layer().set_close_checker(
+        [&] { close_called = true; }
+    );
     // internal auto send disconnect
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
+            BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
@@ -1377,6 +1422,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
+    BOOST_TEST(close_called);
     // recv close
     {
         auto pv = ep.recv(as::use_future).get();
@@ -1384,9 +1430,14 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     }
 
     init();
+    close_called = false;
+    ep.stream().next_layer().set_close_checker(
+        [&] { close_called = true; }
+    );
     // internal auto send disconnect
     ep.stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
+            BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
@@ -1396,6 +1447,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
+    BOOST_TEST(close_called);
     // recv close
     {
         auto pv = ep.recv(as::use_future).get();

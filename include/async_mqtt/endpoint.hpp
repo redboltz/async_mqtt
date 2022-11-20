@@ -563,93 +563,95 @@ private: // compose operation impl
 
             // store publish/pubrel packet
             if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
-                if (ep.need_store_ &&
-                    (actual_packet.opts().qos() == qos::at_least_once ||
-                     actual_packet.opts().qos() == qos::exactly_once)
+                if (actual_packet.opts().qos() == qos::at_least_once ||
+                    actual_packet.opts().qos() == qos::exactly_once
                 ) {
-                    if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
-                        auto ta_opt = get_topic_alias(actual_packet.props());
-                        if (actual_packet.topic().empty()) {
-                            auto topic_opt = validate_topic_alias(self, ta_opt);
-                            if (!topic_opt) {
-                                auto packet_id = actual_packet.packet_id();
-                                if (packet_id != 0) {
-                                    ep.pid_man_.release_id(packet_id);
+                    BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+                    if (ep.need_store_) {
+                        if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
+                            auto ta_opt = get_topic_alias(actual_packet.props());
+                            if (actual_packet.topic().empty()) {
+                                auto topic_opt = validate_topic_alias(self, ta_opt);
+                                if (!topic_opt) {
+                                    auto packet_id = actual_packet.packet_id();
+                                    if (packet_id != 0) {
+                                        ep.pid_man_.release_id(packet_id);
+                                    }
+                                    return false;
                                 }
-                                return false;
-                            }
-                            topic_alias_validated = true;
-                            auto props = actual_packet.props();
-                            auto it = props.cbegin();
-                            auto end = props.cend();
-                            for (; it != end; ++it) {
-                                if (it->id() == property::id::topic_alias) {
-                                    props.erase(it);
-                                    break;
+                                topic_alias_validated = true;
+                                auto props = actual_packet.props();
+                                auto it = props.cbegin();
+                                auto end = props.cend();
+                                for (; it != end; ++it) {
+                                    if (it->id() == property::id::topic_alias) {
+                                        props.erase(it);
+                                        break;
+                                    }
                                 }
-                            }
 
-                            auto store_packet =
-                                ActualPacket(
-                                    actual_packet.packet_id(),
-                                    allocate_buffer(*topic_opt),
-                                    actual_packet.payload(),
-                                    actual_packet.opts(),
-                                    force_move(props)
-                                );
-                            if (!validate_maximum_packet_size(self, store_packet)) {
-                                auto packet_id = actual_packet.packet_id();
-                                if (packet_id != 0) {
-                                    ep.pid_man_.release_id(packet_id);
+                                auto store_packet =
+                                    ActualPacket(
+                                        actual_packet.packet_id(),
+                                        allocate_buffer(*topic_opt),
+                                        actual_packet.payload(),
+                                        actual_packet.opts(),
+                                        force_move(props)
+                                    );
+                                if (!validate_maximum_packet_size(self, store_packet)) {
+                                    auto packet_id = actual_packet.packet_id();
+                                    if (packet_id != 0) {
+                                        ep.pid_man_.release_id(packet_id);
+                                    }
+                                    return false;
                                 }
-                                return false;
+                                // add new packet that doesn't have topic_aliass to store
+                                // the original packet still use topic alias to send
+                                store_packet.set_dup(true);
+                                ep.store_.add(force_move(store_packet));
                             }
-                            // add new packet that doesn't have topic_aliass to store
-                            // the original packet still use topic alias to send
-                            store_packet.set_dup(true);
-                            ep.store_.add(force_move(store_packet));
+                            else {
+                                auto props = actual_packet.props();
+                                auto it = props.cbegin();
+                                auto end = props.cend();
+                                for (; it != end; ++it) {
+                                    if (it->id() == property::id::topic_alias) {
+                                        props.erase(it);
+                                        break;
+                                    }
+                                }
+
+                                auto store_packet =
+                                    ActualPacket(
+                                        actual_packet.packet_id(),
+                                        actual_packet.topic(),
+                                        actual_packet.payload(),
+                                        actual_packet.opts(),
+                                        force_move(props)
+                                    );
+                                if (!validate_maximum_packet_size(self, store_packet)) {
+                                    auto packet_id = actual_packet.packet_id();
+                                    if (packet_id != 0) {
+                                        ep.pid_man_.release_id(packet_id);
+                                    }
+                                    return false;
+                                }
+                                store_packet.set_dup(true);
+                                ep.store_.add(force_move(store_packet));
+                            }
                         }
                         else {
-                            auto props = actual_packet.props();
-                            auto it = props.cbegin();
-                            auto end = props.cend();
-                            for (; it != end; ++it) {
-                                if (it->id() == property::id::topic_alias) {
-                                    props.erase(it);
-                                    break;
-                                }
-                            }
-
-                            auto store_packet =
-                                ActualPacket(
-                                    actual_packet.packet_id(),
-                                    actual_packet.topic(),
-                                    actual_packet.payload(),
-                                    actual_packet.opts(),
-                                    force_move(props)
-                                );
-                            if (!validate_maximum_packet_size(self, store_packet)) {
+                            if (!validate_maximum_packet_size(self, actual_packet)) {
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.pid_man_.release_id(packet_id);
                                 }
                                 return false;
                             }
+                            auto store_packet{actual_packet};
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
                         }
-                    }
-                    else {
-                        if (!validate_maximum_packet_size(self, actual_packet)) {
-                            auto packet_id = actual_packet.packet_id();
-                            if (packet_id != 0) {
-                                ep.pid_man_.release_id(packet_id);
-                            }
-                            return false;
-                        }
-                        auto store_packet{actual_packet};
-                        store_packet.set_dup(true);
-                        ep.store_.add(force_move(store_packet));
                     }
                 }
             }
@@ -739,11 +741,20 @@ private: // compose operation impl
             }
 
             if constexpr(is_pubrel<std::decay_t<ActualPacket>>()) {
+                BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
                 if (ep.need_store_) ep.store_.add(actual_packet);
             }
 
             if constexpr(is_instance_of<v5::basic_pubcomp_packet, std::decay_t<ActualPacket>>::value) {
                 ep.publish_recv_.erase(actual_packet.packet_id());
+            }
+
+            if constexpr(is_subscribe<std::decay_t<ActualPacket>>()) {
+                BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+            }
+
+            if constexpr(is_unsubscribe<std::decay_t<ActualPacket>>()) {
+                BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
             }
 
             if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
@@ -1480,6 +1491,7 @@ private:
         publish_queue_.clear();
         topic_alias_send_ = nullopt;
         topic_alias_recv_ = nullopt;
+        publish_recv_.clear();
         need_store_ = false;
     }
 

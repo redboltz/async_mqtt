@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(ut_ep_recv_max)
 namespace am = async_mqtt;
 namespace as = boost::asio;
 
-BOOST_AUTO_TEST_CASE(client) {
+BOOST_AUTO_TEST_CASE(client_send) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -56,29 +56,10 @@ BOOST_AUTO_TEST_CASE(client) {
         }
     };
 
-    auto puback2 = am::v5::puback_packet(
-        0x2 // packet_id
-    );
-
-    auto pubrec3 = am::v5::pubrec_packet(
-        0x3 // packet_id
-    );
-
-    auto pubrel3 = am::v5::pubrel_packet(
-        0x3 // packet_id
-    );
-
-    auto pubcomp3 = am::v5::pubcomp_packet(
-        0x3 // packet_id
-    );
-
     ep.stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
-            puback2,
-            pubrec3,
-            pubcomp3,
         }
     );
 
@@ -135,6 +116,22 @@ BOOST_AUTO_TEST_CASE(client) {
         am::allocate_buffer("payload1"),
         am::qos::at_most_once,
         am::properties{}
+    );
+
+    auto puback2 = am::v5::puback_packet(
+        *pid_opt2
+    );
+
+    auto pubrec3 = am::v5::pubrec_packet(
+        *pid_opt3
+    );
+
+    auto pubrel3 = am::v5::pubrel_packet(
+        *pid_opt3
+    );
+
+    auto pubcomp3 = am::v5::pubcomp_packet(
+        *pid_opt3
     );
 
     // send publish_1
@@ -199,6 +196,15 @@ BOOST_AUTO_TEST_CASE(client) {
         }
     );
 
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            puback2,
+            pubrec3,
+            pubcomp3,
+        }
+    );
+
     // recv puback2
     {
         auto pv = ep.recv(as::use_future).get();
@@ -234,7 +240,7 @@ BOOST_AUTO_TEST_CASE(client) {
     th.join();
 }
 
-BOOST_AUTO_TEST_CASE(server) {
+BOOST_AUTO_TEST_CASE(server_send) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -447,6 +453,175 @@ BOOST_AUTO_TEST_CASE(server) {
     {
         auto pv = ep.recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(pubcomp3, pv));
+    }
+
+    guard.reset();
+    th.join();
+}
+
+BOOST_AUTO_TEST_CASE(client_recv) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    };
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::allocate_buffer("user1"),
+        am::allocate_buffer("pass1"),
+        am::properties{
+            am::property::receive_maximum{2}
+        }
+    };
+
+    auto connack = am::v5::connack_packet{
+        false,   // session_present
+        am::connect_reason_code::success,
+        am::properties{}
+    };
+
+    // internal
+    auto disconnect = am::v5::disconnect_packet{
+        am::disconnect_reason_code::receive_maximum_exceeded
+    };
+
+    auto close = am::make_error(am::errc::network_reset, "pseudo close");
+
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            connack,
+        }
+    );
+
+    // send connect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(am::packet_compare(connect, wp));
+        }
+    );
+    {
+        auto ec = ep.send(connect, as::use_future).get();
+        BOOST_TEST(!ec);
+    }
+
+    // recv connack
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(connack, pv));
+    }
+
+    auto publish_1_q1 = am::v5::publish_packet(
+        0x1, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    auto publish_2_q1 = am::v5::publish_packet(
+        0x2, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    auto publish_3_q0 = am::v5::publish_packet(
+        0x0, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_most_once,
+        am::properties{}
+    );
+
+    auto publish_4_q2 = am::v5::publish_packet(
+        0x3, // packet_id
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::exactly_once,
+        am::properties{}
+    );
+
+    auto puback2 = am::v5::puback_packet(
+        0x1 // packet_id
+    );
+
+    auto pubrec3 = am::v5::pubrec_packet(
+        0x2 // packet_id
+    );
+
+    auto pubrel3 = am::v5::pubrel_packet(
+        0x2 // packet_id
+    );
+
+    auto pubcomp3 = am::v5::pubcomp_packet(
+        0x2 // packet_id
+    );
+
+    ep.stream().next_layer().set_recv_packets(
+        {
+            // receive packets
+            publish_1_q1,
+            publish_2_q1,
+            publish_3_q0,
+            publish_4_q2,
+            close,
+        }
+    );
+
+    // recv publish1
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(publish_1_q1, pv));
+    }
+    // recv publish2
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(publish_2_q1, pv));
+    }
+    // recv publish3
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(am::packet_compare(publish_3_q0, pv));
+    }
+
+    bool close_called = false;
+    ep.stream().next_layer().set_close_checker(
+        [&] { close_called = true; }
+    );
+    // internal auto send disconnect
+    ep.stream().next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(!close_called);
+            BOOST_TEST(am::packet_compare(disconnect, wp));
+        }
+    );
+    // recv publish4
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+        BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
+    }
+    BOOST_TEST(close_called);
+    // recv close
+    {
+        auto pv = ep.recv(as::use_future).get();
+        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
     guard.reset();
