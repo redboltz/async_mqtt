@@ -391,6 +391,22 @@ public:
         }
     }
 
+    void update_message_expiry_interval(std::uint32_t val) {
+        bool updated = false;
+        for (auto& prop : props_) {
+            prop.visit(
+                overload {
+                    [&](property::message_expiry_interval& p) {
+                        p = property::message_expiry_interval(val);
+                        updated = true;
+                    },
+                    [&](auto&){}
+                }
+            );
+            if (updated) return;
+        }
+    }
+
 private:
     std::uint8_t fixed_header_;
     buffer topic_name_;

@@ -265,6 +265,41 @@ public:
             );
     }
 
+    packet_id_t acquire_unique_packet_id() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return pid_man_.acquire_unique_id();
+    }
+
+    bool register_packet_id(packet_id_t pid) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return pid_man_.register_id(pid);
+    }
+
+    void release_packet_id(packet_id_t pid) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        pid_man_.release_id(pid);
+    }
+
+    /**
+     * @brief Get processed but not released QoS2 packet ids
+     *        This function should be called after disconnection
+     * @return set of packet_ids
+     */
+    std::set<packet_id_t> get_qos2_publish_handled_pids() const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return qos2_publish_handled_;
+    }
+
+    /**
+     * @brief Restore processed but not released QoS2 packet ids
+     *        This function should be called before receive the first publish
+     * @param pids packet ids
+     */
+    void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        qos2_publish_handled_ = force_move(pids);
+    }
+
 private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
@@ -982,23 +1017,20 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
-                            if (ep.auto_pub_response_) {
-                                switch (p.opts().qos()) {
-                                case qos::at_least_once: {
+                            switch (p.opts().qos()) {
+                            case qos::at_least_once: {
+                                if (ep.auto_pub_response_) {
                                     ep.send(
                                         v3_1_1::basic_puback_packet<PacketIdBytes>(p.packet_id()),
                                         [](system_error const&){}
                                     );
-                                } break;
-                                case qos::exactly_once: {
-                                    ep.send(
-                                        v3_1_1::basic_pubrec_packet<PacketIdBytes>(p.packet_id()),
-                                        [](system_error const&){}
-                                    );
-                                } break;
-                                default:
-                                    break;
                                 }
+                            } break;
+                            case qos::exactly_once:
+                                process_qos2_publish(self, protocol_version::v3_1_1, p.packet_id());
+                                break;
+                            default:
+                                break;
                             }
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes>& p) {
@@ -1048,12 +1080,7 @@ private: // compose operation impl
                                 }
                                 auto packet_id = p.packet_id();
                                 ep.publish_recv_.insert(packet_id);
-                                if (ep.auto_pub_response_) {
-                                    ep.send(
-                                        v5::basic_pubrec_packet<PacketIdBytes>{packet_id},
-                                        [](system_error const&){}
-                                    );
-                                }
+                                process_qos2_publish(self, protocol_version::v5, packet_id);
                             } break;
                             default:
                                 break;
@@ -1192,17 +1219,21 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
+                            auto packet_id = p.packet_id();
+                            ep.qos2_publish_handled_.erase(packet_id);
                             if (ep.auto_pub_response_) {
                                 ep.send(
-                                    v3_1_1::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
+                                    v3_1_1::basic_pubcomp_packet<PacketIdBytes>(packet_id),
                                     [](system_error const&){}
                                 );
                             }
                         },
                         [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
+                            auto packet_id = p.packet_id();
+                            ep.qos2_publish_handled_.erase(packet_id);
                             if (ep.auto_pub_response_) {
                                 ep.send(
-                                    v5::basic_pubcomp_packet<PacketIdBytes>(p.packet_id()),
+                                    v5::basic_pubcomp_packet<PacketIdBytes>(packet_id),
                                     [](system_error const&){}
                                 );
                             }
@@ -1308,6 +1339,42 @@ private: // compose operation impl
                     [](system_error const&){}
                 );
                 ep.publish_queue_.pop_front();
+            }
+        }
+
+        template <typename Self>
+        void process_qos2_publish(
+            Self& self,
+            protocol_version ver,
+            packet_id_t packet_id
+        ) {
+            BOOST_ASSERT(ep.strand().running_in_this_thread());
+            bool already_handled = false;
+            if (ep.qos2_publish_handled_.find(packet_id) == ep.qos2_publish_handled_.end()) {
+                ep.qos2_publish_handled_.emplace(packet_id);
+            }
+            else {
+                already_handled = true;
+            }
+            if (ep.auto_pub_response_) {
+                switch (ver) {
+                case protocol_version::v3_1_1:
+                    ep.send(
+                        v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id),
+                        [](system_error const&){}
+                    );
+                case protocol_version::v5:
+                    ep.send(
+                        v5::basic_pubrec_packet<PacketIdBytes>(packet_id),
+                        [](system_error const&){}
+                    );
+                default:
+                    BOOST_ASSERT(false);
+                }
+            }
+            if (already_handled) {
+                // do the next read
+                ep.stream_.read_packet(force_move(self));
             }
         }
     };
@@ -1526,6 +1593,8 @@ private:
     as::steady_timer tim_pingreq_send_{strand()};
     as::steady_timer tim_pingreq_recv_{strand()};
     as::steady_timer tim_pingresp_recv_{strand()};
+
+    std::set<packet_id_t> qos2_publish_handled_;
 };
 
 template <role Role, typename NextLayer>

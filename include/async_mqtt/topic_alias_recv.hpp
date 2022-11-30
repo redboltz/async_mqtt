@@ -19,6 +19,7 @@
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/util/move.hpp>
+#include <async_mqtt/util/string_view.hpp>
 
 namespace async_mqtt {
 
@@ -29,7 +30,7 @@ public:
     topic_alias_recv(topic_alias_t max)
         :max_{max} {}
 
-    void insert_or_update(std::string_view topic, topic_alias_t alias) {
+    void insert_or_update(string_view topic, topic_alias_t alias) {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "topic_alias_recv insert"

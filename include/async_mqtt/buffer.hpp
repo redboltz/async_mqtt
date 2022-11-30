@@ -15,6 +15,7 @@
 #include <async_mqtt/util/any.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/is_iterator.hpp>
+#include <async_mqtt/util/string_view.hpp>
 
 namespace async_mqtt {
 
@@ -27,20 +28,20 @@ namespace as = boost::asio;
  */
 class buffer {
 public:
-    using traits_type = std::string_view::traits_type;
-    using value_type = std::string_view::value_type;
-    using pointer = std::string_view::pointer;
-    using const_pointer = std::string_view::const_pointer;
-    using reference = std::string_view::reference;
-    using const_reference = std::string_view::const_reference;
-    using iterator = std::string_view::iterator;
-    using const_iterator = std::string_view::const_iterator;
-    using const_reverse_iterator = std::string_view::const_reverse_iterator;
-    using reverse_iterator = std::string_view::reverse_iterator;
-    using size_type = std::string_view::size_type;
-    using difference_type = std::string_view::difference_type;
+    using traits_type = string_view::traits_type;
+    using value_type = string_view::value_type;
+    using pointer = string_view::pointer;
+    using const_pointer = string_view::const_pointer;
+    using reference = string_view::reference;
+    using const_reference = string_view::const_reference;
+    using iterator = string_view::iterator;
+    using const_iterator = string_view::const_iterator;
+    using const_reverse_iterator = string_view::const_reverse_iterator;
+    using reverse_iterator = string_view::reverse_iterator;
+    using size_type = string_view::size_type;
+    using difference_type = string_view::difference_type;
 
-    static constexpr size_type npos = std::string_view::npos;
+    static constexpr size_type npos = string_view::npos;
 
     constexpr buffer() noexcept = default;
     buffer(buffer const& other) noexcept = default;
@@ -69,7 +70,7 @@ public:
      * This constructor doesn't hold the sv target's lifetime.
      * It behaves as string_view. Caller needs to manage the target lifetime.
      */
-    explicit constexpr buffer(std::string_view sv)
+    explicit constexpr buffer(string_view sv)
         : view_{force_move(sv)}
     {}
 
@@ -87,7 +88,7 @@ public:
      * @param sp shared_ptr_array that holds sv target's lifetime
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
      */
-    buffer(std::string_view sv, any life)
+    buffer(string_view sv, any life)
         : view_{force_move(sv)},
           life_{force_move(life)}
     {
@@ -193,7 +194,7 @@ public:
 
     /**
      * @brief get substring
-     * The returned buffer ragnge is the same as std::string_view::substr().
+     * The returned buffer ragnge is the same as string_view::substr().
      * In addition the lifetime is shared between returned buffer and this buffer.
      * @param offset offset point of the buffer
      * @param length length of the buffer, If the length is string_view::npos
@@ -206,7 +207,7 @@ public:
 
     /**
      * @brief get substring
-     * The returned buffer ragnge is the same as std::string_view::substr().
+     * The returned buffer ragnge is the same as string_view::substr().
      * In addition the lifetime is moved to returned buffer.
      * @param offset offset point of the buffer
      * @param length length of the buffer, If the length is string_view::npos
@@ -220,13 +221,13 @@ public:
     constexpr int compare(buffer const& buf) const noexcept {
         return view_.compare(buf.view_);
     }
-    constexpr int compare(std::string_view const& v) const noexcept {
+    constexpr int compare(string_view const& v) const noexcept {
         return view_.compare(v);
     }
     constexpr int compare(size_type pos1, size_type count1, buffer const& buf) const noexcept {
         return view_.compare(pos1, count1, buf.view_);
     }
-    constexpr int compare(size_type pos1, size_type count1, std::string_view const& v) const noexcept {
+    constexpr int compare(size_type pos1, size_type count1, string_view const& v) const noexcept {
         return view_.compare(pos1, count1, v);
     }
     constexpr int compare(
@@ -241,7 +242,7 @@ public:
     constexpr int compare(
         size_type pos1,
         size_type count1,
-        std::string_view const& v,
+        string_view const& v,
         size_type pos2,
         size_type count2
     ) const noexcept {
@@ -266,7 +267,7 @@ public:
     constexpr size_type find(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find(buf.view_, pos);
     }
-    constexpr size_type find(std::string_view v, size_type pos = 0) const noexcept {
+    constexpr size_type find(string_view v, size_type pos = 0) const noexcept {
         return view_.find(v, pos);
     }
     constexpr size_type find(char ch, size_type pos = 0) const noexcept {
@@ -282,7 +283,7 @@ public:
     constexpr size_type rfind(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.rfind(buf.view_, pos);
     }
-    constexpr size_type rfind( std::string_view v, size_type pos = npos) const noexcept {
+    constexpr size_type rfind( string_view v, size_type pos = npos) const noexcept {
         return view_.rfind(v, pos);
     }
     constexpr size_type rfind(char ch, size_type pos = npos) const noexcept {
@@ -298,7 +299,7 @@ public:
     constexpr size_type find_first_of(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find_first_of(buf.view_, pos);
     }
-    constexpr size_type find_first_of( std::string_view v, size_type pos = 0) const noexcept {
+    constexpr size_type find_first_of( string_view v, size_type pos = 0) const noexcept {
         return view_.find_first_of(v, pos);
     }
     constexpr size_type find_first_of(char ch, size_type pos = 0) const noexcept {
@@ -314,7 +315,7 @@ public:
     constexpr size_type find_last_of(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.find_last_of(buf.view_, pos);
     }
-    constexpr size_type find_last_of( std::string_view v, size_type pos = npos) const noexcept {
+    constexpr size_type find_last_of( string_view v, size_type pos = npos) const noexcept {
         return view_.find_last_of(v, pos);
     }
     constexpr size_type find_last_of(char ch, size_type pos = npos) const noexcept {
@@ -330,7 +331,7 @@ public:
     constexpr size_type find_first_not_of(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find_first_not_of(buf.view_, pos);
     }
-    constexpr size_type find_first_not_of( std::string_view v, size_type pos = 0) const noexcept {
+    constexpr size_type find_first_not_of( string_view v, size_type pos = 0) const noexcept {
         return view_.find_first_not_of(v, pos);
     }
     constexpr size_type find_first_not_of(char ch, size_type pos = 0) const noexcept {
@@ -346,7 +347,7 @@ public:
     constexpr size_type find_last_not_of(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.find_last_not_of(buf.view_, pos);
     }
-    constexpr size_type find_last_not_of( std::string_view v, size_type pos = npos) const noexcept {
+    constexpr size_type find_last_not_of( string_view v, size_type pos = npos) const noexcept {
         return view_.find_last_not_of(v, pos);
     }
     constexpr size_type find_last_not_of(char ch, size_type pos = npos) const noexcept {
@@ -367,7 +368,7 @@ public:
         return as::buffer(view_.data(), view_.size());
     }
 
-    operator std::string_view() const {
+    operator string_view() const {
         return view_;
     }
 
@@ -402,7 +403,7 @@ public:
         return o;
     }
 private:
-    std::string_view view_;
+    string_view view_;
     any life_;
 };
 
@@ -453,7 +454,7 @@ inline buffer allocate_buffer(Iterator b, Iterator e) {
  * @param sv  the source string_view
  * @return buffer
  */
-inline buffer allocate_buffer(std::string_view sv) {
+inline buffer allocate_buffer(string_view sv) {
     return allocate_buffer(sv.begin(), sv.end());
 }
 

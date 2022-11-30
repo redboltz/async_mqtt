@@ -216,6 +216,10 @@ public:
         );
     }
 
+    void const* get_address() const {
+        return ep_.get();
+    }
+
 private:
 
     template <typename Endpoint>
