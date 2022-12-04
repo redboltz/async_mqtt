@@ -265,6 +265,8 @@ public:
             );
     }
 
+    // sync APIs that require working on strand
+
     packet_id_t acquire_unique_packet_id() {
         BOOST_ASSERT(strand().running_in_this_thread());
         return pid_man_.acquire_unique_id();
@@ -298,6 +300,46 @@ public:
     void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
         BOOST_ASSERT(strand().running_in_this_thread());
         qos2_publish_handled_ = force_move(pids);
+    }
+
+    void restore(
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+    ) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        for (auto& pv : pvs) {
+            pv.visit(
+                [&](auto& p) {
+                    if (pid_man_.register_id(p.packet_id())) {
+                        store_.add(force_move(p));
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
+                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                            << "packet_id:" << p.packet_id()
+                            << " has already been used. Skip it";
+                    }
+                }
+            );
+        }
+    }
+
+    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored() const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return store_.get_stored();
+    }
+
+    void set_preauthed_user_name(optional<std::string> user_name) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        preauthed_user_name_ = force_move(user_name);
+    }
+    optional<std::string> get_preauthed_user_name() const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return preauthed_user_name_;
+    }
+
+    protocol_version get_protocol_version() const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return protocol_version_;
     }
 
 private: // compose operation impl
@@ -1420,21 +1462,7 @@ private: // compose operation impl
                 break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
-                for (auto& pv : pvs) {
-                    pv.visit(
-                        [&](auto& p) {
-                            if (ep.pid_man_.register_id(p.packet_id())) {
-                                ep.store_.add(force_move(p));
-                            }
-                            else {
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                                    << "packet_id:" << p.packet_id()
-                                    << " has already been used. Skip it";
-                            }
-                        }
-                    );
-                }
+                ep.restore(force_move(pvs));
                 self.complete();
                 break;
             }
@@ -1459,7 +1487,7 @@ private: // compose operation impl
                 break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
-                self.complete(ep.store_.get_stored());
+                self.complete(ep.get_stored());
                 break;
             }
         }
@@ -1595,6 +1623,8 @@ private:
     as::steady_timer tim_pingresp_recv_{strand()};
 
     std::set<packet_id_t> qos2_publish_handled_;
+
+    optional<std::string> preauthed_user_name_;
 };
 
 template <role Role, typename NextLayer>

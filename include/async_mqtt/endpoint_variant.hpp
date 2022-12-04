@@ -207,6 +207,110 @@ public:
         );
     }
 
+    // sync APIs that reqire woking on strand
+
+    packet_id_t acquire_unique_packet_id() {
+        return std::visit(
+            [&](auto& ep) {
+                return ep->acquire_unique_packet_id();
+            },
+            ep_
+        );
+    }
+
+    bool register_packet_id(packet_id_t pid) {
+        return std::visit(
+            [&](auto& ep) {
+                return ep->register_packet_id(pid);
+            }
+        );
+    }
+
+    void release_packet_id(packet_id_t pid) {
+        std::visit(
+            [&](auto& ep) {
+                return ep->release_packet_id(pid);
+            },
+            ep_
+        );
+    }
+
+    /**
+     * @brief Get processed but not released QoS2 packet ids
+     *        This function should be called after disconnection
+     * @return set of packet_ids
+     */
+    std::set<packet_id_t> get_qos2_publish_handled_pids() const {
+        return std::visit(
+            [&](auto& ep) {
+                return ep->get_qos2_publish_handled_pids();
+            },
+            ep_
+        );
+    }
+
+    /**
+     * @brief Restore processed but not released QoS2 packet ids
+     *        This function should be called before receive the first publish
+     * @param pids packet ids
+     */
+    void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
+        std::visit(
+            [&](auto& ep) {
+                return ep->restore_qos2_publish_handled_pids(pids);
+            },
+            ep_
+        );
+    }
+
+    void restore(
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+    ) {
+        return std::visit(
+            [&](auto& ep) {
+                ep->restore(pvs);
+            },
+            ep_
+        );
+    }
+
+    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored() const {
+        return std::visit(
+            [&](auto& ep) {
+                return ep->get_stored();
+            },
+            ep_
+        );
+    }
+
+    void set_preauthed_user_name(optional<std::string> user_name) {
+        std::visit(
+            [&](auto& ep) {
+                ep->set_preauthed_user_name(force_move(user_name));
+            },
+            ep_
+        );
+    }
+
+    optional<std::string> get_preauthed_user_name() const {
+        return std::visit(
+            [&](auto& ep) {
+                ep->get_preauthed_user_name();
+            },
+            ep_
+        );
+    }
+
+    protocol_version get_protocol_version() const {
+        return std::visit(
+            [&](auto& ep) {
+                ep->get_protocol_version();
+            },
+            ep_
+        );
+    }
+
+
     operator bool() const {
         return std::visit(
             [&](auto& ep) {
@@ -274,7 +378,7 @@ public:
         );
     }
 
-    bool owner_before(this_type const& other) const {
+    bool owner_before(this_type const& other) const noexcept {
         return std::visit(
             [&](auto const& lhs, auto const& rhs) {
                 return lhs.owner_before(rhs);
@@ -292,5 +396,19 @@ template <role Role, typename... NextLayer>
 using endpoint_wp_variant = basic_endpoint_wp_variant<Role, 2, NextLayer...>;
 
 } // namespace async_mqtt
+
+namespace std {
+
+template <async_mqtt::role Role, std::size_t PacketIdBytes, typename... NextLayer>
+struct owner_less<async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...>> {
+    bool operator()(
+        async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& lhs,
+        async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& rhs
+    ) const noexcept {
+        return lhs.owined_before(rhs);
+    }
+};
+
+} // namespace std
 
 #endif // ASYNC_MQTT_ENDPOINT_VARIANT_HPP

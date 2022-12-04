@@ -12,16 +12,8 @@
 
 namespace async_mqtt {
 
-struct buffer_hasher  {
-    std::size_t operator()(buffer const& b) const noexcept {
-        std::size_t result = 0;
-        boost::hash_combine(result, b);
-        return result;
-    }
-};
-
 template <typename... NextLayer>
-using sub_con_map = multiple_subscription_map<buffer, subscription<NextLayer...>, buffer_hasher>;
+using sub_con_map = multiple_subscription_map<buffer, subscription<NextLayer...>, boost::hash<buffer>>;
 
 } // namespace async_mqtt
 

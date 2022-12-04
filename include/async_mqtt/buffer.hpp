@@ -10,6 +10,7 @@
 #include <string_view>
 
 #include <boost/asio/buffer.hpp>
+#include <boost/container_hash/hash.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/any.hpp>
@@ -407,6 +408,12 @@ private:
     any life_;
 };
 
+inline std::size_t hash_value(buffer const& v) noexcept {
+    std::size_t result = 0;
+    boost::hash_combine(result, static_cast<string_view const&>(v));
+    return result;
+}
+
 inline namespace literals {
 
 /**
@@ -566,5 +573,17 @@ inline const_buffer buffer(async_mqtt::buffer const& data) {
 
 } // namespace asio
 } // namespace boost
+
+namespace std {
+
+template <>
+class hash<async_mqtt::buffer> {
+public:
+    std::uint64_t operator()(async_mqtt::buffer const& v) const noexcept {
+        return std::hash<std::string_view>()(static_cast<std::string_view const&>(v));
+    }
+};
+
+} // namespace std
 
 #endif // ASYNC_MQTT_BUFFER_HPP

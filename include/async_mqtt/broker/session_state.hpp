@@ -120,47 +120,51 @@ struct session_state {
         SessionExpireHandler&& h
     ) {
         BOOST_ASSERT(!epwp_.expired());
-        con_->for_each_store_with_life_keeper(
-            [this] (store_message_variant msg, any life_keeper) {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                    << "store inflight message";
 
-                std::shared_ptr<as::steady_timer> tim_message_expiry;
+        ASYNC_MQTT_LOG("mqtt_broker", trace)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "store inflight message";
 
-                ASYNC_MQTT_NS::visit(
-                    make_lambda_visitor(
-                        [&](v5::basic_publish_message<sizeof(packet_id_t)> const& m) {
-                            auto v = get_property<v5::property::message_expiry_interval>(m.props());
-                            if (v) {
-                                tim_message_expiry =
-                                    std::make_shared<as::steady_timer>(timer_ioc_, std::chrono::seconds(v.value().val()));
-                                tim_message_expiry->async_wait(
-                                    [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
-                                    (error_code ec) {
-                                        if (auto sp = wp.lock()) {
-                                            if (!ec) {
-                                                erase_inflight_message_by_expiry(sp);
+        auto stored = epsp.get_stored();
+        for (auto& store : stored) {
+            std::shared_ptr<as::steady_timer> tim_message_expiry;
+            store.visit(
+                overload {
+                    [&](v5::publish_packet const& p) {
+                        for (auto const& prop : p.props()) {
+                            prop.visit(
+                                [&](property::message_expiry_interval const& v) {
+                                    tim_message_expiry =
+                                        std::make_shared<as::steady_timer>(
+                                            timer_ioc_,
+                                            std::chrono::seconds(v.val())
+                                        );
+                                    tim_message_expiry->async_wait(
+                                        [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
+                                        (error_code ec) {
+                                            if (auto sp = wp.lock()) {
+                                                if (!ec) {
+                                                    erase_inflight_message_by_expiry(sp);
+                                                }
                                             }
                                         }
-                                    }
-                                );
-                            }
-                        },
-                        [&](auto const&) {}
-                    ),
-                    msg
-                );
+                                    );
+                                },
+                                [](auto const&) {}
+                            );
+                        }
+                    },
+                    [&](auto const&) {}
+                }
+            );
 
-                insert_inflight_message(
-                    force_move(msg),
-                    force_move(life_keeper),
-                    force_move(tim_message_expiry)
-                );
-            }
-        );
-        qos2_publish_handled_ = con_->get_qos2_publish_handled_pids();
-        con_.reset();
+            insert_inflight_message(
+                force_move(store),
+                force_move(tim_message_expiry)
+            );
+        }
+
+        qos2_publish_handled_ = epsp.get_qos2_publish_handled_pids();
 
         if (session_expiry_interval_ &&
             session_expiry_interval_.value() != std::chrono::seconds(session_never_expire)) {
@@ -202,49 +206,68 @@ struct session_state {
         properties props) {
 
         auto epsp = epwp_.lock();
-        BOOST_ASSERT(epsp);
+        if (!epsp) return;
 
-        std::lock_guard<mutex> g(mtx_offline_messages_);
-        if (offline_messages_.empty()) {
-            auto qos_value = pubopts.get_qos();
-            if (qos_value == qos::at_least_once ||
-                qos_value == qos::exactly_once) {
-                if (auto pid = con_->acquire_unique_packet_id_no_except()) {
-                    con_->async_publish(
-                        pid.value(),
-                        force_move(pub_topic),
-                        force_move(contents),
-                        pubopts,
-                        force_move(props),
-                        any{},
-                        [con = con_]
-                        (error_code ec) {
+        auto send_publish =
+            [this, epsp, pub_topic, contents, pubopts, props](packet_id_t pid) mutable {
+                switch (version_) {
+                case protocol_version::v3_1_1:
+                    epsp.send(
+                        v3_1_1::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(contents),
+                            pubopts
+                        },
+                        [epsp](system_error const& ec) {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", warning)
-                                    << ASYNC_MQTT_ADD_VALUE(address, con.get())
-                                    << ec.message();
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << ec.what();
                             }
                         }
                     );
-                    return;
+                    break;
+                case protocol_version::v5:
+                    epsp.send(
+                        v5::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(contents),
+                            pubopts,
+                            force_move(props)
+                        },
+                        [epsp](system_error const& ec) {
+                            if (ec) {
+                                ASYNC_MQTT_LOG("mqtt_broker", warning)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << ec.what();
+                            }
+                        }
+                    );
+                    break;
+                default:
+                    BOOST_ASSERT(false);
+                    break;
                 }
-            }
-            else {
-                con_->async_publish(
-                    force_move(pub_topic),
-                    force_move(contents),
-                    pubopts,
-                    force_move(props),
-                    any{},
-                    [con = con_]
-                    (error_code ec) {
-                        if (ec) {
-                            ASYNC_MQTT_LOG("mqtt_broker", warning)
-                                << ASYNC_MQTT_ADD_VALUE(address, con.get())
-                                << ec.message();
+            };
+
+        std::lock_guard<mutex> g(mtx_offline_messages_);
+        if (offline_messages_.empty()) {
+            auto qos_value = pubopts.qos();
+            if (qos_value == qos::at_least_once ||
+                qos_value == qos::exactly_once) {
+                epsp.acquire_unique_packet_id(
+                    [](auto pid_opt) {
+                        if (pid_opt) {
+                            send_publish(*pid_opt);
+                            return;
                         }
                     }
                 );
+            }
+            else {
+                send_publish(0);
                 return;
             }
         }
@@ -324,7 +347,7 @@ struct session_state {
             << "subscribe"
             << " share_name:" << share_name
             << " topic_filter:" << topic_filter
-            << " qos:" << subopts.get_qos();
+            << " qos:" << subopts.qos();
 
         subscription sub {*this, force_move(share_name), topic_filter, subopts, sid };
         auto handle_ret =
@@ -337,7 +360,7 @@ struct session_state {
                 );
             } ();
 
-        auto rh = subopts.get_retain_handling();
+        auto rh = subopts.retain_handling();
 
         if (handle_ret.second) { // insert
             ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -345,8 +368,8 @@ struct session_state {
                 << "subscription inserted";
 
             handles_.insert(handle_ret.first);
-            if (rh == retain_handling::send ||
-                rh == retain_handling::send_only_new_subscription) {
+            if (rh == sub::retain_handling::send ||
+                rh == sub::retain_handling::send_only_new_subscription) {
                 std::forward<PublishRetainHandler>(h)();
             }
         }
@@ -355,7 +378,7 @@ struct session_state {
                 << ASYNC_MQTT_ADD_VALUE(address, this)
                 << "subscription updated";
 
-            if (rh == retain_handling::send) {
+            if (rh == sub::retain_handling::send) {
                 std::forward<PublishRetainHandler>(h)();
             }
         }
@@ -418,11 +441,17 @@ struct session_state {
 
         auto wd_sec =
             [&] () -> std::size_t {
-                if (auto wd_opt = get_property<v5::property::will_delay_interval>(
-                        will_value_.value().props()
-                    )
-                ) {
-                    return wd_opt.value().val();
+                optional<property::will_delay_interval> wd_opt;
+                for (auto const& prop : will_value_->props()) {
+                    prop.visit(
+                        overload {
+                            [&] (property::will_delay_interval const& v) {
+                                wd_opt.emplace(v);
+                            },
+                            [&](auto const&) {}
+                        }
+                    );
+                    if (wd_opt) return wd_opt->val();
                 }
                 return 0;
             } ();
@@ -447,7 +476,7 @@ struct session_state {
     }
 
     void insert_inflight_message(
-        packet_variant msg,
+        store_packet_variant msg,
         std::shared_ptr<as::steady_timer> tim_message_expiry
     ) {
         std::lock_guard<mutex> g(mtx_inflight_messages_);
@@ -458,9 +487,10 @@ struct session_state {
     }
 
     void send_inflight_messages() {
-        BOOST_ASSERT(con_);
-        std::lock_guard<mutex> g(mtx_inflight_messages_);
-        inflight_messages_.send_all_messages(*con_);
+        if (auto epsp = epwp_.lock()) {
+            std::lock_guard<mutex> g(mtx_inflight_messages_);
+            inflight_messages_.send_all_messages(epsp);
+        }
     }
 
     void erase_inflight_message_by_expiry(std::shared_ptr<as::steady_timer> const& sp) {
@@ -475,15 +505,17 @@ struct session_state {
     }
 
     void send_all_offline_messages() {
-        BOOST_ASSERT(con_);
-        std::lock_guard<mutex> g(mtx_offline_messages_);
-        offline_messages_.send_until_fail(*con_, protocol_version_);
+        if (auto epsp = epwp_.lock()) {
+            std::lock_guard<mutex> g(mtx_offline_messages_);
+            offline_messages_.send_until_fail(epsp, get_protocol_version());
+        }
     }
 
     void send_offline_messages_by_packet_id_release() {
-        BOOST_ASSERT(con_);
-        std::lock_guard<mutex> g(mtx_offline_messages_);
-        offline_messages_.send_until_fail(*con_, protocol_version_);
+        if (auto epsp = epwp_.lock()) {
+            std::lock_guard<mutex> g(mtx_offline_messages_);
+            offline_messages_.send_until_fail(epsp, get_protocol_version());
+        }
     }
 
     protocol_version get_protocol_version() const {
@@ -501,7 +533,7 @@ struct session_state {
         return username_;
     }
 
-    void renew(epsp_t con, bool clean_start) {
+    void renew(epsp_t epsp, bool clean_start) {
         tim_will_delay_.cancel();
         if (clean_start) {
             // send previous will
@@ -511,9 +543,9 @@ struct session_state {
         else {
             // cancel will
             clear_will();
-            con->restore_qos2_publish_handled_pids(qos2_publish_handled_);
+            epsp.restore_qos2_publish_handled_pids(qos2_publish_handled_);
         }
-        con_ = force_move(con);
+        epwp_ = epsp;
     }
 
     epsp_t const& lock() const {
@@ -542,7 +574,7 @@ private:
 
         auto topic = force_move(will_value_.value().topic());
         auto payload = force_move(will_value_.value().message());
-        auto opts = will_value_.value().get_qos() | will_value_.value().get_retain();
+        auto opts = will_value_->qos() | will_value_->retain();
         auto props = force_move(will_value_.value().props());
         will_value_ = nullopt;
         if (tim_will_expiry_) {
@@ -551,12 +583,22 @@ private:
                     tim_will_expiry_->expiry() - std::chrono::steady_clock::now()
                 ).count();
             if (d < 0) d = 0;
-            set_property<v5::property::message_expiry_interval>(
-                props,
-                v5::property::message_expiry_interval(
-                    static_cast<uint32_t>(d)
-                )
-            );
+
+            bool set = false;
+            for (auto& prop : props) {
+                prop.visit(
+                    overload {
+                        [&](property::message_expiry_interval& v) {
+                            v = property::message_expiry_interval{
+                                static_cast<uint32_t>(d)
+                            };
+                            set = true;
+                        },
+                        [&](auto&) {}
+                    }
+                );
+                if (set) break;
+            }
         }
         if (will_sender_) {
             will_sender_(
@@ -613,12 +655,12 @@ class session_states {
 public:
     template <typename Tag>
     decltype(auto) get() {
-        return entries_.get<Tag>();
+        return entries_.template get<Tag>();
     }
 
     template <typename Tag>
     decltype(auto) get() const {
-        return entries_.get<Tag>();
+        return entries_.template get<Tag>();
     }
 
     void clear() {
@@ -628,22 +670,26 @@ public:
 private:
     // The mi_session_online container holds the relevant data about an active connection with the broker.
     // It can be queried either with the clientid, or with the shared pointer to the mqtt endpoint object
+    using elem_t = session_state<NextLayer...>;
     using mi_session_state = mi::multi_index_container<
-        session_state,
+        elem_t,
         mi::indexed_by<
             // non is nullable
             mi::ordered_non_unique<
                 mi::tag<tag_con>,
-                mi::key<&session_state::epwp_>,
+                mi::key<&elem_t::epwp_>,
                 std::owner_less<epwp_t>
             >,
             mi::ordered_unique<
                 mi::tag<tag_cid>,
-                mi::key<&session::state::username_, &session_state::client_id_>
+                mi::key<
+                    &elem_t::username_,
+                    &elem_t::client_id_
+                >
             >,
             mi::ordered_non_unique<
                 mi::tag<tag_tim>,
-                mi::key<&session_state::tim_session_expiry_>
+                mi::key<&elem_t::tim_session_expiry_>
             >
         >
     >;

@@ -8,9 +8,10 @@
 #include <async_mqtt/predefined_underlying_layer.hpp>
 
 namespace am = async_mqtt;
+namespace as = boost::asio;
 
 int main() {
-
+    as::io_context ioc;
     am::broker<
         am::protocol::mqtt,
         am::protocol::ws
@@ -19,5 +20,5 @@ int main() {
         am::protocol::mqtts,
         am::protocol::wss
 #endif // defined(ASYNC_MQTT_USE_TLS)
-    > brk;
+    > brk{ioc};
 }

@@ -82,12 +82,10 @@ class inflight_messages {
 public:
     void insert(
         store_packet_variant packet,
-        any life_keeper,
         std::shared_ptr<as::steady_timer> tim_message_expiry
     ) {
         messages_.emplace_back(
             force_move(packet),
-            force_move(life_keeper),
             force_move(tim_message_expiry)
         );
     }
