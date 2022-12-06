@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_BROKER_BROKER_HPP
 
 #include <async_mqtt/endpoint_variant.hpp>
+#include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/broker/security.hpp>
 #include <async_mqtt/broker/mutex.hpp>
 #include <async_mqtt/broker/session_state.hpp>
@@ -70,7 +71,74 @@ private:
                                 p.props()
                             );
                         },
+                        [&](v3_1_1::publish_packet& p) {
+                            publish_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.opts(),
+                                p.topic(),
+                                p.payload(),
+                                properties{}
+                            );
+                        },
+                        [&](v5::publish_packet& p) {
+                            publish_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.opts(),
+                                p.topic(),
+                                p.payload(),
+                                p.props()
+                            );
+                        },
+                        [&](v3_1_1::puback_packet& p) {
+                            puback_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                puback_reason_code::success,
+                                properties{}
+                            );
+                        },
+                        [&](v5::puback_packet& p) {
+                            puback_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.code(),
+                                p.props()
+                            );
+                        },
+                        [&](v3_1_1::pubrec_packet& p) {
+                            pubrec_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                pubrec_reason_code::success,
+                                properties{}
+                            );
+                        },
+                        [&](v5::pubrec_packet& p) {
+                            pubrec_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.code(),
+                                p.props()
+                            );
+                        },
+                        [&](v3_1_1::disconnect_packet&) {
+                            disconnect_handler(
+                                force_move(epsp),
+                                disconnect_reason_code::normal_disconnection,
+                                properties{}
+                            );
+                        },
+                        [&](v5::disconnect_packet& p) {
+                            disconnect_handler(
+                                force_move(epsp),
+                                p.code(),
+                                p.props()
+                            );
+                        },
                         [&](system_error const&) {
+                            // TBD connack or disconnect send on error
                             close_proc(
                                 force_move(epsp),
                                 true // send_will
@@ -164,7 +232,7 @@ private:
                     disconnect_and_force_disconnect(epsp, disconnect_reason_code::not_authorized);
                 }
             );
-
+            async_read_packet(force_move(epsp));
             return;
         }
 
@@ -429,6 +497,8 @@ private:
                 );
             }
         }
+
+        async_read_packet(force_move(epsp));
     }
 
     void send_connack(
@@ -498,6 +568,435 @@ private:
             BOOST_ASSERT(false);
             break;
         }
+    }
+
+    void publish_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        pub::opts opts,
+        buffer topic,
+        buffer payload,
+        properties props
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        auto send_pubres =
+            [&] (bool authorized = true) {
+                switch (opts.qos()) {
+                case qos::at_least_once:
+                    switch (epsp.get_protocol_version()) {
+                    case protocol_version::v3_1_1:
+                        epsp.send(
+                            v3_1_1::puback_packet{
+                                packet_id
+                            },
+                            [epsp]
+                            (system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << ec.what();
+                                }
+                            }
+                        );
+                        break;
+                    case protocol_version::v5:
+                        epsp.send(
+                            v5::puback_packet{
+                                packet_id,
+                                authorized ? puback_reason_code::success
+                                           : puback_reason_code::not_authorized,
+                                puback_props_
+                            },
+                            [epsp]
+                            (system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << ec.what();
+                                }
+                            }
+                        );
+                        break;
+                    default:
+                        BOOST_ASSERT(false);
+                        break;
+                    }
+                    break;
+                case qos::exactly_once:
+                    switch (epsp.get_protocol_version()) {
+                    case protocol_version::v3_1_1:
+                        epsp.send(
+                            v3_1_1::pubrec_packet{
+                                packet_id
+                            },
+                            [epsp]
+                            (system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << ec.what();
+                                }
+                            }
+                        );
+                        break;
+                    case protocol_version::v5:
+                        epsp.send(
+                            v5::pubrec_packet{
+                                packet_id,
+                                authorized ? pubrec_reason_code::success
+                                           : pubrec_reason_code::not_authorized,
+                                pubrec_props_
+                            },
+                            [epsp]
+                            (system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << ec.what();
+                                }
+                            }
+                        );
+                        break;
+                    default:
+                        BOOST_ASSERT(false);
+                        break;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            };
+
+        // See if this session is authorized to publish this topic
+        if (security_.auth_pub(topic, it->get_username()) != security::authorization::type::allow) {
+            // Publish not authorized
+            send_pubres(false);
+            return;
+        }
+
+        properties forward_props;
+
+        for (auto& prop : props) {
+            prop.visit(
+                overload {
+                    [&](property::topic_alias&&) {
+                        // TopicAlias is not forwarded
+                        // https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901113
+                        // A receiver MUST NOT carry forward any Topic Alias mappings from
+                        // one Network Connection to another [MQTT-3.3.2-7].
+                    },
+                    [&](property::subscription_identifier&& p) {
+                        ASYNC_MQTT_LOG("mqtt_broker", warning)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << "Subscription Identifier from client not forwarded sid:" << p.val();
+                    },
+                    [&](auto&& p) {
+                        forward_props.push_back(force_move(p));
+                    }
+                },
+                force_move(prop)
+            );
+        }
+
+        do_publish(
+            *it,
+            force_move(topic),
+            force_move(payload),
+            opts.qos() | opts.retain(), // remove dup flag
+            force_move(forward_props)
+        );
+
+        send_pubres();
+    }
+
+    /**
+     * @brief do_publish Publish a message to any subscribed clients.
+     *
+     * @param source_ss - soource session_state.
+     * @param topic - The topic to publish the message on.
+     * @param payload - The payload of the message.
+     * @param pubopts - publish options
+     * @param props - properties
+     */
+    void do_publish(
+        session_state<NextLayer...> const& source_ss,
+        buffer topic,
+        buffer payload,
+        pub::opts opts,
+        properties props
+    ) {
+        // Get auth rights for this topic
+        // auth_users prepared once here, and then referred multiple times in subs_map_.modify() for efficiency
+        auto auth_users = security_.auth_sub(topic);
+
+        // publish the message to subscribers.
+        // retain is delivered as the original only if rap_value is rap::retain.
+        // On MQTT v3.1.1, rap_value is always rap::dont.
+        auto deliver =
+            [&] (session_state<NextLayer...>& ss, subscription<NextLayer...>& sub, auto const& auth_users) {
+
+                // See if this session is authorized to subscribe this topic
+                auto access = security_.auth_sub_user(auth_users, ss.get_username());
+                if (access != security::authorization::type::allow) return;
+
+                pub::opts new_opts = std::min(opts.qos(), sub.opts.qos());
+                if (sub.opts.rap() == sub::rap::retain && opts.retain() == pub::retain::yes) {
+                    new_opts |= pub::retain::yes;
+                }
+
+                if (sub.sid) {
+                    props.push_back(property::subscription_identifier(*sub.sid));
+                    ss.deliver(
+                        timer_ioc_,
+                        topic,
+                        payload,
+                        new_opts,
+                        props
+                    );
+                    props.pop_back();
+                }
+                else {
+                    ss.deliver(
+                        timer_ioc_,
+                        topic,
+                        payload,
+                        new_opts,
+                        props
+                    );
+                }
+            };
+
+        //                  share_name   topic_filter
+        std::set<std::tuple<string_view, string_view>> sent;
+
+        {
+            std::shared_lock<mutex> g{mtx_subs_map_};
+            subs_map_.modify(
+                topic,
+                [&](buffer const& /*key*/, subscription<NextLayer...>& sub) {
+                    if (sub.share_name.empty()) {
+                        // Non shared subscriptions
+
+                        // If NL (no local) subscription option is set and
+                        // publisher is the same as subscriber, then skip it.
+                        if (sub.opts.nl() == sub::nl::yes &&
+                            sub.ss.get().client_id() ==  source_ss.client_id()) return;
+                        deliver(sub.ss.get(), sub, auth_users);
+                    }
+                    else {
+                        // Shared subscriptions
+                        bool inserted;
+                        std::tie(std::ignore, inserted) = sent.emplace(sub.share_name, sub.topic_filter);
+                        if (inserted) {
+                            if (auto ssr_opt = shared_targets_.get_target(sub.share_name, sub.topic_filter)) {
+                                deliver(ssr_opt.value().get(), sub, auth_users);
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        optional<std::chrono::steady_clock::duration> message_expiry_interval;
+        if (source_ss.get_protocol_version() == protocol_version::v5) {
+            for (auto const& prop : props) {
+                prop.visit(
+                    overload {
+                        [&](property::message_expiry_interval const& v) {
+                            message_expiry_interval.emplace(std::chrono::seconds(v.val()));
+                        },
+                        [&](auto const&){}
+                    }
+                );
+            }
+        }
+
+        /*
+         * If the message is marked as being retained, then we
+         * keep it in case a new subscription is added that matches
+         * this topic.
+         *
+         * @note: The MQTT standard 3.3.1.3 RETAIN makes it clear that
+         *        retained messages are global based on the topic, and
+         *        are not scoped by the client id. So any client may
+         *        publish a retained message on any topic, and the most
+         *        recently published retained message on a particular
+         *        topic is the message that is stored on the server.
+         *
+         * @note: The standard doesn't make it clear that publishing
+         *        a message with zero length, but the retain flag not
+         *        set, does not result in any existing retained message
+         *        being removed. However, internet searching indicates
+         *        that most brokers have opted to keep retained messages
+         *        when receiving payload of zero bytes, unless the so
+         *        received message has the retain flag set, in which case
+         *        the retained message is removed.
+         */
+        if (opts.retain() == pub::retain::yes) {
+            if (payload.empty()) {
+                std::lock_guard<mutex> g(mtx_retains_);
+                retains_.erase(topic);
+            }
+            else {
+                std::shared_ptr<as::steady_timer> tim_message_expiry;
+                if (message_expiry_interval) {
+                    tim_message_expiry = std::make_shared<as::steady_timer>(timer_ioc_, message_expiry_interval.value());
+                    tim_message_expiry->async_wait(
+                        [this, topic = topic, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
+                        (boost::system::error_code const& ec) {
+                            if (auto sp = wp.lock()) {
+                                if (!ec) {
+                                    retains_.erase(topic);
+                                }
+                            }
+                        }
+                    );
+                }
+
+                std::lock_guard<mutex> g(mtx_retains_);
+                retains_.insert_or_assign(
+                    topic,
+                    retain_t {
+                        force_move(topic),
+                        force_move(payload),
+                        force_move(props),
+                        opts.qos(),
+                        tim_message_expiry
+                    }
+                );
+            }
+        }
+    }
+
+    void puback_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        puback_reason_code /*reason_code*/,
+        properties /*props*/
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        // const_cast is appropriate here
+        // See https://github.com/boostorg/multi_index/issues/50
+        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        ss.erase_inflight_message_by_packet_id(packet_id);
+        ss.send_offline_messages_by_packet_id_release();
+    }
+
+    void pubrec_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        pubrec_reason_code reason_code,
+        properties /*props*/
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        // const_cast is appropriate here
+        // See https://github.com/boostorg/multi_index/issues/50
+        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        ss.erase_inflight_message_by_packet_id(packet_id);
+
+        if (is_error(reason_code)) return;
+
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            epsp.send(
+                v3_1_1::pubrel_packet{
+                    packet_id
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        case protocol_version::v5:
+            epsp.send(
+                v5::pubrel_packet{
+                    packet_id,
+                    pubrel_reason_code::success,
+                    pubrel_props_
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+    }
+
+    void disconnect_handler(
+        epsp_t epsp,
+        disconnect_reason_code rc,
+        properties props
+    ) {
+        if (delay_disconnect_) {
+            tim_disconnect_.expires_after(*delay_disconnect_);
+            tim_disconnect_.wait();
+        }
+        close_proc(
+            force_move(epsp),
+            rc == disconnect_reason_code::disconnect_with_will_message,
+            force_move(props)
+        );
     }
 
 
