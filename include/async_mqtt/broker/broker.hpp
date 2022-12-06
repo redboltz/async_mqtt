@@ -123,6 +123,54 @@ private:
                                 p.props()
                             );
                         },
+                        [&](v3_1_1::pubrel_packet& p) {
+                            pubrel_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                pubrel_reason_code::success,
+                                properties{}
+                            );
+                        },
+                        [&](v5::pubrel_packet& p) {
+                            pubrel_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.code(),
+                                p.props()
+                            );
+                        },
+                        [&](v3_1_1::pubcomp_packet& p) {
+                            pubcomp_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                pubcomp_reason_code::success,
+                                properties{}
+                            );
+                        },
+                        [&](v5::pubcomp_packet& p) {
+                            pubcomp_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.code(),
+                                p.props()
+                            );
+                        },
+                        [&](v3_1_1::subscribe_packet& p) {
+                            subscribe_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.entries(),
+                                properties{}
+                            );
+                        },
+                        [&](v5::subscribe_packet& p) {
+                            subscribe_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.entries(),
+                                p.props()
+                            );
+                        },
                         [&](v3_1_1::disconnect_packet&) {
                             disconnect_handler(
                                 force_move(epsp),
@@ -980,6 +1028,298 @@ private:
         default:
             BOOST_ASSERT(false);
             break;
+        }
+    }
+
+    void pubrel_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        pubrel_reason_code reason_code,
+        properties /*props*/
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            epsp.send(
+                v3_1_1::pubcomp_packet{
+                    packet_id
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        case protocol_version::v5:
+            epsp.send(
+                v5::pubcomp_packet{
+                    packet_id,
+                    static_cast<pubcomp_reason_code>(reason_code),
+                    pubcomp_props_
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+    }
+
+    void pubcomp_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        pubcomp_reason_code /*reason_code*/,
+        properties /*props*/
+    ){
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        // const_cast is appropriate here
+        // See https://github.com/boostorg/multi_index/issues/50
+        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        ss.erase_inflight_message_by_packet_id(packet_id);
+        ss.send_offline_messages_by_packet_id_release();
+    }
+
+    void subscribe_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        std::vector<topic_subopts> const& entries,
+        properties props
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        // The element of sessions_ must have longer lifetime
+        // than corresponding subscription.
+        // Because the subscription store the reference of the element.
+        optional<session_state_ref<NextLayer...>> ssr_opt;
+
+        // const_cast is appropriate here
+        // See https://github.com/boostorg/multi_index/issues/50
+        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        ssr_opt.emplace(ss);
+
+        BOOST_ASSERT(ssr_opt);
+        session_state_ref<NextLayer...> ssr {*ssr_opt};
+
+        auto publish_proc =
+            [this, &ssr](retain_t const& r, qos qos_value, optional<std::size_t> sid) {
+                auto props = r.props;
+                if (sid) {
+                    props.push_back(property::subscription_identifier(*sid));
+                }
+                if (r.tim_message_expiry) {
+                    auto d =
+                        std::chrono::duration_cast<std::chrono::seconds>(
+                            r.tim_message_expiry->expiry() - std::chrono::steady_clock::now()
+                        ).count();
+                    for (auto& prop : props) {
+                        prop.visit(
+                            overload {
+                                [&](property::message_expiry_interval& v) {
+                                    v = property::message_expiry_interval(static_cast<uint32_t>(d));
+                                },
+                                [&](auto&) {}
+                            }
+                        );
+                    }
+                }
+                ssr.get().publish(
+                    timer_ioc_,
+                    r.topic,
+                    r.payload,
+                    std::min(r.qos_value, qos_value) | pub::retain::yes,
+                    props
+                );
+            };
+
+        std::vector<std::function<void()>> retain_deliver;
+        retain_deliver.reserve(entries.size());
+
+        // subscription identifier
+        optional<std::size_t> sid;
+
+        // An in-order list of qos settings, used to send the reply.
+        // The MQTT protocol 3.1.1 - 3.8.4 Response - paragraph 6
+        // allows the server to grant a lower QOS than requested
+        // So we reply with the QOS setting that was granted
+        // not the one requested.
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1: {
+            std::vector<suback_return_code> res;
+            res.reserve(entries.size());
+            for (auto& e : entries) {
+                if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                    res.emplace_back(qos_to_suback_return_code(e.opts().qos())); // converts to granted_qos_x
+                    ssr.get().subscribe(
+                        e.sharename(),
+                        e.topic(),
+                        e.opts(),
+                        [&] {
+                            std::shared_lock<mutex> g(mtx_retains_);
+                            retains_.find(
+                                e.topic(),
+                                [&](retain_t const& r) {
+                                    retain_deliver.emplace_back(
+                                        [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
+                                            publish_proc(r, qos_value, sid);
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    );
+                }
+                else {
+                    // User not authorized to subscribe to topic filter
+                    res.emplace_back(suback_return_code::failure);
+                }
+            }
+            // Acknowledge the subscriptions, and the registered QOS settings
+            epsp.send(
+                v3_1_1::suback_packet{
+                    packet_id,
+                    force_move(res)
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+        } break;
+        case protocol_version::v5: {
+            // Get subscription identifier
+            for (auto const& prop : props) {
+                prop.visit(
+                    overload {
+                        [&](property::subscription_identifier const& v) {
+                            // TBD error if 0
+                            if (v.val() != 0) {
+                                sid.emplace(v.val());
+                            }
+                        },
+                        [&](auto const&) {}
+                    }
+                );
+                if (sid) break;
+            }
+
+            std::vector<suback_reason_code> res;
+            res.reserve(entries.size());
+            for (auto& e : entries) {
+                if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                    res.emplace_back(qos_to_suback_reason_code(e.opts().qos())); // converts to granted_qos_x
+                    ssr.get().subscribe(
+                        e.sharename(),
+                        e.topic(),
+                        e.opts(),
+                        [&] {
+                            std::shared_lock<mutex> g(mtx_retains_);
+                            retains_.find(
+                                e.topic(),
+                                [&](retain_t const& r) {
+                                    retain_deliver.emplace_back(
+                                        [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
+                                            publish_proc(r, qos_value, sid);
+                                        }
+                                    );
+                                }
+                            );
+                        },
+                        sid
+                    );
+                }
+                else {
+                    // User not authorized to subscribe to topic filter
+                    res.emplace_back(suback_reason_code::not_authorized);
+                }
+            }
+            if (h_subscribe_props_) h_subscribe_props_(props);
+            // Acknowledge the subscriptions, and the registered QOS settings
+            epsp.send(
+                v5::suback_packet{
+                    packet_id,
+                    force_move(res),
+                    suback_props_
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+        } break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+
+        for (auto const& f : retain_deliver) {
+            f();
         }
     }
 

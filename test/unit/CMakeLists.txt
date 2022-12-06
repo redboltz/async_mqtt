@@ -6,6 +6,7 @@
 
 list(APPEND check_PROGRAMS
     ut_buffer.cpp
+    ut_topic_subopts.cpp
     ut_prop_variant.cpp
     ut_packet_v3_1_1_connect.cpp
     ut_packet_v3_1_1_connack.cpp

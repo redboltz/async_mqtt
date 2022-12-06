@@ -20,19 +20,19 @@ namespace async_mqtt {
 struct retain_t {
     retain_t(
         buffer topic,
-        buffer contents,
+        buffer payload,
         properties props,
         qos qos_value,
         std::shared_ptr<as::steady_timer> tim_message_expiry = std::shared_ptr<as::steady_timer>())
         :topic(force_move(topic)),
-         contents(force_move(contents)),
+         payload(force_move(payload)),
          props(force_move(props)),
          qos_value(qos_value),
          tim_message_expiry(force_move(tim_message_expiry))
     { }
 
     buffer topic;
-    buffer contents;
+    buffer payload;
     properties props;
     qos qos_value;
     std::shared_ptr<as::steady_timer> tim_message_expiry;

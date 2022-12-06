@@ -19,29 +19,37 @@ namespace async_mqtt {
 class topic_subopts {
 public:
     topic_subopts(
-        buffer topic,
+        buffer all_topic,
         sub::opts opts
-    ): topic_{force_move(topic)},
+    ): all_topic_{force_move(all_topic)},
        opts_{opts}
     {
         BOOST_ASSERT(topic_.size() <= 0xffff);
+        auto const shared_prefix = string_view("$share/");
+        if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {
+            sharename_ = all_topic_.substr(shared_prefix.size());
+
+            auto const idx = sharename_.find_first_of('/');
+            if (idx == string_view::npos) return;
+
+            topic_ = sharename_.substr(idx + 1);
+            sharename_.remove_suffix(sharename_.size() - idx);
+        }
+        else {
+            topic_ = all_topic;
+        }
     }
 
     buffer const& topic() const {
         return topic_;
     }
 
+    buffer const& sharename() const {
+        return sharename_;
+    }
+
     sub::opts const& opts() const { // return reference in mandatory
         return opts_;
-    }
-
-    void set_topic(buffer topic) {
-        BOOST_ASSERT(topic.size() <= 0xffff);
-        topic_ = force_move(topic);
-    }
-
-    void set_opts(sub::opts val) {
-        opts_ = val;
     }
 
     friend
@@ -59,7 +67,9 @@ public:
     }
 
 private:
+    buffer all_topic_;
     buffer topic_;
+    buffer sharename_;
     sub::opts opts_;
 };
 
