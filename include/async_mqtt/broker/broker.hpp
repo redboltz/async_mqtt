@@ -1228,7 +1228,7 @@ private:
             std::vector<suback_return_code> res;
             res.reserve(entries.size());
             for (auto& e : entries) {
-                if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                if (!e || security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
                     res.emplace_back(qos_to_suback_return_code(e.opts().qos())); // converts to granted_qos_x
                     ssr.get().subscribe(
                         e.sharename(),
@@ -1290,31 +1290,36 @@ private:
             std::vector<suback_reason_code> res;
             res.reserve(entries.size());
             for (auto& e : entries) {
-                if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
-                    res.emplace_back(qos_to_suback_reason_code(e.opts().qos())); // converts to granted_qos_x
-                    ssr.get().subscribe(
-                        e.sharename(),
-                        e.topic(),
-                        e.opts(),
-                        [&] {
-                            std::shared_lock<mutex> g(mtx_retains_);
-                            retains_.find(
-                                e.topic(),
-                                [&](retain_t const& r) {
-                                    retain_deliver.emplace_back(
-                                        [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
-                                            publish_proc(r, qos_value, sid);
-                                        }
-                                    );
-                                }
-                            );
-                        },
-                        sid
-                    );
+                if (e) {
+                    if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                        res.emplace_back(qos_to_suback_reason_code(e.opts().qos())); // converts to granted_qos_x
+                        ssr.get().subscribe(
+                            e.sharename(),
+                            e.topic(),
+                            e.opts(),
+                            [&] {
+                                std::shared_lock<mutex> g(mtx_retains_);
+                                retains_.find(
+                                    e.topic(),
+                                    [&](retain_t const& r) {
+                                        retain_deliver.emplace_back(
+                                            [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
+                                                publish_proc(r, qos_value, sid);
+                                            }
+                                        );
+                                    }
+                                );
+                            },
+                            sid
+                        );
+                    }
+                    else {
+                        // User not authorized to subscribe to topic filter
+                        res.emplace_back(suback_reason_code::not_authorized);
+                    }
                 }
                 else {
-                    // User not authorized to subscribe to topic filter
-                    res.emplace_back(suback_reason_code::not_authorized);
+                    res.emplace_back(suback_reason_code::topic_filter_invalid);
                 }
             }
             if (h_subscribe_props_) h_subscribe_props_(props);
@@ -1386,8 +1391,9 @@ private:
         // Compare against the list of topic filters, and remove
         // the subscription if the topic filter is in the list.
         for (auto const& e : entries) {
-            auto ts = topic_sharename{e};
-            ssr.get().unsubscribe(ts.sharename(), ts.topic());
+            if (auto ts = topic_sharename{e}) {
+                ssr.get().unsubscribe(ts.sharename(), ts.topic());
+            }
         }
 
         switch (epsp.get_protocol_version()) {
