@@ -193,6 +193,16 @@ private:
                                 p.props()
                             );
                         },
+                        [&](v3_1_1::pingreq_packet&) {
+                            pingreq_handler(
+                                force_move(epsp)
+                            );
+                        },
+                        [&](v5::pingreq_packet&) {
+                            pingreq_handler(
+                                force_move(epsp)
+                            );
+                        },
                         [&](v3_1_1::disconnect_packet&) {
                             disconnect_handler(
                                 force_move(epsp),
@@ -202,6 +212,13 @@ private:
                         },
                         [&](v5::disconnect_packet& p) {
                             disconnect_handler(
+                                force_move(epsp),
+                                p.code(),
+                                p.props()
+                            );
+                        },
+                        [&](v5::auth_packet& p) {
+                            auth_handler(
                                 force_move(epsp),
                                 p.code(),
                                 p.props()
@@ -299,7 +316,7 @@ private:
                 false, // authenticated
                 force_move(connack_props),
                 [epsp](error_code) {
-                    disconnect_and_force_disconnect(epsp, disconnect_reason_code::not_authorized);
+                    disconnect_and_close(epsp, disconnect_reason_code::not_authorized);
                 }
             );
             async_read_packet(force_move(epsp));
@@ -1439,6 +1456,50 @@ private:
         }
     }
 
+    void pingreq_handler(
+        epsp_t epsp
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        if (!pingresp_) return;
+
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            epsp.send(
+                v3_1_1::pingresp_packet{},
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        case protocol_version::v5:
+            epsp.send(
+                v5::pingresp_packet{},
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+    }
+
     void disconnect_handler(
         epsp_t epsp,
         disconnect_reason_code rc,
@@ -1454,7 +1515,6 @@ private:
             force_move(props)
         );
     }
-
 
     /**
      * @brief close_proc_no_lock - clean up a connection that has been closed.
@@ -1508,13 +1568,13 @@ private:
             if (rc_opt) {
                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "disconnect_and_force_disconnect(async) cid:" << ss.client_id();
-                disconnect_and_force_disconnect(epsp, *rc_opt);
+                    << "disconnect_and_close() cid:" << ss.client_id();
+                disconnect_and_close(epsp, *rc_opt);
             }
             else {
                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "force_disconnect(async) cid:" << ss.client_id();
+                    << "force_disconnect() cid:" << ss.client_id();
                 force_disconnect(epsp);
             }
             idx.erase(it);
@@ -1529,8 +1589,8 @@ private:
                     if (rc_opt) {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "disconnect_and_force_disconnect(async) cid:" << ss.client_id();
-                        disconnect_and_force_disconnect(epsp, *rc_opt);
+                            << "disconnect_and_close() cid:" << ss.client_id();
+                        disconnect_and_close(epsp, *rc_opt);
                     }
                     else {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -1570,6 +1630,58 @@ private:
         std::lock_guard<mutex> g(mtx_sessions_);
         return close_proc_no_lock(force_move(epsp), send_will, rc_opt);
     }
+
+    void auth_handler(
+        epsp_t epsp,
+        auth_reason_code /*rc*/,
+        properties props
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+        if (h_auth_props_) h_auth_props_(force_move(props));
+    }
+
+    static void disconnect_and_close(epsp_t epsp, disconnect_reason_code rc) {
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            epsp.close(
+                [epsp = force_move(epsp)]{
+                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << "closed";
+                }
+            );
+            break;
+        case protocol_version::v5:
+            epsp.send(
+                v5::disconnect_packet{
+                    rc,
+                    properties{}
+                },
+                [epsp = force_move(epsp)]
+                (system_error const& ec) mutable {
+                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << ec.what();
+                    epsp.close(
+                        [epsp = force_move(epsp)]{
+                            ASYNC_MQTT_LOG("mqtt_broker", info)
+                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                << "closed";
+                        }
+                    );
+                }
+            );
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+    };
 
 private:
 
