@@ -7,11 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_TOPIC_SUBOPTS_HPP)
 #define ASYNC_MQTT_PACKET_TOPIC_SUBOPTS_HPP
 
-#include <boost/numeric/conversion/cast.hpp>
-
-#include <async_mqtt/buffer.hpp>
-#include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/packet/topic_sharename.hpp>
 #include <async_mqtt/packet/subopts.hpp>
 
 namespace async_mqtt {
@@ -21,55 +17,43 @@ public:
     topic_subopts(
         buffer all_topic,
         sub::opts opts
-    ): all_topic_{force_move(all_topic)},
+    ): topic_sharename_{force_move(all_topic)},
        opts_{opts}
     {
-        BOOST_ASSERT(topic_.size() <= 0xffff);
-        auto const shared_prefix = string_view("$share/");
-        if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {
-            sharename_ = all_topic_.substr(shared_prefix.size());
-
-            auto const idx = sharename_.find_first_of('/');
-            if (idx == string_view::npos) return;
-
-            topic_ = sharename_.substr(idx + 1);
-            sharename_.remove_suffix(sharename_.size() - idx);
-        }
-        else {
-            topic_ = all_topic;
-        }
     }
 
     buffer const& topic() const {
-        return topic_;
+        return topic_sharename_.topic();
     }
 
     buffer const& sharename() const {
-        return sharename_;
+        return topic_sharename_.sharename();
     }
 
     sub::opts const& opts() const { // return reference in mandatory
         return opts_;
     }
 
+    operator bool() const {
+        return static_cast<bool>(topic_sharename_);
+    }
+
     friend
     bool operator<(topic_subopts const& lhs, topic_subopts const& rhs) {
         return
-            std::tie(lhs.topic_, lhs.opts_) <
-            std::tie(rhs.topic_, rhs.opts_);
+            std::tie(lhs.topic_sharename_, lhs.opts_) <
+            std::tie(rhs.topic_sharename_, rhs.opts_);
     }
 
     friend
     bool operator==(topic_subopts const& lhs, topic_subopts const& rhs) {
         return
-            std::tie(lhs.topic_, lhs.opts_) ==
-            std::tie(rhs.topic_, rhs.opts_);
+            std::tie(lhs.topic_sharename_, lhs.opts_) ==
+            std::tie(rhs.topic_sharename_, rhs.opts_);
     }
 
 private:
-    buffer all_topic_;
-    buffer topic_;
-    buffer sharename_;
+    topic_sharename topic_sharename_;
     sub::opts opts_;
 };
 

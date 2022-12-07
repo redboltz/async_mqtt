@@ -171,6 +171,28 @@ private:
                                 p.props()
                             );
                         },
+                        [&](v3_1_1::suback_packet&) {
+                            // TBD receive invalid packet
+                        },
+                        [&](v5::suback_packet&) {
+                            // TBD receive invalid packet
+                        },
+                        [&](v3_1_1::unsubscribe_packet& p) {
+                            unsubscribe_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.entries(),
+                                properties{}
+                            );
+                        },
+                        [&](v5::unsubscribe_packet& p) {
+                            unsubscribe_handler(
+                                force_move(epsp),
+                                p.packet_id(),
+                                p.entries(),
+                                p.props()
+                            );
+                        },
                         [&](v3_1_1::disconnect_packet&) {
                             disconnect_handler(
                                 force_move(epsp),
@@ -1320,6 +1342,94 @@ private:
 
         for (auto const& f : retain_deliver) {
             f();
+        }
+    }
+
+    void unsubscribe_handler(
+        epsp_t epsp,
+        packet_id_t packet_id,
+        std::vector<buffer> entries,
+        properties props
+    ) {
+        auto usg = unique_scope_guard(
+            [&] {
+                async_read_packet(force_move(epsp));
+            }
+        );
+
+
+        std::shared_lock<mutex> g(mtx_sessions_);
+        auto& idx = sessions_.template get<tag_con>();
+        auto it  = idx.find(epsp);
+
+        // broker uses async_* APIs
+        // If broker erase a connection, then async_force_disconnect()
+        // and/or async_force_disconnect () is called.
+        // During async operation, spep is valid but it has already been
+        // erased from sessions_
+        if (it == idx.end()) return;
+
+        // The element of sessions_ must have longer lifetime
+        // than corresponding subscription.
+        // Because the subscription store the reference of the element.
+        optional<session_state_ref<NextLayer...>> ssr_opt;
+
+        // const_cast is appropriate here
+        // See https://github.com/boostorg/multi_index/issues/50
+        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        ssr_opt.emplace(ss);
+
+        BOOST_ASSERT(ssr_opt);
+        session_state_ref<NextLayer...> ssr {*ssr_opt};
+
+        // For each subscription that this connection has
+        // Compare against the list of topic filters, and remove
+        // the subscription if the topic filter is in the list.
+        for (auto const& e : entries) {
+            auto ts = topic_sharename{e};
+            ssr.get().unsubscribe(ts.sharename(), ts.topic());
+        }
+
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            epsp.send(
+                v3_1_1::unsuback_packet{
+                    packet_id
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        case protocol_version::v5:
+            if (h_unsubscribe_props_) h_unsubscribe_props_(props);
+            epsp.send(
+                v5::unsuback_packet{
+                    packet_id,
+                    std::vector<unsuback_reason_code>(
+                        entries.size(),
+                        unsuback_reason_code::success
+                    ),
+                    unsuback_props_
+                },
+                [epsp]
+                (system_error const& ec) {
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << ec.what();
+                    }
+                }
+            );
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
         }
     }
 
