@@ -33,7 +33,7 @@ public:
         Args&&... args
     ) {
         return
-            std::make_shared<basic_endpoint<Role, PacketIdBytes, NextLayer...>>(
+            std::make_shared<basic_endpoint<Role, PacketIdBytes, Args...>>(
                 ver,
                 std::forward<Args>(args)...
             );
