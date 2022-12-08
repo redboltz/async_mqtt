@@ -36,7 +36,7 @@ public:
     template <
         typename BufferSequence,
         typename std::enable_if<
-            is_buffer_sequence<BufferSequence>::value,
+            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
             std::nullptr_t
         >::type = nullptr
     >

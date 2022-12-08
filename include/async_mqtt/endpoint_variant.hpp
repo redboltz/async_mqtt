@@ -39,19 +39,21 @@ public:
             );
     }
 
-    decltype(auto) stream() const {
+    template <typename Func>
+    decltype(auto) visit(Func&& func) const {
         return std::visit(
             [&](auto& ep) -> decltype(auto) {
-                return ep->stream();
+                return std::forward<Func>(func)(*ep);
             },
             ep_
         );
     }
 
-    decltype(auto) stream() {
+    template <typename Func>
+    decltype(auto) visit(Func&& func) {
         return std::visit(
             [&](auto& ep) -> decltype(auto) {
-                return ep->stream();
+                return std::forward<Func>(func)(*ep);
             },
             ep_
         );
@@ -295,7 +297,7 @@ public:
     optional<std::string> get_preauthed_user_name() const {
         return std::visit(
             [&](auto& ep) {
-                ep->get_preauthed_user_name();
+                return ep->get_preauthed_user_name();
             },
             ep_
         );
@@ -304,7 +306,25 @@ public:
     protocol_version get_protocol_version() const {
         return std::visit(
             [&](auto& ep) {
-                ep->get_protocol_version();
+                return ep->get_protocol_version();
+            },
+            ep_
+        );
+    }
+
+    void set_client_id(buffer cid) {
+        std::visit(
+            [&](auto& ep) {
+                ep->set_client_id(force_move(cid));
+            },
+            ep_
+        );
+    }
+
+    buffer const& get_client_id() const {
+        return std::visit(
+            [&](auto& ep) -> buffer const& {
+                return ep->get_client_id();
             },
             ep_
         );
@@ -321,7 +341,12 @@ public:
     }
 
     void const* get_address() const {
-        return ep_.get();
+        return std::visit(
+            [&](auto& ep) -> void const* {
+                return ep.get();
+            },
+            ep_
+        );
     }
 
 private:
@@ -405,7 +430,7 @@ struct owner_less<async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, Nex
         async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& lhs,
         async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& rhs
     ) const noexcept {
-        return lhs.owined_before(rhs);
+        return lhs.owner_before(rhs);
     }
 };
 

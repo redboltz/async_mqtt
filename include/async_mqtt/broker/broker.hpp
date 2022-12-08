@@ -44,7 +44,7 @@ private:
     void async_read_packet(epsp_t epsp) {
         epsp.recv(
             [this, epsp = force_move(epsp)]
-            (packet_variant pv) {
+            (packet_variant pv) mutable {
                 pv.visit(
                     overload {
                         [&](v3_1_1::connect_packet& p) {
@@ -280,7 +280,8 @@ private:
                         },
                         [&](property::request_response_information const& v) {
                             response_topic_requested = v.val();
-                        }
+                        },
+                        [&](auto const&) {}
                     }
                 );
             }
@@ -290,7 +291,8 @@ private:
                         overload {
                             [&](property::message_expiry_interval const& v) {
                                 will_expiry_interval.emplace(std::chrono::seconds(v.val()));
-                            }
+                            },
+                            [&](auto const&) {}
                         }
                     );
                 }
@@ -315,7 +317,7 @@ private:
                 false, // session present
                 false, // authenticated
                 force_move(connack_props),
-                [epsp](error_code) {
+                [epsp](system_error) {
                     disconnect_and_close(epsp, disconnect_reason_code::not_authorized);
                 }
             );
@@ -328,7 +330,7 @@ private:
                 return;
             }
             // A new client id was generated
-            client_id = buffer(string_view(epsp->get_client_id()));
+            client_id = epsp.get_client_id();
         }
 
         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -370,6 +372,7 @@ private:
                 [this](auto&&... params) {
                     do_publish(std::forward<decltype(params)>(params)...);
                 },
+                clean_start,
                 force_move(will_expiry_interval),
                 force_move(session_expiry_interval)
             );
@@ -385,9 +388,9 @@ private:
                 force_move(connack_props)
             );
         }
-        else if (it->online()) {
+        else if (auto old_epsp = it->lock()) {
             // online overwrite
-            if (close_proc_no_lock(it->con(), true, disconnect_reason_code::session_taken_over)) {
+            if (close_proc_no_lock(old_epsp, true, disconnect_reason_code::session_taken_over)) {
                 // remain offline
                 if (clean_start) {
                     // discard offline session
@@ -443,11 +446,11 @@ private:
                             session_expiry_interval = session_expiry_interval,
                             username
                         ]
-                        (error_code ec) mutable {
+                        (system_error const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << ec.message();
+                                    << ec.what();
                                 return;
                             }
                             idx.modify(
@@ -487,6 +490,7 @@ private:
                     [this](auto&&... params) {
                         do_publish(std::forward<decltype(params)>(params)...);
                     },
+                    clean_start,
                     force_move(will_expiry_interval),
                     force_move(session_expiry_interval)
                 );
@@ -560,11 +564,11 @@ private:
                         session_expiry_interval,
                         username
                     ]
-                    (error_code ec) mutable {
+                    (system_error const& ec) mutable {
                         if (ec) {
                             ASYNC_MQTT_LOG("mqtt_broker", trace)
                                 << ASYNC_MQTT_ADD_VALUE(address, this)
-                                << ec.message();
+                                << ec.what();
                             return;
                         }
                         idx.modify(
@@ -586,6 +590,114 @@ private:
         }
 
         async_read_packet(force_move(epsp));
+    }
+
+    void set_response_topic(
+        session_state<NextLayer...>& s,
+        properties& connack_props,
+        std::string const &username
+    ) {
+        auto response_topic =
+            [&] {
+                if (auto rt_opt = s.get_response_topic()) {
+                    return rt_opt.value();
+                }
+                auto rt = create_uuid_string();
+                s.set_response_topic(rt);
+                return rt;
+            } ();
+
+        auto rule_nr = security_.add_auth(
+            response_topic,
+            { "@any" }, security::authorization::type::allow,
+            { username }, security::authorization::type::allow
+        );
+
+        s.set_clean_handler(
+            [this, response_topic, rule_nr]() {
+                std::lock_guard<mutex> g(mtx_retains_);
+                retains_.erase(response_topic);
+                remove_rule(rule_nr);
+            }
+        );
+
+        connack_props.emplace_back(
+            property::response_topic{
+                allocate_buffer(response_topic)
+            }
+        );
+    }
+
+    bool handle_empty_client_id(
+        epsp_t epsp,
+        buffer const& client_id,
+        bool clean_start,
+        properties& connack_props
+    ) {
+        switch (epsp.get_protocol_version()) {
+        case protocol_version::v3_1_1:
+            if (client_id.empty()) {
+                if (clean_start) {
+                    epsp.set_client_id(allocate_buffer(create_uuid_string()));
+                }
+                else {
+                    // https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349242
+                    // If the Client supplies a zero-byte ClientId,
+                    // the Client MUST also set CleanSession to 1 [MQTT-3.1.3-7].
+                    // If it's a not a clean session, but no client id is provided,
+                    // we would have no way to map this connection's session to a new connection later.
+                    // So the connection must be rejected.
+                    if (connack_) {
+                        epsp.send(
+                            v3_1_1::connack_packet{
+                                false,
+                                connect_return_code::identifier_rejected
+                            },
+                            [epsp]
+                            (system_error const& ec) mutable {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << ec.what();
+                                }
+                                epsp.close(
+                                    [epsp] {
+                                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                            << "closed";
+                                    }
+                                );
+                            }
+                        );
+                    }
+                    return false;
+                }
+            }
+            break;
+        case protocol_version::v5:
+            if (client_id.empty()) {
+                // https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
+                //  A Server MAY allow a Client to supply a ClientID that has a length of zero bytes,
+                // however if it does so the Server MUST treat this as a special case and assign a
+                // unique ClientID to that Client [MQTT-3.1.3-6]. It MUST then process the
+                // CONNECT packet as if the Client had provided that unique ClientID,
+                // and MUST return the Assigned Client Identifier in the CONNACK packet [MQTT-3.1.3-7].
+                // If the Server rejects the ClientID it MAY respond to the CONNECT packet with a CONNACK
+                // using Reason Code 0x85 (Client Identifier not valid) as described in section 4.13
+                // Handling errors, and then it MUST close the Network Connection [MQTT-3.1.3-8].
+                //
+                // mqtt_cpp author's note: On v5.0, no Clean Start restriction is described.
+                epsp.set_client_id(allocate_buffer(create_uuid_string()));
+                connack_props.emplace_back(
+                    property::assigned_client_identifier{epsp.get_client_id()}
+                );
+            }
+            break;
+        default:
+            BOOST_ASSERT(false);
+            return false;
+        }
+        return true;
     }
 
     void send_connack(
@@ -657,12 +769,16 @@ private:
         }
     }
 
-    void publish_handler(
+    template <typename BufferSequence>
+    std::enable_if_t<
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+    >
+    publish_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         pub::opts opts,
         buffer topic,
-        buffer payload,
+        BufferSequence&& payload,
         properties props
     ) {
         auto usg = unique_scope_guard(
@@ -804,7 +920,7 @@ private:
         do_publish(
             *it,
             force_move(topic),
-            force_move(payload),
+            std::forward<BufferSequence>(payload),
             opts.qos() | opts.retain(), // remove dup flag
             force_move(forward_props)
         );
@@ -821,10 +937,14 @@ private:
      * @param pubopts - publish options
      * @param props - properties
      */
-    void do_publish(
+    template <typename BufferSequence>
+    std::enable_if_t<
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+    >
+    do_publish(
         session_state<NextLayer...> const& source_ss,
         buffer topic,
-        buffer payload,
+        BufferSequence&& payload,
         pub::opts opts,
         properties props
     ) {
@@ -877,7 +997,7 @@ private:
             subs_map_.modify(
                 topic,
                 [&](buffer const& /*key*/, subscription<NextLayer...>& sub) {
-                    if (sub.share_name.empty()) {
+                    if (sub.sharename.empty()) {
                         // Non shared subscriptions
 
                         // If NL (no local) subscription option is set and
@@ -889,9 +1009,9 @@ private:
                     else {
                         // Shared subscriptions
                         bool inserted;
-                        std::tie(std::ignore, inserted) = sent.emplace(sub.share_name, sub.topic_filter);
+                        std::tie(std::ignore, inserted) = sent.emplace(sub.sharename, sub.topic);
                         if (inserted) {
-                            if (auto ssr_opt = shared_targets_.get_target(sub.share_name, sub.topic_filter)) {
+                            if (auto ssr_opt = shared_targets_.get_target(sub.sharename, sub.topic)) {
                                 deliver(ssr_opt.value().get(), sub, auth_users);
                             }
                         }
@@ -961,7 +1081,7 @@ private:
                     topic,
                     retain_t {
                         force_move(topic),
-                        force_move(payload),
+                        std::forward<BufferSequence>(payload),
                         force_move(props),
                         opts.qos(),
                         tim_message_expiry
@@ -1199,7 +1319,7 @@ private:
         session_state_ref<NextLayer...> ssr {*ssr_opt};
 
         auto publish_proc =
-            [this, &ssr](retain_t const& r, qos qos_value, optional<std::size_t> sid) {
+            [this, &ssr, &epsp](retain_t const& r, qos qos_value, optional<std::size_t> sid) {
                 auto props = r.props;
                 if (sid) {
                     props.push_back(property::subscription_identifier(*sid));
@@ -1221,6 +1341,7 @@ private:
                     }
                 }
                 ssr.get().publish(
+                    epsp,
                     timer_ioc_,
                     r.topic,
                     r.payload,

@@ -56,7 +56,7 @@ struct session_state {
         void(
             session_state const& source_ss,
             buffer topic,
-            buffer contents,
+            buffer payload,
             pub::opts pubopts,
             properties props
         )
@@ -72,6 +72,7 @@ struct session_state {
         std::string const& username,
         optional<will> will,
         will_sender_t will_sender,
+        bool clean_start,
         optional<std::chrono::steady_clock::duration> will_expiry_interval,
         optional<std::chrono::steady_clock::duration> session_expiry_interval)
         :timer_ioc_(timer_ioc),
@@ -79,7 +80,7 @@ struct session_state {
          subs_map_(subs_map),
          shared_targets_(shared_targets),
          epwp_(epsp),
-         version_(epsp->get_protocol_version()),
+         version_(epsp.get_protocol_version()),
          client_id_(force_move(client_id)),
          username_(username),
          session_expiry_interval_(force_move(session_expiry_interval)),
@@ -88,7 +89,7 @@ struct session_state {
          remain_after_close_(
             [&] {
                 if (version_ == protocol_version::v3_1_1) {
-                    return !epsp->clean_session();
+                    return !clean_start;
                 }
                 else {
                     BOOST_ASSERT(version_ == protocol_version::v5);
@@ -108,10 +109,6 @@ struct session_state {
             << "session destroy";
         send_will_impl();
         clean();
-    }
-
-    bool online() const {
-        return !epwp_.expired();
     }
 
     template <typename SessionExpireHandler>
@@ -198,25 +195,28 @@ struct session_state {
         tim_session_expiry_.reset();
     }
 
-    void publish(
+    template <typename BufferSequence>
+    std::enable_if_t<
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+    >
+    publish(
+        epsp_t& epsp,
         as::io_context& timer_ioc,
         buffer pub_topic,
-        buffer contents,
+        BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {
 
-        auto epsp = epwp_.lock();
-        if (!epsp) return;
-
         auto send_publish =
-            [this, epsp, pub_topic, contents, pubopts, props](packet_id_t pid) mutable {
+            [this, epsp, pub_topic, payload, pubopts, props]
+            (packet_id_t pid) mutable {
                 switch (version_) {
                 case protocol_version::v3_1_1:
                     epsp.send(
                         v3_1_1::publish_packet{
                             pid,
                             force_move(pub_topic),
-                            force_move(contents),
+                            force_move(payload),
                             pubopts
                         },
                         [epsp](system_error const& ec) {
@@ -233,7 +233,7 @@ struct session_state {
                         v5::publish_packet{
                             pid,
                             force_move(pub_topic),
-                            force_move(contents),
+                            force_move(payload),
                             pubopts,
                             force_move(props)
                         },
@@ -258,7 +258,8 @@ struct session_state {
             if (qos_value == qos::at_least_once ||
                 qos_value == qos::exactly_once) {
                 epsp.acquire_unique_packet_id(
-                    [](auto pid_opt) {
+                    [send_publish = force_move(send_publish)]
+                    (auto pid_opt) mutable {
                         if (pid_opt) {
                             send_publish(*pid_opt);
                             return;
@@ -276,24 +277,29 @@ struct session_state {
         offline_messages_.push_back(
             timer_ioc,
             force_move(pub_topic),
-            force_move(contents),
+            std::forward<BufferSequence>(payload),
             pubopts,
             force_move(props)
         );
     }
 
-    void deliver(
+    template <typename BufferSequence>
+    std::enable_if_t<
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+    >
+    deliver(
         as::io_context& timer_ioc,
         buffer pub_topic,
-        buffer contents,
+        BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {
 
-        if (online()) {
+        if (auto epsp = epwp_.lock()) {
             publish(
+                epsp,
                 timer_ioc,
                 force_move(pub_topic),
-                force_move(contents),
+                std::forward<BufferSequence>(payload),
                 pubopts,
                 force_move(props)
             );
@@ -303,7 +309,7 @@ struct session_state {
             offline_messages_.push_back(
                 timer_ioc,
                 force_move(pub_topic),
-                force_move(contents),
+                std::forward<BufferSequence>(payload),
                 pubopts,
                 force_move(props)
             );

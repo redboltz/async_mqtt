@@ -342,6 +342,16 @@ public:
         return protocol_version_;
     }
 
+    void set_client_id(buffer cid) {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        client_id_ = force_move(cid);
+    }
+
+    buffer const& get_client_id() const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        return client_id_;
+    }
+
 private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
@@ -1625,6 +1635,7 @@ private:
     std::set<packet_id_t> qos2_publish_handled_;
 
     optional<std::string> preauthed_user_name_;
+    buffer client_id_;
 };
 
 template <role Role, typename NextLayer>

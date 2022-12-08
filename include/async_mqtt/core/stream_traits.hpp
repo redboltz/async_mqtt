@@ -8,11 +8,8 @@
 #define ASYNC_MQTT_STREAM_TRAITS_HPP
 
 #include <type_traits>
-#include <boost/asio/io_context.hpp>
 
 namespace async_mqtt {
-
-namespace as = boost::asio;
 
 namespace detail {
 
@@ -56,20 +53,10 @@ get_lowest_layer_impl(T& t, std::true_type) noexcept {
         );
 }
 
-template <typename T>
-struct executor_type_t {
-    using type = decltype(std::declval<T>().get_executor());
-};
-
-template <typename Allocator, uintptr_t Bits>
-struct executor_type_t<as::io_context::basic_executor_type<Allocator, Bits>> {
-    using type = as::io_context::basic_executor_type<Allocator, Bits>;
-};
-
 } // namespace detail
 
 template<typename T>
-using executor_type = typename detail::executor_type_t<T>::type;
+using executor_type = decltype(std::declval<T>().get_executor());
 
 template<typename T>
 using lowest_layer_type = detail::lowest_layer_type<T>;

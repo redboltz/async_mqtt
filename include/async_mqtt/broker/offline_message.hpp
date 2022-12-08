@@ -32,18 +32,30 @@ class offline_messages;
 // these messages will be published to that client, and only that client.
 class offline_message {
 public:
+    template <
+        typename BufferSequence,
+        typename std::enable_if_t<
+            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+            std::nullptr_t
+        >* = nullptr
+    >
     offline_message(
         buffer topic,
-        buffer contents,
+        BufferSequence&& payload,
         pub::opts pubopts,
         properties props,
         std::shared_ptr<as::steady_timer> tim_message_expiry)
         : topic_(force_move(topic)),
-          contents_(force_move(contents)),
           pubopts_(pubopts),
           props_(force_move(props)),
           tim_message_expiry_(force_move(tim_message_expiry))
-    { }
+    {
+        auto it = buffer_sequence_begin(payload);
+        auto end = buffer_sequence_end(payload);
+        for (; it != end; ++it) {
+            payload_.emplace_back(*it);
+        }
+    }
 
     template <typename Epsp>
     bool send(Epsp& epsp, protocol_version ver) {
@@ -56,7 +68,7 @@ public:
                         v3_1_1::publish_packet{
                             pid,
                             topic_,
-                            contents_,
+                            payload_,
                             pubopts_
                         },
                         [epsp](system_error const& ec) {
@@ -73,7 +85,7 @@ public:
                         v5::publish_packet{
                             pid,
                             topic_,
-                            contents_,
+                            payload_,
                             pubopts_,
                             props_
                         };
@@ -123,7 +135,7 @@ private:
     friend class offline_messages;
 
     buffer topic_;
-    buffer contents_;
+    std::vector<buffer> payload_;
     pub::opts pubopts_;
     properties props_;
     std::shared_ptr<as::steady_timer> tim_message_expiry_;
@@ -162,10 +174,14 @@ public:
         return messages_.empty();
     }
 
-    void push_back(
+    template <typename BufferSequence>
+    std::enable_if_t<
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+    >
+    push_back(
         as::io_context& timer_ioc,
         buffer pub_topic,
-        buffer contents,
+        BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {
         optional<std::chrono::steady_clock::duration> message_expiry_interval;
@@ -198,7 +214,7 @@ public:
         auto& seq_idx = messages_.get<tag_seq>();
         seq_idx.emplace_back(
             force_move(pub_topic),
-            force_move(contents),
+            std::forward<BufferSequence>(payload),
             pubopts,
             force_move(props),
             force_move(tim_message_expiry)

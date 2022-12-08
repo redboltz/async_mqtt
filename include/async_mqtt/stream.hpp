@@ -64,10 +64,10 @@ public:
     }
 
     auto const& lowest_layer() const {
-        return nl_.lowest_layer();
+        return get_lowest_layer(nl_);
     }
     auto& lowest_layer() {
-        return nl_.lowest_layer();
+        return get_lowest_layer(nl_);
     }
 
     auto get_executor() const {
@@ -417,7 +417,7 @@ private:
             case close: {
                 state = complete;
                 auto& a_strm{strm};
-                async_teardown(
+                async_mqtt::async_teardown(
                     Role,
                     a_strm.nl_,
                     force_move(self)

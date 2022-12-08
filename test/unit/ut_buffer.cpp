@@ -7,12 +7,17 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
+#include <vector>
 #include <async_mqtt/buffer.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_buffer)
 
+namespace am = async_mqtt;
 
-BOOST_AUTO_TEST_CASE( tc1 ) {
+BOOST_AUTO_TEST_CASE(seq) {
+    BOOST_TEST(am::is_buffer_sequence<am::buffer>::value);
+    BOOST_TEST(am::is_buffer_sequence<std::vector<am::buffer>>::value);
+    BOOST_TEST(am::is_buffer_sequence<std::decay_t<std::vector<am::buffer> const&>>::value);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

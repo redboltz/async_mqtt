@@ -38,10 +38,10 @@ public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     template <
         typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<BufferSequence>::value,
+        std::enable_if_t<
+            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
             std::nullptr_t
-        >::type = nullptr
+        > = nullptr
     >
     basic_publish_packet(
         packet_id_t packet_id,

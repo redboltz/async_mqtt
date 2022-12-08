@@ -18,21 +18,21 @@ template <typename... NextLayer>
 struct subscription {
     subscription(
         session_state_ref<NextLayer...> ss,
-        buffer share_name,
-        buffer topic_filter,
-        sub::opts subopts,
+        buffer sharename,
+        buffer topic,
+        sub::opts opts,
         optional<std::size_t> sid)
-        :ss { ss },
-         share_name { force_move(share_name) },
-         topic_filter { force_move(topic_filter) },
-         subopts { subopts },
-         sid { sid }
+        :ss{ss},
+         sharename{force_move(sharename)},
+         topic{force_move(topic)},
+         opts{opts},
+         sid{sid}
     {}
 
     session_state_ref<NextLayer...> ss;
-    buffer share_name;
-    buffer topic_filter;
-    sub::opts subopts;
+    buffer sharename;
+    buffer topic;
+    sub::opts opts;
     optional<std::size_t> sid;
 };
 
