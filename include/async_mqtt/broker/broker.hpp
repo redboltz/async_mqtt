@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_BROKER_BROKER_HPP)
 #define ASYNC_MQTT_BROKER_BROKER_HPP
 
-#include <async_mqtt/endpoint_variant.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
+#include <async_mqtt/broker/endpoint_variant.hpp>
 #include <async_mqtt/broker/security.hpp>
 #include <async_mqtt/broker/mutex.hpp>
 #include <async_mqtt/broker/session_state.hpp>
@@ -25,9 +25,9 @@
 namespace async_mqtt {
 
 
-template <typename Sp>
+template <std::size_t PacketIdBytes, typename... NextLayer>
 class broker {
-    using epsp_t = Sp;
+    using epsp_t = epsp_wrap<role::server, PacketIdBytes, NextLayer...>;
 public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
@@ -35,14 +35,14 @@ public:
         security_.default_config();
     }
 
-    void handle_accept(epsp_t epsp) {
+    void handle_accept(typename epsp_t::epsp_t epsp) {
         async_read_packet(force_move(epsp));
     }
 
 private:
     void async_read_packet(epsp_t epsp) {
         epsp.recv(
-            [this, epsp = force_move(epsp)]
+            [this, epsp]
             (packet_variant pv) mutable {
                 pv.visit(
                     overload {

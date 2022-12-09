@@ -294,7 +294,7 @@ struct session_state {
         pub::opts pubopts,
         properties props) {
 
-        if (auto epsp = epwp_.lock()) {
+        if (auto epsp = lock()) {
             publish(
                 epsp,
                 timer_ioc,
@@ -493,7 +493,7 @@ struct session_state {
     }
 
     void send_inflight_messages() {
-        if (auto epsp = epwp_.lock()) {
+        if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_inflight_messages_);
             inflight_messages_.send_all_messages(epsp);
         }
@@ -511,14 +511,14 @@ struct session_state {
     }
 
     void send_all_offline_messages() {
-        if (auto epsp = epwp_.lock()) {
+        if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.send_until_fail(epsp, get_protocol_version());
         }
     }
 
     void send_offline_messages_by_packet_id_release() {
-        if (auto epsp = epwp_.lock()) {
+        if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.send_until_fail(epsp, get_protocol_version());
         }

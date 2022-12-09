@@ -73,6 +73,7 @@ public:
             NextLayer
         >;
     using strand_type = typename stream_type::strand_type;
+    static constexpr std::size_t packet_id_bytes = PacketIdBytes;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
@@ -81,15 +82,15 @@ public:
         protocol_version ver,
         Args&&... args
     ): protocol_version_{ver},
-       stream_{std::forward<Args>(args)...}
+       stream_{std::make_unique<stream_type>(std::forward<Args>(args)...)}
     {
     }
 
     stream_type const& stream() const {
-        return stream_;
+        return *stream_;
     }
     stream_type& stream() {
-        return stream_;
+        return *stream_;
     }
 
     strand_type const& strand() const {
@@ -463,7 +464,7 @@ private: // compose operation impl
                         overload {
                             [&](auto& actual_packet) {
                                 if (process_send_packet(self, actual_packet)) {
-                                    ep.stream_.write_packet(
+                                    ep.stream_->write_packet(
                                         force_move(actual_packet),
                                         force_move(self)
                                     );
@@ -479,7 +480,7 @@ private: // compose operation impl
                 }
                 else {
                     if (process_send_packet(self, packet)) {
-                        ep.stream_.write_packet(
+                        ep.stream_->write_packet(
                             force_move(packet),
                             force_move(self)
                         );
@@ -952,7 +953,7 @@ private: // compose operation impl
             switch (state) {
             case initiate:
                 state = complete;
-                ep.stream_.read_packet(force_move(self));
+                ep.stream_->read_packet(force_move(self));
                 break;
             case complete: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
@@ -1426,7 +1427,7 @@ private: // compose operation impl
             }
             if (already_handled) {
                 // do the next read
-                ep.stream_.read_packet(force_move(self));
+                ep.stream_->read_packet(force_move(self));
             }
         }
     };
@@ -1443,7 +1444,7 @@ private: // compose operation impl
             switch (state) {
             case initiate:
                 state = complete;
-                ep.stream_.close(force_move(self));
+                ep.stream_->close(force_move(self));
                 break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
@@ -1602,7 +1603,7 @@ private:
 
 private:
     protocol_version protocol_version_;
-    stream_type stream_;
+    std::unique_ptr<stream_type> stream_;
     packet_id_manager<packet_id_t> pid_man_;
 
     bool need_store_ = false;
@@ -1626,7 +1627,7 @@ private:
     std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 
-    std::atomic<connection_status> status_{connection_status::disconnected};
+    connection_status status_{connection_status::disconnected};
 
     as::steady_timer tim_pingreq_send_{strand()};
     as::steady_timer tim_pingreq_recv_{strand()};

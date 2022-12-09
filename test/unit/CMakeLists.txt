@@ -38,6 +38,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_disconnect.cpp
     ut_packet_v5_auth.cpp
     ut_system_error.cpp
+    ut_ep_basic.cpp
     ut_ep_con_discon.cpp
     ut_ep_topic_alias.cpp
     ut_ep_recv_max.cpp

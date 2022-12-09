@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include <async_mqtt/predefined_underlying_layer.hpp>
-#include <async_mqtt/endpoint_variant.hpp>
+#include <async_mqtt/broker/endpoint_variant.hpp>
 
 #include <async_mqtt/broker/broker.hpp>
 
@@ -26,7 +26,21 @@ as::io_context ioc;
     as::ip::tcp::acceptor ws_ac{ioc, ws_endpoint};
 #endif
 
-    using epsp_t = am::endpoint_sp_variant<
+    using ep_t = am::endpoint_variant<
+        am::role::server,
+        am::protocol::mqtt
+#if 0
+        ,
+        am::protocol::ws
+#endif
+#if defined(ASYNC_MQTT_USE_TLS)
+        ,
+        am::protocol::mqtts,
+        am::protocol::wss
+#endif // defined(ASYNC_MQTT_USE_TLS)
+    >;
+
+    using epsp_t = am::endpoint_variant_sp<
         am::role::server,
         am::protocol::mqtt
 #if 0
@@ -41,27 +55,36 @@ as::io_context ioc;
     >;
 
     am::broker<
-        epsp_t
+        2,
+        am::protocol::mqtt
+#if 0
+        ,
+        am::protocol::ws
+#endif
+#if defined(ASYNC_MQTT_USE_TLS)
+        ,
+        am::protocol::mqtts,
+        am::protocol::wss
+#endif // defined(ASYNC_MQTT_USE_TLS)
     > brk{ioc};
     std::function<void()> mqtt_async_accept;
     mqtt_async_accept =
         [&] {
-            auto epsp = epsp_t::create(
-                am::protocol_version::undetermined,
-                am::protocol::mqtt{ioc.get_executor()}
-            );
-            mqtt_ac.async_accept(
-                epsp.visit(
-                    [](auto & ep) -> decltype(auto) {
-                        return ep.stream().lowest_layer();
+            auto epsp =
+                std::make_shared<ep_t>(
+                    am::endpoint<am::role::server, am::protocol::mqtt>{
+                        am::protocol_version::undetermined,
+                        am::protocol::mqtt{ioc.get_executor()}
                     }
-                ),
+                );
+            mqtt_ac.async_accept(
+                std::get<am::endpoint<am::role::server, am::protocol::mqtt>>(*epsp).stream().lowest_layer(),
                 [&mqtt_async_accept, &brk, epsp]
                 (boost::system::error_code const& ec) mutable {
 
                     std::cout << "accept: " << ec.message() << std::endl;
                     if (ec) return;
-                    brk.handle_accept(force_move(epsp));
+                    brk.handle_accept(epsp);
                     mqtt_async_accept();
                 }
             );
