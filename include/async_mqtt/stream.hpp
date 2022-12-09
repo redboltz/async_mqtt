@@ -23,7 +23,7 @@
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/teardown.hpp>
+#include <async_mqtt/close.hpp>
 
 namespace async_mqtt {
 
@@ -417,7 +417,7 @@ private:
             case close: {
                 state = complete;
                 auto& a_strm{strm};
-                async_mqtt::async_teardown(
+                async_mqtt::async_close(
                     Role,
                     a_strm.nl_,
                     force_move(self)

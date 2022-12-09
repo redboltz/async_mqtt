@@ -116,8 +116,6 @@ struct session_state {
         epsp_t epsp,
         SessionExpireHandler&& h
     ) {
-        BOOST_ASSERT(!epwp_.expired());
-
         ASYNC_MQTT_LOG("mqtt_broker", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "store inflight message";
@@ -130,24 +128,26 @@ struct session_state {
                     [&](v5::publish_packet const& p) {
                         for (auto const& prop : p.props()) {
                             prop.visit(
-                                [&](property::message_expiry_interval const& v) {
-                                    tim_message_expiry =
-                                        std::make_shared<as::steady_timer>(
-                                            timer_ioc_,
-                                            std::chrono::seconds(v.val())
-                                        );
-                                    tim_message_expiry->async_wait(
-                                        [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
-                                        (error_code ec) {
-                                            if (auto sp = wp.lock()) {
-                                                if (!ec) {
-                                                    erase_inflight_message_by_expiry(sp);
-                                                }
+                                overload {
+                                    [&](property::message_expiry_interval const& v) {
+                                        tim_message_expiry =
+                                            std::make_shared<as::steady_timer>(
+                                                timer_ioc_,
+                                                std::chrono::seconds(v.val())
+                                            );
+                                        tim_message_expiry->async_wait(
+                                            [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
+                                            (error_code ec) {
+                                                if (auto sp = wp.lock()) {
+                                                    if (!ec) {
+                                                        erase_inflight_message_by_expiry(sp);
+                                                    }
                                             }
-                                        }
-                                    );
-                                },
-                                [](auto const&) {}
+                                            }
+                                        );
+                                    },
+                                    [](auto const&) {}
+                                }
                             );
                         }
                     },
@@ -208,7 +208,7 @@ struct session_state {
         properties props) {
 
         auto send_publish =
-            [this, epsp, pub_topic, payload, pubopts, props]
+            [this, epsp, pub_topic, payload = payload, pubopts, props]
             (packet_id_t pid) mutable {
                 switch (version_) {
                 case protocol_version::v3_1_1:
@@ -355,7 +355,7 @@ struct session_state {
             << " topic_filter:" << topic_filter
             << " qos:" << subopts.qos();
 
-        subscription sub {*this, force_move(share_name), topic_filter, subopts, sid };
+        subscription<NextLayer...> sub {*this, force_move(share_name), topic_filter, subopts, sid };
         auto handle_ret =
             [&] {
                 std::lock_guard<mutex> g{mtx_subs_map_};
@@ -554,7 +554,7 @@ struct session_state {
         epwp_ = epsp;
     }
 
-    epsp_t const& lock() const {
+    epsp_t lock() {
         return epwp_.lock();
     }
 
@@ -568,6 +568,10 @@ struct session_state {
 
     optional<std::string> get_response_topic() const {
         return response_topic_;
+    }
+
+    bool remain_after_close() const {
+        return remain_after_close_;
     }
 
 private:

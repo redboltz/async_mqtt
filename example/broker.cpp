@@ -14,31 +14,22 @@
 namespace am = async_mqtt;
 namespace as = boost::asio;
 
-
 int main() {
-    static_assert(
-    sizeof(
-        boost::beast::websocket::stream<
-            boost::asio::basic_stream_socket<
-                boost::asio::ip::tcp, boost::asio::io_context::basic_executor_type<
-                    std::allocator<void>, 0
-                >
-            >,
-            true
-        >
-    )
-    != -1
-    );
 
 as::io_context ioc;
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
-    as::ip::tcp::endpoint endpoint{address, 1883};
-    as::ip::tcp::acceptor ac{ioc, endpoint};
+
+    as::ip::tcp::endpoint mqtt_endpoint{address, 1883};
+    as::ip::tcp::endpoint ws_endpoint{address, 80};
+
+    as::ip::tcp::acceptor mqtt_ac{ioc, mqtt_endpoint};
+    as::ip::tcp::acceptor ws_ac{ioc, ws_endpoint};
+
     using epsp_t = am::endpoint_sp_variant<
         am::role::server,
-        am::protocol::mqtt//,
-        //am::protocol::ws
-#if 0 //defined(ASYNC_MQTT_USE_TLS)
+        am::protocol::mqtt,
+        am::protocol::ws
+#if defined(ASYNC_MQTT_USE_TLS)
         ,
         am::protocol::mqtts,
         am::protocol::wss
@@ -46,39 +37,84 @@ as::io_context ioc;
     >;
 
     am::broker<
-        am::protocol::mqtt//,
-        //am::protocol::ws
-#if 0 //defined(ASYNC_MQTT_USE_TLS)
+        am::protocol::mqtt
+#if 0
+        ,
+
+        am::protocol::ws
+#if defined(ASYNC_MQTT_USE_TLS)
         ,
         am::protocol::mqtts,
         am::protocol::wss
 #endif // defined(ASYNC_MQTT_USE_TLS)
+#endif
     > brk{ioc};
-
-    std::function<void()> do_async_accept;
-    do_async_accept =
+    std::function<void()> mqtt_async_accept;
+    mqtt_async_accept =
         [&] {
             auto epsp = epsp_t::create(
                 am::protocol_version::undetermined,
                 am::protocol::mqtt{ioc.get_executor()}
             );
-            epsp.strand();
-            ac.async_accept(
+            mqtt_ac.async_accept(
                 epsp.visit(
                     [](auto & ep) -> decltype(auto) {
                         return ep.stream().lowest_layer();
                     }
                 ),
-                [&do_async_accept, &brk, epsp]
+                [&mqtt_async_accept, &brk, epsp]
                 (boost::system::error_code const& ec) mutable {
+
                     std::cout << "accept: " << ec.message() << std::endl;
                     if (ec) return;
                     brk.handle_accept(force_move(epsp));
-                    do_async_accept();
+                    mqtt_async_accept();
                 }
             );
         };
 
-    do_async_accept();
+    std::function<void()> ws_async_accept;
+#if 0
+    ws_async_accept =
+        [&] {
+            auto epsp = epsp_t::create(
+                am::protocol_version::undetermined,
+                am::protocol::ws{ioc.get_executor()}
+            );
+            ws_ac.async_accept(
+                epsp.visit(
+                    [](auto & ep) -> decltype(auto) {
+                        return ep.stream().lowest_layer();
+                    }
+                ),
+                [&ws_async_accept, &brk, epsp]
+                (boost::system::error_code const& ec) mutable {
+                    std::cout << "accept: " << ec.message() << std::endl;
+                    if (ec) {
+                        ws_async_accept();
+                        return;
+                    }
+                    epsp.visit(
+                        am::overload {
+                            [&](am::endpoint<am::role::server, am::protocol::ws>& ep) {
+                                ep.stream().next_layer().async_accept(
+                                    [&ws_async_accept, &brk, epsp]
+                                    (boost::system::error_code const& ec) mutable {
+                                        std::cout << "accept: " << ec.message() << std::endl;
+                                        if (ec) return;
+                                        brk.handle_accept(force_move(epsp));
+                                        ws_async_accept();
+                                    }
+                                );
+                            },
+                            [&](auto&){}
+                        }
+                    );
+                }
+            );
+        };
+#endif
+    mqtt_async_accept();
+    ws_async_accept();
     ioc.run();
 }

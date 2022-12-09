@@ -58,10 +58,10 @@ public:
     }
 
     template <typename Epsp>
-    bool send(Epsp& epsp, protocol_version ver) {
+    bool send(Epsp epsp, protocol_version ver) {
         BOOST_ASSERT(epsp.strand().running_in_this_thread());
         auto publish =
-            [this, epsp, ver] (packet_id_t pid) {
+            [&] (packet_id_t pid) {
                 switch (ver) {
                 case protocol_version::v3_1_1:
                     epsp.send(

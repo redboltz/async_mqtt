@@ -96,6 +96,9 @@ class auth_packet;
 
 } // namespace v5
 
+template <std::size_t PacketIdBytes>
+class basic_store_packet_variant;
+
 template <template <std::size_t> typename, typename>
 struct is_instance_of : std::false_type {};
 
@@ -125,7 +128,9 @@ constexpr bool is_client_sendable() {
         is_instance_of<v5::basic_pubcomp_packet, Packet>::value ||
         is_instance_of<v5::basic_subscribe_packet, Packet>::value ||
         is_instance_of<v5::basic_unsubscribe_packet, Packet>::value ||
-        std::is_same_v<v5::auth_packet, Packet>;
+        std::is_same_v<v5::auth_packet, Packet> ||
+        is_instance_of<basic_store_packet_variant, Packet>::value
+        ;
 }
 
 template <typename Packet>
@@ -150,7 +155,9 @@ constexpr bool is_server_sendable() {
         is_instance_of<v5::basic_pubcomp_packet, Packet>::value ||
         is_instance_of<v5::basic_suback_packet, Packet>::value ||
         is_instance_of<v5::basic_unsuback_packet, Packet>::value ||
-        std::is_same_v<v5::auth_packet, Packet>;
+        std::is_same_v<v5::auth_packet, Packet> ||
+        is_instance_of<basic_store_packet_variant, Packet>::value
+        ;
 }
 
 template <typename Packet>

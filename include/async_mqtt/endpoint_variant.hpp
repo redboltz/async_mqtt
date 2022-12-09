@@ -211,7 +211,7 @@ public:
 
     // sync APIs that reqire woking on strand
 
-    packet_id_t acquire_unique_packet_id() {
+    optional<packet_id_t> acquire_unique_packet_id() {
         return std::visit(
             [&](auto& ep) {
                 return ep->acquire_unique_packet_id();
@@ -349,6 +349,17 @@ public:
         );
     }
 
+    template <typename T>
+    bool owner_before(T const& other) const noexcept {
+        return std::visit(
+            [&](auto const& lhs, auto const& rhs) {
+                return lhs.owner_before(rhs);
+            },
+            ep_,
+            other.ep_
+        );
+    }
+
 private:
 
     template <typename Endpoint>
@@ -403,7 +414,8 @@ public:
         );
     }
 
-    bool owner_before(this_type const& other) const noexcept {
+    template <typename T>
+    bool owner_before(T const& other) const noexcept {
         return std::visit(
             [&](auto const& lhs, auto const& rhs) {
                 return lhs.owner_before(rhs);
@@ -414,6 +426,10 @@ public:
     }
 
 private:
+
+    friend
+    class basic_endpoint_sp_variant<Role, PacketIdBytes, NextLayer...>;
+
     ep_wp_t ep_;
 };
 
@@ -432,7 +448,22 @@ struct owner_less<async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, Nex
     ) const noexcept {
         return lhs.owner_before(rhs);
     }
+
+    bool operator()(
+        async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& lhs,
+        async_mqtt::basic_endpoint_sp_variant<Role, PacketIdBytes, NextLayer...> const& rhs
+    ) const noexcept {
+        return lhs.owner_before(rhs);
+    }
+
+    bool operator()(
+        async_mqtt::basic_endpoint_sp_variant<Role, PacketIdBytes, NextLayer...> const& lhs,
+        async_mqtt::basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...> const& rhs
+    ) const noexcept {
+        return lhs.owner_before(rhs);
+    }
 };
+
 
 } // namespace std
 

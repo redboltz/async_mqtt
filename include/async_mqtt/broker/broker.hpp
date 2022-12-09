@@ -388,7 +388,7 @@ private:
                 force_move(connack_props)
             );
         }
-        else if (auto old_epsp = it->lock()) {
+        else if (auto old_epsp = const_cast<session_state<NextLayer...>&>(*it).lock()) {
             // online overwrite
             if (close_proc_no_lock(old_epsp, true, disconnect_reason_code::session_taken_over)) {
                 // remain offline
@@ -617,7 +617,7 @@ private:
             [this, response_topic, rule_nr]() {
                 std::lock_guard<mutex> g(mtx_retains_);
                 retains_.erase(response_topic);
-                remove_rule(rule_nr);
+                security_.remove_auth(rule_nr);
             }
         );
 
@@ -912,8 +912,7 @@ private:
                     [&](auto&& p) {
                         forward_props.push_back(force_move(p));
                     }
-                },
-                force_move(prop)
+                }
             );
         }
 
@@ -1624,7 +1623,7 @@ private:
     void disconnect_handler(
         epsp_t epsp,
         disconnect_reason_code rc,
-        properties props
+        properties /*props*/
     ) {
         if (delay_disconnect_) {
             tim_disconnect_.expires_after(*delay_disconnect_);
@@ -1633,7 +1632,7 @@ private:
         close_proc(
             force_move(epsp),
             rc == disconnect_reason_code::disconnect_with_will_message,
-            force_move(props)
+            rc
         );
     }
 
@@ -1659,18 +1658,6 @@ private:
         // In this case, do nothing is correct behavior.
         if (it == idx.end()) return false;
 
-        bool session_clear =
-            [&] {
-                if (epsp.get_protocol_version() == protocol_version::v3_1_1) {
-                    return epsp.clean_session();
-                }
-                else {
-                    BOOST_ASSERT(epsp.get_protocol_version() == protocol_version::v5);
-                    auto const& sei_opt = it->session_expiry_interval();
-                    return !sei_opt || *sei_opt == std::chrono::steady_clock::duration::zero();
-                }
-            } ();
-
         auto do_send_will =
             [&](session_state<NextLayer...>& ss) {
                 if (send_will) {
@@ -1681,28 +1668,7 @@ private:
                 }
             };
 
-        if (session_clear) {
-            // const_cast is appropriate here
-            // See https://github.com/boostorg/multi_index/issues/50
-            auto& ss = const_cast<session_state<NextLayer...>&>(*it);
-            do_send_will(ss);
-            if (rc_opt) {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "disconnect_and_close() cid:" << ss.client_id();
-                disconnect_and_close(epsp, *rc_opt);
-            }
-            else {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "force_disconnect() cid:" << ss.client_id();
-                force_disconnect(epsp);
-            }
-            idx.erase(it);
-            BOOST_ASSERT(sessions_.template get<tag_con>().find(epwp_t{epsp}) == sessions_.template get<tag_con>().end());
-            return false;
-        }
-        else {
+        if (it->remain_after_close()) {
             idx.modify(
                 it,
                 [&](session_state<NextLayer...>& ss) {
@@ -1716,11 +1682,18 @@ private:
                     else {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "force_disconnect(async) cid:" << ss.client_id();
-                        force_disconnect(epsp);
+                            << "close cid:" << ss.client_id();
+                        epsp.close(
+                            [epsp = force_move(epsp)]{
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << "closed";
+                            }
+                        );
                     }
                     // become_offline updates index
                     ss.become_offline(
+                        epsp,
                         [this]
                         (std::shared_ptr<as::steady_timer> const& sp_tim) {
                             sessions_.template get<tag_tim>().erase(sp_tim);
@@ -1731,7 +1704,33 @@ private:
             );
             return true;
         }
-
+        else {
+            // const_cast is appropriate here
+            // See https://github.com/boostorg/multi_index/issues/50
+            auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+            do_send_will(ss);
+            if (rc_opt) {
+                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                    << "disconnect_and_close() cid:" << ss.client_id();
+                disconnect_and_close(epsp, *rc_opt);
+            }
+            else {
+                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                    << "close cid:" << ss.client_id();
+                epsp.close(
+                    [epsp = force_move(epsp)]{
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << "closed";
+                    }
+                );
+            }
+            idx.erase(it);
+            BOOST_ASSERT(sessions_.template get<tag_con>().find(epwp_t{epsp}) == sessions_.template get<tag_con>().end());
+            return false;
+        }
     }
 
     /**

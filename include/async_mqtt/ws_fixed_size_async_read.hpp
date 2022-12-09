@@ -11,6 +11,7 @@
 #include <type_traits>
 
 #include <boost/asio/buffer.hpp>
+#include <boost/asio/read.hpp>
 #include <boost/asio/compose.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/beast/websocket/stream.hpp>
@@ -59,6 +60,8 @@ struct async_read_impl {
 };
 
 } // namespace detail
+
+using as::async_read;
 
 template <
     typename NextLayer,

@@ -267,7 +267,7 @@ public:
 
     // sync APIs that require working on strand
 
-    packet_id_t acquire_unique_packet_id() {
+    optional<packet_id_t> acquire_unique_packet_id() {
         BOOST_ASSERT(strand().running_in_this_thread());
         return pid_man_.acquire_unique_id();
     }
