@@ -24,6 +24,7 @@ public:
                 basic_endpoint<Role, PacketIdBytes, NextLayer>
             >...
         >;
+    using weak_type = basic_endpoint_wp_variant<Role, PacketIdBytes, NextLayer...>;
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 

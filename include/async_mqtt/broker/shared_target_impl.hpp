@@ -12,11 +12,11 @@
 
 namespace async_mqtt {
 
-template <typename... NextLayer>
-inline void shared_target<NextLayer...>::insert(
+template <typename Sp>
+inline void shared_target<Sp>::insert(
     buffer share_name,
     buffer topic_filter,
-    session_state<NextLayer...>& ss
+    session_state<Sp>& ss
 ) {
     std::lock_guard<mutex> g{mtx_targets_};
     auto& idx = targets_.template get<tag_cid_sn>();
@@ -41,11 +41,11 @@ inline void shared_target<NextLayer...>::insert(
     }
 }
 
-template <typename... NextLayer>
-inline void shared_target<NextLayer...>::erase(
+template <typename Sp>
+inline void shared_target<Sp>::erase(
     buffer share_name,
     buffer topic_filter,
-    session_state<NextLayer...> const& ss
+    session_state<Sp> const& ss
 ) {
     std::lock_guard<mutex> g{mtx_targets_};
     auto& idx = targets_.template get<tag_cid_sn>();
@@ -70,9 +70,9 @@ inline void shared_target<NextLayer...>::erase(
     }
 }
 
-template <typename... NextLayer>
-inline void shared_target<NextLayer...>::erase(
-    session_state<NextLayer...> const& ss
+template <typename Sp>
+inline void shared_target<Sp>::erase(
+    session_state<Sp> const& ss
 ) {
     std::lock_guard<mutex> g{mtx_targets_};
     auto& idx = targets_.template get<tag_cid_sn>();
@@ -80,8 +80,8 @@ inline void shared_target<NextLayer...>::erase(
     idx.erase(r.first, r.second);
 }
 
-template <typename... NextLayer>
-inline optional<session_state_ref<NextLayer...>> shared_target<NextLayer...>::get_target(
+template <typename Sp>
+inline optional<session_state_ref<Sp>> shared_target<Sp>::get_target(
     buffer const& share_name,
     buffer const& topic_filter
 ) {
@@ -104,18 +104,18 @@ inline optional<session_state_ref<NextLayer...>> shared_target<NextLayer...>::ge
     return nullopt;
 }
 
-template <typename... NextLayer>
-inline shared_target<NextLayer...>::entry::entry(
+template <typename Sp>
+inline shared_target<Sp>::entry::entry(
     buffer share_name,
-    session_state<NextLayer...>& ss,
+    session_state<Sp>& ss,
     time_point_t tp)
     : share_name { force_move(share_name) },
       ssr { ss },
       tp { force_move(tp) }
 {}
 
-template <typename... NextLayer>
-inline buffer const& shared_target<NextLayer...>::entry::client_id() const {
+template <typename Sp>
+inline buffer const& shared_target<Sp>::entry::client_id() const {
     return ssr.get().client_id();
 }
 

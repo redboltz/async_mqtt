@@ -12,8 +12,8 @@
 
 namespace async_mqtt {
 
-template <typename... NextLayer>
-using sub_con_map = multiple_subscription_map<buffer, subscription<NextLayer...>, boost::hash<buffer>>;
+template <typename Sp>
+using sub_con_map = multiple_subscription_map<buffer, subscription<Sp>, boost::hash<buffer>>;
 
 } // namespace async_mqtt
 

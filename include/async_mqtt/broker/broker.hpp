@@ -25,10 +25,9 @@
 namespace async_mqtt {
 
 
-template <typename... NextLayer>
+template <typename Sp>
 class broker {
-    using epsp_t = endpoint_sp_variant<role::server, NextLayer...>;
-    using epwp_t = endpoint_wp_variant<role::server, NextLayer...>;
+    using epsp_t = Sp;
 public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
@@ -378,7 +377,7 @@ private:
             );
             if (response_topic_requested) {
                 // set_response_topic never modify key part
-                set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
             }
 
             send_connack(
@@ -388,7 +387,7 @@ private:
                 force_move(connack_props)
             );
         }
-        else if (auto old_epsp = const_cast<session_state<NextLayer...>&>(*it).lock()) {
+        else if (auto old_epsp = const_cast<session_state<epsp_t>&>(*it).lock()) {
             // online overwrite
             if (close_proc_no_lock(old_epsp, true, disconnect_reason_code::session_taken_over)) {
                 // remain offline
@@ -400,7 +399,7 @@ private:
                         << "online connection exists, discard old one due to new one's clean_start and renew";
                     if (response_topic_requested) {
                         // set_response_topic never modify key part
-                        set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                        set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
                     }
                     send_connack(
                         epsp,
@@ -428,7 +427,7 @@ private:
                         << "online connection exists, inherit old one and renew";
                     if (response_topic_requested) {
                         // set_response_topic never modify key part
-                        set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                        set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
                     }
                     send_connack(
                         epsp,
@@ -497,7 +496,7 @@ private:
                 BOOST_ASSERT(inserted);
                 if (response_topic_requested) {
                     // set_response_topic never modify key part
-                    set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                    set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
                 }
                 send_connack(
                     epsp,
@@ -517,7 +516,7 @@ private:
                     << "offline connection exists, discard old one due to new one's clean_start and renew";
                 if (response_topic_requested) {
                     // set_response_topic never modify key part
-                    set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                    set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
                 }
                 send_connack(
                     epsp,
@@ -546,7 +545,7 @@ private:
                     << "offline connection exists, inherit old one and renew";
                 if (response_topic_requested) {
                     // set_response_topic never modify key part
-                    set_response_topic(const_cast<session_state<NextLayer...>&>(*it), connack_props, *username);
+                    set_response_topic(const_cast<session_state<epsp_t>&>(*it), connack_props, *username);
                 }
                 send_connack(
                     epsp,
@@ -593,7 +592,7 @@ private:
     }
 
     void set_response_topic(
-        session_state<NextLayer...>& s,
+        session_state<epsp_t>& s,
         properties& connack_props,
         std::string const &username
     ) {
@@ -941,7 +940,7 @@ private:
         is_buffer_sequence<std::decay_t<BufferSequence>>::value
     >
     do_publish(
-        session_state<NextLayer...> const& source_ss,
+        session_state<epsp_t> const& source_ss,
         buffer topic,
         BufferSequence&& payload,
         pub::opts opts,
@@ -955,7 +954,7 @@ private:
         // retain is delivered as the original only if rap_value is rap::retain.
         // On MQTT v3.1.1, rap_value is always rap::dont.
         auto deliver =
-            [&] (session_state<NextLayer...>& ss, subscription<NextLayer...>& sub, auto const& auth_users) {
+            [&] (session_state<epsp_t>& ss, subscription<epsp_t>& sub, auto const& auth_users) {
 
                 // See if this session is authorized to subscribe this topic
                 auto access = security_.auth_sub_user(auth_users, ss.get_username());
@@ -995,7 +994,7 @@ private:
             std::shared_lock<mutex> g{mtx_subs_map_};
             subs_map_.modify(
                 topic,
-                [&](buffer const& /*key*/, subscription<NextLayer...>& sub) {
+                [&](buffer const& /*key*/, subscription<epsp_t>& sub) {
                     if (sub.sharename.empty()) {
                         // Non shared subscriptions
 
@@ -1115,7 +1114,7 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        auto& ss = const_cast<session_state<epsp_t>&>(*it);
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
@@ -1145,7 +1144,7 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        auto& ss = const_cast<session_state<epsp_t>&>(*it);
         ss.erase_inflight_message_by_packet_id(packet_id);
 
         if (is_error(reason_code)) return;
@@ -1276,7 +1275,7 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        auto& ss = const_cast<session_state<epsp_t>&>(*it);
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
@@ -1307,15 +1306,15 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        optional<session_state_ref<NextLayer...>> ssr_opt;
+        optional<session_state_ref<epsp_t>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        auto& ss = const_cast<session_state<epsp_t>&>(*it);
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
-        session_state_ref<NextLayer...> ssr {*ssr_opt};
+        session_state_ref<epsp_t> ssr {*ssr_opt};
 
         auto publish_proc =
             [this, &ssr, &epsp](retain_t const& r, qos qos_value, optional<std::size_t> sid) {
@@ -1514,15 +1513,15 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        optional<session_state_ref<NextLayer...>> ssr_opt;
+        optional<session_state_ref<epsp_t>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+        auto& ss = const_cast<session_state<epsp_t>&>(*it);
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
-        session_state_ref<NextLayer...> ssr {*ssr_opt};
+        session_state_ref<epsp_t> ssr {*ssr_opt};
 
         // For each subscription that this connection has
         // Compare against the list of topic filters, and remove
@@ -1650,7 +1649,7 @@ private:
         optional<disconnect_reason_code> rc_opt) {
 
         auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epwp_t{epsp});
+        auto it = idx.find(epsp);
 
         // act_sess_it == act_sess_idx.end() could happen if broker accepts
         // the session from client but the client closes the session  before sending
@@ -1659,7 +1658,7 @@ private:
         if (it == idx.end()) return false;
 
         auto do_send_will =
-            [&](session_state<NextLayer...>& ss) {
+            [&](session_state<epsp_t>& ss) {
                 if (send_will) {
                     ss.send_will();
                 }
@@ -1671,7 +1670,7 @@ private:
         if (it->remain_after_close()) {
             idx.modify(
                 it,
-                [&](session_state<NextLayer...>& ss) {
+                [&](session_state<epsp_t>& ss) {
                     do_send_will(ss);
                     if (rc_opt) {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -1707,7 +1706,7 @@ private:
         else {
             // const_cast is appropriate here
             // See https://github.com/boostorg/multi_index/issues/50
-            auto& ss = const_cast<session_state<NextLayer...>&>(*it);
+            auto& ss = const_cast<session_state<epsp_t>&>(*it);
             do_send_will(ss);
             if (rc_opt) {
                 ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -1728,7 +1727,7 @@ private:
                 );
             }
             idx.erase(it);
-            BOOST_ASSERT(sessions_.template get<tag_con>().find(epwp_t{epsp}) == sessions_.template get<tag_con>().end());
+            BOOST_ASSERT(sessions_.template get<tag_con>().find(epsp) == sessions_.template get<tag_con>().end());
             return false;
         }
     }
@@ -1813,14 +1812,14 @@ private:
     security security_;
 
     mutable mutex mtx_subs_map_;
-    sub_con_map<NextLayer...> subs_map_;   /// subscription information
-    shared_target<NextLayer...> shared_targets_; /// shared subscription targets
+    sub_con_map<epsp_t> subs_map_;   /// subscription information
+    shared_target<epsp_t> shared_targets_; /// shared subscription targets
 
     ///< Map of active client id and connections
     /// session_state has references of subs_map_ and shared_targets_.
     /// because session_state (member of sessions_) has references of subs_map_ and shared_targets_.
     mutable mutex mtx_sessions_;
-    session_states<NextLayer...> sessions_;
+    session_states<epsp_t> sessions_;
 
     mutable mutex mtx_retains_;
     retained_messages retains_; ///< A list of messages retained so they can be sent to newly subscribed clients.

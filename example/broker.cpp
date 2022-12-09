@@ -20,15 +20,19 @@ as::io_context ioc;
     as::ip::address address = boost::asio::ip::address::from_string("127.0.0.1");
 
     as::ip::tcp::endpoint mqtt_endpoint{address, 1883};
-    as::ip::tcp::endpoint ws_endpoint{address, 80};
-
     as::ip::tcp::acceptor mqtt_ac{ioc, mqtt_endpoint};
+#if 0
+    as::ip::tcp::endpoint ws_endpoint{address, 80};
     as::ip::tcp::acceptor ws_ac{ioc, ws_endpoint};
+#endif
 
     using epsp_t = am::endpoint_sp_variant<
         am::role::server,
-        am::protocol::mqtt,
+        am::protocol::mqtt
+#if 0
+        ,
         am::protocol::ws
+#endif
 #if defined(ASYNC_MQTT_USE_TLS)
         ,
         am::protocol::mqtts,
@@ -37,17 +41,7 @@ as::io_context ioc;
     >;
 
     am::broker<
-        am::protocol::mqtt
-#if 0
-        ,
-
-        am::protocol::ws
-#if defined(ASYNC_MQTT_USE_TLS)
-        ,
-        am::protocol::mqtts,
-        am::protocol::wss
-#endif // defined(ASYNC_MQTT_USE_TLS)
-#endif
+        epsp_t
     > brk{ioc};
     std::function<void()> mqtt_async_accept;
     mqtt_async_accept =
@@ -72,6 +66,8 @@ as::io_context ioc;
                 }
             );
         };
+
+    mqtt_async_accept();
 
     std::function<void()> ws_async_accept;
 #if 0
@@ -113,8 +109,9 @@ as::io_context ioc;
                 }
             );
         };
-#endif
-    mqtt_async_accept();
+
     ws_async_accept();
+#endif
+
     ioc.run();
 }

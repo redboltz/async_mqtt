@@ -28,7 +28,7 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace mi = boost::multi_index;
 
-template <typename... NextLayer>
+template <typename Sp>
 class session_states;
 
 /**
@@ -48,13 +48,13 @@ class session_states;
  *
  * Retained messages do not form part of the Session State in the Server, they are not deleted as a result of a Session ending.
  */
-template <typename... NextLayer>
+template <typename Sp>
 struct session_state {
-    using epsp_t = endpoint_sp_variant<role::server, NextLayer...>;
-    using epwp_t = endpoint_wp_variant<role::server, NextLayer...>;
+    using epsp_t = Sp;
+    using epwp_t = typename epsp_t::weak_type;
     using will_sender_t = std::function<
         void(
-            session_state const& source_ss,
+            session_state<epsp_t> const& source_ss,
             buffer topic,
             buffer payload,
             pub::opts pubopts,
@@ -65,8 +65,8 @@ struct session_state {
     session_state(
         as::io_context& timer_ioc,
         mutex& mtx_subs_map,
-        sub_con_map<NextLayer...>& subs_map,
-        shared_target<NextLayer...>& shared_targets,
+        sub_con_map<epsp_t>& subs_map,
+        shared_target<epsp_t>& shared_targets,
         epsp_t epsp,
         buffer client_id,
         std::string const& username,
@@ -355,7 +355,7 @@ struct session_state {
             << " topic_filter:" << topic_filter
             << " qos:" << subopts.qos();
 
-        subscription<NextLayer...> sub {*this, force_move(share_name), topic_filter, subopts, sid };
+        subscription<epsp_t> sub {*this, force_move(share_name), topic_filter, subopts, sid };
         auto handle_ret =
             [&] {
                 std::lock_guard<mutex> g{mtx_subs_map_};
@@ -622,15 +622,15 @@ private:
     }
 
 private:
-    friend class session_states<NextLayer...>;
+    friend class session_states<epsp_t>;
 
     as::io_context& timer_ioc_;
     std::shared_ptr<as::steady_timer> tim_will_expiry_;
     optional<async_mqtt::will> will_value_;
 
     mutex& mtx_subs_map_;
-    sub_con_map<NextLayer...>& subs_map_;
-    shared_target<NextLayer...>& shared_targets_;
+    sub_con_map<epsp_t>& subs_map_;
+    shared_target<epsp_t>& shared_targets_;
     epwp_t epwp_;
     protocol_version version_;
     buffer client_id_;
@@ -646,7 +646,7 @@ private:
     mutable mutex mtx_offline_messages_;
     offline_messages offline_messages_;
 
-    std::set<typename sub_con_map<NextLayer...>::handle> handles_; // to efficient remove
+    std::set<typename sub_con_map<epsp_t>::handle> handles_; // to efficient remove
 
     as::steady_timer tim_will_delay_;
     will_sender_t will_sender_;
@@ -658,10 +658,10 @@ private:
     std::function<void()> clean_handler_;
 };
 
-template <typename... NextLayer>
+template <typename Sp>
 class session_states {
-    using epsp_t = endpoint_sp_variant<role::server, NextLayer...>;
-    using epwp_t = endpoint_wp_variant<role::server, NextLayer...>;
+    using epsp_t = Sp;
+    using epwp_t = typename epsp_t::weak_type;
 public:
     template <typename Tag>
     decltype(auto) get() {
@@ -680,7 +680,7 @@ public:
 private:
     // The mi_session_online container holds the relevant data about an active connection with the broker.
     // It can be queried either with the clientid, or with the shared pointer to the mqtt endpoint object
-    using elem_t = session_state<NextLayer...>;
+    using elem_t = session_state<epsp_t>;
     using mi_session_state = mi::multi_index_container<
         elem_t,
         mi::indexed_by<

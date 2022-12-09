@@ -14,10 +14,10 @@
 
 namespace async_mqtt {
 
-template <typename... NextLayer>
+template <typename Sp>
 struct subscription {
     subscription(
-        session_state_ref<NextLayer...> ss,
+        session_state_ref<Sp> ss,
         buffer sharename,
         buffer topic,
         sub::opts opts,
@@ -29,15 +29,15 @@ struct subscription {
          sid{sid}
     {}
 
-    session_state_ref<NextLayer...> ss;
+    session_state_ref<Sp> ss;
     buffer sharename;
     buffer topic;
     sub::opts opts;
     optional<std::size_t> sid;
 };
 
-template <typename... NextLayer>
-inline bool operator<(subscription<NextLayer...> const& lhs, subscription<NextLayer...> const& rhs) {
+template <typename Sp>
+inline bool operator<(subscription<Sp> const& lhs, subscription<Sp> const& rhs) {
     return &lhs.ss.get() < &rhs.ss.get();
 }
 

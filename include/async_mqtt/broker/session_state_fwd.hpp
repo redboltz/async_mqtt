@@ -11,11 +11,11 @@
 
 namespace async_mqtt {
 
-template <typename... NextLayer>
+template <typename Sp>
 struct session_state;
 
-template <typename... NextLayer>
-using session_state_ref = std::reference_wrapper<session_state<NextLayer...>>;
+template <typename Sp>
+using session_state_ref = std::reference_wrapper<session_state<Sp>>;
 
 } // namespace async_mqtt
 

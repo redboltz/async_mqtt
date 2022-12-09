@@ -25,21 +25,21 @@ namespace async_mqtt {
 
 namespace mi = boost::multi_index;
 
-template <typename... NextLayer>
+template <typename Sp>
 class shared_target {
 public:
-    void insert(buffer share_name, buffer topic_filter, session_state<NextLayer...>& ss);
-    void erase(buffer share_name, buffer topic_filter, session_state<NextLayer...> const& ss);
-    void erase(session_state<NextLayer...> const& ss);
-    optional<session_state_ref<NextLayer...>> get_target(buffer const& share_name, buffer const& topic_filter);
+    void insert(buffer share_name, buffer topic_filter, session_state<Sp>& ss);
+    void erase(buffer share_name, buffer topic_filter, session_state<Sp> const& ss);
+    void erase(session_state<Sp> const& ss);
+    optional<session_state_ref<Sp>> get_target(buffer const& share_name, buffer const& topic_filter);
 
 private:
     struct entry {
-        entry(buffer share_name, session_state<NextLayer...>& ss, time_point_t tp);
+        entry(buffer share_name, session_state<Sp>& ss, time_point_t tp);
 
         buffer const& client_id() const;
         buffer share_name;
-        session_state_ref<NextLayer...> ssr;
+        session_state_ref<Sp> ssr;
         time_point_t tp;
         std::set<buffer> topic_filters;
     };
