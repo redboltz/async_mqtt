@@ -45,7 +45,7 @@ public:
           ),
           reason_code_{reason_code},
           property_length_{async_mqtt::size(props)},
-          props_{force_move(props)}
+          props_(force_move(props))
     {
         using namespace std::literals;
         auto pb = val_to_variable_bytes(property_length_);
@@ -217,7 +217,7 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    constexpr std::size_t num_of_const_buffer_sequence() const {
+    std::size_t num_of_const_buffer_sequence() const {
         return
             1 +                   // fixed header
             1 +                   // remaining length

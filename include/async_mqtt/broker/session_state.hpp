@@ -254,7 +254,7 @@ struct session_state {
 
         std::lock_guard<mutex> g(mtx_offline_messages_);
         if (offline_messages_.empty()) {
-            auto qos_value = pubopts.qos();
+            auto qos_value = pubopts.get_qos();
             if (qos_value == qos::at_least_once ||
                 qos_value == qos::exactly_once) {
                 epsp.acquire_unique_packet_id(
@@ -353,7 +353,7 @@ struct session_state {
             << "subscribe"
             << " share_name:" << share_name
             << " topic_filter:" << topic_filter
-            << " qos:" << subopts.qos();
+            << " qos:" << subopts.get_qos();
 
         subscription<epsp_t> sub {*this, force_move(share_name), topic_filter, subopts, sid };
         auto handle_ret =
@@ -366,7 +366,7 @@ struct session_state {
                 );
             } ();
 
-        auto rh = subopts.retain_handling();
+        auto rh = subopts.get_retain_handling();
 
         if (handle_ret.second) { // insert
             ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -584,7 +584,7 @@ private:
 
         auto topic = force_move(will_value_.value().topic());
         auto payload = force_move(will_value_.value().message());
-        auto opts = will_value_->qos() | will_value_->retain();
+        auto opts = will_value_->get_qos() | will_value_->get_retain();
         auto props = force_move(will_value_.value().props());
         will_value_ = nullopt;
         if (tim_will_expiry_) {

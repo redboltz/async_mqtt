@@ -86,18 +86,18 @@ public:
     {
     }
 
-    stream_type const& stream() const {
+    stream_type const& get_stream() const {
         return *stream_;
     }
-    stream_type& stream() {
+    stream_type& get_stream() {
         return *stream_;
     }
 
     strand_type const& strand() const {
-        return stream().strand();
+        return get_stream().strand();
     }
     strand_type& strand() {
-        return stream().strand();
+        return get_stream().strand();
     }
 
     void set_auto_pub_response(bool val) {
@@ -651,8 +651,8 @@ private: // compose operation impl
 
             // store publish/pubrel packet
             if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
-                if (actual_packet.opts().qos() == qos::at_least_once ||
-                    actual_packet.opts().qos() == qos::exactly_once
+                if (actual_packet.opts().get_qos() == qos::at_least_once ||
+                    actual_packet.opts().get_qos() == qos::exactly_once
                 ) {
                     BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
                     if (ep.need_store_) {
@@ -982,6 +982,7 @@ private: // compose operation impl
                     overload {
                         [&](v3_1_1::connect_packet& p) {
                             ep.initialize();
+                            ep.protocol_version_ = protocol_version::v3_1_1;
                             ep.status_ = connection_status::connecting;
                             if (p.clean_session()) {
                                 ep.need_store_ = false;
@@ -992,6 +993,7 @@ private: // compose operation impl
                         },
                         [&](v5::connect_packet& p) {
                             ep.initialize();
+                            ep.protocol_version_ = protocol_version::v5;
                             ep.status_ = connection_status::connecting;
                             for (auto const& prop : p.props()) {
                                 prop.visit(
@@ -1070,7 +1072,7 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
-                            switch (p.opts().qos()) {
+                            switch (p.opts().get_qos()) {
                             case qos::at_least_once: {
                                 if (ep.auto_pub_response_) {
                                     ep.send(
@@ -1087,7 +1089,7 @@ private: // compose operation impl
                             }
                         },
                         [&](v5::basic_publish_packet<PacketIdBytes>& p) {
-                            switch (p.opts().qos()) {
+                            switch (p.opts().get_qos()) {
                             case qos::at_least_once: {
                                 if (ep.publish_recv_.size() == ep.publish_recv_max_) {
                                     state = disconnect;
@@ -1529,8 +1531,8 @@ private:
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet) {
         BOOST_ASSERT(strand().running_in_this_thread());
-        if (packet.opts().qos() == qos::at_least_once ||
-            packet.opts().qos() == qos::exactly_once
+        if (packet.opts().get_qos() == qos::at_least_once ||
+            packet.opts().get_qos() == qos::exactly_once
         ) {
             if (publish_send_count_ == publish_send_max_) {
                 publish_queue_.push_back(force_move(packet));

@@ -40,7 +40,7 @@ public:
           entries_{force_move(params)},
           remaining_length_{PacketIdBytes},
           property_length_(async_mqtt::size(props)),
-          props_{force_move(props)}
+          props_(force_move(props))
     {
         using namespace std::literals;
         topic_length_buf_entries_.reserve(entries_.size());
@@ -79,7 +79,7 @@ public:
                     "v5::subscribe_packet subopts is invalid"
                 );
             }
-            switch (e.opts().qos()) {
+            switch (e.opts().get_qos()) {
             case qos::at_most_once:
             case qos::at_least_once:
             case qos::exactly_once:
@@ -214,7 +214,7 @@ public:
                     "v5::subscribe_packet subopts is invalid"
                 );
             }
-            switch (opts.qos()) {
+            switch (opts.get_qos()) {
             case qos::at_most_once:
             case qos::at_least_once:
             case qos::exactly_once:

@@ -30,11 +30,11 @@ BOOST_AUTO_TEST_CASE(v3_1_1_publish) {
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
     }
-    BOOST_TEST(p.opts().qos() == am::qos::exactly_once);
-    BOOST_TEST(p.opts().retain() == am::pub::retain::yes);
-    BOOST_TEST(p.opts().dup() == am::pub::dup::yes);
+    BOOST_TEST(p.opts().get_qos() == am::qos::exactly_once);
+    BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+    BOOST_TEST(p.opts().get_dup() == am::pub::dup::yes);
     p.set_dup(false);
-    BOOST_TEST(p.opts().dup() == am::pub::dup::no);
+    BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
     {
         auto cbs = p.const_buffer_sequence();
@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE(v3_1_1_publish) {
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
         }
-        BOOST_TEST(p.opts().qos() == am::qos::exactly_once);
-        BOOST_TEST(p.opts().retain() == am::pub::retain::yes);
-        BOOST_TEST(p.opts().dup() == am::pub::dup::no);
+        BOOST_TEST(p.opts().get_qos() == am::qos::exactly_once);
+        BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+        BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);
@@ -85,11 +85,11 @@ BOOST_AUTO_TEST_CASE(v3_1_1_publish_pid4) {
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
     }
-    BOOST_TEST(p.opts().qos() == am::qos::exactly_once);
-    BOOST_TEST(p.opts().retain() == am::pub::retain::yes);
-    BOOST_TEST(p.opts().dup() == am::pub::dup::yes);
+    BOOST_TEST(p.opts().get_qos() == am::qos::exactly_once);
+    BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+    BOOST_TEST(p.opts().get_dup() == am::pub::dup::yes);
     p.set_dup(false);
-    BOOST_TEST(p.opts().dup() == am::pub::dup::no);
+    BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
     {
         auto cbs = p.const_buffer_sequence();
@@ -114,9 +114,9 @@ BOOST_AUTO_TEST_CASE(v3_1_1_publish_pid4) {
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
         }
-        BOOST_TEST(p.opts().qos() == am::qos::exactly_once);
-        BOOST_TEST(p.opts().retain() == am::pub::retain::yes);
-        BOOST_TEST(p.opts().dup() == am::pub::dup::no);
+        BOOST_TEST(p.opts().get_qos() == am::qos::exactly_once);
+        BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+        BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);

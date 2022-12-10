@@ -20,8 +20,8 @@ namespace as = boost::asio;
 struct stub_socket {
     using executor_type = as::io_context::executor_type;
     using pv_queue_t = std::deque<packet_variant>;
-    using packet_iterator = packet_iterator<std::vector, as::const_buffer>;
-    using packet_range = std::pair<packet_iterator, packet_iterator>;
+    using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
+    using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
 
     stub_socket(
         protocol_version version,

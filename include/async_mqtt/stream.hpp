@@ -415,12 +415,16 @@ private:
                 );
             } break;
             case close: {
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = complete;
                 auto& a_strm{strm};
                 async_mqtt::async_close(
                     Role,
                     a_strm.nl_,
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:

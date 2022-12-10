@@ -35,7 +35,7 @@ public:
         :topic_{force_move(topic)},
          message_{force_move(message)},
          pubopts_{pubopts},
-         props_{force_move(props)}
+         props_(force_move(props))
     {}
 
     constexpr buffer const& topic() const {
@@ -50,11 +50,11 @@ public:
     constexpr buffer& message() {
         return message_;
     }
-    constexpr pub::retain retain() const {
-        return pubopts_.retain();
+    constexpr pub::retain get_retain() const {
+        return pubopts_.get_retain();
     }
-    constexpr qos qos() const {
-        return pubopts_.qos();
+    constexpr qos get_qos() const {
+        return pubopts_.get_qos();
     }
     constexpr properties const& props() const {
         return props_;
@@ -88,8 +88,8 @@ inline std::ostream& operator<<(std::ostream& o, will const& val) {
     o << "{" <<
         "topic:" << val.topic() << "," <<
         "message:" << json_like_out(val.message()) << "," <<
-        "qos:" << val.qos() << "," <<
-        "retain:" << val.retain() << "," <<
+        "qos:" << val.get_qos() << "," <<
+        "retain:" << val.get_retain() << "," <<
         "props:" << val.props() <<
         "}";
     return o;

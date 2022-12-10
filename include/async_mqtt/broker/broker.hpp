@@ -25,9 +25,9 @@
 namespace async_mqtt {
 
 
-template <std::size_t PacketIdBytes, typename... NextLayer>
+template <typename Epsp>
 class broker {
-    using epsp_t = epsp_wrap<role::server, PacketIdBytes, NextLayer...>;
+    using epsp_t = epsp_wrap<Epsp>;
 public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
@@ -52,7 +52,7 @@ private:
                                 p.client_id(),
                                 p.user_name(),
                                 p.password(),
-                                p.will(),
+                                p.get_will(),
                                 p.clean_session(),
                                 p.keep_alive(),
                                 properties{}
@@ -64,7 +64,7 @@ private:
                                 p.client_id(),
                                 p.user_name(),
                                 p.password(),
-                                p.will(),
+                                p.get_will(),
                                 p.clean_start(),
                                 p.keep_alive(),
                                 p.props()
@@ -799,7 +799,7 @@ private:
 
         auto send_pubres =
             [&] (bool authorized = true) {
-                switch (opts.qos()) {
+                switch (opts.get_qos()) {
                 case qos::at_least_once:
                     switch (epsp.get_protocol_version()) {
                     case protocol_version::v3_1_1:
@@ -919,7 +919,7 @@ private:
             *it,
             force_move(topic),
             std::forward<BufferSequence>(payload),
-            opts.qos() | opts.retain(), // remove dup flag
+            opts.get_qos() | opts.get_retain(), // remove dup flag
             force_move(forward_props)
         );
 
@@ -960,8 +960,8 @@ private:
                 auto access = security_.auth_sub_user(auth_users, ss.get_username());
                 if (access != security::authorization::type::allow) return;
 
-                pub::opts new_opts = std::min(opts.qos(), sub.opts.qos());
-                if (sub.opts.rap() == sub::rap::retain && opts.retain() == pub::retain::yes) {
+                pub::opts new_opts = std::min(opts.get_qos(), sub.opts.get_qos());
+                if (sub.opts.get_rap() == sub::rap::retain && opts.get_retain() == pub::retain::yes) {
                     new_opts |= pub::retain::yes;
                 }
 
@@ -1000,7 +1000,7 @@ private:
 
                         // If NL (no local) subscription option is set and
                         // publisher is the same as subscriber, then skip it.
-                        if (sub.opts.nl() == sub::nl::yes &&
+                        if (sub.opts.get_nl() == sub::nl::yes &&
                             sub.ss.get().client_id() ==  source_ss.client_id()) return;
                         deliver(sub.ss.get(), sub, auth_users);
                     }
@@ -1053,7 +1053,7 @@ private:
          *        received message has the retain flag set, in which case
          *        the retained message is removed.
          */
-        if (opts.retain() == pub::retain::yes) {
+        if (opts.get_retain() == pub::retain::yes) {
             if (payload.empty()) {
                 std::lock_guard<mutex> g(mtx_retains_);
                 retains_.erase(topic);
@@ -1081,7 +1081,7 @@ private:
                         force_move(topic),
                         std::forward<BufferSequence>(payload),
                         force_move(props),
-                        opts.qos(),
+                        opts.get_qos(),
                         tim_message_expiry
                     }
                 );
@@ -1365,7 +1365,7 @@ private:
             res.reserve(entries.size());
             for (auto& e : entries) {
                 if (!e || security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
-                    res.emplace_back(qos_to_suback_return_code(e.opts().qos())); // converts to granted_qos_x
+                    res.emplace_back(qos_to_suback_return_code(e.opts().get_qos())); // converts to granted_qos_x
                     ssr.get().subscribe(
                         e.sharename(),
                         e.topic(),
@@ -1376,7 +1376,7 @@ private:
                                 e.topic(),
                                 [&](retain_t const& r) {
                                     retain_deliver.emplace_back(
-                                        [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
+                                        [&publish_proc, &r, qos_value = e.opts().get_qos(), sid] {
                                             publish_proc(r, qos_value, sid);
                                         }
                                     );
@@ -1428,7 +1428,7 @@ private:
             for (auto& e : entries) {
                 if (e) {
                     if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
-                        res.emplace_back(qos_to_suback_reason_code(e.opts().qos())); // converts to granted_qos_x
+                        res.emplace_back(qos_to_suback_reason_code(e.opts().get_qos())); // converts to granted_qos_x
                         ssr.get().subscribe(
                             e.sharename(),
                             e.topic(),
@@ -1439,7 +1439,7 @@ private:
                                     e.topic(),
                                     [&](retain_t const& r) {
                                         retain_deliver.emplace_back(
-                                            [&publish_proc, &r, qos_value = e.opts().qos(), sid] {
+                                            [&publish_proc, &r, qos_value = e.opts().get_qos(), sid] {
                                                 publish_proc(r, qos_value, sid);
                                             }
                                         );
@@ -1683,7 +1683,7 @@ private:
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                             << "close cid:" << ss.client_id();
                         epsp.close(
-                            [epsp = force_move(epsp)]{
+                            [epsp]{
                                 ASYNC_MQTT_LOG("mqtt_broker", info)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                     << "closed";
@@ -1719,7 +1719,7 @@ private:
                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                     << "close cid:" << ss.client_id();
                 epsp.close(
-                    [epsp = force_move(epsp)]{
+                    [epsp]{
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                             << "closed";
@@ -1768,7 +1768,7 @@ private:
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
             epsp.close(
-                [epsp = force_move(epsp)]{
+                [epsp]{
                     ASYNC_MQTT_LOG("mqtt_broker", info)
                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                         << "closed";
@@ -1781,13 +1781,13 @@ private:
                     rc,
                     properties{}
                 },
-                [epsp = force_move(epsp)]
+                [epsp]
                 (system_error const& ec) mutable {
                     ASYNC_MQTT_LOG("mqtt_broker", info)
                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                         << ec.what();
                     epsp.close(
-                        [epsp = force_move(epsp)]{
+                        [epsp]{
                             ASYNC_MQTT_LOG("mqtt_broker", info)
                                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                 << "closed";

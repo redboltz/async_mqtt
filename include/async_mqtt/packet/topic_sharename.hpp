@@ -41,7 +41,7 @@ public:
     }
 
     operator bool() const {
-        return topic_.empty() && !sharename_.empty();
+        return !topic_.empty() || sharename_.empty();
     }
 
     friend

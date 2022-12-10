@@ -14,32 +14,48 @@
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-using basic_endpoint_variant =
-    std::variant<basic_endpoint<Role, PacketIdBytes, NextLayer>...>;
+struct basic_endpoint_variant : std::variant<basic_endpoint<Role, PacketIdBytes, NextLayer>...> {
+    using this_type = basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>;
+    using base_type = std::variant<basic_endpoint<Role, PacketIdBytes, NextLayer>...>;
+    using base_type::base_type;
+    using shared_type = std::shared_ptr<this_type>;
+    using weak_type = std::weak_ptr<this_type>;
 
-template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-using basic_endpoint_variant_sp = std::shared_ptr<basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>>;
+    static constexpr role role_value = Role;
+    static constexpr std::size_t packet_id_bytes = PacketIdBytes;
+    using packet_id_t = typename packet_id_type<packet_id_bytes>::type;
 
-template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-using basic_endpoint_variant_wp = std::weak_ptr<basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>>;
+    template <typename ActualNextLayer>
+    basic_endpoint<Role, PacketIdBytes, ActualNextLayer> const& as() const {
+        return std::get<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>(*this);
+    }
+    template <typename ActualNextLayer>
+    basic_endpoint<Role, PacketIdBytes, ActualNextLayer>& as() {
+        return std::get<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>(*this);
+    }
+
+    template <typename Actual, typename... Args>
+    static std::shared_ptr<this_type> make_shared(
+        Args&&... args
+    ) {
+        return
+            std::make_shared<this_type>(
+                Actual(std::forward<Args>(args)...)
+            );
+    }
+};
 
 template <role Role, typename... NextLayer>
 using endpoint_variant = basic_endpoint_variant<Role, 2, NextLayer...>;
 
-template <role Role, typename... NextLayer>
-using endpoint_variant_sp = std::shared_ptr<endpoint_variant<Role, NextLayer...>>;
-
-template <role Role, typename... NextLayer>
-using endpoint_variant_wp = std::weak_ptr<endpoint_variant<Role, NextLayer...>>;
-
-
-template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
+template <typename Epsp>
 class epsp_wrap {
 public:
-    using this_type = epsp_wrap<Role, PacketIdBytes, NextLayer...>;
-    using epsp_t = basic_endpoint_variant_sp<Role, PacketIdBytes, NextLayer...>;
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
-    using packet_variant_type = basic_packet_variant<PacketIdBytes>;
+    using epsp_t = Epsp;
+    using this_type = epsp_wrap<Epsp>;
+    using packet_id_t = typename epsp_t::element_type::packet_id_t;
+    static constexpr std::size_t packet_id_bytes = epsp_t::element_type::packet_id_bytes;
+    using packet_variant_type = basic_packet_variant<packet_id_bytes>;
     using weak_type = typename epsp_t::weak_type;
 
     epsp_wrap(epsp_t&& epsp)
@@ -69,14 +85,14 @@ public:
     decltype(auto) strand() const {
         return visit(
             [&](auto& ep) -> decltype(auto) {
-                return ep.stream().strand();
+                return ep.get_stream().strand();
             }
         );
     }
     decltype(auto) strand() {
         return visit(
             [&](auto& ep) -> decltype(auto) {
-                return ep.stream().strand();
+                return ep.get_stream().strand();
             }
         );
     }
@@ -176,7 +192,7 @@ public:
     template <typename CompletionToken>
     typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
     restore(
-        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
+        std::vector<basic_store_packet_variant<packet_id_bytes>> pvs,
         CompletionToken&& token
     ) {
         return visit(
@@ -192,7 +208,7 @@ public:
     template <typename CompletionToken>
     typename as::async_result<
         std::decay_t<CompletionToken>,
-        void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+        void(std::vector<basic_store_packet_variant<packet_id_bytes>>)
     >::return_type
     get_stored(
         CompletionToken&& token
@@ -259,7 +275,7 @@ public:
     }
 
     void restore(
-        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+        std::vector<basic_store_packet_variant<packet_id_bytes>> pvs
     ) {
         return visit(
             [&](auto& ep) {
@@ -268,7 +284,7 @@ public:
         );
     }
 
-    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored() const {
+    std::vector<basic_store_packet_variant<packet_id_bytes>> get_stored() const {
         return visit(
             [&](auto& ep) {
                 return ep.get_stored();

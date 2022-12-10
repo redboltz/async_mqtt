@@ -114,7 +114,7 @@ public:
                 }
             };
 
-        auto qos_value = pubopts_.qos();
+        auto qos_value = pubopts_.get_qos();
         if (qos_value == qos::at_least_once ||
             qos_value == qos::exactly_once) {
             if (auto pid_opt = epsp.acquire_unique_packet_id()) {

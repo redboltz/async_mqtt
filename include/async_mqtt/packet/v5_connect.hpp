@@ -60,7 +60,7 @@ public:
           client_id_length_buf_(2),
           keep_alive_buf_(2),
           property_length_(async_mqtt::size(props)),
-          props_{force_move(props)}
+          props_(force_move(props))
     {
         using namespace std::literals;
         endian_store(keep_alive_sec, keep_alive_buf_.data());
@@ -105,8 +105,8 @@ public:
 
         if (w) {
             connect_flags_ |= connect_flags::mask_will_flag;
-            if (w->retain() == pub::retain::yes) connect_flags_ |= connect_flags::mask_will_retain;
-            connect_flags::set_will_qos(connect_flags_, w->qos());
+            if (w->get_retain() == pub::retain::yes) connect_flags_ |= connect_flags::mask_will_retain;
+            connect_flags::set_will_qos(connect_flags_, w->get_qos());
 
 #if 0 // TBD
             utf8string_check(w->topic());
@@ -466,7 +466,7 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    constexpr std::size_t num_of_const_buffer_sequence() const {
+    std::size_t num_of_const_buffer_sequence() const {
         return
             1 +                   // fixed header
             1 +                   // remaining length
@@ -516,7 +516,7 @@ public:
         }
     }
 
-    optional<will> will() const {
+    optional<will> get_will() const {
         if (connect_flags::has_will_flag(connect_flags_)) {
             pub::opts opts =
                 connect_flags::will_retain(connect_flags_) |

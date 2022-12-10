@@ -11,7 +11,7 @@
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/packet/get_protocol_version.hpp>
 
 namespace async_mqtt {
 
@@ -27,18 +27,13 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
             return v5::connect_packet(force_move(buf));
             break;
         case protocol_version::undetermined:
-            if (buf.size() >= 7) {
-                switch (static_cast<protocol_version>(buf[6])) {
-                case protocol_version::v3_1_1:
-                    return v3_1_1::connect_packet(force_move(buf));
-                case protocol_version::v5:
-                    return v5::connect_packet(force_move(buf));
-                default:
-                    return make_error(errc::bad_message, "connect_packet protocol_version is invalid");
-                }
-            }
-            else {
-                return make_error(errc::bad_message, "connect_packet protocol_version doesn't exist");
+            switch (get_protocol_version(buf)) {
+            case protocol_version::v3_1_1:
+                return v3_1_1::connect_packet(force_move(buf));
+            case protocol_version::v5:
+                return v5::connect_packet(force_move(buf));
+            default:
+                return make_error(errc::bad_message, "connect_packet protocol_version is invalid");
             }
         } break;
     case control_packet_type::connack:
@@ -180,9 +175,11 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
         }
         break;
     default:
-        return make_error(errc::bad_message, "control_packet_type is invalid");
+        break;
     }
+    return make_error(errc::bad_message, "control_packet_type is invalid");
 }
+
 
 inline
 packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver) {

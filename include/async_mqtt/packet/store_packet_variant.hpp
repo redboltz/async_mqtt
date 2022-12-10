@@ -34,7 +34,7 @@ public:
     basic_store_packet_variant(v3_1_1::basic_publish_packet<PacketIdBytes> packet)
         :res_{
              [&] {
-                 switch (packet.opts().qos()) {
+                 switch (packet.opts().get_qos()) {
                  case qos::at_least_once:
                      return response_packet::v3_1_1_puback;
                  case qos::exactly_once:
@@ -56,7 +56,7 @@ public:
     basic_store_packet_variant(v5::basic_publish_packet<PacketIdBytes> packet)
         :res_{
              [&] {
-                 switch (packet.opts().qos()) {
+                 switch (packet.opts().get_qos()) {
                  case qos::at_least_once:
                      return response_packet::v5_puback;
                  case qos::exactly_once:

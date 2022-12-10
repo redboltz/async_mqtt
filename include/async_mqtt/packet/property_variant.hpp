@@ -580,6 +580,10 @@ property_variant make_property_variant(buffer& buf, property_location loc) {
     catch (system_error const& e) {
         return e;
     }
+    return make_error(
+        errc::bad_message,
+        "unknown error"
+    );
 }
 
 inline

@@ -38,7 +38,7 @@ public:
           entries_{force_move(params)},
           remaining_length_{PacketIdBytes + entries_.size()},
           property_length_(async_mqtt::size(props)),
-          props_{force_move(props)}
+          props_(force_move(props))
     {
         using namespace std::literals;
         endian_store(packet_id, packet_id_.data());

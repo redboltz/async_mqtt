@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     BOOST_TEST(p.clean_start());
     BOOST_TEST(p.keep_alive() == 0x1234);
     BOOST_TEST(p.client_id() == "cid1");
-    BOOST_TEST(p.will().has_value());
-    BOOST_TEST(*p.will() == w);
+    BOOST_TEST(p.get_will().has_value());
+    BOOST_TEST(*p.get_will() == w);
     BOOST_TEST(p.user_name().has_value());
     BOOST_TEST(*p.user_name() == "user1");
     BOOST_TEST(p.password().has_value());
@@ -87,8 +87,8 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(p.clean_start());
         BOOST_TEST(p.keep_alive() == 0x1234);
         BOOST_TEST(p.client_id() == "cid1");
-        BOOST_TEST(p.will().has_value());
-        BOOST_TEST(*p.will() == w);
+        BOOST_TEST(p.get_will().has_value());
+        BOOST_TEST(*p.get_will() == w);
         BOOST_TEST(p.user_name().has_value());
         BOOST_TEST(*p.user_name() == "user1");
         BOOST_TEST(p.password().has_value());

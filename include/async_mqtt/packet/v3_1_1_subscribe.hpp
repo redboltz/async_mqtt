@@ -57,7 +57,7 @@ public:
                     "v3_1_1::subscribe_packet subopts is invalid"
                 );
             }
-            switch (e.opts().qos()) {
+            switch (e.opts().get_qos()) {
             case qos::at_most_once:
             case qos::at_least_once:
             case qos::exactly_once:
@@ -168,7 +168,7 @@ public:
                     "v3_1_1::subscribe_packet subopts is invalid"
                 );
             }
-            switch (opts.qos()) {
+            switch (opts.get_qos()) {
             case qos::at_most_once:
             case qos::at_least_once:
             case qos::exactly_once:

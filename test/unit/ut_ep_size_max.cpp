@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         ioc
     };
 
-    ep.stream().next_layer().set_close_checker(
+    ep.get_stream().next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     };
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
 
     // send publish_1
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish_1_q1, wp));
         }
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     }
 
     // send publish_2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         ioc
     };
 
-    ep.stream().next_layer().set_close_checker(
+    ep.get_stream().next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         am::properties{}
     };
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         am::properties{}
     );
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             publish_1_q1,
@@ -245,10 +245,10 @@ BOOST_AUTO_TEST_CASE(client_recv) {
 
     // recv publish2
     bool close_called = false;
-    ep.stream().next_layer().set_close_checker(
+    ep.get_stream().next_layer().set_close_checker(
         [&] { close_called = true; }
     );
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         ioc
     };
 
-    ep.stream().next_layer().set_close_checker(
+    ep.get_stream().next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         am::properties{}
     };
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     }
 
     // send connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         am::properties{}
     );
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             publish_1_q1,
@@ -373,10 +373,10 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv publish2
     bool close_called = false;
-    ep.stream().next_layer().set_close_checker(
+    ep.get_stream().next_layer().set_close_checker(
         [&] { close_called = true; }
     );
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));

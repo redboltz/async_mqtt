@@ -54,7 +54,7 @@ public:
           remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
-              + (  (pubopts.qos() == qos::at_least_once || pubopts.qos() == qos::exactly_once)
+              + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
           )
@@ -80,7 +80,7 @@ public:
         for (auto e : rb) {
             remaining_length_buf_.push_back(e);
         }
-        switch (pubopts.qos()) {
+        switch (pubopts.get_qos()) {
         case qos::at_most_once:
             endian_store(0, packet_id_.data());
             break;

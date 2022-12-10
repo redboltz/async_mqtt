@@ -60,7 +60,7 @@ public:
           remaining_length_(
               2                      // topic name length
               + topic_name_.size()   // topic name
-              + (  (pubopts.qos() == qos::at_least_once || pubopts.qos() == qos::exactly_once)
+              + (  (pubopts.get_qos() == qos::at_least_once || pubopts.get_qos() == qos::exactly_once)
                  ? PacketIdBytes // packet_id
                  : 0)
           )
@@ -106,8 +106,8 @@ public:
             remaining_length_buf_.push_back(e);
         }
 
-        if (pubopts.qos() == qos::at_least_once ||
-            pubopts.qos() == qos::exactly_once) {
+        if (pubopts.get_qos() == qos::at_least_once ||
+            pubopts.get_qos() == qos::exactly_once) {
             endian_store(packet_id, packet_id_.data());
         }
         else {

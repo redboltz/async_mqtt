@@ -28,8 +28,8 @@ public:
     template <typename Packet>
     bool add(Packet const& packet) {
         if constexpr(is_publish<Packet>()) {
-            if (packet.opts().qos() == qos::at_least_once ||
-                packet.opts().qos() == qos::exactly_once) {
+            if (packet.opts().get_qos() == qos::at_least_once ||
+                packet.opts().get_qos() == qos::exactly_once) {
                 return elems_.push_back(packet).second;
             }
         }

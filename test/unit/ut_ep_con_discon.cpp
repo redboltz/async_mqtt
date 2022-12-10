@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(puback, wp));
         }
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrec, wp));
         }
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel, wp));
         }
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubcomp, wp));
         }
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(subscribe, wp));
         }
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(unsubscribe, wp));
         }
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pingreq, wp));
         }
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
 
     // send disconnect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     }
 
     // send disconnect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack
@@ -371,7 +371,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     // compile error as expected
 #if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
 #endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
     // runtime error due to connot send packet
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -434,7 +434,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -444,7 +444,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     }
 
     // runtime error due to send before sending connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -465,7 +465,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -475,7 +475,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -495,7 +495,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -505,7 +505,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -525,7 +525,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -536,7 +536,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     }
 
     // runtime error due to send before receiving connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -577,7 +577,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -597,7 +597,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -607,7 +607,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -617,7 +617,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -637,7 +637,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // runtime error due to send before receiving connack with not_authorized
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -647,7 +647,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -657,7 +657,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -667,7 +667,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -677,7 +677,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -697,7 +697,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -707,7 +707,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -797,7 +797,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -812,7 +812,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     }
 
     // send connack
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -826,7 +826,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     BOOST_TEST(ep1.register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -836,7 +836,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(puback, wp));
         }
@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrec, wp));
         }
@@ -856,7 +856,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel, wp));
         }
@@ -866,7 +866,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubcomp, wp));
         }
@@ -876,7 +876,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(suback, wp));
         }
@@ -886,7 +886,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(unsuback, wp));
         }
@@ -896,7 +896,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pingresp, wp));
         }
@@ -913,7 +913,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
-    ep2.stream().next_layer().set_recv_packets(
+    ep2.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -928,7 +928,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     }
 
     // send connack
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -942,7 +942,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     BOOST_TEST(ep2.register_packet_id(0x1, as::use_future).get());
 
     // send publish behalf of valid packets
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -1051,7 +1051,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -1063,7 +1063,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     // compile error as expected
 #if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1073,7 +1073,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1083,7 +1083,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1093,7 +1093,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1106,7 +1106,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
 #endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
     // runtime error due to connot send packet
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1116,7 +1116,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1126,7 +1126,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1136,7 +1136,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1147,7 +1147,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     }
 
     // runtime error due to send before receiving connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1157,7 +1157,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1177,7 +1177,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1187,7 +1187,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1197,7 +1197,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1207,7 +1207,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1217,7 +1217,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1234,7 +1234,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     }
 
     // runtime error due to send before sending connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1244,7 +1244,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1254,7 +1254,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1264,7 +1264,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1274,7 +1274,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1284,7 +1284,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1294,7 +1294,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1304,7 +1304,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1315,7 +1315,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     }
 
     // send connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -1329,7 +1329,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // runtime error due to send before receiving connack with not_authorized
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1339,7 +1339,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1349,7 +1349,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1359,7 +1359,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1369,7 +1369,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1379,7 +1379,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1389,7 +1389,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1399,7 +1399,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1512,7 +1512,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -1523,7 +1523,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1534,7 +1534,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     }
 
     // send auth packet that can be sent before connack receiving
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(auth, wp));
         }
@@ -1554,7 +1554,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(auth, wp));
         }
@@ -1564,7 +1564,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -1574,7 +1574,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(puback, wp));
         }
@@ -1584,7 +1584,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrec, wp));
         }
@@ -1594,7 +1594,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel, wp));
         }
@@ -1604,7 +1604,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubcomp, wp));
         }
@@ -1614,7 +1614,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(subscribe, wp));
         }
@@ -1624,7 +1624,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(unsubscribe, wp));
         }
@@ -1634,7 +1634,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pingreq, wp));
         }
@@ -1646,7 +1646,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
 
     // send disconnect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
@@ -1663,7 +1663,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1680,7 +1680,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     }
 
     // send disconnect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
@@ -1817,7 +1817,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack
@@ -1829,7 +1829,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     // compile error as expected
 #if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1839,7 +1839,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1849,7 +1849,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1859,7 +1859,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1872,7 +1872,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
 #endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
     // runtime error due to connot send packet
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1882,7 +1882,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1892,7 +1892,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1902,7 +1902,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1913,7 +1913,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     }
 
     // runtime error due to send before sending connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1923,7 +1923,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1933,7 +1933,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1943,7 +1943,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1953,7 +1953,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1963,7 +1963,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1973,7 +1973,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1983,7 +1983,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1993,7 +1993,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2004,7 +2004,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -2015,7 +2015,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     }
 
     // runtime error due to send before receiving connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2025,7 +2025,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2035,7 +2035,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2045,7 +2045,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2055,7 +2055,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2065,7 +2065,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2075,7 +2075,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2085,7 +2085,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2105,7 +2105,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // runtime error due to send before receiving connack with not_authorized
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2115,7 +2115,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2125,7 +2125,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2135,7 +2135,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2145,7 +2145,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2155,7 +2155,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2165,7 +2165,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2175,7 +2175,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2293,7 +2293,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -2308,7 +2308,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     }
 
     // send auth
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(auth, wp));
         }
@@ -2319,7 +2319,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     }
 
     // send connack
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -2333,7 +2333,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     BOOST_TEST(ep1.register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(auth, wp));
         }
@@ -2343,7 +2343,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -2353,7 +2353,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(puback, wp));
         }
@@ -2363,7 +2363,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrec, wp));
         }
@@ -2373,7 +2373,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel, wp));
         }
@@ -2383,7 +2383,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubcomp, wp));
         }
@@ -2393,7 +2393,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(suback, wp));
         }
@@ -2403,7 +2403,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(unsuback, wp));
         }
@@ -2413,7 +2413,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(!ec);
     }
 
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pingresp, wp));
         }
@@ -2430,7 +2430,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
-    ep2.stream().next_layer().set_recv_packets(
+    ep2.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -2445,7 +2445,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     }
 
     // send connack
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -2459,7 +2459,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     BOOST_TEST(ep2.register_packet_id(0x1, as::use_future).get());
 
     // send publish behalf of valid packets
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish, wp));
         }
@@ -2596,7 +2596,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect
@@ -2608,7 +2608,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     // compile error as expected
 #if defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2618,7 +2618,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2628,7 +2628,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2638,7 +2638,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2651,7 +2651,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
 #endif // defined(ASYNC_MQTT_TEST_COMPILE_ERROR)
 
     // runtime error due to connot send packet
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2661,7 +2661,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2671,7 +2671,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2681,7 +2681,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2692,7 +2692,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     }
 
     // runtime error due to send before receiving connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2702,7 +2702,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2712,7 +2712,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2722,7 +2722,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2732,7 +2732,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2742,7 +2742,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2752,7 +2752,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2762,7 +2762,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2772,7 +2772,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2789,7 +2789,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     }
 
     // runtime error due to send before sending connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2799,7 +2799,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2809,7 +2809,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2819,7 +2819,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2829,7 +2829,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2839,7 +2839,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2849,7 +2849,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2859,7 +2859,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2870,7 +2870,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     }
 
     // send connack
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
@@ -2884,7 +2884,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     BOOST_TEST(ep.register_packet_id(0x1, as::use_future).get());
 
     // runtime error due to send before receiving connack with not_authorized
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2894,7 +2894,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2904,7 +2904,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2914,7 +2914,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2924,7 +2924,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2934,7 +2934,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2944,7 +2944,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -2954,7 +2954,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }

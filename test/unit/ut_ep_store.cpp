@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         am::connect_return_code::accepted
     };
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack_sp_false,
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         *pid_opt3
     );
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             close,
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     );
 
     // send publish0
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish0, wp));
         }
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send publish1
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish1, wp));
         }
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send publish2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish2, wp));
         }
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     std::size_t index = 0;
     std::promise<void> p;
     auto f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send pubrel2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel2, wp));
         }
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send pubrel3
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
 
     // recv connack_sp_false
     index = 0;
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
 
     // send connack_sp_false
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack_sp_false, wp));
         }
@@ -462,13 +462,13 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
         *pid_opt3
     );
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             close,
         }
     );
-    ep2.stream().next_layer().set_recv_packets(
+    ep2.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
@@ -476,14 +476,14 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
             close,
         }
     );
-    ep3.stream().next_layer().set_recv_packets(
+    ep3.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
             close,
         }
     );
-    ep4.stream().next_layer().set_recv_packets(
+    ep4.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_clean,
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     );
 
     // send publish0
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish0, wp));
         }
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
 
     // send publish1
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish1, wp));
         }
@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
 
     // send publish2
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish2, wp));
         }
@@ -545,7 +545,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     std::size_t index = 0;
     std::promise<void> p;
     auto f = p.get_future();
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -583,7 +583,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
 
     // send pubrel2
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel2, wp));
         }
@@ -594,7 +594,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     }
 
     // send pubrel3
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep3.stream().next_layer().set_write_packet_checker(
+    ep3.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -678,7 +678,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep4.stream().next_layer().set_write_packet_checker(
+    ep4.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -747,7 +747,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack_sp_false,
@@ -755,7 +755,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -819,7 +819,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         *pid_opt3
     );
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             close,
@@ -833,7 +833,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     );
 
     // send publish0
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish0, wp));
         }
@@ -844,7 +844,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send publish1
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish1, wp));
         }
@@ -855,7 +855,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send publish2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish2, wp));
         }
@@ -872,7 +872,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -886,7 +886,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     std::size_t index = 0;
     std::promise<void> p;
     auto f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -916,7 +916,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send pubrel2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel2, wp));
         }
@@ -927,7 +927,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send pubrel3
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
@@ -944,7 +944,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -958,7 +958,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -991,7 +991,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1003,7 +1003,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
 
     // recv connack_sp_false
     index = 0;
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
@@ -1088,7 +1088,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
@@ -1102,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
 
     // send connack_sp_false
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack_sp_false, wp));
         }
@@ -1160,13 +1160,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         *pid_opt3
     );
 
-    ep1.stream().next_layer().set_recv_packets(
+    ep1.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             close,
         }
     );
-    ep2.stream().next_layer().set_recv_packets(
+    ep2.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
@@ -1174,14 +1174,14 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             close,
         }
     );
-    ep3.stream().next_layer().set_recv_packets(
+    ep3.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_no_clean,
             close,
         }
     );
-    ep4.stream().next_layer().set_recv_packets(
+    ep4.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connect_clean,
@@ -1189,7 +1189,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     );
 
     // send publish0
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish0, wp));
         }
@@ -1200,7 +1200,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
 
     // send publish1
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish1, wp));
         }
@@ -1211,7 +1211,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
 
     // send publish2
-    ep1.stream().next_layer().set_write_packet_checker(
+    ep1.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish2, wp));
         }
@@ -1243,7 +1243,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     std::size_t index = 0;
     std::promise<void> p;
     auto f = p.get_future();
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -1282,7 +1282,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
 
     // send pubrel2
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel2, wp));
         }
@@ -1293,7 +1293,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
 
     // send pubrel3
-    ep2.stream().next_layer().set_write_packet_checker(
+    ep2.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
@@ -1325,7 +1325,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep3.stream().next_layer().set_write_packet_checker(
+    ep3.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -1377,7 +1377,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep4.stream().next_layer().set_write_packet_checker(
+    ep4.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -1448,7 +1448,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             connack_sp_false,
@@ -1456,7 +1456,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1540,7 +1540,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         *pid_opt3
     );
 
-    ep.stream().next_layer().set_recv_packets(
+    ep.get_stream().next_layer().set_recv_packets(
         {
             // receive packets
             close,
@@ -1554,7 +1554,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
 
     // send publish0
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish0, wp));
         }
@@ -1565,7 +1565,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send publish1
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish1, wp));
         }
@@ -1576,7 +1576,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send publish2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish2, wp));
         }
@@ -1593,7 +1593,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1607,7 +1607,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     std::size_t index = 0;
     std::promise<void> p;
     auto f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -1637,7 +1637,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send pubrel2
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel2, wp));
         }
@@ -1648,7 +1648,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send pubrel3
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(pubrel3, wp));
         }
@@ -1665,7 +1665,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1679,7 +1679,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     index = 0;
     p = std::promise<void>();
     f = p.get_future();
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
@@ -1712,7 +1712,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     }
 
     // send connect
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
@@ -1724,7 +1724,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     // recv connack_sp_false
     index = 0;
-    ep.stream().next_layer().set_write_packet_checker(
+    ep.get_stream().next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }

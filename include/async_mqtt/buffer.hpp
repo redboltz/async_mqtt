@@ -184,12 +184,12 @@ public:
         view_.remove_suffix(n);
     }
 
-    constexpr void swap(buffer& buf) noexcept {
+    void swap(buffer& buf) noexcept {
         view_.swap(buf.view_);
         life_.swap(buf.life_);
     }
 
-    constexpr size_type copy(char* dest, size_type count, size_type pos = 0 ) const {
+    size_type copy(char* dest, size_type count, size_type pos = 0 ) const {
         return view_.copy(dest, count, pos);
     }
 
@@ -449,7 +449,8 @@ inline buffer allocate_buffer(Iterator b, Iterator e) {
     auto size = static_cast<std::size_t>(std::distance(b, e));
     auto spa = make_shared_ptr_array(size);
     std::copy(b, e, spa.get());
-    return buffer(spa.get(), size, force_move(spa));
+    auto p = spa.get();
+    return buffer(p, size, force_move(spa));
 }
 
 /**

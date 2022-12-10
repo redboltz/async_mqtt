@@ -39,7 +39,7 @@ public:
           entries_{force_move(params)},
           remaining_length_{PacketIdBytes},
           property_length_(async_mqtt::size(props)),
-          props_{force_move(props)}
+          props_(force_move(props))
     {
         using namespace std::literals;
         topic_length_buf_entries_.reserve(entries_.size());

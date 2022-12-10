@@ -60,13 +60,13 @@ struct opts final {
     constexpr opts& operator|=(nl rhs)                { return (*this = (*this | rhs)); }
     constexpr opts& operator|=(qos rhs)               { return (*this = (*this | rhs)); }
 
-    constexpr retain_handling retain_handling() const
+    constexpr retain_handling get_retain_handling() const
     { return static_cast<enum retain_handling>(data_ & 0b00110000); }
-    constexpr rap rap() const
+    constexpr rap get_rap() const
     { return static_cast<enum rap>(data_ & 0b00001000); }
-    constexpr nl nl() const
+    constexpr nl get_nl() const
     { return static_cast<enum nl>(data_ & 0b00000100); }
-    constexpr qos qos() const
+    constexpr qos get_qos() const
     { return static_cast<enum qos>(data_ & 0b00000011); }
 
     explicit constexpr operator std::uint8_t() const { return data_; }
