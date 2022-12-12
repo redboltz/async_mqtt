@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(ASYNC_MQTT_USE_TLS "Enable building TLS code" OFF)
+option(ASYNC_MQTT_USE_WS "Enable building WebSockets code" OFF)
 option(ASYNC_MQTT_BUILD_TESTS "Enable building test applications" ON)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" ON)
 OPTION(ASYNC_MQTT_USE_LOG "Enable building logging code" OFF)

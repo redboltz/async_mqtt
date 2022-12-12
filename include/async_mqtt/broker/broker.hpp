@@ -39,6 +39,13 @@ public:
         async_read_packet(force_move(epsp));
     }
 
+    /**
+     * @brief configure the security settings
+     */
+    void set_security(security&& sec) {
+        security_ = force_move(sec);
+    }
+
 private:
     void async_read_packet(epsp_t epsp) {
         epsp.recv(
