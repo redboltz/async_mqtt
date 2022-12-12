@@ -77,8 +77,8 @@ as::ssl::context init_ctx() {
     return ctx;
 }
 
-template<typename Server>
-void reload_ctx(Server& server,
+template<typename Context>
+void reload_ctx(Context& ctx,
                 as::steady_timer& reload_timer,
                 std::string const& certificate_filename,
                 std::string const& key_filename,
@@ -92,7 +92,7 @@ void reload_ctx(Server& server,
         reload_timer.expires_after(std::chrono::hours(certificate_reload_interval));
         reload_timer.async_wait(
             [
-                &server,
+                &ctx,
                 &reload_timer,
                 certificate_filename,
                 key_filename,
@@ -104,7 +104,7 @@ void reload_ctx(Server& server,
                 BOOST_ASSERT(!e || e == as::error::operation_aborted);
                 if (!e) {
                     reload_ctx(
-                        server,
+                        ctx,
                         reload_timer,
                         certificate_filename,
                         key_filename,
@@ -147,12 +147,12 @@ void reload_ctx(Server& server,
         context.load_verify_file(*verify_file);
     }
 
-    server.get_ssl_context() = am::force_move(context);
+    ctx = am::force_move(context);
 }
 
-template<typename Server>
+template<typename Context>
 void load_ctx(
-    Server& server,
+    Context& ctx,
     as::steady_timer& reload_timer,
     boost::program_options::variables_map const& vm,
     char const* name
@@ -166,7 +166,7 @@ void load_ctx(
         verify_file = vm["verify_file"].as<std::string>();
     }
     reload_ctx(
-        server,
+        ctx,
         reload_timer,
         vm["certificate"].as<std::string>(),
         vm["private_key"].as<std::string>(),
@@ -303,7 +303,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         epsp->as<am::protocol::mqtt>().get_stream().lowest_layer(),
                         [&mqtt_async_accept, &brk, epsp]
                         (boost::system::error_code const& ec) mutable {
-                            std::cout << "accept: " << ec.message() << std::endl;
                             if (ec) return;
                             brk.handle_accept(epsp);
                             mqtt_async_accept();
@@ -321,7 +320,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         std::function<void()> ws_async_accept;
         if (vm.count("ws.port")) {
             ws_endpoint.emplace(as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>());
-            ws_ac.emplace(accept_ioc, ws_endpoint);
+            ws_ac.emplace(accept_ioc, *ws_endpoint);
             ws_async_accept =
                 [&] {
                     auto epsp =
@@ -329,11 +328,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol_version::undetermined,
                             am::protocol::ws{con_ioc_getter().get_executor()}
                         );
-                    ws_ac.async_accept(
+                    ws_ac->async_accept(
                         epsp->as<am::protocol::ws>().get_stream().lowest_layer(),
                         [&ws_async_accept, &brk, epsp]
                         (boost::system::error_code const& ec) mutable {
-                            std::cout << "accept: " << ec.message() << std::endl;
                             if (ec) {
                                 ws_async_accept();
                                 return;
@@ -341,7 +339,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             epsp->as<am::protocol::ws>().get_stream().next_layer().async_accept(
                                 [&ws_async_accept, &brk, epsp]
                                 (boost::system::error_code const& ec) mutable {
-                                    std::cout << "accept: " << ec.message() << std::endl;
                                     if (ec) return;
                                     brk.handle_accept(force_move(epsp));
                                     ws_async_accept();
@@ -358,6 +355,71 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
 #if defined(ASYNC_MQTT_USE_TLS)
         // mqtts (MQTT on TLS TCP
+        am::optional<as::ip::tcp::endpoint> mqtts_endpoint;
+        am::optional<as::ip::tcp::acceptor> mqtts_ac;
+        std::function<void()> mqtts_async_accept;
+        am::optional<as::steady_timer> mqtts_timer;
+        auto ctx = init_ctx();
+        mqtts_timer.emplace(accept_ioc);
+        auto verify_field_obj =
+            std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
+                OBJ_txt2obj(vm["verify_field"].as<std::string>().c_str(), 0),
+                &ASN1_OBJECT_free
+            );
+        if (!verify_field_obj) {
+            throw std::runtime_error(
+                "An invalid verify field was specified: " +
+                vm["verify_field"].as<std::string>()
+            );
+        }
+        load_ctx(ctx, mqtts_timer.value(), vm, "TLS");
+        if (vm.count("tls.port")) {
+            mqtts_endpoint.emplace(as::ip::tcp::v4(), vm["tls.port"].as<std::uint16_t>());
+            mqtts_ac.emplace(accept_ioc, *mqtts_endpoint);
+            mqtts_async_accept =
+                [&] {
+                    auto epsp =
+                        epv_t::make_shared<am::endpoint<am::role::server, am::protocol::mqtts>>(
+                            am::protocol_version::undetermined,
+                            am::protocol::mqtts{con_ioc_getter().get_executor(), ctx}
+                        );
+
+                    mqtts_ac->async_accept(
+                        epsp->as<am::protocol::mqtts>().get_stream().lowest_layer(),
+                        [&mqtts_async_accept, &brk, epsp, &ctx, &vm]
+                        (boost::system::error_code const& ec) mutable {
+                            if (ec) return;
+                            // TBD insert underlying timeout here
+                            auto username = std::make_shared<am::optional<std::string>>(); // shared_ptr for username
+                            ctx.set_verify_mode(as::ssl::verify_peer);
+                            ctx.set_verify_callback(
+                                [username, &vm] // copy capture socket shared_ptr
+                                (bool preverified, boost::asio::ssl::verify_context& ctx) {
+                                    // user can set username in the callback
+                                    return
+                                        verify_certificate(
+                                            vm["verify_field"].as<std::string>(),
+                                            preverified,
+                                            ctx,
+                                            username
+                                        );
+                                }
+                            );
+                            epsp->as<am::protocol::mqtts>().get_stream().next_layer().async_handshake(
+                                as::ssl::stream_base::server,
+                                [&brk, epsp]
+                                (boost::system::error_code const& ec) {
+                                    if (ec) return;
+                                    brk.handle_accept(epsp);
+                                }
+                            );
+                            mqtts_async_accept();
+                        }
+                    );
+                };
+
+            mqtts_async_accept();
+        }
 
 #if defined(ASYNC_MQTT_USE_WS)
         // wss (MQTT on WebScoket TLS TCP

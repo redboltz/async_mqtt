@@ -24,6 +24,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_TLS}>:ASYNC_MQTT_USE_TLS>)
+target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_TLS}>:ASYNC_MQTT_USE_WS>)
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_STR_CHECK}>:ASYNC_MQTT_USE_STR_CHECK>)
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_LOG}>:ASYNC_MQTT_USE_LOG>)
 

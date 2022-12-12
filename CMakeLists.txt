@@ -49,6 +49,12 @@ else()
     message(STATUS "TLS disabled")
 endif()
 
+if(ASYNC_MQTT_USE_WS)
+    message(STATUS "WS enabled")
+else()
+    message(STATUS "WS disabled")
+endif()
+
 set(ASYNC_MQTT_BOOST_COMPONENTS)
 if(ASYNC_MQTT_USE_LOG)
     message(STATUS "Logging enabled")
