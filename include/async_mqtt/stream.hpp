@@ -322,13 +322,54 @@ private:
         this_type& strm;
         Packet packet;
         error_code last_ec = error_code{};
-        enum { dispatch, post, write, bind, complete } state = dispatch;
+        enum { post, write, bind, complete } state = post;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case post: {
+                state = write;
+                auto& a_strm{strm};
+                a_strm.queue_->post(
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
+                );
+                if (a_strm.queue_->stopped()) {
+                    a_strm.queue_->restart();
+                    a_strm.queue_->poll_one();
+                }
+            } break;
+            case write: {
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                state = bind;
+                BOOST_ASSERT(!strm.writing_);
+                strm.writing_ = true;
+                auto& a_strm{strm};
+                auto cbs = packet.const_buffer_sequence();
+                async_write(
+                    a_strm.nl_,
+                    cbs,
+                    as::bind_executor(
+                        a_strm.strand_,
+                        force_move(self)
+                    )
+                );
+            } break;
+            default:
+                BOOST_ASSERT(false);
+                break;
+            }
+        }
 
         template <typename Self>
         void operator()(
             Self& self,
-            error_code const& ec = error_code{},
-            std::size_t bytes_transferred = 0
+            error_code const& ec,
+            std::size_t bytes_transferred
         ) {
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
@@ -346,43 +387,9 @@ private:
                 return;
             }
             switch (state) {
-            case dispatch: {
-                state = post;
-                auto& a_strm{strm};
-                as::dispatch(
-                    a_strm.strand_,
-                    force_move(self)
-                );
-            } break;
-            case post: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                state = write;
-                auto& a_strm{strm};
-                as::post(
-                    a_strm.strand_,
-                    force_move(self)
-                );
-                if (a_strm.queue_->stopped()) {
-                    a_strm.queue_->restart();
-                    a_strm.queue_->poll_one();
-                }
-            } break;
-            case write: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                state = bind;
-                auto& a_strm{strm};
-                auto cbs = packet.const_buffer_sequence();
-                async_write(
-                    a_strm.nl_,
-                    cbs,
-                    as::bind_executor(
-                        a_strm.strand_,
-                        force_move(self)
-                    )
-                );
-            } break;
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                strm.writing_ = false;
                 strm.queue_->poll_one();
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
@@ -401,6 +408,9 @@ private:
                 else {
                     self.complete(last_ec, bytes_transferred);
                 }
+                break;
+            default:
+                BOOST_ASSERT(false);
                 break;
             }
         }
@@ -450,6 +460,7 @@ public:
     strand_type strand_{nl_.get_executor()};
     optional<as::io_context> queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
+    bool writing_ = false;
 };
 
 } // namespace async_mqtt
