@@ -322,7 +322,7 @@ private:
         this_type& strm;
         Packet packet;
         error_code last_ec = error_code{};
-        enum { initiate, write, bind, complete } state = initiate;
+        enum { dispatch, post, write, bind, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -346,7 +346,16 @@ private:
                 return;
             }
             switch (state) {
-            case initiate: {
+            case dispatch: {
+                state = post;
+                auto& a_strm{strm};
+                as::dispatch(
+                    a_strm.strand_,
+                    force_move(self)
+                );
+            } break;
+            case post: {
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = write;
                 auto& a_strm{strm};
                 as::post(
@@ -385,6 +394,7 @@ private:
                 self.complete(ec, bytes_transferred);
             } break;
             case complete:
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 if (last_ec) {
                     self.complete(last_ec, 0);
                 }
