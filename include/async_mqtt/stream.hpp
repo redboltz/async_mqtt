@@ -322,14 +322,23 @@ private:
         this_type& strm;
         Packet packet;
         error_code last_ec = error_code{};
-        enum { post, write, bind, complete } state = post;
+        enum { dispatch, post, write, bind, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
             switch (state) {
+            case dispatch: {
+                state = post;
+                auto& a_strm{strm};
+                as::dispatch(
+                    a_strm.strand_,
+                    force_move(self)
+                );
+            } break;
             case post: {
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = write;
                 auto& a_strm{strm};
                 a_strm.queue_->post(
