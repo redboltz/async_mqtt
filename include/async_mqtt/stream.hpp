@@ -147,6 +147,7 @@ private:
         std::uint32_t rl = 0;
         shared_ptr_array spa;
         error_code last_ec;
+        optional<as::executor_work_guard<as::io_context::executor_type>> queue_work_guard = nullopt;
 
         enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
 
@@ -168,6 +169,7 @@ private:
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
                 strm.reading_ = true;
+                queue_work_guard.emplace(strm.queue_->get_executor());
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
