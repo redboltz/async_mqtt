@@ -364,13 +364,14 @@ private: // compose operation impl
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = complete;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.pid_man_.acquire_unique_id());
@@ -389,13 +390,14 @@ private: // compose operation impl
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = complete;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.pid_man_.register_id(packet_id));
@@ -414,13 +416,14 @@ private: // compose operation impl
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = complete;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 ep.pid_man_.release_id(packet_id);
@@ -449,13 +452,14 @@ private: // compose operation impl
             }
 
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = write;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case write: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
@@ -464,7 +468,8 @@ private: // compose operation impl
                         overload {
                             [&](auto& actual_packet) {
                                 if (process_send_packet(self, actual_packet)) {
-                                    ep.stream_->write_packet(
+                                    auto& a_ep{ep};
+                                    a_ep.stream_->write_packet(
                                         force_move(actual_packet),
                                         force_move(self)
                                     );
@@ -480,13 +485,15 @@ private: // compose operation impl
                 }
                 else {
                     if (process_send_packet(self, packet)) {
-                        ep.stream_->write_packet(
-                            force_move(packet),
+                        auto& a_ep{ep};
+                        auto& a_packet{packet};
+                        a_ep.stream_->write_packet(
+                            force_move(a_packet),
                             force_move(self)
                         );
                         if constexpr(is_connack<Packet>()) {
                             // server send connack after connack sent
-                            ep.send_stored();
+                            a_ep.send_stored();
                         }
                     }
                 }
@@ -951,10 +958,11 @@ private: // compose operation impl
             }
 
             switch (state) {
-            case initiate:
+            case initiate: {
                 state = complete;
-                ep.stream_->read_packet(force_move(self));
-                break;
+                auto& a_ep{ep};
+                a_ep.stream_->read_packet(force_move(self));
+            } break;
             case complete: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 if (buf.size() > ep.maximum_packet_size_recv_) {
@@ -967,7 +975,8 @@ private: // compose operation impl
                             "too large packet received"
                         )
                     );
-                    ep.send(
+                    auto& a_ep{ep};
+                    a_ep.send(
                         v5::disconnect_packet{
                             disconnect_reason_code::packet_too_large
                         },
@@ -1099,7 +1108,8 @@ private: // compose operation impl
                                             "receive maximum exceeded"
                                         )
                                     );
-                                    ep.send(
+                                    auto& a_ep{ep};
+                                    a_ep.send(
                                         v5::disconnect_packet{
                                             disconnect_reason_code::receive_maximum_exceeded
                                         },
@@ -1125,7 +1135,8 @@ private: // compose operation impl
                                             "receive maximum exceeded"
                                         )
                                     );
-                                    ep.send(
+                                    auto& a_ep{ep};
+                                    a_ep.send(
                                         v5::disconnect_packet{
                                             disconnect_reason_code::receive_maximum_exceeded
                                         },
@@ -1153,7 +1164,8 @@ private: // compose operation impl
                                                 "topic alias invalid"
                                             )
                                         );
-                                        ep.send(
+                                        auto& a_ep{ep};
+                                        a_ep.send(
                                             v5::disconnect_packet{
                                                 disconnect_reason_code::topic_alias_invalid
                                             },
@@ -1175,7 +1187,8 @@ private: // compose operation impl
                                                     "topic alias invalid"
                                                 )
                                             );
-                                            ep.send(
+                                            auto& a_ep{ep};
+                                            a_ep.send(
                                                 v5::disconnect_packet{
                                                     disconnect_reason_code::topic_alias_invalid
                                                 },
@@ -1199,7 +1212,8 @@ private: // compose operation impl
                                             "topic alias invalid"
                                         )
                                     );
-                                    ep.send(
+                                    auto& a_ep{ep};
+                                    a_ep.send(
                                         v5::disconnect_packet{
                                             disconnect_reason_code::topic_alias_invalid
                                         },
@@ -1219,7 +1233,8 @@ private: // compose operation impl
                                                 "topic alias invalid"
                                             )
                                         );
-                                        ep.send(
+                                        auto& a_ep{ep};
+                                        a_ep.send(
                                             v5::disconnect_packet{
                                                 disconnect_reason_code::topic_alias_invalid
                                             },
@@ -1381,7 +1396,8 @@ private: // compose operation impl
         ) {
             BOOST_ASSERT(state == disconnect);
             state = close;
-            ep.close(force_move(self));
+            auto& a_ep{ep};
+            a_ep.close(force_move(self));
         }
 
         void send_publish_from_queue() {
@@ -1429,7 +1445,8 @@ private: // compose operation impl
             }
             if (already_handled) {
                 // do the next read
-                ep.stream_->read_packet(force_move(self));
+                auto& a_ep{ep};
+                a_ep.stream_->read_packet(force_move(self));
             }
         }
     };
@@ -1444,10 +1461,11 @@ private: // compose operation impl
             error_code const& = error_code{}
         ) {
             switch (state) {
-            case initiate:
+            case initiate: {
                 state = complete;
-                ep.stream_->close(force_move(self));
-                break;
+                auto& a_ep{ep};
+                a_ep.stream_->close(force_move(self));
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete();
@@ -1466,13 +1484,14 @@ private: // compose operation impl
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = complete;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 ep.restore(force_move(pvs));
@@ -1491,13 +1510,14 @@ private: // compose operation impl
             Self& self
         ) {
             switch (state) {
-            case dispatch:
+            case dispatch: {
                 state = complete;
+                auto& a_ep{ep};
                 as::dispatch(
-                    ep.strand(),
+                    a_ep.strand(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.get_stored());
