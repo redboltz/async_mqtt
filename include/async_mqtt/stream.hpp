@@ -222,6 +222,26 @@ private:
             }
 
             switch (state) {
+            case header:
+                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(bytes_transferred == 1);
+                state = remaining_length;
+                ++received;
+                // read the first remaining_length
+                {
+                    auto address = &strm.header_remaining_length_buf_[received];
+                    strm.reading_ = true;
+                    auto& a_strm{strm};
+                    async_read(
+                        a_strm.nl_,
+                        as::buffer(address, 1),
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
+                    );
+                }
+                break;
             case remaining_length:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 BOOST_ASSERT(bytes_transferred == 1);
