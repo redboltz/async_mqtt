@@ -70,7 +70,17 @@ struct stub_socket {
         auto buf = allocate_buffer(it, end);
         auto pv = buffer_to_packet_variant(buf, version_);
         if (write_packet_checker_) write_packet_checker_(pv);
-        token(boost::system::error_code{}, std::distance(it, end));
+        ioc_.post(
+            [token = std::forward<CompletionToken>(token), dis = std::distance(it, end)] () mutable {
+                auto exe = as::get_associated_executor(token);
+                as::dispatch(
+                    exe,
+                    [token = force_move(token), dis] () mutable {
+                        token(boost::system::error_code{}, dis);
+                    }
+                );
+            }
+        );
     }
 
     template <typename MutableBufferSequence, typename CompletionToken>

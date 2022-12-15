@@ -44,6 +44,7 @@ list(APPEND check_PROGRAMS
     ut_ep_recv_max.cpp
     ut_ep_size_max.cpp
     ut_ep_store.cpp
+    ut_strm.cpp
 )
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS unit_test_framework)

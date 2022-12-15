@@ -322,6 +322,7 @@ private:
         this_type& strm;
         Packet packet;
         error_code last_ec = error_code{};
+        optional<as::executor_work_guard<as::io_context::executor_type>> queue_work_guard = nullopt;
         enum { dispatch, post, write, bind, complete } state = dispatch;
 
         template <typename Self>
@@ -357,6 +358,7 @@ private:
                 state = bind;
                 BOOST_ASSERT(!strm.writing_);
                 strm.writing_ = true;
+                queue_work_guard.emplace(strm.queue_->get_executor());
                 auto& a_strm{strm};
                 auto cbs = packet.const_buffer_sequence();
                 async_write(
