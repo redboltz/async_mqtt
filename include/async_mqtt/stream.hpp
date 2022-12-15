@@ -147,7 +147,6 @@ private:
         std::uint32_t rl = 0;
         shared_ptr_array spa;
         error_code last_ec;
-        optional<as::executor_work_guard<as::io_context::executor_type>> queue_work_guard = nullopt;
 
         enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
 
@@ -168,8 +167,6 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
-                queue_work_guard.emplace(strm.queue_->get_executor());
-                strm.reading_ = true;
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
@@ -181,8 +178,6 @@ private:
                 );
             } break;
             case complete: {
-                strm.reading_ = false;
-                queue_work_guard = nullopt;
                 if (last_ec) {
                     self.complete(last_ec, buffer{});
                 }
@@ -205,8 +200,6 @@ private:
         ) {
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                strm.reading_ = false;
-                queue_work_guard = nullopt;
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -230,7 +223,6 @@ private:
                 // read the first remaining_length
                 {
                     auto address = &strm.header_remaining_length_buf_[received];
-                    strm.reading_ = true;
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
@@ -249,8 +241,6 @@ private:
                 if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
                     // remaining_length continues
                     if (received == 5) {
-                        strm.reading_ = false;
-                        queue_work_guard = nullopt;
                         self.complete(
                             sys::errc::make_error_code(sys::errc::protocol_error),
                             buffer{}
@@ -287,8 +277,6 @@ private:
                             return;
                         }
                         auto ptr = spa.get();
-                        strm.reading_ = false;
-                        queue_work_guard = nullopt;
                         self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
                         return;
                     }
@@ -320,8 +308,6 @@ private:
                     return;
                 }
                 auto ptr = spa.get();
-                strm.reading_ = false;
-                queue_work_guard = nullopt;
                 self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
             } break;
             default:
@@ -371,7 +357,6 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = bind;
                 BOOST_ASSERT(!strm.writing_);
-                BOOST_ASSERT(!strm.reading_);
                 strm.writing_ = true;
                 queue_work_guard.emplace(strm.queue_->get_executor());
                 auto& a_strm{strm};
@@ -488,7 +473,6 @@ public:
     optional<as::io_context> queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
     bool writing_ = false;
-    bool reading_ = false;
 };
 
 } // namespace async_mqtt
