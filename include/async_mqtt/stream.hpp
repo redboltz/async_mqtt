@@ -168,8 +168,8 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
-                strm.reading_ = true;
                 queue_work_guard.emplace(strm.queue_->get_executor());
+                strm.reading_ = true;
                 auto& a_strm{strm};
                 async_read(
                     a_strm.nl_,
@@ -222,26 +222,6 @@ private:
             }
 
             switch (state) {
-            case header:
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                BOOST_ASSERT(bytes_transferred == 1);
-                state = remaining_length;
-                ++received;
-                // read the first remaining_length
-                {
-                    auto address = &strm.header_remaining_length_buf_[received];
-                    strm.reading_ = true;
-                    auto& a_strm{strm};
-                    async_read(
-                        a_strm.nl_,
-                        as::buffer(address, 1),
-                        as::bind_executor(
-                            a_strm.strand_,
-                            force_move(self)
-                        )
-                    );
-                }
-                break;
             case remaining_length:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 BOOST_ASSERT(bytes_transferred == 1);
@@ -260,7 +240,6 @@ private:
                     rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
                     mul *= 128;
                     auto address = &strm.header_remaining_length_buf_[received];
-                    strm.reading_ = true;
                     auto& a_strm{strm};
                     async_read(
                         a_strm.nl_,
@@ -296,7 +275,6 @@ private:
                     else {
                         state = bind;
                         auto address = &spa[received];
-                        strm.reading_ = true;
                         auto& a_strm{strm};
                         async_read(
                             a_strm.nl_,
