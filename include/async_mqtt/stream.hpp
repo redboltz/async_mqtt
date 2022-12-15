@@ -182,6 +182,7 @@ private:
             } break;
             case complete: {
                 strm.reading_ = false;
+                queue_work_guard = nullopt;
                 if (last_ec) {
                     self.complete(last_ec, buffer{});
                 }
@@ -205,6 +206,7 @@ private:
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.reading_ = false;
+                queue_work_guard = nullopt;
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -248,6 +250,7 @@ private:
                     // remaining_length continues
                     if (received == 5) {
                         strm.reading_ = false;
+                        queue_work_guard = nullopt;
                         self.complete(
                             sys::errc::make_error_code(sys::errc::protocol_error),
                             buffer{}
@@ -286,6 +289,7 @@ private:
                         }
                         auto ptr = spa.get();
                         strm.reading_ = false;
+                        queue_work_guard = nullopt;
                         self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
                         return;
                     }
@@ -319,6 +323,7 @@ private:
                 }
                 auto ptr = spa.get();
                 strm.reading_ = false;
+                queue_work_guard = nullopt;
                 self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
             } break;
             default:
