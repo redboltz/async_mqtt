@@ -90,12 +90,22 @@ struct stub_socket {
     ) {
         // empty
         if (recv_pvs_it_ == recv_pvs_.end()) {
-            token(errc::make_error_code(errc::no_message), 0);
+            as::dispatch(
+                as::get_associated_executor(token),
+                [token = force_move(token)] () mutable {
+                    token(errc::make_error_code(errc::no_message), 0);
+                }
+            );
             return;
         }
         if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
             ++recv_pvs_it_;
-            token(ec->code(), 0);
+            as::dispatch(
+                as::get_associated_executor(token),
+                [token = force_move(token), code = ec->code()] () mutable {
+                    token(code, 0);
+                }
+            );
             return;
         }
 
@@ -108,12 +118,22 @@ struct stub_socket {
             pv_r_ = nullopt;
             ++recv_pvs_it_;
             if (recv_pvs_it_ == recv_pvs_.end()) {
-                token(errc::make_error_code(errc::no_message), 0);
+                as::dispatch(
+                as::get_associated_executor(token),
+                    [token = force_move(token)] () mutable {
+                        token(errc::make_error_code(errc::no_message), 0);
+                    }
+                );
                 return;
             }
             if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
                 ++recv_pvs_it_;
-                token(ec->code(), 0);
+                as::dispatch(
+                    as::get_associated_executor(token),
+                    [token = force_move(token), code = ec->code()] () mutable {
+                        token(code, 0);
+                    }
+                );
                 return;
             }
             cbs_ = recv_pvs_it_->const_buffer_sequence();
@@ -124,13 +144,23 @@ struct stub_socket {
         as::mutable_buffer mb_copy = mb;
         std::copy(pv_r_->first, std::next(pv_r_->first, mb.size()), static_cast<char*>(mb_copy.data()));
         std::advance(pv_r_->first, mb.size());
-        token(errc::make_error_code(errc::success), mb.size());
+        as::dispatch(
+            as::get_associated_executor(token),
+            [token = force_move(token), size = mb.size()] () mutable {
+                token(errc::make_error_code(errc::success), size);
+            }
+        );
     }
 
     template<typename TeardownHandler>
     void async_teardown(TeardownHandler&& handler) const {
         if (close_checker_) close_checker_();
-        handler(boost::system::error_code{});
+        as::dispatch(
+            as::get_associated_executor(handler),
+            [handler = force_move(handler)] () mutable {
+                handler(errc::make_error_code(errc::success));
+            }
+        );
     }
 
 private:
