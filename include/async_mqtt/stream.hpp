@@ -342,7 +342,8 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = write;
                 auto& a_strm{strm};
-                a_strm.queue_->post(
+                as::post(
+                    *a_strm.queue_,
                     as::bind_executor(
                         a_strm.strand_,
                         force_move(self)
