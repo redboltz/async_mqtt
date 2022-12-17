@@ -350,7 +350,12 @@ private:
                 );
                 if (a_strm.queue_->stopped()) {
                     a_strm.queue_->restart();
-                    a_strm.queue_->poll_one();
+                    as::post(
+                        a_strm.strand_,
+                        [&queue = a_strm.queue_] {
+                            queue->poll_one();
+                        }
+                    );
                 }
             } break;
             case write: {
@@ -385,7 +390,13 @@ private:
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.writing_ = false;
-                strm.queue_->poll_one();
+                auto& a_strm{strm};
+                as::post(
+                    a_strm.strand_,
+                    [&queue = a_strm.queue_] {
+                        queue->poll_one();
+                    }
+                );
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -402,7 +413,13 @@ private:
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.writing_ = false;
-                strm.queue_->poll_one();
+                auto& a_strm{strm};
+                as::post(
+                    a_strm.strand_,
+                    [&queue = a_strm.queue_] {
+                        queue->poll_one();
+                    }
+                );
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
