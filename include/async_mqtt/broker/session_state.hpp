@@ -211,17 +211,15 @@ struct session_state {
             [this, epsp, pub_topic, payload = payload, pubopts, props]
             (packet_id_t pid) mutable {
                 switch (version_) {
-                case protocol_version::v3_1_1: {
-                    auto packet = std::make_shared<v3_1_1::publish_packet>(
-                        pid,
-                        force_move(pub_topic),
-                        force_move(payload),
-                        pubopts
-                    );
-                    auto const& ref = *packet;
+                case protocol_version::v3_1_1:
                     epsp.send(
-                        ref,
-                        [epsp, packet = force_move(packet)](system_error const& ec) {
+                        v3_1_1::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(payload),
+                            pubopts
+                        },
+                        [epsp](system_error const& ec) {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", warning)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -229,19 +227,17 @@ struct session_state {
                             }
                         }
                     );
-                } break;
-                case protocol_version::v5: {
-                    auto packet = std::make_shared<v5::publish_packet>(
-                        pid,
-                        force_move(pub_topic),
-                        force_move(payload),
-                        pubopts,
-                        force_move(props)
-                    );
-                    auto const& ref = *packet;
+                    break;
+                case protocol_version::v5:
                     epsp.send(
-                        ref,
-                        [epsp, packet = force_move(packet)](system_error const& ec) {
+                        v5::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(payload),
+                            pubopts,
+                            force_move(props)
+                        },
+                        [epsp](system_error const& ec) {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", warning)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -249,7 +245,7 @@ struct session_state {
                             }
                         }
                     );
-                } break;
+                    break;
                 default:
                     BOOST_ASSERT(false);
                     break;
