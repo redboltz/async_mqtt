@@ -363,11 +363,6 @@ private:
                 strm.writing_ = true;
                 queue_work_guard.emplace(strm.queue_->get_executor());
                 auto& a_strm{strm};
-
-                auto size = packet->size();
-                if (size != 11 && size != 6 && size != 1038) {
-                    std::cout << "invalid size:" << size << std::endl;
-                }
                 auto cbs = packet->const_buffer_sequence();
                 async_write(
                     a_strm.nl_,
@@ -393,7 +388,13 @@ private:
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.writing_ = false;
-                strm.queue_->poll_one();
+                auto& a_strm{strm};
+                as::post(
+                    a_strm.strand_,
+                    [&queue = a_strm.queue_] {
+                        queue->poll_one();
+                    }
+                );
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -410,6 +411,13 @@ private:
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 strm.writing_ = false;
+                auto& a_strm{strm};
+                as::post(
+                    a_strm.strand_,
+                    [&queue = a_strm.queue_] {
+                        queue->poll_one();
+                    }
+                );
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
