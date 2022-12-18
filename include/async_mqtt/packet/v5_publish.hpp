@@ -36,12 +36,6 @@ template <std::size_t PacketIdBytes>
 class basic_publish_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
-
-    ~basic_publish_packet() {
-        std::cout << "D:" << this << std::endl;
-    }
-
-
     template <
         typename BufferSequence,
         std::enable_if_t<
@@ -71,7 +65,6 @@ public:
                  : 0)
           )
     {
-        std::cout << "C:" << this << std::endl;
         using namespace std::literals;
         topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
         endian_store(
@@ -124,7 +117,6 @@ public:
 
     basic_publish_packet(buffer buf)
         : packet_id_(PacketIdBytes) {
-        std::cout << "c:" << this << std::endl;
         // fixed_header
         if (buf.empty()) {
             throw make_error(

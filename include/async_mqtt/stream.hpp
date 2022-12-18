@@ -325,7 +325,6 @@ private:
         std::shared_ptr<Packet> packet;
         error_code last_ec = error_code{};
         optional<as::executor_work_guard<as::io_context::executor_type>> queue_work_guard = nullopt;
-        void const* sent = 0;
         enum { dispatch, post, write, bind, complete } state = dispatch;
 
         template <typename Self>
@@ -374,8 +373,6 @@ private:
                 if (size != 11 && size != 6 && size != 1038) {
                     std::cout << "invalid size:" << size << std::endl;
                 }
-                std::cout << "S:" << packet.get() << std::endl;
-                sent = packet.get();
                 auto cbs = packet->const_buffer_sequence();
                 async_write(
                     a_strm.nl_,
@@ -423,7 +420,6 @@ private:
             switch (state) {
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                std::cout << "F:" << sent << " " << packet.get() << std::endl;
                 strm.writing_ = false;
                 auto& a_strm{strm};
                 as::post(
