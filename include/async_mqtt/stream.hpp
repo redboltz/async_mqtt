@@ -7,6 +7,8 @@
 #if !defined(ASYNC_MQTT_STREAM_HPP)
 #define ASYNC_MQTT_STREAM_HPP
 
+#include <iostream>
+
 #include <utility>
 #include <type_traits>
 
@@ -366,6 +368,12 @@ private:
                 strm.writing_ = true;
                 queue_work_guard.emplace(strm.queue_->get_executor());
                 auto& a_strm{strm};
+
+                auto size = packet.size();
+                if (size != 11 && size != 6 && size != 1038) {
+                    std::cout << "invalid size:" << size << std::endl;
+                }
+
                 auto cbs = packet.const_buffer_sequence();
                 async_write(
                     a_strm.nl_,
