@@ -242,6 +242,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         BOOST_TEST(!ec);
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -466,6 +467,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         BOOST_TEST(!ec);
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -687,6 +689,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         BOOST_TEST(!ec);
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -851,6 +854,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         BOOST_TEST(!ec);
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1160,7 +1164,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         BOOST_TEST(am::packet_compare(publish_exp_t3, pv));
     }
 
-
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1467,7 +1471,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         BOOST_TEST(am::packet_compare(publish_exp_t3, pv));
     }
 
-
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }

@@ -133,6 +133,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     BOOST_TEST(pid_opt3.has_value());
     BOOST_TEST(*pid_opt3 == 2); // 2 can be resused
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }

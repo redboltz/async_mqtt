@@ -353,6 +353,12 @@ public:
         return client_id_;
     }
 
+    void cancel_all_timers_for_test() {
+        tim_pingreq_send_.cancel();
+        tim_pingreq_recv_.cancel();
+        tim_pingresp_recv_.cancel();
+    }
+
 private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
@@ -475,7 +481,10 @@ private: // compose operation impl
                                     );
                                     if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                                         // server send connack after connack sent
-                                        ep.send_stored();
+                                        a_ep.send_stored();
+                                    }
+                                    if constexpr(Role == role::client) {
+                                        a_ep.reset_pingreq_send_timer();
                                     }
                                 }
                             },
@@ -494,6 +503,9 @@ private: // compose operation impl
                         if constexpr(is_connack<Packet>()) {
                             // server send connack after connack sent
                             a_ep.send_stored();
+                        }
+                        if constexpr(Role == role::client) {
+                            a_ep.reset_pingreq_send_timer();
                         }
                     }
                 }
@@ -573,6 +585,10 @@ private: // compose operation impl
             if constexpr(std::is_same_v<v3_1_1::connect_packet, std::decay_t<ActualPacket>>) {
                 ep.initialize();
                 ep.status_ = connection_status::connecting;
+                auto keep_alive = actual_packet.keep_alive();
+                if (keep_alive != 0 && !ep.pingreq_send_interval_ms_) {
+                    ep.pingreq_send_interval_ms_.emplace(keep_alive * 1000);
+                }
                 if (actual_packet.clean_session()) {
                     ep.pid_man_.clear();
                     ep.store_.clear();
@@ -587,6 +603,10 @@ private: // compose operation impl
             if constexpr(std::is_same_v<v5::connect_packet, std::decay_t<ActualPacket>>) {
                 ep.initialize();
                 ep.status_ = connection_status::connecting;
+                auto keep_alive = actual_packet.keep_alive();
+                if (keep_alive != 0 && !ep.pingreq_send_interval_ms_) {
+                    ep.pingreq_send_interval_ms_.emplace(keep_alive * 1000);
+                }
                 if (actual_packet.clean_start()) {
                     ep.pid_man_.clear();
                     ep.store_.clear();
@@ -852,6 +872,10 @@ private: // compose operation impl
                 BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
             }
 
+            if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {
+                ep.reset_pingresp_recv_timer();
+            }
+
             if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
                 ep.status_ = connection_status::disconnecting;
             }
@@ -993,6 +1017,10 @@ private: // compose operation impl
                             ep.initialize();
                             ep.protocol_version_ = protocol_version::v3_1_1;
                             ep.status_ = connection_status::connecting;
+                            auto keep_alive = p.keep_alive();
+                            if (keep_alive != 0) {
+                                ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
+                            }
                             if (p.clean_session()) {
                                 ep.need_store_ = false;
                             }
@@ -1004,6 +1032,10 @@ private: // compose operation impl
                             ep.initialize();
                             ep.protocol_version_ = protocol_version::v5;
                             ep.status_ = connection_status::connecting;
+                            auto keep_alive = p.keep_alive();
+                            if (keep_alive != 0) {
+                                ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
+                            }
                             for (auto const& prop : p.props()) {
                                 prop.visit(
                                     overload {
@@ -1377,6 +1409,7 @@ private: // compose operation impl
                         }
                     }
                 );
+                ep.reset_pingreq_recv_timer();
                 if (!decided_error) self.complete(force_move(v));
             } break;
             case close:
@@ -1468,6 +1501,9 @@ private: // compose operation impl
             } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
+                ep.tim_pingreq_send_.cancel();
+                ep.tim_pingreq_recv_.cancel();
+                ep.tim_pingresp_recv_.cancel();
                 self.complete();
                 break;
             }
@@ -1623,6 +1659,139 @@ private:
         need_store_ = false;
     }
 
+    void reset_pingreq_send_timer() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        if (pingreq_send_interval_ms_) {
+            tim_pingreq_send_.cancel();
+            if (status_ != connection_status::connected) return;
+            tim_pingreq_send_.expires_after(
+                std::chrono::milliseconds{*pingreq_send_interval_ms_}
+            );
+            tim_pingreq_send_.async_wait(
+                [this](error_code const& ec) {
+                    if (!ec) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            send(
+                                v3_1_1::pingreq_packet(),
+                                [](system_error const&){}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            send(
+                                v5::pingreq_packet(),
+                                [](system_error const&){}
+                            );
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    }
+
+    void reset_pingreq_recv_timer() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        if (pingreq_recv_timeout_ms_) {
+            tim_pingreq_recv_.cancel();
+            if (status_ != connection_status::connected) return;
+            tim_pingreq_recv_.expires_after(
+                std::chrono::milliseconds{*pingreq_recv_timeout_ms_}
+            );
+            tim_pingreq_recv_.async_wait(
+                [this](error_code const& ec) {
+                    if (!ec) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingreq recv timeout. close.";
+                            close(
+                                []{}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingreq recv timeout. close.";
+                            send(
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::keep_alive_timeout,
+                                    properties{}
+                                },
+                                [this](system_error const&){
+                                    close(
+                                        []{}
+                                    );
+                                }
+                            );
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    }
+
+    void reset_pingresp_recv_timer() {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        if (pingresp_recv_timeout_ms_) {
+            tim_pingresp_recv_.cancel();
+            if (status_ != connection_status::connected) return;
+            tim_pingresp_recv_.expires_after(
+                std::chrono::milliseconds{*pingresp_recv_timeout_ms_}
+            );
+            tim_pingresp_recv_.async_wait(
+                [this](error_code const& ec) {
+                    if (!ec) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingresp recv timeout. close.";
+                            close(
+                                []{}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingresp recv timeout. close.";
+                            if (status_ == connection_status::connected) {
+                                send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::keep_alive_timeout,
+                                            properties{}
+                                    },
+                                    [this](system_error const&){
+                                        close(
+                                            []{}
+                                        );
+                                    }
+                                );
+                            }
+                            else {
+                                close(
+                                    []{}
+                                );
+                            }
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
+                        }
+                    }
+                }
+            );
+        }
+    }
+
 private:
     protocol_version protocol_version_;
     std::unique_ptr<stream_type> stream_;
@@ -1650,6 +1819,10 @@ private:
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 
     connection_status status_{connection_status::disconnected};
+
+    optional<std::size_t> pingreq_send_interval_ms_;
+    optional<std::size_t> pingreq_recv_timeout_ms_;
+    optional<std::size_t> pingresp_recv_timeout_ms_;
 
     as::steady_timer tim_pingreq_send_{strand()};
     as::steady_timer tim_pingreq_recv_{strand()};

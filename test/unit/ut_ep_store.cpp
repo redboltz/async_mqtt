@@ -324,6 +324,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_client) {
         BOOST_TEST(am::packet_compare(connack_sp_false, pv));
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -698,6 +699,10 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
     f.get();
     BOOST_TEST(index == 1);
 
+    ep1.cancel_all_timers_for_test();
+    ep2.cancel_all_timers_for_test();
+    ep3.cancel_all_timers_for_test();
+    ep4.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1013,6 +1018,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         BOOST_TEST(am::packet_compare(connack_sp_false, pv));
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1397,6 +1403,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     f.get();
     BOOST_TEST(index == 1);
 
+    ep1.cancel_all_timers_for_test();
+    ep2.cancel_all_timers_for_test();
+    ep3.cancel_all_timers_for_test();
+    ep4.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1734,6 +1744,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         BOOST_TEST(am::packet_compare(connack_sp_false, pv));
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }

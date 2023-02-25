@@ -236,6 +236,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         BOOST_TEST(am::packet_compare(pubcomp3, pv));
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -455,6 +456,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         BOOST_TEST(am::packet_compare(pubcomp3, pv));
     }
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -759,6 +761,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     }
     BOOST_TEST(close_called);
 
+    ep.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
@@ -1069,6 +1072,8 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     }
     BOOST_TEST(close_called);
 
+    ep1.cancel_all_timers_for_test();
+    ep2.cancel_all_timers_for_test();
     guard.reset();
     th.join();
 }
