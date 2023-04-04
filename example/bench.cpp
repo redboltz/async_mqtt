@@ -4,14 +4,18 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <async_mqtt/setup_log.hpp>
-
 #include <thread>
 #include <fstream>
 #include <iostream>
 
+#include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
+
+#include <async_mqtt/setup_log.hpp>
+#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/packet/pubopts.hpp>
+#include <async_mqtt/predefined_underlying_layer.hpp>
 
 #include "locked_cout.hpp"
 
@@ -28,6 +32,8 @@ enum class phase {
     pub_after_idle_delay,
     publish
 };
+
+using packet_id_t = am::packet_id_type<2>::type;
 
 int main(int argc, char **argv) {
     try {
@@ -309,11 +315,11 @@ int main(int argc, char **argv) {
         auto mqtt_version = vm["mqtt_version"].as<std::string>();
         auto qos = static_cast<am::qos>(vm["qos"].as<unsigned int>());
         auto retain =
-            [&] () -> am::retain {
+            [&] () -> am::pub::retain {
                 if (vm["retain"].as<bool>()) {
-                    return am::retain::yes;
+                    return am::pub::retain::yes;
                 }
-                return am::retain::no;
+                return am::pub::retain::no;
             } ();
         auto clean_start = vm["clean_start"].as<bool>();
         auto sei = vm["sei"].as<std::uint32_t>();
@@ -466,13 +472,19 @@ int main(int argc, char **argv) {
                 std::atomic<std::uint64_t> rest_times{times * clients};
 
                 // ==== begin local lambda expressions
+                using ci_t = typename std::remove_reference_t<decltype(cis.front())>;
+                std::function<void()> pub_after_idle_delay_proc;
+                std::function<void()> pub_idle_delay_proc;
+                std::function <void(ci_t&)> async_wait_pub;
+                std::function<void()> finish_proc;
+
                 auto sub_proc =
-                    [&] {
+                    [&] () mutable {
                         ph.store(phase::sub_delay);
                         tp_sub_delay = std::chrono::steady_clock::now();
                         tim_delay.expires_after(std::chrono::milliseconds(sub_delay_ms));
                         tim_delay.async_wait(
-                            [&] (boost::system::error_code const& ec) {
+                            [&] (boost::system::error_code const& ec) mutable {
                                 if (ec) {
                                     std::cout << "timer error:" << ec.message() << std::endl;
                                     return;
@@ -484,17 +496,113 @@ int main(int argc, char **argv) {
                                 for (auto& ci : cis) {
                                     ci.tim->expires_after(std::chrono::milliseconds(sub_interval_ms) * ++index);
                                     ci.tim->async_wait(
-                                        [&] (boost::system::error_code const& ec) {
+                                        [&] (boost::system::error_code const& ec) mutable {
                                             if (ec) {
                                                 std::cout << "timer error:" << ec.message() << std::endl;
                                                 return;
                                             }
-                                            ci.c->async_subscribe(
-                                                topic_prefix + ci.index_str,
-                                                qos,
-                                                [&](am::error_code ec) {
-                                                    if (ec) {
-                                                        std::cout << "sub error:" << ec.message() << std::endl;
+
+                                            ci.c.acquire_unique_packet_id(
+                                                [&]
+                                                (am::optional<packet_id_t> pid_opt) mutable {
+                                                    if (pid_opt) {
+                                                        switch (version) {
+                                                        case am::protocol_version::v5: {
+                                                            ci.c.send(
+                                                                am::v5::subscribe_packet{
+                                                                    *pid_opt,
+                                                                    {
+                                                                        { am::allocate_buffer(topic_prefix + ci.index_str), qos }
+                                                                    },
+                                                                    am::properties{}
+                                                                },
+                                                                [&]
+                                                                (am::system_error const& ec) mutable {
+                                                                    if (ec) {
+                                                                        std::cout << "v5 subscribe send error:" << ec.what() << std::endl;
+                                                                        return;
+                                                                    }
+                                                                    ci.c.recv(
+                                                                        [&]
+                                                                        (am::packet_variant pv) {
+                                                                            pv.visit(
+                                                                                am::overload {
+                                                                                    [&](am::v5::suback_packet const& p) {
+                                                                                        if (p.entries().front() == am::suback_reason_code::granted_qos_0 ||
+                                                                                            p.entries().front() == am::suback_reason_code::granted_qos_1 ||
+                                                                                            p.entries().front() == am::suback_reason_code::granted_qos_2) {
+                                                                                            if (--rest_sub == 0) {
+                                                                                                if (pub_idle_count == 0) {
+                                                                                                    pub_after_idle_delay_proc();
+                                                                                                }
+                                                                                                else {
+                                                                                                    pub_idle_delay_proc();
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        else {
+                                                                                            std::cout << "v5 suback:" << p.entries().front() << std::endl;
+                                                                                        }
+                                                                                    },
+                                                                                    [](auto const&) {}
+                                                                                }
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }
+                                                            );
+                                                        } break;
+                                                        case am::protocol_version::v3_1_1: {
+                                                            ci.c.send(
+                                                                am::v3_1_1::subscribe_packet{
+                                                                    *pid_opt,
+                                                                    {
+                                                                        { am::allocate_buffer(topic_prefix + ci.index_str), qos }
+                                                                    }
+                                                                },
+                                                                [&]
+                                                                (am::system_error const& ec) {
+                                                                    if (ec) {
+                                                                        std::cout << "v3.1.1 subscribe send error:" << ec.what() << std::endl;
+                                                                        return;
+                                                                    }
+                                                                    ci.c.recv(
+                                                                        [&]
+                                                                        (am::packet_variant pv) {
+                                                                            pv.visit(
+                                                                                am::overload {
+                                                                                    [&](am::v3_1_1::suback_packet const& p) {
+                                                                                        if (p.entries().front() == am::suback_return_code::success_maximum_qos_0 ||
+                                                                                            p.entries().front() == am::suback_return_code::success_maximum_qos_1 ||
+                                                                                            p.entries().front() == am::suback_return_code::success_maximum_qos_2) {
+                                                                                            if (--rest_sub == 0) {
+                                                                                                if (pub_idle_count == 0) {
+                                                                                                    pub_after_idle_delay_proc();
+                                                                                                }
+                                                                                                else {
+                                                                                                    pub_idle_delay_proc();
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        else {
+                                                                                            std::cout << "v3.1.1 suback:" << p.entries().front() << std::endl;
+                                                                                        }
+                                                                                    },
+                                                                                    [](auto const&) {}
+                                                                                }
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }
+                                                            );
+                                                        } break;
+                                                        default:
+                                                            std::cout << "invalid MQTT version" << std::endl;
+                                                            break;
+                                                        }
+                                                    }
+                                                    else {
+                                                        std::cout << "packet_id is fully used" << std::endl;
                                                     }
                                                 }
                                             );
@@ -505,8 +613,54 @@ int main(int argc, char **argv) {
                         );
                     };
 
-                using ci_t = typename std::remove_reference_t<decltype(cis.front())>;
-                std::function <void(ci_t&)> async_wait_pub;
+                auto publish_handler =
+                    [&](auto& ci,
+                        packet_id_t /*packet_id*/,
+                        am::pub::opts pubopts,
+                        am::buffer topic_name,
+                        std::vector<am::buffer> const& contents,
+                        am::properties /*props*/) {
+                        if (pubopts.get_retain() == am::pub::retain::yes) {
+                            locked_cout() << "retained publish received and ignored topic:" << topic_name << std::endl;
+                            return;
+                        }
+                        BOOST_ASSERT(rest_times > 0);
+                        --rest_times;
+                        if (rest_idle > 0) {
+                            --ci.recv_times;
+                            if (--rest_idle == 0) pub_after_idle_delay_proc();
+                        }
+                        else {
+                            auto recv = std::chrono::steady_clock::now();
+                            auto dur_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                                recv - ci.sent.at(ci.recv_times - 1)
+                            ).count();
+                            if (limit_ms != 0 && static_cast<unsigned long>(dur_us) > limit_ms * 1000) {
+                                std::cout << "RTT:" << (dur_us / 1000) << "ms over " << limit_ms << "ms" << std::endl;
+                            }
+                            if (compare) {
+                                if (contents.front() != ci.recv_payload()) {
+                                    locked_cout() << "received payload doesn't match to sent one" << std::endl;
+                                    locked_cout() << "  expected: " << ci.recv_payload() << std::endl;
+                                    locked_cout() << "  received: " << contents.front() << std::endl;;
+                                }
+                            }
+                            if (topic_name != std::string_view(topic_prefix + ci.index_str)) {
+                                locked_cout() << "topic doesn't match" << std::endl;
+                                locked_cout() << "  expected: " << topic_prefix + ci.index_str << std::endl;
+                                locked_cout() << "  received: " << topic_name << std::endl;
+                            }
+                            ci.rtt_us.emplace_back(dur_us);
+                            BOOST_ASSERT(ci.recv_times != 0);
+                            --ci.recv_times;
+                            if (rest_times == 0) {
+                                finish_proc();
+                            }
+                            else {
+                            }
+                        }
+                    };
+
                 async_wait_pub =
                     [&] (ci_t& ci) {
                         ci.tim->async_wait(
@@ -515,19 +669,108 @@ int main(int argc, char **argv) {
                                     std::cout << "timer error:" << ec.message() << std::endl;
                                 }
                                 else {
-                                    am::publish_options opts = qos | retain;
+                                    am::pub::opts opts = qos | retain;
                                     ci.sent.at(ci.send_times - 1) = std::chrono::steady_clock::now();
 
-                                    ci.c->async_publish(
-                                        am::allocate_buffer(topic_prefix + ci.index_str),
-                                        ci.send_payload(),
-                                        opts,
-                                        [&](am::error_code ec) {
-                                            if (ec) {
-                                                locked_cout() << "pub error:" << ec.message() << std::endl;
+                                    auto send_publish =
+                                        [&, opts] (packet_id_t pid) {
+                                            switch (version) {
+                                            case am::protocol_version::v5: {
+                                                ci.c.send(
+                                                    am::v5::publish_packet{
+                                                        pid,
+                                                        am::allocate_buffer(topic_prefix + ci.index_str),
+                                                        ci.send_payload(),
+                                                        opts,
+                                                        am::properties{}
+                                                    },
+                                                    []
+                                                    (am::system_error const& ec) {
+                                                        if (ec) {
+                                                            std::cout << "v5 publish send error:" << ec.what() << std::endl;
+                                                        }
+                                                    }
+                                                );
+                                                ci.c.recv(
+                                                    [&]
+                                                    (am::packet_variant pv) {
+                                                        pv.visit(
+                                                            am::overload {
+                                                                [&](am::v5::publish_packet const& p) {
+                                                                    publish_handler(
+                                                                        ci,
+                                                                        p.packet_id(),
+                                                                        p.opts(),
+                                                                        p.topic(),
+                                                                        p.payload(),
+                                                                        p.props()
+                                                                    );
+                                                                },
+                                                                [](auto const&) {}
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            } break;
+                                            case am::protocol_version::v3_1_1: {
+                                                ci.c.send(
+                                                    am::v3_1_1::publish_packet{
+                                                        pid,
+                                                        am::allocate_buffer(topic_prefix + ci.index_str),
+                                                        ci.send_payload(),
+                                                        opts
+                                                    },
+                                                    []
+                                                    (am::system_error const&& ec) {
+                                                        if (ec) {
+                                                            std::cout << "v3.1.1 publish send error:" << ec.what() << std::endl;
+                                                        }
+                                                    }
+                                                );
+                                                ci.c.recv(
+                                                    [&]
+                                                    (am::packet_variant pv) {
+                                                        pv.visit(
+                                                            am::overload {
+                                                                [&](am::v3_1_1::publish_packet const& p) {
+                                                                    publish_handler(
+                                                                        ci,
+                                                                        p.packet_id(),
+                                                                        p.opts(),
+                                                                        p.topic(),
+                                                                        p.payload(),
+                                                                        am::properties{}
+                                                                    );
+                                                                },
+                                                                [](auto const&) {}
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            } break;
+                                            default:
+                                                std::cout << "invalid MQTT version" << std::endl;
+                                                break;
                                             }
-                                        }
-                                    );
+                                        };
+
+                                    if (qos == am::qos::at_least_once ||
+                                        qos == am::qos::exactly_once) {
+                                        ci.c.acquire_unique_packet_id(
+                                            [&]
+                                            (am::optional<packet_id_t> pid_opt) {
+                                                if (pid_opt) {
+                                                    send_publish(*pid_opt);
+                                                }
+                                                else {
+                                                    std::cout << "packet_id is fully used" << std::endl;
+                                                }
+                                            }
+                                        );
+                                    }
+                                    else {
+                                        send_publish(0);
+                                    }
 
                                     BOOST_ASSERT(ci.send_times != 0);
                                     --ci.send_times;
@@ -575,7 +818,7 @@ int main(int argc, char **argv) {
                         }
                     };
 
-                auto pub_idle_delay_proc =
+                pub_idle_delay_proc =
                     [&] {
                         locked_cout() << "Publish (idle) delay" << std::endl;
                         ph.store(phase::pub_delay);
@@ -607,7 +850,7 @@ int main(int argc, char **argv) {
                         }
                     };
 
-                auto pub_after_idle_delay_proc =
+                pub_after_idle_delay_proc =
                     [&] {
                         ph.store(phase::pub_after_idle_delay);
                         tp_pub_after_idle_delay = std::chrono::steady_clock::now();
@@ -625,7 +868,7 @@ int main(int argc, char **argv) {
                         );
                     };
 
-                auto finish_proc =
+                finish_proc =
                     [&] {
                         locked_cout() << "Report" << std::endl;
                         std::size_t maxmax = 0;
@@ -638,7 +881,7 @@ int main(int argc, char **argv) {
                         std::string maxmin_cid;
                         for (auto& ci : cis) {
                             std::sort(ci.rtt_us.begin(), ci.rtt_us.end());
-                            std::string cid = ci.c->get_client_id();
+                            std::string cid = ci.get_client_id();
                             std::size_t max = ci.rtt_us.back();
                             std::size_t mid = ci.rtt_us.at(ci.rtt_us.size() / 2);
                             std::size_t avg = std::accumulate(
@@ -691,154 +934,17 @@ int main(int argc, char **argv) {
                             << "client_id:" << maxmin_cid << std::endl;
 
                         for (auto& ci : cis) {
-                            ci.c->async_force_disconnect();
+                            ci.c.close([]{});
                         }
                         locked_cout() << "Finish" << std::endl;
                         for (auto& guard_ioc : guard_iocs) guard_ioc.reset();
                         guard_ioc_timer.reset();
                     };
 
-                using packet_id_t = typename std::remove_reference_t<decltype(*cis.front().c)>::packet_id_t;
-                auto publish_handler =
-                    [&](auto& ci,
-                        am::optional<packet_id_t> /*packet_id*/,
-                        am::publish_options pubopts,
-                        am::buffer topic_name,
-                        am::buffer contents,
-                        am::v5::properties /*props*/) {
-                        if (pubopts.get_retain() == am::retain::yes) {
-                            locked_cout() << "retained publish received and ignored topic:" << topic_name << std::endl;
-                            return true;
-                        }
-                        BOOST_ASSERT(rest_times > 0);
-                        --rest_times;
-                        if (rest_idle > 0) {
-                            --ci.recv_times;
-                            if (--rest_idle == 0) pub_after_idle_delay_proc();
-                        }
-                        else {
-                            auto recv = std::chrono::steady_clock::now();
-                            auto dur_us = std::chrono::duration_cast<std::chrono::microseconds>(
-                                recv - ci.sent.at(ci.recv_times - 1)
-                            ).count();
-                            if (limit_ms != 0 && static_cast<unsigned long>(dur_us) > limit_ms * 1000) {
-                                std::cout << "RTT:" << (dur_us / 1000) << "ms over " << limit_ms << "ms" << std::endl;
-                            }
-                            if (compare) {
-                                if (contents != ci.recv_payload()) {
-                                    locked_cout() << "received payload doesn't match to sent one" << std::endl;
-                                    locked_cout() << "  expected: " << ci.recv_payload() << std::endl;
-                                    locked_cout() << "  received: " << contents << std::endl;;
-                                }
-                            }
-                            if (topic_name != topic_prefix + ci.index_str) {
-                                locked_cout() << "topic doesn't match" << std::endl;
-                                locked_cout() << "  expected: " << topic_prefix + ci.index_str << std::endl;
-                                locked_cout() << "  received: " << topic_name << std::endl;
-                            }
-                            ci.rtt_us.emplace_back(dur_us);
-                            BOOST_ASSERT(ci.recv_times != 0);
-                            --ci.recv_times;
-                            if (rest_times == 0) finish_proc();
-                        }
-
-                        return true;
-                    };
-
                 // ==== end local lambda expressions
 
                 for (auto& ci : cis) {
-                    ci.c->set_auto_pub_response(true);
-                    ci.c->set_async_operation(true);
-                    ci.c->set_clean_start(clean_start);
-                    if (username) ci.c->set_user_name(username.value());
-                    if (password) ci.c->set_password(password.value());
-                    ci.c->set_client_id(cid_prefix + ci.index_str);
-                    ci.c->set_connack_handler(
-                        [&]
-                        (bool /*sp*/, am::connect_return_code connack_return_code) {
-                            if (connack_return_code == am::connect_return_code::accepted) {
-                                if (--rest_connect == 0) sub_proc();
-                            }
-                            else {
-                                std::cout << "connack error:" << connack_return_code << std::endl;
-                            }
-                            return true;
-                        }
-                    );
-                    ci.c->set_v5_connack_handler(
-                        [&]
-                        (bool /*sp*/, am::v5::connect_reason_code reason_code, am::v5::properties /*props*/) {
-                            if (reason_code == am::v5::connect_reason_code::success) {
-                                if (--rest_connect == 0) sub_proc();
-                            }
-                            else {
-                                std::cout << "connack error:" << reason_code << std::endl;
-                            }
-                            return true;
-                        }
-                    );
-
-                    ci.c->set_suback_handler(
-                        [&]
-                        (packet_id_t /*packet_id*/, std::vector<am::suback_return_code> results) {
-                            BOOST_ASSERT(results.size() == 1);
-                            if (results.front() == am::suback_return_code::success_maximum_qos_0 ||
-                                results.front() == am::suback_return_code::success_maximum_qos_1 ||
-                                results.front() == am::suback_return_code::success_maximum_qos_2) {
-                                if (--rest_sub == 0) {
-                                    if (pub_idle_count == 0) {
-                                        pub_after_idle_delay_proc();
-                                    }
-                                    else {
-                                        pub_idle_delay_proc();
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                    );
-                    ci.c->set_v5_suback_handler(
-                        [&]
-                        (packet_id_t /*packet_id*/,
-                         std::vector<am::v5::suback_reason_code> reasons,
-                         am::v5::properties /*props*/) {
-                            BOOST_ASSERT(reasons.size() == 1);
-                            if (reasons.front() == am::v5::suback_reason_code::granted_qos_0 ||
-                                reasons.front() == am::v5::suback_reason_code::granted_qos_1 ||
-                                reasons.front() == am::v5::suback_reason_code::granted_qos_2) {
-                                if (--rest_sub == 0) {
-                                    if (pub_idle_count == 0) {
-                                        pub_after_idle_delay_proc();
-                                    }
-                                    else {
-                                        pub_idle_delay_proc();
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                    );
-
-                    ci.c->set_publish_handler(
-                        [&]
-                        (am::optional<packet_id_t> packet_id,
-                         am::publish_options pubopts,
-                         am::buffer topic_name,
-                         am::buffer contents) {
-                            return publish_handler(ci, packet_id, pubopts, topic_name, contents, am::v5::properties{});
-                        }
-                    );
-                    ci.c->set_v5_publish_handler(
-                        [&]
-                        (am::optional<packet_id_t> packet_id,
-                         am::publish_options pubopts,
-                         am::buffer topic_name,
-                         am::buffer contents,
-                         am::v5::properties props) {
-                            return publish_handler(ci, packet_id, pubopts, topic_name, contents, am::force_move(props));
-                        }
-                    );
+                    ci.c.set_auto_pub_response(true);
                 }
 
                 std::function <void()> tim_progress_proc;
@@ -928,19 +1034,103 @@ int main(int argc, char **argv) {
                                 std::cout << "timer error:" << ec.message() << std::endl;
                                 return;
                             }
-                            am::v5::properties props;
-                            if (sei != 0) {
-                                props.emplace_back(
-                                    am::v5::property::session_expiry_interval(sei)
-                                );
-                            }
-                            ci.c->async_connect(
-                                am::force_move(props),
-                                [&](am::error_code ec) {
+                            ci.async_connect(
+                                [&](boost::system::error_code ec) {
                                     if (ec) {
                                         std::cerr << "async_connect error: " << ec.message() << std::endl;
+                                        return;
                                     }
-                                    ci.init_timer(ci.c->get_executor());
+                                    am::optional<am::buffer> un;
+                                    am::optional<am::buffer> pw;
+                                    if (username) un.emplace(am::allocate_buffer(username.value()));
+                                    if (password) pw.emplace(am::allocate_buffer(password.value()));
+                                    switch (version) {
+                                    case am::protocol_version::v5: {
+                                        am::properties props;
+                                        if (sei != 0) {
+                                            props.emplace_back(
+                                                am::property::session_expiry_interval(sei)
+                                            );
+                                        }
+                                        ci.c.send(
+                                            am::v5::connect_packet{
+                                                clean_start,
+                                                0, // keep_alive
+                                                am::allocate_buffer(ci.get_client_id()),
+                                                am::nullopt, // will
+                                                am::force_move(un),
+                                                am::force_move(pw),
+                                                am::force_move(props)
+                                            },
+                                            [&]
+                                            (am::system_error const& ec) {
+                                                if (ec) {
+                                                    std::cout << "v5 connect send error:" << ec.what() << std::endl;
+                                                    return;
+                                                }
+                                                ci.c.recv(
+                                                    [&]
+                                                    (am::packet_variant pv) {
+                                                        pv.visit(
+                                                            am::overload {
+                                                                [&](am::v5::connack_packet const& p) {
+                                                                    if (p.code() == am::connect_reason_code::success) {
+                                                                        if (--rest_connect == 0) sub_proc();
+                                                                    }
+                                                                    else {
+                                                                        std::cout << "v5 connack:" << p.code() << std::endl;
+                                                                    }
+                                                                },
+                                                                [](auto const&) {}
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    } break;
+                                    case am::protocol_version::v3_1_1: {
+                                        ci.c.send(
+                                            am::v3_1_1::connect_packet{
+                                                clean_start,
+                                                0, // keep_alive
+                                                am::allocate_buffer(ci.get_client_id()),
+                                                am::nullopt, // will
+                                                am::force_move(un),
+                                                am::force_move(pw)
+                                            },
+                                            [&]
+                                            (am::system_error const& ec) {
+                                                if (ec) {
+                                                    std::cout << "v3.1.1 connect send error:" << ec.what() << std::endl;
+                                                    return;
+                                                }
+                                                ci.c.recv(
+                                                    [&]
+                                                    (am::packet_variant pv) {
+                                                        pv.visit(
+                                                            am::overload {
+                                                                [&](am::v3_1_1::connack_packet const& p) {
+                                                                    if (p.code() == am::connect_return_code::accepted) {
+                                                                        if (--rest_connect == 0) sub_proc();
+                                                                    }
+                                                                    else {
+                                                                        std::cout << "v3.1.1 connack:" << p.code() << std::endl;
+                                                                    }
+                                                                },
+                                                                [](auto const&) {}
+                                                            }
+                                                        );
+                                                    }
+                                                );
+                                            }
+                                        );
+                                    } break;
+                                    default:
+                                        std::cout << "invalid MQTT version" << std::endl;
+                                        return;
+                                    }
+                                    ci.init_timer(ci.c.strand());
                                 }
                             );
                         }
@@ -996,8 +1186,15 @@ int main(int argc, char **argv) {
         std::cout << "  protocol:" << protocol << std::endl;
 
         struct client_info_base {
-            client_info_base(std::size_t index, std::size_t payload_size, std::size_t times, std::size_t idle_count)
-                :index_str{(boost::format("%08d") % index).str()},
+            client_info_base(
+                std::string cid_prefix,
+                std::size_t index,
+                std::size_t payload_size,
+                std::size_t times,
+                std::size_t idle_count
+            )
+                :cid_prefix{am::force_move(cid_prefix)},
+                 index_str{(boost::format("%08d") % index).str()},
                  send_times{times},
                  recv_times{times},
                  send_idle_count{idle_count},
@@ -1014,6 +1211,9 @@ int main(int argc, char **argv) {
                 }
             }
 
+            std::string get_client_id() const {
+                return cid_prefix + index_str;
+            }
             am::buffer send_payload() {
                 std::string ret = payload_str;
                 auto variable = (boost::format("%s%08d") %index_str % send_times).str();
@@ -1038,6 +1238,7 @@ int main(int argc, char **argv) {
                 tim = std::make_shared<as::steady_timer>(exe);
             }
 
+            std::string cid_prefix;
             std::string index_str;
             std::string payload_str;
             std::size_t send_times;
@@ -1050,38 +1251,82 @@ int main(int argc, char **argv) {
         };
 
         if (protocol == "mqtt") {
-            using client_t = decltype(
-                am::make_async_client(
-                    std::declval<as::io_context&>(),
-                    host,
-                    port,
-                    version
-                )
-            );
+            using client_t = am::endpoint<am::role::client, am::protocol::mqtt>;
             struct client_info : client_info_base {
-                client_info(client_t c, std::size_t index, std::size_t payload_size, std::size_t times, std::size_t idle_count)
-                    :client_info_base(index, payload_size, times, idle_count),
-                     c{am::force_move(c)}
-
+                client_info(
+                    client_t c,
+                    std::string cid_prefix,
+                    std::size_t index,
+                    std::size_t payload_size,
+                    std::size_t times,
+                    std::size_t idle_count,
+                    as::io_context& ioc,
+                    std::string host,
+                    std::uint16_t port
+                )
+                    :client_info_base{am::force_move(cid_prefix), index, payload_size, times, idle_count},
+                     c{am::force_move(c)},
+                     r{ioc.get_executor()},
+                     host{am::force_move(host)},
+                     port{port}
                 {
                 }
+
+                void async_connect(
+                    std::function<void(boost::system::error_code const&)> cb
+                ) {
+                    r.async_resolve(
+                        host,
+                        std::to_string(port),
+                        [this, cb = am::force_move(cb)]
+                        (
+                            boost::system::error_code const& ec,
+                            as::ip::tcp::resolver::results_type eps
+                        ) {
+                            if (ec) {
+                                if (cb) {
+                                    cb(ec);
+                                }
+                                return;
+                            }
+                            as::async_connect(
+                                c.get_stream().lowest_layer(),
+                                eps.begin(),
+                                eps.end(),
+                                []
+                                (
+                                    boost::system::error_code const& ec,
+                                    auto /*unused*/
+                                ) {
+
+                                }
+                            );
+                        }
+                    );
+                }
+
                 client_t c;
+                as::ip::tcp::resolver r;
+                std::string host;
+                std::uint16_t port;
             };
 
             std::vector<client_info> cis;
             cis.reserve(clients);
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    am::make_async_client(
-                        iocs.at(i % num_of_iocs),
-                        host,
-                        port,
-                        version
-                    ),
+                    client_t{
+                        version,
+                        iocs.at(i % num_of_iocs).get_executor()
+                    },
+                    cid_prefix,
                     i + start_index,
                     payload_size,
                     times,
-                    pub_idle_count
+                    pub_idle_count,
+                    iocs.at(i % num_of_iocs),
+                    host,
+                    port
                 );
             }
             bench_proc(cis);
@@ -1115,6 +1360,7 @@ int main(int argc, char **argv) {
                         port,
                         version
                     ),
+                    cid_prefix,
                     i + start_index,
                     payload_size,
                     times,
@@ -1162,6 +1408,7 @@ int main(int argc, char **argv) {
                         ws_path ? ws_path.value() : std::string(),
                         version
                     ),
+                    cid_prefix,
                     i + start_index,
                     payload_size,
                     times,
@@ -1205,6 +1452,7 @@ int main(int argc, char **argv) {
                         ws_path ? ws_path.value() : std::string(),
                         version
                     ),
+                    cid_prefix,
                     i + start_index,
                     payload_size,
                     times,

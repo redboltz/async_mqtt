@@ -120,7 +120,7 @@ struct session_state {
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "store inflight message";
 
-        auto stored = epsp.get_stored();
+        auto stored = epsp.get_stored_packets();
         for (auto& store : stored) {
             std::shared_ptr<as::steady_timer> tim_message_expiry;
             store.visit(

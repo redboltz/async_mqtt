@@ -31,7 +31,7 @@ int main() {
     };
 
     try {
-        auto f_con = amep.stream().next_layer().async_connect(
+        auto f_con = amep.get_stream().next_layer().async_connect(
             endpoint,
             as::use_future
         );

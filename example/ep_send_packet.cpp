@@ -7,7 +7,6 @@
 #include <iostream>
 #include <boost/asio.hpp>
 
-#include <async_mqtt/endpoint_variant.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/predefined_underlying_layer.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
@@ -28,7 +27,7 @@ int main() {
 
     auto str = as::make_strand(ioc);
 
-    amep.stream().next_layer().async_connect(
+    amep.get_stream().next_layer().async_connect(
         endpoint,
         [&]
         (am::error_code const& ec) {

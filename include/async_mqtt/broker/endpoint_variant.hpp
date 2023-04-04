@@ -191,13 +191,13 @@ public:
 
     template <typename CompletionToken>
     typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
-    restore(
+    restore_packets(
         std::vector<basic_store_packet_variant<packet_id_bytes>> pvs,
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.restore(
+                return ep.restore_packets(
                     force_move(pvs),
                     std::forward<CompletionToken>(token)
                 );
@@ -274,7 +274,7 @@ public:
         );
     }
 
-    void restore(
+    void restore_packets(
         std::vector<basic_store_packet_variant<packet_id_bytes>> pvs
     ) {
         return visit(
@@ -284,28 +284,20 @@ public:
         );
     }
 
-    std::vector<basic_store_packet_variant<packet_id_bytes>> get_stored() const {
+    std::vector<basic_store_packet_variant<packet_id_bytes>> get_stored_packets() const {
         return visit(
             [&](auto& ep) {
-                return ep.get_stored();
+                return ep.get_stored_packets();
             }
         );
     }
 
     void set_preauthed_user_name(optional<std::string> user_name) {
-        visit(
-            [&](auto& ep) {
-                ep.set_preauthed_user_name(force_move(user_name));
-            }
-        );
+        preauthed_user_name_ = force_move(user_name);
     }
 
-    optional<std::string> get_preauthed_user_name() const {
-        return visit(
-            [&](auto& ep) {
-                return ep.get_preauthed_user_name();
-            }
-        );
+    optional<std::string> const& get_preauthed_user_name() const {
+        return preauthed_user_name_;
     }
 
     protocol_version get_protocol_version() const {
@@ -317,19 +309,11 @@ public:
     }
 
     void set_client_id(buffer cid) {
-        visit(
-            [&](auto& ep) {
-                ep.set_client_id(force_move(cid));
-            }
-        );
+        client_id_ = force_move(cid);
     }
 
     buffer const& get_client_id() const {
-        return visit(
-            [&](auto& ep) -> buffer const& {
-                return ep.get_client_id();
-            }
-        );
+        return client_id_;
     }
 
     operator bool() const {
@@ -354,6 +338,8 @@ public:
 
 private:
     epsp_t epsp_;
+    buffer client_id_;
+    optional<std::string> preauthed_user_name_;
 };
 
 } // namespace async_mqtt

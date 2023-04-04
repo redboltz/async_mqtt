@@ -538,8 +538,8 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
 
     // get_stored and restore next endpoint
     {
-        auto pvs = ep1.get_stored(as::use_future).get();
-        ep2.restore(am::force_move(pvs), as::use_future);
+        auto pvs = ep1.get_stored_packets(as::use_future).get();
+        ep2.restore_packets(am::force_move(pvs), as::use_future);
     }
 
     // send connack_sp_true
@@ -619,8 +619,8 @@ BOOST_AUTO_TEST_CASE(v3_1_1_server) {
 
     // get_stored and restore next endpoint
     {
-        auto pvs = ep2.get_stored(as::use_future).get();
-        ep3.restore(am::force_move(pvs), as::use_future);
+        auto pvs = ep2.get_stored_packets(as::use_future).get();
+        ep3.restore_packets(am::force_move(pvs), as::use_future);
     }
 
     // send connack_sp_true
@@ -1241,8 +1241,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
 
     // get_stored and restore next endpoint
     {
-        auto pvs = ep1.get_stored(as::use_future).get();
-        ep2.restore(am::force_move(pvs), as::use_future);
+        auto pvs = ep1.get_stored_packets(as::use_future).get();
+        ep2.restore_packets(am::force_move(pvs), as::use_future);
     }
 
     // send connack_sp_true
@@ -1323,8 +1323,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
 
     // get_stored and restore next endpoint
     {
-        auto pvs = ep2.get_stored(as::use_future).get();
-        ep3.restore(am::force_move(pvs), as::use_future);
+        auto pvs = ep2.get_stored_packets(as::use_future).get();
+        ep3.restore_packets(am::force_move(pvs), as::use_future);
     }
 
     // send connack_sp_true

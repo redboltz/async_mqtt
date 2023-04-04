@@ -189,7 +189,7 @@ public:
 
         return
             send(
-                std::forward<Packet>(packet),
+                force_move(packet),
                 false, // not from queue
                 std::forward<CompletionToken>(token)
             );
@@ -229,7 +229,7 @@ public:
 
     template <typename CompletionToken>
     typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
-    restore(
+    restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
         CompletionToken&& token
     ) {
@@ -238,7 +238,7 @@ public:
                 CompletionToken,
                 void()
             >(
-                restore_impl{
+                restore_packets_impl{
                     *this,
                     force_move(pvs)
                 },
@@ -251,7 +251,7 @@ public:
         std::decay_t<CompletionToken>,
         void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
     >::return_type
-    get_stored(
+    get_stored_packets(
         CompletionToken&& token
     ) const {
         return
@@ -259,7 +259,7 @@ public:
                 CompletionToken,
                 void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
             >(
-                get_stored_impl{
+                get_stored_packets_impl{
                     *this
                 },
                 token
@@ -303,7 +303,7 @@ public:
         qos2_publish_handled_ = force_move(pids);
     }
 
-    void restore(
+    void restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
     ) {
         BOOST_ASSERT(strand().running_in_this_thread());
@@ -324,33 +324,14 @@ public:
         }
     }
 
-    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored() const {
+    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored_packets() const {
         BOOST_ASSERT(strand().running_in_this_thread());
         return store_.get_stored();
-    }
-
-    void set_preauthed_user_name(optional<std::string> user_name) {
-        BOOST_ASSERT(strand().running_in_this_thread());
-        preauthed_user_name_ = force_move(user_name);
-    }
-    optional<std::string> get_preauthed_user_name() const {
-        BOOST_ASSERT(strand().running_in_this_thread());
-        return preauthed_user_name_;
     }
 
     protocol_version get_protocol_version() const {
         BOOST_ASSERT(strand().running_in_this_thread());
         return protocol_version_;
-    }
-
-    void set_client_id(buffer cid) {
-        BOOST_ASSERT(strand().running_in_this_thread());
-        client_id_ = force_move(cid);
-    }
-
-    buffer const& get_client_id() const {
-        BOOST_ASSERT(strand().running_in_this_thread());
-        return client_id_;
     }
 
     void cancel_all_timers_for_test() {
@@ -1510,7 +1491,7 @@ private: // compose operation impl
         }
     };
 
-    struct restore_impl {
+    struct restore_packets_impl {
         this_type& ep;
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
         enum { dispatch, complete } state = dispatch;
@@ -1530,14 +1511,14 @@ private: // compose operation impl
             } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
-                ep.restore(force_move(pvs));
+                ep.restore_packets(force_move(pvs));
                 self.complete();
                 break;
             }
         }
     };
 
-    struct get_stored_impl {
+    struct get_stored_packets_impl {
         this_type const& ep;
         enum { dispatch, complete } state = dispatch;
 
@@ -1556,7 +1537,7 @@ private: // compose operation impl
             } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
-                self.complete(ep.get_stored());
+                self.complete(ep.get_stored_packets());
                 break;
             }
         }
@@ -1829,9 +1810,6 @@ private:
     as::steady_timer tim_pingresp_recv_{strand()};
 
     std::set<packet_id_t> qos2_publish_handled_;
-
-    optional<std::string> preauthed_user_name_;
-    buffer client_id_;
 };
 
 template <role Role, typename NextLayer>

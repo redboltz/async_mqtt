@@ -407,9 +407,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             );
                             epsp->as<am::protocol::mqtts>().get_stream().next_layer().async_handshake(
                                 as::ssl::stream_base::server,
-                                [&brk, epsp]
+                                [&brk, epsp, username]
                                 (boost::system::error_code const& ec) {
                                     if (ec) return;
+                                    epsp->set_preauthed_user_name(*username);
                                     brk.handle_accept(epsp);
                                 }
                             );
