@@ -622,13 +622,17 @@ int main(int argc, char **argv) {
                         am::properties /*props*/) {
                         if (pubopts.get_retain() == am::pub::retain::yes) {
                             locked_cout() << "retained publish received and ignored topic:" << topic_name << std::endl;
-                            return;
+                            return false;
                         }
                         BOOST_ASSERT(rest_times > 0);
                         --rest_times;
                         if (rest_idle > 0) {
                             --ci.recv_times;
-                            if (--rest_idle == 0) pub_after_idle_delay_proc();
+                            if (--rest_idle == 0) {
+                                pub_after_idle_delay_proc();
+                                return false; // next recv is called in pub_after_idle_delay_proc()
+                            }
+                            return true;
                         }
                         else {
                             auto recv = std::chrono::steady_clock::now();
@@ -655,10 +659,53 @@ int main(int argc, char **argv) {
                             --ci.recv_times;
                             if (rest_times == 0) {
                                 finish_proc();
+                                return false;
                             }
                             else {
+                                return true;
                             }
                         }
+                    };
+
+                std::function<void(ci_t& ci)> recv_pub;
+                recv_pub =
+                    [&](ci_t& ci) {
+                        ci.c.recv(
+                            [&]
+                            (am::packet_variant pv) {
+                                pv.visit(
+                                    am::overload {
+                                        [&](am::v5::publish_packet const& p) {
+                                            if (publish_handler(
+                                                    ci,
+                                                    p.packet_id(),
+                                                    p.opts(),
+                                                    p.topic(),
+                                                    p.payload(),
+                                                    p.props()
+                                                )
+                                            ) {
+                                                recv_pub(ci);
+                                            }
+                                        },
+                                        [&](am::v3_1_1::publish_packet const& p) {
+                                            if (publish_handler(
+                                                ci,
+                                                p.packet_id(),
+                                                p.opts(),
+                                                p.topic(),
+                                                p.payload(),
+                                                am::properties{}
+                                                )
+                                            ) {
+                                                recv_pub(ci);
+                                            };
+                                        },
+                                        [](auto const&) {}
+                                    }
+                                );
+                            }
+                        );
                     };
 
                 async_wait_pub =
@@ -691,26 +738,7 @@ int main(int argc, char **argv) {
                                                         }
                                                     }
                                                 );
-                                                ci.c.recv(
-                                                    [&]
-                                                    (am::packet_variant pv) {
-                                                        pv.visit(
-                                                            am::overload {
-                                                                [&](am::v5::publish_packet const& p) {
-                                                                    publish_handler(
-                                                                        ci,
-                                                                        p.packet_id(),
-                                                                        p.opts(),
-                                                                        p.topic(),
-                                                                        p.payload(),
-                                                                        p.props()
-                                                                    );
-                                                                },
-                                                                [](auto const&) {}
-                                                            }
-                                                        );
-                                                    }
-                                                );
+                                                recv_pub(ci);
                                             } break;
                                             case am::protocol_version::v3_1_1: {
                                                 ci.c.send(
@@ -727,26 +755,7 @@ int main(int argc, char **argv) {
                                                         }
                                                     }
                                                 );
-                                                ci.c.recv(
-                                                    [&]
-                                                    (am::packet_variant pv) {
-                                                        pv.visit(
-                                                            am::overload {
-                                                                [&](am::v3_1_1::publish_packet const& p) {
-                                                                    publish_handler(
-                                                                        ci,
-                                                                        p.packet_id(),
-                                                                        p.opts(),
-                                                                        p.topic(),
-                                                                        p.payload(),
-                                                                        am::properties{}
-                                                                    );
-                                                                },
-                                                                [](auto const&) {}
-                                                            }
-                                                        );
-                                                    }
-                                                );
+                                                recv_pub(ci);
                                             } break;
                                             default:
                                                 std::cout << "invalid MQTT version" << std::endl;
@@ -1282,7 +1291,7 @@ int main(int argc, char **argv) {
                         (
                             boost::system::error_code const& ec,
                             as::ip::tcp::resolver::results_type eps
-                        ) {
+                        ) mutable {
                             if (ec) {
                                 if (cb) {
                                     cb(ec);
@@ -1293,12 +1302,14 @@ int main(int argc, char **argv) {
                                 c.get_stream().lowest_layer(),
                                 eps.begin(),
                                 eps.end(),
-                                []
+                                [cb = am::force_move(cb)]
                                 (
                                     boost::system::error_code const& ec,
                                     auto /*unused*/
                                 ) {
-
+                                    if (cb) {
+                                        cb(ec);
+                                    }
                                 }
                             );
                         }
