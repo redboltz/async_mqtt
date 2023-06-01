@@ -2,7 +2,7 @@
 
 Asynchronous MQTT communication library.
 
-Version 0.1 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![Build Status](https://dev.azure.com/redboltz/redboltz/_apis/build/status/redboltz.async_mqtt?branchName=main)](https://dev.azure.com/redboltz/redboltz/_build/latest?definitionId=6&branchName=main)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
+Version 0.1 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
 
 # Overview
 
