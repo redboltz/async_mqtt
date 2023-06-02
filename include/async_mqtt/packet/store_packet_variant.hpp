@@ -17,6 +17,9 @@
 
 namespace async_mqtt {
 
+/**
+ * @brief corresponding response packet
+ */
 enum class response_packet {
     v3_1_1_puback,
     v3_1_1_pubrec,
@@ -26,6 +29,10 @@ enum class response_packet {
     v5_pubcomp,
 };
 
+/**
+ * @brief MQTT packet variant for store
+ * @tparam PacketIdBytes MQTT spec is 2. You can use `store_packet_variant` for that.
+ */
 template <std::size_t PacketIdBytes>
 class basic_store_packet_variant {
 public:

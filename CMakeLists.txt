@@ -108,16 +108,19 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = \"async_mqtt\"" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = _DOXYGEN_" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE                = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt/broker" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_LATEX         = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_MEMBERS     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_CLASSES     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_FRIEND_COMPOUNDS  = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_IN_BODY_DOCS      = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_XML           = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+#        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_FRIEND_COMPOUNDS  = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+#        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_IN_BODY_DOCS      = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "CLASS_GRAPH            = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDE_GRAPH          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDED_BY_GRAPH      = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+
     )
     if(DOXYGEN_DOT_FOUND)
         list(APPEND Doxyfile_CONTENT

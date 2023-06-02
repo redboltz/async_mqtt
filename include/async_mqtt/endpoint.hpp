@@ -23,56 +23,29 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
+/// @file
+
 namespace async_mqtt {
 
 /**
  * @brief MQTT endpoint connection role
+ * @related basic_endpoint
  */
 enum class role {
-    client = 0b01, /// as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.
-    server = 0b10, /// as server. Can't send CONNECT, SUBSCRIBE, UNSUBSCRIBE, PINGREQ, DISCONNECT(only on v3.1.1).
-                   /// Can send Other packets.
-    any    = 0b11, /// can send all packets. (no check)
+    client = 0b01, ///< as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.
+    server = 0b10, ///< as server. Can't send CONNECT, SUBSCRIBE, UNSUBSCRIBE, PINGREQ, DISCONNECT(only on v3.1.1).
+                   ///  Can send Other packets.
+    any    = 0b11, ///< can send all packets. (no check)
 };
 
 /**
  * @brief receive packet filter
+ * @related basic_endpoint
  */
 enum class filter {
-    match,  /// matched control_packet_type is target
-    except  /// no matched control_packet_type is target
+    match,  ///< matched control_packet_type is target
+    except  ///< no matched control_packet_type is target
 };
-
-enum class connection_status {
-    connecting,
-    connected,
-    disconnecting,
-    disconnected
-};
-
-constexpr bool can_send_as_client(role r) {
-    return static_cast<int>(r) & static_cast<int>(role::client);
-}
-constexpr bool can_send_as_server(role r) {
-    return static_cast<int>(r) & static_cast<int>(role::server);
-}
-
-inline optional<topic_alias_t> get_topic_alias(properties const& props) {
-    optional<topic_alias_t> ta_opt;
-    for (auto const& prop : props) {
-        prop.visit(
-            overload {
-                [&](property::topic_alias const& p) {
-                    ta_opt.emplace(p.val());
-                },
-                [](auto const&) {
-                }
-            }
-        );
-        if (ta_opt) return ta_opt;
-    }
-    return ta_opt;
-}
 
 /**
  * @brief MQTT endpoint corresponding to the connection
@@ -82,24 +55,57 @@ inline optional<topic_alias_t> get_topic_alias(properties const& props) {
  */
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint {
-public:
+
+    enum class connection_status {
+        connecting,
+        connected,
+        disconnecting,
+        disconnected
+    };
+
+    static constexpr bool can_send_as_client(role r) {
+        return static_cast<int>(r) & static_cast<int>(role::client);
+    }
+
+    static constexpr bool can_send_as_server(role r) {
+        return static_cast<int>(r) & static_cast<int>(role::server);
+    }
+
+    static inline optional<topic_alias_t> get_topic_alias(properties const& props) {
+        optional<topic_alias_t> ta_opt;
+        for (auto const& prop : props) {
+            prop.visit(
+                overload {
+                    [&](property::topic_alias const& p) {
+                        ta_opt.emplace(p.val());
+                    },
+                    [](auto const&) {
+                    }
+                }
+            );
+            if (ta_opt) return ta_opt;
+        }
+        return ta_opt;
+    }
+
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
     using stream_type =
         stream<
             NextLayer
         >;
+
+public:
+    /// @brief The type given as NextLayer
     using next_layer_type = NextLayer;
+    /// @brief The type of stand that is used MQTT stream exclusive control
     using strand_type = typename stream_type::strand_type;
+    /// @brief The value given as PacketIdBytes
     static constexpr std::size_t packet_id_bytes = PacketIdBytes;
 
-    /**
-     * @brief Type of packet_variant.
-     */
+    /// @brief Type of packet_variant.
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
-    /**
-     * @brief Type of MQTT Packet Identifier.
-     */
+    /// @brief Type of MQTT Packet Identifier.
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
@@ -2182,6 +2188,12 @@ private:
     bool recv_processing_ = false;
 };
 
+/**
+ * @related basic_endpoint
+ * @brief Type alias of basic_endpoint (PacketIdBytes=2).
+ * @tparam Role          role for packet sendable checking
+ * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
+ */
 template <role Role, typename NextLayer>
 using endpoint = basic_endpoint<Role, 2, NextLayer>;
 
