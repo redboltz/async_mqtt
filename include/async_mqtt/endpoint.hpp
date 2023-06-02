@@ -26,7 +26,7 @@
 namespace async_mqtt {
 
 /**
- * @breif MQTT endpoint connection role
+ * @brief MQTT endpoint connection role
  */
 enum class role {
     client = 0b01, /// as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.
@@ -36,7 +36,7 @@ enum class role {
 };
 
 /**
- * @breif receive packet filter
+ * @brief receive packet filter
  */
 enum class filter {
     match,  /// matched control_packet_type is target
@@ -75,7 +75,7 @@ inline optional<topic_alias_t> get_topic_alias(properties const& props) {
 }
 
 /**
- * @breif MQTT endpoint corresponding to the connection
+ * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
@@ -93,17 +93,17 @@ public:
     static constexpr std::size_t packet_id_bytes = PacketIdBytes;
 
     /**
-     * @breif Type of packet_variant.
+     * @brief Type of packet_variant.
      */
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
     /**
-     * @breif Type of MQTT Packet Identifier.
+     * @brief Type of MQTT Packet Identifier.
      */
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
-     * @breif constructor
+     * @brief constructor
      * @tparam Args Types for the next layer
      * @param  ver  MQTT protocol version (v5 or v3_1_1)
      * @param  args args for the next layer
@@ -118,14 +118,14 @@ public:
     }
 
     /**
-     * @breif strand getter
+     * @brief strand getter
      * @return const reference of the strand
      */
     strand_type const& strand() const {
         return stream_->strand();
     }
     /**
-     * @breif strand getter
+     * @brief strand getter
      * @return eference of the strand
      */
     strand_type& strand() {
@@ -133,14 +133,14 @@ public:
     }
 
     /**
-     * @breif next_layer getter
+     * @brief next_layer getter
      * @return const reference of the next_layer
      */
     next_layer_type const& next_layer() const {
         return stream_->next_layer();
     }
     /**
-     * @breif next_layer getter
+     * @brief next_layer getter
      * @return reference of the next_layer
      */
     next_layer_type& next_layer() {
@@ -148,14 +148,14 @@ public:
     }
 
     /**
-     * @breif lowest_layer getter
+     * @brief lowest_layer getter
      * @return const reference of the lowest_layer
      */
     auto const& lowest_layer() const {
         return stream_->lowest_layer();
     }
     /**
-     * @breif lowest_layer getter
+     * @brief lowest_layer getter
      * @return reference of the lowest_layer
      */
     auto& lowest_layer() {
@@ -163,7 +163,7 @@ public:
     }
 
     /**
-     * @breif auto publish response setter. Should be called before send()/recv() call.
+     * @brief auto publish response setter. Should be called before send()/recv() call.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
      */
@@ -175,7 +175,7 @@ public:
     }
 
     /**
-     * @breif auto pingreq response setter. Should be called before send()/recv() call.
+     * @brief auto pingreq response setter. Should be called before send()/recv() call.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
      */
@@ -187,7 +187,7 @@ public:
     }
 
     /**
-     * @breif auto map (allocate) topic alias on send PUBLISH packet.
+     * @brief auto map (allocate) topic alias on send PUBLISH packet.
      *        If all topic aliases are used, then overwrite by LRU algorithm.
      *        Should be called before send() call.
      * @note By default not automatically mapping.
@@ -201,7 +201,7 @@ public:
     }
 
     /**
-     * @breif auto replace topic with corresponding topic alias on send PUBLISH packet.
+     * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
      *        Registering topic alias need to do manually.
      *        Should be called before send() call.
      * @note By default not automatically replacing.
@@ -217,7 +217,7 @@ public:
     // async functions
 
     /**
-     * @breif acuire unique packet_id.
+     * @brief acuire unique packet_id.
      * @param token the param is optional<packet_id_t>
      * @return deduced by token
      */
@@ -242,7 +242,7 @@ public:
     }
 
     /**
-     * @breif register packet_id.
+     * @brief register packet_id.
      * @param packet_id packet_id to register
      * @param token     the param is bool. If true, success, otherwise the packet_id has already been used.
      * @return deduced by token
@@ -270,7 +270,7 @@ public:
     }
 
     /**
-     * @breif release packet_id.
+     * @brief release packet_id.
      * @param packet_id packet_id to release
      * @param token     the param is void
      * @return deduced by token
@@ -298,7 +298,7 @@ public:
     }
 
     /**
-     * @breif send packet
+     * @brief send packet
      *        users can call send() before the previous send()'s CompletionToken is invoked
      * @param packet packet to send
      * @param token  the param is system_error
@@ -330,7 +330,7 @@ public:
     }
 
     /**
-     * @breif receive packet
+     * @brief receive packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      * @param token the param is packet_variant_type
      * @return deduced by token
@@ -358,7 +358,7 @@ public:
     }
 
     /**
-     * @breif receive packet
+     * @brief receive packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
@@ -380,7 +380,7 @@ public:
     }
 
     /**
-     * @breif receive packet
+     * @brief receive packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
@@ -426,7 +426,7 @@ public:
     }
 
     /**
-     * @breif close the underlying connection
+     * @brief close the underlying connection
      * @param token  the param is void
      * @return deduced by token
      */
@@ -449,7 +449,7 @@ public:
     }
 
     /**
-     * @breif restore packets
+     * @brief restore packets
      *        the restored packets would automatically send when CONNACK packet is received
      * @param pvs packets to restore
      * @param token  the param is void
@@ -478,7 +478,7 @@ public:
     }
 
     /**
-     * @breif get stored packets
+     * @brief get stored packets
      *        sotred packets mean inflight packets.
      *        - PUBLISH packet (QoS1) not received PUBACK packet
      *        - PUBLISH packet (QoS1) not received PUBREC packet
@@ -512,7 +512,7 @@ public:
     // sync APIs that require working on strand
 
     /**
-     * @breif acuire unique packet_id.
+     * @brief acuire unique packet_id.
      * @return optional<packet_id_t> if acquired return acquired packet id, otherwise nullopt
      * @note This function is SYNC function that must only be called in the strand.
      */
@@ -533,7 +533,7 @@ public:
     }
 
     /**
-     * @breif register packet_id.
+     * @brief register packet_id.
      * @param packet_id packet_id to register
      * @return If true, success, otherwise the packet_id has already been used.
      * @note This function is SYNC function that must only be called in the strand.
@@ -548,7 +548,7 @@ public:
     }
 
     /**
-     * @breif release packet_id.
+     * @brief release packet_id.
      * @param packet_id packet_id to release
      * @note This function is SYNC function that must only be called in the strand.
      */
@@ -589,7 +589,7 @@ public:
     }
 
     /**
-     * @breif restore packets
+     * @brief restore packets
      *        the restored packets would automatically send when CONNACK packet is received
      * @param pvs packets to restore
      * @note This function is SYNC function that must only be called in the strand.
@@ -619,7 +619,7 @@ public:
     }
 
     /**
-     * @breif get stored packets
+     * @brief get stored packets
      *        sotred packets mean inflight packets.
      *        - PUBLISH packet (QoS1) not received PUBACK packet
      *        - PUBLISH packet (QoS1) not received PUBREC packet
@@ -636,7 +636,7 @@ public:
     }
 
     /**
-     * @breif get MQTT protocol version
+     * @brief get MQTT protocol version
      * @return MQTT protocol version
      * @note This function is SYNC function that must only be called in the strand.
      */
