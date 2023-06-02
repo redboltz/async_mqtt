@@ -14,8 +14,16 @@
 
 namespace async_mqtt {
 
+/**
+ * @brief property variant
+ */
 class property_variant {
 public:
+
+    /**
+     * @brief constructor
+     * @param property property
+     */
     template <
         typename Property,
         std::enable_if_t<
@@ -26,6 +34,10 @@ public:
     property_variant(Property&& property):var_{std::forward<Property>(property)}
     {}
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) const& {
         return
@@ -35,6 +47,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) & {
         return
@@ -44,6 +60,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) && {
         return
@@ -53,6 +73,10 @@ public:
             );
     }
 
+    /**
+     * @brief Get property_id
+     * @return property_id
+     */
     property::id id() const {
         return visit(
             overload {
@@ -67,6 +91,10 @@ public:
         );
     }
 
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
     std::size_t num_of_const_buffer_sequence() const {
         return visit(
             overload {
@@ -81,6 +109,11 @@ public:
         );
     }
 
+    /**
+     * @brief Create const buffer sequence.
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
     std::vector<as::const_buffer> const_buffer_sequence() const {
         return visit(
             overload {
@@ -95,6 +128,10 @@ public:
         );
     }
 
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
     std::size_t size() const {
         return visit(
             overload {
@@ -109,21 +146,37 @@ public:
         );
     }
 
+    /**
+     * @brief Get by type. If not match, then throw std::bad_variant_access exception.
+     * @return actual packet
+     */
     template <typename T>
     decltype(auto) get() {
         return std::get<T>(var_);
     }
 
+    /**
+     * @brief Get by type. If not match, then throw std::bad_variant_access exception.
+     * @return actual packet
+     */
     template <typename T>
     decltype(auto) get() const {
         return std::get<T>(var_);
     }
 
+    /**
+     * @brief Get by type pointer
+     * @return actual packet pointer. If not match then return nullptr.
+     */
     template <typename T>
     decltype(auto) get_if() {
         return std::get_if<T>(&var_);
     }
 
+    /**
+     * @brief Get by type pointer
+     * @return actual packet pointer. If not match then return nullptr.
+     */
     template <typename T>
     decltype(auto) get_if() const {
         return std::get_if<T>(&var_);

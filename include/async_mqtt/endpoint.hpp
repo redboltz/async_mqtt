@@ -29,7 +29,6 @@ namespace async_mqtt {
 
 /**
  * @brief MQTT endpoint connection role
- * @related basic_endpoint
  */
 enum class role {
     client = 0b01, ///< as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.
@@ -40,7 +39,6 @@ enum class role {
 
 /**
  * @brief receive packet filter
- * @related basic_endpoint
  */
 enum class filter {
     match,  ///< matched control_packet_type is target
@@ -112,7 +110,9 @@ public:
      * @brief constructor
      * @tparam Args Types for the next layer
      * @param  ver  MQTT protocol version (v5 or v3_1_1)
-     * @param  args args for the next layer
+     * @param  args args for the next layer. There are predefined next layer types:
+     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
+     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
      */
     template <typename... Args>
     basic_endpoint(
@@ -194,8 +194,8 @@ public:
 
     /**
      * @brief auto map (allocate) topic alias on send PUBLISH packet.
-     *        If all topic aliases are used, then overwrite by LRU algorithm.
-     *        Should be called before send() call.
+     * If all topic aliases are used, then overwrite by LRU algorithm.
+     * \n This function should be called before send() call.
      * @note By default not automatically mapping.
      * @param val if true, enable auto mapping, otherwise disable.
      */
@@ -208,8 +208,8 @@ public:
 
     /**
      * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
-     *        Registering topic alias need to do manually.
-     *        Should be called before send() call.
+     * Registering topic alias need to do manually.
+     * \n This function should be called before send() call.
      * @note By default not automatically replacing.
      * @param val if true, enable auto replacing, otherwise disable.
      */
@@ -218,6 +218,24 @@ public:
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "set_auto_replace_topic_alias_send val:" << val;
         auto_replace_topic_alias_send_ = val;
+    }
+
+    /**
+     * @brief Set timeout for receiving PINGRESP packet after PINGREQ packet is sent.
+     * If the timer is fired, then the underlying layer is closed from the client side.
+     * If the protocol_version is v5, then send DISCONNECT packet with the reason code
+     * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
+     * \n This function should be called before send() call.
+     * @note By default timeout is not set.
+     * @param val if 0, timer is not set, otherwise set val milliseconds.
+     */
+    void set_ping_resp_recv_timeout_ms(std::size_t ms) {
+        if (ms == 0) {
+            pingresp_recv_timeout_ms_ = nullopt;
+        }
+        else {
+            pingresp_recv_timeout_ms_.emplace(ms);
+        }
     }
 
     // async functions

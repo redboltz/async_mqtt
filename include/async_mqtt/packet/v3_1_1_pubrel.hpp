@@ -26,10 +26,26 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PUBREL packet (v3.1.1)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
+ * automatically sent when PUBREC v3_1_1::basic_pubrec_packet is received.
+ * If both the client and the broker keeping the session, this packet is
+ * stored in the endpoint for resending if disconnect/reconnect happens.
+ * If the session doesn' exist or lost, then the stored packets are erased.
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718053
+ */
 template <std::size_t PacketIdBytes>
 class basic_pubrel_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREC packet
+     */
     basic_pubrel_packet(
         packet_id_t packet_id
     )
@@ -101,8 +117,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();
@@ -116,6 +132,10 @@ public:
         return 1; // all
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(&all_[2]);
     }
@@ -133,6 +153,10 @@ inline std::ostream& operator<<(std::ostream& o, basic_pubrel_packet<PacketIdByt
     return o;
 }
 
+/**
+ * @related basic_pubrel_packet
+ * @brief Type alias of basic_pubrel_packet (PacketIdBytes=2).
+ */
 using pubrel_packet = basic_pubrel_packet<2>;
 
 } // namespace async_mqtt::v3_1_1

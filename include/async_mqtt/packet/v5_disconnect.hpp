@@ -30,8 +30,28 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT DISCONNECT packet (v5)
+ *
+ * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
+ * The endpoint can't send packets any more.
+ * The underlying layer is not automatically closed from the client side.
+ * If you want to close the underlying layer from the client side, you need to call basic_endpoint::close()
+ * after sending DISCONNECT packet.
+ * When the broker receives DISCONNECT packet, then close underlying layer from the broker.
+ * In this case, Will is not published by the broker except reason_code is Disconnect with Will Message.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205
+ */
 class disconnect_packet {
 public:
+    /**
+     * @brief constructor
+     *
+     * @param reason_code DisonnectReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
+     * @param props       properties.
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901209
+     */
     disconnect_packet(
         disconnect_reason_code reason_code,
         properties props
@@ -41,6 +61,9 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     */
     disconnect_packet(
     ) : disconnect_packet{
             nullopt,
@@ -48,6 +71,12 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     *
+     * @param reason_code DisonnectReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
+     */
     disconnect_packet(
         disconnect_reason_code reason_code
     ) : disconnect_packet{
@@ -191,8 +220,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -218,11 +247,19 @@ public:
             }();
     }
 
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
     disconnect_reason_code code() const {
         if (reason_code_) return *reason_code_;
         return disconnect_reason_code::normal_disconnection;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }

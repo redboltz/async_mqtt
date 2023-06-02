@@ -27,10 +27,26 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT UNSUBSCRIBE packet (v5)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * MQTT UNSUBSCRIBE packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901179
+ */
 template <std::size_t PacketIdBytes>
 class basic_unsubscribe_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier.the packet_id must be acquired by
+     *                  basic_endpoint::acquire_unique_packet_id().
+     * @param params    unsubscribe entries.
+     * @param props     properties.
+     *                  \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901182
+     */
     basic_unsubscribe_packet(
         packet_id_t packet_id,
         std::vector<topic_sharename> params,
@@ -215,8 +231,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -243,14 +259,26 @@ public:
             entries_.size() * 2;  // topic name length, topic name
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(packet_id_.data());
     }
 
+    /**
+     * @brief Get entries
+     * @return entries
+     */
     std::vector<topic_sharename> const& entries() const {
         return entries_;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }

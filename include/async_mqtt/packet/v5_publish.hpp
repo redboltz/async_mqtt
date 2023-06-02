@@ -264,8 +264,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -324,6 +324,10 @@ public:
         return payloads_;
     }
 
+    /**
+     * @brief Get payload range
+     * @return A pair of forward iterators
+     */
     auto payload_range() const {
         return make_packet_range(payloads_);
     }
@@ -336,10 +340,20 @@ public:
         pub::set_dup(fixed_header_, dup);
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }
 
+    /**
+     * @breif Remove topic and add topic_alias
+     *
+     * This is for applying topic_alias.
+     * @param val topic_alias
+     */
     void remove_topic_add_topic_alias(topic_alias_t val) {
         // add topic_alias property
         auto prop{property::topic_alias{val}};
@@ -376,6 +390,12 @@ public:
         }
     }
 
+    /**
+     * @breif Add topic_alias
+     *
+     * This is for registering topic_alias.
+     * @param val topic_alias
+     */
     void add_topic_alias(topic_alias_t val) {
         // add topic_alias property
         auto prop{property::topic_alias{val}};
@@ -403,6 +423,12 @@ public:
         }
     }
 
+    /**
+     * @breif Remove topic and add topic_alias
+     *
+     * This is for extracting topic from the topic_alias.
+     * @param val topic_alias
+     */
     void add_topic(buffer topic) {
         BOOST_ASSERT(topic_name_.empty());
 
@@ -422,6 +448,10 @@ public:
         }
     }
 
+    /**
+     * @breif Update MessageExpiryInterval property
+     * @param val message_expiry_interval
+     */
     void update_message_expiry_interval(std::uint32_t val) {
         bool updated = false;
         for (auto& prop : props_) {

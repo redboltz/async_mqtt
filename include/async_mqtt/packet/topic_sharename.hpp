@@ -13,8 +13,16 @@
 
 namespace async_mqtt {
 
+/**
+ * @brief topic and sharename
+ */
 class topic_sharename {
 public:
+
+    /**
+     * @brief constructor
+     * @param all_topic TopicFilter. It could contain sharename on MQTT v5.0.
+     */
     topic_sharename(
         buffer all_topic
     ): all_topic_{force_move(all_topic)} {
@@ -35,22 +43,44 @@ public:
         }
     }
 
+    /**
+     * @brief Get topic
+     * @return topic
+     */
     buffer const& topic() const {
         return topic_;
     }
 
+    /**
+     * @brief Get sharename
+     * @return sharename. If no sharename then return empty size buffer.
+     */
     buffer const& sharename() const {
         return sharename_;
     }
 
+    /**
+     * @brief Get all_topic
+     *
+     * If sharename is contained, $share/ prefix is contained.
+     * @return all_topic that is given to the constructor.
+     */
     buffer const& all_topic() const {
         return all_topic_;
     }
 
+    /**
+     * @brief bool conversion
+     *
+     * @return if topic is empty (invalid) then return false, otherwise true.
+     */
     operator bool() const {
         return !topic_.empty();
     }
 
+    /**
+     * @brief less than operator
+     */
     friend
     bool operator<(topic_sharename const& lhs, topic_sharename const& rhs) {
         return
@@ -58,6 +88,9 @@ public:
             std::tie(rhs.topic_, rhs.sharename_);
     }
 
+    /**
+     * @brief equal operator
+     */
     friend
     bool operator==(topic_sharename const& lhs, topic_sharename const& rhs) {
         return

@@ -15,18 +15,20 @@
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/exception.hpp>
 
+/// @file
+
 namespace async_mqtt {
 
 /**
  * @brief corresponding response packet
  */
 enum class response_packet {
-    v3_1_1_puback,
-    v3_1_1_pubrec,
-    v3_1_1_pubcomp,
-    v5_puback,
-    v5_pubrec,
-    v5_pubcomp,
+    v3_1_1_puback,  ///< stored packet is v3_1_1_basic_publish_packet QoS1
+    v3_1_1_pubrec,  ///< stored packet is v3_1_1_basic_publish_packet QoS2
+    v3_1_1_pubcomp, ///< stored packet is v3_1_1_basic_pubrel_packet
+    v5_puback,      ///< stored packet is v5_basic_publish_packet QoS1
+    v5_pubrec,      ///< stored packet is v5_basic_publish_packet QoS2
+    v5_pubcomp,     ///< stored packet is v5_basic_rel_packet
 };
 
 /**
@@ -38,6 +40,10 @@ class basic_store_packet_variant {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
+    /**
+     * @brief constructor
+     * @param packet PUBLISH packet QoS1 or 2
+     */
     basic_store_packet_variant(v3_1_1::basic_publish_packet<PacketIdBytes> packet)
         :res_{
              [&] {
@@ -57,11 +63,19 @@ public:
          var_{force_move(packet)}
     {}
 
+    /**
+     * @brief constructor
+     * @param packet PUBREL packet
+     */
     basic_store_packet_variant(v3_1_1::basic_pubrel_packet<PacketIdBytes> packet)
         :res_{response_packet::v3_1_1_pubcomp},
          var_{force_move(packet)}
     {}
 
+    /**
+     * @brief constructor
+     * @param packet PUBLISH packet QoS1 or 2
+     */
     basic_store_packet_variant(v5::basic_publish_packet<PacketIdBytes> packet)
         :res_{
              [&] {
@@ -81,11 +95,19 @@ public:
          var_{force_move(packet)}
     {}
 
+    /**
+     * @brief constructor
+     * @param packet PUBREL packet
+     */
     basic_store_packet_variant(v5::basic_pubrel_packet<PacketIdBytes> packet)
         :res_{response_packet::v5_pubcomp},
          var_{force_move(packet)}
     {}
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) const& {
         return
@@ -95,6 +117,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) & {
         return
@@ -104,6 +130,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) && {
         return
@@ -113,6 +143,11 @@ public:
             );
     }
 
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
     std::vector<as::const_buffer> const_buffer_sequence() const {
         return visit(
             overload {
@@ -127,6 +162,10 @@ public:
         );
     }
 
+    /**
+     * @brief Get packet id
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return visit(
             overload {
@@ -137,6 +176,10 @@ public:
         );
     }
 
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
     std::size_t size() const {
         return visit(
             overload {
@@ -147,6 +190,10 @@ public:
         );
     }
 
+    /**
+     * @breif Get MessageExpiryInterval property value
+     * @return  message_expiry_interval
+     */
     std::uint32_t get_message_expiry_interval() const {
         return visit(
             overload {
@@ -175,6 +222,10 @@ public:
         );
     }
 
+    /**
+     * @breif Update MessageExpiryInterval property
+     * @param val message_expiry_interval
+     */
     void update_message_expiry_interval(std::uint32_t val) const {
         visit(
             overload {
@@ -200,6 +251,10 @@ public:
         );
     }
 
+    /**
+     * @brief Get response packet type corresponding to this packet.
+     * @return response_packet
+     */
     response_packet response_packet_type() const {
         return res_;
     }

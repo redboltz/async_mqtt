@@ -26,8 +26,24 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PINGRESP packet (v5)
+ *
+ * Only MQTT broker(sever) can send this packet.
+ * If basic_endpoint::set_auto_ping_response() is called with true, then this packet is
+ * automatically sent when PINGREQ v5::pingreq_packet is received.
+ * If the endpoint called basic_endpoint::set_ping_resp_recv_timeout_ms() with non 0 argument,
+ * and PINGRESP packet isn't received until the timer fired, then send DISCONNECT packet with
+ * the reason code disconnect_reason_code::keep_alive_timeout automatically then close underlying
+ * layer automatically.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901200
+ */
 class pingresp_packet {
 public:
+
+    /**
+     * @brief constructor
+     */
     pingresp_packet()
         : all_(all_.capacity())
     {
@@ -87,8 +103,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();

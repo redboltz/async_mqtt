@@ -26,8 +26,24 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT DISCONNECT packet (v3.1.1)
+ *
+ * Only MQTT client can send this packet.
+ * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
+ * The endpoint can't send packets any more.
+ * The underlying layer is not automatically closed from the client side.
+ * If you want to close the underlying layer from the client side, you need to call basic_endpoint::close()
+ * after sending DISCONNECT packet.
+ * When the broker receives DISCONNECT packet, then close underlying layer from the broker.
+ * In this case, Will is not published by the broker.
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090
+ */
 class disconnect_packet {
 public:
+    /**
+     * @brief constructor
+     */
     disconnect_packet()
         : all_(all_.capacity())
     {
@@ -87,8 +103,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();

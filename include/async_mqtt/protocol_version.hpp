@@ -10,14 +10,22 @@
 #include <cstdint>
 #include <ostream>
 
+/// @file
+
 namespace async_mqtt {
 
+/**
+ * @brief MQTT protocol version
+ */
 enum class protocol_version {
-    undetermined  = 0,
-    v3_1_1        = 4,
-    v5            = 5,
+    undetermined  = 0, ///< both v3.1.1 and v5.0 are accepted for broker (server)
+    v3_1_1        = 4, ///< version 3.1.1
+    v5            = 5, ///< version 5.0
 };
 
+/**
+ * @brief stringize protocol_version
+ */
 constexpr char const* protocol_version_to_str(protocol_version v) {
     switch(v) {
     case protocol_version::undetermined: return "undetermined";
@@ -27,6 +35,9 @@ constexpr char const* protocol_version_to_str(protocol_version v) {
     }
 }
 
+/**
+ * @brief output to the stream protocol_version
+ */
 inline
 std::ostream& operator<<(std::ostream& os, protocol_version val)
 {

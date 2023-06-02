@@ -26,10 +26,24 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PUBCOMP packet (v3.1.1)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
+ * automatically sent when PUBREL v3_1_1::basic_pubrel_packet is received.
+ *
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718058
+ */
 template <std::size_t PacketIdBytes>
 class basic_pubcomp_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
+     */
     basic_pubcomp_packet(
         packet_id_t packet_id
     )
@@ -101,8 +115,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();
@@ -116,6 +130,10 @@ public:
         return 1; // all
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(&all_[2]);
     }
@@ -133,6 +151,10 @@ inline std::ostream& operator<<(std::ostream& o, basic_pubcomp_packet<PacketIdBy
     return o;
 }
 
+/**
+ * @related basic_pubcomp_packet
+ * @brief Type alias of basic_pubcomp_packet (PacketIdBytes=2).
+ */
 using pubcomp_packet = basic_pubcomp_packet<2>;
 
 } // namespace async_mqtt::v3_1_1

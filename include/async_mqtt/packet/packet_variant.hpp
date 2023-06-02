@@ -49,6 +49,11 @@ template <std::size_t PacketIdBytes>
 class basic_packet_variant {
 public:
     basic_packet_variant() = default;
+
+    /**
+     * @brief constructor
+     * @param packet packet
+     */
     template <
         typename Packet,
         std::enable_if_t<
@@ -61,6 +66,10 @@ public:
     basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
     {}
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) const& {
         return
@@ -70,6 +79,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) & {
         return
@@ -79,6 +92,10 @@ public:
             );
     }
 
+    /**
+     * @brief visit to variant
+     * @param func Visitor function
+     */
     template <typename Func>
     auto visit(Func&& func) && {
         return
@@ -88,26 +105,46 @@ public:
             );
     }
 
+    /**
+     * @brief Get by type. If not match, then throw std::bad_variant_access exception.
+     * @return actual packet
+     */
     template <typename T>
     decltype(auto) get() {
         return std::get<T>(var_);
     }
 
+    /**
+     * @brief Get by type. If not match, then throw std::bad_variant_access exception.
+     * @return actual packet
+     */
     template <typename T>
     decltype(auto) get() const {
         return std::get<T>(var_);
     }
 
+    /**
+     * @brief Get by type pointer
+     * @return actual packet pointer. If not match then return nullptr.
+     */
     template <typename T>
     decltype(auto) get_if() {
         return std::get_if<T>(&var_);
     }
 
+    /**
+     * @brief Get by type pointer
+     * @return actual packet pointer. If not match then return nullptr.
+     */
     template <typename T>
     decltype(auto) get_if() const {
         return std::get_if<T>(&var_);
     }
 
+    /**
+     * @brief Get control_packet_type.
+     * @return If packet is stored then return its control_packet_type, If error then return nullopt.
+     */
     optional<control_packet_type> type() const {
         return visit(
             overload {
@@ -121,6 +158,11 @@ public:
         );
     }
 
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
     std::vector<as::const_buffer> const_buffer_sequence() const {
         return visit(
             overload {

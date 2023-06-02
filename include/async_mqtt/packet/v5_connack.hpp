@@ -26,8 +26,25 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @bried MQTT CONNACK packet (v5)
+ *
+ * Only MQTT broker(sever) can send this packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074
+ */
 class connack_packet {
 public:
+
+    /**
+     * @bried constructor
+     * @param session_present If the broker stores the session, then true, otherwise false.
+     *                        When the endpoint receives CONNACK packet with session_present is false,
+     *                        then stored packets are erased.
+     * @param reason_code ConnectReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901079
+     * @param props       properties.
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901080
+     */
     connack_packet(
         bool session_present,
         connect_reason_code reason_code,
@@ -207,8 +224,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -234,10 +251,18 @@ public:
         return is_session_present(static_cast<char>(connect_acknowledge_flags_));
     }
 
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
     connect_reason_code code() const {
         return reason_code_;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }
