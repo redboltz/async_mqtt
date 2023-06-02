@@ -62,7 +62,7 @@ public:
     {}
 
     template <typename Func>
-    auto visit(Func&& func) const {
+    auto visit(Func&& func) const& {
         return
             async_mqtt::visit(
                 std::forward<Func>(func),
@@ -71,11 +71,20 @@ public:
     }
 
     template <typename Func>
-    auto visit(Func&& func) {
+    auto visit(Func&& func) & {
         return
             async_mqtt::visit(
                 std::forward<Func>(func),
                 var_
+            );
+    }
+
+    template <typename Func>
+    auto visit(Func&& func) && {
+        return
+            async_mqtt::visit(
+                std::forward<Func>(func),
+                force_move(var_)
             );
     }
 
