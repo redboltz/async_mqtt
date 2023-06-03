@@ -90,6 +90,10 @@ Typedefs</h2></td></tr>
 <tr class="separator:a27f859f34b0db17135add24d84eef9e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4926c44b7cc4725e9516c14c9f4d8fcd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="predefined__underlying__layer_8hpp.html#a4926c44b7cc4725e9516c14c9f4d8fcd">async_mqtt::protocol::ws</a> = bs::websocket::stream&lt; <a class="el" href="predefined__underlying__layer_8hpp.html#a27f859f34b0db17135add24d84eef9e0">mqtt</a> &gt;</td></tr>
 <tr class="separator:a4926c44b7cc4725e9516c14c9f4d8fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8e118fcdb4eb5d0cca58615282b4146"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="predefined__underlying__layer_8hpp.html#aa8e118fcdb4eb5d0cca58615282b4146">async_mqtt::protocol::mqtts</a> = tls::stream&lt; <a class="el" href="predefined__underlying__layer_8hpp.html#a27f859f34b0db17135add24d84eef9e0">mqtt</a> &gt;</td></tr>
+<tr class="separator:aa8e118fcdb4eb5d0cca58615282b4146"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74219d816d3e7d2cf80c5ce6cdc4cb29"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="predefined__underlying__layer_8hpp.html#a74219d816d3e7d2cf80c5ce6cdc4cb29">async_mqtt::protocol::wss</a> = bs::websocket::stream&lt; <a class="el" href="predefined__underlying__layer_8hpp.html#aa8e118fcdb4eb5d0cca58615282b4146">mqtts</a> &gt;</td></tr>
+<tr class="separator:a74219d816d3e7d2cf80c5ce6cdc4cb29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="a27f859f34b0db17135add24d84eef9e0" name="a27f859f34b0db17135add24d84eef9e0"></a>
@@ -107,6 +111,21 @@ Typedefs</h2></td></tr>
 
 </div>
 </div>
+<a id="aa8e118fcdb4eb5d0cca58615282b4146" name="aa8e118fcdb4eb5d0cca58615282b4146"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8e118fcdb4eb5d0cca58615282b4146">&#9670;&#160;</a></span>mqtts</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="predefined__underlying__layer_8hpp.html#aa8e118fcdb4eb5d0cca58615282b4146">async_mqtt::protocol::mqtts</a> = typedef tls::stream&lt;mqtt&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>@breif Type alias of TLS stream </p>
+
+</div>
+</div>
 <a id="a4926c44b7cc4725e9516c14c9f4d8fcd" name="a4926c44b7cc4725e9516c14c9f4d8fcd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4926c44b7cc4725e9516c14c9f4d8fcd">&#9670;&#160;</a></span>ws</h2>
 
@@ -119,6 +138,21 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>@breif Type alias of Boost.Beast WebScoket </p>
+
+</div>
+</div>
+<a id="a74219d816d3e7d2cf80c5ce6cdc4cb29" name="a74219d816d3e7d2cf80c5ce6cdc4cb29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74219d816d3e7d2cf80c5ce6cdc4cb29">&#9670;&#160;</a></span>wss</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="predefined__underlying__layer_8hpp.html#a74219d816d3e7d2cf80c5ce6cdc4cb29">async_mqtt::protocol::wss</a> = typedef bs::websocket::stream&lt;mqtts&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>@breif Type alias of Boost.Beast WebSocket on TLS stream </p>
 
 </div>
 </div>
