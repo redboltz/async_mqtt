@@ -109,7 +109,7 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = \"async_mqtt\"" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = _DOXYGEN_" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = _DOXYGEN_ ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE                = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt/broker" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_LATEX         = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
