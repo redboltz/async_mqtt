@@ -1,6 +1,6 @@
 # async_mqtt API reference
 
 ## latest
-- [main](html/index.html)
+- [main](doc/latest/html/index.html)
 
 ## releases
