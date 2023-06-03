@@ -30,10 +30,29 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PUBACK packet (v5)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
+ * automatically sent when PUBLISH (QoS1) v5::basic_publish_packet is received.
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901121
+ */
 template <std::size_t PacketIdBytes>
 class basic_puback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     *
+     * @param packet_id   MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS1) packet
+     * @param reason_code PubackReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901124
+     * @param props       properties.
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901125
+     */
     basic_puback_packet(
         packet_id_t packet_id,
         puback_reason_code reason_code,
@@ -45,6 +64,11 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     *
+     * @param packet_id   MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS1) packet
+     */
     basic_puback_packet(
         packet_id_t packet_id
     ) : basic_puback_packet{
@@ -54,6 +78,13 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     *
+     * @param packet_id   MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS1) packet
+     * @param reason_code PubackReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901124
+     */
     basic_puback_packet(
         packet_id_t packet_id,
         puback_reason_code reason_code
@@ -189,8 +220,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -217,15 +248,27 @@ public:
             }();
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(packet_id_.data());
     }
 
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
     puback_reason_code code() const {
         if (reason_code_) return *reason_code_;
         return puback_reason_code::success;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }

@@ -24,8 +24,22 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @bried MQTT CONNACK packet (v3.1.1)
+ *
+ * Only MQTT broker(sever) can send this packet.
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718033
+ */
 class connack_packet {
 public:
+    /**
+     * @bried constructor
+     * @param session_present If the broker stores the session, then true, otherwise false.
+     *                        When the endpoint receives CONNACK packet with session_present is false,
+     *                        then stored packets are erased.
+     * @param return_code ConnectReturnCode
+     *                    See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
+     */
     connack_packet(
         bool session_present,
         connect_return_code return_code
@@ -102,7 +116,7 @@ public:
     }
 
     /**
-     * @brief Create const buffer sequence
+     * @brief Create const buffer sequence.
      *        it is for boost asio APIs
      * @return const buffer sequence
      */
@@ -114,25 +128,33 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();
     }
 
     /**
-     * @brief Get number of element of const_buffer_sequence
+     * @brief Get number of element of const_buffer_sequence.
      * @return number of element of const_buffer_sequence
      */
     static constexpr std::size_t num_of_const_buffer_sequence() {
         return 1; // all
     }
 
+    /**
+     * @brief Get session_present.
+     * @return session_present
+     */
     bool session_present() const {
         return is_session_present(all_[2]);
     }
 
+    /**
+     * @brief Get connect_return_code.
+     * @return connect_return_code
+     */
     connect_return_code code() const {
         return static_cast<connect_return_code>(all_[3]);
     }

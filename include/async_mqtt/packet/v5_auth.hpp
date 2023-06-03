@@ -30,8 +30,22 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT AUTH packet (v35)
+ *
+ * MQTT UNSUBACK packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217
+ */
 class auth_packet {
 public:
+
+    /**
+     * @brief constructor
+     * @param reason_code auth_reason_code
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220
+     * @param props       properties
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901221
+     */
     auth_packet(
         auth_reason_code reason_code,
         properties props
@@ -41,6 +55,9 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     */
     auth_packet(
     ) : auth_packet{
             nullopt,
@@ -48,6 +65,11 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     * @param reason_code auth_reason_code
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220
+     */
     auth_packet(
         auth_reason_code reason_code
     ) : auth_packet{
@@ -165,8 +187,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -192,11 +214,19 @@ public:
             }();
     }
 
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
     auth_reason_code code() const {
         if (reason_code_) return *reason_code_;
         return auth_reason_code::success;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }

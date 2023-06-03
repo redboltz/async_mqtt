@@ -10,15 +10,25 @@
 #include <cstdint>
 #include <ostream>
 
+/// @file
+
 namespace async_mqtt {
 
+/**
+ * @brief MQTT QoS
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234
+ */
 enum class qos : std::uint8_t
 {
-    at_most_once = 0b00000000,
-    at_least_once = 0b00000001,
-    exactly_once = 0b00000010,
+    at_most_once = 0b00000000,  ///< At most once delivery.
+    at_least_once = 0b00000001, ///< At least once delivery.
+    exactly_once = 0b00000010,  ///< Exactly once delivery.
 };
 
+/**
+ * @brief stringize qos
+ */
 constexpr char const* qos_to_str(qos v) {
     switch(v) {
     case qos::at_most_once:  return "at_most_once";
@@ -28,6 +38,9 @@ constexpr char const* qos_to_str(qos v) {
     }
 }
 
+/**
+ * @brief output to the stream qos
+ */
 inline
 std::ostream& operator<<(std::ostream& os, qos val)
 {

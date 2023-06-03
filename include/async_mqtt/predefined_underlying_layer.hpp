@@ -12,6 +12,8 @@
 
 #include <async_mqtt/tls.hpp>
 
+/// @file
+
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -19,7 +21,14 @@ namespace bs = boost::beast;
 
 namespace protocol {
 
+/**
+ * @breif Type alias of Boost.Asio TCP socket
+ */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
+
+/**
+ * @breif Type alias of Boost.Beast WebScoket
+ */
 using ws = bs::websocket::stream<mqtt>;
 
 } // namespace procotol
@@ -32,7 +41,14 @@ namespace async_mqtt {
 
 namespace protocol {
 
+/**
+ * @breif Type alias of TLS stream
+ */
 using mqtts = tls::stream<mqtt>;
+
+/**
+ * @breif Type alias of Boost.Beast WebSocket on TLS stream
+ */
 using wss = bs::websocket::stream<mqtts>;
 
 

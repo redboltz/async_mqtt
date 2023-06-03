@@ -29,10 +29,23 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT SUBACK packet (v3.1.1)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * MQTT SUBACK packet.
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
+ */
 template <std::size_t PacketIdBytes>
 class basic_suback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the SUBSCRIBE packet
+     * @param params    suback entries.
+     */
     basic_suback_packet(
         packet_id_t packet_id,
         std::vector<suback_return_code> params
@@ -126,8 +139,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -148,10 +161,18 @@ public:
             entries_.size();      // suback_return_code
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(packet_id_.data());
     }
 
+    /**
+     * @brief Get entries
+     * @return entries
+     */
     std::vector<suback_return_code> const& entries() const {
         return entries_;
     }
@@ -181,6 +202,10 @@ inline std::ostream& operator<<(std::ostream& o, basic_suback_packet<PacketIdByt
     return o;
 }
 
+/**
+ * @related basic_suback_packet
+ * @brief Type alias of basic_suback_packet (PacketIdBytes=2).
+ */
 using suback_packet = basic_suback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1

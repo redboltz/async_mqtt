@@ -26,10 +26,22 @@ namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT UNSUBACK packet (v3.1.1)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * MQTT UNSUBACK packet.
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072
+ */
 template <std::size_t PacketIdBytes>
 class basic_unsuback_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the UNSUBSCRIBE packet
+     */
     basic_unsuback_packet(
         packet_id_t packet_id
     )
@@ -101,8 +113,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();
@@ -116,6 +128,10 @@ public:
         return 1; // all
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(&all_[2]);
     }
@@ -133,6 +149,10 @@ inline std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdB
     return o;
 }
 
+/**
+ * @related basic_unsuback_packet
+ * @brief Type alias of basic_unsuback_packet (PacketIdBytes=2).
+ */
 using unsuback_packet = basic_unsuback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1

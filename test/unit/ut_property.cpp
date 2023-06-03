@@ -21,8 +21,8 @@ namespace am = async_mqtt;
 using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE( payload_format_indicator ) {
-    am::property::payload_format_indicator v1 { am::property::payload_format_indicator::binary };
-    am::property::payload_format_indicator v2 { am::property::payload_format_indicator::string };
+    am::property::payload_format_indicator v1 { am::payload_format::binary };
+    am::property::payload_format_indicator v2 { am::payload_format::string };
 
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:payload_format_indicator,val:binary}");
     BOOST_TEST(boost::lexical_cast<std::string>(v2) == "{id:payload_format_indicator,val:string}");
@@ -181,8 +181,8 @@ BOOST_AUTO_TEST_CASE( user_property ) {
 
 BOOST_AUTO_TEST_CASE(comparison) {
     {
-        am::property::payload_format_indicator v1 { am::property::payload_format_indicator::binary };
-        am::property::payload_format_indicator v2 { am::property::payload_format_indicator::string };
+        am::property::payload_format_indicator v1 { am::payload_format::binary };
+        am::property::payload_format_indicator v2 { am::payload_format::string };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);

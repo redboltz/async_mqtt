@@ -30,10 +30,28 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PUBCOMP packet (v5)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
+ * automatically sent when PUBREL v5::basic_pubrel_packet is received.
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901151
+ */
 template <std::size_t PacketIdBytes>
 class basic_pubcomp_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
+     * @param reason_code PubcompReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
+     * @param props       properties.
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901155
+     */
     basic_pubcomp_packet(
         packet_id_t packet_id,
         pubcomp_reason_code reason_code,
@@ -45,6 +63,10 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
+     */
     basic_pubcomp_packet(
         packet_id_t packet_id
     ) : basic_pubcomp_packet{
@@ -54,6 +76,12 @@ public:
         }
     {}
 
+    /**
+     * @brief constructor
+     * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
+     * @param reason_code PubcompReasonCode
+     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
+     */
     basic_pubcomp_packet(
         packet_id_t packet_id,
         pubcomp_reason_code reason_code
@@ -182,8 +210,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -210,15 +238,27 @@ public:
             }();
     }
 
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
     packet_id_t packet_id() const {
         return endian_load<packet_id_t>(packet_id_.data());
     }
 
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
     pubcomp_reason_code code() const {
         if (reason_code_) return *reason_code_;
         return pubcomp_reason_code::success;
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }

@@ -20,7 +20,7 @@ namespace am = async_mqtt;
 BOOST_AUTO_TEST_CASE(payload_format_indicator) {
     am::property_variant pv1{
         am::property::payload_format_indicator{
-            am::property::payload_format_indicator::payload_format::binary
+            am::payload_format::binary
         }
     };
     BOOST_TEST(
@@ -2776,7 +2776,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
 BOOST_AUTO_TEST_CASE(props) {
     am::properties ps1{
         am::property::payload_format_indicator{
-            am::property::payload_format_indicator::payload_format::binary
+            am::payload_format::binary
         },
         am::property::message_expiry_interval{0xff'ff'ff'ff}
     };

@@ -26,6 +26,17 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT PINGREQ packet (v5)
+ *
+ * Only MQTT client can send this packet.
+ * This packet is to notify the client is living.
+ * When you set keep_alive_sec > 0 on CONNECT packet (v5::connect_packet),
+ * then PINGREQ packet is automatically sent after keep_alive_sec passed after the last packet sent.
+ * When the broker receives this packet, KeepAlive timeout (keep_alive_sec * 1.5) is reset and
+ * start counting from 0.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195
+ */
 class pingreq_packet {
 public:
     pingreq_packet()
@@ -35,6 +46,9 @@ public:
         all_[1] = char(0);
     }
 
+    /**
+     * @brief constructor
+     */
     pingreq_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -87,8 +101,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return all_.size();

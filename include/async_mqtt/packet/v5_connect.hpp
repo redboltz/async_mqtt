@@ -30,8 +30,40 @@ namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @brief MQTT CONNECT packet (v5)
+ *
+ * Only MQTT client can send this packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901033
+ */
 class connect_packet {
 public:
+    /**
+     * @bried constructor
+     * @param clean_start  When the endpoint sends CONNECT packet with clean_start is true,
+     *                       then stored packets are erased.
+     *                       When the endpoint receives CONNECT packet with clean_start is false,
+     *                       then the endpoint start storing PUBLISH packet (QoS1 and QoS2) and PUBREL packet
+     *                       that would send by the endpoint until the corresponding response would be received.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039
+     * @param keep_alive_sec When the endpoint sends CONNECT packet with keep_alive_sec,
+     *                       then the endpoint start sending PINGREQ packet keep_alive_sec after the last
+     *                       packet is sent.
+     *                       When the endpoint receives CONNECT packet with keep_alive_sec,
+     *                       then start keep_alive_sec * 1.5 timer.
+     *                       The timer is reset if any packet is received. If the timer is fired, then
+     *                       the endpoint close the underlying layer automatically.
+     *                       At that time, if the endpoint recv() is called, then the CompletionToken is
+     *                       invoked with system_error.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045
+     * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
+     *                       if it is empty string.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
+     * @param user_name      MQTT UserName. It is often used for authentication.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
+     * @param password       MQTT Password. It is often used for authentication.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     */
     connect_packet(
         bool clean_start,
         std::uint16_t keep_alive_sec,
@@ -50,6 +82,34 @@ public:
     )
     {}
 
+    /**
+     * @bried constructor
+     * @param clean_start  When the endpoint sends CONNECT packet with clean_start is true,
+     *                       then stored packets are erased.
+     *                       When the endpoint receives CONNECT packet with clean_start is false,
+     *                       then the endpoint start storing PUBLISH packet (QoS1 and QoS2) and PUBREL packet
+     *                       that would send by the endpoint until the corresponding response would be received.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039
+     * @param keep_alive_sec When the endpoint sends CONNECT packet with keep_alive_sec,
+     *                       then the endpoint start sending PINGREQ packet keep_alive_sec after the last
+     *                       packet is sent.
+     *                       When the endpoint receives CONNECT packet with keep_alive_sec,
+     *                       then start keep_alive_sec * 1.5 timer.
+     *                       The timer is reset if any packet is received. If the timer is fired, then
+     *                       the endpoint close the underlying layer automatically.
+     *                       At that time, if the endpoint recv() is called, then the CompletionToken is
+     *                       invoked with system_error.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045
+     * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
+     *                       if it is empty string.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
+     * @param will           MQTT Will
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901060
+     * @param user_name      MQTT UserName. It is often used for authentication.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
+     * @param password       MQTT Password. It is often used for authentication.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     */
     connect_packet(
         bool clean_start,
         std::uint16_t keep_alive_sec,
@@ -474,8 +534,8 @@ public:
     }
 
     /**
-     * @brief Get whole size of sequence
-     * @return whole size
+     * @brief Get packet size.
+     * @return packet size
      */
     std::size_t size() const {
         return
@@ -508,18 +568,34 @@ public:
             2;                    // password length, password
     }
 
+    /**
+     * @brief Get clean_start.
+     * @return clean_start
+     */
     bool clean_start() const {
         return connect_flags::has_clean_start(connect_flags_);
     }
 
+    /**
+     * @brief Get keep_alive.
+     * @return keep_alive
+     */
     std::uint16_t keep_alive() const {
         return endian_load<std::uint16_t>(keep_alive_buf_.data());
     }
 
+    /**
+     * @brief Get client_id
+     * @return client_id
+     */
     buffer client_id() const {
         return client_id_;
     }
 
+    /**
+     * @brief Get user_name.
+     * @return user_name
+     */
     optional<buffer> user_name() const {
         if (connect_flags::has_user_name_flag(connect_flags_)) {
             return user_name_;
@@ -529,6 +605,10 @@ public:
         }
     }
 
+    /**
+     * @brief Get password.
+     * @return password
+     */
     optional<buffer> password() const {
         if (connect_flags::has_password_flag(connect_flags_)) {
             return password_;
@@ -538,6 +618,10 @@ public:
         }
     }
 
+    /**
+     * @brief Get will.
+     * @return will
+     */
     optional<will> get_will() const {
         if (connect_flags::has_will_flag(connect_flags_)) {
             pub::opts opts =
@@ -556,6 +640,10 @@ public:
         }
     }
 
+    /**
+     * @breif Get properties
+     * @return properties
+     */
     properties const& props() const {
         return props_;
     }
