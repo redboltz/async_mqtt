@@ -12,11 +12,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(ASYNC_MQTT_USE_TLS "Enable building TLS code" OFF)
 option(ASYNC_MQTT_USE_WS "Enable building WebSockets code" OFF)
+option(ASYNC_MQTT_USE_LOG "Enable building logging code" OFF)
 option(ASYNC_MQTT_BUILD_UNIT_TESTS "Enable building unit tests" OFF)
 option(ASYNC_MQTT_BUILD_SYSTEM_TESTS "Enable building system tests" OFF)
 option(ASYNC_MQTT_BUILD_TOOLS "Enable building tools (broker, bench, etc.." OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" OFF)
-option(ASYNC_MQTT_USE_LOG "Enable building logging code" OFF)
 
 # Don't use GNU extensions
 set(CMAKE_CXX_EXTENSIONS OFF)
