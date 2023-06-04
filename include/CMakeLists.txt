@@ -1,7 +1,3 @@
-file(GLOB HDR_ASYNC_MQTT "async_mqtt/*.hpp")
-set(ROOT_INCLUDE_TARGET include)
-set(ROOT_ASYNC_MQTT_TARGET include/async_mqtt)
-
 add_library(${PROJECT_NAME} INTERFACE)
 
 target_link_libraries(${PROJECT_NAME} INTERFACE Threads::Threads Boost::boost)
@@ -59,5 +55,4 @@ target_compile_options(check_deps PUBLIC -Wno-unused-const-variable $<IF:$<CXX_C
 
 target_link_libraries(check_deps PUBLIC ${PROJECT_NAME})
 
-install(FILES ${HDR_ROOT} DESTINATION ${ROOT_INCLUDE_TARGET})
-install(FILES ${HDR_ASYNC_MQTT} DESTINATION ${ROOT_ASYNC_MQTT_TARGET})
+install(DIRECTORY . DESTINATION include FILES_MATCHING PATTERN "*.hpp")

@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required (VERSION 3.13.0)
-project(async_mqtt_iface VERSION 0.1.0)
+project(async_mqtt_iface VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,6 +17,9 @@ option(ASYNC_MQTT_BUILD_UNIT_TESTS "Enable building unit tests" OFF)
 option(ASYNC_MQTT_BUILD_SYSTEM_TESTS "Enable building system tests" OFF)
 option(ASYNC_MQTT_BUILD_TOOLS "Enable building tools (broker, bench, etc.." OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" OFF)
+
+# Not implemented yet
+option(ASYNC_MQTT_USE_STR_CHECK "Enable UTF8 String check" OFF)
 
 # Don't use GNU extensions
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -107,7 +110,8 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = \"async_mqtt\"" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 1.0.0" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = _DOXYGEN_ ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
