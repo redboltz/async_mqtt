@@ -26,10 +26,12 @@ namespace protocol {
  */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
 
+#if defined(ASYNC_MQTT_USE_WS)
 /**
  * @breif Type alias of Boost.Beast WebScoket
  */
 using ws = bs::websocket::stream<mqtt>;
+#endif //defined(ASYNC_MQTT_USE_WS)
 
 } // namespace procotol
 
@@ -46,10 +48,12 @@ namespace protocol {
  */
 using mqtts = tls::stream<mqtt>;
 
+#if defined(ASYNC_MQTT_USE_WS)
 /**
  * @breif Type alias of Boost.Beast WebSocket on TLS stream
  */
 using wss = bs::websocket::stream<mqtts>;
+#endif // defined(ASYNC_MQTT_USE_WS)
 
 
 } // namespace procotol

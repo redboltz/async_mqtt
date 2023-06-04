@@ -6,6 +6,8 @@ Version 0.1 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/
 
 # Overview
 
+[API Reference](https://redboltz.github.io/async_mqtt)
+
 ## Boost.Asio style asynchronous APIs support
 
 ### [Completion Token](https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html) is supported
