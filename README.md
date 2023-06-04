@@ -15,10 +15,21 @@ Based on https://github.com/redboltz/mqtt_cpp experience, there are many improve
 
 ### [Completion Token](https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html) is supported
 - Callbacks
+  - Can wait mutiple events
+  - High performance
+  - Deep callback nesting
+  - For simple and continuous multiple waiting usecases
   - [example/ep_cb_mqtt_client.cpp](example/ep_cb_mqtt_client.cpp)
 - [`boost::asio::use_future`](https://www.boost.org/doc/html/boost_asio/overview/composition/futures.html)
+  - Can't wait multiple events
+  - Less performance than callbacks and stackless coroutines
+  - Easy to read
+  - For simple and straight usecases
   - [example/ep_future_mqtt_client.cpp](example/ep_future_mqtt_client.cpp)
 - [Stackless Coroutine (`boost::asio::coroutine`)](https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html)
+  - Can wait multiple event. You can distinguish which event is invoked by operator()'s overloaded parameter.
+  - High performance
+  - Easy to read but difficult to learn `yield` notation
   - [example/ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp)
 - [and more](https://www.boost.org/doc/html/boost_asio/overview/composition.html)
 
