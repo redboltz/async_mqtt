@@ -37,6 +37,7 @@ namespace as = boost::asio;
  * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
  * automatically sent when PUBLISH (QoS1) v5::basic_publish_packet is received.
  *
+ * When the packet is received, the packet_id is automatically released and become reusable.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901121
  */
 template <std::size_t PacketIdBytes>
