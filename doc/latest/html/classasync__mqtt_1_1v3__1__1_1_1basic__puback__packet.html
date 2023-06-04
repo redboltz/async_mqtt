@@ -127,7 +127,7 @@ class async_mqtt::v3_1_1::basic_puback_packet&lt; PacketIdBytes &gt;</div><p>MQT
   </dd>
 </dl>
 <p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBLISH (QoS1) <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v3.1.1)">v3_1_1::basic_publish_packet</a> is received.</p>
-<p><br  />
+<p>When the packet is received, the packet_id is automatically released and become reusable. <br  />
  See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718043">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718043</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a39b815412dbe87383e3c4e02352401e1" name="a39b815412dbe87383e3c4e02352401e1"></a>

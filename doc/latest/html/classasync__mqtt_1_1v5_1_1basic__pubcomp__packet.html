@@ -123,7 +123,7 @@ class async_mqtt::v5::basic_pubcomp_packet&lt; PacketIdBytes &gt;</div><p>MQTT P
   </dd>
 </dl>
 <p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBREL <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html" title="MQTT PUBREL packet (v5)">v5::basic_pubrel_packet</a> is received.</p>
-<p><br  />
+<p>When the packet is received, the packet_id is automatically released and become reusable. <br  />
  See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901151">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901151</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8eb3f4a3d92db1533447a5a18f3b04f8" name="a8eb3f4a3d92db1533447a5a18f3b04f8"></a>
