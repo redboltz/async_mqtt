@@ -1285,7 +1285,8 @@ private:
         if (is_error(reason_code)) return;
         auto rc =
             [&] {
-                if (ss.erase_inflight_message_by_packet_id(packet_id) == 0) {
+                ss.erase_inflight_message_by_packet_id(packet_id);
+                if (!epsp.is_publish_processing(packet_id)) {
                     return pubrel_reason_code::packet_identifier_not_found;
                 }
                 else {

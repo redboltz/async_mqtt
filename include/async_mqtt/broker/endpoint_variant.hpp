@@ -299,7 +299,7 @@ public:
     void restore_packets(
         std::vector<basic_store_packet_variant<packet_id_bytes>> pvs
     ) {
-        return visit(
+        visit(
             [&](auto& ep) {
                 ep.restore(pvs);
             }
@@ -336,6 +336,14 @@ public:
             );
         }
         return *protocol_version_;
+    }
+
+    bool is_publish_processing(packet_id_t pid) const {
+        return visit(
+            [&](auto& ep) {
+                return ep.is_publish_processing(pid);
+            }
+        );
     }
 
     void set_client_id(buffer cid) {

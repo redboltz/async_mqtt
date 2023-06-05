@@ -672,6 +672,20 @@ public:
         return protocol_version_;
     }
 
+    /**
+     * @brief Get MQTT PUBLISH packet processing status
+     @ @param pid packet_id corresponding to the publish packet.
+     * @return If the packet is processing, then true, otherwise false.
+     * @note This function is SYNC function that must only be called in the strand.
+     */
+    bool is_publish_processing(packet_id_t pid) const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "is_publish_processing:" << pid;
+        return publish_recv_.find(pid) != publish_recv_.end();
+    }
+
     void cancel_all_timers_for_test() {
         BOOST_ASSERT(strand().running_in_this_thread());
         tim_pingreq_send_.cancel();
