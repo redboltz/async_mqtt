@@ -19,12 +19,24 @@ cd docker
 ./broker.sh
 ```
 
+If you don't have executing docker permission, then run as follows:
+
+```
+sudo ./broker.sh
+```
+
 ### Run client_cli
 
 On another terminal:
 
 ```
 ./client_cli.sh --host host.docker.internal
+```
+
+If you don't have executing docker permission, then run as follows:
+
+```
+sudo ./client_cli.sh --host host.docker.internal
 ```
 
 Then, you can communicate to the broker container on the same machine.
