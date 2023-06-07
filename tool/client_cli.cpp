@@ -56,12 +56,59 @@ public:
         auto root = std::make_unique<cli::Menu>("cli", "Top menu");
         cli::SetColor();
 
-        auto pub_menu = std::make_unique<cli::Menu>("pub", "publish detail");
+        root->Insert(
+            "pub",
+            {"topic", "payload", "qos[0-2]"},
+            [this](std::ostream& out, std::string topic, std::string payload, std::size_t qos) {
+                if (qos > 2) {
+                    out << "Invalid QoS:" << qos << std::endl;
+                    return;
+                }
+                publish(
+                    am::allocate_buffer(topic),
+                    am::allocate_buffer(payload),
+                    static_cast<am::qos>(qos)
+                );
+            },
+            "publish"
+        );
+
+        root->Insert(
+            "sub",
+            {"topic_filter", "qos[0-2]"},
+            [this](std::ostream& out, std::string topic, std::size_t qos) {
+                if (qos > 2) {
+                    out << "Invalid QoS:" << qos << std::endl;
+                    return;
+                }
+                subscribe(
+                    am::allocate_buffer(topic),
+                    static_cast<am::qos>(qos)
+                );
+            },
+            "subscribe"
+        );
+
+        root->Insert(
+            "unsub",
+            {"topic_filter"},
+            [this](std::ostream& /*out*/, std::string topic) {
+                unsubscribe(
+                    am::allocate_buffer(topic)
+                );
+            },
+            "unsubscribe"
+        );
+
+        // ---------------------------------------------------------------------
+        auto pub_menu = std::make_unique<cli::Menu>(
+            "bpub", "build publish packet and send ..."
+        );
         pub_menu->Insert(
             "topic",
             {"TopicName"},
             [this](std::ostream& o, std::string topic) {
-                pub_topic_ = am::force_move(topic);
+                pub_topic_ = am::allocate_buffer(topic);
                 print_pub(o);
             },
             "topic"
@@ -70,7 +117,50 @@ public:
             "payload",
             {"Payload"},
             [this](std::ostream& o, std::string payload) {
-                pub_payload_ = am::force_move(payload);
+                pub_payload_ = am::allocate_buffer(payload);
+                print_pub(o);
+            },
+            "payload"
+        );
+        pub_menu->Insert(
+            "retain",
+            {"[0|1]"},
+            [this](std::ostream& o, std::string retain_str) {
+                if (retain_str == "1" ||
+                    retain_str == "yes" ||
+                    retain_str == "true"
+                ) {
+                    pub_retain_ = am::pub::retain::yes;
+                }
+                else if (retain_str == "0" ||
+                    retain_str == "no" ||
+                    retain_str == "false"
+                ) {
+                    pub_retain_ = am::pub::retain::no;
+                }
+                print_pub(o);
+            },
+            "payload"
+        );
+        pub_menu->Insert(
+            "qos",
+            {"[0-2]"},
+            [this](std::ostream& o, std::string qos_str) {
+                if (qos_str == "0" ||
+                    qos_str == "at_most_once"
+                ) {
+                    pub_qos_ = am::qos::at_most_once;
+                }
+                else if (qos_str == "1" ||
+                    qos_str == "at_least_once"
+                ) {
+                    pub_qos_ = am::qos::at_least_once;
+                }
+                else if (qos_str == "2" ||
+                    qos_str == "exactly_once"
+                ) {
+                    pub_qos_ = am::qos::exactly_once;
+                }
                 print_pub(o);
             },
             "payload"
@@ -80,171 +170,169 @@ public:
             [this](std::ostream& o) {
                 print_pub(o);
             },
-            "show current packet"
+            "show packet"
+        );
+        pub_menu->Insert(
+            "clear",
+            [this](std::ostream& o) {
+                pub_payload_ = am::buffer{};
+                pub_topic_ = am::buffer{};
+                pub_qos_ = am::qos::at_most_once;
+                pub_retain_ = am::pub::retain::no;
+                print_pub(o);
+            },
+            "clear packet"
         );
         pub_menu->Insert(
             "send",
             [this](std::ostream& /*out*/) {
-                if (version_ == am::protocol_version::v3_1_1) {
-                    ep_.send(
-                        am::v3_1_1::publish_packet{
-                            am::allocate_buffer(pub_topic_),
-                            am::allocate_buffer(pub_payload_),
-                            am::qos::at_most_once
-                        },
-                        [](am::system_error const& se) {
-                            std::cout << color_red << "\n";
-                            std::cout << se.message() << std::endl;
-                            std::cout << color_none;
-                        }
-                    );
-                }
-                else {
-                    ep_.send(
-                        am::v5::publish_packet{
-                            am::allocate_buffer(pub_topic_),
-                            am::allocate_buffer(pub_payload_),
-                            am::qos::at_most_once
-                        },
-                        [](am::system_error const& se) {
-                            std::cout << color_red << "\n";
-                            std::cout << se.message() << std::endl;
-                            std::cout << color_none;
-                        }
-                    );
-                }
+                publish(
+                    am::allocate_buffer(pub_topic_),
+                    am::allocate_buffer(pub_payload_),
+                    pub_qos_ | pub_retain_
+                );
             },
             "send packet"
         );
-
-        root->Insert(
-            "spub",
-            {"topic", "payload", "qos[0-2]"},
-            [this](std::ostream& /*out*/, std::string topic, std::string payload, std::size_t qos) {
-                auto send_pub =
-                    [this] (std::string const& topic, std::string const& payload, am::qos qos, packet_id_t pid) {
-                        if (version_ == am::protocol_version::v3_1_1) {
-                            ep_.send(
-                                am::v3_1_1::publish_packet{
-                                    pid,
-                                    am::allocate_buffer(topic),
-                                    am::allocate_buffer(payload),
-                                    qos
-                                },
-                                [](am::system_error const& se) {
-                                    std::cout << color_red << "\n";
-                                    std::cout << se.message() << std::endl;
-                                    std::cout << color_none;
-                                }
-                            );
-                        }
-                        else {
-                            ep_.send(
-                                am::v5::publish_packet{
-                                    pid,
-                                    am::allocate_buffer(topic),
-                                    am::allocate_buffer(payload),
-                                    qos
-                                },
-                                [](am::system_error const& se) {
-                                    std::cout << color_red << "\n";
-                                    std::cout << se.message() << std::endl;
-                                    std::cout << color_none;
-                                }
-                            );
-                        }
-                    };
-
-                switch (qos) {
-                case 0:
-                    send_pub(topic, payload, am::qos::at_most_once, 0);
-                    break;
-                case 1:
-                    ep_.acquire_unique_packet_id(
-                        [topic, payload, send_pub](am::optional<packet_id_t> pid_opt) {
-                            if (pid_opt) {
-                                send_pub(topic, payload, am::qos::at_least_once, *pid_opt);
-                            }
-                            else {
-                                std::cout << color_red;
-                                std::cout << "packet_id exhausted" << std::endl;
-                                std::cout << color_none;
-                            }
-                        }
-                    );
-                    break;
-                case 2:
-                    ep_.acquire_unique_packet_id(
-                        [topic, payload, send_pub](am::optional<packet_id_t> pid_opt) {
-                            if (pid_opt) {
-                                send_pub(topic, payload, am::qos::exactly_once, *pid_opt);
-                            }
-                            else {
-                                std::cout << color_red;
-                                std::cout << "packet_id exhausted" << std::endl;
-                                std::cout << color_none;
-                            }
-                        }
-                    );
-                    break;
-                default:
-                    std::cout << "invalid qos" << std::endl;
-                    break;
-                }
-            },
-            "Simple publish"
-        );
-
-        root->Insert(
-            "ssub",
-            {"topic_filter", "qos[0-2]"},
-            [this](std::ostream& /*out*/, std::string topic, std::size_t qos) {
-                ep_.acquire_unique_packet_id(
-                    [this, topic, qos](am::optional<packet_id_t> pid_opt) {
-                        if (pid_opt) {
-                            if (version_ == am::protocol_version::v3_1_1) {
-                                ep_.send(
-                                    am::v3_1_1::subscribe_packet{
-                                        *pid_opt,
-                                        { {am::allocate_buffer(topic), static_cast<am::qos>(qos)} }
-                                    },
-                                    [](am::system_error const& se) {
-                                        std::cout << color_red << "\n";
-                                        std::cout << se.message() << std::endl;
-                                        std::cout << color_none;
-                                    }
-                                );
-                            }
-                            else {
-                                ep_.send(
-                                    am::v5::subscribe_packet{
-                                        *pid_opt,
-                                        { {am::allocate_buffer(topic), static_cast<am::qos>(qos)} }
-                                    },
-                                    [](am::system_error const& se) {
-                                        std::cout << color_red << "\n";
-                                        std::cout << se.message() << std::endl;
-                                        std::cout << color_none;
-                                    }
-                                );
-                            }
-                        }
-                        else {
-                            std::cout << color_red;
-                            std::cout << "packet_id exhausted" << std::endl;
-                            std::cout << color_none;
-                        }
-                    }
-                );
-            },
-            "Simple subscribe"
-        );
-
         root->Insert(am::force_move(pub_menu));
 
+        // ---------------------------------------------------------------------
+        auto sub_menu = std::make_unique<cli::Menu>(
+            "bsub", "build publish packet and send ..."
+        );
+        sub_menu->Insert(
+            "topic",
+            {"TopicFilter"},
+            [this](std::ostream& o, std::string topic) {
+                sub_topic_ = am::allocate_buffer(topic),
+                print_sub(o);
+            },
+            "topic"
+        );
+        sub_menu->Insert(
+            "qos",
+            {"[0-2]"},
+            [this](std::ostream& o, std::string qos_str) {
+                if (qos_str == "0" ||
+                    qos_str == "at_most_once"
+                ) {
+                    sub_qos_ = am::qos::at_most_once;
+                }
+                else if (qos_str == "1" ||
+                    qos_str == "at_least_once"
+                ) {
+                    sub_qos_ = am::qos::at_least_once;
+                }
+                else if (qos_str == "2" ||
+                    qos_str == "exactly_once"
+                ) {
+                    sub_qos_ = am::qos::exactly_once;
+                }
+                print_sub(o);
+            },
+            "payload"
+        );
+        sub_menu->Insert(
+            "nl",
+            {"[0|1]"},
+            [this](std::ostream& o, std::string nl_str) {
+                if (nl_str == "0" ||
+                    nl_str == "false"
+                ) {
+                    sub_nl_ = am::sub::nl::no;
+                }
+                else if (nl_str == "1" ||
+                    nl_str == "true"
+                ) {
+                    sub_nl_ = am::sub::nl::yes;
+                }
+                print_sub(o);
+            },
+            "No Local"
+        );
+        sub_menu->Insert(
+            "rap",
+            {"[0|1]"},
+            [this](std::ostream& o, std::string rap_str) {
+                if (rap_str == "0" ||
+                    rap_str == "false"
+                ) {
+                    sub_rap_ = am::sub::rap::dont;
+                }
+                else if (rap_str == "1" ||
+                    rap_str == "true"
+                ) {
+                    sub_rap_ = am::sub::rap::retain;
+                }
+                print_sub(o);
+            },
+            "Retain as Published"
+        );
+        sub_menu->Insert(
+            "rh",
+            {"[0(send) | 1(new sub only) | 2(not send)]"},
+            [this](std::ostream& o, std::string rh_str) {
+                if (rh_str == "0") {
+                    sub_rh_ = am::sub::retain_handling::send;
+                }
+                else if (rh_str == "1") {
+                    sub_rh_ = am::sub::retain_handling::send_only_new_subscription;
+                }
+                else if (rh_str == "2") {
+                    sub_rh_ = am::sub::retain_handling::not_send;
+                }
+                print_sub(o);
+            },
+            "Retain Handling"
+        );
+        sub_menu->Insert(
+            "sid",
+            {"[1-268435455] or 0 (clear)"},
+            [this](std::ostream& o, std::string sid_str) {
+                auto sid = boost::lexical_cast<std::uint32_t>(sid_str);
+                if (sid == 0) {
+                    sub_sid_ = am::nullopt;
+                }
+                else {
+                    sub_sid_ = sid;
+                }
+                print_sub(o);
+            },
+            "Retain Handling"
+        );
+        sub_menu->Insert(
+            "show",
+            [this](std::ostream& o) {
+                print_sub(o);
+            },
+            "show packet"
+        );
+        sub_menu->Insert(
+            "clear",
+            [this](std::ostream& o) {
+                sub_topic_ = am::buffer{};
+                sub_qos_ = am::qos::at_most_once;
+                sub_nl_ = am::sub::nl::no;
+                sub_rap_ = am::sub::rap::dont;
+                sub_rh_ = am::sub::retain_handling::send;
+                sub_sid_ = am::nullopt;
+                print_sub(o);
+            },
+            "clear packet"
+        );
+        sub_menu->Insert(
+            "send",
+            [this](std::ostream& /*out*/) {
+                subscribe(
+                    am::allocate_buffer(sub_topic_),
+                    sub_qos_ | sub_nl_ | sub_rap_ | sub_rh_
+                );
+            },
+            "send packet"
+        );
+        root->Insert(am::force_move(sub_menu));
+
         cli_ = std::make_unique<cli::Cli>(std::move(root));
-        // global exit action
-        cli_->ExitAction( [](auto& out){ out << "Goodbye and thanks for all the fish.\n"; } );
         // std exception custom handler
         cli_->StdExceptionHandler(
             [](std::ostream& out, const std::string& cmd, const std::exception& e)
@@ -272,6 +360,209 @@ private:
     void print_pub(std::ostream& o) const {
         o << "topic   : " << pub_topic_ << std::endl;
         o << "payload : " << pub_payload_ << std::endl;
+        o << "qos     : " << pub_qos_ << std::endl;
+        o << "retain  : " << pub_retain_ << std::endl;
+    }
+
+    void print_sub(std::ostream& o) const {
+        o << "topic : " << sub_topic_ << std::endl;
+        o << "qos   : " << sub_qos_ << std::endl;
+        o << "nl    : " << sub_nl_ << std::endl;
+        o << "rap   : " << sub_rap_ << std::endl;
+        o << "rh    : " << sub_rh_ << std::endl;
+        o << "sid   : ";
+        if (sub_sid_) {
+            o << *sub_sid_;
+        }
+        o << std::endl;
+    }
+
+    void publish(
+        packet_id_t pid,
+        am::buffer topic,
+        am::buffer payload,
+        am::pub::opts opts,
+        am::properties props = {}
+    ) {
+        if (version_ == am::protocol_version::v3_1_1) {
+            ep_.send(
+                am::v3_1_1::publish_packet{
+                    pid,
+                    am::force_move(topic),
+                    am::force_move(payload),
+                    opts
+                },
+                [](am::system_error const& se) {
+                    std::cout << color_red << "\n";
+                    std::cout << se.message() << std::endl;
+                    std::cout << color_none;
+                }
+            );
+        }
+        else {
+            ep_.send(
+                am::v5::publish_packet{
+                    pid,
+                    am::force_move(topic),
+                    am::force_move(payload),
+                    opts,
+                    am::force_move(props)
+                },
+                [](am::system_error const& se) {
+                    std::cout << color_red << "\n";
+                    std::cout << se.message() << std::endl;
+                    std::cout << color_none;
+                }
+            );
+        }
+    }
+
+    void publish(
+        am::buffer topic,
+        am::buffer payload,
+        am::pub::opts opts,
+        am::properties props = {}
+    ) {
+        if (opts.get_qos() == am::qos::at_least_once ||
+            opts.get_qos() == am::qos::exactly_once) {
+            ep_.acquire_unique_packet_id(
+                [
+                    this,
+                    topic = am::force_move(topic),
+                    payload = am::force_move(payload),
+                    opts,
+                    props = am::force_move(props)
+                ]
+                (am::optional<packet_id_t> pid_opt) mutable {
+                    if (pid_opt) {
+                        publish(
+                            *pid_opt,
+                            am::force_move(topic),
+                            am::force_move(payload),
+                            opts,
+                            am::force_move(props)
+                        );
+                    }
+                    else {
+                        std::cout << color_red;
+                        std::cout << "packet_id exhausted" << std::endl;
+                        std::cout << color_none;
+                    }
+                }
+            );
+        }
+        else {
+            publish(
+                0,
+                am::force_move(topic),
+                am::force_move(payload),
+                opts,
+                am::force_move(props)
+            );
+        }
+    }
+
+    void subscribe(
+        am::buffer topic,
+        am::sub::opts opts,
+        am::properties props = {}
+    ) {
+        ep_.acquire_unique_packet_id(
+            [
+                this,
+                topic = am::force_move(topic),
+                opts,
+                props = am::force_move(props)
+            ]
+            (am::optional<packet_id_t> pid_opt) mutable {
+                if (pid_opt) {
+                    if (version_ == am::protocol_version::v3_1_1) {
+                        ep_.send(
+                            am::v3_1_1::subscribe_packet{
+                                *pid_opt,
+                                { {am::force_move(topic), opts} }
+                            },
+                            [](am::system_error const& se) {
+                                std::cout << color_red << "\n";
+                                std::cout << se.message() << std::endl;
+                                std::cout << color_none;
+                            }
+                        );
+                    }
+                    else {
+                        am::properties props;
+                        if (sub_sid_) {
+                            props.push_back(
+                                am::property::subscription_identifier{*sub_sid_}
+                            );
+                        }
+                        ep_.send(
+                            am::v5::subscribe_packet{
+                                *pid_opt,
+                                { {am::force_move(topic), opts} },
+                                force_move(props)
+                            },
+                            [](am::system_error const& se) {
+                                std::cout << color_red << "\n";
+                                std::cout << se.message() << std::endl;
+                                std::cout << color_none;
+                            }
+                        );
+                    }
+                }
+                else {
+                    std::cout << color_red;
+                    std::cout << "packet_id exhausted" << std::endl;
+                    std::cout << color_none;
+                }
+            }
+        );
+    }
+
+    void unsubscribe(
+        am::buffer topic
+    ) {
+        ep_.acquire_unique_packet_id(
+            [
+                this,
+                topic = am::force_move(topic)
+            ]
+            (am::optional<packet_id_t> pid_opt) mutable {
+                if (pid_opt) {
+                    if (version_ == am::protocol_version::v3_1_1) {
+                        ep_.send(
+                            am::v3_1_1::unsubscribe_packet{
+                                *pid_opt,
+                                { am::force_move(topic) }
+                            },
+                            [](am::system_error const& se) {
+                                std::cout << color_red << "\n";
+                                std::cout << se.message() << std::endl;
+                                std::cout << color_none;
+                            }
+                        );
+                    }
+                    else {
+                        ep_.send(
+                            am::v5::unsubscribe_packet{
+                                *pid_opt,
+                                { am::force_move(topic) }
+                            },
+                            [](am::system_error const& se) {
+                                std::cout << color_red << "\n";
+                                std::cout << se.message() << std::endl;
+                                std::cout << color_none;
+                            }
+                        );
+                    }
+                }
+                else {
+                    std::cout << color_red;
+                    std::cout << "packet_id exhausted" << std::endl;
+                    std::cout << color_none;
+                }
+            }
+        );
     }
 
 private:
@@ -281,8 +572,19 @@ private:
     am::protocol_version version_;
     std::unique_ptr<cli::Cli> cli_;
     std::unique_ptr<cli::CliLocalTerminalSession> session_;
-    std::string pub_topic_;
-    std::string pub_payload_;
+
+    am::buffer pub_topic_;
+    am::buffer pub_payload_;
+    am::qos pub_qos_ = am::qos::at_most_once;
+    am::pub::retain pub_retain_ = am::pub::retain::no;
+
+    am::buffer sub_topic_;
+    am::qos sub_qos_ = am::qos::at_most_once;
+    am::sub::nl sub_nl_ = am::sub::nl::no;
+    am::sub::rap sub_rap_ = am::sub::rap::dont;
+    am::sub::retain_handling sub_rh_ = am::sub::retain_handling::send;
+    am::optional<std::uint32_t> sub_sid_;
+
 };
 
 template <typename Endpoint>
