@@ -38,6 +38,6 @@ RUN git clone https://github.com/redboltz/async_mqtt.git -b ${ASYNC_MQTT_VERSION
        -DASYNC_MQTT_USE_LOG=ON \
        -DASYNC_MQTT_BUILD_TOOLS=ON \
        /var/async_mqtt \
-    && cmake --build . --target broker bench \
+    && cmake --build . --target broker bench client_cli \
     && rm -rf `find . -name "*.o"`
 WORKDIR /var/async_mqtt_build/tool/conf
