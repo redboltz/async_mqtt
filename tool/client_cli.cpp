@@ -329,58 +329,58 @@ private:
                 username_ =
                     [&] () -> am::optional<am::buffer> {
                         if (vm_.count("username")) {
-                            return am::allocate_buffer(vm_["username"].as<std::string>());
+                            return am::allocate_buffer(vm_["username"].template as<std::string>());
                         }
                         return am::nullopt;
                     } ();
                 password_ =
                     [&] () -> am::optional<am::buffer> {
                         if (vm_.count("password")) {
-                            return am::allocate_buffer(vm_["password"].as<std::string>());
+                            return am::allocate_buffer(vm_["password"].template as<std::string>());
                         }
                         return am::nullopt;
                     } ();
                 auto client_id =
                     [&] () -> am::buffer {
                         if (vm_.count("client_id")) {
-                            return am::allocate_buffer(vm_["client_id"].as<std::string>());
+                            return am::allocate_buffer(vm_["client_id"].template as<std::string>());
                         }
                         return am::buffer();
                     } ();
                 auto verify_file =
                     [&] () -> am::optional<std::string> {
                         if (vm_.count("verify_file")) {
-                            return vm_["verify_file"].as<std::string>();
+                            return vm_["verify_file"].template as<std::string>();
                         }
                         return am::nullopt;
                     } ();
                 auto certificate =
                     [&] () -> am::optional<std::string> {
                         if (vm_.count("certificate")) {
-                            return vm_["certificate"].as<std::string>();
+                            return vm_["certificate"].template as<std::string>();
                         }
                         return am::nullopt;
                     } ();
                 auto private_key =
                     [&] () -> am::optional<std::string> {
                         if (vm_.count("private_key")) {
-                            return vm_["private_key"].as<std::string>();
+                            return vm_["private_key"].template as<std::string>();
                         }
                         return am::nullopt;
                     } ();
                 auto ws_path =
                     [&] () -> am::optional<std::string> {
                         if (vm_.count("ws_path")) {
-                            return vm_["ws_path"].as<std::string>();
+                            return vm_["ws_path"].template as<std::string>();
                         }
                         return am::nullopt;
                     } ();
 
-                auto host = vm_["host"].as<std::string>();
-                auto port = vm_["port"].as<std::uint16_t>();
-                auto protocol = vm_["protocol"].as<std::string>();
-                clean_start_ = vm_["clean_start"].as<bool>();
-                sei_ = vm_["sei"].as<std::uint32_t>();
+                auto host = vm_["host"].template as<std::string>();
+                auto port = vm_["port"].template as<std::uint16_t>();
+                auto protocol = vm_["protocol"].template as<std::string>();
+                clean_start_ = vm_["clean_start"].template as<bool>();
+                sei_ = vm_["sei"].template as<std::uint32_t>();
 
                 // Resolve hostname
                 res_.async_resolve(host, boost::lexical_cast<std::string>(port), *this);
