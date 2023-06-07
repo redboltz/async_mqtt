@@ -13,9 +13,18 @@
 #include <boost/asio.hpp>
 #include <boost/lexical_cast.hpp>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif // defined(__GNUC__)
+
 #include <cli/boostasioscheduler.h>
 #include <cli/cli.h>
 #include <cli/clilocalsession.h>
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // defined(__GNUC__)
 
 #include <async_mqtt/all.hpp>
 
