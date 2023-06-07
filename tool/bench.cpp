@@ -1085,13 +1085,11 @@ int main(int argc, char *argv[]) {
                 boost::program_options::value<std::size_t>()->default_value(10),
                 "report progress timer for each given seconds."
             )
-#if defined(ASYNC_MQTT_USE_LOG)
             (
                 "verbose",
                 boost::program_options::value<unsigned int>()->default_value(1),
                 "set verbose level, possible values:\n 0 - Fatal\n 1 - Error\n 2 - Warning\n 3 - Info\n 4 - Debug\n 5 - Trace"
             )
-#endif // defined(ASYNC_MQTT_USE_LOG)
             (
                 "cacert",
                 boost::program_options::value<std::string>(),

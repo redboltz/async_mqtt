@@ -1,6 +1,7 @@
 list(APPEND exec_PROGRAMS
     bench.cpp
     broker.cpp
+    client_cli.cpp
 )
 
 find_package(Boost 1.81.0 REQUIRED COMPONENTS program_options)
@@ -9,6 +10,14 @@ find_package(Boost 1.81.0 REQUIRED COMPONENTS program_options)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 endif()
+
+include(FetchContent)
+FetchContent_Declare(
+  cli
+  GIT_REPOSITORY https://github.com/daniele77/cli.git
+  GIT_TAG v2.0.2
+)
+FetchContent_MakeAvailable(cli)
 
 foreach(source_file ${exec_PROGRAMS})
     get_filename_component(source_file_we ${source_file} NAME_WE)
@@ -34,7 +43,7 @@ foreach(source_file ${exec_PROGRAMS})
         PUBLIC
         $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>
     )
-    target_link_libraries(${source_file_we} Boost::program_options)
+    target_link_libraries(${source_file_we} Boost::program_options cli::cli)
 endforeach()
 
 if(UNIX)
