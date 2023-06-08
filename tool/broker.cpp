@@ -297,7 +297,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto epsp =
                         epv_t::make_shared<am::endpoint<am::role::server, am::protocol::mqtt>>(
                             am::protocol_version::undetermined,
-                            am::protocol::mqtt{con_ioc_getter().get_executor()}
+                            con_ioc_getter().get_executor()
                         );
 
                     auto& lowest_layer = epsp->as<am::protocol::mqtt>().lowest_layer();
@@ -333,7 +333,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto epsp =
                         epv_t::make_shared<am::endpoint<am::role::server, am::protocol::ws>>(
                             am::protocol_version::undetermined,
-                            am::protocol::ws{con_ioc_getter().get_executor()}
+                            con_ioc_getter().get_executor()
                         );
                     auto& lowest_layer = epsp->as<am::protocol::ws>().lowest_layer();
                     ws_ac->async_accept(
@@ -397,7 +397,8 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto epsp =
                         epv_t::make_shared<am::endpoint<am::role::server, am::protocol::mqtts>>(
                             am::protocol_version::undetermined,
-                            am::protocol::mqtts{con_ioc_getter().get_executor(), mqtts_ctx}
+                            con_ioc_getter().get_executor(),
+                            mqtts_ctx
                         );
 
                     auto& lowest_layer = epsp->as<am::protocol::mqtts>().lowest_layer();
@@ -477,7 +478,8 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto epsp =
                         epv_t::make_shared<am::endpoint<am::role::server, am::protocol::wss>>(
                             am::protocol_version::undetermined,
-                            am::protocol::wss{con_ioc_getter().get_executor(), wss_ctx}
+                            con_ioc_getter().get_executor(),
+                            wss_ctx
                         );
 
                     auto& lowest_layer = epsp->as<am::protocol::wss>().lowest_layer();

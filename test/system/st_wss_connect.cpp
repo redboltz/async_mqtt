@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(cb) {
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()},
+        ioc.get_executor(),
         ctx
     );
 
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()},
+        ioc.get_executor(),
         ctx
     );
 
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(coro) {
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()},
+        ioc.get_executor(),
         ctx
     );
 

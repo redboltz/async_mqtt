@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(cb) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     amep.next_layer().async_connect(
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(coro) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {

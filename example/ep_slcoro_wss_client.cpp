@@ -256,7 +256,7 @@ int main(int argc, char* argv[]) {
     // ctx.load_verify_file(cacert);
     am::endpoint<am::role::client, am::protocol::wss> amep {
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()},
+        ioc.get_executor(),
         ctx
     };
     app a{res, argv[1], argv[2], amep};

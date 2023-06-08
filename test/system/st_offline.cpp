@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -395,11 +395,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -603,11 +603,11 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
