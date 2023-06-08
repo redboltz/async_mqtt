@@ -23,11 +23,11 @@ BOOST_AUTO_TEST_CASE(v311_will) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -142,11 +142,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -265,11 +265,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -388,11 +388,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -518,11 +518,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {
@@ -660,11 +660,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
     auto amep_sub = ep_t(
         am::protocol_version::v5,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {

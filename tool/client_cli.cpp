@@ -1029,7 +1029,7 @@ int main(int argc, char* argv[]) {
             as::ip::tcp::resolver res{resolve_sock.get_executor()};
             am::endpoint<am::role::client, am::protocol::mqtt> amep {
                 version,
-                am::protocol::mqtt{ioc.get_executor()}
+                ioc.get_executor()
             };
             auto cc = client_cli{ioc, amep, version};
             auto nm = network_manager{amep, res, vm, version};

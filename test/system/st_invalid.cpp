@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t(
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     );
 
     struct tc : coro_base<ep_t> {

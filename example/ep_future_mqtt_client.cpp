@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
     am::endpoint<am::role::client, am::protocol::mqtt> amep {
         am::protocol_version::v3_1_1,
-        am::protocol::mqtt{ioc.get_executor()}
+        ioc.get_executor()
     };
 
     // async_mqtt thread
