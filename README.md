@@ -65,8 +65,4 @@ Also you can connect mosquitto.org as follows.
 
 ## Create endpoint
 First, choose underlying layer.
-
-mqtt|-|-|boost::asio::ip::socket
-mqtts|-|boost::asio::ssl::stream|boost::asio::ip::socket
-ws|boost::beast::
-wss|
+![layer structure](img/layer.svg)
