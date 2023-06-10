@@ -426,8 +426,8 @@ This is commandline MQTT client application.
 Layer access | mqtt | mqtts | ws | wss
 ---|---|---|---|---
 next_layer()|TCP stream|TLS stream| WS stream | WS stream
-next_layer()->next_layer()|-|TCP stream|TCP stream | TLS stream
-next_layer()->next_layer()->next_layer()|-|-|-|TCP stream
+next_layer().next_layer()|-|TCP stream|TCP stream | TLS stream
+next_layer().next_layer().next_layer()|-|-|-|TCP stream
 lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 
 ## Examples
