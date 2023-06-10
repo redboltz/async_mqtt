@@ -344,6 +344,85 @@ Now, hostname is resolved. The next step is making TCP connection.
             if (ec) return;
 ```
 
+### TLS handshake and WS handshake
+See [Examples](#Examples)
+
+### Send MQTT CONNECT packet
+
+Create MQTT CONNECT packet and send it as follows:
+
+```cpp
+            // Send MQTT CONNECT
+            yield amep.send(
+                am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    am::allocate_buffer("cid1"),
+                    am::nullopt, // will
+                    am::nullopt, // username set like am::allocate_buffer("user1"),
+                    am::nullopt  // password set like am::allocate_buffer("pass1")
+                },
+                *this
+            );
+```
+
+When async process is finished the function resumes at the following line:
+
+```cpp
+            if (se) {
+                std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+                return;
+            }
+```
+
+The parameter of the completion token is `system_error const& se`.
+See [API reference](https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html).
+
+### Recv MQTT CONNACK packet
+
+Receive MQTT packet as follows:
+
+```cpp
+            // Recv MQTT CONNACK
+            yield amep.recv(*this);
+```
+
+When a packet is received then the function resumes at the following line:
+
+```cpp
+            if (pv) {
+                pv.visit(
+                    am::overload {
+                        [&](am::v3_1_1::connack_packet const& p) {
+                            std::cout
+                                << "MQTT CONNACK recv"
+                                << " sp:" << p.session_present()
+                                << std::endl;
+                        },
+                        [](auto const&) {}
+                    }
+                );
+            }
+            else {
+                std::cout
+                    << "MQTT CONNACK recv error:"
+                    << pv.get<am::system_error>().what()
+                    << std::endl;
+                return;
+            }
+```
+
+The parameter of the completion token is `packet_variant pv`. You can access the `pv` using visit function and overloaded lamnda expressions. Each lambda expression is corresponding to the actual packet type.
+`pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
+
+### Send/Recv packets
+See the simple example [ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp).
+
+If you want to know more complex usecase, [client_cli.cpp](tool/client_cli.cpp) is helpful.
+This is commandline MQTT client application.
+
+## Layer access
+
 Layer access | mqtt | mqtts | ws | wss
 ---|---|---|---|---
 next_layer()|TCP stream|TLS stream| WS stream | WS stream
@@ -351,4 +430,9 @@ next_layer()->next_layer()|-|TCP stream|TCP stream | TLS stream
 next_layer()->next_layer()->next_layer()|-|-|-|TCP stream
 lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 
+## Examples
+- [ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp)
+- [ep_slcoro_mqtts_client.cpp](example/ep_slcoro_mqtts_client.cpp)
+- [ep_slcoro_ws_client.cpp](example/ep_slcoro_ws_client.cpp)
+- [ep_slcoro_wss_client.cpp](example/ep_slcoro_wss_client.cpp)
 
