@@ -416,9 +416,9 @@ The parameter of the completion token is `packet_variant pv`. You can access the
 `pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
 
 ### Send/Recv packets
-See the simple example [ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp).
+See the simple example [ep_slcoro_mqtt_client.cpp](../main/example/ep_slcoro_mqtt_client.cpp).
 
-If you want to know more complex usecase, [client_cli.cpp](tool/client_cli.cpp) is helpful.
+If you want to know more complex usecase, [client_cli.cpp](../main/tool/client_cli.cpp) is helpful.
 This is commandline MQTT client application.
 
 ## Layer access
@@ -431,8 +431,8 @@ next_layer()->next_layer()->next_layer()|-|-|-|TCP stream
 lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 
 ## Examples
-- [ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp)
-- [ep_slcoro_mqtts_client.cpp](example/ep_slcoro_mqtts_client.cpp)
-- [ep_slcoro_ws_client.cpp](example/ep_slcoro_ws_client.cpp)
-- [ep_slcoro_wss_client.cpp](example/ep_slcoro_wss_client.cpp)
+- [ep_slcoro_mqtt_client.cpp](../main/example/ep_slcoro_mqtt_client.cpp)
+- [ep_slcoro_mqtts_client.cpp](../main/example/ep_slcoro_mqtts_client.cpp)
+- [ep_slcoro_ws_client.cpp](../main/example/ep_slcoro_ws_client.cpp)
+- [ep_slcoro_wss_client.cpp](../main/example/ep_slcoro_wss_client.cpp)
 
