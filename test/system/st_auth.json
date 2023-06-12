@@ -7,10 +7,18 @@
             "password": "passforu1"
         },
         {
-            "name": "u2",
+            # Authenticates user by client certificate
+            "name": "cid1",
+            "method": "client_cert"
+        },
+        {
+            "name": "u3",
             "method": "sha256",
             "salt": "mysalt",
-            "digest": "fc1e1b5c61f33b0c44993552563201253570505e9781c1e811e3cd1906868842"
+            # mysaltpassforu3
+            # you can get it `echo -n mysaltpassforu3 | sha256sum`
+            # don't forget -n
+            "digest": "9ed77f119f694e5e543201a97cc8db226cf36c814c4406fe2eac5b9b1f084ba9"
         }
     ],
     # Give access to topics

@@ -238,6 +238,78 @@ BOOST_AUTO_TEST_CASE(coro) {
     BOOST_TEST(t.finish());
 }
 
+BOOST_AUTO_TEST_CASE(coro_client_cert) {
+     broker_runner br;
+    as::io_context ioc;
+    am::tls::context ctx{am::tls::context::tlsv12};
+    ctx.set_verify_mode(am::tls::verify_peer);
+    ctx.load_verify_file("cacert.pem");
+    ctx.use_certificate_chain_file("client.crt.pem");
+    ctx.use_private_key_file("client.key.pem", boost::asio::ssl::context::pem);
+
+    using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
+    auto amep = ep_t(
+        am::protocol_version::v3_1_1,
+        ioc.get_executor(),
+        ctx
+    );
+
+    struct tc : coro_base<ep_t> {
+        using coro_base<ep_t>::coro_base;
+    private:
+        void proc(
+            am::optional<am::error_code> ec,
+            am::optional<am::system_error> se,
+            am::optional<am::packet_variant> pv,
+            am::optional<packet_id_t> /*pid*/
+        ) override {
+            reenter(this) {
+                yield ep().lowest_layer().async_connect(
+                    dest(),
+                    *this
+                );
+                BOOST_TEST(*ec == am::error_code{});
+                yield ep().next_layer().async_handshake(
+                    am::tls::stream_base::client,
+                    *this
+                );
+                BOOST_TEST(*ec == am::error_code{});
+                yield ep().send(
+                    am::v3_1_1::connect_packet{
+                        true,   // clean_session
+                        0x1234, // keep_alive
+                        am::allocate_buffer("cidxxx"),
+                        am::nullopt, // will
+                        am::allocate_buffer("cid1"),
+                        am::nullopt // no password
+                    },
+                    *this
+                );
+                BOOST_TEST(!*se);
+                yield ep().recv(*this);
+                pv->visit(
+                    am::overload {
+                        [&](am::v3_1_1::connack_packet const& p) {
+                            BOOST_TEST(p.code() == am::connect_return_code::accepted);
+                            BOOST_TEST(!p.session_present());
+                        },
+                        [](auto const&) {
+                            BOOST_TEST(false);
+                        }
+                   }
+                );
+                yield ep().close(*this);
+                yield set_finish();
+            }
+        }
+    };
+
+    tc t{amep, "127.0.0.1", 8883};
+    t();
+    ioc.run();
+    BOOST_TEST(t.finish());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <boost/asio/unyield.hpp>

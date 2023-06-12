@@ -18,6 +18,19 @@
 #include <boost/algorithm/hex.hpp>
 #include <boost/algorithm/string.hpp>
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif // defined(__GNUC__)
+
+// from https://github.com/okdshin/PicoSHA2
+// MIT license
+#include <async_mqtt/external/picosha2.h>
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // defined(__GNUC__)
+
 #if ASYNC_MQTT_USE_TLS
 #include <openssl/evp.h>
 #endif
@@ -45,9 +58,9 @@ inline std::string json_remove_comments(std::istream& input) {
         if (input.get(c).eof()) break;
 
         if (!inside_double_quote && !inside_single_quote && c == '#') inside_comment = true;
-        if (!inside_double_quote && c == '\'') inside_single_quote = !inside_single_quote;
-        if (!inside_single_quote && c == '"') inside_double_quote = !inside_double_quote;
-        if (!inside_double_quote && c == '\n') inside_comment = false;
+        if (!inside_comment && !inside_double_quote && c == '\'') inside_single_quote = !inside_single_quote;
+        if (!inside_comment && !inside_single_quote && c == '"') inside_double_quote = !inside_double_quote;
+        if (c == '\n') inside_comment = false;
 
         if (!inside_comment) result << c;
     }
@@ -135,23 +148,11 @@ struct security {
         return result;
     }
 
-#if defined(ASYNC_MQTT_USE_TLS)
     static std::string sha256hash(string_view message) {
-        std::shared_ptr<EVP_MD_CTX> mdctx(EVP_MD_CTX_new(), EVP_MD_CTX_free);
-        EVP_DigestInit_ex(mdctx.get(), EVP_sha256(), NULL);
-        EVP_DigestUpdate(mdctx.get(), message.data(), message.size());
-
-        std::vector<unsigned char> digest(static_cast<std::size_t>(EVP_MD_size(EVP_sha256())));
-        unsigned int digest_size = static_cast<unsigned int>(digest.size());
-
-        EVP_DigestFinal_ex(mdctx.get(), digest.data(), &digest_size);
-        return to_hex(digest.data(), digest.data() + digest_size);
+        std::vector<unsigned char> hash(picosha2::k_digest_size);
+        picosha2::hash256(message.begin(), message.end(), hash.begin(), hash.end());
+        return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
     }
-#else
-    static std::string sha256hash(string_view message) {
-        return std::string(message);
-    }
-#endif
 
     bool login_cert(string_view username) const {
         auto i = authentication_.find(std::string(username));

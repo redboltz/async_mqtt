@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <string_view>
 #include <limits>
+#include <cstdint>
 
 #include <boost/assert.hpp>
 
