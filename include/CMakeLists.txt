@@ -15,8 +15,6 @@ target_link_libraries(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_TLS}>:
 target_include_directories(${PROJECT_NAME}
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${ROOT_INCLUDE_TARGET}>
-    $<INSTALL_INTERFACE:${ROOT_ASYNC_MQTT_TARGET}>
 )
 
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_TLS}>:ASYNC_MQTT_USE_TLS>)
@@ -55,4 +53,4 @@ target_compile_options(check_deps PUBLIC -Wno-unused-const-variable $<IF:$<CXX_C
 
 target_link_libraries(check_deps PUBLIC ${PROJECT_NAME})
 
-install(DIRECTORY . DESTINATION include FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY . DESTINATION include FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h")
