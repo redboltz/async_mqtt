@@ -683,7 +683,7 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "is_publish_processing:" << pid;
-        return publish_recv_.find(pid) != publish_recv_.end();
+        return qos2_publish_processing_.find(pid) != qos2_publish_processing_.end();
     }
 
     void cancel_all_timers_for_test() {
@@ -904,7 +904,7 @@ private: // compose operation impl
                     self.complete(
                         make_error(
                             errc::protocol_error,
-                            "auth packet can only be send on connection_status::connected"
+                            "auth packet can only be send on connection_status::connecting or status::connected"
                         )
                     );
                     return false;
@@ -1112,6 +1112,9 @@ private: // compose operation impl
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
                         }
+                    }
+                    if (actual_packet.opts().get_qos() == qos::exactly_once) {
+                        ep.qos2_publish_processing_.insert(actual_packet.packet_id());
                     }
                 }
             }
@@ -1678,6 +1681,7 @@ private: // compose operation impl
                             ep.store_.erase(response_packet::v5_pubrec, packet_id);
                             if (is_error(p.code())) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.qos2_publish_processing_.erase(packet_id);
                                 --ep.publish_send_count_;
                                 send_publish_from_queue();
                             }
@@ -1712,6 +1716,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
                             ep.pid_man_.release_id(packet_id);
+                            ep.qos2_publish_processing_.erase(packet_id);
                             --ep.publish_send_count_;
                             send_publish_from_queue();
                         },
@@ -1719,6 +1724,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             ep.store_.erase(response_packet::v5_pubcomp, packet_id);
                             ep.pid_man_.release_id(packet_id);
+                            ep.qos2_publish_processing_.erase(packet_id);
                         },
                         [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>&) {
                         },
@@ -2040,6 +2046,7 @@ private:
         topic_alias_send_ = nullopt;
         topic_alias_recv_ = nullopt;
         publish_recv_.clear();
+        qos2_publish_processing_.clear();
         need_store_ = false;
     }
 
@@ -2218,6 +2225,7 @@ private:
     std::set<packet_id_t> qos2_publish_handled_;
 
     bool recv_processing_ = false;
+    std::set<packet_id_t> qos2_publish_processing_;
 };
 
 /**
