@@ -432,110 +432,19 @@ private:
                 ]
                 (bool remain_as_offline) mutable {
                     if (remain_as_offline) {
-                        // remain offline
-                        if (clean_start) {
-                            // discard offline session
-                            ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                << ASYNC_MQTT_ADD_VALUE(address, this)
-                                << "cid:" << client_id
-                                << "online connection exists, discard old one due to new one's clean_start and renew";
-                            if (response_topic_requested) {
-                                // set_response_topic never modify key part
-                                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
-                            }
-
-                            idx.modify(
-                                it,
-                                [&](auto& e) {
-                                    e->clean();
-                                    e->update_will(timer_ioc_, force_move(will), will_expiry_interval);
-                                    e->set_username(*username);
-                                    // renew_session_expiry updates index
-                                    e->renew_session_expiry(force_move(session_expiry_interval));
-                                },
-                                [](auto&) { BOOST_ASSERT(false); }
-                            );
-                            send_connack(
-                                epsp,
-                                false, // session present
-                                true,  // authenticated
-                                force_move(connack_props),
-                                [
-                                    this,
-                                    epsp
-                                ](system_error) mutable {
-                                    async_read_packet(force_move(epsp));
-                                }
-                            );
-                        }
-                        else {
-                            // inherit online session if previous session's session exists
-                            ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                << ASYNC_MQTT_ADD_VALUE(address, this)
-                                << "cid:" << client_id
-                                << "online connection exists, inherit old one and renew";
-                            if (response_topic_requested) {
-                                // set_response_topic never modify key part
-                                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
-                            }
-
-                            epsp.dispatch(
-                                [
-                                    this,
-                                    epsp,
-                                    &idx,
-                                    &it,
-                                    clean_start,
-                                    username = force_move(username),
-                                    will = force_move(will),
-                                    will_expiry_interval,
-                                    session_expiry_interval,
-                                    connack_props = force_move(connack_props)
-                                ]
-                                () mutable {
-                                    idx.modify(
-                                        it,
-                                        [&](auto& e) {
-                                            e->renew(epsp, clean_start);
-                                            e->set_username(*username);
-                                            e->update_will(timer_ioc_, force_move(will), will_expiry_interval);
-                                            // renew_session_expiry updates index
-                                            e->renew_session_expiry(force_move(session_expiry_interval));
-                                        },
-                                        [](auto&) { BOOST_ASSERT(false); }
-                                    );
-                                    send_connack(
-                                        epsp,
-                                        true, // session present
-                                        true, // authenticated
-                                        force_move(connack_props),
-                                        [
-                                            this,
-                                            epsp,
-                                            &idx,
-                                            it
-                                        ]
-                                        (system_error const& ec) mutable {
-                                            if (ec) {
-                                                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                                    << ec.what();
-                                                return;
-                                            }
-                                            idx.modify(
-                                                it,
-                                                [&](auto& e) {
-                                                    e->send_inflight_messages();
-                                                    e->send_all_offline_messages();
-                                                },
-                                                [](auto&) { BOOST_ASSERT(false); }
-                                            );
-                                            async_read_packet(force_move(epsp));
-                                        }
-                                    );
-                                }
-                            );
-                        }
+                        // offline exists -> online
+                        offline_to_online(
+                            force_move(epsp),
+                            force_move(will),
+                            force_move(will_expiry_interval),
+                            force_move(session_expiry_interval),
+                            clean_start,
+                            force_move(*username),
+                            idx,
+                            it,
+                            response_topic_requested,
+                            force_move(connack_props)
+                        );
                     }
                     else {
                         // new connection
@@ -582,94 +491,138 @@ private:
             );
         }
         else {
-            // offline -> online
-            if (clean_start) {
-                // discard offline session
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                    << "cid:" << client_id
-                    << "offline connection exists, discard old one due to new one's clean_start and renew";
-                if (response_topic_requested) {
-                    // set_response_topic never modify key part
-                    set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
-                }
+            // offline exists -> online
+            offline_to_online(
+                force_move(epsp),
+                force_move(will),
+                force_move(will_expiry_interval),
+                force_move(session_expiry_interval),
+                clean_start,
+                force_move(*username),
+                idx,
+                it,
+                response_topic_requested,
+                force_move(connack_props)
+            );
+        }
+    }
 
-                idx.modify(
-                    it,
-                    [&](auto& e) {
-                        e->clean();
-                        e->renew(epsp, clean_start);
-                        e->update_will(timer_ioc_, force_move(will), will_expiry_interval);
-                        e->set_username(*username);
-                        // renew_session_expiry updates index
-                        e->renew_session_expiry(force_move(session_expiry_interval));
-                    },
-                    [](auto&) { BOOST_ASSERT(false); }
-                );
-                send_connack(
-                    epsp,
-                    false, // session present
-                    true,  // authenticated
-                    force_move(connack_props),
-                    [
-                        this,
-                        epsp
-                    ](system_error) mutable {
-                        async_read_packet(force_move(epsp));
-                    }
-                );
-            }
-            else {
-                // inherit offline session
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                    << "cid:" << client_id
-                    << " offline connection exists, inherit old one and renew";
-                if (response_topic_requested) {
-                    // set_response_topic never modify key part
-                    set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
-                }
-
-                idx.modify(
-                    it,
-                    [&](auto& e) {
-                        e->renew(epsp, clean_start);
-                        e->set_username(*username);
-                        e->update_will(timer_ioc_, force_move(will), will_expiry_interval);
-                        // renew_session_expiry updates index
-                        e->renew_session_expiry(force_move(session_expiry_interval));
-                    },
-                    [](auto&) { BOOST_ASSERT(false); }
-                );
-                send_connack(
-                    epsp,
-                    true, // session present
-                    true,  // authenticated
-                    force_move(connack_props),
-                    [
-                        this,
+    template <typename Idx, typename It>
+    void offline_to_online(
+        epsp_t epsp,
+        optional<will> will,
+        optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        optional<std::chrono::steady_clock::duration> session_expiry_interval,
+        bool clean_start,
+        std::string username,
+        Idx& idx,
+        It it,
+        bool response_topic_requested,
+        properties connack_props
+    ) {
+        if (clean_start) {
+            // discard offline session
+            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, this)
+                << "un:" << username
+                << "offline connection exists, discard old one due to new one's clean_start and renew";
+            idx.modify(
+                it,
+                [&](auto& e) {
+                    e->renew(
                         epsp,
-                        &idx,
-                        it
-                    ]
-                    (system_error const& ec) mutable {
-                        if (ec) {
-                            ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                << ASYNC_MQTT_ADD_VALUE(address, this)
-                                << ec.what();
-                            return;
-                        }
-                        idx.modify(
-                            it,
-                            [&](auto& e) {
-                                e->send_inflight_messages();
-                                e->send_all_offline_messages();
-                            }
-                        );
-                        async_read_packet(force_move(epsp));
-                    }
-                );
+                        will,
+                        clean_start,
+                        will_expiry_interval,
+                        session_expiry_interval
+                    );
+                },
+                [](auto&) { BOOST_ASSERT(false); }
+            );
+            if (response_topic_requested) {
+                // set_response_topic never modify key part
+                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, username);
             }
+            send_connack(
+                epsp,
+                false, // session present
+                true,  // authenticated
+                force_move(connack_props),
+                [
+                    this,
+                    epsp
+                ](system_error) mutable {
+                    async_read_packet(force_move(epsp));
+                }
+            );
+        }
+        else {
+            // inherit online session if previous session's session exists
+            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, this)
+                << "un:" << username
+                << "offline connection exists, and inherit it";
+            if (response_topic_requested) {
+                // set_response_topic never modify key part
+                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, username);
+            }
+
+            epsp.dispatch(
+                [
+                    this,
+                    epsp,
+                    &idx,
+                    &it,
+                    username = force_move(username),
+                    will = force_move(will),
+                    will_expiry_interval,
+                    session_expiry_interval,
+                    connack_props = force_move(connack_props)
+                ]
+                () mutable {
+                    idx.modify(
+                        it,
+                        [&](auto& e) {
+                            e->inherit(
+                                epsp,
+                                force_move(will),
+                                will_expiry_interval,
+                                force_move(session_expiry_interval)
+                            );
+                        },
+                        [](auto&) { BOOST_ASSERT(false); }
+                    );
+                    send_connack(
+                        epsp,
+                        true, // session present
+                        true, // authenticated
+                        force_move(connack_props),
+                        [
+                            this,
+                            epsp,
+                            &idx,
+                            it
+                        ]
+                        (system_error const& ec) mutable {
+                            if (ec) {
+                                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                    << ec.what();
+                                return;
+                            }
+                            idx.modify(
+                                it,
+                                [&](auto& e) {
+                                    e->send_inflight_messages();
+                                    e->send_all_offline_messages();
+                                },
+                                [](auto&) { BOOST_ASSERT(false); }
+                            );
+                            async_read_packet(force_move(epsp));
+                        }
+                    );
+                }
+            );
         }
     }
 
