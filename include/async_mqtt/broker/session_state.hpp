@@ -194,12 +194,27 @@ struct session_state {
         }
     }
 
-    void renew_session_expiry(optional<std::chrono::steady_clock::duration> v) {
-        ASYNC_MQTT_LOG("mqtt_broker", trace)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "renew_session expiry";
-        session_expiry_interval_ = force_move(v);
-        tim_session_expiry_.reset();
+    void renew(
+        epsp_t epsp,
+        optional<will> will,
+        bool clean_start,
+        optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        optional<std::chrono::steady_clock::duration> session_expiry_interval
+    ) {
+        clean();
+        epwp_ = epsp;
+        auto version = epsp.get_protocol_version();
+        if (version == protocol_version::v3_1_1) {
+            remain_after_close_= !clean_start;
+        }
+        else {
+            BOOST_ASSERT(version == protocol_version::v5);
+            remain_after_close_=
+                session_expiry_interval_ &&
+                *session_expiry_interval_ != std::chrono::steady_clock::duration::zero();
+        }
+        update_will(timer_ioc_, force_move(will), will_expiry_interval);
+        session_expiry_interval_ = force_move(session_expiry_interval);
     }
 
     template <typename BufferSequence>
@@ -333,6 +348,8 @@ struct session_state {
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "clean";
         if (clean_handler_) clean_handler_();
+        if (tim_will_expiry_) tim_will_expiry_->cancel();
+        will_value_ = nullopt;
         {
             std::lock_guard<mutex> g(mtx_inflight_messages_);
             inflight_messages_.clear();
@@ -341,8 +358,14 @@ struct session_state {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.clear();
         }
-        shared_targets_.erase(*this);
         unsubscribe_all();
+        shared_targets_.erase(*this);
+        tim_will_delay_.cancel();
+
+        session_expiry_interval_ = nullopt;
+        if (tim_session_expiry_) tim_session_expiry_->cancel();
+        qos2_publish_handled_.clear();
+        response_topic_ = nullopt;
     }
 
     template <typename PublishRetainHandler>
@@ -546,29 +569,39 @@ struct session_state {
         return client_id_;
     }
 
-    void set_username(std::string const& username) {
-        username_ = username;
-    }
     std::string const& get_username() const {
         return username_;
     }
 
-    void renew(epsp_t epsp, bool clean_start) {
+    void inherit(
+        epsp_t epsp,
+        optional<will> will,
+        optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        optional<std::chrono::steady_clock::duration> session_expiry_interval
+    ) {
         ASYNC_MQTT_LOG("mqtt_broker", info)
             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-            << "renew";
-        tim_will_delay_.cancel();
-        if (clean_start) {
-            // send previous will
-            send_will_impl();
-            qos2_publish_handled_.clear();
+            << "inherit";
+
+        epwp_ = epsp;
+        auto version = epsp.get_protocol_version();
+        if (version == protocol_version::v3_1_1) {
+            remain_after_close_= true;
         }
         else {
-            // cancel will
-            clear_will();
-            epsp.restore_qos2_publish_handled_pids(qos2_publish_handled_);
+            BOOST_ASSERT(version == protocol_version::v5);
+            remain_after_close_=
+                session_expiry_interval_ &&
+                *session_expiry_interval_ != std::chrono::steady_clock::duration::zero();
         }
-        epwp_ = epsp;
+        // for old will
+        tim_will_delay_.cancel();
+        clear_will();
+        // for new will
+        update_will(timer_ioc_, force_move(will), will_expiry_interval);
+
+        session_expiry_interval_ = force_move(session_expiry_interval);
+        epsp.restore_qos2_publish_handled_pids(qos2_publish_handled_);
     }
 
     epsp_t lock() {
