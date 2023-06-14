@@ -1,3 +1,10 @@
+## 1.0.2
+- Fixed installed cmake configuration. #23
+- Fixed offline client inheritance on broker. #22
+- Fixed PUBREL(v5) reason_code on broker. #21
+- Moved SHA256 from OpenSSL to picosha2. #19
+- Refined tests. #19, #20
+
 ## 1.0.1
 - Fixed broker's PUBREL rc. #12
 - Removed redundant codes. #15
