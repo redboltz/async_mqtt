@@ -63,7 +63,7 @@ inline std::ostream& operator<<(std::ostream& o, json_like_out_t const& v) {
     return o;
 }
 
-json_like_out_t inline json_like_out(buffer const& buf) {
+inline json_like_out_t json_like_out(buffer const& buf) {
     return json_like_out_t{buf};
 }
 
