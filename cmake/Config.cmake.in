@@ -1,7 +1,7 @@
 set(Boost_USE_MULTITHREADED ON)
 include(CMakeFindDependencyMacro)
-find_dependency((Threads)
-find_dependency((Boost 1.81.0 COMPONENTS @ASYNC_MQTT_BOOST_COMPONENTS@)
+find_dependency(Threads)
+find_dependency(Boost 1.81.0 COMPONENTS @ASYNC_MQTT_BOOST_COMPONENTS@)
 @ASYNC_MQTT_DEPENDS_OPENSSL@
 @ASYNC_MQTT_DEPENDS_ZLIB@
 
