@@ -124,3 +124,9 @@ foreach(source_file ${check_PROGRAMS})
     endif()
     set_tests_properties(${source_file_we} PROPERTIES TIMEOUT 400)
 endforeach()
+
+ADD_EXECUTABLE (
+    ut_multi_file
+    ut_multi_file1.cpp ut_multi_file2.cpp
+)
+target_link_libraries(ut_multi_file async_mqtt_iface)
