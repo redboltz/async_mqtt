@@ -1,3 +1,7 @@
+## 1.0.3
+- Fixed receive packet error processing.  #28
+- Fixed multiple definition linker error. #25, #26
+
 ## 1.0.2
 - Fixed installed cmake configuration. #23
 - Fixed offline client inheritance on broker. #22
