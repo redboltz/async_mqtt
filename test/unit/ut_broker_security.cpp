@@ -57,45 +57,63 @@ BOOST_AUTO_TEST_CASE(json_load) {
 
     std::string value = R"*(
         { # JSON Comment
-            "authentication": [{
-                "name": "u1",
-                "method": "sha256",
-                "salt": "salt",
-                "digest": "38ea2e5e88fcd692fe177c6cada15e9b2db6e70bee0a0d6678c8d3b2a9aae2ad"
-            }, {
-                "name": "u2",
-                "method": "client_cert"
-            }, {
-                "name": "u3",
-                "method": "plain_password",
-                "password": "mypassword"
-            }, {
-                "name": "anonymous",
-                "method": "anonymous"
-            }],
-            "groups": [{
-                "name": "@g1",
-                "members": ["u1", "u2", "anonymous"]
-            }],
-            "authorization": [{
-                "topic": "#",
-                "allow": { "pub": ["@g1"] }
-            }, {
-                "topic": "#",
-                "deny": { "sub": ["@g1"] }
-            }, {
-                "topic": "sub/#",
-                "allow": {
-                    "sub": ["@g1"],
-                    "pub": ["@g1"]
+            "authentication": [
+                {
+                    "name": "u1",
+                    "method": "sha256",
+                    "salt": "salt",
+                    "digest": "38ea2e5e88fcd692fe177c6cada15e9b2db6e70bee0a0d6678c8d3b2a9aae2ad"
                 }
-            }, {
-                "topic": "sub/topic1",
-                "deny": {
-                    "sub": ["u1", "anonymous"],
-                    "pub": ["u1", "anonymous"]
+                ,
+                {
+                    "name": "u2",
+                    "method": "client_cert"
                 }
-            }]
+                ,
+                {
+                    "name": "u3",
+                    "method": "plain_password",
+                    "password": "mypassword"
+                }
+                ,
+                {
+                    "name": "anonymous",
+                    "method": "anonymous"
+                }
+            ],
+            "groups": [
+                {
+                    "name": "@g1",
+                    "members": ["u1", "u2", "anonymous"]
+                }
+            ],
+            "authorization": [
+                {
+                    "topic": "#",
+                    "allow": { "pub": ["@g1"] }
+                }
+                ,
+                {
+                     "topic": "#",
+                     "deny": { "sub": ["@g1"] }
+                }
+                ,
+                {
+                    "topic": "sub/#",
+                     "allow": {
+                        "sub": ["@g1"],
+                        "pub": ["@g1"]
+                     }
+                }
+                ,
+                {
+                    "topic": "sub/topic1",
+                    "deny": {
+                        "sub": ["u1", "anonymous"],
+                        "pub": ["u1", "anonymous"]
+                    }
+                }
+            ]
         }
         )*";
 
@@ -156,10 +174,12 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Group references non-existing user
     std::string nonexisting_1 = R"*(
             {  # JSON Comment
-                "groups": [{
-                    "name": "@g1",
-                    "members": ["u1", "u2"]
-                }]
+                "groups": [
+                    {
+                        "name": "@g1",
+                        "members": ["u1", "u2"]
+                    }
+                ]
             }
         )*";
 
@@ -168,20 +188,26 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Auth references non-existing user
     std::string nonexisting_2 = R"*(
             {
-                "authorization": [{
-                    "topic": "#",
-                    "type": "deny"
-                }, {
-                    "topic": "sub/#",
-                    "allow": {
-                        "sub": ["@g1"]
+                "authorization": [
+                    {
+                        "topic": "#",
+                        "type": "deny"
                     }
-                }, {
-                    "topic": "sub/topic1",
-                    "deny": {
-                        "sub": ["u1", "anonymous"]
+                    ,
+                    {
+                        "topic": "sub/#",
+                        "allow": {
+                            "sub": ["@g1"]
+                        }
                     }
-                }]
+                    ,
+                    {
+                        "topic": "sub/topic1",
+                        "deny": {
+                            "sub": ["u1", "anonymous"]
+                        }
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, nonexisting_2), std::exception);
@@ -189,16 +215,22 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Duplicate user
     std::string duplicate_1 = R"*(
             {
-                "authentication": [{
-                    "name": "u1",
-                    "method": "client_cert"
-                }, {
-                    "name": "u1",
-                    "method": "client_cert"
-                }, {
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }]
+                "authentication": [
+                    {
+                        "name": "u1",
+                        "method": "client_cert"
+                    }
+                    ,
+                    {
+                        "name": "u1",
+                        "method": "client_cert"
+                    }
+                    ,
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, duplicate_1), std::exception);
@@ -206,13 +238,17 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Duplicate anonymous
     std::string duplicate_anonymous = R"*(
             {
-                "authentication": [{
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }, {
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }]
+                "authentication": [
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
+                    }
+                    ,
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, duplicate_anonymous), std::exception);
@@ -220,13 +256,17 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Duplicate group
     std::string duplicate_group = R"*(
             {
-                "groups": [{
-                    "name": "@g1",
-                    "members": ["u1", "u2"]
-                }, {
-                    "name": "@g1",
-                    "members": ["u1", "u2"]
-                }]
+                "groups": [
+                    {
+                        "name": "@g1",
+                        "members": ["u1", "u2"]
+                    }
+                    ,
+                    {
+                        "name": "@g1",
+                        "members": ["u1", "u2"]
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, duplicate_group), std::exception);
@@ -234,10 +274,12 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Redefine any group
     std::string redefine_any_group = R"*(
             {
-                "groups": [{
-                    "name": "@any",
-                    "members": ["u1", "u2"]
-                }]
+                "groups": [
+                    {
+                        "name": "@any",
+                        "members": ["u1", "u2"]
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, redefine_any_group), std::exception);
@@ -245,13 +287,17 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Non-existing group
     std::string non_existing_group = R"*(
             {
-                "authorization": [{
-                    "topic": "#",
-                    "type": "deny"
-                }, {
-                    "topic": "sub/#",
-                    "allow": { "sub": ["@nonexist"] }
-                }]
+                "authorization": [
+                    {
+                        "topic": "#",
+                        "type": "deny"
+                    }
+                    ,
+                    {
+                        "topic": "sub/#",
+                        "allow": { "sub": ["@nonexist"] }
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, non_existing_group), std::exception);
@@ -259,10 +305,12 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Invalid username
     std::string invalid_username = R"*(
             {
-                "authentication": [{
-                    "name": "@u1",
-                    "method": "anonymous"
-                }]
+                "authentication": [
+                    {
+                        "name": "@u1",
+                        "method": "anonymous"
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, invalid_username), std::exception);
@@ -270,10 +318,12 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Invalid group name
     std::string invalid_group_name = R"*(
             {
-                "groups": [{
-                    "name": "g1",
-                    "members": ["u1", "u2"]
-                }]
+                "groups": [
+                    {
+                        "name": "g1",
+                        "members": ["u1", "u2"]
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, invalid_group_name), std::exception);
@@ -281,11 +331,13 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Invalid field
     std::string invalid_field = R"*(
             {
-                "authentication": [{
-                    "name": "u1",
-                    "method": "client_cert",
-                    "field": "other",
-                }]
+                "authentication": [
+                    {
+                        "name": "u1",
+                        "method": "client_cert",
+                        "field": "other",
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_THROW(load_config(security, invalid_field), std::exception);
@@ -296,41 +348,55 @@ BOOST_AUTO_TEST_CASE(check_publish) {
 
     std::string value = R"*(
             {
-                "authentication": [{
-                    "name": "u1",
-                    "method": "sha256",
-                    "salt": "salt",
-                    "digest": "mypassword"
-                }, {
-                    "name": "u2",
-                    "method": "client_cert"
-                }, {
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }],
-                "groups": [{
-                    "name": "@g1",
-                    "members": ["u1", "u2"]
-                }],
-                "authorization": [{
-                    "topic": "#",
-                    "deny": {
-                        "sub": ["@g1"],
-                        "pub": ["@g1"]
+                "authentication": [
+                    {
+                        "name": "u1",
+                        "method": "sha256",
+                        "salt": "salt",
+                        "digest": "mypassword"
                     }
-                }, {
-                    "topic": "sub/#",
-                    "allow": {
-                        "sub": ["@g1"],
-                        "pub": ["@g1"]
+                    ,
+                    {
+                        "name": "u2",
+                        "method": "client_cert"
                     }
-                }, {
-                    "topic": "sub/topic1",
-                    "deny": {
-                        "sub": ["u1", "anonymous"],
-                        "pub": ["u1", "anonymous"]
+                    ,
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
                     }
-                }]
+                ],
+                "groups": [
+                    {
+                        "name": "@g1",
+                        "members": ["u1", "u2"]
+                    }
+                ],
+                "authorization": [
+                    {
+                        "topic": "#",
+                        "deny": {
+                            "sub": ["@g1"],
+                            "pub": ["@g1"]
+                        }
+                    }
+                    ,
+                    {
+                        "topic": "sub/#",
+                        "allow": {
+                            "sub": ["@g1"],
+                            "pub": ["@g1"]
+                        }
+                    }
+                    ,
+                    {
+                        "topic": "sub/topic1",
+                        "deny": {
+                            "sub": ["u1", "anonymous"],
+                            "pub": ["u1", "anonymous"]
+                        }
+                    }
+                ]
             }
         )*";
     BOOST_CHECK_NO_THROW(load_config(security, value));
@@ -349,37 +415,49 @@ BOOST_AUTO_TEST_CASE(check_publish_any) {
 
     std::string value = R"*(
             {
-                "authentication": [{
-                    "name": "u1",
-                    "method": "sha256",
-                    "salt": "salt",
-                    "digest": "mypassword"
-                }, {
-                    "name": "u2",
-                    "method": "client_cert"
-                }, {
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }],
-                "authorization": [{
-                    "topic": "#",
-                    "deny": {
-                        "sub": ["@any"],
-                        "pub": ["@any"]
+                "authentication": [
+                    {
+                        "name": "u1",
+                        "method": "sha256",
+                        "salt": "salt",
+                        "digest": "mypassword"
                     }
-                }, {
-                    "topic": "sub/#",
-                    "allow": {
-                        "sub": ["@any"],
-                        "pub": ["@any"]
+                    ,
+                    {
+                        "name": "u2",
+                        "method": "client_cert"
                     }
-                }, {
-                    "topic": "sub/topic1",
-                    "deny": {
-                        "sub": ["u1", "anonymous"],
-                        "pub": ["u1", "anonymous"]
+                    ,
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
                     }
-                }]
+                ],
+                "authorization": [
+                    {
+                        "topic": "#",
+                        "deny": {
+                            "sub": ["@any"],
+                            "pub": ["@any"]
+                        }
+                    }
+                    ,
+                    {
+                        "topic": "sub/#",
+                        "allow": {
+                            "sub": ["@any"],
+                            "pub": ["@any"]
+                        }
+                    }
+                    ,
+                    {
+                        "topic": "sub/topic1",
+                        "deny": {
+                            "sub": ["u1", "anonymous"],
+                            "pub": ["u1", "anonymous"]
+                        }
+                    }
+                ]
             }
         )*";
     try {
@@ -487,41 +565,57 @@ BOOST_AUTO_TEST_CASE(auth_check) {
     std::string test_1 = R"*(
             # JSON Comment
             {
-                "authentication": [{
-                    "name": "u1",
-                    "method": "sha256",
-                    "salt": "salt",
-                    "digest": "75c111ce6542425228c157b1187076ed86e837f6085e3bb30b976114f70abc40"
-                }, {
-                    "name": "u2",
-                    "method": "client_cert"
-                }, {
-                    "name": "anonymous",
-                    "method": "anonymous"
-                }],
-                "groups": [{
-                    "name": "@g1",
-                    "members": ["u1", "u2", "anonymous"]
-                }],
-                "authorization": [{
-                    "topic": "#",
-                    "allow": { "pub": ["@g1"] }
-                }, {
-                    "topic": "#",
-                    "deny": { "sub": ["@g1"] }
-                }, {
-                    "topic": "sub/#",
-                    "allow": {
-                        "sub": ["@g1"],
-                        "pub": ["@g1"]
+                "authentication": [
+                    {
+                        "name": "u1",
+                        "method": "sha256",
+                        "salt": "salt",
+                        "digest": "75c111ce6542425228c157b1187076ed86e837f6085e3bb30b976114f70abc40"
                     }
-                }, {
-                    "topic": "sub/topic1",
-                    "deny": {
-                        "sub": ["u1", "anonymous"],
-                        "pub": ["u1", "anonymous"]
+                    ,
+                    {
+                        "name": "u2",
+                        "method": "client_cert"
                     }
-                }]
+                    ,
+                    {
+                        "name": "anonymous",
+                        "method": "anonymous"
+                    }
+                ],
+                "groups": [
+                    {
+                        "name": "@g1",
+                        "members": ["u1", "u2", "anonymous"]
+                    }
+                ],
+                "authorization": [
+                    {
+                        "topic": "#",
+                        "allow": { "pub": ["@g1"] }
+                    }
+                    ,
+                    {
+                        "topic": "#",
+                        "deny": { "sub": ["@g1"] }
+                    }
+                    ,
+                    {
+                        "topic": "sub/#",
+                        "allow": {
+                            "sub": ["@g1"],
+                            "pub": ["@g1"]
+                        }
+                    }
+                    ,
+                    {
+                        "topic": "sub/topic1",
+                        "deny": {
+                            "sub": ["u1", "anonymous"],
+                            "pub": ["u1", "anonymous"]
+                        }
+                    }
+                ]
             }
         )*";
 
@@ -584,7 +678,8 @@ BOOST_AUTO_TEST_CASE(auth_check_dynamic) {
                         "name": "u1",
                         "method": "plain_password",
                         "password": "hoge"
-                    },
+                    }
+                    ,
                     {
                         "name": "u2",
                         "method": "plain_password",
@@ -688,10 +783,10 @@ BOOST_AUTO_TEST_CASE(auth_check_plus) {
                     }
                 ],
                 "authorization": [
-                                        {
-                                "topic": "+/",
-                                "allow": { "pub":["u1"], "sub":["u1"] }
-                                }
+                    {
+                        "topic": "+/",
+                        "allow": { "pub":["u1"], "sub":["u1"] }
+                    }
                 ]
             }
         )*";
@@ -793,9 +888,6 @@ BOOST_AUTO_TEST_CASE(subscription_level_check) {
     BOOST_CHECK(security.is_subscribe_authorized("u1", "1/2"));
     BOOST_CHECK(!security.is_subscribe_authorized("u1", "1/2/3"));
     BOOST_CHECK(!security.is_subscribe_authorized("u1", "1/2/"));
-
-
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -651,54 +651,28 @@ private:
                         }
                         return am::nullopt;
                     } ();
-                auto client_id =
+                client_id_ =
                     [&] () -> am::buffer {
                         if (vm_.count("client_id")) {
                             return am::allocate_buffer(vm_["client_id"].template as<std::string>());
                         }
                         return am::buffer();
                     } ();
-                auto verify_file =
-                    [&] () -> am::optional<std::string> {
-                        if (vm_.count("verify_file")) {
-                            return vm_["verify_file"].template as<std::string>();
-                        }
-                        return am::nullopt;
-                    } ();
-                auto certificate =
-                    [&] () -> am::optional<std::string> {
-                        if (vm_.count("certificate")) {
-                            return vm_["certificate"].template as<std::string>();
-                        }
-                        return am::nullopt;
-                    } ();
-                auto private_key =
-                    [&] () -> am::optional<std::string> {
-                        if (vm_.count("private_key")) {
-                            return vm_["private_key"].template as<std::string>();
-                        }
-                        return am::nullopt;
-                    } ();
-                auto ws_path =
-                    [&] () -> am::optional<std::string> {
-                        if (vm_.count("ws_path")) {
-                            return vm_["ws_path"].template as<std::string>();
-                        }
-                        return am::nullopt;
-                    } ();
-
-                auto host = vm_["host"].template as<std::string>();
+                keep_alive_ = vm_["keep_alive"].template as<std::uint16_t>();
+                ws_path_ = vm_["ws_path"].template as<std::string>();
+                host_ = vm_["host"].template as<std::string>();
                 auto port = vm_["port"].template as<std::uint16_t>();
                 auto protocol = vm_["protocol"].template as<std::string>();
                 clean_start_ = vm_["clean_start"].template as<bool>();
                 sei_ = vm_["sei"].template as<std::uint32_t>();
 
                 // Resolve hostname
-                res_.async_resolve(host, boost::lexical_cast<std::string>(port), *this);
+                res_.async_resolve(host_, boost::lexical_cast<std::string>(port), *this);
                 std::cout << color_red << "\n";
                 std::cout << "async_resolve:" << ec.message() << std::endl;
                 if (ec) return;
             }
+
             // Underlying TCP connect
             yield as::async_connect(
                 ep_.lowest_layer(),
@@ -711,14 +685,90 @@ private:
                 << std::endl;
             if (ec) return;
 
+#if defined(ASYNC_MQTT_USE_TLS)
+            // Underlying TLS handshake
+            yield {
+                if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::mqtts>>) {
+                    ep_.next_layer().async_handshake(
+                        am::tls::stream_base::client,
+                        *this
+                    );
+                }
+#if defined(ASYNC_MQTT_USE_WS)
+                else if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>) {
+                    ep_.next_layer().next_layer().async_handshake(
+                        am::tls::stream_base::client,
+                        *this
+                    );
+                }
+#endif // defined(ASYNC_MQTT_USE_WS)
+                else {
+                    as::dispatch(
+                        ep_.strand(),
+                        *this
+                    );
+                }
+            }
+            if constexpr (
+                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::mqtts>>
+#if defined(ASYNC_MQTT_USE_WS)
+                ||
+                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
+#endif // defined(ASYNC_MQTT_USE_WS)
+            ) {
+                std::cout
+                    << "TLS handshaked ec:"
+                    << ec.message()
+                    << std::endl;
+                if (ec) return;
+            }
+#endif // defined(ASYNC_MQTT_USE_TLS)
+
+#if defined(ASYNC_MQTT_USE_WS)
+            // Underlying WS handshake
+            yield {
+                if constexpr (
+                    std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::ws>>
+#if defined(ASYNC_MQTT_USE_TLS)
+                    ||
+                    std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
+#endif // defined(ASYNC_MQTT_USE_TLS)
+                ) {
+                    ep_.next_layer().async_handshake(
+                        host_,
+                        ws_path_,
+                        *this
+                    );
+                }
+                else {
+                    as::dispatch(
+                        ep_.strand(),
+                        *this
+                    );
+                }
+            }
+            if constexpr (
+                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::ws>>
+#if defined(ASYNC_MQTT_USE_TLS)
+                ||
+                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
+#endif // defined(ASYNC_MQTT_USE_TLS)
+            ) {
+                std::cout
+                    << "WS handshaked ec:"
+                    << ec.message()
+                    << std::endl;
+            }
+#endif // defined(ASYNC_MQTT_USE_WS)
+
             // Send MQTT CONNECT
             yield {
                 if (version_ == am::protocol_version::v3_1_1) {
                     ep_.send(
                         am::v3_1_1::connect_packet{
                             clean_start_,
-                            0, // keep_alive
-                            am::allocate_buffer("cid1"),
+                            keep_alive_,
+                            client_id_,
                             am::nullopt, // will
                             username_,
                             password_
@@ -739,8 +789,8 @@ private:
                     ep_.send(
                         am::v5::connect_packet{
                             clean_start_,
-                            0, // keep_alive
-                            am::allocate_buffer("cid1"),
+                            keep_alive_,
+                            client_id_,
                             am::nullopt, // will
                             username_,
                             password_,
@@ -807,10 +857,14 @@ private:
     as::ip::tcp::resolver& res_;
     po::variables_map& vm_;
     am::protocol_version version_;
+    am::buffer client_id_;
     am::optional<am::buffer> username_;
     am::optional<am::buffer> password_;
+    std::uint16_t keep_alive_ = 0;
     bool clean_start_ = true;
     std::uint32_t sei_ = 0;
+    std::string host_;
+    std::string ws_path_;
     as::coroutine coro_;
 };
 
@@ -871,7 +925,12 @@ int main(int argc, char* argv[]) {
             (
                  "client_id",
                  po::value<std::string>(),
-                 "(optional) client_id"
+                 "client_id"
+            )
+            (
+                 "keep_alive",
+                 po::value<std::uint16_t>()->default_value(0),
+                 "keep_alive"
             )
             (
                 "verify_file",
@@ -890,7 +949,7 @@ int main(int argc, char* argv[]) {
             )
             (
                 "ws_path",
-                boost::program_options::value<std::string>(),
+                boost::program_options::value<std::string>()->default_value("/"),
                 "Web-Socket path for ws and wss connections"
             )
             (
@@ -1037,6 +1096,93 @@ int main(int argc, char* argv[]) {
             ioc.run();
             return 0;
         }
+#if defined(ASYNC_MQTT_USE_TLS)
+        else if (protocol == "mqtts") {
+            as::ip::tcp::socket resolve_sock{ioc};
+            as::ip::tcp::resolver res{resolve_sock.get_executor()};
+            am::tls::context ctx{am::tls::context::tlsv12};
+            if (vm.count("verify_file")) {
+                ctx.load_verify_file(vm["verify_file"].as<std::string>());
+                ctx.set_verify_mode(am::tls::verify_peer);
+            }
+            else {
+                ctx.set_verify_mode(am::tls::verify_none);
+            }
+            if (vm.count("certificate") || vm.count("private_key")) {
+                if (!vm.count("certificate")) {
+                    std::cout << "private_key is set but certificate is not set" << std::endl;
+                    return -1;
+                }
+                if (!vm.count("private_key")) {
+                    std::cout << "certificateis set but private_key is not set" << std::endl;
+                    return -1;
+                }
+                ctx.use_certificate_chain_file(vm["certificate"].as<std::string>());
+                ctx.use_private_key_file(vm["private_key"].as<std::string>(), boost::asio::ssl::context::pem);
+            }
+            am::endpoint<am::role::client, am::protocol::mqtts> amep {
+                version,
+                ioc.get_executor(),
+                ctx
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, res, vm, version};
+            nm();
+            ioc.run();
+            return 0;
+        }
+#endif // defined(ASYNC_MQTT_USE_TLS)
+#if defined(ASYNC_MQTT_USE_WS)
+        else if (protocol == "ws") {
+            as::ip::tcp::socket resolve_sock{ioc};
+            as::ip::tcp::resolver res{resolve_sock.get_executor()};
+            am::endpoint<am::role::client, am::protocol::ws> amep {
+                version,
+                ioc.get_executor()
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, res, vm, version};
+            nm();
+            ioc.run();
+            return 0;
+        }
+#endif // defined(ASYNC_MQTT_USE_WS)
+#if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
+        else if (protocol == "wss") {
+            as::ip::tcp::socket resolve_sock{ioc};
+            as::ip::tcp::resolver res{resolve_sock.get_executor()};
+            am::tls::context ctx{am::tls::context::tlsv12};
+            if (vm.count("verify_file")) {
+                ctx.load_verify_file(vm["verify_file"].as<std::string>());
+                ctx.set_verify_mode(am::tls::verify_peer);
+            }
+            else {
+                ctx.set_verify_mode(am::tls::verify_none);
+            }
+            if (vm.count("certificate") || vm.count("private_key")) {
+                if (!vm.count("certificate")) {
+                    std::cout << "private_key is set but certificate is not set" << std::endl;
+                    return -1;
+                }
+                if (!vm.count("private_key")) {
+                    std::cout << "certificateis set but private_key is not set" << std::endl;
+                    return -1;
+                }
+                ctx.use_certificate_chain_file(vm["certificate"].as<std::string>());
+                ctx.use_private_key_file(vm["private_key"].as<std::string>(), boost::asio::ssl::context::pem);
+            }
+            am::endpoint<am::role::client, am::protocol::wss> amep {
+                version,
+                ioc.get_executor(),
+                ctx
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, res, vm, version};
+            nm();
+            ioc.run();
+            return 0;
+        }
+#endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
     }
     catch (std::exception const &e) {
         std::cout << "Exception: " << e.what() << std::endl;

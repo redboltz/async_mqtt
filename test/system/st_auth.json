@@ -5,12 +5,14 @@
             "name": "u1",
             "method": "plain_password",
             "password": "passforu1"
-        },
+        }
+        ,
         {
             # Authenticates user by client certificate
             "name": "cid1",
             "method": "client_cert"
-        },
+        }
+        ,
         {
             "name": "u3",
             "method": "sha256",
@@ -20,7 +22,8 @@
             # don't forget -n
             "digest": "9ed77f119f694e5e543201a97cc8db226cf36c814c4406fe2eac5b9b1f084ba9"
         }
-    ],
+    ]
+    ,
     # Give access to topics
     "authorization": [
         {
