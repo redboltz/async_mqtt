@@ -521,17 +521,25 @@ struct security {
 
     std::map<std::string, authorization::type> auth_sub(string_view topic) const {
         std::map<std::string, authorization::type> result;
-
-        std::size_t priority = 0;
+        std::map<std::string, std::size_t> priorities;
         auth_sub_map.find(
             topic,
             [&](
                 std::string const &allowed_username,
                 std::pair<authorization::type, std::size_t> entry
             ) {
-                if (entry.second >= priority) {
-                    result[allowed_username] = entry.first;
-                    priority = entry.second;
+                auto rit = result.find(allowed_username);
+                if (rit == result.end()) {
+                    result.emplace(allowed_username, entry.first);
+                    priorities.emplace(allowed_username, entry.second);
+                }
+                else {
+                    auto pit = priorities.find(allowed_username);
+                    BOOST_ASSERT(pit != priorities.end());
+                    if (pit->second <= entry.second) {
+                        pit->second = entry.second;
+                        rit->second = entry.first;
+                    }
                 }
             }
         );
