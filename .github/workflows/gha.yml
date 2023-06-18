@@ -61,7 +61,7 @@ jobs:
       working-directory: ${{ runner.temp }}
       run: |
         export PATH="/usr/local/opt/llvm/bin:$PATH"
-        lcov --capture --directory ${{ runner.temp }} --output-file coverage.info --gcov-tool ${{ github.workspace }}/llvm-gcov.sh
+        lcov --capture --directory ${{ runner.temp }} --output-file coverage.info --ignore-errors gcov,source --gcov-tool ${{ github.workspace }}/llvm-gcov.sh
         lcov --list coverage.info # debug info
         lcov --remove coverage.info '/usr/*' '/home/runner/work/async_mqtt/async_mqtt/usr/*' '/home/runner/work/async_mqtt/async_mqtt/test/*' --output-file coverage.info # filter system-files
         lcov --list coverage.info # debug info
