@@ -890,4 +890,53 @@ BOOST_AUTO_TEST_CASE(subscription_level_check) {
     BOOST_CHECK(!security.is_subscribe_authorized("u1", "1/2/"));
 }
 
+BOOST_AUTO_TEST_CASE(allow_pertial_deny_group) {
+    am::security security;
+    std::string test = R"*(
+        {
+            # Configure username/login
+            "authentication": [
+                {
+                    "name": "u1",
+                    "method": "plain_password",
+                    "password": "hoge"
+                }
+                ,
+                {
+                    "name": "u2",
+                    "method": "plain_password",
+                    "password": "hoge"
+                }
+            ],
+            # Give access to topics
+            "authorization": [
+                {
+                    "topic": "#",
+                    "allow": { "pub":["u1"], "sub":["u1"] }
+
+                }
+                ,
+                {
+                    "topic": "#",
+                    "deny": { "pub":["u2"], "sub":["u2"] }
+
+                }
+            ]
+        }
+        )*";
+    BOOST_CHECK_NO_THROW(load_config(security, test));
+
+    // sub
+    BOOST_CHECK(security.is_subscribe_authorized("u1", "topic"));
+    BOOST_CHECK(!security.is_subscribe_authorized("u2", "topic"));
+
+    // pub
+    BOOST_CHECK(security.auth_pub("topic", "u1") == am::security::authorization::type::allow);
+    BOOST_CHECK(security.auth_pub("topic", "u2") == am::security::authorization::type::deny);
+
+    // deliver
+    BOOST_CHECK(security.auth_sub_user(security.auth_sub("topic"), "u1") == am::security::authorization::type::allow);
+    BOOST_CHECK(security.auth_sub_user(security.auth_sub("topic"), "u2") == am::security::authorization::type::deny);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
