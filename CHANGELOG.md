@@ -1,3 +1,8 @@
+## 1.0.4
+- Fixed deliver authorization for broker. #30
+- Refined client_cli. #29
+- Fixed creating packets from buffer process. #28
+
 ## 1.0.3
 - Fixed receive packet error processing.  #28
 - Fixed multiple definition linker error. #25, #26
