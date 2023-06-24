@@ -1,5 +1,6 @@
 # Index
 - [Run on the docker container](#run-on-the-docker-container)
+- [Trial broker](#Trial-broker)
 - [Tutorial](#tutorial)
 # Run on the docker container
 You can run async_mqtt broker, benchmarking tool, and CLI client using docker.
@@ -60,6 +61,23 @@ Also you can connect mosquitto.org as follows.
 ```
 ./client_cli --host test.mosquitto.rog
 ```
+
+# Trial broker
+
+You can connect to the broker `async-mqtt.redboltz.net` for testing.
+
+port|protocol|client_cli.sh access
+---|---|---
+1883|MQTT on TCP|./client_cli.sh --host async-mqtt.redboltz.net --port 1883 --protocol mqtt
+8883|MQTT on TLS|./client_cli.sh --host async-mqtt.redboltz.net --port 8883 --protocol mqtts
+80|MQTT on Websocket|./client_cli.sh --host async-mqtt.redboltz.net --port 80 --protocol ws
+443|MQTT on Websocket(TLS)|./client_cli.sh --host async-mqtt.redboltz.net --port 443 --protocol wss
+
+## Important notice
+You are free to use it for any application, but please do not abuse or rely upon it for anything of importance. This server runs on an AWS Fargate spot instance(0.25vcpu, 0.5GB ram). It is not intended to demonstrate any performance characteristics.
+Please don't publish anything sensitive, anybody could be listening.
+
+
 
 # Tutorial
 
