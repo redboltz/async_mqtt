@@ -1,3 +1,5 @@
+<img src="logo/async_mqtt_1280x640.png" width=300>
+
 # async_mqtt
 
 Asynchronous MQTT communication library.
