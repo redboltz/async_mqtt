@@ -1,6 +1,6 @@
 # Index
 - [Run on the docker container](#run-on-the-docker-container)
-- [Trial broker](#Trial-broker)
+- [Free trial broker on cloud](#Free-trial-broker-on-cloud)
 - [Tutorial](#tutorial)
 # Run on the docker container
 You can run async_mqtt broker, benchmarking tool, and CLI client using docker.
@@ -62,7 +62,7 @@ Also you can connect mosquitto.org as follows.
 ./client_cli --host test.mosquitto.rog
 ```
 
-# Trial broker
+# Free trial broker on cloud
 
 You can connect to the broker `async-mqtt.redboltz.net` for testing.
 
