@@ -1,31 +1,23 @@
-FROM ubuntu
-RUN apt-get upgrade -y \
-    && apt-get update -y \
-    && apt-get install wget -y \
-    && apt-get install git -y \
-    && apt-get install cmake -y \
-    && apt-get remove --purge g++ -y\
-    && apt-get remove --purge gcc -y\
-    && apt-get install gcc-12 -y \
-    && apt-get install g++-12 -y \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 1 \
-    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 1 \
-    && apt-get install clang -y \
-    && apt-get install libssl-dev -y \
-    && apt-get install bzip2 -y \
-    && apt-get clean -y
-RUN wget https://boostorg.jfrog.io/artifactory/main/release/1.82.0/source/boost_1_82_0.tar.bz2 \
-    && tar xf boost_1_82_0.tar.bz2 \
-    && cd boost_1_82_0 \
-    && ./bootstrap.sh \
-    && ./b2 link=static,shared address-model=64 install \
-    && cd .. \
-    && rm -rf boost_1_82_0 boost_1_82_0.tar.bz2
-RUN mkdir -p /var/async_mqtt
+FROM alpine:latest
 
+RUN mkdir -p /var/async_mqtt
 WORKDIR /var
 ARG ASYNC_MQTT_VERSION
-RUN git clone https://github.com/redboltz/async_mqtt.git -b ${ASYNC_MQTT_VERSION} \
+
+RUN apk update \
+ && apk add --no-cache \
+    gcc \
+    libc-dev \
+    clang16 \
+    boost-dev \
+    libssl3 \
+    libcrypto3 \
+ && apk add --no-cache --virtual .build-deps \
+    git \
+    openssl-dev \
+    cmake \
+    make \
+ && git clone https://github.com/redboltz/async_mqtt.git -b ${ASYNC_MQTT_VERSION} \
     && mkdir async_mqtt_build \
     && cd async_mqtt_build \
     && cmake \
@@ -38,6 +30,10 @@ RUN git clone https://github.com/redboltz/async_mqtt.git -b ${ASYNC_MQTT_VERSION
        -DASYNC_MQTT_USE_LOG=ON \
        -DASYNC_MQTT_BUILD_TOOLS=ON \
        /var/async_mqtt \
-    && cmake --build . --target broker bench client_cli \
-    && rm -rf `find . -name "*.o"`
+    && cd tool \
+    && cmake --build . --parallel 3 \
+    && cd .. \
+    && rm -rf `find . -name "*.o"` \
+    && apk del .build-deps
+
 WORKDIR /var/async_mqtt_build/tool/conf
