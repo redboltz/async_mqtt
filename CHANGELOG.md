@@ -1,3 +1,7 @@
+## 1.0.5
+- Fixed missing PINGRESP timeout cancel. #37
+- Refined CI. #33
+
 ## 1.0.4
 - Fixed deliver authorization for broker. #30
 - Refined client_cli. #29
