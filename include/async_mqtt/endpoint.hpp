@@ -1767,8 +1767,10 @@ private: // compose operation impl
                             }
                         },
                         [&](v3_1_1::pingresp_packet&) {
+                            ep.tim_pingresp_recv_.cancel();
                         },
                         [&](v5::pingresp_packet&) {
+                            ep.tim_pingresp_recv_.cancel();
                         },
                         [&](v3_1_1::disconnect_packet&) {
                             ep.status_ = connection_status::disconnecting;
