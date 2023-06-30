@@ -1,6 +1,6 @@
 #!/bin/bash
 TAG=latest
-if [[ ! "$1" == -* ]] ;
+if [[ "$#" -ne 0 && "$1" != -* ]] ;
 then
     TAG=$1
     shift
