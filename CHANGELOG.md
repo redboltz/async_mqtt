@@ -1,3 +1,7 @@
+## 1.0.6
+- Fixed docker launch bash scripts. #40
+- Refined docker images. #39
+
 ## 1.0.5
 - Fixed missing PINGRESP timeout cancel. #37
 - Refined CI. #33
