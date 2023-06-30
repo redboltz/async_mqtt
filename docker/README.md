@@ -1,5 +1,12 @@
 # Docker container
 
+**Important note**
+I tried to migrate the base docker image from ubuntu to alpine. At first, it looks working well. But when I do some performance test, I got very poor performance on the alpine version.
+I investigate a little and I found
+https://superuser.com/questions/1219609/why-is-the-alpine-docker-image-over-50-slower-than-the-ubuntu-image
+
+The docker images are ubuntu -> alpine -> ubuntu(now).
+
 ## Launch script
 
 ### broker.sh
