@@ -110,6 +110,8 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
                 ep().set_pingreq_send_interval_ms_for_test(10000);
                 yield ep().recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
+                BOOST_TEST(pv->get_if<am::v5::disconnect_packet>());
+                yield ep().recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(!*pv); // error as expected
                 set_finish();
             }
