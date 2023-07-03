@@ -399,8 +399,20 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "recv";
-
-        return recv(filter::match, force_move(types), std::forward<CompletionToken>(token));
+        BOOST_ASSERT(!recv_processing_);
+        recv_processing_ = true;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(packet_variant_type)
+            >(
+                recv_impl{
+                    *this,
+                    filter::match,
+                    force_move(types)
+                },
+                token
+            );
     }
 
     /**
@@ -423,30 +435,20 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "recv";
-
-        return recv(
-            [
-                this,
-                fil,
-                types = force_move(types),
-                token = std::forward<CompletionToken>(token)
-            ]
-            (packet_variant pv) mutable {
-                if (auto type_opt = pv.type()) {
-                    if ((fil == filter::match  && types.find(*type_opt) == types.end()) ||
-                        (fil == filter::except && types.find(*type_opt) != types.end())
-                    ) {
-                        recv(force_move(types), force_move(token));
-                    }
-                    else {
-                        token(force_move(pv));
-                    }
-                }
-                else {
-                    token(force_move(pv));
-                }
-            }
-        );
+        BOOST_ASSERT(!recv_processing_);
+        recv_processing_ = true;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(packet_variant_type)
+            >(
+                recv_impl{
+                    *this,
+                    fil,
+                    force_move(types)
+                },
+                token
+            );
     }
 
     /**
@@ -1328,6 +1330,8 @@ private: // compose operation impl
 
     struct recv_impl {
         this_type& ep;
+        optional<filter> fil = nullopt;
+        std::set<control_packet_type> types = {};
         optional<system_error> decided_error = nullopt;
         enum { initiate, disconnect, close, complete } state = initiate;
 
@@ -1787,7 +1791,31 @@ private: // compose operation impl
                 );
                 ep.reset_pingreq_recv_timer();
                 ep.recv_processing_ = false;
-                if (call_complete && !decided_error) self.complete(force_move(v));
+
+                if (fil) {
+                    if (auto type_opt = v.type()) {
+                        if ((*fil == filter::match  && types.find(*type_opt) == types.end()) ||
+                            (*fil == filter::except && types.find(*type_opt) != types.end())
+                        ) {
+                            // read the next packet
+                            state = initiate;
+                            auto& a_ep{ep};
+                            as::dispatch(
+                                a_ep.strand(),
+                                force_move(self)
+                            );
+                        }
+                        else {
+                            if (call_complete && !decided_error) self.complete(force_move(v));
+                        }
+                    }
+                    else {
+                        if (call_complete && !decided_error) self.complete(force_move(v));
+                    }
+                }
+                else {
+                    if (call_complete && !decided_error) self.complete(force_move(v));
+                }
             } break;
             case close:
                 BOOST_ASSERT(decided_error);
