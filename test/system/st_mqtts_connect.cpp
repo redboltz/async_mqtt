@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(coro) {
 }
 
 BOOST_AUTO_TEST_CASE(coro_client_cert) {
-     broker_runner br;
+    broker_runner br;
     as::io_context ioc;
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_peer);
