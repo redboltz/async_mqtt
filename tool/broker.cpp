@@ -631,11 +631,6 @@ int main(int argc, char *argv[]) {
                 "Field to be used from certificate for authenticating clients"
             )
             (
-                "certificate_reload_interval",
-                boost::program_options::value<unsigned int>()->default_value(0),
-                "Reload interval for the certificate and private key files (hours)\n 0 - Disabled"
-            )
-            (
                 "auth_file",
                 boost::program_options::value<std::string>(),
                 "Authentication file"
