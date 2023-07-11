@@ -21,6 +21,24 @@ BOOST_AUTO_TEST_SUITE(ut_ep_topic_alias)
 
 namespace am = async_mqtt;
 namespace as = boost::asio;
+using namespace am::literals;
+
+inline am::optional<am::topic_alias_t> get_topic_alias(am::properties const& props) {
+    am::optional<am::topic_alias_t> ta_opt;
+    for (auto const& prop : props) {
+        prop.visit(
+            am::overload {
+                [&](am::property::topic_alias const& p) {
+                    ta_opt.emplace(p.val());
+                },
+                [](auto const&) {
+                }
+            }
+        );
+        if (ta_opt) return ta_opt;
+    }
+    return ta_opt;
+}
 
 BOOST_AUTO_TEST_CASE(send_client) {
     auto version = am::protocol_version::v5;
@@ -32,7 +50,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
@@ -175,6 +194,18 @@ BOOST_AUTO_TEST_CASE(send_client) {
         auto ec = ep.send(publish_reg_t1, as::use_future).get();
         BOOST_TEST(!ec);
     }
+    {   // check regulate
+        auto p = publish_reg_t1;
+        auto rp = ep.regulate_for_store(p, as::use_future).get();
+        BOOST_TEST(rp.topic() == "topic1"_mb);
+        BOOST_TEST(!get_topic_alias(rp.props()));
+
+        // idempotence
+        auto p2 = p;
+        auto rp2 = ep.regulate_for_store(p2, as::use_future).get();
+        BOOST_TEST(rp2.topic() == "topic1"_mb);
+        BOOST_TEST(!get_topic_alias(rp2.props()));
+    }
 
     // send publish_use_ta1
     ep.next_layer().set_write_packet_checker(
@@ -185,6 +216,12 @@ BOOST_AUTO_TEST_CASE(send_client) {
     {
         auto ec = ep.send(publish_use_ta1, as::use_future).get();
         BOOST_TEST(!ec);
+    }
+    {   // check regulate
+        auto p = publish_use_ta1;
+        auto rp = ep.regulate_for_store(p, as::use_future).get();
+        BOOST_TEST(rp.topic() == "topic1"_mb);
+        BOOST_TEST(!get_topic_alias(rp.props()));
     }
 
     // send publish_reg_t2
@@ -256,7 +293,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     };
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
@@ -480,7 +518,8 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
@@ -701,7 +740,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
@@ -865,7 +905,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
@@ -1174,7 +1215,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     };
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+    using ep_t = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>;
+    ep_t ep{
         version,
         // for stub_socket args
         version,
