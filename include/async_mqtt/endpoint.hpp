@@ -535,6 +535,31 @@ public:
             );
     }
 
+    template <typename CompletionToken>
+    typename as::async_result<
+        std::decay_t<CompletionToken>,
+        void(v5::basic_publish_packet<PacketIdBytes>)
+    >::return_type
+    regulate_for_store(
+        v5::basic_publish_packet<PacketIdBytes> packet,
+        CompletionToken&& token
+    ) const {
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "regulate_for_store:" << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(v5::basic_publish_packet<PacketIdBytes>)
+            >(
+                regulate_for_store_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
+    }
+
     // sync APIs that require working on strand
 
     /**
@@ -676,7 +701,7 @@ public:
 
     /**
      * @brief Get MQTT PUBLISH packet processing status
-     @ @param pid packet_id corresponding to the publish packet.
+     * @param pid packet_id corresponding to the publish packet.
      * @return If the packet is processing, then true, otherwise false.
      * @note This function is SYNC function that must only be called in the strand.
      */
@@ -686,6 +711,31 @@ public:
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "is_publish_processing:" << pid;
         return qos2_publish_processing_.find(pid) != qos2_publish_processing_.end();
+    }
+
+    /**
+     * @brief Regulate publish packet for store
+     *        If topic is empty, extract topic from topic alias, and remove topic alias
+     *        Otherwise, remove topic alias if exists.
+     * @param packet packet to regulate
+     * @note This function is SYNC function that must only be called in the strand.
+     */
+    void regulate_for_store(v5::basic_publish_packet<PacketIdBytes>& packet) const {
+        BOOST_ASSERT(strand().running_in_this_thread());
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "regulate_for_store:" << packet;
+        if (packet.topic().empty()) {
+            if (auto ta_opt = get_topic_alias(packet.props())) {
+                auto topic = topic_alias_send_->find_without_touch(*ta_opt);
+                if (!topic.empty()) {
+                    packet.remove_topic_alias_add_topic(allocate_buffer(topic));
+                }
+            }
+        }
+        else {
+            packet.remove_topic_alias();
+        }
     }
 
     void cancel_all_timers_for_test() {
@@ -1281,7 +1331,7 @@ private: // compose operation impl
         }
 
         template <typename Self>
-        std::optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) {
+        optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) {
             BOOST_ASSERT(ep.strand().running_in_this_thread());
             if (!ta_opt) {
                 self.complete(
@@ -1977,6 +2027,33 @@ private: // compose operation impl
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 self.complete(ep.get_stored_packets());
+                break;
+            }
+        }
+    };
+
+    struct regulate_for_store_impl {
+        this_type const& ep;
+        v5::basic_publish_packet<PacketIdBytes> packet;
+        enum { dispatch, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case dispatch: {
+                state = complete;
+                auto& a_ep{ep};
+                as::dispatch(
+                    a_ep.strand(),
+                    force_move(self)
+                );
+            } break;
+            case complete:
+                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                ep.regulate_for_store(packet);
+                self.complete(force_move(packet));
                 break;
             }
         }

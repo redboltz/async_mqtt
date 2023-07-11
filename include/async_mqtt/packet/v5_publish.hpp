@@ -362,13 +362,8 @@ public:
         props_.push_back(force_move(prop));
 
         // update property_length_buf
-        auto old_property_length_buf_size = property_length_buf_.size();
-        property_length_buf_.clear();
-        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
-        for (auto e : pb) {
-            property_length_buf_.push_back(e);
-        }
-        auto new_property_length_buf_size = property_length_buf_.size();
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
 
         // remove topic_name
         auto old_topic_name_size = topic_name_.size();
@@ -383,11 +378,7 @@ public:
             prop_size +
             (new_property_length_buf_size - old_property_length_buf_size) -
             old_topic_name_size;
-        remaining_length_buf_.clear();
-        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
-        for (auto e : rb) {
-            remaining_length_buf_.push_back(e);
-        }
+        update_remaining_length_buf();
     }
 
     /**
@@ -404,23 +395,14 @@ public:
         props_.push_back(force_move(prop));
 
         // update property_length_buf
-        auto old_property_length_buf_size = property_length_buf_.size();
-        property_length_buf_.clear();
-        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
-        for (auto e : pb) {
-            property_length_buf_.push_back(e);
-        }
-        auto new_property_length_buf_size = property_length_buf_.size();
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
 
         // update remaining_length
         remaining_length_ +=
             prop_size +
             (new_property_length_buf_size - old_property_length_buf_size);
-        remaining_length_buf_.clear();
-        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
-        for (auto e : rb) {
-            remaining_length_buf_.push_back(e);
-        }
+        update_remaining_length_buf();
     }
 
     /**
@@ -430,22 +412,40 @@ public:
      * @param val topic_alias
      */
     void add_topic(buffer topic) {
-        BOOST_ASSERT(topic_name_.empty());
-
-        // add topic
-        topic_name_ = force_move(topic);
-        endian_store(
-            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
-            topic_name_length_buf_.data()
-        );
-
+        add_topic_impl(force_move(topic));
         // update remaining_length
         remaining_length_ += topic_name_.size();
-        remaining_length_buf_.clear();
-        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
-        for (auto e : rb) {
-            remaining_length_buf_.push_back(e);
-        }
+        update_remaining_length_buf();
+    }
+
+    void remove_topic_alias() {
+        auto prop_size = remove_topic_alias_impl();
+        property_length_ -= prop_size;
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // update remaining_length
+        remaining_length_ +=
+            -prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size);
+        update_remaining_length_buf();
+    }
+
+    void remove_topic_alias_add_topic(buffer topic) {
+        auto prop_size = remove_topic_alias_impl();
+        property_length_ -= prop_size;
+        add_topic_impl(force_move(topic));
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // update remaining_length
+        remaining_length_ +=
+            topic_name_.size() -
+            prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size);
+        update_remaining_length_buf();
     }
 
     /**
@@ -466,6 +466,52 @@ public:
             );
             if (updated) return;
         }
+    }
+
+private:
+    void update_remaining_length_buf() {
+        remaining_length_buf_.clear();
+        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
+        for (auto e : rb) {
+            remaining_length_buf_.push_back(e);
+        }
+    }
+
+    std::tuple<std::size_t, std::size_t> update_property_length_buf() {
+        auto old_property_length_buf_size = property_length_buf_.size();
+        property_length_buf_.clear();
+        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+        auto new_property_length_buf_size = property_length_buf_.size();
+        return {old_property_length_buf_size, new_property_length_buf_size};
+    }
+
+    std::size_t remove_topic_alias_impl() {
+        auto it = props_.cbegin();
+        std::size_t size = 0;
+        while (it != props_.cend()) {
+            if (it->id() == property::id::topic_alias) {
+                size += it->size();
+                it = props_.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+        return size;
+    }
+
+    void add_topic_impl(buffer topic) {
+        BOOST_ASSERT(topic_name_.empty());
+
+        // add topic
+        topic_name_ = force_move(topic);
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
+            topic_name_length_buf_.data()
+        );
     }
 
 private:

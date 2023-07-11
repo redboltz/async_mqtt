@@ -80,6 +80,19 @@ public:
         return it->topic;
     }
 
+    std::string find_without_touch(topic_alias_t alias) const {
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "find_topic_by_alias"
+            << " alias:" << alias;
+
+        BOOST_ASSERT(alias >= min_ && alias <= max_);
+        auto& idx = aliases_.get<tag_alias>();
+        auto it = idx.find(alias);
+        if (it == idx.end()) return std::string();
+        return it->topic;
+    }
+
     optional<topic_alias_t> find(string_view topic) const {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)

@@ -222,4 +222,177 @@ BOOST_AUTO_TEST_CASE(v5_publish_pid4) {
     );
 }
 
+BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
+    auto p1 = am::v5::publish_packet(
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no,
+        am::properties{
+            am::property::topic_alias(1)
+        }
+    );
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p1) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:1}]}"
+    );
+    {
+        auto cbs = p1.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x14,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x00, 0x01,                         // 1
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+
+    auto p2 = p1;
+    p2.remove_topic_alias();
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p2) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no}"
+    );
+    {
+        auto cbs = p2.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x11,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x00,                               // property_length
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+    // p1 is not changed
+    {
+        auto cbs = p1.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x14,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x00, 0x01,                         // 1
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+
+    auto p3 = p2;
+    p3.remove_topic_add_topic_alias(0x1234);
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p3) ==
+        "v5::publish{topic:,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:4660}]}"
+    );
+    {
+        auto cbs = p3.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x0e,                               // remaining_length
+            0x00, 0x00,                         // topic_name_length
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x12, 0x34,                         // 0x1234
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+    // p2 is not changed
+    {
+        auto cbs = p2.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x11,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x00,                               // property_length
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+
+    auto p4 = p3;
+    p4.remove_topic_alias_add_topic(am::allocate_buffer("topic1"));
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p4) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no}"
+    );
+    {
+        auto cbs = p4.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x11,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x00,                               // property_length
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+    // p3 is not changed
+    {
+        auto cbs = p3.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x0e,                               // remaining_length
+            0x00, 0x00,                         // topic_name_length
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x12, 0x34,                         // 0x1234
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+
+    auto p5 = p3;
+    p5.add_topic(am::allocate_buffer("topic1"));
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p5) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:4660}]}"
+    );
+    {
+        auto cbs = p5.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x14,                               // remaining_length
+            0x00, 0x06,                         // topic_name_length
+            0x74, 0x6f, 0x70, 0x69, 0x63, 0x31, // topic_name
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x12, 0x34,                         // 0x1234
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+    // p3 is not changed
+    {
+        auto cbs = p3.const_buffer_sequence();
+        char expected[] {
+            0x30,                               // fixed_header
+            0x0e,                               // remaining_length
+            0x00, 0x00,                         // topic_name_length
+            0x03,                               // property_length
+            0x23,                               // topic_alias
+            0x12, 0x34,                         // 0x1234
+            0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x31 // payload
+        };
+        auto [b, e] = am::make_packet_range(cbs);
+        BOOST_TEST(std::equal(b, e, std::begin(expected)));
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
