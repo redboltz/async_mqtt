@@ -1,3 +1,9 @@
+## 1.0.7
+- Removed zlib dependency. #51
+- Refined topic alias. #48
+- Refined broker's CA certificate checking. #45, #46
+- Fixed recv() with filter compile error. #44
+
 ## 1.0.6
 - Fixed docker launch bash scripts. #40
 - Refined docker images. #39
