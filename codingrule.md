@@ -160,7 +160,6 @@ lambda(1);
 ```cpp
 auto lambda =
     [
-        &,
         val1 = std::move(val1),
         val2,
         val3,
