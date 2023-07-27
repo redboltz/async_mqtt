@@ -12,6 +12,7 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/exception.hpp>
+#include <async_mqtt/host_port.hpp>
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/packet_id_manager.hpp>

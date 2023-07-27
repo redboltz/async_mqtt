@@ -12,6 +12,7 @@
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 
+#include <async_mqtt/host_port.hpp>
 #include <async_mqtt/setup_log.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
@@ -39,8 +40,6 @@ using packet_id_t = am::packet_id_type<2>::type;
 struct bench_context {
     bench_context(
         as::ip::tcp::resolver& res,
-        std::string const& host,
-        std::string const& port,
         am::optional<std::string> const& ws_path,
         am::protocol_version version,
         std::uint32_t sei,
@@ -84,8 +83,6 @@ struct bench_context {
         >& guard_iocs
     )
     :res{res},
-     host{host},
-     port{port},
      ws_path{ws_path},
      version{version},
      sei{sei},
@@ -127,8 +124,6 @@ struct bench_context {
     }
 
     as::ip::tcp::resolver& res;
-    std::string const& host;
-    std::string const& port;
     am::optional<std::string> const& ws_path;
     am::protocol_version version;
     std::uint32_t sei;
@@ -192,8 +187,8 @@ struct bench {
     void operator()(boost::system::error_code const& ec, ClientInfo* pci = nullptr) {
         proc(ec, {}, {}, {}, pci);
     }
-    void operator()(boost::system::error_code ec, as::ip::tcp::resolver::results_type eps) {
-        proc(ec, {}, {}, std::move(eps), {});
+    void operator()(boost::system::error_code ec, as::ip::tcp::resolver::results_type eps, ClientInfo* pci = nullptr) {
+        proc(ec, {}, {}, std::move(eps), pci);
     }
     void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/, ClientInfo* pci = nullptr) {
         proc(ec, {}, {}, {}, pci);
@@ -214,21 +209,14 @@ private:
         ClientInfo* pci
     ) {
         reenter (coro_) {
-            // setup
+            // Setup
             for (auto& ci : cis_) {
                 ci.init_timer(ci.c.strand());
                 ci.c.set_auto_pub_response(true);
             }
 
-            // Resolve hostname
-            yield bc_.res.async_resolve(bc_.host, bc_.port, *this);
-            if (*ec) {
-                locked_cout() << "async_resolve error:" << ec->message() << std::endl;
-                exit(-1);
-            }
-            eps_ = am::force_move(*eps);
             yield {
-                // connect
+                // connect interval timer set
                 std::size_t index = 0;
                 for (auto& ci : cis_) {
                     ci.tim->expires_after(std::chrono::milliseconds(bc_.con_interval_ms) * ++index);
@@ -244,6 +232,21 @@ private:
                 locked_cout() << "async_connect interval timer error:" << ec->message() << std::endl;
                 exit(-1);
             }
+
+            // Resolve hostname
+            yield bc_.res.async_resolve(
+                pci->host,
+                pci->port,
+                as::append(
+                    *this,
+                    pci
+                )
+            );
+            if (*ec) {
+                locked_cout() << "async_resolve error:" << ec->message() << std::endl;
+                exit(-1);
+            }
+            eps_ = am::force_move(*eps);
 
             // TCP connect
             yield as::async_connect(
@@ -306,7 +309,7 @@ private:
             yield {
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::ws>>) {
                     pci->c.next_layer().async_handshake(
-                        bc_.host,
+                        pci->host,
                         [&] () -> std::string{
                             if (bc_.ws_path) return *bc_.ws_path;
                             else return "/";
@@ -321,7 +324,7 @@ private:
 #if defined(ASYNC_MQTT_USE_TLS)
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
                     pci->c.next_layer().async_handshake(
-                        bc_.host,
+                        pci->host,
                         [&] () -> std::string{
                             if (bc_.ws_path) return *bc_.ws_path;
                             else return "/";
@@ -435,6 +438,7 @@ private:
                 }
             );
             if (bc_.rest_connect != 0) return;
+
             // subscribe delay
             bc_.ph.store(phase::sub_delay);
             bc_.tp_sub_delay = std::chrono::steady_clock::now();
@@ -941,14 +945,11 @@ int main(int argc, char *argv[]) {
                 "Load configuration file"
             )
             (
-                "host",
-                boost::program_options::value<std::string>(),
-                "mqtt broker's hostname to connect"
-            )
-            (
-                "port",
-                boost::program_options::value<std::string>()->default_value("1883"),
-                "mqtt broker's port to connect"
+                "target",
+                boost::program_options::value<std::vector<std::string>>(),
+                "mqtt broker's hostname:port to connect. when you set this option  multiple times, "
+                "then connect round robin for each client. "
+                "Note set as --target host1:1883 --target host2:1883, not --target host1:1883 host2:1883."
             )
             (
                 "protocol",
@@ -1129,7 +1130,7 @@ int main(int argc, char *argv[]) {
 
         std::cout << "Set options:" << std::endl;
         for (auto const& e : vm) {
-            std::cout << boost::format("%-16s") % e.first.c_str() << " : ";
+            std::cout << boost::format("%-24s") % e.first.c_str() << " : ";
             if (auto p = boost::any_cast<std::string>(&e.second.value())) {
                 if (e.first.c_str() == std::string("password")) {
                     std::cout << "********";
@@ -1152,6 +1153,11 @@ int main(int argc, char *argv[]) {
             }
             else if (auto p = boost::any_cast<bool>(&e.second.value())) {
                 std::cout << std::boolalpha << *p;
+            }
+            else if (auto p = boost::any_cast<std::vector<std::string>>(&e.second.value())) {
+                for (auto const& e : *p) {
+                    std::cout << e << " ";
+                }
             }
             std::cout << std::endl;
         }
@@ -1182,8 +1188,8 @@ int main(int argc, char *argv[]) {
         am::setup_log();
 #endif
 
-        if (!vm.count("host")) {
-            std::cerr << "host must be set" << std::endl;
+        if (!vm.count("target")) {
+            std::cerr << "target host:port must be set at least one entry" << std::endl;
             return -1;
         }
 
@@ -1196,8 +1202,21 @@ int main(int argc, char *argv[]) {
         std::chrono::steady_clock::time_point tp_publish;
 
         auto detail_report = vm["detail_report"].as<bool>();
-        auto host = vm["host"].as<std::string>();
-        auto port = vm["port"].as<std::string>();
+        auto target = vm["target"].as<std::vector<std::string>>();
+        std::vector<am::host_port> hps;
+        for (auto& t : target) {
+            auto hp_opt = am::host_port_from_string(t);
+            if (hp_opt) {
+                hps.emplace_back(am::force_move(*hp_opt));
+            }
+            else {
+                std::cout
+                    << "invalid host:port is set:"
+                    << t
+                    << std::endl;
+                return -1;
+            }
+        }
         auto protocol = vm["protocol"].as<std::string>();
         auto mqtt_version = vm["mqtt_version"].as<std::string>();
         auto qos = static_cast<am::qos>(vm["qos"].as<unsigned int>());
@@ -1350,14 +1369,18 @@ int main(int argc, char *argv[]) {
                 std::size_t index,
                 std::size_t payload_size,
                 std::size_t times,
-                std::size_t idle_count
+                std::size_t idle_count,
+                std::string host,
+                std::string port
             )
                 :cid_prefix{am::force_move(cid_prefix)},
                  index_str{(boost::format("%08d") % index).str()},
                  send_times{times},
                  recv_times{times},
                  send_idle_count{idle_count},
-                 recv_idle_count{idle_count}
+                 recv_idle_count{idle_count},
+                 host{am::force_move(host)},
+                 port{am::force_move(port)}
             {
                 payload_str.resize(payload_size);
                 sent.resize(times);
@@ -1407,6 +1430,8 @@ int main(int argc, char *argv[]) {
             std::vector<std::chrono::steady_clock::time_point> sent;
             std::vector<std::size_t> rtt_us;
             std::shared_ptr<as::steady_timer> tim;
+            std::string host;
+            std::string port;
         };
 
         as::io_context ioc_timer;
@@ -1547,8 +1572,6 @@ int main(int argc, char *argv[]) {
 
         auto bc = bench_context(
             res,
-            host,
-            port,
             ws_path,
             version,
             sei,
@@ -1598,9 +1621,19 @@ int main(int argc, char *argv[]) {
                     std::size_t index,
                     std::size_t payload_size,
                     std::size_t times,
-                    std::size_t idle_count
+                    std::size_t idle_count,
+                    std::string host,
+                    std::string port
                 )
-                    :client_info_base{am::force_move(cid_prefix), index, payload_size, times, idle_count},
+                    :client_info_base{
+                        am::force_move(cid_prefix),
+                        index,
+                        payload_size,
+                        times,
+                        idle_count,
+                        am::force_move(host),
+                        am::force_move(port)
+                     },
                      c{am::force_move(c)}
                 {
                 }
@@ -1609,6 +1642,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
+            std::size_t hps_index = 0;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
                     client_t{
@@ -1619,8 +1653,12 @@ int main(int argc, char *argv[]) {
                     i + start_index,
                     payload_size,
                     times,
-                    pub_idle_count
+                    pub_idle_count,
+                    hps[hps_index].host,
+                    std::to_string(hps[hps_index].port)
                 );
+                ++hps_index;
+                if (hps_index == hps.size()) hps_index = 0;
             }
             auto b = bench(
                 cis,
@@ -1640,9 +1678,19 @@ int main(int argc, char *argv[]) {
                     std::size_t index,
                     std::size_t payload_size,
                     std::size_t times,
-                    std::size_t idle_count
+                    std::size_t idle_count,
+                    std::string host,
+                    std::string port
                 )
-                    :client_info_base{am::force_move(cid_prefix), index, payload_size, times, idle_count},
+                    :client_info_base{
+                        am::force_move(cid_prefix),
+                        index,
+                        payload_size,
+                        times,
+                        idle_count,
+                        am::force_move(host),
+                        am::force_move(port)
+                     },
                      c{am::force_move(c)}
                 {
                 }
@@ -1651,6 +1699,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
+            std::size_t hps_index = 0;
             for (std::size_t i = 0; i != clients; ++i) {
                 am::tls::context ctx{am::tls::context::tlsv12};
                 if (cacert) {
@@ -1670,8 +1719,12 @@ int main(int argc, char *argv[]) {
                     i + start_index,
                     payload_size,
                     times,
-                    pub_idle_count
+                    pub_idle_count,
+                    hps[hps_index].host,
+                    std::to_string(hps[hps_index].port)
                 );
+                ++hps_index;
+                if (hps_index == hps.size()) hps_index = 0;
             }
             auto b = bench(
                 cis,
@@ -1696,9 +1749,19 @@ int main(int argc, char *argv[]) {
                     std::size_t index,
                     std::size_t payload_size,
                     std::size_t times,
-                    std::size_t idle_count
+                    std::size_t idle_count,
+                    std::string host,
+                    std::string port
                 )
-                    :client_info_base{am::force_move(cid_prefix), index, payload_size, times, idle_count},
+                    :client_info_base{
+                        am::force_move(cid_prefix),
+                        index,
+                        payload_size,
+                        times,
+                        idle_count,
+                        am::force_move(host),
+                        am::force_move(port)
+                     },
                      c{am::force_move(c)}
                 {
                 }
@@ -1707,6 +1770,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
+            std::size_t hps_index = 0;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
                     client_t{
@@ -1717,8 +1781,12 @@ int main(int argc, char *argv[]) {
                     i + start_index,
                     payload_size,
                     times,
-                    pub_idle_count
+                    pub_idle_count,
+                    hps[hps_index].host,
+                    std::to_string(hps[hps_index].port)
                 );
+                ++hps_index;
+                if (hps_index == hps.size()) hps_index = 0;
             }
             auto b = bench(
                 cis,
@@ -1743,9 +1811,19 @@ int main(int argc, char *argv[]) {
                     std::size_t index,
                     std::size_t payload_size,
                     std::size_t times,
-                    std::size_t idle_count
+                    std::size_t idle_count,
+                    std::string host,
+                    std::string port
                 )
-                    :client_info_base{am::force_move(cid_prefix), index, payload_size, times, idle_count},
+                    :client_info_base{
+                        am::force_move(cid_prefix),
+                        index,
+                        payload_size,
+                        times,
+                        idle_count,
+                        am::force_move(host),
+                        am::force_move(port)
+                     },
                      c{am::force_move(c)}
                 {
                 }
@@ -1754,6 +1832,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
+            std::size_t hps_index = 0;
             for (std::size_t i = 0; i != clients; ++i) {
                 am::tls::context ctx{am::tls::context::tlsv12};
                 if (cacert) {
@@ -1773,8 +1852,12 @@ int main(int argc, char *argv[]) {
                     i + start_index,
                     payload_size,
                     times,
-                    pub_idle_count
+                    pub_idle_count,
+                    hps[hps_index].host,
+                    std::to_string(hps[hps_index].port)
                 );
+                ++hps_index;
+                if (hps_index == hps.size()) hps_index = 0;
             }
             auto b = bench(
                 cis,
