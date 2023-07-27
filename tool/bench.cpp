@@ -23,6 +23,8 @@
 namespace as = boost::asio;
 namespace am = async_mqtt;
 
+static constexpr std::size_t ts_size = 32;
+
 // moved to global to avoid MSVC error
 enum class phase {
     connect,
@@ -32,6 +34,12 @@ enum class phase {
     idle,
     pub_after_idle_delay,
     publish
+};
+
+enum class mode {
+    single,
+    send,
+    recv
 };
 
 using packet_id_t = am::packet_id_type<2>::type;
@@ -80,7 +88,8 @@ struct bench_context {
             as::executor_work_guard<
                 as::io_context::executor_type
             >
-        >& guard_iocs
+        >& guard_iocs,
+        mode md
     )
     :res{res},
      ws_path{ws_path},
@@ -119,7 +128,8 @@ struct bench_context {
      tp_pub_after_idle_delay{tp_pub_after_idle_delay},
      tp_publish{tp_publish},
      detail_report{detail_report},
-     guard_iocs{guard_iocs}
+     guard_iocs{guard_iocs},
+     md{md}
     {
     }
 
@@ -165,6 +175,7 @@ struct bench_context {
             as::io_context::executor_type
         >
     >& guard_iocs;
+    mode md;
 };
 
 template <typename ClientInfo>
@@ -439,161 +450,167 @@ private:
             );
             if (bc_.rest_connect != 0) return;
 
-            // subscribe delay
-            bc_.ph.store(phase::sub_delay);
-            bc_.tp_sub_delay = std::chrono::steady_clock::now();
-            bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.sub_delay_ms));
-            yield bc_.tim_delay.async_wait(*this);
-            if (*ec) {
-                locked_cout() << "sub delay timer error:" << ec->message() << std::endl;
-                exit(-1);
-            }
-            bc_.ph.store(phase::subscribe);
-            bc_.tp_subscribe = std::chrono::steady_clock::now();
-            yield {
-                // sub interval
-                std::size_t index = 0;
-                for (auto& ci : cis_) {
-                    ci.tim->expires_after(std::chrono::milliseconds(bc_.sub_interval_ms) * ++index);
-                    ci.tim->async_wait(
-                        as::append(
-                            *this,
-                            &ci
-                        )
-                    );
-                }
-            }
-            if (*ec) {
-                locked_cout() << "sub interval timer error:" << ec->message() << std::endl;
-                exit(-1);
-            }
-            yield {
-                switch (bc_.version) {
-                case am::protocol_version::v5: {
-                    pci->c.send(
-                        am::v5::subscribe_packet{
-                            // sync version can be called because the previous timer handler is on the strand
-                            *pci->c.acquire_unique_packet_id(),
-                            {
-                                { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
-                            },
-                            am::properties{}
-                        },
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                } break;
-                case am::protocol_version::v3_1_1: {
-                    pci->c.send(
-                        am::v3_1_1::subscribe_packet{
-                            // sync version can be called because the previous timer handler is on the strand
-                            *pci->c.acquire_unique_packet_id(),
-                            {
-                                { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
-                            }
-                        },
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                } break;
-                default:
-                    locked_cout() << "invalid MQTT version" << std::endl;
+            if (bc_.md == mode::single || bc_.md == mode::recv) {
+                // subscribe delay
+                bc_.ph.store(phase::sub_delay);
+                bc_.tp_sub_delay = std::chrono::steady_clock::now();
+                bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.sub_delay_ms));
+                yield bc_.tim_delay.async_wait(*this);
+                if (*ec) {
+                    locked_cout() << "sub delay timer error:" << ec->message() << std::endl;
                     exit(-1);
                 }
-                pci->init_timer(pci->c.strand());
-            }
-            if (*se) {
-                locked_cout() << "subscribe send error:" << se->what() << std::endl;
-                exit(-1);
-            }
-            // MQTT suback recv
-            yield pci->c.recv(
-                as::append(
-                    *this,
-                    pci
-                )
-            );
-            pv.visit(
-                am::overload {
-                    [&](am::v5::suback_packet const& p) {
-                        if (p.entries().front() == am::suback_reason_code::granted_qos_0 ||
-                            p.entries().front() == am::suback_reason_code::granted_qos_1 ||
-                            p.entries().front() == am::suback_reason_code::granted_qos_2) {
-                            --bc_.rest_sub;
-                        }
-                        else {
-                            locked_cout() << "v5 suback:" << p.entries().front() << std::endl;
-                            exit(-1);
-                        }
-                    },
-                    [&](am::v3_1_1::suback_packet const& p) {
-                        if (p.entries().front() == am::suback_return_code::success_maximum_qos_0 ||
-                            p.entries().front() == am::suback_return_code::success_maximum_qos_1 ||
-                            p.entries().front() == am::suback_return_code::success_maximum_qos_2) {
-                            --bc_.rest_sub;
-                        }
-                        else {
-                            locked_cout() << "v3.1.1 suback:" << p.entries().front() << std::endl;
-                            exit(-1);
-                        }
-                    },
-                    [](auto const&) {
+                bc_.ph.store(phase::subscribe);
+                bc_.tp_subscribe = std::chrono::steady_clock::now();
+                yield {
+                    // sub interval
+                    std::size_t index = 0;
+                    for (auto& ci : cis_) {
+                        ci.tim->expires_after(std::chrono::milliseconds(bc_.sub_interval_ms) * ++index);
+                        ci.tim->async_wait(
+                            as::append(
+                                *this,
+                                &ci
+                            )
+                        );
                     }
                 }
-            );
-            if (bc_.rest_sub != 0) return;
+                if (*ec) {
+                    locked_cout() << "sub interval timer error:" << ec->message() << std::endl;
+                    exit(-1);
+                }
+                yield {
+                    switch (bc_.version) {
+                    case am::protocol_version::v5: {
+                        pci->c.send(
+                            am::v5::subscribe_packet{
+                                // sync version can be called because the previous timer handler is on the strand
+                                *pci->c.acquire_unique_packet_id(),
+                                {
+                                    { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
+                                },
+                                am::properties{}
+                            },
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
+                    } break;
+                    case am::protocol_version::v3_1_1: {
+                        pci->c.send(
+                            am::v3_1_1::subscribe_packet{
+                                // sync version can be called because the previous timer handler is on the strand
+                                *pci->c.acquire_unique_packet_id(),
+                                {
+                                    { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
+                                }
+                            },
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
+                    } break;
+                    default:
+                        locked_cout() << "invalid MQTT version" << std::endl;
+                        exit(-1);
+                    }
+                    pci->init_timer(pci->c.strand());
+                }
+                if (*se) {
+                    locked_cout() << "subscribe send error:" << se->what() << std::endl;
+                    exit(-1);
+                }
+                // MQTT suback recv
+                yield pci->c.recv(
+                    as::append(
+                        *this,
+                        pci
+                    )
+                );
+                pv.visit(
+                    am::overload {
+                        [&](am::v5::suback_packet const& p) {
+                            if (p.entries().front() == am::suback_reason_code::granted_qos_0 ||
+                                p.entries().front() == am::suback_reason_code::granted_qos_1 ||
+                                p.entries().front() == am::suback_reason_code::granted_qos_2) {
+                                --bc_.rest_sub;
+                            }
+                            else {
+                                locked_cout() << "v5 suback:" << p.entries().front() << std::endl;
+                                exit(-1);
+                            }
+                        },
+                        [&](am::v3_1_1::suback_packet const& p) {
+                            if (p.entries().front() == am::suback_return_code::success_maximum_qos_0 ||
+                                p.entries().front() == am::suback_return_code::success_maximum_qos_1 ||
+                                p.entries().front() == am::suback_return_code::success_maximum_qos_2) {
+                                --bc_.rest_sub;
+                            }
+                            else {
+                                locked_cout() << "v3.1.1 suback:" << p.entries().front() << std::endl;
+                                exit(-1);
+                            }
+                        },
+                        [](auto const&) {
+                        }
+                    }
+                );
+                if (bc_.rest_sub != 0) return;
+            }
 
-            yield {
-                if (bc_.pub_idle_count == 0) {
-                    bc_.ph.store(phase::pub_after_idle_delay);
-                    bc_.tp_pub_delay = std::chrono::steady_clock::now();
-                    bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
-                    bc_.tim_delay.async_wait(*this);
+            if (bc_.md == mode::single || bc_.md == mode::send) {
+                yield {
+                    if (bc_.pub_idle_count == 0) {
+                        bc_.ph.store(phase::pub_after_idle_delay);
+                        bc_.tp_pub_delay = std::chrono::steady_clock::now();
+                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
+                        bc_.tim_delay.async_wait(*this);
+                    }
+                    else {
+                        bc_.ph.store(phase::pub_delay);
+                        bc_.tp_pub_delay = std::chrono::steady_clock::now();
+                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
+                        bc_.tim_delay.async_wait(*this);
+                    }
+                }
+                if (bc_.ph.load() == phase::pub_delay) {
+                    if (*ec) {
+                        locked_cout() << "pub idle delay timer error:" << ec->message();
+                        exit(-1);
+                    }
+                    else {
+                        bc_.ph.store(phase::idle);
+                        bc_.tp_idle = std::chrono::steady_clock::now();
+                    }
                 }
                 else {
-                    bc_.ph.store(phase::pub_delay);
-                    bc_.tp_pub_delay = std::chrono::steady_clock::now();
-                    bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
-                    bc_.tim_delay.async_wait(*this);
-                }
-            }
-            if (bc_.ph.load() == phase::pub_delay) {
-                if (*ec) {
-                    locked_cout() << "pub idle delay timer error:" << ec->message();
-                    exit(-1);
-                }
-                else {
-                    bc_.ph.store(phase::idle);
-                    bc_.tp_idle = std::chrono::steady_clock::now();
-                }
-            }
-            else {
-                if (*ec) {
-                    locked_cout() << "pub after idle delay timer error:" << ec->message();
-                    exit(-1);
-                }
-                else {
-                    bc_.ph.store(phase::publish);
-                    bc_.tp_publish = std::chrono::steady_clock::now();
+                    if (*ec) {
+                        locked_cout() << "pub after idle delay timer error:" << ec->message();
+                        exit(-1);
+                    }
+                    else {
+                        bc_.ph.store(phase::publish);
+                        bc_.tp_publish = std::chrono::steady_clock::now();
+                    }
                 }
             }
             yield {
                 std::size_t index = 0;
                 for (auto& ci : cis_) {
-                    // pub interval
-                    auto tp =
-                        std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
-                    ci.tim->expires_after(tp);
-                    ci.tim->async_wait(
-                        as::append(
-                            *this,
-                            &ci
-                        )
-                    );
+                    if (bc_.md == mode::single || bc_.md == mode::send) {
+                        // pub interval
+                        auto tp =
+                            std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
+                        ci.tim->expires_after(tp);
+                        ci.tim->async_wait(
+                            as::append(
+                                *this,
+                                &ci
+                            )
+                        );
+                    }
                     // pub recv
                     ci.c.recv(
                         as::append(
@@ -613,7 +630,7 @@ private:
                                 am::v5::publish_packet{
                                     pid,
                                     am::allocate_buffer(bc_.topic_prefix + pci->index_str),
-                                    pci->send_payload(),
+                                    pci->send_payload(bc_.md),
                                     opts,
                                     am::properties{}
                                 },
@@ -629,7 +646,7 @@ private:
                                 am::v3_1_1::publish_packet{
                                     pid,
                                     am::allocate_buffer(bc_.topic_prefix + pci->index_str),
-                                    pci->send_payload(),
+                                    pci->send_payload(bc_.md),
                                     opts
                                 },
                                 as::append(
@@ -646,85 +663,87 @@ private:
                     };
 
                 if (ec) {
-                    auto trigger_pub =
-                        [&] {
-                            packet_id_t pid = 0;
-                            if (bc_.qos == am::qos::at_least_once ||
-                                bc_.qos == am::qos::exactly_once) {
-                                // sync version can be called because the previous timer handler is on the strand
-                                pid = *pci->c.acquire_unique_packet_id();
+                    if (bc_.md == mode::single || bc_.md == mode::send) {
+                        auto trigger_pub =
+                            [&] {
+                                packet_id_t pid = 0;
+                                if (bc_.qos == am::qos::at_least_once ||
+                                    bc_.qos == am::qos::exactly_once) {
+                                    // sync version can be called because the previous timer handler is on the strand
+                                    pid = *pci->c.acquire_unique_packet_id();
+                                }
+                                am::pub::opts opts = bc_.qos | bc_.retain;
+                                pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                send_publish(pid, opts);
+                                BOOST_ASSERT(pci->send_times != 0);
+                                --pci->send_times;
+                            };
+
+
+                        switch (bc_.ph.load()) {
+                        case phase::idle:
+                            // pub interval (idle) timer fired
+                            if (*ec) {
+                                locked_cout() << "pub interval (idle) timer error:" << ec->message() << std::endl;
+                                exit(-1);
                             }
-                            am::pub::opts opts = bc_.qos | bc_.retain;
-                            pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                            send_publish(pid, opts);
-                            BOOST_ASSERT(pci->send_times != 0);
-                            --pci->send_times;
-                        };
-
-
-                    switch (bc_.ph.load()) {
-                    case phase::idle:
-                        // pub interval (idle) timer fired
-                        if (*ec) {
-                            locked_cout() << "pub interval (idle) timer error:" << ec->message() << std::endl;
-                            exit(-1);
+                            trigger_pub();
+                            BOOST_ASSERT(pci->send_idle_count != 0);
+                            if (--pci->send_idle_count != 0) {
+                                pci->tim->expires_at(
+                                    pci->tim->expiry() +
+                                    std::chrono::milliseconds(bc_.pub_interval_ms)
+                                );
+                                pci->tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                            }
+                            break;
+                        case phase::publish:
+                            // pub interval timer fired
+                            if (*ec) {
+                                locked_cout() << "pub interval timer error:" << ec->message() << std::endl;
+                                exit(-1);
+                            }
+                            trigger_pub();
+                            if (pci->send_times != 0) {
+                                pci->tim->expires_at(
+                                    pci->tim->expiry() +
+                                    std::chrono::milliseconds(bc_.pub_interval_ms)
+                                );
+                                pci->tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                            }
+                            break;
+                        case phase::pub_after_idle_delay: {
+                            bc_.ph.store(phase::publish);
+                            bc_.tp_publish = std::chrono::steady_clock::now();
+                            locked_cout() << "Publish (measure)" << std::endl;
+                            std::size_t index = 0;
+                            for (auto& ci : cis_) {
+                                // pub interval
+                                auto tp =
+                                    std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
+                                ci.tim->expires_after(tp);
+                                ci.tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        &ci
+                                    )
+                                );
+                            }
+                        } break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
                         }
-                        trigger_pub();
-                        BOOST_ASSERT(pci->send_idle_count != 0);
-                        if (--pci->send_idle_count != 0) {
-                            pci->tim->expires_at(
-                                pci->tim->expiry() +
-                                std::chrono::milliseconds(bc_.pub_interval_ms)
-                            );
-                            pci->tim->async_wait(
-                                as::append(
-                                    *this,
-                                    pci
-                                )
-                            );
-                        }
-                        break;
-                    case phase::publish:
-                        // pub interval timer fired
-                        if (*ec) {
-                            locked_cout() << "pub interval timer error:" << ec->message() << std::endl;
-                            exit(-1);
-                        }
-                        trigger_pub();
-                        if (pci->send_times != 0) {
-                            pci->tim->expires_at(
-                                pci->tim->expiry() +
-                                std::chrono::milliseconds(bc_.pub_interval_ms)
-                            );
-                            pci->tim->async_wait(
-                                as::append(
-                                    *this,
-                                    pci
-                                )
-                            );
-                        }
-                        break;
-                    case phase::pub_after_idle_delay: {
-                        bc_.ph.store(phase::publish);
-                        bc_.tp_publish = std::chrono::steady_clock::now();
-                        locked_cout() << "Publish (measure)" << std::endl;
-                        std::size_t index = 0;
-                        for (auto& ci : cis_) {
-                            // pub interval
-                            auto tp =
-                                std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
-                            ci.tim->expires_after(tp);
-                            ci.tim->async_wait(
-                                as::append(
-                                    *this,
-                                    &ci
-                                )
-                            );
-                        }
-                    } break;
-                    default:
-                        BOOST_ASSERT(false);
-                        break;
                     }
                 }
                 else if (se) {
@@ -889,13 +908,38 @@ private:
         }
         else {
             auto recv = std::chrono::steady_clock::now();
-            auto dur_us = std::chrono::duration_cast<std::chrono::microseconds>(
-                recv - ci.sent.at(ci.recv_times - 1)
-            ).count();
+            auto dur_us =
+                [&] () -> std::int64_t {
+                    if (bc_.md == mode::single) {
+                        return
+                            static_cast<std::int64_t>(
+                                std::chrono::duration_cast<std::chrono::microseconds>(
+                                    recv - ci.sent.at(ci.recv_times - 1)
+                                ).count()
+                            );
+                    }
+                    else {
+                        BOOST_ASSERT(bc_.md == mode::recv);
+                        auto ts = payload.front().substr(8 + 8, ts_size);
+                        auto ts_val = boost::lexical_cast<std::int64_t>(ts);
+                        return
+                            static_cast<std::int64_t>(
+                                (
+                                    static_cast<std::int64_t>(
+                                        std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                            recv.time_since_epoch()
+                                        ).count()
+                                    )
+                                    -
+                                    ts_val
+                                ) / 1000
+                            );
+                    }
+                } ();
             if (bc_.limit_ms != 0 && static_cast<unsigned long>(dur_us) > bc_.limit_ms * 1000) {
                 locked_cout() << "RTT:" << (dur_us / 1000) << "ms over " << bc_.limit_ms << "ms" << std::endl;
             }
-            if (bc_.compare) {
+            if (bc_.compare && bc_.md == mode::single) {
                 if (payload.front() != ci.recv_payload()) {
                     locked_cout() << "received payload doesn't match to sent one" << std::endl;
                     locked_cout() << "  expected: " << ci.recv_payload() << std::endl;
@@ -1101,6 +1145,14 @@ int main(int argc, char *argv[]) {
                 boost::program_options::value<std::string>(),
                 "Web-Socket path for ws and wss connections"
             )
+            (
+                "mode",
+                boost::program_options::value<std::string>()->default_value("single"),
+                "bench mode. [single|send|recv] "
+                "single is send/recv by bench. "
+                "send is publish only. payload contains timestamp. "
+                "recv is receive only. time is caluclated by timestamp. "
+            )
             ;
 
         desc.add(general_desc);
@@ -1284,6 +1336,25 @@ int main(int argc, char *argv[]) {
 
         auto limit_ms = vm["limit_ms"].as<std::size_t>();
 
+        mode md;
+        auto md_str = vm["mode"].as<std::string>();
+        if (md_str == "single") {
+            md = mode::single;
+        }
+        else if (md_str == "send") {
+            md = mode::send;
+        }
+        else if (md_str == "recv") {
+            md = mode::recv;
+        }
+        else {
+            std::cout
+                << "invalid mode:" << md_str
+                << " mode should be [single|send|recv]."
+                << std::endl;
+            return -1;
+        }
+
         auto con_interval_ms = vm["con_interval_ms"].as<std::size_t>();
         auto sub_delay_ms = vm["sub_delay_ms"].as<std::size_t>();
         auto sub_interval_ms = vm["sub_interval_ms"].as<std::size_t>();
@@ -1396,9 +1467,27 @@ int main(int argc, char *argv[]) {
             std::string get_client_id() const {
                 return cid_prefix + index_str;
             }
-            am::buffer send_payload() {
+            am::buffer send_payload(mode md) {
                 std::string ret = payload_str;
-                auto variable = (boost::format("%s%08d") %index_str % send_times).str();
+                auto variable =
+                    [&] {
+                        switch (md) {
+                        case mode::single:
+                            return (boost::format("%s%08d") % index_str % send_times).str();
+                        case mode::send:
+                            return
+                                (boost::format("%s%08d%032d")
+                                 % index_str
+                                 % send_times
+                                 % std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                     std::chrono::steady_clock::now().time_since_epoch()).count()
+                                ).str();
+                        default:
+                            locked_cout() << "invalid mode" << std::endl;
+                            return std::string{};
+                        }
+                    } ();
+
                 std::copy(variable.begin(), variable.end(), ret.begin());
                 return am::allocate_buffer(ret);
             }
@@ -1608,7 +1697,8 @@ int main(int argc, char *argv[]) {
             tp_pub_after_idle_delay,
             tp_publish,
             detail_report,
-            guard_iocs
+            guard_iocs,
+            md
         );
 
         if (protocol == "mqtt") {
