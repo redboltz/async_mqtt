@@ -205,6 +205,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                 std::lock_guard<std::mutex> g{mtx_con_iocs};
                 auto& ret = *con_iocs_it++;
                 if (con_iocs_it == con_iocs.end()) con_iocs_it = con_iocs.begin();
+                std::cout << "alloc1:" << &ret << std::endl;
                 return ret;
             };
 
