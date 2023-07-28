@@ -499,3 +499,5 @@ c5.4xlarge|28|24|89
 c5.12xlarge|28|38|210
 
 value is Kpps (Kilo publish per second)
+
+![bench.png](img/bench.png)
