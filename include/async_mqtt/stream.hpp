@@ -398,7 +398,7 @@ private:
                         force_move(self)
                     )
                 );
-                if (a_strm.queue_->stopped()) {
+                if (!a_strm.writing_ && a_strm.queue_->stopped()) {
                     a_strm.queue_->restart();
                     a_strm.queue_->poll_one();
                 }
@@ -434,12 +434,13 @@ private:
         ) {
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                strm.writing_ = false;
                 auto& a_strm{strm};
                 as::post(
                     a_strm.strand_,
-                    [&queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
+                    [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
+                            a_strm.writing_ = false;
+                            if (a_strm.queue_->stopped()) a_strm.queue_->restart();
                             queue->poll_one();
                         }
                     }
@@ -460,12 +461,13 @@ private:
             switch (state) {
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                strm.writing_ = false;
                 auto& a_strm{strm};
                 as::post(
                     a_strm.strand_,
-                    [&queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
+                    [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
+                            a_strm.writing_ = false;
+                            if (a_strm.queue_->stopped()) a_strm.queue_->restart();
                             queue->poll_one();
                         }
                     }
