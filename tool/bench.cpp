@@ -558,6 +558,10 @@ private:
                     }
                 );
                 if (bc_.rest_sub != 0) return;
+                if (bc_.md == mode::recv) {
+                    locked_cout() << "all subscriberd. run `bench --mode send`" << std::endl;
+                    bc_.tim_progress->cancel();
+                }
             }
 
             if (bc_.md == mode::single || bc_.md == mode::send) {
@@ -689,6 +693,20 @@ private:
                             }
                             trigger_pub();
                             BOOST_ASSERT(pci->send_idle_count != 0);
+
+                            if (bc_.md == mode::send) {
+                                BOOST_ASSERT(bc_.rest_times > 0);
+                                --bc_.rest_times;
+                                if (bc_.rest_idle > 0) {
+                                    if (--bc_.rest_idle == 0) {
+                                        bc_.ph.store(phase::pub_after_idle_delay);
+                                        bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
+                                        locked_cout() << "Publish (measure) delay" << std::endl;
+                                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
+                                        bc_.tim_delay.async_wait(*this);
+                                    }
+                                }
+                            }
                             if (--pci->send_idle_count != 0) {
                                 pci->tim->expires_at(
                                     pci->tim->expiry() +
@@ -720,6 +738,14 @@ private:
                                         pci
                                     )
                                 );
+                            }
+                            if (bc_.md == mode::send) {
+                                BOOST_ASSERT(bc_.rest_times > 0);
+                                --bc_.rest_times;
+                                if (bc_.rest_times == 0) {
+                                    locked_cout() << "all publish finished. after measured Ctrl-C to stop the program" << std::endl;
+                                    bc_.tim_progress->cancel();
+                                }
                             }
                             break;
                         case phase::pub_after_idle_delay: {
@@ -788,11 +814,13 @@ private:
                         // pub recv
                         break;
                     case pub_recv::idle_finish:
-                        bc_.ph.store(phase::pub_after_idle_delay);
-                        bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
-                        locked_cout() << "Publish (measure) delay" << std::endl;
-                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
-                        bc_.tim_delay.async_wait(*this);
+                        if (bc_.md == mode::single) {
+                            bc_.ph.store(phase::pub_after_idle_delay);
+                            bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
+                            locked_cout() << "Publish (measure) delay" << std::endl;
+                            bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
+                            bc_.tim_delay.async_wait(*this);
+                        }
                         break;
                     case pub_recv::pub_finish: {
                         locked_cout() << "Report" << std::endl;
