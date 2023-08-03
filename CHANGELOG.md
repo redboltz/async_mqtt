@@ -1,3 +1,7 @@
+## 1.0.8
+- Fixed invalid async_write queue operation. #57
+- Improved bench tool. #53, #54, #56
+
 ## 1.0.7
 - Removed zlib dependency. #51
 - Refined topic alias. #48
