@@ -949,7 +949,16 @@ private:
                     else {
                         BOOST_ASSERT(bc_.md == mode::recv);
                         auto ts = payload.front().substr(8 + 8, ts_size);
+                        locked_cout() << "ts:" << ts << std::endl;
                         auto ts_val = boost::lexical_cast<std::int64_t>(ts);
+                        locked_cout() << "ts_val:" << ts_val << std::endl;
+                        auto count = static_cast<std::int64_t>(
+                            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                recv.time_since_epoch()
+                            ).count()
+                        );
+                        locked_cout() << "recv count:" << count << std::endl;
+                        locked_cout() << "count - ts_val:" << count - ts_val << std::endl;
                         return
                             static_cast<std::int64_t>(
                                 (
@@ -1001,6 +1010,16 @@ private:
 #include <boost/asio/unyield.hpp>
 
 int main(int argc, char *argv[]) {
+    {
+        auto count = std::chrono::duration_cast<std::chrono::nanoseconds>(
+            std::chrono::steady_clock::now().time_since_epoch()).count();
+        locked_cout() << "steady ts:" << count << std::endl;
+    }
+    {
+        auto count = std::chrono::duration_cast<std::chrono::nanoseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+        locked_cout() << "system ts:" << count << std::endl;
+    }
     try {
         boost::program_options::options_description desc;
 
@@ -1502,14 +1521,17 @@ int main(int argc, char *argv[]) {
                         switch (md) {
                         case mode::single:
                             return (boost::format("%s%08d") % index_str % send_times).str();
-                        case mode::send:
+                        case mode::send: {
+                            auto count = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                std::chrono::steady_clock::now().time_since_epoch()).count();
+                                locked_cout() << "ts:" << count << std::endl;
                             return
                                 (boost::format("%s%08d%032d")
                                  % index_str
                                  % send_times
-                                 % std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                     std::chrono::steady_clock::now().time_since_epoch()).count()
+                                 % count
                                 ).str();
+                        }
                         default:
                             locked_cout() << "invalid mode" << std::endl;
                             return std::string{};
