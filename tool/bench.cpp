@@ -700,6 +700,7 @@ private:
                                 if (bc_.rest_idle > 0) {
                                     if (--bc_.rest_idle == 0) {
                                         bc_.ph.store(phase::pub_after_idle_delay);
+                                        // use system clock for multi node synchronization
                                         bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
                                         locked_cout() << "Publish (measure) delay" << std::endl;
                                         bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
@@ -926,7 +927,6 @@ private:
             return pub_recv::cont;
         }
         BOOST_ASSERT(bc_.rest_times > 0);
-        --bc_.rest_times;
         if (bc_.rest_idle > 0) {
             --ci.recv_times;
             if (--bc_.rest_idle == 0) {
@@ -935,10 +935,10 @@ private:
             return pub_recv::cont;
         }
         else {
-            auto recv = std::chrono::steady_clock::now();
             auto dur_us =
                 [&] () -> std::int64_t {
                     if (bc_.md == mode::single) {
+                        auto recv = std::chrono::steady_clock::now();
                         return
                             static_cast<std::int64_t>(
                                 std::chrono::duration_cast<std::chrono::microseconds>(
@@ -947,6 +947,7 @@ private:
                             );
                     }
                     else {
+                        auto recv = std::chrono::system_clock::now();
                         BOOST_ASSERT(bc_.md == mode::recv);
                         auto ts = payload.front().substr(8 + 8, ts_size);
                         auto ts_val = boost::lexical_cast<std::int64_t>(ts);
@@ -982,7 +983,7 @@ private:
             ci.rtt_us.emplace_back(dur_us);
             BOOST_ASSERT(ci.recv_times != 0);
             --ci.recv_times;
-            if (bc_.rest_times == 0) {
+            if (--bc_.rest_times == 0) {
                 return pub_recv::pub_finish;
             }
             else {
@@ -1508,7 +1509,8 @@ int main(int argc, char *argv[]) {
                                  % index_str
                                  % send_times
                                  % std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                     std::chrono::steady_clock::now().time_since_epoch()).count()
+                                     // use system clock for multi node synchronization
+                                     std::chrono::system_clock::now().time_since_epoch()).count()
                                 ).str();
                         default:
                             locked_cout() << "invalid mode" << std::endl;
