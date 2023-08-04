@@ -1,3 +1,6 @@
+## 1.0.9
+- Removed debung print. #59
+
 ## 1.0.8
 - Fixed invalid async_write queue operation. #57
 - Improved bench tool. #53, #54, #56
