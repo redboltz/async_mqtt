@@ -40,7 +40,6 @@ public:
         epsp.visit(
             [](auto& ep) {
                 auto e = ep.strand().get_inner_executor();
-                std::cout << "accept:" << &e.context() << std::endl;
             }
         );
         async_read_packet(force_move(epsp));
