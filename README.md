@@ -35,9 +35,14 @@ See https://github.com/redboltz/async_mqtt/blob/doc/README.md.
   - High performance
   - Easy to read but difficult to learn `yield` notation
   - [example/ep_slcoro_mqtt_client.cpp](example/ep_slcoro_mqtt_client.cpp)
+- [C++20Coroutine](https://www.boost.org/doc/html/boost_asio/overview/composition/cpp20_coroutines.html)
+  - Can wait multiple event.
+  - High performance. (But a little bit slower than Stackless Coroutine)
+  - Easy to read.
+  - [example/ep_slcoro_mqtt_client.cpp](example/ep_cpp20coro_mqtt_client.cpp)
 - [and more](https://www.boost.org/doc/html/boost_asio/overview/composition.html)
 
-I recommend using [Stackless Coroutine (`boost::asio::coroutine`)](https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html) because it can avoid deep nested callbacks and higher performance than [`boost::asio::use_future`](https://www.boost.org/doc/html/boost_asio/overview/composition/futures.html).
+I recommend using [Stackless Coroutine (`boost::asio::coroutine`)](https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html) because it can avoid deep nested callbacks and higher performance than [`boost::asio::use_future`](https://www.boost.org/doc/html/boost_asio/overview/composition/futures.html). C++20 Coroutine is also a good choice. It requires C++20 support. It is more elegant than Stackless Coroutine but a little bit slower than Stackless coroutine.
 
 ### recv() funtion
 You need to call recv() function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
