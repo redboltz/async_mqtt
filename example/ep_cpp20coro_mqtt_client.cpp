@@ -81,10 +81,13 @@ proc(Executor exe, std::string_view host, std::string_view port) {
         }
 
         // Send MQTT SUBSCRIBE
+        std::vector<am::topic_subopts> sub_entry{
+            {am::allocate_buffer("topic1"), am::qos::at_most_once}
+        };
         if (auto se = co_await amep.send(
                 am::v3_1_1::subscribe_packet{
                     *amep.acquire_unique_packet_id(),
-                    { {am::allocate_buffer("topic1"), am::qos::at_most_once} }
+                    am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
                 },
                 as::use_awaitable
             )
