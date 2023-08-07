@@ -927,15 +927,9 @@ private:
             return pub_recv::cont;
         }
         BOOST_ASSERT(bc_.rest_times > 0);
-        if (bc_.rest_idle > 0) {
-            --ci.recv_times;
-            --bc_.rest_times;
-            if (--bc_.rest_idle == 0) {
-                return pub_recv::idle_finish;
-            }
-            return pub_recv::cont;
-        }
-        else {
+
+        if (bc_.rest_idle == 0) {
+            // actual measure (no idle)
             auto dur_us =
                 [&] () -> std::int64_t {
                     if (bc_.md == mode::single) {
@@ -990,6 +984,18 @@ private:
             else {
                 return pub_recv::cont;
             }
+        }
+        else {
+            --ci.recv_times;
+            --bc_.rest_times;
+            std::size_t expected = 1;
+            if (bc_.rest_idle.compare_exchange_strong(expected, 0)) { // bc_.rest_idle: 1 -> 0
+                // exact finish idle publishing
+                return pub_recv::idle_finish;
+            }
+            --bc_.rest_idle; // bc_.rest_idle 3 -> 2, 2 -> 1, ...
+            // continue idle publishing
+            return pub_recv::cont;
         }
     }
 
