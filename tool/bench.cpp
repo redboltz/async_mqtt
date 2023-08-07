@@ -929,6 +929,7 @@ private:
         BOOST_ASSERT(bc_.rest_times > 0);
         if (bc_.rest_idle > 0) {
             --ci.recv_times;
+            --bc_.rest_times;
             if (--bc_.rest_idle == 0) {
                 return pub_recv::idle_finish;
             }
