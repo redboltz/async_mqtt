@@ -1032,6 +1032,11 @@ int main(int argc, char *argv[]) {
                 "Note set as --target host1:1883 --target host2:1883, not --target host1:1883 host2:1883."
             )
             (
+                "target_index",
+                boost::program_options::value<std::size_t>()->default_value(0),
+                "start index of the target brokers"
+            )
+            (
                 "protocol",
                 boost::program_options::value<std::string>()->default_value("mqtt"),
                 "mqtt mqtts ws wss"
@@ -1291,6 +1296,16 @@ int main(int argc, char *argv[]) {
 
         auto detail_report = vm["detail_report"].as<bool>();
         auto target = vm["target"].as<std::vector<std::string>>();
+        auto target_index = vm["target_index"].as<std::size_t>();
+        if (target_index >= target.size()) {
+            std::cout
+                << "target_index is out of the target size."
+                << " target_index:" << target_index
+                << " target size:" << target.size()
+                << std::endl;
+            return -1;
+        }
+
         std::vector<am::host_port> hps;
         for (auto& t : target) {
             auto hp_opt = am::host_port_from_string(t);
@@ -1404,7 +1419,24 @@ int main(int argc, char *argv[]) {
         std::cout << "pub_interval:" << pub_interval_us << " us" << std::endl;
         std::uint64_t all_interval_ns = pub_interval_us * 1000 / static_cast<std::uint64_t>(clients);
         std::cout << "all_interval:" << all_interval_ns << " ns" << std::endl;
-        std::cout << (double(1) * 1000 * 1000 * 1000 / static_cast<double>(all_interval_ns)) <<  " publish/sec" << std::endl;
+        auto pps_str = boost::lexical_cast<std::string>(std::uint64_t(1) * 1000 * 1000 * 1000 / all_interval_ns);
+        auto pps_str_with_comma =
+            [&] {
+                std::size_t num_of_comma = (pps_str.size() - 1) / 3;
+                std::size_t i = 3 - (pps_str.size() - 1) % 3;
+                std::string result;
+                result.reserve(pps_str.size() + num_of_comma);
+                for (auto c : pps_str) {
+                    result += c;
+                    if (i % 3 == 0 && num_of_comma != 0) {
+                        result += ',';
+                        --num_of_comma;
+                    }
+                    ++i;
+                }
+                return result;
+            }();
+        std::cout << pps_str_with_comma <<  " publish/sec" << std::endl;
         auto num_of_iocs =
             [&] () -> std::size_t {
                 if (vm.count("iocs")) {
@@ -1769,7 +1801,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
-            std::size_t hps_index = 0;
+            std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
                     client_t{
@@ -1826,7 +1858,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
-            std::size_t hps_index = 0;
+            std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 am::tls::context ctx{am::tls::context::tlsv12};
                 if (cacert) {
@@ -1897,7 +1929,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
-            std::size_t hps_index = 0;
+            std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
                     client_t{
@@ -1959,7 +1991,7 @@ int main(int argc, char *argv[]) {
 
             std::vector<client_info> cis;
             cis.reserve(clients);
-            std::size_t hps_index = 0;
+            std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 am::tls::context ctx{am::tls::context::tlsv12};
                 if (cacert) {
