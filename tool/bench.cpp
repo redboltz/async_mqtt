@@ -62,6 +62,7 @@ struct bench_context {
         std::shared_ptr<as::steady_timer>& tim_progress,
         as::executor_work_guard<as::io_context::executor_type>& guard_ioc_timer,
         as::steady_timer& tim_delay,
+        as::system_timer& tim_sync,
         std::size_t pub_idle_count,
         std::atomic<std::size_t>& rest_connect,
         std::atomic<std::size_t>& rest_sub,
@@ -89,7 +90,9 @@ struct bench_context {
                 as::io_context::executor_type
             >
         >& guard_iocs,
-        mode md
+        mode md,
+        std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers,
+        am::optional<am::host_port> const& manager_hp
     )
     :res{res},
      ws_path{ws_path},
@@ -106,6 +109,7 @@ struct bench_context {
      tim_progress{tim_progress},
      guard_ioc_timer{guard_ioc_timer},
      tim_delay{tim_delay},
+     tim_sync{tim_sync},
      pub_idle_count{pub_idle_count},
      rest_connect{rest_connect},
      rest_sub{rest_sub},
@@ -129,7 +133,9 @@ struct bench_context {
      tp_publish{tp_publish},
      detail_report{detail_report},
      guard_iocs{guard_iocs},
-     md{md}
+     md{md},
+     workers{workers},
+     manager_hp{manager_hp}
     {
     }
 
@@ -148,6 +154,7 @@ struct bench_context {
     std::shared_ptr<as::steady_timer>& tim_progress;
     as::executor_work_guard<as::io_context::executor_type>& guard_ioc_timer;
     as::steady_timer& tim_delay;
+    as::system_timer& tim_sync;
     std::size_t pub_idle_count;
     std::atomic<std::size_t>& rest_connect;
     std::atomic<std::size_t>& rest_sub;
@@ -176,6 +183,8 @@ struct bench_context {
         >
     >& guard_iocs;
     mode md;
+    std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers;
+    am::optional<am::host_port> const& manager_hp;
 };
 
 template <typename ClientInfo>
@@ -565,6 +574,49 @@ private:
             }
 
             if (bc_.md == mode::single || bc_.md == mode::send) {
+                yield {
+                    if (bc_.manager_hp) {
+                        locked_cout() << "work as worker" << std::endl;
+                        as::io_context ioc;
+                        as::ip::tcp::resolver r{ioc};
+                        auto eps = r.resolve(bc_.manager_hp->host, std::to_string(bc_.manager_hp->port));
+                        as::ip::tcp::socket sock{ioc};
+                        as::connect(sock, eps);
+                        std::string str;
+                        str.resize(32); // time since epoch string
+                        as::read(sock, as::buffer(str));
+                        auto ts_val = boost::lexical_cast<std::uint64_t>(str);
+                        locked_cout() << "start time_point:" << ts_val << std::endl;
+                        std::chrono::system_clock::time_point tp{
+                            std::chrono::nanoseconds(ts_val)
+                        };
+                        bc_.tim_sync.expires_at(tp);
+                        bc_.tim_sync.async_wait(*this);
+                    }
+                    else if (bc_.workers.size() != 0) {
+                        locked_cout() << "work as manager" << std::endl;
+                        auto base = std::chrono::system_clock::now() + std::chrono::seconds(10);
+                        auto ts_base = static_cast<std::uint64_t>(
+                            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                base.time_since_epoch()
+                            ).count()
+                        );
+                        locked_cout() << "start time_point:" << ts_base << std::endl;
+
+                        std::uint64_t worker_delay = bc_.all_interval_ns  / (bc_.workers.size() + 1);
+                        for (std::uint64_t i = 0; i != bc_.workers.size(); ++i) {
+                            auto ts_val = ts_base + worker_delay * (i + 1);
+
+                            std::string ts_str = (boost::format("%032d") % ts_val).str();
+                            as::write(*bc_.workers[i], as::buffer(ts_str));
+                        }
+                        bc_.tim_sync.expires_at(base);
+                        bc_.tim_sync.async_wait(*this);
+                    }
+                    else {
+                        as::dispatch(*this);
+                    }
+                }
                 yield {
                     if (bc_.pub_idle_count == 0) {
                         bc_.ph.store(phase::pub_after_idle_delay);
@@ -1194,6 +1246,22 @@ int main(int argc, char *argv[]) {
                 "send is publish only. payload contains timestamp. "
                 "recv is receive only. time is caluclated by timestamp. "
             )
+            (
+                "manager",
+                boost::program_options::value<std::size_t>(),
+                "managing publisher workers. the value is number of workers. "
+                "manager itself is also a publisher. if --manager 5, then 6 publisher exists. "
+            )
+            (
+                "manager_port",
+                boost::program_options::value<std::uint16_t>(),
+                "the communication port that communicate with wokers. "
+            )
+            (
+                "work_for",
+                boost::program_options::value<std::string>(),
+                "manager_host:port work as a worker that is managed by the manager. "
+            )
             ;
 
         desc.add(general_desc);
@@ -1295,6 +1363,39 @@ int main(int argc, char *argv[]) {
         std::chrono::steady_clock::time_point tp_publish;
 
         auto detail_report = vm["detail_report"].as<bool>();
+
+        am::optional<am::host_port> manager_hp;
+        std::uint16_t manager_port = 0;
+        std::size_t num_of_workers = 0;
+
+        if (vm.count("manager")) {
+            if (vm.count("work_for")) {
+                std::cerr << "you cannot set options both manager and work_for" << std::endl;
+                return -1;
+            }
+            if (!vm.count("manager_port")) {
+                std::cerr << "if you set the option manager, then you need to set manager_port" << std::endl;
+                return -1;
+            }
+            num_of_workers = vm["manager"].as<std::size_t>();
+            if (num_of_workers == 0) {
+                std::cerr << "manager option value (number of workers) must be greater than 0" << std::endl;
+                return -1;
+            }
+            manager_port = vm["manager_port"].as<std::uint16_t>();
+        }
+        else if (vm.count("work_for")) {
+            auto str = vm["work_for"].as<std::string>();
+            manager_hp = am::host_port_from_string(str);
+            if (!manager_hp) {
+                std::cout
+                    << "at option work_for, invalid host:port is set:"
+                    << str
+                    << std::endl;
+                return -1;
+            }
+        }
+
         auto target = vm["target"].as<std::vector<std::string>>();
         auto target_index = vm["target_index"].as<std::size_t>();
         if (target_index >= target.size()) {
@@ -1314,7 +1415,7 @@ int main(int argc, char *argv[]) {
             }
             else {
                 std::cout
-                    << "invalid host:port is set:"
+                    << "at option target, invalid host:port is set:"
                     << t
                     << std::endl;
                 return -1;
@@ -1406,6 +1507,20 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
+        if (md == mode::recv) {
+            if (num_of_workers > 0) {
+                std::cout
+                    << "you cannot set options both mode recv and manager"
+                    << std::endl;
+                return -1;
+            }
+            if (manager_hp) {
+                std::cout
+                    << "you cannot set options both mode recv and work_for"
+                    << std::endl;
+                return -1;
+            }
+        }
         auto con_interval_ms = vm["con_interval_ms"].as<std::size_t>();
         auto sub_delay_ms = vm["sub_delay_ms"].as<std::size_t>();
         auto sub_interval_ms = vm["sub_interval_ms"].as<std::size_t>();
@@ -1595,10 +1710,13 @@ int main(int argc, char *argv[]) {
         as::io_context ioc_timer;
         as::io_context ioc_progress_timer;
 
+        as::io_context ioc_sync;
+
         std::atomic<phase> ph{phase::connect};
         auto tim_progress = std::make_shared<as::steady_timer>(ioc_progress_timer);
         as::executor_work_guard<as::io_context::executor_type> guard_ioc_timer(ioc_timer.get_executor());
         as::steady_timer tim_delay{ioc_timer};
+        as::system_timer tim_sync{ioc_timer};
 
         std::atomic<std::size_t> rest_connect{clients};
         std::atomic<std::size_t> rest_sub{clients};
@@ -1673,6 +1791,22 @@ int main(int argc, char *argv[]) {
                 }
             };
 
+        std::vector<std::shared_ptr<as::ip::tcp::socket>> workers;
+        workers.reserve(num_of_workers);
+        if (num_of_workers != 0) {
+            locked_cout() << "work as manager. num_of_workers:" << num_of_workers << std::endl;
+
+            as::ip::tcp::acceptor ac{ioc_sync, as::ip::tcp::endpoint{as::ip::tcp::v4(), manager_port}};
+
+            // as::ip::tcp::acceptor ac{ioc_sync, manager_port};
+            for (std::size_t i = 0; i != num_of_workers; ++i) {
+                auto s = std::make_shared<as::ip::tcp::socket>(ioc_sync);
+                ac.accept(*s);
+                workers.emplace_back(am::force_move(s));
+                locked_cout() << "accepted" << std::endl;
+            }
+        }
+
         auto run_and_join =
             [&] {
                 if (progress_timer_sec > 0) {
@@ -1744,6 +1878,7 @@ int main(int argc, char *argv[]) {
             tim_progress,
             guard_ioc_timer,
             tim_delay,
+            tim_sync,
             pub_idle_count,
             rest_connect,
             rest_sub,
@@ -1767,7 +1902,9 @@ int main(int argc, char *argv[]) {
             tp_publish,
             detail_report,
             guard_iocs,
-            md
+            md,
+            workers,
+            manager_hp
         );
 
         if (protocol == "mqtt") {
