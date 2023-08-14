@@ -590,13 +590,13 @@ private:
                         as::read(sock, as::buffer(str));
                         auto ts_val = boost::lexical_cast<std::uint64_t>(str);
                         locked_cout() << "start time_point:" << ts_val << std::endl;
-#if defined(__APPLE__)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
                         auto ts = std::chrono::duration_cast<
                             std::chrono::microseconds
                         >(std::chrono::nanoseconds(ts_val));
-#else  // defined(__APPLE__)
+#else  // defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
                         auto ts = std::chrono::nanoseconds(ts_val);
-#endif // defined(__APPLE__)
+#endif // defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
                         std::chrono::system_clock::time_point tp(ts);
                         bc_.tim_sync.expires_at(tp);
                         bc_.tim_sync.async_wait(*this);
