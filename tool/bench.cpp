@@ -92,7 +92,8 @@ struct bench_context {
         >& guard_iocs,
         mode md,
         std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers,
-        am::optional<am::host_port> const& manager_hp
+        am::optional<am::host_port> const& manager_hp,
+        bool close_after_report
     )
     :res{res},
      ws_path{ws_path},
@@ -135,7 +136,8 @@ struct bench_context {
      guard_iocs{guard_iocs},
      md{md},
      workers{workers},
-     manager_hp{manager_hp}
+     manager_hp{manager_hp},
+     close_after_report{close_after_report}
     {
     }
 
@@ -185,6 +187,7 @@ struct bench_context {
     mode md;
     std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers;
     am::optional<am::host_port> const& manager_hp;
+    bool close_after_report;
 };
 
 template <typename ClientInfo>
@@ -591,12 +594,10 @@ private:
                         auto ts = std::chrono::duration_cast<
                             std::chrono::microseconds
                         >(std::chrono::nanoseconds(ts_val));
-#else  //
+#else  // defined(__APPLE__)
                         auto ts = std::chrono::nanoseconds(ts_val);
-#endif //
-                        std::chrono::system_clock::time_point tp{
-                            ts
-                        };
+#endif // defined(__APPLE__)
+                        std::chrono::system_clock::time_point tp(ts);
                         bc_.tim_sync.expires_at(tp);
                         bc_.tim_sync.async_wait(*this);
                     }
@@ -945,13 +946,15 @@ private:
                             << "maxmin:" << boost::format("%+12d") % maxmin << " us "
                             << "(" << boost::format("%+8d") % (maxmin / 1000) << " ms ) "
                             << "client_id:" << maxmin_cid << std::endl;
-
-                        for (auto& ci : cis_) {
-                            ci.c.close([]{});
-                        }
                         locked_cout() << "Finish" << std::endl;
-                        for (auto& guard_ioc : bc_.guard_iocs) guard_ioc.reset();
-                        bc_.guard_ioc_timer.reset();
+                        bc_.tim_progress->cancel();
+                        if (bc_.close_after_report) {
+                            for (auto& ci : cis_) {
+                                ci.c.close([]{});
+                            }
+                            for (auto& guard_ioc : bc_.guard_iocs) guard_ioc.reset();
+                            bc_.guard_ioc_timer.reset();
+                        }
                         return;
                     } break;
                     }
@@ -1268,6 +1271,11 @@ int main(int argc, char *argv[]) {
                 "work_for",
                 boost::program_options::value<std::string>(),
                 "manager_host:port work as a worker that is managed by the manager. "
+            )
+            (
+                "close_after_report",
+                boost::program_options::value<bool>()->default_value(true),
+                "All clients disconnect after report. Set false if you want to avoid noises by close on multiple bench measuring. "
             )
             ;
 
@@ -1911,7 +1919,8 @@ int main(int argc, char *argv[]) {
             guard_iocs,
             md,
             workers,
-            manager_hp
+            manager_hp,
+            vm["close_after_report"].as<bool>()
         );
 
         if (protocol == "mqtt") {
