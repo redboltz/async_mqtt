@@ -61,7 +61,8 @@ inline optional<host_port> host_port_from_string(std::string_view str) {
     }
     catch (std::exception const& e) {
         ASYNC_MQTT_LOG("mqtt_api", error)
-            << "invalid host port string:" << str;
+            << "invalid host port string:" << str
+            << " " << e.what();
         return nullopt;
     }
 
