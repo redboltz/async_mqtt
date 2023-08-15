@@ -32,6 +32,7 @@ struct stub_socket {
     {}
 
     void set_write_packet_checker(std::function<void(packet_variant const& pv)> c) {
+        open_ = true;
         write_packet_checker_ = force_move(c);
     }
 
@@ -60,7 +61,11 @@ struct stub_socket {
     auto get_executor() {
         return ioc_.get_executor();
     }
+    bool is_open() const {
+        return open_;
+    }
     void close(error_code&) {
+        open_ = false;
         if (close_checker_) close_checker_();
     }
 
@@ -167,6 +172,7 @@ private:
     optional<packet_range> pv_r_;
     std::function<void(packet_variant const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
+    bool open_ = true;
 };
 
 template <typename MutableBufferSequence, typename CompletionToken>

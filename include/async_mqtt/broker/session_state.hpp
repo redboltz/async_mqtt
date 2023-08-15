@@ -241,10 +241,11 @@ struct session_state {
                             force_move(payload),
                             pubopts
                         },
-                        [epsp](system_error const& ec) {
+                        [this, epsp](system_error const& ec) {
                             if (ec) {
-                                ASYNC_MQTT_LOG("mqtt_broker", warning)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                    << "epsp:" << epsp.get_address() << " "
                                     << ec.what();
                             }
                         }
@@ -259,10 +260,11 @@ struct session_state {
                             pubopts,
                             force_move(props)
                         },
-                        [epsp](system_error const& ec) {
+                        [this, epsp](system_error const& ec) {
                             if (ec) {
-                                ASYNC_MQTT_LOG("mqtt_broker", warning)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                    << "epsp:" << epsp.get_address() << " "
                                     << ec.what();
                             }
                         }
