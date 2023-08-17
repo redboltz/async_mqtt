@@ -378,7 +378,7 @@ private:
                 << " new connection inserted.";
             it = idx.emplace_hint(
                 it,
-                std::make_shared<session_state<epsp_t>>(
+                session_state<epsp_t>::create(
                     timer_ioc_,
                     mtx_subs_map_,
                     subs_map_,
@@ -459,7 +459,7 @@ private:
                             << "online connection exists, discard old one due to session_expiry and renew";
                         bool inserted;
                         std::tie(it, inserted) = idx.emplace(
-                            std::make_shared<session_state<epsp_t>>(
+                            session_state<epsp_t>::create(
                                 timer_ioc_,
                                 mtx_subs_map_,
                                 subs_map_,
