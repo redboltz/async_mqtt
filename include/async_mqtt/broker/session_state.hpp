@@ -52,7 +52,7 @@ class session_states;
  * Retained messages do not form part of the Session State in the Server, they are not deleted as a result of a Session ending.
  */
 template <typename Sp>
-struct session_state {
+struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     using epsp_t = Sp;
     using epwp_t = typename epsp_t::weak_type;
     using will_sender_t = std::function<
@@ -65,7 +65,7 @@ struct session_state {
         )
     >;
 
-    session_state(
+    static std::shared_ptr<session_state<Sp>> create(
         as::io_context& timer_ioc,
         mutex& mtx_subs_map,
         sub_con_map<epsp_t>& subs_map,
@@ -77,33 +77,49 @@ struct session_state {
         will_sender_t will_sender,
         bool clean_start,
         optional<std::chrono::steady_clock::duration> will_expiry_interval,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval)
-        :timer_ioc_(timer_ioc),
-         mtx_subs_map_(mtx_subs_map),
-         subs_map_(subs_map),
-         shared_targets_(shared_targets),
-         epwp_(epsp),
-         version_(epsp.get_protocol_version()),
-         client_id_(force_move(client_id)),
-         username_(username),
-         session_expiry_interval_(force_move(session_expiry_interval)),
-         tim_will_delay_(timer_ioc_),
-         will_sender_(force_move(will_sender)),
-         remain_after_close_(
-            [&] {
-                if (version_ == protocol_version::v3_1_1) {
-                    return !clean_start;
+        optional<std::chrono::steady_clock::duration> session_expiry_interval
+    ) {
+        struct impl : session_state<Sp> {
+            impl(
+                as::io_context& timer_ioc,
+                mutex& mtx_subs_map,
+                sub_con_map<epsp_t>& subs_map,
+                shared_target<epsp_t>& shared_targets,
+                epsp_t epsp,
+                buffer client_id,
+                std::string const& username,
+                will_sender_t will_sender,
+                bool clean_start,
+                optional<std::chrono::steady_clock::duration> session_expiry_interval)
+                :
+                session_state<Sp> {
+                    timer_ioc,
+                    mtx_subs_map,
+                    subs_map,
+                    shared_targets,
+                    force_move(epsp),
+                    force_move(client_id),
+                    username,
+                    force_move(will_sender),
+                    clean_start,
+                    force_move(session_expiry_interval)
                 }
-                else {
-                    BOOST_ASSERT(version_ == protocol_version::v5);
-                    return
-                        session_expiry_interval_ &&
-                        *session_expiry_interval_ != std::chrono::steady_clock::duration::zero();
-                }
-            } ()
-         )
-    {
-        update_will(timer_ioc, will, will_expiry_interval);
+            {}
+        };
+        std::shared_ptr<session_state<Sp>> sssp = std::make_shared<impl>(
+            timer_ioc,
+            mtx_subs_map,
+            subs_map,
+            shared_targets,
+            force_move(epsp),
+            force_move(client_id),
+            username,
+            force_move(will_sender),
+            clean_start,
+            force_move(session_expiry_interval)
+        );
+        sssp->update_will(timer_ioc, will, will_expiry_interval);
+        return sssp;
     }
 
     ~session_state() {
@@ -230,49 +246,51 @@ struct session_state {
         properties props) {
 
         auto send_publish =
-            [this, epsp, pub_topic, payload = payload, pubopts, props]
+            [this, epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this()]
             (packet_id_t pid) mutable {
-                switch (version_) {
-                case protocol_version::v3_1_1:
-                    epsp.send(
-                        v3_1_1::publish_packet{
-                            pid,
-                            force_move(pub_topic),
-                            force_move(payload),
-                            pubopts
-                        },
-                        [this, epsp](system_error const& ec) {
-                            if (ec) {
-                                ASYNC_MQTT_LOG("mqtt_broker", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "epsp:" << epsp.get_address() << " "
-                                    << ec.what();
+                if (auto sp = wp.lock()) {
+                    switch (version_) {
+                    case protocol_version::v3_1_1:
+                        epsp.send(
+                            v3_1_1::publish_packet{
+                                pid,
+                                force_move(pub_topic),
+                                force_move(payload),
+                                pubopts
+                            },
+                            [this, epsp](system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << "epsp:" << epsp.get_address() << " "
+                                        << ec.what();
+                                }
                             }
-                        }
-                    );
-                    break;
-                case protocol_version::v5:
-                    epsp.send(
-                        v5::publish_packet{
-                            pid,
-                            force_move(pub_topic),
-                            force_move(payload),
-                            pubopts,
-                            force_move(props)
-                        },
-                        [this, epsp](system_error const& ec) {
-                            if (ec) {
-                                ASYNC_MQTT_LOG("mqtt_broker", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "epsp:" << epsp.get_address() << " "
-                                    << ec.what();
+                        );
+                        break;
+                    case protocol_version::v5:
+                        epsp.send(
+                            v5::publish_packet{
+                                pid,
+                                force_move(pub_topic),
+                                force_move(payload),
+                                pubopts,
+                                force_move(props)
+                            },
+                            [this, epsp](system_error const& ec) {
+                                if (ec) {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << "epsp:" << epsp.get_address() << " "
+                                        << ec.what();
+                                }
                             }
-                        }
-                    );
-                    break;
-                default:
-                    BOOST_ASSERT(false);
-                    break;
+                        );
+                        break;
+                    default:
+                        BOOST_ASSERT(false);
+                        break;
+                    }
                 }
             };
 
@@ -627,6 +645,45 @@ struct session_state {
     }
 
 private:
+    // constructor
+    session_state(
+        as::io_context& timer_ioc,
+        mutex& mtx_subs_map,
+        sub_con_map<epsp_t>& subs_map,
+        shared_target<epsp_t>& shared_targets,
+        epsp_t epsp,
+        buffer client_id,
+        std::string const& username,
+        will_sender_t will_sender,
+        bool clean_start,
+        optional<std::chrono::steady_clock::duration> session_expiry_interval)
+        :timer_ioc_(timer_ioc),
+         mtx_subs_map_(mtx_subs_map),
+         subs_map_(subs_map),
+         shared_targets_(shared_targets),
+         epwp_(epsp),
+         version_(epsp.get_protocol_version()),
+         client_id_(force_move(client_id)),
+         username_(username),
+         session_expiry_interval_(force_move(session_expiry_interval)),
+         tim_will_delay_(timer_ioc_),
+         will_sender_(force_move(will_sender)),
+         remain_after_close_(
+            [&] {
+                if (version_ == protocol_version::v3_1_1) {
+                    return !clean_start;
+                }
+                else {
+                    BOOST_ASSERT(version_ == protocol_version::v5);
+                    return
+                        session_expiry_interval_ &&
+                        *session_expiry_interval_ != std::chrono::steady_clock::duration::zero();
+                }
+            } ()
+         )
+    {
+    }
+
     void send_will_impl() {
         if (!will_value_) return;
 
