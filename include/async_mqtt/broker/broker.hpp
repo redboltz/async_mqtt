@@ -37,11 +37,6 @@ public:
 
     void handle_accept(epsp_t epsp, optional<std::string> preauthed_user_name = {}) {
         epsp.set_preauthed_user_name(force_move(preauthed_user_name));
-        epsp.visit(
-            [](auto& ep) {
-                auto e = ep.strand().get_inner_executor();
-            }
-        );
         async_read_packet(force_move(epsp));
     }
 
