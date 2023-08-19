@@ -19,6 +19,7 @@
 #include <async_mqtt/broker/endpoint_variant.hpp>
 #include <async_mqtt/broker/broker.hpp>
 #include <async_mqtt/broker/constant.hpp>
+#include <async_mqtt/broker/fixed_core_map.hpp>
 #include <async_mqtt/setup_log.hpp>
 
 namespace am = async_mqtt;
@@ -135,8 +136,11 @@ void run_broker(boost::program_options::variables_map const& vm) {
                 }
                 return 1;
             } ();
+
+        std::size_t num_of_cores = std::thread::hardware_concurrency();
+
         if (num_of_iocs == 0) {
-            num_of_iocs = std::thread::hardware_concurrency();
+            num_of_iocs = num_of_cores;
             ASYNC_MQTT_LOG("mqtt_broker", info)
                 << "iocs set to auto decide (0). Automatically set to " << num_of_iocs;
         }
@@ -515,11 +519,16 @@ void run_broker(boost::program_options::variables_map const& vm) {
         };
         std::vector<std::thread> ts;
         ts.reserve(num_of_iocs * threads_per_ioc);
+        auto fixed_core_map = vm["fixed_core_map"].as<bool>();
+        std::size_t ioc_index = 0;
         for (auto& con_ioc : con_iocs) {
             for (std::size_t i = 0; i != threads_per_ioc; ++i) {
                 ts.emplace_back(
-                    [&con_ioc] {
+                    [&con_ioc, ioc_index, num_of_cores, fixed_core_map] {
                         try {
+                            if (fixed_core_map) {
+                                am::map_core_to_this_thread(ioc_index % num_of_cores);
+                            }
                             con_ioc.run();
                         }
                         catch (std::exception const& e) {
@@ -530,6 +539,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     }
                 );
             }
+            ++ioc_index;
         }
 
         as::io_context ioc_signal;
@@ -634,6 +644,11 @@ int main(int argc, char *argv[]) {
                 "auth_file",
                 boost::program_options::value<std::string>(),
                 "Authentication file"
+            )
+            (
+                "fixed_core_map",
+                boost::program_options::value<bool>()->default_value(true),
+                "Use the specific CPU core by ioc."
             )
             ;
 
