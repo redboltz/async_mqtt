@@ -647,7 +647,7 @@ int main(int argc, char *argv[]) {
             )
             (
                 "fixed_core_map",
-                boost::program_options::value<bool>()->default_value(true),
+                boost::program_options::value<bool>()->default_value(false),
                 "Use the specific CPU core by ioc."
             )
             ;
