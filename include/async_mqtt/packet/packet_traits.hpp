@@ -174,7 +174,9 @@ constexpr bool is_v5() {
         is_instance_of<v5::basic_pubrel_packet, Packet>::value ||
         is_instance_of<v5::basic_pubcomp_packet, Packet>::value ||
         is_instance_of<v5::basic_subscribe_packet, Packet>::value ||
+        is_instance_of<v5::basic_suback_packet, Packet>::value ||
         is_instance_of<v5::basic_unsubscribe_packet, Packet>::value ||
+        is_instance_of<v5::basic_unsuback_packet, Packet>::value ||
         std::is_same_v<v5::auth_packet, Packet>;
 }
 
@@ -192,10 +194,18 @@ constexpr bool is_v3_1_1() {
         is_instance_of<v3_1_1::basic_pubrel_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_pubcomp_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_subscribe_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_unsubscribe_packet, Packet>::value;
+        is_instance_of<v3_1_1::basic_suback_packet, Packet>::value ||
+        is_instance_of<v3_1_1::basic_unsubscribe_packet, Packet>::value ||
+        is_instance_of<v3_1_1::basic_unsuback_packet, Packet>::value;
 }
 
-    template <typename Packet>
+template <typename Packet>
+constexpr bool is_auth() {
+    return
+        std::is_same_v<v5::auth_packet, Packet>;
+}
+
+template <typename Packet>
 constexpr bool is_connect() {
     return
         std::is_same_v<v3_1_1::connect_packet, Packet> ||
@@ -217,10 +227,31 @@ constexpr bool is_publish() {
 }
 
 template <typename Packet>
+constexpr bool is_puback() {
+    return
+        is_instance_of<v3_1_1::basic_puback_packet, Packet>::value ||
+        is_instance_of<v5::basic_puback_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_pubrec() {
+    return
+        is_instance_of<v3_1_1::basic_pubrec_packet, Packet>::value ||
+        is_instance_of<v5::basic_pubrec_packet, Packet>::value;
+}
+
+template <typename Packet>
 constexpr bool is_pubrel() {
     return
         is_instance_of<v3_1_1::basic_pubrel_packet, Packet>::value ||
         is_instance_of<v5::basic_pubrel_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_pubcomp() {
+    return
+        is_instance_of<v3_1_1::basic_pubcomp_packet, Packet>::value ||
+        is_instance_of<v5::basic_pubcomp_packet, Packet>::value;
 }
 
 template <typename Packet>

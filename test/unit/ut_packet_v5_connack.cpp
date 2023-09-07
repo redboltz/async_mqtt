@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v5_connack.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_connack) {
+    BOOST_TEST(am::is_connack<am::v5::connack_packet>());
+    BOOST_TEST(!am::is_v3_1_1<am::v5::connack_packet>());
+    BOOST_TEST(am::is_v5<am::v5::connack_packet>());
+    BOOST_TEST(!am::is_client_sendable<am::v5::connack_packet>());
+    BOOST_TEST(am::is_server_sendable<am::v5::connack_packet>());
+
     auto props = am::properties{
         am::property::session_expiry_interval(0x0fffffff)
     };
@@ -43,7 +50,7 @@ BOOST_AUTO_TEST_CASE(v5_connack) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::connack_packet(buf);
+        auto p = am::v5::connack_packet{buf};
         BOOST_TEST(p.session_present());
         BOOST_TEST(p.code() == am::connect_reason_code::not_authorized);
         BOOST_TEST(p.props() == props);

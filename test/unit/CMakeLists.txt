@@ -13,6 +13,7 @@ list(APPEND check_PROGRAMS
     ut_ep_topic_alias.cpp
     ut_ep_recv_filter.cpp
     ut_ep_recv_max.cpp
+    ut_ep_send_rt_chk.cpp
     ut_ep_size_max.cpp
     ut_ep_store.cpp
     ut_host_port.cpp
@@ -58,6 +59,11 @@ list(APPEND check_PROGRAMS
     ut_topic_sharename.cpp
     ut_topic_subopts.cpp
     ut_value_allocator.cpp
+)
+
+list(APPEND check_ce_PROGRAMS
+    ut_static_assert_fail_client.cpp
+    ut_static_assert_fail_server.cpp
 )
 
 find_package(Boost 1.81.0 REQUIRED COMPONENTS unit_test_framework)
@@ -125,6 +131,65 @@ foreach(source_file ${check_PROGRAMS})
         )
     endif()
     set_tests_properties(${source_file_we} PROPERTIES TIMEOUT 400)
+endforeach()
+
+foreach(source_file ${check_ce_PROGRAMS})
+    get_filename_component(source_file_we ${source_file} NAME_WE)
+    add_executable(${source_file_we} ${source_file})
+    target_link_libraries(${source_file_we} async_mqtt_iface)
+
+    set_target_properties(${source_file_we} PROPERTIES
+        EXCLUDE_FROM_ALL TRUE
+        EXCLUDE_FROM_DEFAULT_BUILD TRUE
+    )
+
+    target_compile_definitions(
+        ${source_file_we}
+        PUBLIC
+        $<IF:$<BOOL:${ASYMC_MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>
+    )
+    target_link_libraries(
+        ${source_file_we} Boost::unit_test_framework
+    )
+    if(WIN32 AND ASYNC_MQTT_USE_STATIC_OPENSSL)
+        TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
+    endif()
+
+    if(ASYNC_MQTT_USE_LOG)
+        target_compile_definitions(
+            ${source_file_we}
+            PUBLIC
+            $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+        )
+        target_link_libraries(
+            ${source_file_we} Boost::log
+        )
+    endif()
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        if(ASYNC_MQTT_CODECOV)
+            set_property(
+                TARGET ${source_file_we}
+                APPEND_STRING PROPERTY COMPILE_FLAGS " -O0 -g --coverage -fno-inline"
+            )
+            set_property(
+                TARGET ${source_file_we}
+                APPEND_STRING PROPERTY LINK_FLAGS " --coverage"
+            )
+        endif()
+    endif()
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+            STRING(REGEX REPLACE "/W[0-4]" "/W3" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+        else()
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+        endif()
+    endif()
+    add_test(
+        NAME ${source_file_we}
+        COMMAND ${CMAKE_COMMAND} --build . --target ${source_file_we} --config $<CONFIG>
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR} # the place where we would run ctest
+    )
+    set_tests_properties(${source_file_we} PROPERTIES WILL_FAIL TRUE)
 endforeach()
 
 ADD_EXECUTABLE (

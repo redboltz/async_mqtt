@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v3_1_1_unsubscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
+    BOOST_TEST(am::is_unsubscribe<am::v3_1_1::unsubscribe_packet>());
+    BOOST_TEST(am::is_v3_1_1<am::v3_1_1::unsubscribe_packet>());
+    BOOST_TEST(!am::is_v5<am::v3_1_1::unsubscribe_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v3_1_1::unsubscribe_packet>());
+    BOOST_TEST(!am::is_server_sendable<am::v3_1_1::unsubscribe_packet>());
+
     std::vector<am::topic_sharename> args {
         am::allocate_buffer("topic1"),
         am::allocate_buffer("topic2"),
@@ -42,7 +49,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::unsubscribe_packet(buf);
+        auto p = am::v3_1_1::unsubscribe_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
 
@@ -82,7 +89,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::basic_unsubscribe_packet<4>(buf);
+        auto p = am::v3_1_1::basic_unsubscribe_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
 

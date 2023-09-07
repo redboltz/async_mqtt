@@ -808,17 +808,17 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     auto publish2dup{publish2};
     publish2dup.set_dup(true);
 
-    auto pubrec2 = am::v3_1_1::pubrec_packet(
+    auto pubrec2 = am::v5::pubrec_packet(
         *pid_opt2
     );
 
-    auto pubrel2 = am::v3_1_1::pubrel_packet(
+    auto pubrel2 = am::v5::pubrel_packet(
         *pid_opt2
     );
 
     auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
-    auto pubrel3 = am::v3_1_1::pubrel_packet(
+    auto pubrel3 = am::v5::pubrel_packet(
         *pid_opt3
     );
 
@@ -1149,17 +1149,17 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     auto publish2dup{publish2};
     publish2dup.set_dup(true);
 
-    auto pubrec2 = am::v3_1_1::pubrec_packet(
+    auto pubrec2 = am::v5::pubrec_packet(
         *pid_opt2
     );
 
-    auto pubrel2 = am::v3_1_1::pubrel_packet(
+    auto pubrel2 = am::v5::pubrel_packet(
         *pid_opt2
     );
 
     auto pid_opt3 = ep1.acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
-    auto pubrel3 = am::v3_1_1::pubrel_packet(
+    auto pubrel3 = am::v5::pubrel_packet(
         *pid_opt3
     );
 
@@ -1532,17 +1532,17 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     auto publish2no_ta_dup{publish2no_ta};
     publish2no_ta_dup.set_dup(true);
 
-    auto pubrec2 = am::v3_1_1::pubrec_packet(
+    auto pubrec2 = am::v5::pubrec_packet(
         *pid_opt2
     );
 
-    auto pubrel2 = am::v3_1_1::pubrel_packet(
+    auto pubrel2 = am::v5::pubrel_packet(
         *pid_opt2
     );
 
     auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
-    auto pubrel3 = am::v3_1_1::pubrel_packet(
+    auto pubrel3 = am::v5::pubrel_packet(
         *pid_opt3
     );
 

@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v5_disconnect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_disconnect) {
+    BOOST_TEST(am::is_disconnect<am::v5::disconnect_packet>());
+    BOOST_TEST(!am::is_v3_1_1<am::v5::disconnect_packet>());
+    BOOST_TEST(am::is_v5<am::v5::disconnect_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v5::disconnect_packet>());
+    BOOST_TEST(am::is_server_sendable<am::v5::disconnect_packet>());
+
     auto props = am::properties{
         am::property::reason_string("some reason")
     };
@@ -40,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v5_disconnect) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::disconnect_packet(buf);
+        auto p = am::v5::disconnect_packet{buf};
         BOOST_TEST(p.code() == am::disconnect_reason_code::protocol_error);
         BOOST_TEST(p.props() == props);
 
@@ -69,7 +76,7 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_no_arg) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::disconnect_packet(buf);
+        auto p = am::v5::disconnect_packet{buf};
         BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
         BOOST_TEST(p.props().empty());
 
@@ -101,7 +108,7 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_pid_rc) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::disconnect_packet(buf);
+        auto p = am::v5::disconnect_packet{buf};
         BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
         BOOST_TEST(p.props().empty());
 
@@ -123,7 +130,7 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_prop_len_last) {
         0x00,                               // property_length
     };
     auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-    auto p = am::v5::disconnect_packet(buf);
+    auto p = am::v5::disconnect_packet{buf};
     BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
     BOOST_TEST(p.props().empty());
 
