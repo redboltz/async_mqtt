@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v3_1_1_subscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v311_subscribe) {
+    BOOST_TEST(am::is_subscribe<am::v3_1_1::subscribe_packet>());
+    BOOST_TEST(am::is_v3_1_1<am::v3_1_1::subscribe_packet>());
+    BOOST_TEST(!am::is_v5<am::v3_1_1::subscribe_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v3_1_1::subscribe_packet>());
+    BOOST_TEST(!am::is_server_sendable<am::v3_1_1::subscribe_packet>());
+
     std::vector<am::topic_subopts> args {
         {am::allocate_buffer("topic1"), am::qos::at_most_once},
         {am::allocate_buffer("topic2"), am::qos::exactly_once},
@@ -44,7 +51,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::subscribe_packet(buf);
+        auto p = am::v3_1_1::subscribe_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
 
@@ -86,7 +93,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::basic_subscribe_packet<4>(buf);
+        auto p = am::v3_1_1::basic_subscribe_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
 

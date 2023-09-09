@@ -101,7 +101,7 @@ jobs:
         [ ${{ matrix.pattern }} == 2 ] && \
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 3 ] && \
-        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${NS_CXXFLAGS} "&& export LDFLAGS=${NS_LDFLAGS}
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 4 ] && \
         gcc --version \
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${NS_CXXFLAGS_GCC} "&& export LDFLAGS=${NS_LDFLAGS}

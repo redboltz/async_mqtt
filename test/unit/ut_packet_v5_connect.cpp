@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_connect) {
+    BOOST_TEST(am::is_connect<am::v5::connect_packet>());
+    BOOST_TEST(!am::is_v3_1_1<am::v5::connect_packet>());
+    BOOST_TEST(am::is_v5<am::v5::connect_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v5::connect_packet>());
+    BOOST_TEST(!am::is_server_sendable<am::v5::connect_packet>());
+
     auto w = am::will{
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
@@ -85,7 +92,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::connect_packet(buf);
+        auto p = am::v5::connect_packet{buf};
         BOOST_TEST(p.clean_start());
         BOOST_TEST(p.keep_alive() == 0x1234);
         BOOST_TEST(p.client_id() == "cid1");

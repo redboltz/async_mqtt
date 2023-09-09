@@ -109,7 +109,8 @@ public:
     /**
      * @brief constructor
      * @tparam Args Types for the next layer
-     * @param  ver  MQTT protocol version (v5 or v3_1_1)
+     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
+     *              server can set undetermined
      * @param  args args for the next layer. There are predefined next layer types:
      *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
      *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
@@ -121,6 +122,11 @@ public:
     ): protocol_version_{ver},
        stream_{std::make_shared<stream_type>(std::forward<Args>(args)...)}
     {
+        BOOST_ASSERT(
+            (Role == role::client && ver != protocol_version::undetermined) ||
+            Role != role::client
+        );
+
     }
 
     /**
@@ -864,7 +870,10 @@ private: // compose operation impl
             case write: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
-                if constexpr(std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>>) {
+                if constexpr(
+                    std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
+                    std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
+                ) {
                     packet.visit(
                         overload {
                             [&](auto& actual_packet) {
@@ -915,25 +924,48 @@ private: // compose operation impl
         template <typename Self, typename ActualPacket>
         bool process_send_packet(Self& self, ActualPacket& actual_packet) {
             // MQTT protocol sendable packet check
-            if ((can_send_as_client(Role) && !is_client_sendable<std::decay_t<ActualPacket>>()) ||
-                (can_send_as_server(Role) && !is_server_sendable<std::decay_t<ActualPacket>>())
+            if (
+                !(
+                    (can_send_as_client(Role) && is_client_sendable<std::decay_t<ActualPacket>>()) ||
+                    (can_send_as_server(Role) && is_server_sendable<std::decay_t<ActualPacket>>())
+                )
             ) {
                 self.complete(
                     make_error(
                         errc::protocol_error,
-                        "Packet cannot be send by MQTT protocol"
+                        "packet cannot be send by MQTT protocol"
                     )
                 );
                 return false;
             }
 
+            auto version_check =
+                [&] {
+                    if (ep.protocol_version_ == protocol_version::v3_1_1 && is_v3_1_1<ActualPacket>()) {
+                        return true;
+                    }
+                    if (ep.protocol_version_ == protocol_version::v5 && is_v5<ActualPacket>()) {
+                        return true;
+                    }
+                    return false;
+                };
+
             // connection status check
             if constexpr(is_connect<ActualPacket>()) {
                 if (ep.status_ != connection_status::disconnected) {
-                self.complete(
+                    self.complete(
                         make_error(
                             errc::protocol_error,
                             "connect_packet can only be send on connection_status::disconnected"
+                        )
+                    );
+                    return false;
+                }
+                if (!version_check()) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "protocol version mismatch"
                         )
                     );
                     return false;
@@ -945,6 +977,15 @@ private: // compose operation impl
                         make_error(
                             errc::protocol_error,
                             "connack_packet can only be send on connection_status::connecting"
+                        )
+                    );
+                    return false;
+                }
+                if (!version_check()) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "protocol version mismatch"
                         )
                     );
                     return false;
@@ -961,6 +1002,15 @@ private: // compose operation impl
                     );
                     return false;
                 }
+                if (!version_check()) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "protocol version mismatch"
+                        )
+                    );
+                    return false;
+                }
             }
             else {
                 if (ep.status_ != connection_status::connected) {
@@ -973,6 +1023,15 @@ private: // compose operation impl
                         );
                         return false;
                     }
+                }
+                if (!version_check()) {
+                    self.complete(
+                        make_error(
+                            errc::protocol_error,
+                            "protocol version mismatch"
+                        )
+                    );
+                    return false;
                 }
             }
 

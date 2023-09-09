@@ -11,13 +11,20 @@
 
 #include <async_mqtt/packet/v5_pingresp.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_pingresp) {
-    auto p = am::v5::pingresp_packet();
+    BOOST_TEST(am::is_pingresp<am::v5::pingresp_packet>());
+    BOOST_TEST(!am::is_v3_1_1<am::v5::pingresp_packet>());
+    BOOST_TEST(am::is_v5<am::v5::pingresp_packet>());
+    BOOST_TEST(!am::is_client_sendable<am::v5::pingresp_packet>());
+    BOOST_TEST(am::is_server_sendable<am::v5::pingresp_packet>());
+
+    auto p = am::v5::pingresp_packet{};
 
     {
         auto cbs = p.const_buffer_sequence();
@@ -29,7 +36,7 @@ BOOST_AUTO_TEST_CASE(v5_pingresp) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::pingresp_packet(buf);
+        auto p = am::v5::pingresp_packet{buf};
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);

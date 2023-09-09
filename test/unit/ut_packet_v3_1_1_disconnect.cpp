@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v3_1_1_disconnect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v3_1_1_disconnect) {
+    BOOST_TEST(am::is_disconnect<am::v3_1_1::disconnect_packet>());
+    BOOST_TEST(am::is_v3_1_1<am::v3_1_1::disconnect_packet>());
+    BOOST_TEST(!am::is_v5<am::v3_1_1::disconnect_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v3_1_1::disconnect_packet>());
+    BOOST_TEST(!am::is_server_sendable<am::v3_1_1::disconnect_packet>());
+
     auto p = am::v3_1_1::disconnect_packet();
 
     {
@@ -29,7 +36,7 @@ BOOST_AUTO_TEST_CASE(v3_1_1_disconnect) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::disconnect_packet(buf);
+        auto p = am::v3_1_1::disconnect_packet{buf};
 
         auto cbs2 = p.const_buffer_sequence();
         auto [b2, e2] = am::make_packet_range(cbs2);

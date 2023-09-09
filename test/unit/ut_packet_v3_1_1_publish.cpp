@@ -11,18 +11,25 @@
 
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v311_publish) {
-    auto p = am::v3_1_1::publish_packet(
+    BOOST_TEST(am::is_publish<am::v3_1_1::publish_packet>());
+    BOOST_TEST(am::is_v3_1_1<am::v3_1_1::publish_packet>());
+    BOOST_TEST(!am::is_v5<am::v3_1_1::publish_packet>());
+    BOOST_TEST(am::is_client_sendable<am::v3_1_1::publish_packet>());
+    BOOST_TEST(am::is_server_sendable<am::v3_1_1::publish_packet>());
+
+    auto p = am::v3_1_1::publish_packet{
         0x1234, // packet_id
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
-    );
+    };
 
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.topic() == "topic1");
@@ -52,7 +59,7 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::publish_packet(buf);
+        auto p = am::v3_1_1::publish_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.topic() == "topic1");
         {
@@ -76,11 +83,11 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 }
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
-    auto p = am::v3_1_1::publish_packet(
+    auto p = am::v3_1_1::publish_packet{
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
-    );
+    };
 
     BOOST_TEST(p.packet_id() == 0);
     BOOST_TEST(p.topic() == "topic1");
@@ -109,7 +116,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::publish_packet(buf);
+        auto p = am::v3_1_1::publish_packet{buf};
         BOOST_TEST(p.packet_id() == 0);
         BOOST_TEST(p.topic() == "topic1");
         {
@@ -134,23 +141,23 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 
 BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
-        auto p = am::v3_1_1::publish_packet(
+        auto p = am::v3_1_1::publish_packet{
             am::allocate_buffer("topic1"),
             am::allocate_buffer("payload1"),
             am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::yes
-        );
+        };
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
         BOOST_TEST(se.code() == am::errc::bad_message);
     }
     try {
-        auto p = am::v3_1_1::publish_packet(
+        auto p = am::v3_1_1::publish_packet{
             1,
             am::allocate_buffer("topic1"),
             am::allocate_buffer("payload1"),
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
-        );
+        };
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
@@ -159,12 +166,12 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
 }
 
 BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
-    auto p = am::v3_1_1::basic_publish_packet<4>(
+    auto p = am::v3_1_1::basic_publish_packet<4>{
         0x12345678, // packet_id
         am::allocate_buffer("topic1"),
         am::allocate_buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
-    );
+    };
 
     BOOST_TEST(p.packet_id() == 0x12345678);
     BOOST_TEST(p.topic() == "topic1");
@@ -194,7 +201,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v3_1_1::basic_publish_packet<4>(buf);
+        auto p = am::v3_1_1::basic_publish_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.topic() == "topic1");
         {

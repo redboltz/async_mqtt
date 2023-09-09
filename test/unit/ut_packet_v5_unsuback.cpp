@@ -11,12 +11,19 @@
 
 #include <async_mqtt/packet/v5_unsuback.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
 
 BOOST_AUTO_TEST_CASE(v5_unsuback) {
+    BOOST_TEST(am::is_unsuback<am::v5::unsuback_packet>());
+    BOOST_TEST(!am::is_v3_1_1<am::v5::unsuback_packet>());
+    BOOST_TEST(am::is_v5<am::v5::unsuback_packet>());
+    BOOST_TEST(!am::is_client_sendable<am::v5::unsuback_packet>());
+    BOOST_TEST(am::is_server_sendable<am::v5::unsuback_packet>());
+
     std::vector<am::unsuback_reason_code> args {
         am::unsuback_reason_code::no_subscription_existed,
         am::unsuback_reason_code::unspecified_error
@@ -48,7 +55,7 @@ BOOST_AUTO_TEST_CASE(v5_unsuback) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::unsuback_packet(buf);
+        auto p = am::v5::unsuback_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
 
@@ -94,7 +101,7 @@ BOOST_AUTO_TEST_CASE(v5_unsuback_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
-        auto p = am::v5::basic_unsuback_packet<4>(buf);
+        auto p = am::v5::basic_unsuback_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
 
