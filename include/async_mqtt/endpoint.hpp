@@ -870,7 +870,10 @@ private: // compose operation impl
             case write: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 state = complete;
-                if constexpr(std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>>) {
+                if constexpr(
+                    std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
+                    std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
+                ) {
                     packet.visit(
                         overload {
                             [&](auto& actual_packet) {
