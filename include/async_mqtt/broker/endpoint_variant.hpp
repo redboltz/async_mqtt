@@ -10,16 +10,15 @@
 #include <variant>
 #include <memory>
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/packet/packet_id_type.hpp>
 
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-struct basic_endpoint_variant : std::variant<basic_endpoint<Role, PacketIdBytes, NextLayer>...> {
+struct basic_endpoint_variant : std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
     using this_type = basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>;
-    using base_type = std::variant<basic_endpoint<Role, PacketIdBytes, NextLayer>...>;
+    using base_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
     using base_type::base_type;
-    using shared_type = std::shared_ptr<this_type>;
-    using weak_type = std::weak_ptr<this_type>;
 
     static constexpr role role_value = Role;
     static constexpr std::size_t packet_id_bytes = PacketIdBytes;
@@ -27,22 +26,46 @@ struct basic_endpoint_variant : std::variant<basic_endpoint<Role, PacketIdBytes,
 
     template <typename ActualNextLayer>
     basic_endpoint<Role, PacketIdBytes, ActualNextLayer> const& as() const {
-        return std::get<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>(*this);
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
     }
     template <typename ActualNextLayer>
     basic_endpoint<Role, PacketIdBytes, ActualNextLayer>& as() {
-        return std::get<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>(*this);
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
     }
 
     template <typename Actual, typename... Args>
-    static std::shared_ptr<this_type> make_shared(
+    static this_type make_shared(
         Args&&... args
     ) {
-        return
-            std::make_shared<this_type>(
-                Actual(std::forward<Args>(args)...)
-            );
+        return std::make_shared<Actual>(std::forward<Args>(args)...);
     }
+
+    struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
+        using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
+        using base_type::base_type;
+        using shared_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
+        this_type lock() {
+            return std::visit(
+                [&](auto& wp) -> this_type {
+                    return wp.lock();
+                },
+                *this
+            );
+        }
+        bool operator<(weak_type const& other) const {
+            return std::visit(
+                [&](auto& lhs) {
+                    return std::visit(
+                        [&](auto& rhs) {
+                            return lhs.owner_before(rhs);
+                        },
+                        other
+                    );
+                },
+                *this
+            );
+        }
+    };
 };
 
 template <role Role, typename... NextLayer>
@@ -53,8 +76,8 @@ class epsp_wrap {
 public:
     using epsp_t = Epsp;
     using this_type = epsp_wrap<Epsp>;
-    using packet_id_t = typename epsp_t::element_type::packet_id_t;
-    static constexpr std::size_t packet_id_bytes = epsp_t::element_type::packet_id_bytes;
+    using packet_id_t = typename epsp_t::packet_id_t;
+    static constexpr std::size_t packet_id_bytes = epsp_t::packet_id_bytes;
     using packet_variant_type = basic_packet_variant<packet_id_bytes>;
     using weak_type = typename epsp_t::weak_type;
 
@@ -67,9 +90,9 @@ public:
     decltype(auto) visit(Func&& func) const {
         return std::visit(
             [&](auto& ep) -> decltype(auto) {
-                return std::forward<Func>(func)(ep);
+                return std::forward<Func>(func)(*ep);
             },
-            *epsp_
+            epsp_
         );
     }
 
@@ -77,9 +100,9 @@ public:
     decltype(auto) visit(Func&& func) {
         return std::visit(
             [&](auto& ep) -> decltype(auto) {
-                return std::forward<Func>(func)(ep);
+                return std::forward<Func>(func)(*ep);
             },
-            *epsp_
+            epsp_
         );
     }
 
@@ -355,23 +378,30 @@ public:
     }
 
     operator bool() const {
-        return static_cast<bool>(epsp_);
+        return std::visit(
+            [&](auto const& epsp) {
+                return static_cast<bool>(epsp);
+            },
+            epsp_
+        );
     }
 
     operator weak_type() const {
-        return epsp_;
+        return std::visit(
+            [&](auto& ep) -> weak_type {
+                return ep;
+            },
+            epsp_
+        );
     }
 
     void const* get_address() const {
-        return epsp_.get();
-    }
-
-    bool owner_before(this_type const& other) const noexcept {
-        return epsp_.owner_before(other.epsp_);
-    }
-
-    bool owner_before(typename epsp_t::weak_type const& other) const noexcept {
-        return epsp_.owner_before(other);
+        return std::visit(
+            [&](auto const& epsp) -> void const*{
+                return epsp.get();
+            },
+            epsp_
+        );
     }
 
 private:

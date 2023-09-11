@@ -814,8 +814,7 @@ private:
             // non is nullable
             mi::ordered_non_unique<
                 mi::tag<tag_con>,
-                mi::key<&ss_t::epwp_>,
-                std::owner_less<epwp_t>
+                mi::key<&ss_t::epwp_>
             >,
             mi::ordered_unique<
                 mi::tag<tag_cid>,

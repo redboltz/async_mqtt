@@ -126,7 +126,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         >;
 
         am::broker<
-            typename epv_t::shared_type
+            epv_t
         > brk{timer_ioc};
 
         auto num_of_iocs =
@@ -227,7 +227,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             con_ioc_getter().get_executor()
                         );
 
-                    auto& lowest_layer = epsp->as<am::protocol::mqtt>().lowest_layer();
+                    auto& lowest_layer = epsp.as<am::protocol::mqtt>().lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
                         [&mqtt_async_accept, &brk, epsp]
@@ -262,7 +262,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor()
                         );
-                    auto& lowest_layer = epsp->as<am::protocol::ws>().lowest_layer();
+                    auto& lowest_layer = epsp.as<am::protocol::ws>().lowest_layer();
                     ws_ac->async_accept(
                         lowest_layer,
                         [&ws_async_accept, &brk, epsp]
@@ -272,7 +272,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
-                                auto& ws_layer = epsp->as<am::protocol::ws>().next_layer();
+                                auto& ws_layer = epsp.as<am::protocol::ws>().next_layer();
                                 ws_layer.async_accept(
                                     [&brk, epsp]
                                     (boost::system::error_code const& ec) mutable {
@@ -281,7 +281,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "WS accept error:" << ec.message();
                                         }
                                         else {
-                                            brk.handle_accept(force_move(epsp));
+                                            brk.handle_accept(epv_t{force_move(epsp)});
                                         }
                                     }
                                 );
@@ -351,7 +351,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             *mqtts_ctx
                         );
 
-                    auto& lowest_layer = epsp->as<am::protocol::mqtts>().lowest_layer();
+                    auto& lowest_layer = epsp.as<am::protocol::mqtts>().lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
                         [&mqtts_async_accept, &brk, epsp, username]
@@ -362,7 +362,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
-                                epsp->as<am::protocol::mqtts>().next_layer().async_handshake(
+                                epsp.as<am::protocol::mqtts>().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username]
                                     (boost::system::error_code const& ec) mutable {
@@ -371,7 +371,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "TLS handshake error:" << ec.message();
                                         }
                                         else {
-                                            brk.handle_accept(force_move(epsp), *username);
+                                            brk.handle_accept(epv_t{force_move(epsp)}, *username);
                                         }
                                     }
                                 );
@@ -439,7 +439,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             *wss_ctx
                         );
 
-                    auto& lowest_layer = epsp->as<am::protocol::wss>().lowest_layer();
+                    auto& lowest_layer = epsp.as<am::protocol::wss>().lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
                         [&wss_async_accept, &brk, epsp, username]
@@ -450,7 +450,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
-                                epsp->as<am::protocol::wss>().next_layer().next_layer().async_handshake(
+                                epsp.as<am::protocol::wss>().next_layer().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username]
                                     (boost::system::error_code const& ec) mutable {
@@ -459,7 +459,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "TLS handshake error:" << ec.message();
                                         }
                                         else {
-                                            auto& ws_layer = epsp->as<am::protocol::wss>().next_layer();
+                                            auto& ws_layer = epsp.as<am::protocol::wss>().next_layer();
                                             ws_layer.binary(true);
                                             ws_layer.async_accept(
                                                 [&brk, epsp, username]
@@ -469,7 +469,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                             << "WS accept error:" << ec.message();
                                                     }
                                                     else {
-                                                        brk.handle_accept(force_move(epsp), *username);
+                                                        brk.handle_accept(epv_t{force_move(epsp)}, *username);
                                                     }
                                                 }
                                             );
