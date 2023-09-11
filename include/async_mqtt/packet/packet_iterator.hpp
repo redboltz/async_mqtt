@@ -14,6 +14,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/buffers_iterator.hpp>
 
+#include <async_mqtt/buffer.hpp>
+
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -35,6 +37,19 @@ std::string
 to_string(Container<Buffer> const& cbs) {
     auto [b, e] = make_packet_range(cbs);
     return std::string(b, e);
+}
+
+template <template <typename...> typename Container, typename Buffer>
+buffer
+to_buffer(Container<Buffer> const& cbs) {
+    switch (cbs.size()) {
+    case 0: return buffer{};
+    case 1: return cbs.front();
+    default: {
+        auto [b, e] = make_packet_range(cbs);
+        return allocate_buffer(b, e);
+    }
+    }
 }
 
 } // namespace async_mqtt
