@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/packet/packet_iterator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_buffer)
 
@@ -69,5 +70,21 @@ BOOST_AUTO_TEST_CASE( view ) {
     BOOST_TEST(ss2 == "34");
     BOOST_TEST(!ss2.get_life().has_value());
 }
+
+BOOST_AUTO_TEST_CASE( buffers ) {
+    using namespace am::literals;
+    std::vector<am::buffer> bufs;
+    BOOST_TEST(am::to_string(bufs).empty());
+    BOOST_TEST(am::to_buffer(bufs).empty());
+
+    bufs.emplace_back(am::allocate_buffer("01234"));
+    BOOST_TEST(am::to_string(bufs) == "01234");
+    BOOST_TEST(am::to_buffer(bufs) == "01234"_mb);
+
+    bufs.emplace_back(am::allocate_buffer("5678"));
+    BOOST_TEST(am::to_string(bufs) == "012345678");
+    BOOST_TEST(am::to_buffer(bufs) == "012345678"_mb);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
