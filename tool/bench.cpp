@@ -234,8 +234,8 @@ private:
         reenter (coro_) {
             // Setup
             for (auto& ci : cis_) {
-                ci.init_timer(ci.c.strand());
-                ci.c.set_auto_pub_response(true);
+                ci.init_timer(ci.c->strand());
+                ci.c->set_auto_pub_response(true);
             }
 
             yield {
@@ -273,7 +273,7 @@ private:
 
             // TCP connect
             yield as::async_connect(
-                pci->c.lowest_layer(),
+                pci->c->lowest_layer(),
                 eps_,
                 as::append(
                     *this,
@@ -290,7 +290,7 @@ private:
 #if defined(ASYNC_MQTT_USE_TLS)
             yield {
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::mqtts>>) {
-                    pci->c.next_layer().async_handshake(
+                    pci->c->next_layer().async_handshake(
                         am::tls::stream_base::client,
                         as::append(
                             *this,
@@ -301,7 +301,7 @@ private:
                 }
 #if defined(ASYNC_MQTT_USE_WS)
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
-                    pci->c.next_layer().next_layer().async_handshake(
+                    pci->c->next_layer().next_layer().async_handshake(
                         am::tls::stream_base::client,
                         as::append(
                             *this,
@@ -312,7 +312,7 @@ private:
                 }
 #endif // defined(ASYNC_MQTT_USE_WS)
                 as::dispatch(
-                    pci->c.strand(),
+                    pci->c->strand(),
                     as::append(
                         *this,
                         am::error_code{},
@@ -331,7 +331,7 @@ private:
 #if defined(ASYNC_MQTT_USE_WS)
             yield {
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::ws>>) {
-                    pci->c.next_layer().async_handshake(
+                    pci->c->next_layer().async_handshake(
                         pci->host,
                         [&] () -> std::string{
                             if (bc_.ws_path) return *bc_.ws_path;
@@ -346,7 +346,7 @@ private:
                 }
 #if defined(ASYNC_MQTT_USE_TLS)
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
-                    pci->c.next_layer().async_handshake(
+                    pci->c->next_layer().async_handshake(
                         pci->host,
                         [&] () -> std::string{
                             if (bc_.ws_path) return *bc_.ws_path;
@@ -361,7 +361,7 @@ private:
                 }
 #endif // defined(ASYNC_MQTT_USE_TLS)
                 as::dispatch(
-                    pci->c.strand(),
+                    pci->c->strand(),
                     as::append(
                         *this,
                         am::error_code{},
@@ -389,7 +389,7 @@ private:
                             am::property::session_expiry_interval(bc_.sei)
                         );
                     }
-                    pci->c.send(
+                    pci->c->send(
                         am::v5::connect_packet{
                             bc_.clean_start,
                             0, // keep_alive
@@ -406,7 +406,7 @@ private:
                     );
                 } break;
                 case am::protocol_version::v3_1_1: {
-                    pci->c.send(
+                    pci->c->send(
                         am::v3_1_1::connect_packet{
                             bc_.clean_start,
                             0, // keep_alive
@@ -425,14 +425,14 @@ private:
                     locked_cout() << "invalid MQTT version" << std::endl;
                     exit(-1);
                 }
-                pci->init_timer(pci->c.strand());
+                pci->init_timer(pci->c->strand());
             }
             if (*se) {
                 locked_cout() << "connect send error:" << se->what() << std::endl;
                 exit(-1);
             }
             // MQTT connack recv
-            yield pci->c.recv(
+            yield pci->c->recv(
                 as::append(
                     *this,
                     pci
@@ -494,10 +494,10 @@ private:
                 yield {
                     switch (bc_.version) {
                     case am::protocol_version::v5: {
-                        pci->c.send(
+                        pci->c->send(
                             am::v5::subscribe_packet{
                                 // sync version can be called because the previous timer handler is on the strand
-                                *pci->c.acquire_unique_packet_id(),
+                                *pci->c->acquire_unique_packet_id(),
                                 {
                                     { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
                                 },
@@ -510,10 +510,10 @@ private:
                         );
                     } break;
                     case am::protocol_version::v3_1_1: {
-                        pci->c.send(
+                        pci->c->send(
                             am::v3_1_1::subscribe_packet{
                                 // sync version can be called because the previous timer handler is on the strand
-                                *pci->c.acquire_unique_packet_id(),
+                                *pci->c->acquire_unique_packet_id(),
                                 {
                                     { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
                                 }
@@ -528,14 +528,14 @@ private:
                         locked_cout() << "invalid MQTT version" << std::endl;
                         exit(-1);
                     }
-                    pci->init_timer(pci->c.strand());
+                    pci->init_timer(pci->c->strand());
                 }
                 if (*se) {
                     locked_cout() << "subscribe send error:" << se->what() << std::endl;
                     exit(-1);
                 }
                 // MQTT suback recv
-                yield pci->c.recv(
+                yield pci->c->recv(
                     as::append(
                         *this,
                         pci
@@ -625,6 +625,7 @@ private:
                         as::dispatch(*this);
                     }
                 }
+
                 yield {
                     if (bc_.pub_idle_count == 0) {
                         bc_.ph.store(phase::pub_after_idle_delay);
@@ -676,7 +677,7 @@ private:
                         );
                     }
                     // pub recv
-                    ci.c.recv(
+                    ci.c->recv(
                         as::append(
                             *this,
                             &ci
@@ -690,7 +691,7 @@ private:
                     [this, &pci] (packet_id_t pid, am::pub::opts opts) {
                         switch (bc_.version) {
                         case am::protocol_version::v5: {
-                            pci->c.send(
+                            pci->c->send(
                                 am::v5::publish_packet{
                                     pid,
                                     am::allocate_buffer(bc_.topic_prefix + pci->index_str),
@@ -706,7 +707,7 @@ private:
                             return;
                         } break;
                         case am::protocol_version::v3_1_1: {
-                            pci->c.send(
+                            pci->c->send(
                                 am::v3_1_1::publish_packet{
                                     pid,
                                     am::allocate_buffer(bc_.topic_prefix + pci->index_str),
@@ -734,7 +735,7 @@ private:
                                 if (bc_.qos == am::qos::at_least_once ||
                                     bc_.qos == am::qos::exactly_once) {
                                     // sync version can be called because the previous timer handler is on the strand
-                                    pid = *pci->c.acquire_unique_packet_id();
+                                    pid = *pci->c->acquire_unique_packet_id();
                                 }
                                 am::pub::opts opts = bc_.qos | bc_.retain;
                                 pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
@@ -950,7 +951,7 @@ private:
                         bc_.tim_progress->cancel();
                         if (bc_.close_after_report) {
                             for (auto& ci : cis_) {
-                                ci.c.close([]{});
+                                ci.c->close([]{});
                             }
                             for (auto& guard_ioc : bc_.guard_iocs) guard_ioc.reset();
                             bc_.guard_ioc_timer.reset();
@@ -958,7 +959,7 @@ private:
                         return;
                     } break;
                     }
-                    pci->c.recv(
+                    pci->c->recv(
                         as::append(
                             *this,
                             pci
@@ -1928,7 +1929,7 @@ int main(int argc, char *argv[]) {
             struct client_info : client_info_base {
                 using client_type = client_t;
                 client_info(
-                    client_t c,
+                    std::shared_ptr<client_t> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -1949,7 +1950,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                client_t c;
+                std::shared_ptr<client_t> c;
             };
 
             std::vector<client_info> cis;
@@ -1957,10 +1958,10 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    client_t{
+                    std::make_shared<client_t>(
                         version,
                         iocs.at(i % num_of_iocs).get_executor()
-                    },
+                    ),
                     cid_prefix,
                     i + start_index,
                     payload_size,
@@ -1985,7 +1986,7 @@ int main(int argc, char *argv[]) {
             struct client_info : client_info_base {
                 using client_type = client_t;
                 client_info(
-                    client_t c,
+                    std::shared_ptr<client_t> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -2006,7 +2007,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                client_t c;
+                std::shared_ptr<client_t> c;
             };
 
             std::vector<client_info> cis;
@@ -2022,11 +2023,11 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(am::tls::verify_none);
                 }
                 cis.emplace_back(
-                    client_t{
+                    std::make_shared<client_t>(
                         version,
                         iocs.at(i % num_of_iocs).get_executor(),
                         ctx
-                    },
+                    ),
                     cid_prefix,
                     i + start_index,
                     payload_size,
@@ -2056,7 +2057,7 @@ int main(int argc, char *argv[]) {
             struct client_info : client_info_base {
                 using client_type = client_t;
                 client_info(
-                    client_t c,
+                    std::shared_ptr<client_t> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -2077,7 +2078,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                client_t c;
+                std::shared_ptr<client_t> c;
             };
 
             std::vector<client_info> cis;
@@ -2085,10 +2086,10 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    client_t{
+                    std::make_shared<client_t>(
                         version,
                         iocs.at(i % num_of_iocs).get_executor()
-                    },
+                    ),
                     cid_prefix,
                     i + start_index,
                     payload_size,
@@ -2118,7 +2119,7 @@ int main(int argc, char *argv[]) {
             struct client_info : client_info_base {
                 using client_type = client_t;
                 client_info(
-                    client_t c,
+                    std::shared_ptr<client_t> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -2139,7 +2140,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                client_t c;
+                std::shared_ptr<client_t> c;
             };
 
             std::vector<client_info> cis;
@@ -2155,11 +2156,11 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(am::tls::verify_none);
                 }
                 cis.emplace_back(
-                    client_t{
+                    std::make_shared<client_t>(
                         version,
                         iocs.at(i % num_of_iocs).get_executor(),
                         ctx
-                    },
+                    ),
                     cid_prefix,
                     i + start_index,
                     payload_size,
