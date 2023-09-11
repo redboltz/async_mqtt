@@ -222,12 +222,12 @@ void run_broker(boost::program_options::variables_map const& vm) {
             mqtt_async_accept =
                 [&] {
                     auto epsp =
-                        epv_t::make_shared<am::endpoint<am::role::server, am::protocol::mqtt>>(
+                        std::make_shared<am::endpoint<am::role::server, am::protocol::mqtt>>(
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor()
                         );
 
-                    auto& lowest_layer = epsp.as<am::protocol::mqtt>().lowest_layer();
+                    auto& lowest_layer = epsp->lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
                         [&mqtt_async_accept, &brk, epsp]
@@ -237,7 +237,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
-                                brk.handle_accept(force_move(epsp));
+                                brk.handle_accept(epv_t{force_move(epsp)});
                             }
                             mqtt_async_accept();
                         }
@@ -258,11 +258,11 @@ void run_broker(boost::program_options::variables_map const& vm) {
             ws_async_accept =
                 [&] {
                     auto epsp =
-                        epv_t::make_shared<am::endpoint<am::role::server, am::protocol::ws>>(
+                        std::make_shared<am::endpoint<am::role::server, am::protocol::ws>>(
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor()
                         );
-                    auto& lowest_layer = epsp.as<am::protocol::ws>().lowest_layer();
+                    auto& lowest_layer = epsp->lowest_layer();
                     ws_ac->async_accept(
                         lowest_layer,
                         [&ws_async_accept, &brk, epsp]
@@ -272,7 +272,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
-                                auto& ws_layer = epsp.as<am::protocol::ws>().next_layer();
+                                auto& ws_layer = epsp->next_layer();
                                 ws_layer.async_accept(
                                     [&brk, epsp]
                                     (boost::system::error_code const& ec) mutable {
@@ -345,13 +345,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         }
                     );
                     auto epsp =
-                        epv_t::make_shared<am::endpoint<am::role::server, am::protocol::mqtts>>(
+                        std::make_shared<am::endpoint<am::role::server, am::protocol::mqtts>>(
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor(),
                             *mqtts_ctx
                         );
 
-                    auto& lowest_layer = epsp.as<am::protocol::mqtts>().lowest_layer();
+                    auto& lowest_layer = epsp->lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
                         [&mqtts_async_accept, &brk, epsp, username]
@@ -362,7 +362,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
-                                epsp.as<am::protocol::mqtts>().next_layer().async_handshake(
+                                epsp->next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username]
                                     (boost::system::error_code const& ec) mutable {
@@ -433,13 +433,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         }
                     );
                     auto epsp =
-                        epv_t::make_shared<am::endpoint<am::role::server, am::protocol::wss>>(
+                        std::make_shared<am::endpoint<am::role::server, am::protocol::wss>>(
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor(),
                             *wss_ctx
                         );
 
-                    auto& lowest_layer = epsp.as<am::protocol::wss>().lowest_layer();
+                    auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
                         [&wss_async_accept, &brk, epsp, username]
@@ -450,7 +450,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
-                                epsp.as<am::protocol::wss>().next_layer().next_layer().async_handshake(
+                                epsp->next_layer().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username]
                                     (boost::system::error_code const& ec) mutable {
@@ -459,7 +459,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "TLS handshake error:" << ec.message();
                                         }
                                         else {
-                                            auto& ws_layer = epsp.as<am::protocol::wss>().next_layer();
+                                            auto& ws_layer = epsp->next_layer();
                                             ws_layer.binary(true);
                                             ws_layer.async_accept(
                                                 [&brk, epsp, username]
