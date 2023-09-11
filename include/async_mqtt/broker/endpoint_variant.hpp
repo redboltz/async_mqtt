@@ -33,13 +33,6 @@ struct basic_endpoint_variant : std::variant<std::shared_ptr<basic_endpoint<Role
         return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
     }
 
-    template <typename Actual, typename... Args>
-    static this_type make_shared(
-        Args&&... args
-    ) {
-        return std::make_shared<Actual>(std::forward<Args>(args)...);
-    }
-
     struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
         using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
         using base_type::base_type;
