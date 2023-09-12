@@ -1,3 +1,22 @@
+## 2.0.0
+### breaking changes
+#### endpoint
+- Made endpoint non movable. #79.
+  - It is designed non copyable and non movable but the code was able to movable invalidly,
+    so this is a bug fix. However some of test, broker, and bench code had been used move constructor.
+    Hence I categolize the fix to breaking changes.
+#### broker
+- Added enable_shared_from_this to session_state. #67, #68
+### other updates
+- Added to_buffer function for std::vector<buffer>. #77
+- Refined CI. #75
+- Fixed invalid sendable packet checking. #74
+- Added fixed CPU core map by ioc for broker. #69, #70
+- Fixed endpoint's internal queue operation. #66
+- Refined documents. #62
+- Refined examples. #61
+- Refined bench. #60, #63, #64, #65
+
 ## 1.0.9
 - Removed debung print. #59
 
