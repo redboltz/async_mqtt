@@ -120,14 +120,14 @@ public:
             );
         }
 
-        if (remaining_length_ == 2) {
+        if (remaining_length_ == PacketIdBytes) {
             if (!buf.empty()) {
                 throw make_error(errc::bad_message, "v5::pubcomp_packet remaining length is invalid");
             }
             return;
         }
 
-        // connect_reason_code
+        // reason_code
         reason_code_.emplace(static_cast<pubcomp_reason_code>(buf.front()));
         buf.remove_prefix(1);
         switch (*reason_code_) {

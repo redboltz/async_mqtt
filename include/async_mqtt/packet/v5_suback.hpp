@@ -142,7 +142,7 @@ public:
         }
 
         while (!buf.empty()) {
-            // suback_reason_code
+            // reason_code
             if (buf.empty()) {
                 throw make_error(
                     errc::bad_message,
