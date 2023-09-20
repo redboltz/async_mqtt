@@ -332,7 +332,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto username = std::make_shared<am::optional<std::string>>();
                     mqtts_ctx->set_verify_mode(as::ssl::verify_peer);
                     mqtts_ctx->set_verify_callback(
-                        [username, &vm, mqtts_ctx] // copy capture socket shared_ptr
+                        [username, &vm] // copy capture socket shared_ptr
                         (bool preverified, boost::asio::ssl::verify_context& ctx) {
                             // user can set username in the callback
                             return
@@ -354,7 +354,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
-                        [&mqtts_async_accept, &brk, epsp, username]
+                        [&mqtts_async_accept, &brk, epsp, username, mqtts_ctx]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -364,7 +364,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                 // TBD insert underlying timeout here
                                 epsp->next_layer().async_handshake(
                                     as::ssl::stream_base::server,
-                                    [&brk, epsp, username]
+                                    [&brk, epsp, username, mqtts_ctx]
                                     (boost::system::error_code const& ec) mutable {
                                         if (ec) {
                                             ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -420,7 +420,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto username = std::make_shared<am::optional<std::string>>();
                     wss_ctx->set_verify_mode(as::ssl::verify_peer);
                     wss_ctx->set_verify_callback(
-                        [username, &vm, wss_ctx] // copy capture socket shared_ptr
+                        [username, &vm]
                         (bool preverified, boost::asio::ssl::verify_context& ctx) {
                             // user can set username in the callback
                             return
@@ -442,7 +442,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
-                        [&wss_async_accept, &brk, epsp, username]
+                        [&wss_async_accept, &brk, epsp, username, wss_ctx]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -452,7 +452,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                 // TBD insert underlying timeout here
                                 epsp->next_layer().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
-                                    [&brk, epsp, username]
+                                    [&brk, epsp, username, wss_ctx]
                                     (boost::system::error_code const& ec) mutable {
                                         if (ec) {
                                             ASYNC_MQTT_LOG("mqtt_broker", error)
