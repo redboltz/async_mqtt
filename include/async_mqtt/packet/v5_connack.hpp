@@ -131,7 +131,7 @@ public:
                 "v5::connack_packet connect acknowledge flags is invalid"
             );
         }
-        // connect_reason_code
+        // reason_code
         reason_code_ = static_cast<connect_reason_code>(buf.front());
         buf.remove_prefix(1);
         switch (reason_code_) {

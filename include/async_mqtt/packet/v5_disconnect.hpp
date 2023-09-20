@@ -111,7 +111,7 @@ public:
             return;
         }
 
-        // connect_reason_code
+        // reason_code
         reason_code_.emplace(static_cast<disconnect_reason_code>(buf.front()));
         buf.remove_prefix(1);
         switch (*reason_code_) {
