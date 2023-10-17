@@ -248,12 +248,12 @@ public:
         std::decay_t<CompletionToken>,
         void(std::vector<basic_store_packet_variant<packet_id_bytes>>)
     >::return_type
-    get_stored(
+    get_stored_packets(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.get_stored(
+                return ep.get_stored_packets(
                     std::forward<CompletionToken>(token)
                 );
             }
