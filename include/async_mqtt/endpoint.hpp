@@ -889,7 +889,7 @@ private: // compose operation impl
                                         force_move(self)
                                     );
                                     if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
-                                        // server send connack after connack sent
+                                        // server send stored packets after connack sent
                                         a_ep.send_stored();
                                     }
                                     if constexpr(Role == role::client) {
@@ -910,7 +910,7 @@ private: // compose operation impl
                             force_move(self)
                         );
                         if constexpr(is_connack<Packet>()) {
-                            // server send connack after connack sent
+                            // server send stored packets after connack sent
                             a_ep.send_stored();
                         }
                         if constexpr(Role == role::client) {
@@ -1231,6 +1231,10 @@ private: // compose operation impl
                     }
                     if (actual_packet.opts().get_qos() == qos::exactly_once) {
                         ep.qos2_publish_processing_.insert(actual_packet.packet_id());
+                        ep.pid_pubrec_.insert(actual_packet.packet_id());
+                    }
+                    else {
+                        ep.pid_puback_.insert(actual_packet.packet_id());
                     }
                 }
             }
@@ -1323,6 +1327,7 @@ private: // compose operation impl
             if constexpr(is_pubrel<std::decay_t<ActualPacket>>()) {
                 BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
                 if (ep.need_store_) ep.store_.add(actual_packet);
+                ep.pid_pubcomp_.insert(actual_packet.packet_id());
             }
 
             if constexpr(is_instance_of<v5::basic_pubcomp_packet, std::decay_t<ActualPacket>>::value) {
@@ -1331,10 +1336,12 @@ private: // compose operation impl
 
             if constexpr(is_subscribe<std::decay_t<ActualPacket>>()) {
                 BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+                ep.pid_suback_.insert(actual_packet.packet_id());
             }
 
             if constexpr(is_unsubscribe<std::decay_t<ActualPacket>>()) {
                 BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+                ep.pid_unsuback_.insert(actual_packet.packet_id());
             }
 
             if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {
@@ -1774,40 +1781,128 @@ private: // compose operation impl
                         },
                         [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
-                            ep.pid_man_.release_id(packet_id);
+                            if (ep.pid_puback_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
+                                ep.pid_man_.release_id(packet_id);
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id puback received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
+                                );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
+                            }
                         },
                         [&](v5::basic_puback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v5_puback, packet_id);
-                            ep.pid_man_.release_id(packet_id);
-                            --ep.publish_send_count_;
-                            send_publish_from_queue();
+                            if (ep.pid_puback_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v5_puback, packet_id);
+                                ep.pid_man_.release_id(packet_id);
+                                --ep.publish_send_count_;
+                                send_publish_from_queue();
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id puback received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
+                                );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
+                            }
                         },
                         [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v3_1_1_pubrec, packet_id);
-                            if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                ep.send(
-                                    v3_1_1::basic_pubrel_packet<PacketIdBytes>(packet_id),
-                                    [](system_error const&){}
+                            if (ep.pid_pubrec_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v3_1_1_pubrec, packet_id);
+                                if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
+                                    ep.send(
+                                        v3_1_1::basic_pubrel_packet<PacketIdBytes>(packet_id),
+                                        [](system_error const&){}
+                                    );
+                                }
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id pubrec received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
                                 );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
                             }
                         },
                         [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v5_pubrec, packet_id);
-                            if (is_error(p.code())) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.qos2_publish_processing_.erase(packet_id);
-                                --ep.publish_send_count_;
-                                send_publish_from_queue();
+                            if (ep.pid_pubrec_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v5_pubrec, packet_id);
+                                if (is_error(p.code())) {
+                                    ep.pid_man_.release_id(packet_id);
+                                    ep.qos2_publish_processing_.erase(packet_id);
+                                    --ep.publish_send_count_;
+                                    send_publish_from_queue();
+                                }
+                                else if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
+                                    ep.send(
+                                        v5::basic_pubrel_packet<PacketIdBytes>(packet_id),
+                                        [](system_error const&){}
+                                    );
+                                }
                             }
-                            else if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                ep.send(
-                                    v5::basic_pubrel_packet<PacketIdBytes>(packet_id),
-                                    [](system_error const&){}
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id pubrec received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
                                 );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
                             }
                         },
                         [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
@@ -1832,37 +1927,93 @@ private: // compose operation impl
                         },
                         [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
-                            ep.pid_man_.release_id(packet_id);
-                            ep.qos2_publish_processing_.erase(packet_id);
-                            --ep.publish_send_count_;
-                            send_publish_from_queue();
+                            if (ep.pid_pubcomp_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
+                                ep.pid_man_.release_id(packet_id);
+                                ep.qos2_publish_processing_.erase(packet_id);
+                                --ep.publish_send_count_;
+                                send_publish_from_queue();
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id pubcomp received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
+                                );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
+                            }
                         },
                         [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.store_.erase(response_packet::v5_pubcomp, packet_id);
-                            ep.pid_man_.release_id(packet_id);
-                            ep.qos2_publish_processing_.erase(packet_id);
+                            if (ep.pid_pubcomp_.erase(packet_id)) {
+                                ep.store_.erase(response_packet::v5_pubcomp, packet_id);
+                                ep.pid_man_.release_id(packet_id);
+                                ep.qos2_publish_processing_.erase(packet_id);
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_impl", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << "invalid packet_id pubcomp received packet_id:" << packet_id;
+                                state = disconnect;
+                                decided_error.emplace(
+                                    make_error(
+                                        errc::bad_message,
+                                        "packet_id invalid"
+                                    )
+                                );
+                                auto& a_ep{ep};
+                                a_ep.send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::topic_alias_invalid
+                                            },
+                                    force_move(self)
+                                );
+                                return;
+                            }
                         },
                         [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>&) {
                         },
                         [&](v5::basic_subscribe_packet<PacketIdBytes>&) {
                         },
                         [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            if (ep.pid_suback_.erase(packet_id)) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
                         },
                         [&](v5::basic_suback_packet<PacketIdBytes>& p) {
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            if (ep.pid_suback_.erase(packet_id)) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
                         },
                         [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
                         [&](v5::basic_unsubscribe_packet<PacketIdBytes>&) {
                         },
                         [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            if (ep.pid_unsuback_.erase(packet_id)) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
                         },
                         [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
-                            ep.pid_man_.release_id(p.packet_id());
+                            auto packet_id = p.packet_id();
+                            if (ep.pid_unsuback_.erase(packet_id)) {
+                                ep.pid_man_.release_id(packet_id);
+                            }
                         },
                         [&](v3_1_1::pingreq_packet&) {
                             if constexpr(can_send_as_server(Role)) {
@@ -1930,6 +2081,11 @@ private: // compose operation impl
                 else {
                     if (call_complete && !decided_error) self.complete(force_move(v));
                 }
+            } break;
+            case disconnect: {
+                state = close;
+                auto& a_ep{ep};
+                a_ep.close(force_move(self));
             } break;
             case close:
                 BOOST_ASSERT(decided_error);
@@ -2219,6 +2375,11 @@ private:
         publish_recv_.clear();
         qos2_publish_processing_.clear();
         need_store_ = false;
+        pid_suback_.clear();
+        pid_unsuback_.clear();
+        pid_puback_.clear();
+        pid_pubrec_.clear();
+        pid_pubcomp_.clear();
     }
 
     void reset_pingreq_send_timer() {
@@ -2367,6 +2528,11 @@ private:
     protocol_version protocol_version_;
     std::shared_ptr<stream_type> stream_;
     packet_id_manager<packet_id_t> pid_man_;
+    std::set<packet_id_t> pid_suback_;
+    std::set<packet_id_t> pid_unsuback_;
+    std::set<packet_id_t> pid_puback_;
+    std::set<packet_id_t> pid_pubrec_;
+    std::set<packet_id_t> pid_pubcomp_;
 
     bool need_store_ = false;
     store<PacketIdBytes, strand_type> store_{strand()};
