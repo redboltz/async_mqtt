@@ -82,6 +82,9 @@ jobs:
       with:
         path: usr
         key: ${{ runner.os }}-boost-20230507
+    - name: install clang++15
+      run: |
+         sudo apt-get install clang-15 clang++-15
     - name: Build boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       run: ./.github/depends/boost.sh -b 64 -t gcc
@@ -101,18 +104,13 @@ jobs:
         [ ${{ matrix.pattern }} == 2 ] && \
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 3 ] && \
-        gcc --version \
-        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${NS_CXXFLAGS_GCC} "&& export LDFLAGS=${NS_LDFLAGS}
-        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON "
-        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
-        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
-        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=g++-12  -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS_GCC} && export LDFLAGS=${NS_LDFLAGS}
+        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++-15 -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON "
+        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++-15 -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++-15 -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
+        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=g++-12     -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF"
         FLAGS="$FLAGS -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
-         echo "begin"
-         echo  ${{env.BOOST_ROOT}}
-         echo "end"
-         ls -al /home/runner/work/async_mqtt/async_mqtt/usr
-         BOOST_ROOT=/home/runner/work/async_mqtt/async_mqtt/usr cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
+        BOOST_ROOT=/home/runner/work/async_mqtt/async_mqtt/usr cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
     - name: Check Header Dependencies
       run: |
         cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
