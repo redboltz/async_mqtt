@@ -45,7 +45,6 @@ public:
     static constexpr size_type npos = string_view::npos;
 
     constexpr buffer() noexcept = default;
-    buffer(buffer const& other) noexcept = default;
     constexpr buffer(char const* s, std::size_t count)
         :view_{s, count}
     {}
@@ -116,8 +115,6 @@ public:
         : view_{&*first, static_cast<std::size_t>(std::distance(first, last))},
           life_{force_move(life)}
     {}
-
-    buffer& operator=(buffer const& buf) noexcept = default;
 
     constexpr const_iterator begin() const noexcept {
         return view_.begin();
