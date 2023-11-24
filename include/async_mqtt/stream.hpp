@@ -398,7 +398,6 @@ private:
                         force_move(self)
                     )
                 );
-                if (!a_strm.lowest_layer().is_open()) return;
                 if (!a_strm.writing_ && a_strm.queue_->stopped()) {
                     a_strm.queue_->restart();
                     a_strm.queue_->poll_one();
@@ -441,7 +440,6 @@ private:
                     [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
                             a_strm.writing_ = false;
-                            if (!a_strm.lowest_layer().is_open()) return;
                             if (a_strm.queue_->stopped()) a_strm.queue_->restart();
                             queue->poll_one();
                         }
@@ -469,7 +467,6 @@ private:
                     [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
                             a_strm.writing_ = false;
-                            if (!a_strm.lowest_layer().is_open()) return;
                             if (a_strm.queue_->stopped()) a_strm.queue_->restart();
                             queue->poll_one();
                         }
