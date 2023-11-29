@@ -1,3 +1,10 @@
+## 2.0.1
+- Improved buffer implementation to support various compilers. #87
+- Improved packet_id management. #85
+- Fixed inconsistent function names. #84, #89
+  They could be considered as breaking changes but I regard them to bug fix so I don't update the mejor version.
+- Fixed packet_id length checking. #20
+
 ## 2.0.0
 ### breaking changes
 #### endpoint
