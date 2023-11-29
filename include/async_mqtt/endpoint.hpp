@@ -240,7 +240,7 @@ public:
      * @note By default timeout is not set.
      * @param val if 0, timer is not set, otherwise set val milliseconds.
      */
-    void set_ping_resp_recv_timeout_ms(std::size_t ms) {
+    void set_pingresp_recv_timeout_ms(std::size_t ms) {
         if (ms == 0) {
             pingresp_recv_timeout_ms_ = nullopt;
         }
