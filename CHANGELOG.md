@@ -1,3 +1,13 @@
+## 3.0.0
+### breaking changes
+- Fixed inconsistent function names. #84, #89
+  - get_stored() => get_stored_packets()
+  - set_ping_resp_recv_timeout_ms() => set_pingresp_recv_timeout_ms()
+### other updates
+- Improved buffer implementation to support various compilers. #87
+- Improved packet_id management. #85
+- Fixed packet_id length checking. #20
+
 ## 2.0.0
 ### breaking changes
 #### endpoint
