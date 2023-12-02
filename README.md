@@ -15,3 +15,4 @@
   - Receive Maximum
   - Maximum Packet Size
 - [Performance](performance.md)
+- [Config](config.md)
