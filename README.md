@@ -8,7 +8,6 @@
 - Functionality
   - [connect timeout](functionality/connect_timeout.md)
   - logging
-  - before the first connection
   - Keep session
   - Topic Alias
   - Reuqest/Response
