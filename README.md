@@ -9,7 +9,7 @@
   - [connect timeout](functionality/connect_timeout.md)
   - logging
   - [Keep session](functionality/keep_session.md)
-  - Topic Alias
+  - [Topic Alias](functionality/topic_alias.md)
   - Reuqest/Response
   - Receive Maximum
   - Maximum Packet Size
