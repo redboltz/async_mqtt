@@ -8,6 +8,7 @@
   - [C++20 Coroutine](tutorial/cpp20_coro.md)
   - [send/recv](tutorial/send_recv.md)
   - [non packet based APIs](tutorial/non_packet_based.md)
+  - [strand](tutorial/strand.md)
 - Functionality
   - [connect timeout](functionality/connect_timeout.md)
   - logging
