@@ -2,6 +2,8 @@
 C++20 coroutine is stackful coroutine that is supported by the language.
 See https://en.cppreference.com/w/cpp/language/coroutines
 
+C++coroutine coroutine can avoid deeply nested callbacks. The code becomes easy to read.
+
 ## co_spawn your application routine
 
 ```cpp
