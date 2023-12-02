@@ -42,6 +42,8 @@ First, choose underlying layer.
     };
 ```
 
+NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
+
 ### ws
 
 ```cpp
