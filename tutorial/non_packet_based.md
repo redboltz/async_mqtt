@@ -2,7 +2,7 @@
 
 Most of async_mqtt APIs are [packet based](send_recv.md#packet-based-apis) so functionalities are automatically applied by simply set packets parameters and send/recv them. However, some of functionalities cannot be explained the packets.
 Such functionalities are implemented as non packet based APIs.
-Here are the list of non packet based APIs.
+Here are the list of non packet based APIs. The functions should be called before send/recv is called.
 
 endpoint member function | Effects
 ---|---
