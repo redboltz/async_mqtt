@@ -14,7 +14,7 @@
   - logging
   - [Keep session](functionality/keep_session.md)
   - [Topic Alias](functionality/topic_alias.md)
-  - Reuqest/Response
+  - [Reuqest/Response](functionality/request_response.md)
   - Receive Maximum
   - Maximum Packet Size
 - [Performance](performance.md)
