@@ -4,7 +4,9 @@ This is stackless coroutine approach. It uses switch-case based Boost.Asio stack
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
 It is convenient but a little tricky. Due to switch-case based, there are some restrictions especially define local variables.
-If you can use C++20 coroutine, I recommend use it.
+If you can use [C++20 coroutine](cpp20_coro.md), I recommend use it.
+
+stackless coroutine can avoid deeply nested callbacks. The code becomes easy to read.
 
 ## Prepare your application class
 
