@@ -8,7 +8,7 @@
 - Functionality
   - [connect timeout](functionality/connect_timeout.md)
   - logging
-  - Keep session
+  - [Keep session](functionality/keep_session.md)
   - Topic Alias
   - Reuqest/Response
   - Receive Maximum
