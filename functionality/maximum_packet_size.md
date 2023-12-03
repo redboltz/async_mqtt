@@ -1,0 +1,14 @@
+# Maximum Packet Size
+Maximum Packet Size is a way to size control for all packets. 
+If the node sends over the Maximum Packet Size packet, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x95 (Packet too large).
+
+## Notifying Maximum Packet Size
+There are two independent Maximum Packet Size. 
+
+```mermaid
+sequenceDiagram
+client1->>broker: CONNECT MaximumPacketSize=10000
+Note right of broker: broker can send at most 10000 bytes packet to client1
+broker->>client1: CONNACK ReceiveMaximum=20000
+Note left of client1: client1 can send at most 20000  bytes packet to the broker
+```
