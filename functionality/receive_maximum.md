@@ -23,7 +23,7 @@ client1->>broker: CONNECT ReceiveMaximum=10
 Note right of broker: broker can send at most 10 PUBLISH (QoS1 or QoS2) packets to client1
 Note right of broker: prepare 20 * MaximumPacketSize memory for client1
 broker->>client1: CONNACK ReceiveMaximum=20
-Note left of client1: client1 can send at most 10 PUBLISH (QoS1 or QoS2) packets to the broker
+Note left of client1: client1 can send at most 20 PUBLISH (QoS1 or QoS2) packets to the broker
 ```
 
 ### broker to client Receive Maximum
