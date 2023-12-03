@@ -7,7 +7,7 @@ recv() function is more flexible than handler registering APIs. In addition, it 
 You cannot call recv() function continuously. You can call the next recv() function after the previous recv() function's CompletionToken is invoked or in the Completion handler.
 
 ### [packet_variant](https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html)
-recv()'s CompletionToken parameter is [packet_variant](/include/async_mqtt/packet/packet_variant.hpp). It is a variant type of all MQTT packets and error.
+recv()'s CompletionToken parameter is [packet_variant](https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html). It is a variant type of all MQTT packets and error.
 
 NOTE: async_mqtt has basic_foobar type and foobar type if the type contains MQTT's Packet Identifier. basic_foobar takes PacketIdBytes parameter. basic_foobar<2> is the same as foobar. MQTT spec defines the size of Packet Identifier to 2. But some of clustering brokers use expanded Packet Identifer for inter brokers communication. General users doesn't need to care basic_foobar types, simply use foobar.
 
