@@ -15,7 +15,7 @@
   - [Keep session](functionality/keep_session.md)
   - [Topic Alias](functionality/topic_alias.md)
   - [Reuqest/Response](functionality/request_response.md)
-  - Receive Maximum
+  - [Receive Maximum](functionality/receive_maximum.md)
   - Maximum Packet Size
 - [Performance](performance.md)
 - [Config](config.md)
