@@ -1,0 +1,48 @@
+# Request/Response
+MQTT's communication model is a pub/sub model. In order to realize Request/Response on the pub/sub model, MQTT v5.0 uses the following mechanism.
+
+```mermaid
+sequenceDiagram
+client1->>broker: CONNECT RequestResponseInformation=1
+Note right of broker: BGTFC1 means Broker Generated Topic For Client1
+broker->>client1: CONNACK ResponseInformation=BGTFC1
+client1->>broker: SUBSCRIBE BGTFC1
+broker->>client1: SUBACK
+client2->>broker: SUBSCRIBE TopicFilter=ControlTopic
+broker->>client2: SUBACK
+client1->>broker: PUBLISH TopicName=ControlTopic, ResponseTopic=BGTFC1, Payload=TurnOnSwitch
+broker->>client2: deliver PUBLISH
+Note left of client2: Use BGTFC1 for response
+client2->>broker: PUBLISH TopicName=BGTFC1 Payload=TurnOnSuccess
+broker->>client1: deliver PUBLISH
+Note right of client1: Got the control response
+```
+
+## Client
+async_mqtt doesn't do any special treatment for Request/Response. Simply, send CONNECT packet with RequestResponseInformation property that value is 1, and then receives CONNACK packet. If the CONNACK packet has ResponseInformation, then you can get ResponseInformation. You can subscribe it.
+
+NOTE: ResponseInformation is a source information of ResponseTopic. It typically the name of topic but it depends on the broker. Sometimes some strings operation would be required. Check the broker manual.
+
+## Broker
+The broker part of async_mqtt supports Request/Response. When the broker receives CONNECT packet with RequestResponseInformation=1, then the broker automatically generate ResponseInformation and sends back CONNACK packet with it. ResponseInformation is TopicName for the response. So the client can use it as ResponseTopic property when sending PUBLISH packet. 
+async_mqtt broker has authentication/authorization support. The generated topic can be subscribed only the client that sends RequestResponseInformation. The generated topic can be published by all clients.
+
+## Correlation Data
+See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115
+
+The client has only one ResponseTopic and use it for all request. The request receiver client could be different. So the responses could be mixed. In order to distingish correct response, CorrelationData can be used. See the following diagram.
+
+```mermaid
+sequenceDiagram
+Note right of client1: omit broker
+client1->>client2: PUBLISH TopicName=T2, ResponseTopic=R1, CorrelationData=UnpredictableString2, Payload=ON
+client1->>client3: PUBLISH TopicName=T3, ResponseTopic=R1, CorrelationData=UnpredictableString3, Payload=ON
+client2->>client1: PUBLISH TopicName=R1, CorrelationData=UnpredictableString2, Payload=Failed
+client3->>client1: PUBLISH TopicName=R1, CorrelationData=UnpredictableString3, Payload=Success
+```
+
+client1 got the ResponseInformation R1 and uses it as ResponseTopic. Both client2 and client3 receive the same ResponseTopic and use it for publish back the response.
+If control PUBLISH packet contains not only ResponseTopic but also CorrelationData, then the receiver just set the CorrelationData to the response PUBLISH packet.
+
+client1 can choose any string as CorrelationData. Typically, choose unpredictable string to avoid malformed response. 
+client1 needs to manage a CorrelationData-Request map to check the corresponding request.
