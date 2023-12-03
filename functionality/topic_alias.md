@@ -75,16 +75,22 @@ This process is automatically done by async_mqtt internally. Users don't need to
 sequenceDiagram
 client1->>broker: CONNECT SessionExpiryInterval=0xffffffff(inifinity)
 broker->>client1: CONNACK SessionPresent=0
+
 Note right of client1: Register
 client1->>broker: PUBLISH TopicName=topic1, TopicAlias=1
+
 Note right of client1: Use
 client1->>broker: PUBLISH TopicName="", QoS=1, TopicAlias=1
+
 Note right of client1: Connection closed before PUBACK is received, but the session is keeping by the broker
 client1->>broker: CONNECT CleanStart=0
 broker->>client1: CONNACK SessionPresent=1
+
 Note right of client1: This is a protocol error because TopicAlias is no registered on this conneciton
 client1->>broker: PUBLISH TopicName="", QoS=1, TopicAlias=1
+
 Note right of client1: If client1 doesn't resend the packet, it is QoS=1 (At least once) violation
+
 Note right of client1: Expected behavior is resending the following packet.
 client1->>broker: PUBLISH TopicName=topic1, QoS=1
 ```
