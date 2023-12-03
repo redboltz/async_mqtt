@@ -4,6 +4,17 @@ Topic Alias is a way to reduce PUBLISH packet size.
 ## Notifying capacity
 There are two independent Topic Alias capacities. 
 
+```mermaid
+sequenceDiagram
+Note left of client1: prepare 10 capacity
+client1->>broker: CONNECT TopicAliasMaximum=10
+Note right of broker: broker can send 1-10 TopicAlias to client1
+Note right of broker: prepare 20 capacity for client1
+broker->>client1: CONNACK TopicAliasMaximum=20
+Note left of client1: client1 can send 1-20 TopicAlias to the broker
+```
+
+
 ### broker to client Topic Alias
 The client can set `Topic Alias Maximum` property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH packet with `Topic Alias` property that the value is less than or equal to `Topic Alias Maximum`. The broker could send the PUBLISH packet using `Topic Alias` property.
 If the broker doesn't receive CONNECT packet with `Topic Alias Maximum` property that value is greater than 0, then the broker cannot use `Topic Alias`.
@@ -13,6 +24,21 @@ The broker can set `Topic Alias Maximum` property that value is greater than 0 t
 If the client doesn't receive CONNACK packet with `Topic Alias Maximum` property that value is greater than 0, then the client cannot use `Topic Alias`.
 
 ## Using Topic Alias
+
+```mermaid
+sequenceDiagram
+Note right of client1: Register
+client1->>broker: PUBLISH TopicName=topic1, TopicAlias=1
+Note right of client1: Use
+client1->>broker: PUBLISH TopicName="", TopicAlias=1
+Note right of broker: Extract topic1 from TopicAlias 1
+Note right of client1: Register(Overwirte)
+client1->>broker: PUBLISH TopicName=topic2, TopicAlias=1
+Note right of client1: Use
+client1->>broker: PUBLISH TopicName="", TopicAlias=1
+Note right of broker: Extract topic2 from TopicAlias 1
+```
+
 ### Register/Overwrite
 When you set TopicName and `Topic Alias` property to the PUBLISH packet, then the mapping is registered. If the `Topic Alias` is already mapped, then the mapping is overwritten.
 
@@ -44,4 +70,25 @@ So, the client/broker sends PUBLISH packet with empty length TopicName and `Topi
 In order to solve the problem, the client/broker needs to extract TopicName from the `Topic Alias` property **on sending** and create the new PUBLISH packet for storing that is contained from the extracted TopicName and remove `Topic Alias` property form the sending PUBLISH packet. When resending, use the stored (non Topic Aliased) packet.
 
 This process is automatically done by async_mqtt internally. Users don't need to care about this issue.
+
+```mermaid
+sequenceDiagram
+client1->>broker: CONNECT SessionExpiryInterval=0xffffffff(inifinity)
+broker->>client1: CONNACK SessionPresent=0
+Note right of client1: Register
+client1->>broker: PUBLISH TopicName=topic1, TopicAlias=1
+Note right of client1: Use
+client1->>broker: PUBLISH TopicName="", QoS=1, TopicAlias=1
+Note right of client1: Connection closed before PUBACK is received, but the session is keeping by the broker
+client1->>broker: CONNECT CleanStart=0
+broker->>client1: CONNACK SessionPresent=1
+Note right of client1: This is a protocol error because TopicAlias is no registered on this conneciton
+client1->>broker: PUBLISH TopicName="", QoS=1, TopicAlias=1
+Note right of client1: If client1 doesn't resend the packet, it is QoS=1 (At least once) violation
+Note right of client1: Expected behavior is resending the following packet.
+client1->>broker: PUBLISH TopicName=topic1, QoS=1
+```
+
+async_mqtt does expected behavior automatically.
+
 
