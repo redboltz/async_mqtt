@@ -16,6 +16,6 @@
   - [Topic Alias](functionality/topic_alias.md)
   - [Reuqest/Response](functionality/request_response.md)
   - [Receive Maximum](functionality/receive_maximum.md)
-  - Maximum Packet Size
+  - [Maximum Packet Size](functionality/maximum_packet_size.md)
 - [Performance](performance.md)
 - [Config](config.md)
