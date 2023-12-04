@@ -58,7 +58,8 @@ class basic_endpoint {
         connecting,
         connected,
         disconnecting,
-        disconnected
+        closing,
+        closed
     };
 
     static constexpr bool can_send_as_client(role r) {
@@ -957,11 +958,11 @@ private: // compose operation impl
 
             // connection status check
             if constexpr(is_connect<ActualPacket>()) {
-                if (ep.status_ != connection_status::disconnected) {
+                if (ep.status_ != connection_status::closed) {
                     self.complete(
                         make_error(
                             errc::protocol_error,
-                            "connect_packet can only be send on connection_status::disconnected"
+                            "connect_packet can only be send on connection_status::closed"
                         )
                     );
                     return false;
@@ -1467,11 +1468,8 @@ private: // compose operation impl
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "recv error:" << ec.message();
                 decided_error.emplace(ec);
-                ep.status_ = connection_status::disconnected;
                 ep.recv_processing_ = false;
-                state = close;
-                auto& a_ep{ep};
-                a_ep.close(force_move(self));
+                try_close(self);
                 return;
             }
 
@@ -2050,7 +2048,7 @@ private: // compose operation impl
                         [&](v5::auth_packet&) {
                         },
                         [&](system_error&) {
-                            ep.status_ = connection_status::disconnected;
+                            ep.status_ = connection_status::closed;
                         }
                     }
                 );
@@ -2082,11 +2080,9 @@ private: // compose operation impl
                     if (call_complete && !decided_error) self.complete(force_move(v));
                 }
             } break;
-            case disconnect: {
-                state = close;
-                auto& a_ep{ep};
-                a_ep.close(force_move(self));
-            } break;
+            case disconnect:
+                try_close(self);
+                break;
             case close:
                 BOOST_ASSERT(decided_error);
                 ep.recv_processing_ = false;
@@ -2107,9 +2103,7 @@ private: // compose operation impl
             system_error const&
         ) {
             BOOST_ASSERT(state == disconnect);
-            state = close;
-            auto& a_ep{ep};
-            a_ep.close(force_move(self));
+            try_close(self);
         }
 
         void send_publish_from_queue() {
@@ -2171,6 +2165,23 @@ private: // compose operation impl
             }
             return true;
         }
+
+        template <typename Self>
+        void try_close(Self& self) {
+            if (ep.status_ == connection_status::closing ||
+                ep.status_ == connection_status::closed) {
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                    << "already closed";
+                BOOST_ASSERT(decided_error);
+                self.complete(*decided_error);
+            }
+            else {
+                state = close;
+                auto& a_ep{ep};
+                a_ep.close(force_move(self));
+            }
+        }
     };
 
     struct close_impl {
@@ -2185,6 +2196,7 @@ private: // compose operation impl
             switch (state) {
             case initiate: {
                 state = complete;
+                ep.status_ = connection_status::closing;
                 auto& a_ep{ep};
                 a_ep.stream_->close(force_move(self));
             } break;
@@ -2193,7 +2205,7 @@ private: // compose operation impl
                 ep.tim_pingreq_send_->cancel();
                 ep.tim_pingreq_recv_->cancel();
                 ep.tim_pingresp_recv_->cancel();
-                ep.status_ = connection_status::disconnected;
+                ep.status_ = connection_status::closed;
                 self.complete();
                 break;
             }
@@ -2387,7 +2399,8 @@ private:
         if (pingreq_send_interval_ms_) {
             tim_pingreq_send_->cancel();
             if (status_ == connection_status::disconnecting ||
-                status_ == connection_status::disconnected) return;
+                status_ == connection_status::closing ||
+                status_ == connection_status::closed) return;
             tim_pingreq_send_->expires_after(
                 std::chrono::milliseconds{*pingreq_send_interval_ms_}
             );
@@ -2424,7 +2437,8 @@ private:
         if (pingreq_recv_timeout_ms_) {
             tim_pingreq_recv_->cancel();
             if (status_ == connection_status::disconnecting ||
-                status_ == connection_status::disconnected) return;
+                status_ == connection_status::closing ||
+                status_ == connection_status::closed) return;
             tim_pingreq_recv_->expires_after(
                 std::chrono::milliseconds{*pingreq_recv_timeout_ms_}
             );
@@ -2473,7 +2487,8 @@ private:
         if (pingresp_recv_timeout_ms_) {
             tim_pingresp_recv_->cancel();
             if (status_ == connection_status::disconnecting ||
-                status_ == connection_status::disconnected) return;
+                status_ == connection_status::closing ||
+                status_ == connection_status::closed) return;
             tim_pingresp_recv_->expires_after(
                 std::chrono::milliseconds{*pingresp_recv_timeout_ms_}
             );
@@ -2555,7 +2570,7 @@ private:
     std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 
-    connection_status status_{connection_status::disconnected};
+    connection_status status_{connection_status::closed};
 
     optional<std::size_t> pingreq_send_interval_ms_;
     optional<std::size_t> pingreq_recv_timeout_ms_;
