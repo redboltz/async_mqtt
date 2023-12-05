@@ -28,6 +28,7 @@
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/constant.hpp>
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/exception.hpp>
@@ -405,20 +406,34 @@ private:
             } break;
             case write: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
-                state = bind;
-                BOOST_ASSERT(!strm.writing_);
-                strm.writing_ = true;
-                queue_work_guard.emplace(strm.queue_->get_executor());
-                auto& a_strm{strm};
-                auto cbs = packet->const_buffer_sequence();
-                async_write(
-                    a_strm.nl_,
-                    cbs,
-                    as::bind_executor(
+                if (strm.lowest_layer().is_open()) {
+                    state = bind;
+                    BOOST_ASSERT(!strm.writing_);
+                    strm.writing_ = true;
+                    queue_work_guard.emplace(strm.queue_->get_executor());
+                    auto& a_strm{strm};
+                    auto cbs = packet->const_buffer_sequence();
+                    async_write(
+                        a_strm.nl_,
+                        cbs,
+                        as::bind_executor(
+                            a_strm.strand_,
+                            force_move(self)
+                        )
+                    );
+                }
+                else {
+                    state = bind;
+                    auto& a_strm{strm};
+                    as::dispatch(
                         a_strm.strand_,
-                        force_move(self)
-                    )
-                );
+                        as::append(
+                            force_move(self),
+                            errc::make_error_code(errc::connection_reset),
+                            0
+                        )
+                    );
+                }
             } break;
             default:
                 BOOST_ASSERT(false);
@@ -620,11 +635,32 @@ private:
                 }
                 else if constexpr(is_tls<Stream>::value) {
                     auto& a_strm{strm};
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                        << "TLS async_shutdown start with timeout";
+                    auto tim = std::make_shared<as::steady_timer>(a_strm.strand_, shutdown_timeout);
+                    tim->async_wait(
+                        as::bind_executor(
+                            a_strm.strand_,
+                            [this, &next_layer = stream.get().next_layer()] (error_code const& ec) {
+                                if (!ec) {
+                                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                                        << "TLS async_shutdown timeout";
+                                    error_code ec;
+                                    next_layer.close(ec);
+                                }
+                            }
+                        )
+                    );
                     stream.get().async_shutdown(
                         as::bind_executor(
                             a_strm.strand_,
                             as::append(
-                                force_move(self),
+                                as::consign(
+                                    force_move(self),
+                                    tim
+                                ),
                                 std::ref(stream.get().next_layer())
                             )
                         )
@@ -633,7 +669,17 @@ private:
                 else {
                     state = complete;
                     error_code ec;
-                    stream.get().close(ec);
+                    if (stream.get().is_open()) {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                            << "TCP close";
+                        stream.get().close(ec);
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                            << "TCP already closed";
+                    }
                     auto exe = as::get_associated_executor(self);
                     if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                         state = complete;

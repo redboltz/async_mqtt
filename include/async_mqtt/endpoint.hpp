@@ -2195,6 +2195,9 @@ private: // compose operation impl
         ) {
             switch (state) {
             case initiate: {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "close initiate status:" << static_cast<int>(ep.status_);
                 state = complete;
                 ep.status_ = connection_status::closing;
                 auto& a_ep{ep};
@@ -2202,6 +2205,9 @@ private: // compose operation impl
             } break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "close complete status:" << static_cast<int>(ep.status_);
                 ep.tim_pingreq_send_->cancel();
                 ep.tim_pingreq_recv_->cancel();
                 ep.tim_pingresp_recv_->cancel();
