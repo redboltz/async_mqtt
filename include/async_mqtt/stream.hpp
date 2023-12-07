@@ -27,6 +27,7 @@
 #include <async_mqtt/core/stream_traits.hpp>
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/is_strand.hpp>
@@ -84,8 +85,6 @@ public:
                 )
             );
         }
-        queue_.emplace();
-        queue_->stop();
     }
 
     ~stream() {
@@ -372,7 +371,6 @@ private:
         std::shared_ptr<Packet> packet;
         error_code last_ec = error_code{};
         this_type_sp life_keeper = strm.shared_from_this();
-        optional<as::executor_work_guard<as::io_context::executor_type>> queue_work_guard = nullopt;
         enum { dispatch, post, write, bind, complete } state = dispatch;
 
         template <typename Self>
@@ -392,25 +390,18 @@ private:
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
                 state = write;
                 auto& a_strm{strm};
-                as::post(
-                    *a_strm.queue_,
+                a_strm.queue_.post(
                     as::bind_executor(
                         a_strm.strand_,
                         force_move(self)
                     )
                 );
-                if (!a_strm.writing_ && a_strm.queue_->stopped()) {
-                    a_strm.queue_->restart();
-                    a_strm.queue_->poll_one();
-                }
             } break;
             case write: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                strm.queue_.start_work();
                 if (strm.lowest_layer().is_open()) {
                     state = bind;
-                    BOOST_ASSERT(!strm.writing_);
-                    strm.writing_ = true;
-                    queue_work_guard.emplace(strm.queue_->get_executor());
                     auto& a_strm{strm};
                     auto cbs = packet->const_buffer_sequence();
                     async_write(
@@ -449,14 +440,13 @@ private:
         ) {
             if (ec) {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
                     a_strm.strand_,
-                    [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
+                    [&a_strm,wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
-                            a_strm.writing_ = false;
-                            if (a_strm.queue_->stopped()) a_strm.queue_->restart();
-                            queue->poll_one();
+                            a_strm.queue_.poll_one();
                         }
                     }
                 );
@@ -476,14 +466,13 @@ private:
             switch (state) {
             case bind: {
                 BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
                     a_strm.strand_,
-                    [&a_strm, &queue = a_strm.queue_, wp = a_strm.weak_from_this()] {
+                    [&a_strm, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
-                            a_strm.writing_ = false;
-                            if (a_strm.queue_->stopped()) a_strm.queue_->restart();
-                            queue->poll_one();
+                            a_strm.queue_.poll_one();
                         }
                     }
                 );
@@ -743,9 +732,8 @@ private:
 private:
     next_layer_type nl_;
     strand_type strand_{nl_.get_executor()};
-    optional<as::io_context> queue_;
+    ioc_queue queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
-    bool writing_ = false;
 };
 
 } // namespace async_mqtt
