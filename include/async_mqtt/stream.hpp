@@ -514,6 +514,7 @@ private:
             complete
         } state = dispatch;
         error_code last_ec = error_code{};
+        this_type_sp life_keeper = strm.shared_from_this();
 
         template <typename Self>
         void operator()(
