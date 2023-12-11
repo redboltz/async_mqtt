@@ -21,19 +21,19 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub1 = ep_t(
+    auto amep_sub1 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub2 = ep_t(
+    auto amep_sub2 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub3 = ep_t(
+    auto amep_sub3 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
         }
     };
 
-    tc t{{amep_pub, amep_sub1, amep_sub2, amep_sub3}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub1, *amep_sub2, *amep_sub3}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -330,19 +330,19 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub1 = ep_t(
+    auto amep_sub1 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub2 = ep_t(
+    auto amep_sub2 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub3 = ep_t(
+    auto amep_sub3 = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -654,7 +654,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
         }
     };
 
-    tc t{{amep_pub, amep_sub1, amep_sub2, amep_sub3}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub1, *amep_sub2, *amep_sub3}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

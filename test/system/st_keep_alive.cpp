@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
         }
     };
 
-    tc t{amep, "127.0.0.1", 1883};
+    tc t{*amep, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
         }
     };
 
-    tc t{amep, "127.0.0.1", 1883};
+    tc t{*amep, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

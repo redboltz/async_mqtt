@@ -46,10 +46,16 @@ public:
         return queue_.stopped();
     }
 
-    void poll_one() {
+    std::size_t poll_one() {
         working_ = false;
         if (queue_.stopped()) queue_.restart();
-        queue_.poll_one();
+        return queue_.poll_one();
+    }
+
+    std::size_t poll() {
+        working_ = false;
+        if (queue_.stopped()) queue_.restart();
+        return queue_.poll();
     }
 
 private:

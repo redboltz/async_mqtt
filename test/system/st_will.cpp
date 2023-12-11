@@ -21,11 +21,11 @@ BOOST_AUTO_TEST_CASE(v311_will) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -140,11 +140,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -263,11 +263,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -386,11 +386,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -506,7 +506,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -516,11 +516,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -648,7 +648,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -658,11 +658,11 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t(
+    auto amep_pub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
-    auto amep_sub = ep_t(
+    auto amep_sub = ep_t::create(
         am::protocol_version::v5,
         ioc.get_executor()
     );
@@ -789,7 +789,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
         }
     };
 
-    tc t{{amep_pub, amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

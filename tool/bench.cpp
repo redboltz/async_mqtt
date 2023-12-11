@@ -1958,7 +1958,7 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    std::make_shared<client_t>(
+                    client_t::create(
                         version,
                         iocs.at(i % num_of_iocs).get_executor()
                     ),
@@ -2023,7 +2023,7 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(am::tls::verify_none);
                 }
                 cis.emplace_back(
-                    std::make_shared<client_t>(
+                    client_t::create(
                         version,
                         iocs.at(i % num_of_iocs).get_executor(),
                         ctx
@@ -2086,7 +2086,7 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    std::make_shared<client_t>(
+                    client_t::create(
                         version,
                         iocs.at(i % num_of_iocs).get_executor()
                     ),
@@ -2156,7 +2156,7 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(am::tls::verify_none);
                 }
                 cis.emplace_back(
-                    std::make_shared<client_t>(
+                    client_t::create(
                         version,
                         iocs.at(i % num_of_iocs).get_executor(),
                         ctx

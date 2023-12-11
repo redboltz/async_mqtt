@@ -28,21 +28,21 @@ BOOST_AUTO_TEST_CASE(cb) {
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor(),
         ctx
     );
 
-    amep.lowest_layer().async_connect(
+    amep->lowest_layer().async_connect(
         endpoint,
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amep.next_layer().async_handshake(
+            amep->next_layer().async_handshake(
                 am::tls::stream_base::client,
                 [&](am::error_code const& ec) {
                     BOOST_TEST(ec == am::error_code{});
-                    amep.send(
+                    amep->send(
                         am::v3_1_1::connect_packet{
                             true,   // clean_session
                             0x1234, // keep_alive
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                         },
                         [&](am::system_error const& se) {
                             BOOST_TEST(!se);
-                            amep.recv(
+                            amep->recv(
                                 [&](am::packet_variant pv) {
                                     pv.visit(
                                         am::overload {
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                                             }
                                         }
                                     );
-                                    amep.close([]{});
+                                    amep->close([]{});
                                 }
                             );
                         }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor(),
         ctx
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     );
 
     {
-        auto fut = amep.lowest_layer().async_connect(
+        auto fut = amep->lowest_layer().async_connect(
             endpoint,
             as::use_future
         );
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(fut) {
         }
     }
     {
-        auto fut = amep.next_layer().async_handshake(
+        auto fut = amep->next_layer().async_handshake(
             am::tls::stream_base::client,
             as::use_future
         );
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep.send(
+            amep->send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep.recv(as::use_future);
+            amep->recv(as::use_future);
         auto pv = fut.get();
         pv.visit(
             am::overload {
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(fut) {
         );
     }
     {
-        auto fut = amep.close(as::use_future);
+        auto fut = amep->close(as::use_future);
         fut.get();
     }
 }
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(coro) {
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor(),
         ctx
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(coro) {
         }
     };
 
-    tc t{amep, "127.0.0.1", 8883};
+    tc t{*amep, "127.0.0.1", 8883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
     ctx.use_private_key_file("client.key.pem", boost::asio::ssl::context::pem);
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor(),
         ctx
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
         }
     };
 
-    tc t{amep, "127.0.0.1", 8883};
+    tc t{*amep, "127.0.0.1", 8883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

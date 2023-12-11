@@ -23,10 +23,10 @@ int main(int argc, char* argv[]) {
     as::io_context ioc;
     as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
-    am::endpoint<am::role::client, am::protocol::mqtt> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    };
+    );
 
     std::cout << "start" << std::endl;
     std::size_t count = 0;
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 
             // Underlying TCP connect
             as::async_connect(
-                amep.next_layer(),
+                amep->next_layer(),
                 eps,
                 [&]
                 (boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/) {
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
                         << std::endl;
                     if (ec) return;
                     // Send MQTT CONNECT
-                    amep.send(
+                    amep->send(
                         am::v3_1_1::connect_packet{
                             true,   // clean_session
                             0x1234, // keep_alive
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
                                 return;
                             }
                             // Recv MQTT CONNACK
-                            amep.recv(
+                            amep->recv(
                                 [&]
                                 (am::packet_variant pv) {
                                     if (pv) {
@@ -82,9 +82,9 @@ int main(int argc, char* argv[]) {
                                                         << " sp:" << p.session_present()
                                                         << std::endl;
                                                     // Send MQTT SUBSCRIBE
-                                                    amep.send(
+                                                    amep->send(
                                                         am::v3_1_1::subscribe_packet{
-                                                            *amep.acquire_unique_packet_id(),
+                                                            *amep->acquire_unique_packet_id(),
                                                             { {am::allocate_buffer("topic1"), am::qos::at_most_once} }
                                                         },
                                                         [&]
@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
                                                                 return;
                                                             }
                                                             // Recv MQTT SUBACK
-                                                            amep.recv(
+                                                            amep->recv(
                                                                 [&]
                                                                 (am::packet_variant pv) {
                                                                     if (pv) {
@@ -110,9 +110,9 @@ int main(int argc, char* argv[]) {
                                                                                     }
                                                                                     std::cout << std::endl;
                                                                                     // Send MQTT PUBLISH
-                                                                                    amep.send(
+                                                                                    amep->send(
                                                                                         am::v3_1_1::publish_packet{
-                                                                                            *amep.acquire_unique_packet_id(),
+                                                                                            *amep->acquire_unique_packet_id(),
                                                                                             am::allocate_buffer("topic1"),
                                                                                             am::allocate_buffer("payload1"),
                                                                                             am::qos::at_least_once
@@ -152,11 +152,11 @@ int main(int argc, char* argv[]) {
                                                                                                             }
                                                                                                         );
                                                                                                         if (++count < 2) {
-                                                                                                            amep.recv(*recv_handler);
+                                                                                                            amep->recv(*recv_handler);
                                                                                                         }
                                                                                                         else {
                                                                                                             std::cout << "close" << std::endl;
-                                                                                                            amep.close([]{});
+                                                                                                            amep->close([]{});
                                                                                                         }
                                                                                                     }
                                                                                                     else {
@@ -167,7 +167,7 @@ int main(int argc, char* argv[]) {
                                                                                                         return;
                                                                                                     }
                                                                                                 };
-                                                                                            amep.recv(*recv_handler);
+                                                                                            amep->recv(*recv_handler);
                                                                                         }
                                                                                     );
                                                                                 },

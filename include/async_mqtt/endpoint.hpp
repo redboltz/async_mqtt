@@ -13,6 +13,7 @@
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
+#include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/log.hpp>
@@ -52,7 +53,7 @@ enum class filter {
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-class basic_endpoint {
+class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>>{
 
     enum class connection_status {
         connecting,
@@ -88,10 +89,14 @@ class basic_endpoint {
     }
 
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
+    using this_type_sp = std::shared_ptr<this_type>;
     using stream_type =
         stream<
             NextLayer
         >;
+
+    template <typename T>
+    friend class make_shared_helper;
 
 public:
     /// @brief The type given as NextLayer
@@ -107,27 +112,18 @@ public:
     /// @brief Type of MQTT Packet Identifier.
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
-    /**
-     * @brief constructor
-     * @tparam Args Types for the next layer
-     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
-     *              server can set undetermined
-     * @param  args args for the next layer. There are predefined next layer types:
-     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
-     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
-     */
     template <typename... Args>
-    basic_endpoint(
+    static std::shared_ptr<this_type> create(
         protocol_version ver,
         Args&&... args
-    ): protocol_version_{ver},
-       stream_{std::make_shared<stream_type>(std::forward<Args>(args)...)}
-    {
-        BOOST_ASSERT(
-            (Role == role::client && ver != protocol_version::undetermined) ||
-            Role != role::client
-        );
+    ) {
+        return make_shared_helper<this_type>::make_shared(ver, std::forward<Args>(args)...);
+    }
 
+    ~basic_endpoint() {
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "destroy";
     }
 
     basic_endpoint(this_type const&) = delete;
@@ -763,6 +759,29 @@ public:
     }
 
 private: // compose operation impl
+
+    /**
+     * @brief constructor
+     * @tparam Args Types for the next layer
+     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
+     *              server can set undetermined
+     * @param  args args for the next layer. There are predefined next layer types:
+     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
+     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
+     */
+    template <typename... Args>
+    basic_endpoint(
+        protocol_version ver,
+        Args&&... args
+    ): protocol_version_{ver},
+       stream_{stream_type::create(std::forward<Args>(args)...)}
+    {
+        BOOST_ASSERT(
+            (Role == role::client && ver != protocol_version::undetermined) ||
+            Role != role::client
+        );
+
+    }
 
     struct acquire_unique_packet_id_impl {
         this_type& ep;
@@ -2186,7 +2205,8 @@ private: // compose operation impl
 
     struct close_impl {
         this_type& ep;
-        enum { initiate, complete } state = initiate;
+        enum { dispatch, close, complete } state = dispatch;
+        this_type_sp life_keeper = ep.shared_from_this();
 
         template <typename Self>
         void operator()(
@@ -2194,7 +2214,15 @@ private: // compose operation impl
             error_code const& = error_code{}
         ) {
             switch (state) {
-            case initiate:
+            case dispatch: {
+                state = close;
+                auto& a_ep{ep};
+                as::dispatch(
+                    a_ep.strand(),
+                    force_move(self)
+                );
+            } break;
+            case close:
                 switch (ep.status_) {
                 case connection_status::connecting:
                 case connection_status::connected:
@@ -2221,26 +2249,23 @@ private: // compose operation impl
                         << "already closed";
                     state = complete;
                     self.complete();
-                    break;
-                }
-                break;
-            case complete:
+                } break;
+            case complete: {
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "close complete status:" << static_cast<int>(ep.status_);
-                ep.tim_pingreq_send_->cancel();
-                ep.tim_pingreq_recv_->cancel();
-                ep.tim_pingresp_recv_->cancel();
-                ep.status_ = connection_status::closed;
-                while (!ep.close_queue_.stopped()) {
-                    ASYNC_MQTT_LOG("mqtt_impl", trace)
-                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                        << "process enqueued close";
-                    ep.close_queue_.poll_one();
-                }
+                auto& a_ep{ep};
+                a_ep.tim_pingreq_send_->cancel();
+                a_ep.tim_pingreq_recv_->cancel();
+                a_ep.tim_pingresp_recv_->cancel();
+                a_ep.status_ = connection_status::closed;
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                    << "process enqueued close";
+                a_ep.close_queue_.poll();
                 self.complete();
-                break;
+            } break;
             }
         }
     };

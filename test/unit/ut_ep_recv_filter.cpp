@@ -32,12 +32,12 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
         ioc
-    };
+    );
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
         }
     };
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -65,23 +65,23 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     );
 
     // send connect
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
     );
     {
-        auto ec = ep.send(connect, as::use_future).get();
+        auto ec = ep->send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep.recv(am::filter::match, {am::control_packet_type::connack}, as::use_future).get();
+        auto pv = ep->recv(am::filter::match, {am::control_packet_type::connack}, as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
 
-    ep.close(as::use_future).get();
+    ep->close(as::use_future).get();
     guard.reset();
     th.join();
 }

@@ -24,7 +24,7 @@ struct app {
     ):res_{exe},
       host_{std::move(host)},
       port_{std::move(port)},
-      amep_{am::protocol_version::v3_1_1, exe, ctx_}
+      amep_{am::endpoint<am::role::client, am::protocol::wss>::create(am::protocol_version::v3_1_1, exe, ctx_)}
     {
         ctx_.set_verify_mode(am::tls::verify_none);
         impl_();
@@ -74,7 +74,7 @@ private:
 
                 // Underlying TCP connect
                 yield as::async_connect(
-                    app_.amep_.lowest_layer(),
+                    app_.amep_->lowest_layer(),
                     *eps,
                     *this
                 );
@@ -86,7 +86,7 @@ private:
                 if (ec) return;
 
                 // Underlying TLS handshake
-                yield app_.amep_.next_layer().next_layer().async_handshake(
+                yield app_.amep_->next_layer().next_layer().async_handshake(
                     am::tls::stream_base::client,
                     *this
                 );
@@ -96,7 +96,7 @@ private:
                     << std::endl;
 
                 // Underlying WS handshake
-                yield app_.amep_.next_layer().async_handshake(
+                yield app_.amep_->next_layer().async_handshake(
                     app_.host_,
                     "/",
                     *this
@@ -107,7 +107,7 @@ private:
                     << std::endl;
 
                 // Send MQTT CONNECT
-                yield app_.amep_.send(
+                yield app_.amep_->send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -124,7 +124,7 @@ private:
                 }
 
                 // Recv MQTT CONNACK
-                yield app_.amep_.recv(*this);
+                yield app_.amep_->recv(*this);
                 if (pv) {
                     pv.visit(
                         am::overload {
@@ -147,9 +147,9 @@ private:
                 }
 
                 // Send MQTT SUBSCRIBE
-                yield app_.amep_.send(
+                yield app_.amep_->send(
                     am::v3_1_1::subscribe_packet{
-                        *app_.amep_.acquire_unique_packet_id(),
+                        *app_.amep_->acquire_unique_packet_id(),
                         { {am::allocate_buffer("topic1"), am::qos::at_most_once} }
                     },
                     *this
@@ -159,7 +159,7 @@ private:
                     return;
                 }
                 // Recv MQTT SUBACK
-                yield app_.amep_.recv(*this);
+                yield app_.amep_->recv(*this);
                 if (pv) {
                     pv.visit(
                         am::overload {
@@ -185,9 +185,9 @@ private:
                     return;
                 }
                 // Send MQTT PUBLISH
-                yield app_.amep_.send(
+                yield app_.amep_->send(
                     am::v3_1_1::publish_packet{
-                        *app_.amep_.acquire_unique_packet_id(),
+                        *app_.amep_->acquire_unique_packet_id(),
                         am::allocate_buffer("topic1"),
                         am::allocate_buffer("payload1"),
                         am::qos::at_least_once
@@ -200,7 +200,7 @@ private:
                 }
                 // Recv MQTT PUBLISH and PUBACK (order depends on broker)
                 for (app_.count_ = 0; app_.count_ != 2; ++app_.count_) {
-                    yield app_.amep_.recv(*this);
+                    yield app_.amep_->recv(*this);
                     if (pv) {
                         pv.visit(
                             am::overload {
@@ -234,7 +234,7 @@ private:
                     }
                 }
                 std::cout << "close" << std::endl;
-                yield app_.amep_.close(*this);
+                yield app_.amep_->close(*this);
             }
         }
 
@@ -247,7 +247,7 @@ private:
     std::string_view host_;
     std::string_view port_;
     am::tls::context ctx_{am::tls::context::tlsv12};
-    am::endpoint<am::role::client, am::protocol::wss> amep_;
+    std::shared_ptr<am::endpoint<am::role::client, am::protocol::wss>> amep_;
     std::size_t count_ = 0;
     impl impl_{*this};
 };

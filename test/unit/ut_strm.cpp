@@ -23,7 +23,7 @@ namespace am = async_mqtt;
 namespace as = boost::asio;
 
 // packet_id is hard coded in this test case for just testing.
-// but users need to get packet_id via ep.acquire_unique_packet_id(...)
+// but users need to get packet_id via ep->acquire_unique_packet_id(...)
 // see other test cases.
 
 // v3_1_1
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(write_cont) {
     as::io_context ioc;
 
     using strm_t = am::stream<async_mqtt::stub_socket>;
-    auto s = std::make_shared<strm_t>(
+    auto s = strm_t::create(
         // for stub_socket args
         version,
         ioc
