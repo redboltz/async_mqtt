@@ -98,15 +98,14 @@ Then, create your application class instance and call the function call operator
     as::ip::tcp::socket resolve_sock{ioc}; 
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
-    //         endpoint is client  choose underlying layer
-    am::endpoint<am::role::client, am::protocol::mqtt> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
-    };
+    );
     
     // Added these code
-    app a{res, argv[1], argv[2], amep};
+    app a{res, argv[1], argv[2], *amep};
     a();
     ioc.run();    
 ```
