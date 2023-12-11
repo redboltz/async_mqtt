@@ -12,12 +12,12 @@ First, choose underlying layer.
     as::ip::tcp::socket resolve_sock{ioc}; 
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
-    //         endpoint is client  choose underlying layer
-    am::endpoint<am::role::client, am::protocol::mqtt> amep {
+    //                     endpoint is client  choose underlying layer
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
-    };
+    );
 ```
 
 ## mqtts
@@ -34,11 +34,11 @@ First, choose underlying layer.
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
   
-    am::endpoint<am::role::client, am::protocol::mqtts> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtts>::create(
         am::protocol_version::v5, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
         ctx
-    };
+    );
 ```
 
 NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
@@ -52,10 +52,10 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
     as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
-    am::endpoint<am::role::client, am::protocol::ws> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
-    };
+    );
 ```
 
 
@@ -73,11 +73,11 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
     
-    am::endpoint<am::role::client, am::protocol::wss> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::wss>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
         ctx                  // mqtts is as::ssl::stream<mqtt>
-    };
+    );
 ```
 
 # Layer access
