@@ -2194,24 +2194,51 @@ private: // compose operation impl
             error_code const& = error_code{}
         ) {
             switch (state) {
-            case initiate: {
-                ASYNC_MQTT_LOG("mqtt_impl", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                        << "close initiate status:" << static_cast<int>(ep.status_);
-                state = complete;
-                ep.status_ = connection_status::closing;
-                auto& a_ep{ep};
-                a_ep.stream_->close(force_move(self));
-            } break;
+            case initiate:
+                switch (ep.status_) {
+                case connection_status::connecting:
+                case connection_status::connected:
+                case connection_status::disconnecting: {
+                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                            << "close initiate status:" << static_cast<int>(ep.status_);
+                    state = complete;
+                    ep.status_ = connection_status::closing;
+                    auto& a_ep{ep};
+                    a_ep.stream_->close(force_move(self));
+                } break;
+                case connection_status::closing: {
+                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "already close requested";
+                    state = complete;
+                    auto& a_ep{ep};
+                    a_ep.close_queue_.post(force_move(self));
+                } break;
+                case connection_status::closed:
+                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "already closed";
+                    state = complete;
+                    self.complete();
+                    break;
+                }
+                break;
             case complete:
                 BOOST_ASSERT(ep.strand().running_in_this_thread());
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                        << "close complete status:" << static_cast<int>(ep.status_);
+                    << "close complete status:" << static_cast<int>(ep.status_);
                 ep.tim_pingreq_send_->cancel();
                 ep.tim_pingreq_recv_->cancel();
                 ep.tim_pingresp_recv_->cancel();
                 ep.status_ = connection_status::closed;
+                while (!ep.close_queue_.stopped()) {
+                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "process enqueued close";
+                    ep.close_queue_.poll_one();
+                }
                 self.complete();
                 break;
             }
@@ -2572,6 +2599,8 @@ private:
 
     std::set<packet_id_t> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
+
+    ioc_queue close_queue_;
 
     std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
