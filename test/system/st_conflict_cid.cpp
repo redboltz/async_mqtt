@@ -21,11 +21,11 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t(
+    auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    auto amep2 = ep_t(
+    auto amep2 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
         }
     };
 
-    tc t{{amep1, amep2}, "127.0.0.1", 1883};
+    tc t{{*amep1, *amep2}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -118,11 +118,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t(
+    auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    auto amep2 = ep_t(
+    auto amep2 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
         }
     };
 
-    tc t{{amep1, amep2}, "127.0.0.1", 1883};
+    tc t{{*amep1, *amep2}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -215,11 +215,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t(
+    auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    auto amep2 = ep_t(
+    auto amep2 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
         }
     };
 
-    tc t{{amep1, amep2}, "127.0.0.1", 1883};
+    tc t{{*amep1, *amep2}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -312,11 +312,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t(
+    auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    auto amep2 = ep_t(
+    auto amep2 = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
         }
     };
 
-    tc t{{amep1, amep2}, "127.0.0.1", 1883};
+    tc t{{*amep1, *amep2}, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

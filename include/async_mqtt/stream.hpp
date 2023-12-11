@@ -25,6 +25,7 @@
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #include <async_mqtt/core/stream_traits.hpp>
+#include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
@@ -66,25 +67,16 @@ public:
     using executor_type = async_mqtt::executor_type<next_layer_type>;
     using strand_type = as::strand<executor_type>;
 
+    template <typename T>
+    friend class make_shared_helper;
+
     template <
         typename T,
         typename... Args,
         std::enable_if_t<!std::is_same_v<std::decay_t<T>, this_type>>* = nullptr
     >
-    explicit
-    stream(T&& t, Args&&... args)
-        :nl_{std::forward<T>(t), std::forward<Args>(args)...}
-    {
-        if constexpr(is_ws<next_layer_type>::value) {
-            nl_.binary(true);
-            nl_.set_option(
-                bs::websocket::stream_base::decorator(
-                    [](bs::websocket::request_type& req) {
-                        req.set("Sec-WebSocket-Protocol", "mqtt");
-                    }
-                )
-            );
-        }
+    static std::shared_ptr<this_type> create(T&& t, Args&&... args) {
+        return make_shared_helper<this_type>::make_shared(std::forward<T>(t), std::forward<Args>(args)...);
     }
 
     ~stream() {
@@ -178,6 +170,28 @@ public:
     }
 
 private:
+
+    // constructor
+    template <
+        typename T,
+        typename... Args,
+        std::enable_if_t<!std::is_same_v<std::decay_t<T>, this_type>>* = nullptr
+    >
+    explicit
+    stream(T&& t, Args&&... args)
+        :nl_{std::forward<T>(t), std::forward<Args>(args)...}
+    {
+        if constexpr(is_ws<next_layer_type>::value) {
+            nl_.binary(true);
+            nl_.set_option(
+                bs::websocket::stream_base::decorator(
+                    [](bs::websocket::request_type& req) {
+                        req.set("Sec-WebSocket-Protocol", "mqtt");
+                    }
+                )
+            );
+        }
+    }
 
     struct read_packet_impl {
         read_packet_impl(this_type& strm):strm{strm}

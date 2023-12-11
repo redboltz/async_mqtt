@@ -23,16 +23,16 @@ BOOST_AUTO_TEST_CASE(cb) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
 
-    amep.next_layer().async_connect(
+    amep->next_layer().async_connect(
         endpoint,
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amep.send(
+            amep->send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                 },
                 [&](am::system_error const& se) {
                     BOOST_TEST(!se);
-                    amep.recv(
+                    amep->recv(
                         [&](am::packet_variant pv) {
                             pv.visit(
                                 am::overload {
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                                     }
                                 }
                             );
-                            amep.close([]{});
+                            amep->close([]{});
                         }
                     );
                 }
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 1883};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     );
 
     {
-        auto fut = amep.next_layer().async_connect(
+        auto fut = amep->next_layer().async_connect(
             endpoint,
             as::use_future
         );
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep.send(
+            amep->send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep.recv(as::use_future);
+            amep->recv(as::use_future);
         auto pv = fut.get();
         pv.visit(
             am::overload {
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(fut) {
         );
     }
     {
-        auto fut = amep.close(as::use_future);
+        auto fut = amep->close(as::use_future);
         fut.get();
     }
 }
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(coro) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t(
+    auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(coro) {
         }
     };
 
-    tc t{amep, "127.0.0.1", 1883};
+    tc t{*amep, "127.0.0.1", 1883};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

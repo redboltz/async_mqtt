@@ -31,14 +31,14 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
         ioc
-    };
+    );
 
-    ep.next_layer().set_close_checker(
+    ep->next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     };
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -70,24 +70,24 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
 
     // send connect
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
     );
     {
-        auto ec = ep.send(connect, as::use_future).get();
+        auto ec = ep->send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
 
     // size: 21bytes
-    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
 
     // size: 22bytes
-    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt2 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
@@ -109,32 +109,32 @@ BOOST_AUTO_TEST_CASE(client_send) {
     );
 
     // send publish_1
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(publish_1_q1, wp));
         }
     );
     {
-        auto ec = ep.send(publish_1_q1, as::use_future).get();
+        auto ec = ep->send(publish_1_q1, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // send publish_2
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
         }
     );
     {
-        auto ec = ep.send(publish_2_q1, as::use_future).get();
+        auto ec = ep->send(publish_2_q1, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::bad_message);
     }
-    auto pid_opt3 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt3 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
     BOOST_TEST(*pid_opt3 == 2); // 2 can be resused
 
-    ep.next_layer().set_close_checker({});
-    ep.close(as::use_future).get();
+    ep->next_layer().set_close_checker({});
+    ep->close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -149,14 +149,14 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     };
 
-    am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket> ep{
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
         ioc
-    };
+    );
 
-    ep.next_layer().set_close_checker(
+    ep->next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         am::properties{}
     };
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             connack,
@@ -193,24 +193,24 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
 
     // send connect
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connect, wp));
         }
     );
     {
-        auto ec = ep.send(connect, as::use_future).get();
+        auto ec = ep->send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connack, pv));
     }
 
     // size: 21bytes
-    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
 
     // size: 22bytes
-    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt2 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         am::properties{}
     );
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             publish_1_q1,
@@ -241,23 +241,23 @@ BOOST_AUTO_TEST_CASE(client_recv) {
 
     // recv publish1
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(publish_1_q1, pv));
     }
 
     // recv publish2
     bool close_called = false;
-    ep.next_layer().set_close_checker(
+    ep->next_layer().set_close_checker(
         [&] { close_called = true; }
     );
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
@@ -277,14 +277,14 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     };
 
-    am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket> ep{
+    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
         ioc
-    };
+    );
 
-    ep.next_layer().set_close_checker(
+    ep->next_layer().set_close_checker(
         [&] { BOOST_TEST(false); }
     );
 
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         am::properties{}
     };
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             connect,
@@ -322,23 +322,23 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv connect
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(connect, pv));
     }
 
     // send connack
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(am::packet_compare(connack, wp));
         }
     );
     {
-        auto ec = ep.send(connack, as::use_future).get();
+        auto ec = ep->send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // size: 21bytes
-    auto pid_opt1 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     );
 
     // size: 22bytes
-    auto pid_opt2 = ep.acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt2 = ep->acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         am::properties{}
     );
 
-    ep.next_layer().set_recv_packets(
+    ep->next_layer().set_recv_packets(
         {
             // receive packets
             publish_1_q1,
@@ -369,23 +369,23 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv publish1
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(am::packet_compare(publish_1_q1, pv));
     }
 
     // recv publish2
     bool close_called = false;
-    ep.next_layer().set_close_checker(
+    ep->next_layer().set_close_checker(
         [&] { close_called = true; }
     );
-    ep.next_layer().set_write_packet_checker(
+    ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
             BOOST_TEST(am::packet_compare(disconnect, wp));
         }
     );
     {
-        auto pv = ep.recv(as::use_future).get();
+        auto pv = ep->recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }

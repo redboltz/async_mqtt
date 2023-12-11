@@ -1,3 +1,10 @@
+## 4.0.0
+### breaking changes
+- Fixed multiple close problem. In order to do that endpoint become shared_ptr based design. #98, #100, #101, #102
+### other updates
+- Refined documents. #97
+- Added TLS async_shutdown timeout. #99
+
 ## 3.0.0
 ### breaking changes
 - Fixed inconsistent function names. #84, #89
