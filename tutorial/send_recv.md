@@ -49,8 +49,8 @@ You might interested in the specific packets. Your application doesn't want to c
 You can filter packets as follows:
 
 ```cpp
-// ep is endpoint
-ep.recv(am::filter::match, {am::control_packet_type::publish}, completion_token);
+// ep is endpoint shared_ptr
+ep->recv(am::filter::match, {am::control_packet_type::publish}, completion_token);
 ```
 
 When you set `filter::match` as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, completion_token isn't invoked but received packets are apropriately proccessed.
@@ -58,7 +58,7 @@ If error is happened, completion_token is invoked with packet_variant that conta
 
 ```cpp
 // ep is endpoint
-ep.recv(am::filter::except, {am::control_packet_type::pingresp, am::control_packet_type::puback}, completion_token);
+ep->recv(am::filter::except, {am::control_packet_type::pingresp, am::control_packet_type::puback}, completion_token);
 ```
 
 When you set `filter::except` as the first argument, the second parameter is a list of ignoring MQTT Control Packet types. If the packets int the list are received, completion_token isn't invoked but received packets are apropriately proccessed.
