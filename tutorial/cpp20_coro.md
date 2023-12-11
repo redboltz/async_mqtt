@@ -41,10 +41,10 @@ proc(Executor exe, std::string_view host, std::string_view port) {
 ```cpp
     as::ip::tcp::socket resolve_sock{exe};
     as::ip::tcp::resolver res{exe};
-    am::endpoint<am::role::client, am::protocol::mqtt> amep {
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
         am::protocol_version::v3_1_1,
         exe
-    };
+    );
     std::cout << "start" << std::endl;
 ```
 
@@ -62,14 +62,14 @@ There is nothing special. The same as non coroutine endpoint.
 
         // Underlying TCP connect
         co_await as::async_connect(
-            amep.next_layer(),
+            amep->next_layer(),
             eps,
             as::use_awaitable
         );
         std::cout << "TCP connected" << std::endl;
 
         // Send MQTT CONNECT
-        if (auto se = co_await amep.send(
+        if (auto se = co_await amep->send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -86,7 +86,7 @@ There is nothing special. The same as non coroutine endpoint.
         }
 
         // Recv MQTT CONNACK
-        if (am::packet_variant pv = co_await amep.recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
@@ -115,7 +115,7 @@ If se is evalueted as true, that means some error happened. So the code printss 
 
 ```cpp
         // Send MQTT CONNECT
-        if (auto se = co_await amep.send(
+        if (auto se = co_await amep->send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
