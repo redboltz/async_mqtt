@@ -112,6 +112,16 @@ public:
     /// @brief Type of MQTT Packet Identifier.
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
+    /**
+     * @brief create
+     * @tparam Args Types for the next layer
+     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
+     *              server can set undetermined
+     * @param  args args for the next layer. There are predefined next layer types:
+     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
+     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
+     * @return shared_ptr of basic_endpoint.
+     */
     template <typename... Args>
     static std::shared_ptr<this_type> create(
         protocol_version ver,
