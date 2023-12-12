@@ -19,5 +19,6 @@
   - [Maximum Packet Size](functionality/maximum_packet_size.md)
 - [Performance](performance.md)
 - [Config](config.md)
+- [History](../main/CHANGELOG.md)
 
 [back to the project top page](https://github.com/redboltz/async_mqtt/)
