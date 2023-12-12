@@ -4,6 +4,7 @@
 - [main](doc/latest/html/index.html)
 
 ## releases
+- [4.0.0](doc/4.0.0/html/index.html)
 - [3.0.0](doc/3.0.0/html/index.html)
 - [2.0.0](doc/2.0.0/html/index.html)
 - [1.0.9](doc/1.0.9/html/index.html)
