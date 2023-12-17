@@ -24,13 +24,20 @@ namespace protocol {
 /**
  * @breif Type alias of Boost.Asio TCP socket
  */
-using mqtt = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
+using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 
 #if defined(ASYNC_MQTT_USE_WS)
+
+namespace detail {
+
+using mqtt_beast_workaround = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
+
+} // namespace detail
+
 /**
  * @breif Type alias of Boost.Beast WebScoket
  */
-using ws = bs::websocket::stream<mqtt>;
+using ws = bs::websocket::stream<detail::mqtt_beast_workaround>;
 #endif //defined(ASYNC_MQTT_USE_WS)
 
 } // namespace procotol
@@ -49,10 +56,17 @@ namespace protocol {
 using mqtts = tls::stream<mqtt>;
 
 #if defined(ASYNC_MQTT_USE_WS)
+
+namespace detail {
+
+using mqtts_beast_workaround = tls::stream<mqtt_beast_workaround>;
+
+} // namespace detail
+
 /**
  * @breif Type alias of Boost.Beast WebSocket on TLS stream
  */
-using wss = bs::websocket::stream<mqtts>;
+using wss = bs::websocket::stream<detail::mqtts_beast_workaround>;
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 

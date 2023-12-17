@@ -14,9 +14,9 @@
 namespace as = boost::asio;
 namespace am = async_mqtt;
 
-template <typename Executor>
 as::awaitable<void>
-proc(Executor exe, std::string_view host, std::string_view port) {
+proc(std::string_view host, std::string_view port) {
+    auto exe = co_await as::this_coro::executor;
     as::ip::tcp::socket resolve_sock{exe};
     as::ip::tcp::resolver res{exe};
     auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
@@ -183,6 +183,6 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     as::io_context ioc;
-    as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
+    as::co_spawn(ioc.get_executor(), proc(argv[1], argv[2]), as::detached);
     ioc.run();
 }
