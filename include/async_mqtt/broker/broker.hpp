@@ -679,14 +679,26 @@ private:
                                 false,
                                 connect_return_code::identifier_rejected
                             },
-                            as::as_tuple(as::use_awaitable)
+                            as::as_tuple(
+                                as::consign(
+                                    as::use_awaitable,
+                                    epsp
+                                )
+                            )
                         );
                         if (ec) {
                             ASYNC_MQTT_LOG("mqtt_broker", info)
                                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                 << ec.what();
                         }
-                        co_await epsp.close(as::use_awaitable);
+                        co_await epsp.close(
+                            as::as_tuple(
+                                as::consign(
+                                    as::use_awaitable,
+                                    epsp
+                                )
+                            )
+                        );
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                             << "closed";
