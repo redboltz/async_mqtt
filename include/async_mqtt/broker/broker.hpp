@@ -35,9 +35,10 @@ public:
         security_.default_config();
     }
 
-    void handle_accept(epsp_t epsp, optional<std::string> preauthed_user_name = {}) {
+    as::awaitable<void> handle_accept(epsp_t epsp, optional<std::string> preauthed_user_name = {}) {
         epsp.set_preauthed_user_name(force_move(preauthed_user_name));
-        async_read_packet(force_move(epsp));
+        while (auto cont = co_await async_read_packet(epsp));
+        co_return;
     }
 
     /**
@@ -48,211 +49,233 @@ public:
     }
 
 private:
-    void async_read_packet(epsp_t epsp) {
-        epsp.recv(
-            [this, epsp]
-            (packet_variant pv) mutable {
-                pv.visit(
-                    overload {
-                        [&](v3_1_1::connect_packet& p) {
-                            connect_handler(
-                                force_move(epsp),
-                                p.client_id(),
-                                p.user_name(),
-                                p.password(),
-                                p.get_will(),
-                                p.clean_session(),
-                                p.keep_alive(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::connect_packet& p) {
-                            connect_handler(
-                                force_move(epsp),
-                                p.client_id(),
-                                p.user_name(),
-                                p.password(),
-                                p.get_will(),
-                                p.clean_start(),
-                                p.keep_alive(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::puback_packet& p) {
-                            puback_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                puback_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::puback_packet& p) {
-                            puback_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubrec_packet& p) {
-                            pubrec_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubrec_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubrec_packet& p) {
-                            pubrec_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubrel_packet& p) {
-                            pubrel_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubrel_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubrel_packet& p) {
-                            pubrel_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubcomp_packet& p) {
-                            pubcomp_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubcomp_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubcomp_packet& p) {
-                            pubcomp_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::subscribe_packet& p) {
-                            subscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::subscribe_packet& p) {
-                            subscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::suback_packet&) {
-                            // TBD receive invalid packet
-                        },
-                        [&](v5::suback_packet&) {
-                            // TBD receive invalid packet
-                        },
-                        [&](v3_1_1::unsubscribe_packet& p) {
-                            unsubscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::unsubscribe_packet& p) {
-                            unsubscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pingreq_packet&) {
-                            pingreq_handler(
-                                force_move(epsp)
-                            );
-                        },
-                        [&](v5::pingreq_packet&) {
-                            pingreq_handler(
-                                force_move(epsp)
-                            );
-                        },
-                        [&](v3_1_1::disconnect_packet&) {
-                            disconnect_handler(
-                                force_move(epsp),
-                                disconnect_reason_code::normal_disconnection,
-                                properties{}
-                            );
-                        },
-                        [&](v5::disconnect_packet& p) {
-                            disconnect_handler(
-                                force_move(epsp),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v5::auth_packet& p) {
-                            auth_handler(
-                                force_move(epsp),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](system_error const& se) {
-                            // TBD connack or disconnect send on error
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << se.what();
-                            close_proc(
-                                force_move(epsp),
-                                true // send_will
-                            );
-                        },
-                        [&](auto const&) {
-                            ASYNC_MQTT_LOG("mqtt_broker", fatal)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << "invalid variant";
-                        }
-                    }
-                );
+    as::awaitable<bool> async_read_packet(epsp_t epsp) {
+        auto [pv] = co_await epsp.recv(as::as_tuple(as::use_awaitable));
+        auto cont = co_await pv.visit(
+            overload {
+                [&](v3_1_1::connect_packet& p) -> as::awaitable<bool> {
+                    co_await connect_handler(
+                        force_move(epsp),
+                        p.client_id(),
+                        p.user_name(),
+                        p.password(),
+                        p.get_will(),
+                        p.clean_session(),
+                        p.keep_alive(),
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::connect_packet& p) -> as::awaitable<bool> {
+                    co_await connect_handler(
+                        force_move(epsp),
+                        p.client_id(),
+                        p.user_name(),
+                        p.password(),
+                        p.get_will(),
+                        p.clean_start(),
+                        p.keep_alive(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::publish_packet& p) -> as::awaitable<bool> {
+                    co_await publish_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.opts(),
+                        p.topic(),
+                        p.payload(),
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::publish_packet& p) -> as::awaitable<bool> {
+                    co_await publish_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.opts(),
+                        p.topic(),
+                        p.payload(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::puback_packet& p) -> as::awaitable<bool> {
+                    co_await puback_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        puback_reason_code::success,
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::puback_packet& p) -> as::awaitable<bool> {
+                    co_await puback_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::pubrec_packet& p) -> as::awaitable<bool> {
+                    co_await pubrec_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        pubrec_reason_code::success,
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::pubrec_packet& p) -> as::awaitable<bool> {
+                    co_await pubrec_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::pubrel_packet& p) -> as::awaitable<bool> {
+                    co_await pubrel_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        pubrel_reason_code::success,
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::pubrel_packet& p) -> as::awaitable<bool> {
+                    co_await pubrel_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::pubcomp_packet& p) -> as::awaitable<bool> {
+                    co_await pubcomp_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        pubcomp_reason_code::success,
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::pubcomp_packet& p) -> as::awaitable<bool> {
+                    co_await pubcomp_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::subscribe_packet& p) -> as::awaitable<bool> {
+                    co_await subscribe_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.entries(),
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::subscribe_packet& p) -> as::awaitable<bool> {
+                    co_await subscribe_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.entries(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::suback_packet&) -> as::awaitable<bool> {
+                    // TBD receive invalid packet
+                    co_return true;
+                },
+                [&](v5::suback_packet&) -> as::awaitable<bool> {
+                    // TBD receive invalid packet
+                    co_return true;
+                },
+                [&](v3_1_1::unsubscribe_packet& p) -> as::awaitable<bool> {
+                    co_await unsubscribe_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.entries(),
+                        properties{}
+                    );
+                    co_return true;
+                },
+                [&](v5::unsubscribe_packet& p) -> as::awaitable<bool> {
+                    co_await unsubscribe_handler(
+                        force_move(epsp),
+                        p.packet_id(),
+                        p.entries(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::pingreq_packet&) -> as::awaitable<bool> {
+                    co_await pingreq_handler(
+                        force_move(epsp)
+                    );
+                    co_return true;
+                },
+                [&](v5::pingreq_packet&) -> as::awaitable<bool> {
+                    co_await pingreq_handler(
+                        force_move(epsp)
+                    );
+                    co_return true;
+                },
+                [&](v3_1_1::disconnect_packet&) -> as::awaitable<bool> {
+                    co_await disconnect_handler(
+                        force_move(epsp),
+                        disconnect_reason_code::normal_disconnection,
+                        properties{}
+                    );
+                    co_return false;
+                },
+                [&](v5::disconnect_packet& p) -> as::awaitable<bool> {
+                    co_await disconnect_handler(
+                        force_move(epsp),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return false;
+                },
+                [&](v5::auth_packet& p) -> as::awaitable<bool> {
+                    co_await auth_handler(
+                        force_move(epsp),
+                        p.code(),
+                        p.props()
+                    );
+                    co_return true;
+                },
+                [&](system_error const& se) -> as::awaitable<bool> {
+                    // TBD connack or disconnect send on error
+                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << se.what();
+                    co_await close_proc(
+                        force_move(epsp),
+                        true // send_will
+                    );
+                    co_return false;
+                },
+                [&](auto const&)  -> as::awaitable<bool> {
+                    ASYNC_MQTT_LOG("mqtt_broker", fatal)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << "invalid variant";
+                    co_return false;
+                }
             }
         );
+        co_return cont;
     }
 
-    void connect_handler(
+    as::awaitable<void> connect_handler(
         epsp_t epsp,
         buffer client_id,
         optional<buffer> noauth_username,
@@ -326,21 +349,20 @@ private:
                 << "User failed to login: "
                 << (noauth_username ? std::string(*noauth_username) : std::string("anonymous user"));
 
-            send_connack(
+            auto [se] = co_await send_connack(
                 epsp,
                 false, // session present
                 false, // authenticated
                 force_move(connack_props),
-                [epsp, version](system_error) {
-                    disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, []{});
-                }
+                as::as_tuple(as::use_awaitable)
             );
-            return;
+            disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, []{});
+            co_return;
         }
 
         if (client_id.empty()) {
-            if (!handle_empty_client_id(epsp, client_id, clean_start, connack_props)) {
-                return;
+            if (! co_await handle_empty_client_id(epsp, client_id, clean_start, connack_props)) {
+                co_return;
             }
             // A new client id was generated
             client_id = epsp.get_client_id();
@@ -396,14 +418,12 @@ private:
                 set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
             }
 
-            send_connack(
+            co_await send_connack(
                 epsp,
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [this, epsp](system_error) mutable {
-                    async_read_packet(force_move(epsp));
-                }
+                as::as_tuple(as::use_awaitable)
             );
         }
         else if (auto old_epsp = const_cast<session_state<epsp_t>&>(**it).lock()) {
@@ -412,87 +432,70 @@ private:
                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                 << "cid:" << client_id
                 << " old connection " << old_epsp.get_address() << " exists and is online. close it ";
-            close_proc_no_lock(
+            auto [remain_as_offline] = co_await close_proc_no_lock(
                 old_epsp,
                 true,
                 disconnect_reason_code::session_taken_over,
-                [
-                    this,
-                    epsp,
-                    &idx,
-                    it,
-                    connack_props = force_move(connack_props),
-                    clean_start,
-                    client_id = force_move(client_id),
-                    response_topic_requested,
-                    username = force_move(username),
-                    will = force_move(will),
-                    will_expiry_interval,
-                    session_expiry_interval
-                ]
-                (bool remain_as_offline) mutable {
-                    if (remain_as_offline) {
-                        // offline exists -> online
-                        offline_to_online(
-                            force_move(epsp),
-                            force_move(will),
-                            force_move(will_expiry_interval),
-                            force_move(session_expiry_interval),
-                            clean_start,
-                            force_move(*username),
-                            idx,
-                            it,
-                            response_topic_requested,
-                            force_move(connack_props)
-                        );
-                    }
-                    else {
-                        // new connection
-                        ASYNC_MQTT_LOG("mqtt_broker", trace)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "cid:" << client_id
-                            << "online connection exists, discard old one due to session_expiry and renew";
-                        bool inserted;
-                        std::tie(it, inserted) = idx.emplace(
-                            session_state<epsp_t>::create(
-                                timer_ioc_,
-                                mtx_subs_map_,
-                                subs_map_,
-                                shared_targets_,
-                                epsp,
-                                client_id,
-                                *username,
-                                force_move(will),
-                                // will_sender
-                                [this](auto&&... params) {
-                                    this->do_publish(std::forward<decltype(params)>(params)...);
-                                },
-                                clean_start,
-                                force_move(will_expiry_interval),
-                                force_move(session_expiry_interval)
-                            )
-                        );
-                        BOOST_ASSERT(inserted);
-                        if (response_topic_requested) {
-                            // set_response_topic never modify key part
-                            set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
-                        }
-                        send_connack(
-                            epsp,
-                            false, // session present
-                            true,  // authenticated
-                            force_move(connack_props),
-                            [this, epsp](system_error) mutable {
-                                async_read_packet(force_move(epsp));
-                            }
-                        );
-                    }
-                }
+                as::as_tuple(as::use_awaitable)
             );
+            if (remain_as_offline) {
+                // offline exists -> online
+                co_await offline_to_online(
+                    force_move(epsp),
+                    force_move(will),
+                    force_move(will_expiry_interval),
+                    force_move(session_expiry_interval),
+                    clean_start,
+                    force_move(*username),
+                    idx,
+                    it,
+                    response_topic_requested,
+                    force_move(connack_props)
+                );
+            }
+            else {
+                // new connection
+                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                    << "cid:" << client_id
+                    << "online connection exists, discard old one due to session_expiry and renew";
+                bool inserted;
+                std::tie(it, inserted) = idx.emplace(
+                    session_state<epsp_t>::create(
+                        timer_ioc_,
+                        mtx_subs_map_,
+                        subs_map_,
+                        shared_targets_,
+                        epsp,
+                        client_id,
+                        *username,
+                        force_move(will),
+                        // will_sender
+                        [this](auto&&... params) {
+                            this->do_publish(std::forward<decltype(params)>(params)...);
+                        },
+                        clean_start,
+                        force_move(will_expiry_interval),
+                        force_move(session_expiry_interval)
+                    )
+                );
+                BOOST_ASSERT(inserted);
+                if (response_topic_requested) {
+                    // set_response_topic never modify key part
+                    set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
+                }
+                co_await send_connack(
+                    epsp,
+                    false, // session present
+                    true,  // authenticated
+                    force_move(connack_props),
+                    as::as_tuple(as::use_awaitable)
+                );
+            }
         }
         else {
             // offline exists -> online
-            offline_to_online(
+            co_await offline_to_online(
                 force_move(epsp),
                 force_move(will),
                 force_move(will_expiry_interval),
@@ -508,7 +511,7 @@ private:
     }
 
     template <typename Idx, typename It>
-    void offline_to_online(
+    as::awaitable<void> offline_to_online(
         epsp_t epsp,
         optional<will> will,
         optional<std::chrono::steady_clock::duration> will_expiry_interval,
@@ -543,17 +546,12 @@ private:
                 // set_response_topic never modify key part
                 set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, username);
             }
-            send_connack(
+            co_await send_connack(
                 epsp,
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [
-                    this,
-                    epsp
-                ](system_error) mutable {
-                    async_read_packet(force_move(epsp));
-                }
+                as::as_tuple(as::use_awaitable)
             );
         }
         else {
@@ -579,7 +577,7 @@ private:
                     session_expiry_interval,
                     connack_props = force_move(connack_props)
                 ]
-                () mutable {
+                () mutable -> as::awaitable<void> {
                     idx.modify(
                         it,
                         [&](auto& e) {
@@ -592,38 +590,32 @@ private:
                         },
                         [](auto&) { BOOST_ASSERT(false); }
                     );
-                    send_connack(
+                    auto [ec] = co_await send_connack(
                         epsp,
                         true, // session present
                         true, // authenticated
                         force_move(connack_props),
-                        [
-                            this,
-                            epsp,
-                            &idx,
-                            it
-                        ]
-                        (system_error const& ec) mutable {
-                            if (ec) {
-                                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << ec.what();
-                                return;
-                            }
-                            idx.modify(
-                                it,
-                                [&](auto& e) {
-                                    e->send_inflight_messages();
-                                    e->send_all_offline_messages();
-                                },
-                                [](auto&) { BOOST_ASSERT(false); }
-                            );
-                            async_read_packet(force_move(epsp));
-                        }
+                        as::as_tuple(as::use_awaitable)
                     );
+                    if (ec) {
+                        ASYNC_MQTT_LOG("mqtt_broker", trace)
+                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                            << ec.what();
+                        co_return;
+                    }
+                    idx.modify(
+                        it,
+                        [&](auto& e) {
+                            e->send_inflight_messages();
+                            e->send_all_offline_messages();
+                        },
+                        [](auto&) { BOOST_ASSERT(false); }
+                    );
+                    co_return;
                 }
             );
         }
+        co_return;
     }
 
     void set_response_topic(
@@ -662,7 +654,7 @@ private:
         );
     }
 
-    bool handle_empty_client_id(
+    as::awaitable<bool> handle_empty_client_id(
         epsp_t& epsp,
         buffer const& client_id,
         bool clean_start,
@@ -682,29 +674,24 @@ private:
                     // we would have no way to map this connection's session to a new connection later.
                     // So the connection must be rejected.
                     if (connack_) {
-                        epsp.send(
+                        auto [ec] = co_await epsp.send(
                             v3_1_1::connack_packet{
                                 false,
                                 connect_return_code::identifier_rejected
                             },
-                            [epsp]
-                            (system_error const& ec) mutable {
-                                if (ec) {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
-                                }
-                                epsp.close(
-                                    [epsp] {
-                                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                            << "closed";
-                                    }
-                                );
-                            }
+                            as::as_tuple(as::use_awaitable)
                         );
+                        if (ec) {
+                            ASYNC_MQTT_LOG("mqtt_broker", info)
+                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                << ec.what();
+                        }
+                        co_await epsp.close(as::use_awaitable);
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                            << "closed";
                     }
-                    return false;
+                    co_return false;
                 }
             }
             break;
@@ -729,9 +716,9 @@ private:
             break;
         default:
             BOOST_ASSERT(false);
-            return false;
+            co_return false;
         }
-        return true;
+        co_return true;
     }
 
     template <typename CompletionToken>
@@ -822,7 +809,8 @@ private:
 
     template <typename BufferSequence>
     std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+        as::awaitable<void>
     >
     publish_handler(
         epsp_t epsp,
@@ -832,12 +820,6 @@ private:
         BufferSequence&& payload,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -847,7 +829,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         auto send_pubres =
             [&] (bool authorized = true) {
@@ -991,7 +973,7 @@ private:
         if (security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow) {
             // Publish not authorized
             send_pubres(false);
-            return;
+            co_return;
         }
 
         properties forward_props;
@@ -1026,6 +1008,7 @@ private:
         );
 
         send_pubres();
+        co_return;
     }
 
     /**
@@ -1192,18 +1175,12 @@ private:
         }
     }
 
-    void puback_handler(
+    as::awaitable<void> puback_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         puback_reason_code /*reason_code*/,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1213,7 +1190,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
@@ -1222,18 +1199,12 @@ private:
         ss.send_offline_messages_by_packet_id_release();
     }
 
-    void pubrec_handler(
+    as::awaitable<void> pubrec_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         pubrec_reason_code reason_code,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1243,13 +1214,13 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
         auto& ss = const_cast<session_state<epsp_t>&>(**it);
 
-        if (is_error(reason_code)) return;
+        if (is_error(reason_code)) co_return;
         auto rc =
             [&] {
                 ss.erase_inflight_message_by_packet_id(packet_id);
@@ -1328,18 +1299,12 @@ private:
         }
     }
 
-    void pubrel_handler(
+    as::awaitable<void> pubrel_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         pubrel_reason_code reason_code,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1349,7 +1314,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
@@ -1416,18 +1381,12 @@ private:
         }
     }
 
-    void pubcomp_handler(
+    as::awaitable<void> pubcomp_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         pubcomp_reason_code /*reason_code*/,
         properties /*props*/
     ){
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1437,7 +1396,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
@@ -1446,18 +1405,12 @@ private:
         ss.send_offline_messages_by_packet_id_release();
     }
 
-    void subscribe_handler(
+    as::awaitable<void> subscribe_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         std::vector<topic_subopts> const& entries,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1467,7 +1420,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
@@ -1652,19 +1605,12 @@ private:
         }
     }
 
-    void unsubscribe_handler(
+    as::awaitable<void> unsubscribe_handler(
         epsp_t epsp,
         packet_id_t packet_id,
         std::vector<topic_sharename> entries,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it  = idx.find(epsp);
@@ -1674,7 +1620,7 @@ private:
         // and/or async_force_disconnect () is called.
         // During async operation, spep is valid but it has already been
         // erased from sessions_
-        if (it == idx.end()) return;
+        if (it == idx.end()) co_return;
 
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
@@ -1739,16 +1685,10 @@ private:
         }
     }
 
-    void pingreq_handler(
+    as::awaitable<void> pingreq_handler(
         epsp_t epsp
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
-        if (!pingresp_) return;
+        if (!pingresp_) co_return;
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
@@ -1783,7 +1723,7 @@ private:
         }
     }
 
-    void disconnect_handler(
+    as::awaitable<void> disconnect_handler(
         epsp_t epsp,
         disconnect_reason_code rc,
         properties /*props*/
@@ -1795,7 +1735,7 @@ private:
             tim_disconnect_.expires_after(*delay_disconnect_);
             tim_disconnect_.wait();
         }
-        close_proc(
+        co_await close_proc(
             force_move(epsp),
             rc == disconnect_reason_code::disconnect_with_will_message,
             rc
@@ -1966,7 +1906,7 @@ private:
      * @return true if offline session is remained, otherwise false
      */
     // TODO: Maybe change the name of this function.
-    void close_proc(
+    as::awaitable<void> close_proc(
         epsp_t epsp,
         bool send_will,
         optional<disconnect_reason_code> rc_opt = nullopt
@@ -1975,21 +1915,21 @@ private:
             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
             << "close_proc";
         std::lock_guard<mutex> g(mtx_sessions_);
-        close_proc_no_lock(force_move(epsp), send_will, rc_opt, [](bool){});
+        co_await close_proc_no_lock(
+            force_move(epsp),
+            send_will,
+            rc_opt,
+            as::as_tuple(as::use_awaitable)
+        );
     }
 
-    void auth_handler(
-        epsp_t epsp,
+    as::awaitable<void> auth_handler(
+        epsp_t /*epsp*/,
         auth_reason_code /*rc*/,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         if (h_auth_props_) h_auth_props_(force_move(props));
+        co_return;
     }
 
     template <typename CompletionToken>

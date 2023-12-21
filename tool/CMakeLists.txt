@@ -4,6 +4,14 @@ list(APPEND exec_PROGRAMS
     client_cli.cpp
 )
 
+if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+    set(CMAKE_CXX_STANDARD 20)
+    message(STATUS "C++20 coroutine based broker added")
+    list(APPEND exec_PROGRAMS
+        cpp20coro_broker.cpp
+    )
+endif()
+
 find_package(Boost 1.81.0 REQUIRED COMPONENTS program_options)
 
 # Without this setting added, azure pipelines completely fails to find the boost libraries. No idea why.
