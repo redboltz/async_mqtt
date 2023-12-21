@@ -734,76 +734,90 @@ private:
         return true;
     }
 
-    void send_connack(
+    template <typename CompletionToken>
+    auto send_connack(
         epsp_t& epsp,
         bool session_present,
         bool authenticated,
         properties props,
-        std::function<void(system_error const&)> finish = [](system_error const&){}
+        CompletionToken&& token
     ) {
-        ASYNC_MQTT_LOG("mqtt_broker", trace)
-            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-            << "send_connack";
-        // Reply to the connect message.
-        switch (epsp.get_protocol_version()) {
-        case protocol_version::v3_1_1:
-            if (connack_) {
-                epsp.send(
-                    v3_1_1::connack_packet{
-                        session_present,
-                        authenticated ? connect_return_code::accepted
-                                      : connect_return_code::not_authorized,
-                    },
-                    [finish = force_move(finish)]
-                    (system_error const& ec) {
-                        finish(ec);
+        auto init =
+            [this]
+            (
+                auto completion_handler,
+                epsp_t epsp,
+                bool session_present,
+                bool authenticated,
+                properties props
+            ) {
+                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                    << "send_connack";
+                // Reply to the connect message.
+                switch (epsp.get_protocol_version()) {
+                case protocol_version::v3_1_1:
+                    if (connack_) {
+                        epsp.send(
+                            v3_1_1::connack_packet{
+                                session_present,
+                                authenticated ? connect_return_code::accepted
+                                              : connect_return_code::not_authorized,
+                            },
+                            force_move(completion_handler)
+                        );
                     }
-                );
-            }
-            break;
-        case protocol_version::v5:
-            // connack_props_ member varible is for testing
-            if (connack_props_.empty()) {
-                // props local variable is is for real case
-                props.emplace_back(property::topic_alias_maximum{topic_alias_max});
-                props.emplace_back(property::receive_maximum{receive_maximum_max});
-                if (connack_) {
-                    epsp.send(
-                        v5::connack_packet{
-                            session_present,
-                            authenticated ? connect_reason_code::success
-                                          : connect_reason_code::not_authorized,
-                            force_move(props)
-                        },
-                        [finish = force_move(finish)]
-                        (system_error const& ec) {
-                            finish(ec);
+                    break;
+                case protocol_version::v5:
+                    // connack_props_ member varible is for testing
+                    if (connack_props_.empty()) {
+                        // props local variable is is for real case
+                        props.emplace_back(property::topic_alias_maximum{topic_alias_max});
+                        props.emplace_back(property::receive_maximum{receive_maximum_max});
+                        if (connack_) {
+                            epsp.send(
+                                v5::connack_packet{
+                                    session_present,
+                                    authenticated ? connect_reason_code::success
+                                                  : connect_reason_code::not_authorized,
+                                    force_move(props)
+                                },
+                                force_move(completion_handler)
+                            );
                         }
-                    );
-                }
-            }
-            else {
-                // use connack_props_ for testing
-                if (connack_) {
-                    epsp.send(
-                        v5::connack_packet{
-                            session_present,
-                            authenticated ? connect_reason_code::success
-                                          : connect_reason_code::not_authorized,
-                            connack_props_
-                        },
-                        [finish = force_move(finish)]
-                        (system_error const& ec) {
-                            finish(ec);
+                    }
+                    else {
+                        // use connack_props_ for testing
+                        if (connack_) {
+                            epsp.send(
+                                v5::connack_packet{
+                                    session_present,
+                                    authenticated ? connect_reason_code::success
+                                                  : connect_reason_code::not_authorized,
+                                    connack_props_
+                                },
+                                force_move(completion_handler)
+                            );
                         }
-                    );
+                    }
+                    break;
+                default:
+                    BOOST_ASSERT(false);
+                    break;
                 }
-            }
-            break;
-        default:
-            BOOST_ASSERT(false);
-            break;
-        }
+            };
+
+        return as::async_initiate<
+            CompletionToken,
+            void(system_error const&)
+        >(
+            init,
+            token,
+            force_move(epsp),
+            session_present,
+            authenticated,
+            force_move(props)
+        );
     }
 
     template <typename BufferSequence>
@@ -1796,43 +1810,106 @@ private:
      * @return true if offline session is remained, otherwise false
      */
     // TODO: Maybe change the name of this function.
-    template <typename Finish>
-    void close_proc_no_lock(
+    template <typename CompletionToken>
+    auto close_proc_no_lock(
         epsp_t epsp,
         bool send_will,
         optional<disconnect_reason_code> rc_opt,
-        Finish&& finish) {
+        CompletionToken&& token) {
 
-        ASYNC_MQTT_LOG("mqtt_broker", trace)
-            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-            << "close_proc_no_lock";
+        auto init =
+            [this]
+            (
+                auto completion_handler,
+                epsp_t epsp,
+                bool send_will,
+                optional<disconnect_reason_code> rc_opt
+            ) {
+                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                    << "close_proc_no_lock";
 
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
+                auto& idx = sessions_.template get<tag_con>();
+                auto it = idx.find(epsp);
 
-        // act_sess_it == act_sess_idx.end() could happen if broker accepts
-        // the session from client but the client closes the session  before sending
-        // MQTT `CONNECT` message.
-        // In this case, do nothing is correct behavior.
-        if (it == idx.end()) {
-            finish(false);
-            return;
-        }
+                // act_sess_it == act_sess_idx.end() could happen if broker accepts
+                // the session from client but the client closes the session  before sending
+                // MQTT `CONNECT` message.
+                // In this case, do nothing is correct behavior.
+                if (it == idx.end()) {
+                    force_move(completion_handler)(false);
+                    return;
+                }
 
-        auto do_send_will =
-            [&](session_state<epsp_t>& ss) {
-                if (send_will) {
-                    ss.send_will();
+                auto do_send_will =
+                    [&](session_state<epsp_t>& ss) {
+                        if (send_will) {
+                            ss.send_will();
+                        }
+                        else {
+                            ss.clear_will();
+                        }
+                    };
+
+                if ((*it)->remain_after_close()) {
+                    idx.modify(
+                        it,
+                        [&](std::shared_ptr<session_state<epsp_t>>& sssp) {
+                            do_send_will(*sssp);
+                            if (rc_opt) {
+                                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << "disconnect_and_close() cid:" << sssp->client_id();
+                                disconnect_and_close(
+                                    epsp,
+                                    (*it)->get_protocol_version(),
+                                    *rc_opt,
+                                    [this, sssp, epsp, completion_handler = force_move(completion_handler)]
+                                    () mutable {
+                                        // become_offline updates index
+                                        sssp->become_offline(
+                                            epsp,
+                                            [this]
+                                            (std::shared_ptr<as::steady_timer> const& sp_tim) {
+                                                // lock for expire (async)
+                                                std::lock_guard<mutex> g(mtx_sessions_);
+                                                sessions_.template get<tag_tim>().erase(sp_tim);
+                                            }
+                                        );
+                                        force_move(completion_handler)(true);
+                                    }
+                                );
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << "close cid:" << sssp->client_id();
+                                epsp.close(
+                                    [this, epsp, sssp, completion_handler = force_move(completion_handler)]
+                                    () mutable {
+                                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                            << "closed";
+                                        // become_offline updates index
+                                        sssp->become_offline(
+                                            epsp,
+                                            [this]
+                                            (std::shared_ptr<as::steady_timer> const& sp_tim) {
+                                                // lock for expire (async)
+                                                std::lock_guard<mutex> g(mtx_sessions_);
+                                                sessions_.template get<tag_tim>().erase(sp_tim);
+                                            }
+                                        );
+                                        force_move(completion_handler)(true);
+                                    }
+                                );
+                            }
+                        },
+                        [](auto&) { BOOST_ASSERT(false); }
+                    );
                 }
                 else {
-                    ss.clear_will();
-                }
-            };
-
-        if ((*it)->remain_after_close()) {
-            idx.modify(
-                it,
-                [&](std::shared_ptr<session_state<epsp_t>>& sssp) {
+                    auto sssp{force_move(idx.extract(it).value())};
                     do_send_will(*sssp);
                     if (rc_opt) {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -1840,21 +1917,14 @@ private:
                             << "disconnect_and_close() cid:" << sssp->client_id();
                         disconnect_and_close(
                             epsp,
-                            (*it)->get_protocol_version(),
+                            sssp->get_protocol_version(),
                             *rc_opt,
-                            [this, sssp, epsp, finish = std::forward<Finish>(finish)]
+                            [sssp, epsp, completion_handler = force_move(completion_handler)]
                             () mutable {
-                                // become_offline updates index
-                                sssp->become_offline(
-                                    epsp,
-                                    [this]
-                                    (std::shared_ptr<as::steady_timer> const& sp_tim) {
-                                        // lock for expire (async)
-                                        std::lock_guard<mutex> g(mtx_sessions_);
-                                        sessions_.template get<tag_tim>().erase(sp_tim);
-                                    }
-                                );
-                                finish(true);
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << "disconnect_and_closed";
+                                force_move(completion_handler)(false);
                             }
                         );
                     }
@@ -1863,64 +1933,28 @@ private:
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                             << "close cid:" << sssp->client_id();
                         epsp.close(
-                            [this, epsp, sssp, finish = std::forward<Finish>(finish)]
+                            [sssp, epsp, completion_handler = force_move(completion_handler)]
                             () mutable {
                                 ASYNC_MQTT_LOG("mqtt_broker", info)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                     << "closed";
-                                // become_offline updates index
-                                sssp->become_offline(
-                                    epsp,
-                                    [this]
-                                    (std::shared_ptr<as::steady_timer> const& sp_tim) {
-                                        // lock for expire (async)
-                                        std::lock_guard<mutex> g(mtx_sessions_);
-                                        sessions_.template get<tag_tim>().erase(sp_tim);
-                                    }
-                                );
-                                finish(true);
+                                force_move(completion_handler)(false);
                             }
                         );
                     }
-                },
-                [](auto&) { BOOST_ASSERT(false); }
-            );
-        }
-        else {
-            auto sssp{force_move(idx.extract(it).value())};
-            do_send_will(*sssp);
-            if (rc_opt) {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "disconnect_and_close() cid:" << sssp->client_id();
-                disconnect_and_close(
-                    epsp,
-                    sssp->get_protocol_version(),
-                    *rc_opt,
-                    [sssp, epsp, finish = std::forward<Finish>(finish)]
-                    () mutable {
-                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "disconnect_and_closed";
-                        finish(false);
-                    }
-                );
-            }
-            else {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "close cid:" << sssp->client_id();
-                epsp.close(
-                    [sssp, epsp, finish = std::forward<Finish>(finish)]
-                    () mutable {
-                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "closed";
-                        finish(false);
-                    }
-                );
-            }
-        }
+                }
+            };
+
+        return as::async_initiate<
+            CompletionToken,
+            void(bool)
+        >(
+            init,
+            token,
+            force_move(epsp),
+            send_will,
+            force_move(rc_opt)
+        );
     }
 
     /**
@@ -1958,52 +1992,72 @@ private:
         if (h_auth_props_) h_auth_props_(force_move(props));
     }
 
-    template <typename Finish>
-    static void disconnect_and_close(
+    template <typename CompletionToken>
+    static auto disconnect_and_close(
         epsp_t epsp,
         protocol_version version,
         disconnect_reason_code rc,
-        Finish&& finish = []{}
+        CompletionToken&& token
     ) {
-        switch (version) {
-        case protocol_version::v3_1_1:
-            epsp.close(
-                [epsp, finish = std::forward<Finish>(finish)]
-                () mutable {
-                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                        << "closed";
-                    finish();
-                }
-            );
-            break;
-        case protocol_version::v5:
-            epsp.send(
-                v5::disconnect_packet{
-                    rc,
-                    properties{}
-                },
-                [epsp, finish = std::forward<Finish>(finish)]
-                (system_error const& ec) mutable {
-                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                        << ec.what();
+        auto init =
+            []
+            (
+                auto completion_handler,
+                epsp_t epsp,
+                protocol_version version,
+                disconnect_reason_code rc
+            ) {
+                switch (version) {
+                case protocol_version::v3_1_1:
                     epsp.close(
-                        [epsp, finish = force_move(finish)]
+                        [epsp, completion_handler = force_move(completion_handler)]
                         () mutable {
                             ASYNC_MQTT_LOG("mqtt_broker", info)
                                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                 << "closed";
-                            finish();
+                            force_move(completion_handler)();
                         }
                     );
+                    break;
+                case protocol_version::v5:
+                    epsp.send(
+                        v5::disconnect_packet{
+                            rc,
+                                properties{}
+                        },
+                        [epsp, completion_handler = force_move(completion_handler)]
+                        (system_error const& ec) mutable {
+                            ASYNC_MQTT_LOG("mqtt_broker", info)
+                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                << ec.what();
+                            epsp.close(
+                                [epsp, completion_handler = force_move(completion_handler)]
+                                () mutable {
+                                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                        << "closed";
+                                    force_move(completion_handler)();
+                                }
+                            );
+                        }
+                    );
+                    break;
+                default:
+                    BOOST_ASSERT(false);
+                    break;
                 }
-            );
-            break;
-        default:
-            BOOST_ASSERT(false);
-            break;
-        }
+            };
+
+        return as::async_initiate<
+            CompletionToken,
+            void()
+        >(
+            init,
+            token,
+            force_move(epsp),
+            version,
+            rc
+        );
     }
 
 private:
