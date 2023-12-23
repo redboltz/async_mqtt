@@ -8,11 +8,13 @@
 #define ASYNC_MQTT_UTIL_UTF8VALIDATE_HPP
 
 #include <string_view>
+#include <boost/beast/websocket/detail/utf8_checker.hpp>
 
 namespace async_mqtt {
 
-inline bool utf8string_check(std::string_view /*buf*/) {
-    return true;
+inline bool utf8string_check(std::string_view buf) {
+    if (buf.empty()) return true;
+    return boost::beast::websocket::detail::check_utf8(buf.data(), buf.size());
 }
 
 } // namespace async_mqtt

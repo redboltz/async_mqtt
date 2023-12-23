@@ -19,6 +19,7 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
+#include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
@@ -136,14 +137,21 @@ public:
         endian_store(keep_alive_sec, keep_alive_buf_.data());
         endian_store(boost::numeric_cast<std::uint16_t>(client_id_.size()), client_id_length_buf_.data());
 
-#if 0 // TBD
-        utf8string_check(client_id_);
-#endif
+        if (!utf8string_check(client_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet client_id invalid utf8"
+            );
+        }
+
         if (clean_session) connect_flags_ |= connect_flags::mask_clean_session;
         if (user_name) {
-#if 0 // TBD
-            utf8string_check(*user_name);
-#endif
+            if (!utf8string_check(*user_name)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet user name invalid utf8"
+                );
+            }
             connect_flags_ |= connect_flags::mask_user_name_flag;
             user_name_ = force_move(*user_name);
             user_name_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(user_name_.size()));
@@ -159,10 +167,12 @@ public:
             connect_flags_ |= connect_flags::mask_will_flag;
             if (w->get_retain() == pub::retain::yes) connect_flags_ |= connect_flags::mask_will_retain;
             connect_flags::set_will_qos(connect_flags_, w->get_qos());
-
-#if 0 // TBD
-            utf8string_check(w->topic());
-#endif
+            if (!utf8string_check(w->topic())) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will topic invalid utf8"
+                );
+            }
             will_topic_ = force_move(w->topic());
             will_topic_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_topic_.size()));
             if (w->message().size() > 0xffffL) {
@@ -270,9 +280,12 @@ public:
             );
         }
         client_id_ = buf.substr(0, client_id_length);
-#if 0 // TBD
-        utf8string_check(client_id_);
-#endif
+        if (!utf8string_check(client_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::connect_packet client_id invalid utf8"
+            );
+        }
         buf.remove_prefix(client_id_length);
 
         // will
@@ -303,9 +316,12 @@ public:
                 );
             }
             will_topic_ = buf.substr(0, will_topic_length);
-#if 0 // TBD
-            utf8string_check(will_topic_);
-#endif
+            if (!utf8string_check(will_topic_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet will topic invalid utf8"
+                );
+            }
             buf.remove_prefix(will_topic_length);
 
             // will_message_length
@@ -362,9 +378,12 @@ public:
                 );
             }
             user_name_ = buf.substr(0, user_name_length);
-#if 0 // TBD
-            utf8string_check(user_name_);
-#endif
+            if (!utf8string_check(user_name_)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::connect_packet user name invalid utf8"
+                );
+            }
             buf.remove_prefix(user_name_length);
         }
 
