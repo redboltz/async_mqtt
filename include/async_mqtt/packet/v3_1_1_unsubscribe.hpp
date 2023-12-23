@@ -15,6 +15,7 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
+#include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
@@ -75,9 +76,13 @@ public:
             remaining_length_ +=
                 2 +                     // topic filter length
                 size;                   // topic filter
-#if 0 // TBD
-            utf8string_check(e.all_topic());
-#endif
+
+            if (!utf8string_check(e.all_topic())) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::unsubscribe_packet topic filter invalid utf8"
+                );
+            }
         }
 
         remaining_length_buf_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
@@ -144,6 +149,12 @@ public:
                 );
             }
             auto topic = buf.substr(0, topic_length);
+            if (!utf8string_check(topic)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::unsubscribe_packet topic filter invalid utf8"
+                );
+            }
             entries_.emplace_back(force_move(topic));
             buf.remove_prefix(topic_length);
         }

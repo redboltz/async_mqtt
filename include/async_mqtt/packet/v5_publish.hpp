@@ -20,6 +20,7 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
+#include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
@@ -80,9 +81,13 @@ public:
             remaining_length_ += payload.size();
             payloads_.push_back(payload);
         }
-#if 0 // TBD
-        utf8string_check(topic_name_);
-#endif
+
+        if (!utf8string_check(topic_name_)) {
+            throw make_error(
+                errc::bad_message,
+                "v5::publish_packet topic name invalid utf8"
+            );
+        }
 
         auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
         for (auto e : pb) {
@@ -179,9 +184,14 @@ public:
             );
         }
         topic_name_ = buf.substr(0, topic_name_length);
-#if 0 // TBD
-        utf8string_check(topic_name_);
-#endif
+
+        if (!utf8string_check(topic_name_)) {
+            throw make_error(
+                errc::bad_message,
+                "v5::publish_packet topic name invalid utf8"
+            );
+        }
+
         buf.remove_prefix(topic_name_length);
 
         // packet_id

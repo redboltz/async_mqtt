@@ -25,6 +25,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/json_like_out.hpp>
+#include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/packet/qos.hpp>
@@ -215,10 +216,12 @@ struct binary_property : private boost::totally_ordered<binary_property> {
 struct string_property : binary_property {
     string_property(property::id id, buffer buf)
         :binary_property{id, force_move(buf)} {
-#if 0 // TBD
-        auto r = utf8string::validate_contents(this->val());
-        if (r != utf8string::validation::well_formed) throw utf8string_contents_error(r);
-#endif
+        if (!utf8string_check(this->val())) {
+            throw make_error(
+                errc::bad_message,
+                "string property invalid utf8"
+            );
+        }
     }
 };
 
