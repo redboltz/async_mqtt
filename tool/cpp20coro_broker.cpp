@@ -216,11 +216,11 @@ void run_broker(boost::program_options::variables_map const& vm) {
         auto accept_mqtt =
             [&]() -> as::awaitable<void> {
                 if (vm.count("tcp.port")) {
+                    as::ip::tcp::endpoint mqtt_endpoint{
+                        as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>()
+                    };
+                    as::ip::tcp::acceptor mqtt_ac{accept_ioc, mqtt_endpoint};
                     while (true) {
-                        as::ip::tcp::endpoint mqtt_endpoint{
-                            as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>()
-                        };
-                        as::ip::tcp::acceptor mqtt_ac{accept_ioc, mqtt_endpoint};
                         auto epsp =
                             am::endpoint<am::role::server, am::protocol::mqtt>::create(
                                 am::protocol_version::undetermined,

@@ -237,7 +237,7 @@ private:
                     co_return true;
                 },
                 [&](v3_1_1::disconnect_packet&) -> as::awaitable<bool> {
-                    co_await disconnect_handler(
+                    disconnect_handler(
                         force_move(epsp),
                         disconnect_reason_code::normal_disconnection,
                         properties{}
@@ -245,7 +245,7 @@ private:
                     co_return false;
                 },
                 [&](v5::disconnect_packet& p) -> as::awaitable<bool> {
-                    co_await disconnect_handler(
+                    disconnect_handler(
                         force_move(epsp),
                         p.code(),
                         p.props()
@@ -265,7 +265,7 @@ private:
                     ASYNC_MQTT_LOG("mqtt_broker", info)
                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                         << se.what();
-                    co_await close_proc(
+                    close_proc(
                         force_move(epsp),
                         true // send_will
                     );
@@ -393,7 +393,7 @@ private:
          */
 
         // Find any sessions that have the same client_id
-        std::lock_guard<mutex> g(mtx_sessions_);
+        std::unique_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_cid>();
         auto it = idx.lower_bound(std::make_tuple(*username, client_id));
         if (it == idx.end() ||
@@ -429,7 +429,7 @@ private:
                 // set_response_topic never modify key part
                 set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
             }
-
+            g.unlock();
             co_await send_connack(
                 epsp,
                 false, // session present
@@ -506,6 +506,7 @@ private:
                     // set_response_topic never modify key part
                     set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
                 }
+                g.unlock();
                 co_await send_connack(
                     epsp,
                     false, // session present
@@ -521,6 +522,10 @@ private:
             }
         }
         else {
+            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, this)
+                << "offline to online cid:" << client_id;
+            g.unlock();
             // offline exists -> online
             co_await offline_to_online(
                 force_move(epsp),
@@ -535,6 +540,10 @@ private:
                 force_move(connack_props)
             );
         }
+        ASYNC_MQTT_LOG("mqtt_broker", trace)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "co_return cid:" << client_id;
+        co_return;
     }
 
     template <typename Idx, typename It>
@@ -678,7 +687,7 @@ private:
 
         s.set_clean_handler(
             [this, response_topic, rule_nr]() {
-                std::lock_guard<mutex> g(mtx_retains_);
+                std::unique_lock<mutex> g(mtx_retains_);
                 retains_.erase(response_topic);
                 security_.remove_auth(rule_nr);
             }
@@ -1190,7 +1199,7 @@ private:
          */
         if (opts.get_retain() == pub::retain::yes) {
             if (payload.empty()) {
-                std::lock_guard<mutex> g(mtx_retains_);
+                std::unique_lock<mutex> g(mtx_retains_);
                 retains_.erase(topic);
             }
             else {
@@ -1209,7 +1218,7 @@ private:
                     );
                 }
 
-                std::lock_guard<mutex> g(mtx_retains_);
+                std::unique_lock<mutex> g(mtx_retains_);
                 retains_.insert_or_assign(
                     topic,
                     retain_t {
@@ -1772,7 +1781,7 @@ private:
         }
     }
 
-    as::awaitable<void> disconnect_handler(
+    void disconnect_handler(
         epsp_t epsp,
         disconnect_reason_code rc,
         properties /*props*/
@@ -1784,7 +1793,7 @@ private:
             tim_disconnect_.expires_after(*delay_disconnect_);
             tim_disconnect_.wait();
         }
-        co_await close_proc(
+        close_proc(
             force_move(epsp),
             rc == disconnect_reason_code::disconnect_with_will_message,
             rc
@@ -1861,7 +1870,7 @@ private:
                                             [this]
                                             (std::shared_ptr<as::steady_timer> const& sp_tim) {
                                                 // lock for expire (async)
-                                                std::lock_guard<mutex> g(mtx_sessions_);
+                                                std::unique_lock<mutex> g(mtx_sessions_);
                                                 sessions_.template get<tag_tim>().erase(sp_tim);
                                             }
                                         );
@@ -1885,7 +1894,7 @@ private:
                                             [this]
                                             (std::shared_ptr<as::steady_timer> const& sp_tim) {
                                                 // lock for expire (async)
-                                                std::lock_guard<mutex> g(mtx_sessions_);
+                                                std::unique_lock<mutex> g(mtx_sessions_);
                                                 sessions_.template get<tag_tim>().erase(sp_tim);
                                             }
                                         );
@@ -1955,7 +1964,7 @@ private:
      * @return true if offline session is remained, otherwise false
      */
     // TODO: Maybe change the name of this function.
-    as::awaitable<void> close_proc(
+    void close_proc(
         epsp_t epsp,
         bool send_will,
         optional<disconnect_reason_code> rc_opt = nullopt
@@ -1963,17 +1972,12 @@ private:
         ASYNC_MQTT_LOG("mqtt_broker", trace)
             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
             << "close_proc";
-        std::lock_guard<mutex> g(mtx_sessions_);
-        co_await close_proc_no_lock(
+        std::unique_lock<mutex> g(mtx_sessions_);
+        close_proc_no_lock(
             force_move(epsp),
             send_will,
             rc_opt,
-            as::as_tuple(
-                as::consign(
-                    as::use_awaitable,
-                    epsp
-                )
-            )
+            [epsp](bool){}
         );
     }
 
