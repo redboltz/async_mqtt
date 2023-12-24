@@ -50,7 +50,14 @@ public:
 
 private:
     as::awaitable<bool> async_read_packet(epsp_t epsp) {
-        auto [pv] = co_await epsp.recv(as::as_tuple(as::use_awaitable));
+        auto [pv] = co_await epsp.recv(
+            as::as_tuple(
+                as::consign(
+                    as::use_awaitable,
+                    epsp
+                )
+            )
+        );
         auto cont = co_await pv.visit(
             overload {
                 [&](v3_1_1::connect_packet& p) -> as::awaitable<bool> {
@@ -354,9 +361,14 @@ private:
                 false, // session present
                 false, // authenticated
                 force_move(connack_props),
-                as::as_tuple(as::use_awaitable)
+                as::as_tuple(
+                    as::consign(
+                        as::use_awaitable,
+                        epsp
+                    )
+                )
             );
-            disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, []{});
+            disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, [epsp]{});
             co_return;
         }
 
@@ -423,7 +435,12 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                as::as_tuple(as::use_awaitable)
+                as::as_tuple(
+                    as::consign(
+                        as::use_awaitable,
+                        epsp
+                    )
+                )
             );
         }
         else if (auto old_epsp = const_cast<session_state<epsp_t>&>(**it).lock()) {
@@ -436,7 +453,12 @@ private:
                 old_epsp,
                 true,
                 disconnect_reason_code::session_taken_over,
-                as::as_tuple(as::use_awaitable)
+                as::as_tuple(
+                    as::consign(
+                        as::use_awaitable,
+                        epsp
+                    )
+                )
             );
             if (remain_as_offline) {
                 // offline exists -> online
@@ -489,7 +511,12 @@ private:
                     false, // session present
                     true,  // authenticated
                     force_move(connack_props),
-                    as::as_tuple(as::use_awaitable)
+                    as::as_tuple(
+                        as::consign(
+                            as::use_awaitable,
+                            epsp
+                        )
+                    )
                 );
             }
         }
@@ -551,7 +578,12 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                as::as_tuple(as::use_awaitable)
+                as::as_tuple(
+                    as::consign(
+                        as::use_awaitable,
+                        epsp
+                    )
+                )
             );
         }
         else {
@@ -595,7 +627,12 @@ private:
                         true, // session present
                         true, // authenticated
                         force_move(connack_props),
-                        as::as_tuple(as::use_awaitable)
+                        as::as_tuple(
+                            as::consign(
+                                as::use_awaitable,
+                                epsp
+                            )
+                        )
                     );
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -1931,7 +1968,12 @@ private:
             force_move(epsp),
             send_will,
             rc_opt,
-            as::as_tuple(as::use_awaitable)
+            as::as_tuple(
+                as::consign(
+                    as::use_awaitable,
+                    epsp
+                )
+            )
         );
     }
 
