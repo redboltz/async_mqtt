@@ -34,14 +34,14 @@ proc(
 
         // Underlying TCP connect
         co_await as::async_connect(
-            amep->next_layer(),
+            amep.next_layer(),
             eps,
             as::use_awaitable
         );
         std::cout << "TCP connected" << std::endl;
 
         // Send MQTT CONNECT
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep.send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -58,7 +58,7 @@ proc(
         }
 
         // Recv MQTT CONNACK
-        if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep.recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
@@ -83,9 +83,9 @@ proc(
         std::vector<am::topic_subopts> sub_entry{
             {am::allocate_buffer("topic1"), am::qos::at_most_once}
         };
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep.send(
                 am::v3_1_1::subscribe_packet{
-                    *amep->acquire_unique_packet_id(),
+                    *amep.acquire_unique_packet_id(),
                     am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
                 },
                 as::use_awaitable
@@ -95,7 +95,7 @@ proc(
             co_return;
         }
         // Recv MQTT SUBACK
-        if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep.recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
@@ -120,9 +120,9 @@ proc(
             co_return;
         }
         // Send MQTT PUBLISH
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep.send(
                 am::v3_1_1::publish_packet{
-                    *amep->acquire_unique_packet_id(),
+                    *amep.acquire_unique_packet_id(),
                     am::allocate_buffer("topic1"),
                     am::allocate_buffer("payload1"),
                     am::qos::at_least_once
@@ -135,7 +135,7 @@ proc(
         }
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         for (std::size_t count = 0; count != 2; ++count) {
-            if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+            if (am::packet_variant pv = co_await amep.recv(as::use_awaitable)) {
                 pv.visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
@@ -168,7 +168,7 @@ proc(
             }
         }
         std::cout << "close" << std::endl;
-        co_await amep->close(as::use_awaitable);
+        co_await amep.close(as::use_awaitable);
     }
     catch (boost::system::system_error const& se) {
         std::cout << se.what() << std::endl;
@@ -182,10 +182,10 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     as::io_context ioc;
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+    am::endpoint<am::role::client, am::protocol::mqtt> amep{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    as::co_spawn(amep->strand(), proc(amep, argv[1], argv[2]), as::detached);
+    };
+    as::co_spawn(amep.strand(), proc(amep, argv[1], argv[2]), as::detached);
     ioc.run();
 }

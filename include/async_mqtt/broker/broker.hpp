@@ -25,7 +25,7 @@
 namespace async_mqtt {
 
 
-template <typename Epsp>
+template <typename Epv>
 class broker {
     using epsp_t = epsp_wrap<Epsp>;
 public:

@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
     as::io_context ioc;
     as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+    am::endpoint<am::role::client, am::protocol::mqtt> amep{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     // async_mqtt thread
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         auto eps = f_res.get();
 
         auto f_con = as::async_connect(
-            amep->next_layer(),
+            amep.next_layer(),
             eps,
             as::use_future
         );
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT CONNECT
         {
-            auto fut = amep->send(
+            auto fut = amep.send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT CONNACK
         {
-            auto fut = amep->recv(as::use_future);
+            auto fut = amep.recv(as::use_future);
             auto pv = fut.get(); // get am::packet_variant
             if (pv) {
                 pv.visit(
@@ -112,9 +112,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT SUBSCRIBE
         {
-            auto fut_id = amep->acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep.acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get();
-            auto fut = amep->send(
+            auto fut = amep.send(
                 am::v3_1_1::subscribe_packet{
                     *pid,
                     { {am::allocate_buffer("topic1"), am::qos::at_most_once} }
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT SUBACK
         {
-            auto fut = amep->recv(as::use_future);
+            auto fut = amep.recv(as::use_future);
             auto pv = fut.get();
             if (pv) {
                 pv.visit(
@@ -160,9 +160,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT PUBLISH
         {
-            auto fut_id = amep->acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep.acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get();
-            auto fut = amep->send(
+            auto fut = amep.send(
                 am::v3_1_1::publish_packet{
                     *pid,
                     am::allocate_buffer("topic1"),
@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         {
             for (std::size_t count = 0; count != 2; ++count) {
-                auto fut =  amep->recv(as::use_future);
+                auto fut =  amep.recv(as::use_future);
                 auto pv = fut.get();
                 if (pv) {
                     pv.visit(
@@ -218,7 +218,7 @@ int main(int argc, char* argv[]) {
         }
         {
             std::cout << "close" << std::endl;
-            auto fut = amep->close(as::use_future);
+            auto fut = amep.close(as::use_future);
             fut.get();
         }
     }

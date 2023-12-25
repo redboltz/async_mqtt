@@ -221,23 +221,22 @@ void run_broker(boost::program_options::variables_map const& vm) {
             mqtt_ac.emplace(accept_ioc, *mqtt_endpoint);
             mqtt_async_accept =
                 [&] {
-                    auto epsp =
-                        am::endpoint<am::role::server, am::protocol::mqtt>::create(
-                            am::protocol_version::undetermined,
-                            con_ioc_getter().get_executor()
-                        );
+                    am::endpoint<am::role::server, am::protocol::mqtt> ep{
+                        am::protocol_version::undetermined,
+                        con_ioc_getter().get_executor()
+                    };
 
-                    auto& lowest_layer = epsp->lowest_layer();
+                    auto& lowest_layer = ep.lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
-                        [&mqtt_async_accept, &brk, epsp]
+                        [&mqtt_async_accept, &brk, ep = force_move(ep)]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
-                                brk.handle_accept(epv_t{force_move(epsp)});
+                                brk.handle_accept(epv_t{force_move(ep)});
                             }
                             mqtt_async_accept();
                         }
