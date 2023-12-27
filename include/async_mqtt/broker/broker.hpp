@@ -52,10 +52,7 @@ private:
     as::awaitable<bool> async_read_packet(epsp_t epsp) {
         auto [pv] = co_await epsp.recv(
             as::as_tuple(
-                as::consign(
-                    as::use_awaitable,
-                    epsp
-                )
+                as::use_awaitable
             )
         );
         auto cont = co_await pv.visit(
@@ -362,10 +359,7 @@ private:
                 false, // authenticated
                 force_move(connack_props),
                 as::as_tuple(
-                    as::consign(
-                        as::use_awaitable,
-                        epsp
-                    )
+                    as::use_awaitable
                 )
             );
             disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, [epsp]{});
@@ -436,10 +430,7 @@ private:
                 true,  // authenticated
                 force_move(connack_props),
                 as::as_tuple(
-                    as::consign(
-                        as::use_awaitable,
-                        epsp
-                    )
+                    as::use_awaitable
                 )
             );
         }
@@ -454,10 +445,7 @@ private:
                 true,
                 disconnect_reason_code::session_taken_over,
                 as::as_tuple(
-                    as::consign(
-                        as::use_awaitable,
-                        epsp
-                    )
+                    as::use_awaitable
                 )
             );
             if (remain_as_offline) {
@@ -513,10 +501,7 @@ private:
                     true,  // authenticated
                     force_move(connack_props),
                     as::as_tuple(
-                        as::consign(
-                            as::use_awaitable,
-                            epsp
-                        )
+                        as::use_awaitable
                     )
                 );
             }
@@ -588,10 +573,7 @@ private:
                 true,  // authenticated
                 force_move(connack_props),
                 as::as_tuple(
-                    as::consign(
-                        as::use_awaitable,
-                        epsp
-                    )
+                    as::use_awaitable
                 )
             );
         }
@@ -637,10 +619,7 @@ private:
                         true, // authenticated
                         force_move(connack_props),
                         as::as_tuple(
-                            as::consign(
-                                as::use_awaitable,
-                                epsp
-                            )
+                            as::use_awaitable
                         )
                     );
                     if (ec) {
@@ -701,7 +680,7 @@ private:
     }
 
     as::awaitable<bool> handle_empty_client_id(
-        epsp_t& epsp,
+        epsp_t epsp,
         buffer const& client_id,
         bool clean_start,
         properties& connack_props
@@ -726,10 +705,7 @@ private:
                                 connect_return_code::identifier_rejected
                             },
                             as::as_tuple(
-                                as::consign(
-                                    as::use_awaitable,
-                                    epsp
-                                )
+                                as::use_awaitable
                             )
                         );
                         if (ec) {
@@ -739,10 +715,7 @@ private:
                         }
                         co_await epsp.close(
                             as::as_tuple(
-                                as::consign(
-                                    as::use_awaitable,
-                                    epsp
-                                )
+                                as::use_awaitable
                             )
                         );
                         ASYNC_MQTT_LOG("mqtt_broker", info)
@@ -781,7 +754,7 @@ private:
 
     template <typename CompletionToken>
     auto send_connack(
-        epsp_t& epsp,
+        epsp_t epsp,
         bool session_present,
         bool authenticated,
         properties props,
