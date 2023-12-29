@@ -119,7 +119,6 @@ public:
         );
     }
 
-#if 0
     decltype(auto) strand() const {
         return visit(
             [&](auto& ep) -> decltype(auto) {
@@ -127,6 +126,7 @@ public:
             }
         );
     }
+
     decltype(auto) strand() {
         return visit(
             [&](auto& ep) -> decltype(auto) {
@@ -134,7 +134,15 @@ public:
             }
         );
     }
-#endif
+
+    bool in_strand() const {
+        return visit(
+            [&](auto& ep) {
+                return ep.in_strand();
+            }
+        );
+    }
+
     // async functions
 
     template <typename CompletionToken>

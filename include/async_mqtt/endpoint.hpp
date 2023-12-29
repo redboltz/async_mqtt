@@ -148,12 +148,21 @@ public:
     strand_type const& strand() const {
         return stream_->strand();
     }
+
     /**
      * @brief strand getter
-     * @return eference of the strand
+     * @return reference of the strand
      */
     strand_type& strand() {
         return stream_->strand();
+    }
+
+    /**
+     * @brief strand checker
+     * @return true if the current context running in the strand, otherwise false
+     */
+    bool in_strand() const {
+        return stream_->in_strand();
     }
 
     /**
@@ -586,7 +595,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     optional<packet_id_t> acquire_unique_packet_id() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         auto pid = pid_man_.acquire_unique_id();
         if (pid) {
             ASYNC_MQTT_LOG("mqtt_api", info)
@@ -608,7 +617,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     bool register_packet_id(packet_id_t pid) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         auto ret = pid_man_.register_id(pid);
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -622,7 +631,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     void release_packet_id(packet_id_t pid) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "release_packet_id:" << pid;
@@ -636,7 +645,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     std::set<packet_id_t> get_qos2_publish_handled_pids() const {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "get_qos2_publish_handled_pids";
@@ -650,7 +659,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "restore_qos2_publish_handled_pids";
@@ -666,7 +675,7 @@ public:
     void restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
     ) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "restore_packets";
@@ -697,7 +706,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored_packets() const {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "get_stored_packets";
@@ -710,7 +719,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     protocol_version get_protocol_version() const {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "get_protocol_version:" << protocol_version_;
@@ -724,7 +733,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     bool is_publish_processing(packet_id_t pid) const {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "is_publish_processing:" << pid;
@@ -739,7 +748,7 @@ public:
      * @note This function is SYNC function that must only be called in the strand.
      */
     void regulate_for_store(v5::basic_publish_packet<PacketIdBytes>& packet) const {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "regulate_for_store:" << packet;
@@ -757,14 +766,14 @@ public:
     }
 
     void cancel_all_timers_for_test() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         tim_pingreq_send_->cancel();
         tim_pingreq_recv_->cancel();
         tim_pingresp_recv_->cancel();
     }
 
     void set_pingreq_send_interval_ms_for_test(std::size_t ms) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         pingreq_send_interval_ms_ = ms;
     }
 
@@ -806,12 +815,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 self.complete(ep.pid_man_.acquire_unique_id());
                 break;
             }
@@ -832,12 +841,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 self.complete(ep.pid_man_.register_id(packet_id));
                 break;
             }
@@ -858,12 +867,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 ep.pid_man_.release_id(packet_id);
                 self.complete();
                 break;
@@ -898,12 +907,12 @@ private: // compose operation impl
                 state = write;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case write: {
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 state = complete;
                 if constexpr(
                     std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
@@ -950,7 +959,7 @@ private: // compose operation impl
                 }
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 self.complete(ec);
                 break;
             }
@@ -1433,7 +1442,7 @@ private: // compose operation impl
 
         template <typename Self>
         optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) {
-            BOOST_ASSERT(ep.strand().running_in_this_thread());
+            BOOST_ASSERT(ep.in_strand());
             if (!ta_opt) {
                 self.complete(
                     make_error(
@@ -1509,7 +1518,7 @@ private: // compose operation impl
                 a_ep.stream_->read_packet(force_move(self));
             } break;
             case complete: {
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 if (buf.size() > ep.maximum_packet_size_recv_) {
                     // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
                     BOOST_ASSERT(ep.protocol_version_ == protocol_version::v5);
@@ -2093,7 +2102,7 @@ private: // compose operation impl
                             state = initiate;
                             auto& a_ep{ep};
                             as::dispatch(
-                                a_ep.strand(),
+                                a_ep.stream_->raw_strand(),
                                 force_move(self)
                             );
                         }
@@ -2136,7 +2145,7 @@ private: // compose operation impl
         }
 
         void send_publish_from_queue() {
-            BOOST_ASSERT(ep.strand().running_in_this_thread());
+            BOOST_ASSERT(ep.in_strand());
             if (ep.status_ != connection_status::connected) return;
             while (!ep.publish_queue_.empty() &&
                    ep.publish_send_count_ != ep.publish_send_max_) {
@@ -2155,7 +2164,7 @@ private: // compose operation impl
             protocol_version ver,
             packet_id_t packet_id
         ) {
-            BOOST_ASSERT(ep.strand().running_in_this_thread());
+            BOOST_ASSERT(ep.in_strand());
             bool already_handled = false;
             if (ep.qos2_publish_handled_.find(packet_id) == ep.qos2_publish_handled_.end()) {
                 ep.qos2_publish_handled_.emplace(packet_id);
@@ -2228,7 +2237,7 @@ private: // compose operation impl
                 state = close;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
@@ -2261,7 +2270,7 @@ private: // compose operation impl
                     self.complete();
                 } break;
             case complete: {
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "close complete status:" << static_cast<int>(ep.status_);
@@ -2294,12 +2303,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 ep.restore_packets(force_move(pvs));
                 self.complete();
                 break;
@@ -2320,12 +2329,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 self.complete(ep.get_stored_packets());
                 break;
             }
@@ -2346,12 +2355,12 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.strand(),
+                    a_ep.stream_->raw_strand(),
                     force_move(self)
                 );
             } break;
             case complete:
-                BOOST_ASSERT(ep.strand().running_in_this_thread());
+                BOOST_ASSERT(ep.in_strand());
                 ep.regulate_for_store(packet);
                 self.complete(force_move(packet));
                 break;
@@ -2383,7 +2392,7 @@ private:
     }
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet) {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         if (packet.opts().get_qos() == qos::at_least_once ||
             packet.opts().get_qos() == qos::exactly_once
         ) {
@@ -2403,7 +2412,7 @@ private:
     }
 
     void send_stored() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         store_.for_each(
             [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
                 if (pv.size() > maximum_packet_size_send_) {
@@ -2447,7 +2456,7 @@ private:
     }
 
     void initialize() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         publish_send_count_ = 0;
         publish_queue_.clear();
         topic_alias_send_ = nullopt;
@@ -2463,7 +2472,7 @@ private:
     }
 
     void reset_pingreq_send_timer() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         if (pingreq_send_interval_ms_) {
             tim_pingreq_send_->cancel();
             if (status_ == connection_status::disconnecting ||
@@ -2501,7 +2510,7 @@ private:
     }
 
     void reset_pingreq_recv_timer() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         if (pingreq_recv_timeout_ms_) {
             tim_pingreq_recv_->cancel();
             if (status_ == connection_status::disconnecting ||
@@ -2551,7 +2560,7 @@ private:
     }
 
     void reset_pingresp_recv_timer() {
-        BOOST_ASSERT(strand().running_in_this_thread());
+        BOOST_ASSERT(in_strand());
         if (pingresp_recv_timeout_ms_) {
             tim_pingresp_recv_->cancel();
             if (status_ == connection_status::disconnecting ||
@@ -2618,7 +2627,7 @@ private:
     std::set<packet_id_t> pid_pubcomp_;
 
     bool need_store_ = false;
-    store<PacketIdBytes, strand_type> store_{strand()};
+    store<PacketIdBytes, as::strand<as::any_io_executor>> store_{stream_->raw_strand()};
 
     bool auto_pub_response_ = false;
     bool auto_ping_response_ = false;
@@ -2646,9 +2655,9 @@ private:
     optional<std::size_t> pingreq_recv_timeout_ms_;
     optional<std::size_t> pingresp_recv_timeout_ms_;
 
-    std::shared_ptr<as::steady_timer> tim_pingreq_send_{std::make_shared<as::steady_timer>(strand())};
-    std::shared_ptr<as::steady_timer> tim_pingreq_recv_{std::make_shared<as::steady_timer>(strand())};
-    std::shared_ptr<as::steady_timer> tim_pingresp_recv_{std::make_shared<as::steady_timer>(strand())};
+    std::shared_ptr<as::steady_timer> tim_pingreq_send_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
+    std::shared_ptr<as::steady_timer> tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
+    std::shared_ptr<as::steady_timer> tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
 
     std::set<packet_id_t> qos2_publish_handled_;
 

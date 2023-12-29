@@ -65,7 +65,8 @@ public:
     using this_type_sp = std::shared_ptr<this_type>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
-    using strand_type = as::strand<executor_type>;
+    using raw_strand_type = as::strand<executor_type>;
+    using strand_type = as::strand<as::any_io_executor>;
 
     template <typename T>
     friend class make_shared_helper;
@@ -150,8 +151,21 @@ public:
     strand_type const& strand() const {
         return strand_;
     }
+
     strand_type& strand() {
         return strand_;
+    }
+
+    raw_strand_type const& raw_strand() const {
+        return raw_strand_;
+    };
+
+    raw_strand_type& raw_strand() {
+        return raw_strand_;
+    };
+
+    bool in_strand() const {
+        return raw_strand().running_in_this_thread();
     }
 
     template<typename CompletionToken>
@@ -215,12 +229,12 @@ private:
                 state = header;
                 auto& a_strm{strm};
                 as::dispatch(
-                    a_strm.strand_,
+                    a_strm.raw_strand_,
                     force_move(self)
                 );
             } break;
             case header: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
                 auto& a_strm{strm};
@@ -228,7 +242,7 @@ private:
                     a_strm.nl_,
                     as::buffer(address, 1),
                     as::bind_executor(
-                        a_strm.strand_,
+                        a_strm.raw_strand_,
                         force_move(self)
                     )
                 );
@@ -255,7 +269,7 @@ private:
             std::size_t bytes_transferred
         ) {
             if (ec) {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -272,7 +286,7 @@ private:
 
             switch (state) {
             case header:
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 BOOST_ASSERT(bytes_transferred == 1);
                 state = remaining_length;
                 ++received;
@@ -284,14 +298,14 @@ private:
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             force_move(self)
                         )
                     );
                 }
                 break;
             case remaining_length:
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 BOOST_ASSERT(bytes_transferred == 1);
                 ++received;
                 if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
@@ -314,7 +328,7 @@ private:
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             force_move(self)
                         )
                     );
@@ -350,7 +364,7 @@ private:
                             a_strm.nl_,
                             as::buffer(address, rl),
                             as::bind_executor(
-                                a_strm.strand_,
+                                a_strm.raw_strand_,
                                 force_move(self)
                             )
                         );
@@ -358,7 +372,7 @@ private:
                 }
                 break;
             case bind: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 auto exe = as::get_associated_executor(self);
                 if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                     state = complete;
@@ -396,23 +410,23 @@ private:
                 state = post;
                 auto& a_strm{strm};
                 as::dispatch(
-                    a_strm.strand_,
+                    a_strm.raw_strand_,
                     force_move(self)
                 );
             } break;
             case post: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 state = write;
                 auto& a_strm{strm};
                 a_strm.queue_.post(
                     as::bind_executor(
-                        a_strm.strand_,
+                        a_strm.raw_strand_,
                         force_move(self)
                     )
                 );
             } break;
             case write: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.start_work();
                 if (strm.lowest_layer().is_open()) {
                     state = bind;
@@ -422,7 +436,7 @@ private:
                         a_strm.nl_,
                         cbs,
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             force_move(self)
                         )
                     );
@@ -431,7 +445,7 @@ private:
                     state = bind;
                     auto& a_strm{strm};
                     as::dispatch(
-                        a_strm.strand_,
+                        a_strm.raw_strand_,
                         as::append(
                             force_move(self),
                             errc::make_error_code(errc::connection_reset),
@@ -453,11 +467,11 @@ private:
             std::size_t bytes_transferred
         ) {
             if (ec) {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
-                    a_strm.strand_,
+                    a_strm.raw_strand_,
                     [&a_strm,wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
                             a_strm.queue_.poll_one();
@@ -479,11 +493,11 @@ private:
             }
             switch (state) {
             case bind: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
-                    a_strm.strand_,
+                    a_strm.raw_strand_,
                     [&a_strm, wp = a_strm.weak_from_this()] {
                         if (auto sp = wp.lock()) {
                             a_strm.queue_.poll_one();
@@ -503,7 +517,7 @@ private:
                 self.complete(ec, bytes_transferred);
             } break;
             case complete:
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 if (last_ec) {
                     self.complete(last_ec, 0);
                 }
@@ -538,7 +552,7 @@ private:
             state = close;
             auto& a_strm{strm};
             as::dispatch(
-                a_strm.strand_,
+                a_strm.raw_strand_,
                 as::append(
                     force_move(self),
                     error_code{},
@@ -571,7 +585,7 @@ private:
                     state = close;
                     auto& a_strm{strm};
                     as::dispatch(
-                        a_strm.strand_,
+                        a_strm.raw_strand_,
                         as::append(
                             force_move(self),
                             error_code{},
@@ -585,7 +599,7 @@ private:
                     stream.get().async_read(
                         *buffer,
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             as::append(
                                 as::consign(
                                     force_move(self),
@@ -608,7 +622,7 @@ private:
         ) {
             switch (state) {
             case close: {
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 if constexpr(is_ws<Stream>::value) {
                     if (stream.get().is_open()) {
                         state = drop1;
@@ -616,7 +630,7 @@ private:
                         stream.get().async_close(
                             bs::websocket::close_code::none,
                             as::bind_executor(
-                                a_strm.strand_,
+                                a_strm.raw_strand_,
                                 as::append(
                                     force_move(self),
                                     force_move(stream)
@@ -628,7 +642,7 @@ private:
                         state = close;
                         auto& a_strm{strm};
                         as::dispatch(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             as::append(
                                 force_move(self),
                                 error_code{},
@@ -642,10 +656,10 @@ private:
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << ASYNC_MQTT_ADD_VALUE(address, this)
                         << "TLS async_shutdown start with timeout";
-                    auto tim = std::make_shared<as::steady_timer>(a_strm.strand_, shutdown_timeout);
+                    auto tim = std::make_shared<as::steady_timer>(a_strm.raw_strand_, shutdown_timeout);
                     tim->async_wait(
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             [this, &next_layer = stream.get().next_layer()] (error_code const& ec) {
                                 if (!ec) {
                                     ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -659,7 +673,7 @@ private:
                     );
                     stream.get().async_shutdown(
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             as::append(
                                 as::consign(
                                     force_move(self),
@@ -706,7 +720,7 @@ private:
                         state = close;
                         auto& a_strm{strm};
                         as::dispatch(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             as::append(
                                 force_move(self),
                                 error_code{},
@@ -721,7 +735,7 @@ private:
                     stream.get().async_read(
                         *buffer,
                         as::bind_executor(
-                            a_strm.strand_,
+                            a_strm.raw_strand_,
                             as::append(
                                 as::consign(
                                     force_move(self),
@@ -734,7 +748,7 @@ private:
                 }
             } break;
             case complete:
-                BOOST_ASSERT(strm.strand_.running_in_this_thread());
+                BOOST_ASSERT(strm.in_strand());
                 self.complete(last_ec);
                 break;
             default:
@@ -746,7 +760,8 @@ private:
 
 private:
     next_layer_type nl_;
-    strand_type strand_{nl_.get_executor()};
+    raw_strand_type raw_strand_{nl_.get_executor()};
+    strand_type strand_{as::any_io_executor{raw_strand_}};
     ioc_queue queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
 };
