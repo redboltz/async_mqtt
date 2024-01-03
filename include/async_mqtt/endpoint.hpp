@@ -273,7 +273,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(optional<packet_id_t>)>::return_type
+    auto
     acquire_unique_packet_id(
         CompletionToken&& token
     ) {
@@ -299,7 +299,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(bool)>::return_type
+    auto
     register_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
@@ -327,7 +327,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     release_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
@@ -356,7 +356,7 @@ public:
      * @return deduced by token
      */
     template <typename Packet, typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(system_error)>::return_type
+    auto
     send(
         Packet packet,
         CompletionToken&& token
@@ -387,7 +387,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
+    auto
     recv(
         CompletionToken&& token
     ) {
@@ -418,7 +418,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
+    auto
     recv(
         std::set<control_packet_type> types,
         CompletionToken&& token
@@ -453,7 +453,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
+    auto
     recv(
         filter fil,
         std::set<control_packet_type> types,
@@ -484,7 +484,7 @@ public:
      * @return deduced by token
      */
     template<typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     close(CompletionToken&& token) {
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -509,7 +509,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
         CompletionToken&& token
@@ -540,10 +540,7 @@ public:
      * @return deduced by token
      */
     template <typename CompletionToken>
-    typename as::async_result<
-        std::decay_t<CompletionToken>,
-        void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
-    >::return_type
+    auto
     get_stored_packets(
         CompletionToken&& token
     ) const {
@@ -563,10 +560,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<
-        std::decay_t<CompletionToken>,
-        void(v5::basic_publish_packet<PacketIdBytes>)
-    >::return_type
+    auto
     regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes> packet,
         CompletionToken&& token
@@ -2371,7 +2365,7 @@ private: // compose operation impl
 private:
 
     template <typename Packet, typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(system_error)>::return_type
+    auto
     send(
         Packet packet,
         bool from_queue,

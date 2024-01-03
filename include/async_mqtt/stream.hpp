@@ -113,7 +113,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(error_code, buffer)>::return_type
+    auto
     read_packet(
         CompletionToken&& token
     ) {
@@ -130,7 +130,7 @@ public:
     }
 
     template <typename Packet, typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(error_code, std::size_t)>::return_type
+    auto
     write_packet(
         Packet packet,
         CompletionToken&& token
@@ -169,7 +169,7 @@ public:
     }
 
     template<typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(error_code)>::return_type
+    auto
     close(CompletionToken&& token) {
         return
             as::async_compose<

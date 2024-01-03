@@ -146,7 +146,7 @@ public:
     // async functions
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(optional<packet_id_t>)>::return_type
+    auto
     acquire_unique_packet_id(
         CompletionToken&& token
     ) {
@@ -160,7 +160,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(bool)>::return_type
+    auto
     register_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
@@ -176,7 +176,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     release_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
@@ -192,7 +192,7 @@ public:
     }
 
     template <typename Packet, typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(system_error)>::return_type
+    auto
     send(
         Packet&& packet,
         CompletionToken&& token
@@ -208,7 +208,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void(packet_variant_type)>::return_type
+    auto
     recv(
         CompletionToken&& token
     ) {
@@ -222,7 +222,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     close(
         CompletionToken&& token
     ) {
@@ -236,7 +236,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<std::decay_t<CompletionToken>, void()>::return_type
+    auto
     restore_packets(
         std::vector<basic_store_packet_variant<packet_id_bytes>> pvs,
         CompletionToken&& token
@@ -252,10 +252,7 @@ public:
     }
 
     template <typename CompletionToken>
-    typename as::async_result<
-        std::decay_t<CompletionToken>,
-        void(std::vector<basic_store_packet_variant<packet_id_bytes>>)
-    >::return_type
+    auto
     get_stored_packets(
         CompletionToken&& token
     ) {
