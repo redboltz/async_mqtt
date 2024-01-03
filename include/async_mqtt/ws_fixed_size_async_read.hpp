@@ -71,7 +71,7 @@ template <
         as::is_mutable_buffer_sequence<MutableBufferSequence>::value
     >* = nullptr
 >
-typename as::async_result<std::decay_t<CompletionToken>, void(boost::system::error_code const&, std::size_t)>::return_type
+auto
 async_read(
     bs::websocket::stream<NextLayer>& stream,
     MutableBufferSequence const& mb,
@@ -98,7 +98,7 @@ template <
         as::is_const_buffer_sequence<ConstBufferSequence>::value
     >* = nullptr
 >
-typename as::async_result<std::decay_t<CompletionToken>, void(boost::system::error_code const&, std::size_t)>::return_type
+auto
 async_write(
     bs::websocket::stream<NextLayer>& stream,
     ConstBufferSequence const& cbs,
