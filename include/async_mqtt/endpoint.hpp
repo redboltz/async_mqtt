@@ -809,8 +809,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:
@@ -835,8 +837,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:
@@ -861,8 +865,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:
@@ -901,8 +907,10 @@ private: // compose operation impl
                 state = write;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case write: {
@@ -2096,8 +2104,10 @@ private: // compose operation impl
                             state = initiate;
                             auto& a_ep{ep};
                             as::dispatch(
-                                a_ep.stream_->raw_strand(),
-                                force_move(self)
+                                as::bind_executor(
+                                    a_ep.stream_->raw_strand(),
+                                    force_move(self)
+                                )
                             );
                         }
                         else {
@@ -2231,8 +2241,10 @@ private: // compose operation impl
                 state = close;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case close:
@@ -2297,8 +2309,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:
@@ -2323,8 +2337,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:
@@ -2349,8 +2365,10 @@ private: // compose operation impl
                 state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
-                    a_ep.stream_->raw_strand(),
-                    force_move(self)
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
                 );
             } break;
             case complete:

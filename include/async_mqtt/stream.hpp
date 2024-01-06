@@ -229,8 +229,10 @@ private:
                 state = header;
                 auto& a_strm{strm};
                 as::dispatch(
-                    a_strm.raw_strand_,
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.raw_strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             case header: {
@@ -275,8 +277,10 @@ private:
                     state = complete;
                     last_ec = ec;
                     as::dispatch(
-                        exe,
-                        force_move(self)
+                        as::bind_executor(
+                            exe,
+                            force_move(self)
+                        )
                     );
                     return;
                 }
@@ -347,8 +351,10 @@ private:
                         auto exe = as::get_associated_executor(self);
                         if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
                             as::dispatch(
-                                exe,
-                                force_move(self)
+                                as::bind_executor(
+                                    exe,
+                                    force_move(self)
+                                )
                             );
                             return;
                         }
@@ -378,8 +384,10 @@ private:
                     state = complete;
                     last_ec = ec;
                     as::dispatch(
-                        exe,
-                        force_move(self)
+                        as::bind_executor(
+                            exe,
+                            force_move(self)
+                        )
                     );
                     return;
                 }
@@ -410,8 +418,10 @@ private:
                 state = post;
                 auto& a_strm{strm};
                 as::dispatch(
-                    a_strm.raw_strand_,
-                    force_move(self)
+                    as::bind_executor(
+                        a_strm.raw_strand_,
+                        force_move(self)
+                    )
                 );
             } break;
             case post: {
@@ -445,11 +455,13 @@ private:
                     state = bind;
                     auto& a_strm{strm};
                     as::dispatch(
-                        a_strm.raw_strand_,
-                        as::append(
-                            force_move(self),
-                            errc::make_error_code(errc::connection_reset),
-                            0
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            as::append(
+                                force_move(self),
+                                errc::make_error_code(errc::connection_reset),
+                                0
+                            )
                         )
                     );
                 }
@@ -483,8 +495,10 @@ private:
                     state = complete;
                     last_ec = ec;
                     as::dispatch(
-                        exe,
-                        force_move(self)
+                        as::bind_executor(
+                            exe,
+                            force_move(self)
+                        )
                     );
                     return;
                 }
@@ -509,8 +523,10 @@ private:
                     state = complete;
                     last_ec = ec;
                     as::dispatch(
-                        exe,
-                        force_move(self)
+                        as::bind_executor(
+                            exe,
+                            force_move(self)
+                        )
                     );
                     return;
                 }
@@ -552,11 +568,13 @@ private:
             state = close;
             auto& a_strm{strm};
             as::dispatch(
-                a_strm.raw_strand_,
-                as::append(
-                    force_move(self),
-                    error_code{},
-                    std::ref(a_strm.nl_)
+                as::bind_executor(
+                    a_strm.raw_strand_,
+                    as::append(
+                        force_move(self),
+                        error_code{},
+                        std::ref(a_strm.nl_)
+                    )
                 )
             );
         }
@@ -585,11 +603,13 @@ private:
                     state = close;
                     auto& a_strm{strm};
                     as::dispatch(
-                        a_strm.raw_strand_,
-                        as::append(
-                            force_move(self),
-                            error_code{},
-                            std::ref(stream.get().next_layer())
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            as::append(
+                                force_move(self),
+                                error_code{},
+                                std::ref(stream.get().next_layer())
+                            )
                         )
                     );
                 }
@@ -642,11 +662,13 @@ private:
                         state = close;
                         auto& a_strm{strm};
                         as::dispatch(
-                            a_strm.raw_strand_,
-                            as::append(
-                                force_move(self),
-                                error_code{},
-                                std::ref(stream.get().next_layer())
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                as::append(
+                                    force_move(self),
+                                    error_code{},
+                                    std::ref(stream.get().next_layer())
+                                )
                             )
                         );
                     }
@@ -703,8 +725,10 @@ private:
                         state = complete;
                         last_ec = ec;
                         as::dispatch(
-                            exe,
-                            force_move(self)
+                            as::bind_executor(
+                                exe,
+                                force_move(self)
+                            )
                         );
                         return;
                     }
@@ -720,11 +744,13 @@ private:
                         state = close;
                         auto& a_strm{strm};
                         as::dispatch(
-                            a_strm.raw_strand_,
-                            as::append(
-                                force_move(self),
-                                error_code{},
-                                std::ref(stream.get().next_layer())
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                as::append(
+                                    force_move(self),
+                                    error_code{},
+                                    std::ref(stream.get().next_layer())
+                                )
                             )
                         );
                         return;

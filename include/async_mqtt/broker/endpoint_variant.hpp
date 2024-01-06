@@ -104,8 +104,10 @@ public:
         visit(
             [&](auto& ep){
                 as::dispatch(
-                    ep.strand(),
-                    std::forward<Func>(func)
+                    as::bind_executor(
+                        ep.strand(),
+                        std::forward<Func>(func)
+                    )
                 );
             }
         );
