@@ -18,17 +18,25 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 struct stub_socket {
-    using executor_type = as::io_context::executor_type;
+    using executor_type = as::any_io_executor;
     using pv_queue_t = std::deque<packet_variant>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
 
     stub_socket(
         protocol_version version,
+        as::any_io_executor exe
+    )
+        :version_{version},
+         exe_{force_move(exe)}
+    {}
+
+    stub_socket(
+        protocol_version version,
         as::io_context& ioc
     )
         :version_{version},
-         ioc_{ioc}
+         exe_{ioc.get_executor()}
     {}
 
     void set_write_packet_checker(std::function<void(packet_variant const& pv)> c) {
@@ -49,17 +57,17 @@ struct stub_socket {
 
 #if 0
     auto const& lowest_layer() const {
-        return ioc_;
+        return exe_;
     }
     auto& lowest_layer() {
-        return ioc_;
+        return exe_;
     }
 #endif
     auto get_executor() const {
-        return ioc_.get_executor();
+        return exe_;
     }
     auto get_executor() {
-        return ioc_.get_executor();
+        return exe_;
     }
     bool is_open() const {
         return open_;
@@ -80,16 +88,20 @@ struct stub_socket {
         auto pv = buffer_to_packet_variant(buf, version_);
         if (write_packet_checker_) write_packet_checker_(pv);
         as::post(
-            ioc_,
-            [token = std::forward<CompletionToken>(token), dis = std::distance(it, end)] () mutable {
-                auto exe = as::get_associated_executor(token);
-                as::dispatch(
-                    exe,
-                    [token = force_move(token), dis] () mutable {
-                        token(boost::system::error_code{}, std::size_t(dis));
-                    }
-                );
-            }
+            as::bind_executor(
+                exe_,
+                [token = std::forward<CompletionToken>(token), dis = std::distance(it, end)] () mutable {
+                    auto exe = as::get_associated_executor(token);
+                    as::dispatch(
+                        as::bind_executor(
+                            exe,
+                            [token = force_move(token), dis] () mutable {
+                                token(boost::system::error_code{}, std::size_t(dis));
+                            }
+                        )
+                    );
+                }
+            )
         );
     }
 
@@ -101,20 +113,24 @@ struct stub_socket {
         // empty
         if (recv_pvs_it_ == recv_pvs_.end()) {
             as::dispatch(
-                as::get_associated_executor(token),
-                [token = force_move(token)] () mutable {
-                    token(errc::make_error_code(errc::no_message), 0);
-                }
+                as::bind_executor(
+                    as::get_associated_executor(token),
+                    [token = force_move(token)] () mutable {
+                        token(errc::make_error_code(errc::no_message), 0);
+                    }
+                )
             );
             return;
         }
         if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
             ++recv_pvs_it_;
             as::dispatch(
-                as::get_associated_executor(token),
-                [token = force_move(token), code = ec->code()] () mutable {
-                    token(code, 0);
-                }
+                as::bind_executor(
+                    as::get_associated_executor(token),
+                    [token = force_move(token), code = ec->code()] () mutable {
+                        token(code, 0);
+                    }
+                )
             );
             return;
         }
@@ -129,20 +145,24 @@ struct stub_socket {
             ++recv_pvs_it_;
             if (recv_pvs_it_ == recv_pvs_.end()) {
                 as::dispatch(
-                as::get_associated_executor(token),
-                    [token = force_move(token)] () mutable {
-                        token(errc::make_error_code(errc::no_message), 0);
-                    }
+                    as::bind_executor(
+                        as::get_associated_executor(token),
+                        [token = force_move(token)] () mutable {
+                            token(errc::make_error_code(errc::no_message), 0);
+                        }
+                    )
                 );
                 return;
             }
             if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
                 ++recv_pvs_it_;
                 as::dispatch(
-                    as::get_associated_executor(token),
-                    [token = force_move(token), code = ec->code()] () mutable {
-                        token(code, 0);
-                    }
+                    as::bind_executor(
+                        as::get_associated_executor(token),
+                        [token = force_move(token), code = ec->code()] () mutable {
+                            token(code, 0);
+                        }
+                    )
                 );
                 return;
             }
@@ -155,17 +175,19 @@ struct stub_socket {
         std::copy(pv_r_->first, std::next(pv_r_->first, std::ptrdiff_t(mb.size())), static_cast<char*>(mb_copy.data()));
         std::advance(pv_r_->first, mb.size());
         as::dispatch(
-            as::get_associated_executor(token),
-            [token = force_move(token), size = mb.size()] () mutable {
-                token(errc::make_error_code(errc::success), size);
-            }
+            as::bind_executor(
+                as::get_associated_executor(token),
+                [token = force_move(token), size = mb.size()] () mutable {
+                    token(errc::make_error_code(errc::success), size);
+                }
+            )
         );
     }
 
 private:
 
     protocol_version version_;
-    as::io_context& ioc_;
+    as::any_io_executor exe_;
     pv_queue_t recv_pvs_;
     pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();
     std::vector<as::const_buffer> cbs_;

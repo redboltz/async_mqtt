@@ -46,6 +46,25 @@ enum class filter {
     except  ///< no matched control_packet_type is target
 };
 
+template <typename Self>
+auto bind_dispatch(Self&& self) {
+    auto exe = as::get_associated_executor(self);
+    auto cs = as::get_associated_cancellation_slot(self);
+    auto alloc = as::get_associated_allocator(self);
+    return as::dispatch(
+        as::bind_executor(
+            exe,
+            as::bind_cancellation_slot(
+                cs,
+                as::bind_allocator(
+                    alloc,
+                    std::forward<Self>(self)
+                )
+            )
+        )
+    );
+}
+
 /**
  * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
@@ -798,7 +817,8 @@ private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
         this_type& ep;
-        enum { dispatch, complete } state = dispatch;
+        optional<packet_id_t> pid_opt = nullopt;
+        enum { dispatch, acquire, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -806,7 +826,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = acquire;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -815,9 +835,14 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case acquire: {
                 BOOST_ASSERT(ep.in_strand());
-                self.complete(ep.pid_man_.acquire_unique_id());
+                pid_opt = ep.pid_man_.acquire_unique_id();
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
+                self.complete(pid_opt);
                 break;
             }
         }
@@ -826,7 +851,8 @@ private: // compose operation impl
     struct register_packet_id_impl {
         this_type& ep;
         packet_id_t packet_id;
-        enum { dispatch, complete } state = dispatch;
+        bool result = false;
+        enum { dispatch, regi, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -834,7 +860,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = regi;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -843,9 +869,14 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case regi: {
                 BOOST_ASSERT(ep.in_strand());
-                self.complete(ep.pid_man_.register_id(packet_id));
+                result = ep.pid_man_.register_id(packet_id);
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
+                self.complete(result);
                 break;
             }
         }
@@ -854,7 +885,7 @@ private: // compose operation impl
     struct release_packet_id_impl {
         this_type& ep;
         packet_id_t packet_id;
-        enum { dispatch, complete } state = dispatch;
+        enum { dispatch, rel, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -862,7 +893,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = rel;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -871,9 +902,13 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case rel: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.pid_man_.release_id(packet_id);
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
                 self.complete();
                 break;
             }
@@ -886,7 +921,8 @@ private: // compose operation impl
         this_type& ep;
         Packet packet;
         bool from_queue = false;
-        enum { dispatch, write, complete } state = dispatch;
+        error_code last_ec = error_code{};
+        enum { dispatch, write, bind, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -898,7 +934,9 @@ private: // compose operation impl
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "send error:" << ec.message();
-                self.complete(ec);
+                last_ec = ec;
+                state = complete;
+                bind_dispatch(force_move(self));
                 return;
             }
 
@@ -915,7 +953,7 @@ private: // compose operation impl
             } break;
             case write: {
                 BOOST_ASSERT(ep.in_strand());
-                state = complete;
+                state = bind;
                 if constexpr(
                     std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
                     std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
@@ -960,9 +998,15 @@ private: // compose operation impl
                     }
                 }
             } break;
-            case complete:
+            case bind: {
                 BOOST_ASSERT(ep.in_strand());
-                self.complete(ec);
+                last_ec = ec;
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
+                // out of strand
+                self.complete(last_ec);
                 break;
             }
         }
@@ -1495,7 +1539,8 @@ private: // compose operation impl
         optional<filter> fil = nullopt;
         std::set<control_packet_type> types = {};
         optional<system_error> decided_error = nullopt;
-        enum { initiate, disconnect, close, complete } state = initiate;
+        optional<basic_packet_variant<PacketIdBytes>> pv_opt = nullopt;
+        enum { initiate, disconnect, close, read, complete } state = initiate;
 
         template <typename Self>
         void operator()(
@@ -1509,17 +1554,24 @@ private: // compose operation impl
                     << "recv error:" << ec.message();
                 decided_error.emplace(ec);
                 ep.recv_processing_ = false;
-                try_close(self);
+                state = close;
+                auto& a_ep{ep};
+                a_ep.close(
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
+                );
                 return;
             }
 
             switch (state) {
             case initiate: {
-                state = complete;
+                state = read;
                 auto& a_ep{ep};
                 a_ep.stream_->read_packet(force_move(self));
             } break;
-            case complete: {
+            case read: {
                 BOOST_ASSERT(ep.in_strand());
                 if (buf.size() > ep.maximum_packet_size_recv_) {
                     // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
@@ -1838,7 +1890,7 @@ private: // compose operation impl
                                 a_ep.send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
-                                            },
+                                    },
                                     force_move(self)
                                 );
                                 return;
@@ -1867,7 +1919,7 @@ private: // compose operation impl
                                 a_ep.send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
-                                            },
+                                    },
                                     force_move(self)
                                 );
                                 return;
@@ -1899,7 +1951,7 @@ private: // compose operation impl
                                 a_ep.send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
-                                            },
+                                    },
                                     force_move(self)
                                 );
                                 return;
@@ -1937,7 +1989,7 @@ private: // compose operation impl
                                 a_ep.send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
-                                            },
+                                    },
                                     force_move(self)
                                 );
                                 return;
@@ -2095,6 +2147,15 @@ private: // compose operation impl
                 ep.reset_pingreq_recv_timer();
                 ep.recv_processing_ = false;
 
+                auto try_to_comp =
+                    [&] {
+                        if (call_complete && !decided_error) {
+                            pv_opt.emplace(force_move(v));
+                            state = complete;
+                            bind_dispatch(force_move(self));
+                        }
+                    };
+
                 if (fil) {
                     if (auto type_opt = v.type()) {
                         if ((*fil == filter::match  && types.find(*type_opt) == types.end()) ||
@@ -2111,27 +2172,40 @@ private: // compose operation impl
                             );
                         }
                         else {
-                            if (call_complete && !decided_error) self.complete(force_move(v));
+                            try_to_comp();
                         }
                     }
                     else {
-                        if (call_complete && !decided_error) self.complete(force_move(v));
+                        try_to_comp();
                     }
                 }
                 else {
-                    if (call_complete && !decided_error) self.complete(force_move(v));
+                    try_to_comp();
                 }
             } break;
-            case disconnect:
-                try_close(self);
-                break;
-            case close:
+            case disconnect: {
+                state = close;
+                auto& a_ep{ep};
+                a_ep.close(
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
+                );
+            } break;
+            case close: {
                 BOOST_ASSERT(decided_error);
                 ep.recv_processing_ = false;
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                    << "recv error:" << decided_error->what();
-                self.complete(*decided_error);
+                    << "recv code triggers close:" << decided_error->what();
+                pv_opt.emplace(force_move(*decided_error));
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
+                BOOST_ASSERT(pv_opt);
+                self.complete(force_move(*pv_opt));
                 break;
             default:
                 BOOST_ASSERT(false);
@@ -2145,7 +2219,14 @@ private: // compose operation impl
             system_error const&
         ) {
             BOOST_ASSERT(state == disconnect);
-            try_close(self);
+            state = close;
+            auto& a_ep{ep};
+            a_ep.close(
+                as::bind_executor(
+                    a_ep.stream_->raw_strand(),
+                    force_move(self)
+                )
+            );
         }
 
         void send_publish_from_queue() {
@@ -2207,28 +2288,11 @@ private: // compose operation impl
             }
             return true;
         }
-
-        template <typename Self>
-        void try_close(Self& self) {
-            if (ep.status_ == connection_status::closing ||
-                ep.status_ == connection_status::closed) {
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                    << "already closed";
-                BOOST_ASSERT(decided_error);
-                self.complete(*decided_error);
-            }
-            else {
-                state = close;
-                auto& a_ep{ep};
-                a_ep.close(force_move(self));
-            }
-        }
     };
 
     struct close_impl {
         this_type& ep;
-        enum { dispatch, close, complete } state = dispatch;
+        enum { dispatch, close, bind, complete } state = dispatch;
         this_type_sp life_keeper = ep.shared_from_this();
 
         template <typename Self>
@@ -2248,6 +2312,7 @@ private: // compose operation impl
                 );
             } break;
             case close:
+                BOOST_ASSERT(ep.in_strand());
                 switch (ep.status_) {
                 case connection_status::connecting:
                 case connection_status::connected:
@@ -2255,7 +2320,7 @@ private: // compose operation impl
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                             << "close initiate status:" << static_cast<int>(ep.status_);
-                    state = complete;
+                    state = bind;
                     ep.status_ = connection_status::closing;
                     auto& a_ep{ep};
                     a_ep.stream_->close(force_move(self));
@@ -2264,18 +2329,31 @@ private: // compose operation impl
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                         << "already close requested";
-                    state = complete;
                     auto& a_ep{ep};
-                    a_ep.close_queue_.post(force_move(self));
+                    auto exe = as::get_associated_executor(self);
+                    auto cs = as::get_associated_cancellation_slot(self);
+                    auto alloc = as::get_associated_allocator(self);
+                    a_ep.close_queue_.post(
+                        as::bind_executor(
+                            exe,
+                            as::bind_cancellation_slot(
+                                cs,
+                                as::bind_allocator(
+                                    alloc,
+                                    force_move(self)
+                                )
+                            )
+                        )
+                    );
                 } break;
                 case connection_status::closed:
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                         << "already closed";
                     state = complete;
-                    self.complete();
+                    bind_dispatch(force_move(self));
                 } break;
-            case complete: {
+            case bind: {
                 BOOST_ASSERT(ep.in_strand());
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
@@ -2289,8 +2367,13 @@ private: // compose operation impl
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "process enqueued close";
                 a_ep.close_queue_.poll();
-                self.complete();
+                state = complete;
+                state = complete;
+                bind_dispatch(force_move(self));
             } break;
+            case complete:
+                self.complete();
+                break;
             }
         }
     };
@@ -2298,7 +2381,7 @@ private: // compose operation impl
     struct restore_packets_impl {
         this_type& ep;
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
-        enum { dispatch, complete } state = dispatch;
+        enum { dispatch, restore, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2306,7 +2389,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = restore;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2315,9 +2398,13 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case restore: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.restore_packets(force_move(pvs));
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
                 self.complete();
                 break;
             }
@@ -2326,7 +2413,8 @@ private: // compose operation impl
 
     struct get_stored_packets_impl {
         this_type const& ep;
-        enum { dispatch, complete } state = dispatch;
+        std::vector<basic_store_packet_variant<PacketIdBytes>> packets = {};
+        enum { dispatch, get, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2334,7 +2422,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = get;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2343,9 +2431,14 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case get: {
                 BOOST_ASSERT(ep.in_strand());
-                self.complete(ep.get_stored_packets());
+                packets = ep.get_stored_packets();
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
+                self.complete(force_move(packets));
                 break;
             }
         }
@@ -2354,7 +2447,7 @@ private: // compose operation impl
     struct regulate_for_store_impl {
         this_type const& ep;
         v5::basic_publish_packet<PacketIdBytes> packet;
-        enum { dispatch, complete } state = dispatch;
+        enum { dispatch, regulate, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2362,7 +2455,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = complete;
+                state = regulate;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2371,9 +2464,13 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case complete:
+            case regulate: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.regulate_for_store(packet);
+                state = complete;
+                bind_dispatch(force_move(self));
+            } break;
+            case complete:
                 self.complete(force_move(packet));
                 break;
             }
