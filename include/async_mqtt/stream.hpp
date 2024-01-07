@@ -208,17 +208,13 @@ private:
     }
 
     struct read_packet_impl {
-        read_packet_impl(this_type& strm):strm{strm}
-        {}
-
         this_type& strm;
         std::size_t received = 0;
         std::uint32_t mul = 1;
         std::uint32_t rl = 0;
-        shared_ptr_array spa;
-        error_code last_ec;
-
-        enum { dispatch, header, remaining_length, bind, complete } state = dispatch;
+        shared_ptr_array spa = nullptr;
+        this_type_sp life_keeper = strm.shared_from_this();
+        enum { dispatch, header, remaining_length, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -249,15 +245,6 @@ private:
                     )
                 );
             } break;
-            case complete: {
-                if (last_ec) {
-                    self.complete(last_ec, buffer{});
-                }
-                else {
-                    auto ptr = spa.get();
-                    self.complete(last_ec, buffer{ptr, ptr + received + rl, force_move(spa)});
-                }
-            } break;
             default:
                 BOOST_ASSERT(false);
                 break;
@@ -270,27 +257,14 @@ private:
             error_code const& ec,
             std::size_t bytes_transferred
         ) {
+            BOOST_ASSERT(strm.in_strand());
             if (ec) {
-                BOOST_ASSERT(strm.in_strand());
-                auto exe = as::get_associated_executor(self);
-                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                    state = complete;
-                    last_ec = ec;
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            force_move(self)
-                        )
-                    );
-                    return;
-                }
                 self.complete(ec, buffer{});
                 return;
             }
 
             switch (state) {
             case header:
-                BOOST_ASSERT(strm.in_strand());
                 BOOST_ASSERT(bytes_transferred == 1);
                 state = remaining_length;
                 ++received;
@@ -309,7 +283,6 @@ private:
                 }
                 break;
             case remaining_length:
-                BOOST_ASSERT(strm.in_strand());
                 BOOST_ASSERT(bytes_transferred == 1);
                 ++received;
                 if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
@@ -348,22 +321,12 @@ private:
                     );
 
                     if (rl == 0) {
-                        auto exe = as::get_associated_executor(self);
-                        if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                            as::dispatch(
-                                as::bind_executor(
-                                    exe,
-                                    force_move(self)
-                                )
-                            );
-                            return;
-                        }
                         auto ptr = spa.get();
                         self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
                         return;
                     }
                     else {
-                        state = bind;
+                        state = complete;
                         auto address = &spa[std::ptrdiff_t(received)];
                         auto& a_strm{strm};
                         async_read(
@@ -377,20 +340,7 @@ private:
                     }
                 }
                 break;
-            case bind: {
-                BOOST_ASSERT(strm.in_strand());
-                auto exe = as::get_associated_executor(self);
-                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                    state = complete;
-                    last_ec = ec;
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            force_move(self)
-                        )
-                    );
-                    return;
-                }
+            case complete: {
                 auto ptr = spa.get();
                 self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
             } break;
@@ -405,9 +355,8 @@ private:
     struct write_packet_impl {
         this_type& strm;
         std::shared_ptr<Packet> packet;
-        error_code last_ec = error_code{};
         this_type_sp life_keeper = strm.shared_from_this();
-        enum { dispatch, post, write, bind, complete } state = dispatch;
+        enum { dispatch, post, write, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -439,7 +388,7 @@ private:
                 BOOST_ASSERT(strm.in_strand());
                 strm.queue_.start_work();
                 if (strm.lowest_layer().is_open()) {
-                    state = bind;
+                    state = complete;
                     auto& a_strm{strm};
                     auto cbs = packet->const_buffer_sequence();
                     async_write(
@@ -452,7 +401,7 @@ private:
                     );
                 }
                 else {
-                    state = bind;
+                    state = complete;
                     auto& a_strm{strm};
                     as::dispatch(
                         as::bind_executor(
@@ -478,69 +427,39 @@ private:
             error_code const& ec,
             std::size_t bytes_transferred
         ) {
+            BOOST_ASSERT(strm.in_strand());
             if (ec) {
-                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
-                    a_strm.raw_strand_,
-                    [&a_strm,wp = a_strm.weak_from_this()] {
-                        if (auto sp = wp.lock()) {
-                            a_strm.queue_.poll_one();
+                    as::bind_executor(
+                        a_strm.raw_strand_,
+                        [&a_strm,wp = a_strm.weak_from_this()] {
+                            if (auto sp = wp.lock()) {
+                                a_strm.queue_.poll_one();
+                            }
                         }
-                    }
+                    )
                 );
-                auto exe = as::get_associated_executor(self);
-                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                    state = complete;
-                    last_ec = ec;
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            force_move(self)
-                        )
-                    );
-                    return;
-                }
                 self.complete(ec, bytes_transferred);
                 return;
             }
             switch (state) {
-            case bind: {
-                BOOST_ASSERT(strm.in_strand());
+            case complete: {
                 strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
-                    a_strm.raw_strand_,
-                    [&a_strm, wp = a_strm.weak_from_this()] {
-                        if (auto sp = wp.lock()) {
-                            a_strm.queue_.poll_one();
+                    as::bind_executor(
+                        a_strm.raw_strand_,
+                        [&a_strm, wp = a_strm.weak_from_this()] {
+                            if (auto sp = wp.lock()) {
+                                a_strm.queue_.poll_one();
+                            }
                         }
-                    }
+                    )
                 );
-                auto exe = as::get_associated_executor(self);
-                if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                    state = complete;
-                    last_ec = ec;
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            force_move(self)
-                        )
-                    );
-                    return;
-                }
                 self.complete(ec, bytes_transferred);
             } break;
-            case complete:
-                BOOST_ASSERT(strm.in_strand());
-                if (last_ec) {
-                    self.complete(last_ec, 0);
-                }
-                else {
-                    self.complete(last_ec, bytes_transferred);
-                }
-                break;
             default:
                 BOOST_ASSERT(false);
                 break;
@@ -554,10 +473,8 @@ private:
             dispatch,
             close,
             drop1,
-            drop2,
             complete
         } state = dispatch;
-        error_code last_ec = error_code{};
         this_type_sp life_keeper = strm.shared_from_this();
 
         template <typename Self>
@@ -587,8 +504,9 @@ private:
             std::size_t /*size*/,
             std::reference_wrapper<Stream> stream
         ) {
+            BOOST_ASSERT(strm.in_strand());
             if constexpr(is_ws<Stream>::value) {
-                BOOST_ASSERT(state == drop2);
+                BOOST_ASSERT(state == complete);
                 if (ec) {
                     if (ec == bs::websocket::error::closed) {
                         ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -640,9 +558,9 @@ private:
             error_code const& ec,
             std::reference_wrapper<Stream> stream
         ) {
+            BOOST_ASSERT(strm.in_strand());
             switch (state) {
             case close: {
-                BOOST_ASSERT(strm.in_strand());
                 if constexpr(is_ws<Stream>::value) {
                     if (stream.get().is_open()) {
                         state = drop1;
@@ -707,7 +625,6 @@ private:
                     );
                 }
                 else {
-                    state = complete;
                     error_code ec;
                     if (stream.get().is_open()) {
                         ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -719,18 +636,6 @@ private:
                         ASYNC_MQTT_LOG("mqtt_impl", info)
                             << ASYNC_MQTT_ADD_VALUE(address, this)
                             << "TCP already closed";
-                    }
-                    auto exe = as::get_associated_executor(self);
-                    if constexpr (is_strand<std::decay_t<decltype(exe)>>()) {
-                        state = complete;
-                        last_ec = ec;
-                        as::dispatch(
-                            as::bind_executor(
-                                exe,
-                                force_move(self)
-                            )
-                        );
-                        return;
                     }
                     self.complete(ec);
                 }
@@ -755,7 +660,7 @@ private:
                         );
                         return;
                     }
-                    state = drop2;
+                    state = complete;
                     auto& a_strm{strm};
                     auto buffer = std::make_shared<bs::flat_buffer>();
                     stream.get().async_read(
@@ -773,10 +678,6 @@ private:
                     );
                 }
             } break;
-            case complete:
-                BOOST_ASSERT(strm.in_strand());
-                self.complete(last_ec);
-                break;
             default:
                 BOOST_ASSERT(false);
                 break;
