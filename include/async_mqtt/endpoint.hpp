@@ -46,6 +46,25 @@ enum class filter {
     except  ///< no matched control_packet_type is target
 };
 
+template <typename Self>
+auto bind_dispatch(Self&& self) {
+    auto exe = as::get_associated_executor(self);
+    auto cs = as::get_associated_cancellation_slot(self);
+    auto alloc = as::get_associated_allocator(self);
+    return as::dispatch(
+        as::bind_executor(
+            exe,
+            as::bind_cancellation_slot(
+                cs,
+                as::bind_allocator(
+                    alloc,
+                    std::forward<Self>(self)
+                )
+            )
+        )
+    );
+}
+
 /**
  * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
@@ -819,14 +838,8 @@ private: // compose operation impl
             case acquire: {
                 BOOST_ASSERT(ep.in_strand());
                 pid_opt = ep.pid_man_.acquire_unique_id();
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete(pid_opt);
@@ -859,14 +872,8 @@ private: // compose operation impl
             case regi: {
                 BOOST_ASSERT(ep.in_strand());
                 result = ep.pid_man_.register_id(packet_id);
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete(result);
@@ -898,14 +905,8 @@ private: // compose operation impl
             case rel: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.pid_man_.release_id(packet_id);
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete();
@@ -934,14 +935,8 @@ private: // compose operation impl
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "send error:" << ec.message();
                 last_ec = ec;
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
                 return;
             }
 
@@ -1006,14 +1001,8 @@ private: // compose operation impl
             case bind: {
                 BOOST_ASSERT(ep.in_strand());
                 last_ec = ec;
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 // out of strand
@@ -2162,14 +2151,8 @@ private: // compose operation impl
                     [&] {
                         if (call_complete && !decided_error) {
                             pv_opt.emplace(force_move(v));
-                            auto exe = as::get_associated_executor(self);
                             state = complete;
-                            as::dispatch(
-                                as::bind_executor(
-                                    exe,
-                                    force_move(self)
-                                )
-                            );
+                            bind_dispatch(force_move(self));
                         }
                     };
 
@@ -2217,14 +2200,8 @@ private: // compose operation impl
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "recv code triggers close:" << decided_error->what();
                 pv_opt.emplace(force_move(*decided_error));
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 BOOST_ASSERT(pv_opt);
@@ -2354,10 +2331,18 @@ private: // compose operation impl
                         << "already close requested";
                     auto& a_ep{ep};
                     auto exe = as::get_associated_executor(self);
+                    auto cs = as::get_associated_cancellation_slot(self);
+                    auto alloc = as::get_associated_allocator(self);
                     a_ep.close_queue_.post(
                         as::bind_executor(
                             exe,
-                            force_move(self)
+                            as::bind_cancellation_slot(
+                                cs,
+                                as::bind_allocator(
+                                    alloc,
+                                    force_move(self)
+                                )
+                            )
                         )
                     );
                 } break;
@@ -2365,14 +2350,8 @@ private: // compose operation impl
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                         << "already closed";
-                    auto exe = as::get_associated_executor(self);
                     state = complete;
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            force_move(self)
-                        )
-                    );
+                    bind_dispatch(force_move(self));
                 } break;
             case bind: {
                 BOOST_ASSERT(ep.in_strand());
@@ -2389,14 +2368,8 @@ private: // compose operation impl
                     << "process enqueued close";
                 a_ep.close_queue_.poll();
                 state = complete;
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete();
@@ -2428,14 +2401,8 @@ private: // compose operation impl
             case restore: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.restore_packets(force_move(pvs));
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete();
@@ -2467,14 +2434,8 @@ private: // compose operation impl
             case get: {
                 BOOST_ASSERT(ep.in_strand());
                 packets = ep.get_stored_packets();
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete(force_move(packets));
@@ -2506,14 +2467,8 @@ private: // compose operation impl
             case regulate: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.regulate_for_store(packet);
-                auto exe = as::get_associated_executor(self);
                 state = complete;
-                as::dispatch(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
-                );
+                bind_dispatch(force_move(self));
             } break;
             case complete:
                 self.complete(force_move(packet));
