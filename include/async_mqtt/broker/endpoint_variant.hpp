@@ -113,10 +113,10 @@ public:
         );
     }
 
-    bool running_in_this_thread() const {
+    bool in_strand() const {
         return visit(
             [&](auto& ep) -> bool {
-                return ep.strand().running_in_this_thread();
+                return ep.in_strand();
             }
         );
     }
@@ -133,14 +133,6 @@ public:
         return visit(
             [&](auto& ep) -> decltype(auto) {
                 return ep.strand();
-            }
-        );
-    }
-
-    bool in_strand() const {
-        return visit(
-            [&](auto& ep) {
-                return ep.in_strand();
             }
         );
     }
