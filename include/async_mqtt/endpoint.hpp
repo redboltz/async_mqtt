@@ -49,18 +49,10 @@ enum class filter {
 template <typename Self>
 auto bind_dispatch(Self&& self) {
     auto exe = as::get_associated_executor(self);
-    auto cs = as::get_associated_cancellation_slot(self);
-    auto alloc = as::get_associated_allocator(self);
     return as::dispatch(
         as::bind_executor(
             exe,
-            as::bind_cancellation_slot(
-                cs,
-                as::bind_allocator(
-                    alloc,
-                    std::forward<Self>(self)
-                )
-            )
+            std::forward<Self>(self)
         )
     );
 }
@@ -2331,18 +2323,10 @@ private: // compose operation impl
                         << "already close requested";
                     auto& a_ep{ep};
                     auto exe = as::get_associated_executor(self);
-                    auto cs = as::get_associated_cancellation_slot(self);
-                    auto alloc = as::get_associated_allocator(self);
                     a_ep.close_queue_.post(
                         as::bind_executor(
                             exe,
-                            as::bind_cancellation_slot(
-                                cs,
-                                as::bind_allocator(
-                                    alloc,
-                                    force_move(self)
-                                )
-                            )
+                            force_move(self)
                         )
                     );
                 } break;
