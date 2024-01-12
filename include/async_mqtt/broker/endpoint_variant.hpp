@@ -396,6 +396,10 @@ public:
         );
     }
 
+    epsp_t get_epvsp() {
+        return epsp_;
+    }
+
 private:
     epsp_t epsp_;
     buffer client_id_;
