@@ -1,19 +1,22 @@
-# Receive Maximum
+= Receive Maximum
+
 Receive Maximum is a way to flow control PUBLISH(QoS1, QoS2) packets. They require to store for resending. So the node should prepare the memory packet size * Receive Maximum.
-The maximum value of the packet size can be defined using [Maximum Packet Size](functionality/maximum_packet_size.md).
+The maximum value of the packet size can be defined using link:functionality/maximum_packet_size.adoc[Maximum Packet Size].
 If the node sends over the Receive Maximum packets, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).
 
-## When increase/decrease the receive count?
-- When the node send/receive PUBLISH (QoS1 or QoS2) packet, then increase the receive count.
-- When the node send/receive PUBACK packet corresponding to the PUBLISH QoS1 packet, then decrease the receive count.
-- When the node send/receive PUBCOMP packet corresponding to the PUBLISH QoS2 packet, then decrease the receive count.
-- When the node send/receive PUBREC packet corresponding to the PUBLISH QoS2 packet and if the PUBREC Reason Code is error, then decrease the receive count.
+== When increase/decrease the receive count?
+
+* When the node send/receive PUBLISH (QoS1 or QoS2) packet, then increase the receive count.
+* When the node send/receive PUBACK packet corresponding to the PUBLISH QoS1 packet, then decrease the receive count.
+* When the node send/receive PUBCOMP packet corresponding to the PUBLISH QoS2 packet, then decrease the receive count.
+* When the node send/receive PUBREC packet corresponding to the PUBLISH QoS2 packet and if the PUBREC Reason Code is error, then decrease the receive count.
 
 The timing is the same as Packet Identifier becomes reusable.
 
 NOTE: Packet Identifier and Receive Maximum are not directly related. Packet Identifier is not only used for PUBLISH (QoS1 or QoS2) packet but also SUBSCRIBE/UNSUBSCRIBE packet.
 
-## Notifying Receive Maximum
+== Notifying Receive Maximum
+
 There are two independent Receive Maximum. 
 
 ```mermaid
@@ -26,13 +29,16 @@ broker->>client1: CONNACK ReceiveMaximum=20
 Note left of client1: client1 can send at most 20 PUBLISH (QoS1 or QoS2) packets to the broker
 ```
 
-### broker to client Receive Maximum
+=== broker to client Receive Maximum
+
 The client can set `Receive Maximum` property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.
 
-### client to client Receive Maximum
+=== client to client Receive Maximum
+
 The broker can set `Receive Maximum` property that value is greater than 0 to the CONNACK packet. This means the broker can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.
 
-## async_mqtt implementation
+== async_mqtt implementation
+
 asnyc_mqtt automatically respect Receive Maximum so user doesn't care about that. If user calls send() with PUBLISH (QoS1 or QoS2) packets over received Receive Maximum times before the publish sequence is not finished, async_mqtt queuing the PUBLISH packet internally. When the receive count is decreased, then send the queued PUBLISH packet. The order of sending the PUBLISH is the same as user's send() function call order.
 There is no explicit limitation for the number of queuing packets. But in order to create PUBLISH (QoS1 or QoS2) packet, user needs to acquire a Packet Identifier. It is limited at most 65535, so it is also the limit of queuing packets.
 
