@@ -1,9 +1,10 @@
-# Run async_mqtt broker/client on the docker container
+= Run async_mqtt broker/client on the docker container
+
 You can run async_mqtt broker, benchmarking tool, and CLI client using docker.
 
 See https://github.com/redboltz/async_mqtt/tree/main/docker
 
-## Preparation
+== Preparation
 
 ```
 git clone https://github.com/redboltz/async_mqtt.git
@@ -11,7 +12,7 @@ cd async_mqtt
 cd docker
 ```
 
-## Run broker
+== Run broker
 
 ```
 ./broker.sh
@@ -23,7 +24,7 @@ If you don't have executing docker permission, then run as follows:
 sudo ./broker.sh
 ```
 
-## Run client_cli
+== Run client_cli
 
 On another terminal:
 
