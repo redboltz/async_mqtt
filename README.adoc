@@ -20,6 +20,6 @@
 ** link:functionality/maximum_packet_size.adoc[Maximum Packet Size]
 * link:performance.adoc[Performance]
 * link:config.adoc[Config]
-* link:../main/CHANGELOG.adoc[History]
+* link:../main/CHANGELOG.md[History]
 
 https://github.com/redboltz/async_mqtt/[back to the project top page]
