@@ -1,9 +1,10 @@
-# Coding Rule
+= Coding Rule
 
-## Conditional branch
-- If the branch has `else` clause, corresponding `if` should be used with **positive** condition.
+== Conditional branch
 
-- Good example:
+* If the branch has `else` clause, corresponding `if` should be used with **positive** condition.
+
+* Good example:
 
 ```cpp
 #if defined(ASYNC_MQTT_VAL1)
@@ -20,7 +21,7 @@ else {
 }
 ```
 
-- Bad example
+* Bad example
 
 ```cpp
 #if !defined(ASYNC_MQTT_VAL1)
@@ -37,7 +38,7 @@ else {
 }
 ```
 
-## Include guard
+== Include guard
 
 For file `include/async_mqtt/file.hpp`
 ```cpp
@@ -55,30 +56,32 @@ For file `include/async_mqtt/sub1/file.hpp`
 #endif // ASYNC_MQTT_SUB1_FILE_HPP
 ```
 
-- Use `#if !defined()`
-- Add comment after `#endif`. It doesn't contain `!defined()`.
-  - It is a special rule for include guard.
+* Use `#if !defined()`
+* Add comment after `#endif`. It doesn't contain `!defined()`.
+** It is a special rule for include guard.
 
-## Macro
+== Macro
 
-### Values
-- The name of the values must be start with `ASYNC_MQTT_`.
+=== Values
 
-### Conditional branch
+* The name of the values must be start with `ASYNC_MQTT_`.
 
-- Don't use `#ifdef` and `#ifndef`, use `#if defined(...)`.
-- Add comment after `#else  ` and `#endif`. For `#else` adiitional one whitespace is required. The contents of the comment should be the same as `#if` condition.
-- Good example:
+=== Conditional branch
+
+* Don't use `#ifdef` and `#ifndef`, use `#if defined(...)`.
+* Add comment after `#else  ` and `#endif`. For `#else` adiitional one whitespace is required. The contents of the comment should be the same as `#if` condition.
+* Good example:
 ```cpp
 #if defined(ASYNC_MQTT_VAL1)
 #else  // defined(ASYNC_MQTT_VAL1)
 #endif // defined(ASYNC_MQTT_VAL1)
 ```
 
-## namespace
-- `namespace` doesn't introduce indent.
-- After the comment end of the namespace `}` , the contnents of the comment is `namespace ns`.
-- Good example:
+== namespace
+
+* `namespace` doesn't introduce indent.
+* After the comment end of the namespace `}` , the contnents of the comment is `namespace ns`.
+* Good example:
 ```cpp
 namespace async_mqtt {
 // ...
@@ -91,8 +94,9 @@ struct foo;
 } // namespace async_mqtt
 ```
 
-## Whiltespace and Line break
-- Whilespace rule is here:
+== Whiltespace and Line break
+
+* Whilespace rule is here:
 
 ```cpp
 if (val == 1) {
@@ -146,8 +150,8 @@ auto lambda =
 lambda(1);
 ```
 
-- immediate invoke case.
-  - use `&` is allowed.
+* immediate invoke case.
+** use `&` is allowed.
 ```cpp
 auto lambda =
     [&] {
@@ -156,7 +160,7 @@ auto lambda =
 lambda(1);
 ```
 
-- long capture list, or long parameter case:
+* long capture list, or long parameter case:
 ```cpp
 auto lambda =
     [
@@ -183,7 +187,7 @@ void func(T t, U u) {
 }
 ```
 
-- long parameters case
+* long parameters case
 ```cpp
 template <
     typename T1,
@@ -206,7 +210,7 @@ void func(
 }
 ```
 
-- SFINAE case. Adjust `>` position like as follows:
+* SFINAE case. Adjust `>` position like as follows:
 ```cpp
 template <typname T>
 std::enable_if_t<
