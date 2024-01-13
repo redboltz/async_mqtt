@@ -1,4 +1,5 @@
-# Request/Response
+= Request/Response
+
 MQTT's communication model is a pub/sub model. In order to realize Request/Response on the pub/sub model, MQTT v5.0 uses the following mechanism.
 
 ```mermaid
@@ -18,16 +19,18 @@ broker->>client1: deliver PUBLISH
 Note right of client1: Got the control response
 ```
 
-## Client
+== Client
+
 async_mqtt doesn't do any special treatment for Request/Response. Simply, send CONNECT packet with RequestResponseInformation property that value is 1, and then receives CONNACK packet. If the CONNACK packet has ResponseInformation, then you can get ResponseInformation. You can subscribe it.
 
-NOTE: ResponseInformation is a source information of ResponseTopic. It typically the name of topic but it depends on the broker. Sometimes some strings operation would be required. Check the broker manual.
 
-## Broker
+== Broker
+
 The broker part of async_mqtt supports Request/Response. When the broker receives CONNECT packet with RequestResponseInformation=1, then the broker automatically generate ResponseInformation and sends back CONNACK packet with it. ResponseInformation is TopicName for the response. So the client can use it as ResponseTopic property when sending PUBLISH packet. 
 async_mqtt broker has authentication/authorization support. The generated topic can be subscribed only the client that sends RequestResponseInformation. The generated topic can be published by all clients.
 
-## Correlation Data
+== Correlation Data
+
 See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115
 
 The client has only one ResponseTopic and use it for all request. The request receiver client could be different. So the responses could be mixed. In order to distingish correct response, CorrelationData can be used. See the following diagram.
