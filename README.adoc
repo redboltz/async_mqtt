@@ -1,6 +1,6 @@
 # Index
-- [API Reference](https://redboltz.github.io/async_mqtt/)
-- [Run async_mqtt broker/client on the docker container](container.adoc)
+- link:https://redboltz.github.io/async_mqtt/[API Reference]
+- link:container.adoc[Run async_mqtt broker/client on the docker container]
 - [Free trial broker on cloud](trial.adoc)
 - Tutorial
   - [Create Endpoint](tutorial/create_endpoint.adoc)
