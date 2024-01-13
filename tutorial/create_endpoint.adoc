@@ -1,9 +1,10 @@
-# Create endpoint
+= Create endpoint
 
 First, choose underlying layer.
-![layer structure](../img/layer.svg)
 
-## mqtt
+image::../img/layer.svg[layer structure]
+
+== mqtt
 
 ```cpp
     as::io_context ioc;
@@ -20,7 +21,7 @@ First, choose underlying layer.
     );
 ```
 
-## mqtts
+== mqtts
 
 ```cpp
     as::io_context ioc;
@@ -43,7 +44,7 @@ First, choose underlying layer.
 
 NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 
-## ws
+== ws
 
 ```cpp
     as::io_context ioc;
@@ -59,7 +60,7 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 ```
 
 
-## wss
+== wss
 
 ```cpp
     as::io_context ioc;
@@ -80,12 +81,14 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
     );
 ```
 
-# Layer access
+= Layer access
 
-Layer access | mqtt | mqtts | ws | wss
----|---|---|---|---
-next_layer()|TCP stream|TLS stream| WS stream | WS stream
-next_layer().next_layer()|-|TCP stream|TCP stream | TLS stream
-next_layer().next_layer().next_layer()|-|-|-|TCP stream
-lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
+|===
+|Layer access | mqtt | mqtts | ws | wss
+
+|next_layer()|TCP stream|TLS stream| WS stream | WS stream
+|next_layer().next_layer()|-|TCP stream|TCP stream | TLS stream
+|next_layer().next_layer().next_layer()|-|-|-|TCP stream
+|lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
+|===
 
