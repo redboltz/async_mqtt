@@ -1,8 +1,10 @@
-# Maximum Packet Size
+= Maximum Packet Size
+
 Maximum Packet Size is a way to size control for all packets. 
 If the node sends over the Maximum Packet Size packet, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x95 (Packet too large).
 
-## Notifying Maximum Packet Size
+== Notifying Maximum Packet Size
+
 There are two independent Maximum Packet Size. 
 
 ```mermaid
