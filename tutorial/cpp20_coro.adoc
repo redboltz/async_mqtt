@@ -1,10 +1,11 @@
-# C++20 coroutine
+= C++20 coroutine
+
 C++20 coroutine is stackful coroutine that is supported by the language.
 See https://en.cppreference.com/w/cpp/language/coroutines
 
 C++coroutine coroutine can avoid deeply nested callbacks. The code becomes easy to read.
 
-## co_spawn your application routine
+== co_spawn your application routine
 
 ```cpp
 int main(int argc, char* argv[]) {
@@ -25,7 +26,7 @@ In order to use coroutine, you need to call `as::co_spawn()` to launch the corou
 as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
 ```
 
-## define application routine
+== define application routine
 
 Define application routine `proc()` as follows. The return value should be wrapped `as::awaitable<>`.
 
@@ -36,7 +37,7 @@ proc(Executor exe, std::string_view host, std::string_view port) {
    ...
 ```
 
-### define endpoint
+=== define endpoint
 
 ```cpp
     as::ip::tcp::socket resolve_sock{exe};
@@ -50,7 +51,7 @@ proc(Executor exe, std::string_view host, std::string_view port) {
 
 There is nothing special. The same as non coroutine endpoint.
 
-### chain async calls
+=== chain async calls
 
 ```cpp
         // Resolve hostname
@@ -132,5 +133,6 @@ If se is evalueted as true, that means some error happened. So the code printss 
         }
 ```
 
-# whole code (example)
-[ep_cpp20coro_mqtt_client.cpp](../../main/example/ep_cpp20coro_mqtt_client.cpp)
+= whole code (example)
+
+link:../../main/example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]
