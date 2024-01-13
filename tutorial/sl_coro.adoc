@@ -1,19 +1,19 @@
-# Using stackless coroutine
+= Using stackless coroutine
 
 This is stackless coroutine approach. It uses switch-case based Boost.Asio stackless corotuine.
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
 It is convenient but a little tricky. Due to switch-case based, there are some restrictions especially define local variables.
-If you can use [C++20 coroutine](cpp20_coro.md), I recommend use it.
+If you can use link:cpp20_coro.adoc[C++20 coroutine], I recommend use it.
 
 stackless coroutine can avoid deeply nested callbacks. The code becomes easy to read.
 
-## Prepare your application class
+== Prepare your application class
 
 Here is a application class prototype:
 
 ```cpp
-#include <boost/asio/yield.hpp>
+=include <boost/asio/yield.hpp>
 
 struct app {
     // forwarding callbacks
@@ -128,7 +128,7 @@ When `a()` is called then "start" is output.
 This is the basic of stackless coroutine approach.
 Now, adding more meaningful sequence.
 
-## Resolve hostname (mqtt, mqtts, ws, wss)
+== Resolve hostname (mqtt, mqtts, ws, wss)
 
 If you use IP Address directly, you can skip resolve phase.
 
@@ -156,7 +156,7 @@ The important point is
             yield res.async_resolve(host, port, *this);
 ```
 
-The third argument of [async_resolve](https://www.boost.org/doc/html/boost_asio/reference/ip__basic_resolver/async_resolve/overload2.html) is CompletionToken. In this case, asio document said it ResolveToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and async_resolve starts processing.
+The third argument of link:https://www.boost.org/doc/html/boost_asio/reference/ip__basic_resolver/async_resolve/overload2.html[async_resolve] is CompletionToken. In this case, asio document said it ResolveToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and async_resolve starts processing.
 When async process (resolving hostname) is finished, then the following operator() is called:
 
 ```cpp
@@ -185,7 +185,7 @@ Even if proc() is called again, the following part of the code is skipped:
 This is switch-case based Boost.Asio stackless coroutine mechanism.
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
-## TCP connect (mqtt, mqtts, ws, wss)
+== TCP connect (mqtt, mqtts, ws, wss)
 
 Now, hostname is resolved. The next step is making TCP connection.
 
@@ -204,10 +204,10 @@ Now, hostname is resolved. The next step is making TCP connection.
             if (ec) return;
 ```
 
-## TLS handshake and WS handshake
-See [Examples](#Examples)
+== TLS handshake and WS handshake
+See #Examples[Examples]
 
-## Send MQTT CONNECT packet
+== Send MQTT CONNECT packet
 
 Create MQTT CONNECT packet and send it as follows:
 
@@ -236,9 +236,9 @@ When async process is finished the function resumes at the following line:
 ```
 
 The parameter of the completion token is `system_error const& se`.
-See [API reference](https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html).
+See link:https://redboltz.github.io/async_mqtt/doc/latest/html/$$classasync__mqtt_1_1basic__endpoint$$.html[API reference].
 
-## Recv MQTT CONNACK packet
+== Recv MQTT CONNACK packet
 
 Receive MQTT packet as follows:
 
@@ -275,14 +275,14 @@ When a packet is received then the function resumes at the following line:
 The parameter of the completion token is `packet_variant pv`. You can access the `pv` using visit function and overloaded lamnda expressions. Each lambda expression is corresponding to the actual packet type.
 `pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
 
-## Send/Recv packets
-See the simple example [ep_slcoro_mqtt_client.cpp](../../main/example/ep_slcoro_mqtt_client.cpp).
+== Send/Recv packets
+See the simple example link:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp].
 
-If you want to know more complex usecase, [client_cli.cpp](../../main/tool/client_cli.cpp) is helpful.
+If you want to know more complex usecase, link:../../main/tool/client_cli.cpp[client_cli.cpp] is helpful.
 This is commandline MQTT client application.
 
-# Examples
-- [ep_slcoro_mqtt_client.cpp](../../main/example/ep_slcoro_mqtt_client.cpp)
-- [ep_slcoro_mqtts_client.cpp](../../main/example/ep_slcoro_mqtts_client.cpp)
-- [ep_slcoro_ws_client.cpp](../../main/example/ep_slcoro_ws_client.cpp)
-- [ep_slcoro_wss_client.cpp](../../main/example/ep_slcoro_wss_client.cpp)
+= Examples
+* link:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]
+* link:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]
+* link:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]
+* link:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]
