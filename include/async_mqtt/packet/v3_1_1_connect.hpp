@@ -68,8 +68,8 @@ public:
         bool clean_session,
         std::uint16_t keep_alive_sec,
         buffer client_id,
-        optional<buffer> user_name,
-        optional<buffer> password
+        optional<buffer> user_name = nullopt,
+        optional<buffer> password = nullopt
     ):connect_packet(
         clean_session,
         keep_alive_sec,
@@ -112,8 +112,8 @@ public:
         std::uint16_t keep_alive_sec,
         buffer client_id,
         optional<will> w,
-        optional<buffer> user_name,
-        optional<buffer> password
+        optional<buffer> user_name = nullopt,
+        optional<buffer> password = nullopt
     )
         : fixed_header_{
               make_fixed_header(control_packet_type::connect, 0b0000)
