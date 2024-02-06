@@ -176,7 +176,7 @@ public:
         );
     }
 
-    operator bool() {
+    operator bool() const {
         return var_.index() != 0;
     }
 
