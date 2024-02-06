@@ -158,7 +158,7 @@ public:
             1 +                   // fixed header
             1 +                   // remaining length
             1 +                   // packet id
-            entries_.size();      // suback_return_code
+            1;                    // suback_return_code vector
     }
 
     /**

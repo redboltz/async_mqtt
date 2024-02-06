@@ -205,12 +205,18 @@ public:
         return
             1 +                   // fixed header
             1 +                   // remaining length
-            1 +                   // reason_code
             [&] () -> std::size_t {
-                if (property_length_buf_.size() == 0) return 0;
-                return
-                    1 +                   // property length
-                    async_mqtt::num_of_const_buffer_sequence(props_);
+                if (reason_code_) {
+                    return
+                        1 +       // reason_code
+                        [&] () -> std::size_t {
+                            if (property_length_buf_.size() == 0) return 0;
+                            return
+                                1 +                   // property length
+                                async_mqtt::num_of_const_buffer_sequence(props_);
+                        }();
+                }
+                return 0;
             }();
     }
 

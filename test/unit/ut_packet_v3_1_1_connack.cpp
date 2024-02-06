@@ -33,12 +33,13 @@ BOOST_AUTO_TEST_CASE(v311_connack) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x20, // fixed_header
             0x02, // remaining_length
             0x01, // session_present
             0x05, // connect_return_code
-                };
+        };
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
@@ -48,6 +49,7 @@ BOOST_AUTO_TEST_CASE(v311_connack) {
         BOOST_TEST(p.code() == am::connect_return_code::not_authorized);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }

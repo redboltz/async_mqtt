@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x35,                               // fixed_header
             0x12,                               // remaining_length
@@ -73,6 +74,7 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -105,6 +107,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x31,                               // fixed_header
             0x10,                               // remaining_length
@@ -130,6 +133,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -189,6 +193,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x35,                               // fixed_header
             0x14,                               // remaining_length
@@ -215,6 +220,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }

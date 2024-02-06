@@ -49,6 +49,7 @@ BOOST_AUTO_TEST_CASE(v5_publish) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x35,                               // fixed_header
             0x1a,                               // remaining_length
@@ -108,6 +109,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x31,                               // fixed_header
             0x18,                               // remaining_length
@@ -194,6 +196,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_pid4) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x35,                               // fixed_header
             0x1c,                               // remaining_length
@@ -243,6 +246,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     );
     {
         auto cbs = p1.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p1.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x14,                               // remaining_length
@@ -265,6 +269,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     );
     {
         auto cbs = p2.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p2.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x11,                               // remaining_length
@@ -279,6 +284,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     // p1 is not changed
     {
         auto cbs = p1.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p1.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x14,                               // remaining_length
@@ -301,6 +307,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     );
     {
         auto cbs = p3.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p3.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x0e,                               // remaining_length
@@ -316,6 +323,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     // p2 is not changed
     {
         auto cbs = p2.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p2.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x11,                               // remaining_length
@@ -336,6 +344,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     );
     {
         auto cbs = p4.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p4.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x11,                               // remaining_length
@@ -350,6 +359,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     // p3 is not changed
     {
         auto cbs = p3.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p3.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x0e,                               // remaining_length
@@ -371,6 +381,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     );
     {
         auto cbs = p5.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p5.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x14,                               // remaining_length
@@ -387,6 +398,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     // p3 is not changed
     {
         auto cbs = p3.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p3.num_of_const_buffer_sequence());
         char expected[] {
             0x30,                               // fixed_header
             0x0e,                               // remaining_length

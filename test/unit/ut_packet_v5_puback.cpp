@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
     BOOST_TEST(p.props() == props);
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x40,                               // fixed_header
             0x12,                               // remaining_length
@@ -56,6 +57,7 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
         BOOST_TEST(p.props() == props);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -81,6 +83,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid4) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x40,                               // fixed_header
             0x14,                               // remaining_length
@@ -100,6 +103,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid4) {
         BOOST_TEST(p.props() == props);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -119,6 +123,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_only) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x40,                               // fixed_header
             0x02,                               // remaining_length
@@ -134,6 +139,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_only) {
         BOOST_TEST(p.props().empty());
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -154,6 +160,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x40,                               // fixed_header
             0x03,                               // remaining_length
@@ -170,6 +177,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
         BOOST_TEST(p.props().empty());
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
@@ -194,6 +202,7 @@ BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
     BOOST_TEST(p.props().empty());
 
     auto cbs = p.const_buffer_sequence();
+    BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
     auto [b, e] = am::make_packet_range(cbs);
     BOOST_TEST(std::equal(b, e, std::begin(expected)));
     BOOST_TEST(
