@@ -9,6 +9,7 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
     message(STATUS "C++20 examples added")
     list(APPEND check_PROGRAMS
         ut_cpp20coro_exec.cpp
+        ut_cpp20coro_broker.cpp
     )
 endif()
 

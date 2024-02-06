@@ -209,7 +209,6 @@ public:
 
         if (reason_code_) {
             ret.emplace_back(as::buffer(&*reason_code_, 1));
-
             if (property_length_buf_.size() != 0) {
                 ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
                 auto props_cbs = async_mqtt::const_buffer_sequence(props_);
