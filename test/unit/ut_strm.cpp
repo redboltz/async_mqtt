@@ -15,7 +15,7 @@
 #include <async_mqtt/packet/v3_1_1_pingreq.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_strm)
 
