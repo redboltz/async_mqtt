@@ -14,7 +14,7 @@
 #include <async_mqtt/endpoint.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_ep_recv_filter)
 
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     // recv connack
     {
         auto pv = ep->recv(am::filter::match, {am::control_packet_type::connack}, as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     ep->close(as::use_future).get();

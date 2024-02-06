@@ -14,7 +14,7 @@
 #include <async_mqtt/endpoint.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_ep_con_discon)
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // register packet_id for testing
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // send valid packets
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(puback, wp));
+            BOOST_TEST(puback == wp);
         }
     );
     {
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrec, wp));
+            BOOST_TEST(pubrec == wp);
         }
     );
     {
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel, wp));
+            BOOST_TEST(pubrel == wp);
         }
     );
     {
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubcomp, wp));
+            BOOST_TEST(pubcomp == wp);
         }
     );
     {
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(subscribe, wp));
+            BOOST_TEST(subscribe == wp);
         }
     );
     {
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(unsubscribe, wp));
+            BOOST_TEST(unsubscribe == wp);
         }
     );
     {
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pingreq, wp));
+            BOOST_TEST(pingreq == wp);
         }
     );
     {
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // send disconnect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -245,13 +245,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // send disconnect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -635,7 +635,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // offline publish success
@@ -811,13 +811,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     // recv connect
     {
         auto pv = ep1->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // send connack
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -831,7 +831,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     // send valid packets
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -841,7 +841,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(puback, wp));
+            BOOST_TEST(puback == wp);
         }
     );
     {
@@ -851,7 +851,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrec, wp));
+            BOOST_TEST(pubrec == wp);
         }
     );
     {
@@ -861,7 +861,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel, wp));
+            BOOST_TEST(pubrel == wp);
         }
     );
     {
@@ -871,7 +871,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubcomp, wp));
+            BOOST_TEST(pubcomp == wp);
         }
     );
     {
@@ -881,7 +881,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(suback, wp));
+            BOOST_TEST(suback == wp);
         }
     );
     {
@@ -891,7 +891,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(unsuback, wp));
+            BOOST_TEST(unsuback == wp);
         }
     );
     {
@@ -901,7 +901,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pingresp, wp));
+            BOOST_TEST(pingresp == wp);
         }
     );
     {
@@ -927,13 +927,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     // recv connect
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // send connack
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -947,7 +947,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     // send publish behalf of valid packets
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -1236,7 +1236,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     // recv connect
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // offline publish success
@@ -1324,7 +1324,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     // send connack
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -1530,7 +1530,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1541,7 +1541,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // send auth packet that can be sent before connack receiving
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(auth, wp));
+            BOOST_TEST(auth == wp);
         }
     );
     {
@@ -1552,13 +1552,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // send valid packets
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(auth, wp));
+            BOOST_TEST(auth == wp);
         }
     );
     {
@@ -1570,7 +1570,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -1580,7 +1580,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(puback, wp));
+            BOOST_TEST(puback == wp);
         }
     );
     {
@@ -1590,7 +1590,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrec, wp));
+            BOOST_TEST(pubrec == wp);
         }
     );
     {
@@ -1600,7 +1600,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel, wp));
+            BOOST_TEST(pubrel == wp);
         }
     );
     {
@@ -1610,7 +1610,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubcomp, wp));
+            BOOST_TEST(pubcomp == wp);
         }
     );
     {
@@ -1620,7 +1620,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(subscribe, wp));
+            BOOST_TEST(subscribe == wp);
         }
     );
     {
@@ -1630,7 +1630,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(unsubscribe, wp));
+            BOOST_TEST(unsubscribe == wp);
         }
     );
     {
@@ -1640,7 +1640,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pingreq, wp));
+            BOOST_TEST(pingreq == wp);
         }
     );
     {
@@ -1652,7 +1652,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // send disconnect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
@@ -1669,7 +1669,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1680,13 +1680,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // send disconnect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
@@ -2013,7 +2013,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -2108,7 +2108,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // offline publish success
@@ -2312,13 +2312,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     // recv connect
     {
         auto pv = ep1->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // send auth
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(auth, wp));
+            BOOST_TEST(auth == wp);
         }
     );
     {
@@ -2329,7 +2329,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     // send connack
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -2343,7 +2343,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     // send valid packets
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(auth, wp));
+            BOOST_TEST(auth == wp);
         }
     );
     {
@@ -2353,7 +2353,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -2363,7 +2363,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(puback, wp));
+            BOOST_TEST(puback == wp);
         }
     );
     {
@@ -2373,7 +2373,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrec, wp));
+            BOOST_TEST(pubrec == wp);
         }
     );
     {
@@ -2383,7 +2383,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel, wp));
+            BOOST_TEST(pubrel == wp);
         }
     );
     {
@@ -2393,7 +2393,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubcomp, wp));
+            BOOST_TEST(pubcomp == wp);
         }
     );
     {
@@ -2403,7 +2403,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(suback, wp));
+            BOOST_TEST(suback == wp);
         }
     );
     {
@@ -2413,7 +2413,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(unsuback, wp));
+            BOOST_TEST(unsuback == wp);
         }
     );
     {
@@ -2423,7 +2423,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pingresp, wp));
+            BOOST_TEST(pingresp == wp);
         }
     );
     {
@@ -2449,13 +2449,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     // recv connect
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // send connack
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -2469,7 +2469,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     // send publish behalf of valid packets
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish, wp));
+            BOOST_TEST(publish == wp);
         }
     );
     {
@@ -2796,7 +2796,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     // recv connect
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // offline publish success
@@ -2884,7 +2884,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     // send connack
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {

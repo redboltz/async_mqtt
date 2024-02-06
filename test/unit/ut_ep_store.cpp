@@ -14,7 +14,7 @@
 #include <async_mqtt/endpoint.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_ep_store)
 
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // recv connack_sp_false
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
 
     auto close = am::make_error(am::errc::network_reset, "pseudo close");
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send publish0
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish0, wp));
+            BOOST_TEST(publish0 == wp);
         }
     );
     {
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send publish1
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish1, wp));
+            BOOST_TEST(publish1 == wp);
         }
     );
     {
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send publish2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish2, wp));
+            BOOST_TEST(publish2 == wp);
         }
     );
     {
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -201,10 +201,10 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish2dup, wp));
+                BOOST_TEST(publish2dup == wp);
                 p.set_value();
                 break;
             default:
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -223,13 +223,13 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // recv pubrec2
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec2, pv));
+        BOOST_TEST(pubrec2 == pv);
     }
 
     // send pubrel2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel2, wp));
+            BOOST_TEST(pubrel2 == wp);
         }
     );
     {
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send pubrel3
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
+            BOOST_TEST(pubrel3 == wp);
         }
     );
     {
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -273,13 +273,13 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(pubrel2, wp));
+                BOOST_TEST(pubrel2 == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel3, wp));
+                BOOST_TEST(pubrel3 == wp);
                 p.set_value();
                 break;
             default:
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
     ep->close(as::use_future).get();
     guard.reset();
@@ -403,13 +403,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // recv connect_no_clean
     {
         auto pv = ep1->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // send connack_sp_false
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+            BOOST_TEST(connack_sp_false == wp);
         }
     );
     {
@@ -493,7 +493,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // send publish0
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish0, wp));
+            BOOST_TEST(publish0 == wp);
         }
     );
     {
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // send publish1
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish1, wp));
+            BOOST_TEST(publish1 == wp);
         }
     );
     {
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // send publish2
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish2, wp));
+            BOOST_TEST(publish2 == wp);
         }
     );
     {
@@ -532,7 +532,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // recv connect_no_clean
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // get_stored and restore next endpoint
@@ -549,13 +549,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_true, wp));
+                BOOST_TEST(connack_sp_true == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(publish2dup, wp));
+                BOOST_TEST(publish2dup == wp);
                 p.set_value();
                 break;
             default:
@@ -579,13 +579,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // recv pubrec2
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec2, pv));
+        BOOST_TEST(pubrec2 == pv);
     }
 
     // send pubrel2
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel2, wp));
+            BOOST_TEST(pubrel2 == wp);
         }
     );
     {
@@ -596,7 +596,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // send pubrel3
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
+            BOOST_TEST(pubrel3 == wp);
         }
     );
     {
@@ -613,7 +613,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // recv connect_no_clean
     {
         auto pv = ep3->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // get_stored and restore next endpoint
@@ -630,16 +630,16 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_true, wp));
+                BOOST_TEST(connack_sp_true == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel2, wp));
+                BOOST_TEST(pubrel2 == wp);
                 break;
             case 3:
-                BOOST_TEST(am::packet_compare(pubrel3, wp));
+                BOOST_TEST(pubrel3 == wp);
                 p.set_value();
                 break;
             default:
@@ -669,7 +669,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     // recv connect_clean
     {
         auto pv = ep4->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_clean, pv));
+        BOOST_TEST(connect_clean == pv);
     }
 
     // no restore because clean_session is true
@@ -682,7 +682,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+                BOOST_TEST(connack_sp_false == wp);
                 p.set_value();
                 break;
             default:
@@ -760,7 +760,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -771,7 +771,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // recv connack_sp_false
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
 
     auto publish0 = am::v5::publish_packet(
@@ -838,7 +838,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send publish0
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish0, wp));
+            BOOST_TEST(publish0 == wp);
         }
     );
     {
@@ -849,7 +849,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send publish1
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish1, wp));
+            BOOST_TEST(publish1 == wp);
         }
     );
     {
@@ -860,7 +860,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send publish2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish2, wp));
+            BOOST_TEST(publish2 == wp);
         }
     );
     {
@@ -877,7 +877,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -893,10 +893,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish2dup, wp));
+                BOOST_TEST(publish2dup == wp);
                 p.set_value();
                 break;
             default:
@@ -907,7 +907,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -915,13 +915,13 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // recv pubrec2
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec2, pv));
+        BOOST_TEST(pubrec2 == pv);
     }
 
     // send pubrel2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel2, wp));
+            BOOST_TEST(pubrel2 == wp);
         }
     );
     {
@@ -932,7 +932,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send pubrel3
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
+            BOOST_TEST(pubrel3 == wp);
         }
     );
     {
@@ -949,7 +949,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -965,13 +965,13 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(pubrel2, wp));
+                BOOST_TEST(pubrel2 == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel3, wp));
+                BOOST_TEST(pubrel3 == wp);
                 p.set_value();
                 break;
             default:
@@ -982,7 +982,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -996,7 +996,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1013,7 +1013,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
     ep->close(as::use_future).get();
     guard.reset();
@@ -1101,13 +1101,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // recv connect_no_clean
     {
         auto pv = ep1->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // send connack_sp_false
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+            BOOST_TEST(connack_sp_false == wp);
         }
     );
     {
@@ -1194,7 +1194,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // send publish0
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish0, wp));
+            BOOST_TEST(publish0 == wp);
         }
     );
     {
@@ -1205,7 +1205,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // send publish1
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish1, wp));
+            BOOST_TEST(publish1 == wp);
         }
     );
     {
@@ -1216,7 +1216,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // send publish2
     ep1->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish2, wp));
+            BOOST_TEST(publish2 == wp);
         }
     );
     {
@@ -1233,7 +1233,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // recv connect_no_clean
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // get_stored and restore next endpoint
@@ -1250,13 +1250,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_true, wp));
+                BOOST_TEST(connack_sp_true == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(publish2dup, wp));
+                BOOST_TEST(publish2dup == wp);
                 p.set_value();
                 break;
             default:
@@ -1281,13 +1281,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // recv pubrec2
     {
         auto pv = ep2->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec2, pv));
+        BOOST_TEST(pubrec2 == pv);
     }
 
     // send pubrel2
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel2, wp));
+            BOOST_TEST(pubrel2 == wp);
         }
     );
     {
@@ -1298,7 +1298,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // send pubrel3
     ep2->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
+            BOOST_TEST(pubrel3 == wp);
         }
     );
     {
@@ -1315,7 +1315,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // recv connect_no_clean
     {
         auto pv = ep3->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_no_clean, pv));
+        BOOST_TEST(connect_no_clean == pv);
     }
 
     // get_stored and restore next endpoint
@@ -1332,16 +1332,16 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_true, wp));
+                BOOST_TEST(connack_sp_true == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish1dup, wp));
+                BOOST_TEST(publish1dup == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel2, wp));
+                BOOST_TEST(pubrel2 == wp);
                 break;
             case 3:
-                BOOST_TEST(am::packet_compare(pubrel3, wp));
+                BOOST_TEST(pubrel3 == wp);
                 p.set_value();
                 break;
             default:
@@ -1371,7 +1371,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     // recv connect_clean
     {
         auto pv = ep4->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect_clean, pv));
+        BOOST_TEST(connect_clean == pv);
     }
 
     // no restore because clean_session is true
@@ -1384,7 +1384,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(connack_sp_false, wp));
+                BOOST_TEST(connack_sp_false == wp);
                 p.set_value();
                 break;
             default:
@@ -1464,7 +1464,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1475,7 +1475,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // recv connack_sp_false
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
 
     auto publish0 = am::v5::publish_packet(
@@ -1562,7 +1562,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send publish0
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish0, wp));
+            BOOST_TEST(publish0 == wp);
         }
     );
     {
@@ -1573,7 +1573,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send publish1
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish1, wp));
+            BOOST_TEST(publish1 == wp);
         }
     );
     {
@@ -1584,7 +1584,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send publish2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish2, wp));
+            BOOST_TEST(publish2 == wp);
         }
     );
     {
@@ -1601,7 +1601,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1617,10 +1617,10 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1no_ta_dup, wp));
+                BOOST_TEST(publish1no_ta_dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(publish2no_ta_dup, wp));
+                BOOST_TEST(publish2no_ta_dup == wp);
                 p.set_value();
                 break;
             default:
@@ -1631,7 +1631,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -1639,13 +1639,13 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // recv pubrec2
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(pubrec2, pv));
+        BOOST_TEST(pubrec2 == pv);
     }
 
     // send pubrel2
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel2, wp));
+            BOOST_TEST(pubrel2 == wp);
         }
     );
     {
@@ -1656,7 +1656,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send pubrel3
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(pubrel3, wp));
+            BOOST_TEST(pubrel3 == wp);
         }
     );
     {
@@ -1673,7 +1673,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1689,13 +1689,13 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         [&](am::packet_variant wp) {
             switch (index++) {
             case 0:
-                BOOST_TEST(am::packet_compare(publish1no_ta_dup, wp));
+                BOOST_TEST(publish1no_ta_dup == wp);
                 break;
             case 1:
-                BOOST_TEST(am::packet_compare(pubrel2, wp));
+                BOOST_TEST(pubrel2 == wp);
                 break;
             case 2:
-                BOOST_TEST(am::packet_compare(pubrel3, wp));
+                BOOST_TEST(pubrel3 == wp);
                 p.set_value();
                 break;
             default:
@@ -1706,7 +1706,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_true, pv));
+        BOOST_TEST(connack_sp_true == pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -1720,7 +1720,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -1737,7 +1737,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     );
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack_sp_false, pv));
+        BOOST_TEST(connack_sp_false == pv);
     }
     ep->close(as::use_future).get();
     guard.reset();

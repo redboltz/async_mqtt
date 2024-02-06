@@ -14,7 +14,7 @@
 #include <async_mqtt/endpoint.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_cpp20coro_exec)
 

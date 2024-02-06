@@ -14,7 +14,7 @@
 #include <async_mqtt/endpoint.hpp>
 
 #include "stub_socket.hpp"
-#include "packet_compare.hpp"
+#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_ep_size_max)
 
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // size: 21bytes
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     // send publish_1
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(publish_1_q1, wp));
+            BOOST_TEST(publish_1_q1 == wp);
         }
     );
     {
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     // send connect
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connect, wp));
+            BOOST_TEST(connect == wp);
         }
     );
     {
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     // recv connack
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connack, pv));
+        BOOST_TEST(connack == pv);
     }
 
     // size: 21bytes
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     // recv publish1
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_1_q1, pv));
+        BOOST_TEST(publish_1_q1 == pv);
     }
 
     // recv publish2
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
@@ -323,13 +323,13 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     // recv connect
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(connect, pv));
+        BOOST_TEST(connect == pv);
     }
 
     // send connack
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(am::packet_compare(connack, wp));
+            BOOST_TEST(connack == wp);
         }
     );
     {
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     // recv publish1
     {
         auto pv = ep->recv(as::use_future).get();
-        BOOST_TEST(am::packet_compare(publish_1_q1, pv));
+        BOOST_TEST(publish_1_q1 == pv);
     }
 
     // recv publish2
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(!close_called);
-            BOOST_TEST(am::packet_compare(disconnect, wp));
+            BOOST_TEST(disconnect == wp);
         }
     );
     {
