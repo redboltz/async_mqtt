@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE(v5_connack) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             0x20,       // fixed_header
             0x08,       // remaining_length
@@ -56,6 +57,7 @@ BOOST_AUTO_TEST_CASE(v5_connack) {
         BOOST_TEST(p.props() == props);
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }

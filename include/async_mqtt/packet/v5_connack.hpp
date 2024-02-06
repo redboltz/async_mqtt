@@ -244,6 +244,7 @@ public:
             1 +                   // remaining length
             1 +                   // connect_acknowledge_flags
             1 +                   // reason_code
+            1 +                   // property length
             async_mqtt::num_of_const_buffer_sequence(props_);
     }
 

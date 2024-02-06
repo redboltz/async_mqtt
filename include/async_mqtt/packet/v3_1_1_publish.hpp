@@ -301,12 +301,12 @@ public:
      */
     std::size_t num_of_const_buffer_sequence() const {
         return
-            1U +                   // fixed header
-            1U +                   // remaining length
-            2U +                   // topic name length, topic name
-            [&] {
-                if (packet_id() == 0) return 0U;
-                return 1U;
+            1 +                   // fixed header
+            1 +                   // remaining length
+            2 +                   // topic name length, topic name
+            [&] () -> std::size_t {
+                if (packet_id() == 0) return 0;
+                return 1;
             }() +
             payloads_.size();
 

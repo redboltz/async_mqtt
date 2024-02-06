@@ -208,7 +208,7 @@ public:
                     1 +                   // property length
                     async_mqtt::num_of_const_buffer_sequence(props_);
             }() +
-            entries_.size();      // unsuback_reason_code
+            1;                    // unsuback_reason_code vector
     }
 
     /**

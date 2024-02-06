@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_CASE(v311_pingresp) {
 
     {
         auto cbs = p.const_buffer_sequence();
+        BOOST_TEST(cbs.size() == p.num_of_const_buffer_sequence());
         char expected[] {
             char(0xd0),                         // fixed_header
             0x00,                               // remaining_length
@@ -39,6 +40,7 @@ BOOST_AUTO_TEST_CASE(v311_pingresp) {
         auto p = am::v3_1_1::pingresp_packet{buf};
 
         auto cbs2 = p.const_buffer_sequence();
+        BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
