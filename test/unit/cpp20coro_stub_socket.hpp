@@ -82,11 +82,9 @@ struct cpp20coro_stub_socket {
             [this](
                 auto completion_handler
             ) {
-                std::cout << "waiting" << std::endl;
                 ch_send_.async_receive(
                     [completion_handler = force_move(completion_handler)]
                     (packet_variant pv) mutable {
-                        std::cout << "arrive:" << pv << std::endl;
                         force_move(completion_handler)(force_move(pv));
                     }
                 );
@@ -161,11 +159,9 @@ struct cpp20coro_stub_socket {
                                             boost::system::error_code{},
                                             std::size_t(dis)
                                         );
-                                        std::cout << "send:" << pv << std::endl;
                                         ch_send_.async_send(
                                             pv,
                                             [](auto) {
-                                                std::cout << "send finish" << std::endl;
                                             }
                                         );
                                     }
@@ -270,7 +266,10 @@ void async_read(
 }
 
 inline bool is_close(packet_variant const& pv) {
-    if (pv) return false; // pv is packet
+    if (pv) {
+        BOOST_TEST_MESSAGE("close expected but receive packet: " << pv);
+        return false; // pv is packet
+    }
     return pv.get<system_error>().code() == errc::make_error_code(errc::connection_reset);
 }
 
