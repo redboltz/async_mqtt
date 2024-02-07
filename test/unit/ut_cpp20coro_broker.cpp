@@ -62,12 +62,13 @@ BOOST_AUTO_TEST_CASE(tc1) {
 
             {
                 // connect ep1
+                auto snd_packet = am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    am::allocate_buffer("cid1")
+                };
                 co_await ep1->next_layer().emulate_recv(
-                    am::v3_1_1::connect_packet{
-                        true,   // clean_session
-                        0x1234, // keep_alive
-                        am::allocate_buffer("cid1")
-                    },
+                    am::force_move(snd_packet),
                     as::deferred
                 );
 
@@ -81,14 +82,15 @@ BOOST_AUTO_TEST_CASE(tc1) {
             }
             {
                 // subscribe ep1
+                auto snd_packet = am::v3_1_1::subscribe_packet{
+                    0x1234,         // packet_id
+                    {
+                        {am::allocate_buffer("topic1"), am::qos::at_most_once},
+                        {am::allocate_buffer("topic2"), am::qos::exactly_once},
+                    }
+                };
                 co_await ep1->next_layer().emulate_recv(
-                    am::v3_1_1::subscribe_packet{
-                        0x1234,         // packet_id
-                        {
-                            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-                            {am::allocate_buffer("topic2"), am::qos::exactly_once},
-                        }
-                    },
+                    am::force_move(snd_packet),
                     as::deferred
                 );
 
@@ -105,12 +107,13 @@ BOOST_AUTO_TEST_CASE(tc1) {
             }
             {
                 // connect ep2
+                auto snd_packet = am::v5::connect_packet{
+                    true,   // clean_start
+                    0x1234, // keep_alive
+                    am::allocate_buffer("cid2")
+                };
                 co_await ep2->next_layer().emulate_recv(
-                    am::v5::connect_packet{
-                        true,   // clean_start
-                        0x1234, // keep_alive
-                        am::allocate_buffer("cid2")
-                    },
+                    am::force_move(snd_packet),
                     as::deferred
                 );
 
@@ -128,13 +131,14 @@ BOOST_AUTO_TEST_CASE(tc1) {
             }
             {
                 // subscribe ep2
+                auto snd_packet = am::v5::subscribe_packet{
+                    0x1234,         // packet_id
+                    {
+                        {am::allocate_buffer("topic1"), am::qos::at_most_once}
+                    }
+                };
                 co_await ep2->next_layer().emulate_recv(
-                    am::v5::subscribe_packet{
-                        0x1234,         // packet_id
-                        {
-                            {am::allocate_buffer("topic1"), am::qos::at_most_once}
-                        }
-                    },
+                    am::force_move(snd_packet),
                     as::deferred
                 );
 
@@ -150,16 +154,17 @@ BOOST_AUTO_TEST_CASE(tc1) {
             }
             {
                 // publish ep2
+                auto snd_packet = am::v5::publish_packet{
+                    0x1234, // packet_id
+                    am::allocate_buffer("topic1"),
+                    am::allocate_buffer("payload1"),
+                    am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::no,
+                    am::properties{
+                        am::property::content_type("json")
+                    }
+                };
                 co_await ep2->next_layer().emulate_recv(
-                    am::v5::publish_packet{
-                        0x1234, // packet_id
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
-                        am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::no,
-                        am::properties{
-                            am::property::content_type("json")
-                        }
-                    },
+                    am::force_move(snd_packet),
                     as::deferred
                 );
             }
