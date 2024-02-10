@@ -62,13 +62,13 @@ BOOST_AUTO_TEST_CASE(tc1) {
 
             {
                 // connect ep1
-                auto snd_packet = am::v3_1_1::connect_packet{
+                auto c2b_packet = am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
                     am::allocate_buffer("cid1")
                 };
                 co_await ep1->next_layer().emulate_recv(
-                    am::force_move(snd_packet),
+                    am::force_move(c2b_packet),
                     as::deferred
                 );
 
@@ -77,12 +77,12 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     false,   // session_present
                     am::connect_return_code::accepted
                 };
-                auto rcv_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                BOOST_TEST(rcv_packet == exp_packet);
+                auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
+                BOOST_TEST(b2c_packet == exp_packet);
             }
             {
                 // subscribe ep1
-                auto snd_packet = am::v3_1_1::subscribe_packet{
+                auto c2b_packet = am::v3_1_1::subscribe_packet{
                     0x1234,         // packet_id
                     {
                         {am::allocate_buffer("topic1"), am::qos::at_most_once},
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     }
                 };
                 co_await ep1->next_layer().emulate_recv(
-                    am::force_move(snd_packet),
+                    am::force_move(c2b_packet),
                     as::deferred
                 );
 
@@ -102,18 +102,18 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::suback_return_code::success_maximum_qos_2,
                     }
                 };
-                auto rcv_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                BOOST_TEST(rcv_packet == exp_packet);
+                auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
+                BOOST_TEST(b2c_packet == exp_packet);
             }
             {
                 // connect ep2
-                auto snd_packet = am::v5::connect_packet{
+                auto c2b_packet = am::v5::connect_packet{
                     true,   // clean_start
                     0x1234, // keep_alive
                     am::allocate_buffer("cid2")
                 };
                 co_await ep2->next_layer().emulate_recv(
-                    am::force_move(snd_packet),
+                    am::force_move(c2b_packet),
                     as::deferred
                 );
 
@@ -126,19 +126,19 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::property::receive_maximum{am::receive_maximum_max},
                     }
                 };
-                auto rcv_packet = co_await ep2->next_layer().wait_response(as::deferred);
-                BOOST_TEST(rcv_packet == exp_packet);
+                auto b2c_packet = co_await ep2->next_layer().wait_response(as::deferred);
+                BOOST_TEST(b2c_packet == exp_packet);
             }
             {
                 // subscribe ep2
-                auto snd_packet = am::v5::subscribe_packet{
+                auto c2b_packet = am::v5::subscribe_packet{
                     0x1234,         // packet_id
                     {
                         {am::allocate_buffer("topic1"), am::qos::at_most_once}
                     }
                 };
                 co_await ep2->next_layer().emulate_recv(
-                    am::force_move(snd_packet),
+                    am::force_move(c2b_packet),
                     as::deferred
                 );
 
@@ -149,12 +149,12 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::suback_reason_code::granted_qos_0
                     }
                 };
-                auto rcv_packet = co_await ep2->next_layer().wait_response(as::deferred);
-                BOOST_TEST(rcv_packet == exp_packet);
+                auto b2c_packet = co_await ep2->next_layer().wait_response(as::deferred);
+                BOOST_TEST(b2c_packet == exp_packet);
             }
             {
                 // publish ep2
-                auto snd_packet = am::v5::publish_packet{
+                auto c2b_packet = am::v5::publish_packet{
                     0x1234, // packet_id
                     am::allocate_buffer("topic1"),
                     am::allocate_buffer("payload1"),
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     }
                 };
                 co_await ep2->next_layer().emulate_recv(
-                    am::force_move(snd_packet),
+                    am::force_move(c2b_packet),
                     as::deferred
                 );
             }
@@ -175,8 +175,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::allocate_buffer("payload1"),
                     am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no
                 };
-                auto rcv_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                BOOST_TEST(rcv_packet == exp_packet);
+                auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
+                BOOST_TEST(b2c_packet == exp_packet);
             }
             {
                 std::set<am::packet_variant> exp_packets {
@@ -193,24 +193,24 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     },
                 };
                 // recv ep2
-                auto rcv_packet1 = co_await ep2->next_layer().wait_response(as::deferred);
-                BOOST_ASSERT(exp_packets.erase(rcv_packet1) == 1);
-                auto rcv_packet2 = co_await ep2->next_layer().wait_response(as::deferred);
-                BOOST_ASSERT(exp_packets.erase(rcv_packet2) == 1);
+                auto b2c_packet1 = co_await ep2->next_layer().wait_response(as::deferred);
+                BOOST_ASSERT(exp_packets.erase(b2c_packet1) == 1);
+                auto b2c_packet2 = co_await ep2->next_layer().wait_response(as::deferred);
+                BOOST_ASSERT(exp_packets.erase(b2c_packet2) == 1);
             }
             {
                 // close ep1
                 co_await ep1->next_layer().emulate_close(as::deferred);
                 // closed ep1
-                auto rcv_close = co_await ep1->next_layer().wait_response(as::deferred);
-                BOOST_TEST(am::is_close(rcv_close));
+                auto b2c_close = co_await ep1->next_layer().wait_response(as::deferred);
+                BOOST_TEST(am::is_close(b2c_close));
             }
             {
                 // close ep2
                 co_await ep2->next_layer().emulate_close(as::deferred);
                 // closed ep2
-                auto rcv_close = co_await ep2->next_layer().wait_response(as::deferred);
-                BOOST_TEST(am::is_close(rcv_close));
+                auto b2c_close = co_await ep2->next_layer().wait_response(as::deferred);
+                BOOST_TEST(am::is_close(b2c_close));
             }
 
             co_return;
