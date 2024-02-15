@@ -52,6 +52,7 @@ struct bench_context {
         am::protocol_version version,
         std::uint32_t sei,
         bool clean_start,
+        std::uint16_t keep_alive,
         am::optional<std::string> const& username,
         am::optional<std::string> const& password,
         std::string const& topic_prefix,
@@ -100,6 +101,7 @@ struct bench_context {
      version{version},
      sei{sei},
      clean_start{clean_start},
+     keep_alive{keep_alive},
      username{username},
      password{password},
      topic_prefix{topic_prefix},
@@ -146,6 +148,7 @@ struct bench_context {
     am::protocol_version version;
     std::uint32_t sei;
     bool clean_start;
+    std::uint16_t keep_alive;
     am::optional<std::string> const& username;
     am::optional<std::string> const& password;
     std::string const& topic_prefix;
@@ -392,7 +395,7 @@ private:
                     pci->c->send(
                         am::v5::connect_packet{
                             bc_.clean_start,
-                            0, // keep_alive
+                            bc_.keep_alive,
                             am::allocate_buffer(pci->get_client_id()),
                             am::nullopt, // will
                             am::force_move(un),
@@ -409,7 +412,7 @@ private:
                     pci->c->send(
                         am::v3_1_1::connect_packet{
                             bc_.clean_start,
-                            0, // keep_alive
+                            bc_.keep_alive,
                             am::allocate_buffer(pci->get_client_id()),
                             am::nullopt, // will
                             am::force_move(un),
@@ -590,13 +593,9 @@ private:
                         as::read(sock, as::buffer(str));
                         auto ts_val = boost::lexical_cast<std::uint64_t>(str);
                         locked_cout() << "start time_point:" << ts_val << std::endl;
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
                         auto ts = std::chrono::duration_cast<
                             std::chrono::microseconds
                         >(std::chrono::nanoseconds(ts_val));
-#else  // defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
-                        auto ts = std::chrono::nanoseconds(ts_val);
-#endif // defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(__APPLE__)
                         std::chrono::system_clock::time_point tp(ts);
                         bc_.tim_sync.expires_at(tp);
                         bc_.tim_sync.async_wait(*this);
@@ -1150,6 +1149,11 @@ int main(int argc, char *argv[]) {
                 "number of publishes for each client"
             )
             (
+                "keep_alive",
+                boost::program_options::value<std::uint16_t>()->default_value(0),
+                "keep_alive (sec)"
+            )
+            (
                 "username",
                 boost::program_options::value<std::string>(),
                 "username for all clients"
@@ -1470,6 +1474,7 @@ int main(int argc, char *argv[]) {
         auto pub_idle_count = vm["pub_idle_count"].as<std::size_t>();
         times += pub_idle_count;
 
+        auto keep_alive = vm["keep_alive"].as<std::uint16_t>();
         auto username =
             [&] () -> am::optional<std::string> {
                 if (vm.count("username")) {
@@ -1884,6 +1889,7 @@ int main(int argc, char *argv[]) {
             version,
             sei,
             clean_start,
+            keep_alive,
             username,
             password,
             topic_prefix,
