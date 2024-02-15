@@ -33,33 +33,36 @@ inline bool launch_broker_required() {
     return true;
 }
 
-inline void kill_broker() {
+inline void kill_broker(pr::pid_t pid) {
     if (!launch_broker_required()) return;
 #if _WIN32
-    std::system("taskkill /IM broker.exe /F");
+    {
+        std::string cmd = "taskkill /F /pid ";
+        cmd += std::to_string(pid);
+        std::system(cmd.c_str());
+    }
 #else  // _WIN32
-    std::system("pkill broker");
+    {
+        std::string cmd = "kill ";
+        cmd += std::to_string(pid);
+        std::system(cmd.c_str());
+    }
 #endif // _WIN32
 }
 
-struct broker_killer {
-    broker_killer() {
-        kill_broker();
-    }
-};
-
-struct broker_runner : broker_killer {
+struct broker_runner {
     broker_runner(
         std::string const& config = "st_broker.conf",
         std::string const& auth = "st_auth.json"
     ) {
-        if (launch_broker_required()) {
+        if (!launch_broker_required()) return;
 #if _WIN32
-            brk.emplace(pr::search_path("broker"), "--cfg", config, "--auth_file", auth);
+        brk.emplace(pr::search_path("broker"), "--cfg", config, "--auth_file", auth);
 #else  // _WIN32
-            brk.emplace(pr::args({"../../tool/broker", "--cfg", config, "--auth_file", auth}));
+        brk.emplace(pr::args({"../../tool/broker", "--cfg", config, "--auth_file", auth}));
 #endif // _WIN32
-        }
+
+        // wait broker's socket ready
         {
             as::io_context ioc;
             as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
@@ -157,8 +160,10 @@ struct broker_runner : broker_killer {
     }
     ~broker_runner() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        kill_broker();
-        if (brk) brk->join();
+        if (brk) {
+            kill_broker(brk->id());
+            brk->join();
+        }
     }
     std::optional<pr::child> brk;
 };
