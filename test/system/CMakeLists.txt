@@ -13,6 +13,7 @@ list(APPEND check_PROGRAMS
     st_inflight.cpp
     st_invalid.cpp
     st_offline.cpp
+    st_order.cpp
     st_pub.cpp
     st_retain.cpp
     st_reqres.cpp
