@@ -381,12 +381,12 @@ inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBy
         v.opts().get_qos() == qos::exactly_once) {
         o << ",pid:" << v.packet_id();
     }
-#if 0
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     o << ",payload:";
     for (auto const& e : v.payload()) {
         o << json_like_out(e);
     }
-#endif
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     o << "}";
     return o;
 }
