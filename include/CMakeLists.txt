@@ -21,6 +21,7 @@ target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_T
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_WS}>:ASYNC_MQTT_USE_WS>)
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_STR_CHECK}>:ASYNC_MQTT_USE_STR_CHECK>)
 target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_USE_LOG}>:ASYNC_MQTT_USE_LOG>)
+target_compile_definitions(${PROJECT_NAME} INTERFACE $<$<BOOL:${ASYNC_MQTT_PRINT_PAYLOAD}>:ASYNC_MQTT_PRINT_PAYLOAD>)
 
 # You might wonder why we don't simply add the list of header files to the check_deps
 # executable directly, and let cmake figure everything out on it's own.
