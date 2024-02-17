@@ -110,8 +110,7 @@ public:
             [this](std::ostream& o, std::string topic) {
                 pub_topic_ = am::allocate_buffer(topic);
                 print_pub(o);
-            },
-            "topic"
+            }
         );
         pub_menu->Insert(
             "payload",
@@ -119,8 +118,7 @@ public:
             [this](std::ostream& o, std::string payload) {
                 pub_payload_ = am::allocate_buffer(payload);
                 print_pub(o);
-            },
-            "payload"
+            }
         );
         pub_menu->Insert(
             "retain",
@@ -139,8 +137,7 @@ public:
                     pub_retain_ = am::pub::retain::no;
                 }
                 print_pub(o);
-            },
-            "payload"
+            }
         );
         pub_menu->Insert(
             "qos",
@@ -162,15 +159,90 @@ public:
                     pub_qos_ = am::qos::exactly_once;
                 }
                 print_pub(o);
+            }
+        );
+        pub_menu->Insert(
+            "pfi",
+            {"[0|1]"},
+            [this](std::ostream& o, std::string str) {
+                auto val = boost::lexical_cast<std::uint32_t>(str);
+                switch (val) {
+                case 0:
+                    pub_pfi_.emplace(am::payload_format::binary);
+                    break;
+                case 1:
+                    pub_pfi_.emplace(am::payload_format::string);
+                    break;
+                default:
+                    o << "Invalid value\n";
+                    break;
+                }
+                print_pub(o);
             },
-            "payload"
+            "Payload Format Idenfitier Property (0:Binary, 1:String)"
+        );
+        pub_menu->Insert(
+            "mei",
+            {"[0-4294967295]"},
+            [this](std::ostream& o, std::string str) {
+                auto val = boost::lexical_cast<std::uint32_t>(str);
+                pub_mei_.emplace(val);
+                print_pub(o);
+            },
+            "Message Expiry Interval Property (32bit seconds)"
+        );
+        pub_menu->Insert(
+            "ct",
+            {"ContentTypeSrting"},
+            [this](std::ostream& o, std::string str) {
+                pub_ct_.emplace(str);
+                print_pub(o);
+            },
+            "Content Type Property (ContentTypeString)"
+        );
+        pub_menu->Insert(
+            "rt",
+            {"topic"},
+            [this](std::ostream& o, std::string str) {
+                pub_rt_.emplace(str);
+                print_pub(o);
+            },
+            "Response Topic Property (topic)"
+        );
+        pub_menu->Insert(
+            "cd",
+            {"data(only string supported on this tool)"},
+            [this](std::ostream& o, std::string str) {
+                pub_cd_.emplace(str);
+                print_pub(o);
+            },
+            "Correlation Data Property (data binary)"
+        );
+        pub_menu->Insert(
+            "ta",
+            {"[1-65535]"},
+            [this](std::ostream& o, std::string str) {
+                auto val = boost::lexical_cast<std::uint16_t>(str);
+                pub_ta_.emplace(val);
+                print_pub(o);
+            },
+            "Topic Alias Property (16bit TopicAlias value)"
+        );
+        pub_menu->Insert(
+            "add_up",
+            {"key", "val"},
+            [this](std::ostream& o, std::string key, std::string val) {
+                pub_ups_.emplace_back(am::allocate_buffer(key), am::allocate_buffer(val));
+                print_pub(o);
+            },
+            "Subscription Identifier Property"
         );
         pub_menu->Insert(
             "show",
             [this](std::ostream& o) {
                 print_pub(o);
             },
-            "show packet"
+            "show building packet"
         );
         pub_menu->Insert(
             "clear",
@@ -179,6 +251,13 @@ public:
                 pub_topic_ = am::buffer{};
                 pub_qos_ = am::qos::at_most_once;
                 pub_retain_ = am::pub::retain::no;
+                pub_pfi_ = am::nullopt;
+                pub_mei_ = am::nullopt;
+                pub_ct_ = am::nullopt;
+                pub_rt_ = am::nullopt;
+                pub_cd_ = am::nullopt;
+                pub_ta_ = am::nullopt;
+                pub_ups_.clear();
                 print_pub(o);
             },
             "clear packet"
@@ -206,8 +285,7 @@ public:
             [this](std::ostream& o, std::string topic) {
                 sub_topic_ = am::allocate_buffer(topic),
                 print_sub(o);
-            },
-            "topic"
+            }
         );
         sub_menu->Insert(
             "qos",
@@ -229,8 +307,7 @@ public:
                     sub_qos_ = am::qos::exactly_once;
                 }
                 print_sub(o);
-            },
-            "payload"
+            }
         );
         sub_menu->Insert(
             "nl",
@@ -298,14 +375,23 @@ public:
                 }
                 print_sub(o);
             },
-            "Retain Handling"
+            "Subscription Identifier Property"
+        );
+        sub_menu->Insert(
+            "add_up",
+            {"key", "val"},
+            [this](std::ostream& o, std::string key, std::string val) {
+                sub_ups_.emplace_back(am::allocate_buffer(key), am::allocate_buffer(val));
+                print_sub(o);
+            },
+            "Subscription Identifier Property"
         );
         sub_menu->Insert(
             "show",
             [this](std::ostream& o) {
                 print_sub(o);
             },
-            "show packet"
+            "show building packet"
         );
         sub_menu->Insert(
             "clear",
@@ -316,6 +402,7 @@ public:
                 sub_rap_ = am::sub::rap::dont;
                 sub_rh_ = am::sub::retain_handling::send;
                 sub_sid_ = am::nullopt;
+                sub_ups_.clear();
                 print_sub(o);
             },
             "clear packet"
@@ -362,6 +449,33 @@ private:
         o << "payload : " << pub_payload_ << std::endl;
         o << "qos     : " << pub_qos_ << std::endl;
         o << "retain  : " << pub_retain_ << std::endl;
+        o << "props   : " << std::endl;
+        if (pub_pfi_) {
+            o << "  Payload Format Indicator : " <<
+                [this] {
+                    if (*pub_pfi_ == am::payload_format::binary) return "binary";
+                    return "string";
+                } ()
+              << std::endl;
+        }
+        if (pub_mei_) {
+            o << "  Message Expiry Interval : " << *pub_mei_ << std::endl;
+        }
+        if (pub_ct_) {
+            o << "  Content Type            : " << *pub_ct_ << std::endl;
+        }
+        if (pub_rt_) {
+            o << "  Response Topic          : " << *pub_rt_ << std::endl;
+        }
+        if (pub_cd_) {
+            o << "  Correlation Data        : " << *pub_cd_ << std::endl;
+        }
+        if (pub_ta_) {
+            o << "  Topic Alias             : " << *pub_ta_ << std::endl;
+        }
+        for (auto const& p : pub_ups_) {
+            o << "  User Property           : " << p.key() << ":" << p.val() << std::endl;
+        }
     }
 
     void print_sub(std::ostream& o) const {
@@ -370,19 +484,20 @@ private:
         o << "nl    : " << sub_nl_ << std::endl;
         o << "rap   : " << sub_rap_ << std::endl;
         o << "rh    : " << sub_rh_ << std::endl;
-        o << "sid   : ";
+        o << "props   : " << std::endl;
         if (sub_sid_) {
-            o << *sub_sid_;
+            o << "  Subscription Identifier : " << *sub_sid_ << std::endl;
         }
-        o << std::endl;
+        for (auto const& p : sub_ups_) {
+            o << "  User Property           : " << p.key() << ":" << p.val() << std::endl;
+        }
     }
 
     void publish(
         packet_id_t pid,
         am::buffer topic,
         am::buffer payload,
-        am::pub::opts opts,
-        am::properties props = {}
+        am::pub::opts opts
     ) {
         if (version_ == am::protocol_version::v3_1_1) {
             ep_.send(
@@ -400,6 +515,40 @@ private:
             );
         }
         else {
+            am::properties props;
+            if (pub_pfi_) {
+                props.push_back(
+                    am::property::payload_format_indicator{*pub_pfi_}
+                );
+            }
+            if (pub_mei_) {
+                props.push_back(
+                    am::property::message_expiry_interval{*pub_mei_}
+                );
+            }
+            if (pub_ct_) {
+                props.push_back(
+                    am::property::content_type{am::allocate_buffer(*pub_ct_)}
+                );
+            }
+            if (pub_rt_) {
+                props.push_back(
+                    am::property::response_topic{am::allocate_buffer(*pub_rt_)}
+                );
+            }
+            if (pub_cd_) {
+                props.push_back(
+                    am::property::correlation_data{am::allocate_buffer(*pub_cd_)}
+                );
+            }
+            if (pub_ta_) {
+                props.push_back(
+                    am::property::topic_alias{*pub_ta_}
+                );
+            }
+            for (auto& p : pub_ups_) {
+                props.emplace_back(p);
+            }
             ep_.send(
                 am::v5::publish_packet{
                     pid,
@@ -420,8 +569,7 @@ private:
     void publish(
         am::buffer topic,
         am::buffer payload,
-        am::pub::opts opts,
-        am::properties props = {}
+        am::pub::opts opts
     ) {
         if (opts.get_qos() == am::qos::at_least_once ||
             opts.get_qos() == am::qos::exactly_once) {
@@ -430,8 +578,7 @@ private:
                     this,
                     topic = am::force_move(topic),
                     payload = am::force_move(payload),
-                    opts,
-                    props = am::force_move(props)
+                    opts
                 ]
                 (am::optional<packet_id_t> pid_opt) mutable {
                     if (pid_opt) {
@@ -439,8 +586,7 @@ private:
                             *pid_opt,
                             am::force_move(topic),
                             am::force_move(payload),
-                            opts,
-                            am::force_move(props)
+                            opts
                         );
                     }
                     else {
@@ -456,23 +602,20 @@ private:
                 0,
                 am::force_move(topic),
                 am::force_move(payload),
-                opts,
-                am::force_move(props)
+                opts
             );
         }
     }
 
     void subscribe(
         am::buffer topic,
-        am::sub::opts opts,
-        am::properties props = {}
+        am::sub::opts opts
     ) {
         ep_.acquire_unique_packet_id(
             [
                 this,
                 topic = am::force_move(topic),
-                opts,
-                props = am::force_move(props)
+                opts
             ]
             (am::optional<packet_id_t> pid_opt) mutable {
                 if (pid_opt) {
@@ -495,6 +638,9 @@ private:
                             props.push_back(
                                 am::property::subscription_identifier{*sub_sid_}
                             );
+                        }
+                        for (auto& p : sub_ups_) {
+                            props.emplace_back(p);
                         }
                         ep_.send(
                             am::v5::subscribe_packet{
@@ -577,6 +723,13 @@ private:
     am::buffer pub_payload_;
     am::qos pub_qos_ = am::qos::at_most_once;
     am::pub::retain pub_retain_ = am::pub::retain::no;
+    am::optional<am::payload_format> pub_pfi_;
+    am::optional<std::uint32_t> pub_mei_;
+    am::optional<std::string> pub_ct_;
+    am::optional<std::string> pub_rt_;
+    am::optional<std::string> pub_cd_;
+    am::optional<std::uint16_t> pub_ta_;
+    std::vector<am::property::user_property> pub_ups_;
 
     am::buffer sub_topic_;
     am::qos sub_qos_ = am::qos::at_most_once;
@@ -584,6 +737,7 @@ private:
     am::sub::rap sub_rap_ = am::sub::rap::dont;
     am::sub::retain_handling sub_rh_ = am::sub::retain_handling::send;
     am::optional<std::uint32_t> sub_sid_;
+    std::vector<am::property::user_property> sub_ups_;
 
 };
 
@@ -1014,7 +1168,7 @@ int main(int argc, char* argv[]) {
             std::cout << std::endl;
         }
 
-
+        std::cout << "type 'help' to show menu" << std::endl;
 #if defined(MQTT_USE_LOG)
         switch (vm["verbose"].as<unsigned int>()) {
         case 5:
