@@ -18,6 +18,10 @@
 ** link:functionality/request_response.adoc[Reuqest/Response]
 ** link:functionality/receive_maximum.adoc[Receive Maximum]
 ** link:functionality/maximum_packet_size.adoc[Maximum Packet Size]
+* Tools
+** broker
+** link:tool/client_cli.adoc[client_cli]
+** bench
 * link:performance.adoc[Performance]
 * link:config.adoc[Config]
 * link:../main/CHANGELOG.md[History]
