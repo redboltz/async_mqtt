@@ -78,10 +78,18 @@ BOOST_AUTO_TEST_CASE(v5_publish) {
         BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
     }
+
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v5::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:4660,payload:payload1,ps:[{id:content_type,val:json}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v5::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:4660,ps:[{id:content_type,val:json}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
@@ -137,10 +145,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
         BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
     }
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:yes,dup:no,payload:payload1,ps:[{id:content_type,val:json}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v5::publish{topic:topic1,qos:at_most_once,retain:yes,dup:no,ps:[{id:content_type,val:json}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_CASE(v5_publish_invalid) {
@@ -225,10 +240,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_pid4) {
         BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
         BOOST_TEST(p.opts().get_dup() == am::pub::dup::no);
     }
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v5::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:305419896,payload:payload1,ps:[{id:content_type,val:json}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v5::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:305419896,ps:[{id:content_type,val:json}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
@@ -240,10 +262,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
             am::property::topic_alias(1)
         }
     };
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p1) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,payload:payload1,ps:[{id:topic_alias,val:1}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p1) ==
         "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:1}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     {
         auto cbs = p1.const_buffer_sequence();
         BOOST_TEST(cbs.size() == p1.num_of_const_buffer_sequence());
@@ -263,10 +292,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
 
     auto p2 = p1;
     p2.remove_topic_alias();
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p2) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,payload:payload1}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p2) ==
         "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     {
         auto cbs = p2.const_buffer_sequence();
         BOOST_TEST(cbs.size() == p2.num_of_const_buffer_sequence());
@@ -301,10 +337,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
 
     auto p3 = p2;
     p3.remove_topic_add_topic_alias(0x1234);
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p3) ==
+        "v5::publish{topic:,qos:at_most_once,retain:no,dup:no,payload:payload1,ps:[{id:topic_alias,val:4660}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p3) ==
         "v5::publish{topic:,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:4660}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     {
         auto cbs = p3.const_buffer_sequence();
         BOOST_TEST(cbs.size() == p3.num_of_const_buffer_sequence());
@@ -338,10 +381,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
 
     auto p4 = p3;
     p4.remove_topic_alias_add_topic(am::allocate_buffer("topic1"));
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p4) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,payload:payload1}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p4) ==
         "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     {
         auto cbs = p4.const_buffer_sequence();
         BOOST_TEST(cbs.size() == p4.num_of_const_buffer_sequence());
@@ -375,10 +425,17 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
 
     auto p5 = p3;
     p5.add_topic(am::allocate_buffer("topic1"));
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p5) ==
+        "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,payload:payload1,ps:[{id:topic_alias,val:4660}]}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p5) ==
         "v5::publish{topic:topic1,qos:at_most_once,retain:no,dup:no,ps:[{id:topic_alias,val:4660}]}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     {
         auto cbs = p5.const_buffer_sequence();
         BOOST_TEST(cbs.size() == p5.num_of_const_buffer_sequence());
