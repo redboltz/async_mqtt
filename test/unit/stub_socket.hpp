@@ -17,13 +17,14 @@ namespace async_mqtt {
 
 namespace as = boost::asio;
 
-struct stub_socket {
+template <std::size_t PacketIdBytes>
+struct basic_stub_socket {
     using executor_type = as::any_io_executor;
-    using pv_queue_t = std::deque<packet_variant>;
+    using pv_queue_t = std::deque<basic_packet_variant<PacketIdBytes>>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
 
-    stub_socket(
+    basic_stub_socket(
         protocol_version version,
         as::any_io_executor exe
     )
@@ -31,7 +32,7 @@ struct stub_socket {
          exe_{force_move(exe)}
     {}
 
-    stub_socket(
+    basic_stub_socket(
         protocol_version version,
         as::io_context& ioc
     )
@@ -39,12 +40,12 @@ struct stub_socket {
          exe_{ioc.get_executor()}
     {}
 
-    void set_write_packet_checker(std::function<void(packet_variant const& pv)> c) {
+    void set_write_packet_checker(std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> c) {
         open_ = true;
         write_packet_checker_ = force_move(c);
     }
 
-    void set_recv_packets(std::deque<packet_variant> recv_pvs) {
+    void set_recv_packets(std::deque<basic_packet_variant<PacketIdBytes>> recv_pvs) {
         recv_pvs_ = force_move(recv_pvs);
         recv_pvs_it_ = recv_pvs_.begin();
         pv_r_ = nullopt;
@@ -85,7 +86,7 @@ struct stub_socket {
         auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
         auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
         auto buf = allocate_buffer(it, end);
-        auto pv = buffer_to_packet_variant(buf, version_);
+        auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
         if (write_packet_checker_) write_packet_checker_(pv);
         as::post(
             as::bind_executor(
@@ -122,7 +123,7 @@ struct stub_socket {
             );
             return;
         }
-        if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
+        if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
             ++recv_pvs_it_;
             as::dispatch(
                 as::bind_executor(
@@ -154,7 +155,7 @@ struct stub_socket {
                 );
                 return;
             }
-            if (auto* ec = recv_pvs_it_->get_if<system_error>()) {
+            if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
                 ++recv_pvs_it_;
                 as::dispatch(
                     as::bind_executor(
@@ -189,13 +190,24 @@ private:
     protocol_version version_;
     as::any_io_executor exe_;
     pv_queue_t recv_pvs_;
-    pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();
+    typename pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();
     std::vector<as::const_buffer> cbs_;
     optional<packet_range> pv_r_;
-    std::function<void(packet_variant const& pv)> write_packet_checker_;
+    std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
 };
+
+using stub_socket = basic_stub_socket<2>;
+
+template <typename MutableBufferSequence, typename CompletionToken>
+void async_read(
+    basic_stub_socket<4>& socket,
+    MutableBufferSequence const& mb,
+    CompletionToken&& token
+) {
+    socket.async_read_some(mb, std::forward<CompletionToken>(token));
+}
 
 template <typename MutableBufferSequence, typename CompletionToken>
 void async_read(
