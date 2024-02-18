@@ -78,10 +78,17 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:4660,payload:payload1}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:4660}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
@@ -137,10 +144,17 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v3_1_1::publish{topic:topic1,qos:at_most_once,retain:yes,dup:no,payload:payload1}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v3_1_1::publish{topic:topic1,qos:at_most_once,retain:yes,dup:no}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
@@ -224,10 +238,17 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
     }
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+    BOOST_TEST(
+        boost::lexical_cast<std::string>(p) ==
+        "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:305419896,payload:payload1}"
+    );
+#else  // defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:305419896}"
     );
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 }
 
 BOOST_AUTO_TEST_SUITE_END()

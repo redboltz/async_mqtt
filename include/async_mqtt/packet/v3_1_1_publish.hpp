@@ -27,6 +27,10 @@
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+#if defined(ASYNC_MQTT_PRINT_PAYLOAD)
+#include <async_mqtt/util/json_like_out.hpp>
+#endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
