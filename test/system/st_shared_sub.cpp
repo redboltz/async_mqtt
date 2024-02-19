@@ -54,6 +54,11 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub1).set_auto_pub_response(true);
+                ep(sub2).set_auto_pub_response(true);
+                ep(sub3).set_auto_pub_response(true);
+
                 // connect sub1
                 yield ep(sub1).next_layer().async_connect(
                     dest(),
@@ -196,6 +201,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv puback
 
                 // publish 3
                 yield ep(pub).send(
@@ -208,6 +214,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // publish 4
                 yield ep(pub).send(
@@ -231,6 +238,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv puback
 
                 // publish 6
                 yield ep(pub).send(
@@ -243,6 +251,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv pubrec
 
                 yield ep(sub1).recv(*this);
                 BOOST_TEST(
@@ -363,6 +372,11 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
             am::optional<packet_id_t> pid
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub1).set_auto_pub_response(true);
+                ep(sub2).set_auto_pub_response(true);
+                ep(sub3).set_auto_pub_response(true);
+
                 // connect sub1
                 yield ep(sub1).next_layer().async_connect(
                     dest(),
@@ -508,6 +522,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv puback
 
                 // publish 3
                 yield ep(pub).send(
@@ -520,6 +535,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv pubrec
 
 
                 yield ep(sub1).recv(*this);
@@ -595,6 +611,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv puback
 
                 // publish 6
                 yield ep(pub).send(
@@ -607,6 +624,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+                yield ep(pub).recv(*this); // recv pubrec
 
                 yield ep(sub2).recv(*this);
                 BOOST_TEST(
@@ -619,6 +637,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
+                yield ep(sub3).recv(*this); // recv pubrel
                 yield ep(sub3).recv(*this);
                 BOOST_TEST(
                     *pv
@@ -636,7 +655,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        2,
+                        1,
                         am::allocate_buffer("topic1"),
                         am::allocate_buffer("payload6"),
                         am::qos::at_least_once,

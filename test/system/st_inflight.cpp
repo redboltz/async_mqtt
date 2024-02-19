@@ -280,10 +280,13 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                 );
                 // recv puback
                 yield ep().recv(*this);
-                BOOST_TEST(*pv == (am::v5::puback_packet{1}));
+                BOOST_TEST(*pv == (am::v5::puback_packet{1, am::puback_reason_code::no_matching_subscribers}));
                 // recv pubrec
                 yield ep().recv(*this);
-                BOOST_TEST(*pv == (am::v5::pubrec_packet{2}));
+                BOOST_CHECK(
+                    *pv == (am::v5::pubrec_packet{2, am::pubrec_reason_code::no_matching_subscribers}) ||
+                    *pv == (am::v5::pubrec_packet{2})
+                );
 
                 // send pubrel
                 yield ep().send(am::v5::pubrel_packet{2}, *this);
@@ -362,6 +365,8 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -450,6 +455,9 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+
+                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // wait for broker delivers publish packets.
                 // if close sub too early, offline publish mechanism would work
@@ -551,6 +559,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -640,6 +651,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+
+                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // wait for broker delivers publish packets.
                 // if close sub too early, offline publish mechanism would work
@@ -741,6 +755,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -832,6 +849,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                     *this
                 );
                 BOOST_TEST(!*se);
+
+                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // wait for broker QoS1 publish message will expire
                 std::this_thread::sleep_for(std::chrono::seconds(2));
