@@ -44,6 +44,9 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -196,6 +199,9 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -350,6 +356,9 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -517,6 +526,9 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
             am::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),

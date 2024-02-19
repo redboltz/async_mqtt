@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
                 BOOST_TEST(!*se);
                 // recv puback
                 yield ep().recv(*this);
-                BOOST_TEST(*pv == am::v5::puback_packet{pid});
+                BOOST_TEST(*pv == (am::v5::puback_packet{pid, am::puback_reason_code::no_matching_subscribers}));
 
                 // publish QoS2
                 pid = *ep().acquire_unique_packet_id();
@@ -199,7 +199,10 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
                 BOOST_TEST(!*se);
                 // recv pubrec
                 yield ep().recv(*this);
-                BOOST_TEST(*pv == am::v5::pubrec_packet{pid});
+                BOOST_CHECK(
+                    *pv == (am::v5::pubrec_packet{pid, am::pubrec_reason_code::no_matching_subscribers}) ||
+                    *pv == (am::v5::pubrec_packet{pid})
+                );
                 // recv pubcomp
                 yield ep().recv(*this);
                 BOOST_TEST(*pv == am::v5::pubcomp_packet{pid});
@@ -245,6 +248,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -344,6 +348,9 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+
+                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // wait for broker delivers publish packets.
                 // to adjust expected recv packet_id
@@ -529,6 +536,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
+
+                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).recv(*this); // recv pubrec
 
                 // wait for broker delivers publish packets.
                 // to adjust expected recv packet_id

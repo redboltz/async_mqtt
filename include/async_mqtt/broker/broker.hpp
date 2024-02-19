@@ -572,7 +572,7 @@ private:
                     this,
                     epsp,
                     &idx,
-                    &it,
+                    it,
                     username = force_move(username),
                     will = force_move(will),
                     will_expiry_interval,
@@ -850,7 +850,7 @@ private:
         if (it == idx.end()) return;
 
         auto send_pubres =
-            [&] (bool authorized = true) {
+            [&] (bool authorized, bool matched) {
                 switch (opts.get_qos()) {
                 case qos::at_least_once:
                     switch (epsp.get_protocol_version()) {
@@ -874,14 +874,31 @@ private:
                             [&] {
                                 if (authorized) {
                                     if (puback_props_.empty()) {
-                                        return v5::puback_packet{packet_id};
+                                        if (matched) {
+                                            return v5::puback_packet{packet_id};
+                                        }
+                                        else {
+                                            return v5::puback_packet{
+                                                packet_id,
+                                                puback_reason_code::no_matching_subscribers
+                                            };
+                                        }
                                     }
                                     else {
-                                        return v5::puback_packet{
-                                            packet_id,
-                                            puback_reason_code::success,
-                                            puback_props_
-                                        };
+                                        if (matched) {
+                                            return v5::puback_packet{
+                                                packet_id,
+                                                puback_reason_code::success,
+                                                puback_props_
+                                            };
+                                        }
+                                        else {
+                                            return v5::puback_packet{
+                                                packet_id,
+                                                puback_reason_code::no_matching_subscribers,
+                                                puback_props_
+                                            };
+                                        }
                                     };
                                 }
                                 else {
@@ -939,14 +956,31 @@ private:
                             [&] {
                                 if (authorized) {
                                     if (pubrec_props_.empty()) {
-                                        return v5::pubrec_packet{packet_id};
+                                        if (matched) {
+                                            return v5::pubrec_packet{packet_id};
+                                        }
+                                        else {
+                                            return v5::pubrec_packet{
+                                                packet_id,
+                                                pubrec_reason_code::no_matching_subscribers
+                                            };
+                                        }
                                     }
                                     else {
-                                        return v5::pubrec_packet{
-                                            packet_id,
-                                            pubrec_reason_code::success,
-                                            pubrec_props_
-                                        };
+                                        if (matched) {
+                                            return v5::pubrec_packet{
+                                                packet_id,
+                                                pubrec_reason_code::success,
+                                                pubrec_props_
+                                            };
+                                        }
+                                        else {
+                                            return v5::pubrec_packet{
+                                                packet_id,
+                                                pubrec_reason_code::no_matching_subscribers,
+                                                pubrec_props_
+                                            };
+                                        }
                                     };
                                 }
                                 else {
@@ -990,7 +1024,7 @@ private:
         // See if this session is authorized to publish this topic
         if (security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow) {
             // Publish not authorized
-            send_pubres(false);
+            send_pubres(false, false);
             return;
         }
 
@@ -1017,7 +1051,7 @@ private:
             );
         }
 
-        do_publish(
+        bool matched = do_publish(
             **it,
             force_move(topic),
             std::forward<BufferSequence>(payload),
@@ -1025,7 +1059,7 @@ private:
             force_move(forward_props)
         );
 
-        send_pubres();
+        send_pubres(true, matched);
     }
 
     /**
@@ -1039,7 +1073,8 @@ private:
      */
     template <typename BufferSequence>
     std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
+        is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+        bool
     >
     do_publish(
         session_state<epsp_t> const& source_ss,
@@ -1048,6 +1083,8 @@ private:
         pub::opts opts,
         properties props
     ) {
+        bool matched = false;
+
         // Get auth rights for this topic
         // auth_users prepared once here, and then referred multiple times in subs_map_.modify() for efficiency
         auto auth_users = security_.auth_sub(topic);
@@ -1060,7 +1097,7 @@ private:
 
                 // See if this session is authorized to subscribe this topic
                 auto access = security_.auth_sub_user(auth_users, ss.get_username());
-                if (access != security::authorization::type::allow) return;
+                if (access != security::authorization::type::allow) return false;
 
                 pub::opts new_opts = std::min(opts.get_qos(), sub.opts.get_qos());
                 if (sub.opts.get_rap() == sub::rap::retain && opts.get_retain() == pub::retain::yes) {
@@ -1087,6 +1124,7 @@ private:
                         props
                     );
                 }
+                return true;
             };
 
         //                  share_name   topic_filter
@@ -1104,7 +1142,7 @@ private:
                         // publisher is the same as subscriber, then skip it.
                         if (sub.opts.get_nl() == sub::nl::yes &&
                             sub.ss.get().client_id() ==  source_ss.client_id()) return;
-                        deliver(sub.ss.get(), sub, auth_users);
+                        if (deliver(sub.ss.get(), sub, auth_users)) matched = true;
                     }
                     else {
                         // Shared subscriptions
@@ -1113,7 +1151,7 @@ private:
                         if (inserted) {
                             if (auto ssr_sub_opt = shared_targets_.get_target(sub.sharename, sub.topic)) {
                                 auto [ssr, sub] = *ssr_sub_opt;
-                                deliver(ssr.get(), sub, auth_users);
+                                if (deliver(ssr.get(), sub, auth_users)) matched = true;
                             }
                         }
                     }
@@ -1190,6 +1228,7 @@ private:
                 );
             }
         }
+        return matched;
     }
 
     void puback_handler(
