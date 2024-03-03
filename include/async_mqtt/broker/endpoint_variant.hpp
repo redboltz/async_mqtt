@@ -74,7 +74,7 @@ public:
     using packet_variant_type = basic_packet_variant<packet_id_bytes>;
     using weak_type = typename epsp_t::weak_type;
 
-    epsp_wrap(epsp_t&& epsp)
+    epsp_wrap(epsp_t epsp)
         : epsp_{force_move(epsp)}
     {
     }
