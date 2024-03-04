@@ -44,10 +44,18 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         ep->acquire_unique_packet_id_wait_until(as::use_future).get();
     }
 
-    auto fut = ep->acquire_unique_packet_id_wait_until(as::use_future);
-    ep->release_packet_id(12345, as::use_future).get();
-    auto pid = fut.get();
-    BOOST_TEST(pid == 12345);
+    auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut2 = ep->acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut3 = ep->acquire_unique_packet_id_wait_until(as::use_future);
+    ep->release_packet_id(10001, as::use_future).get();
+    ep->release_packet_id(10002, as::use_future).get();
+    ep->release_packet_id(10003, as::use_future).get();
+    auto pid2 = fut2.get();
+    BOOST_TEST(pid2 == 10002);
+    auto pid1 = fut1.get();
+    BOOST_TEST(pid1 == 10001);
+    auto pid3 = fut3.get();
+    BOOST_TEST(pid3 == 10003);
     guard.reset();
     th.join();
 }
