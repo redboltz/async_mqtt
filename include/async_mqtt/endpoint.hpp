@@ -304,6 +304,32 @@ public:
     }
 
     /**
+     * @brief acuire unique packet_id.
+     * If packet_id is fully acquired, then wait until released.
+     * @param token the param is packet_id_t
+     * @return deduced by token
+     */
+    template <typename CompletionToken>
+    auto
+    acquire_unique_packet_id_wait_until(
+        CompletionToken&& token
+    ) {
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "acquire_unique_packet_id_wait_until";
+        return
+            as::async_compose<
+                CompletionToken,
+                void(packet_id_t)
+            >(
+                acquire_unique_packet_id_wait_until_impl{
+                    *this
+                },
+                token
+            );
+    }
+
+    /**
      * @brief register packet_id.
      * @param packet_id packet_id to register
      * @param token     the param is bool. If true, success, otherwise the packet_id has already been used.
@@ -640,6 +666,7 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "release_packet_id:" << pid;
+        tim_retry_acq_pid_->cancel();
         pid_man_.release_id(pid);
     }
 
@@ -840,6 +867,56 @@ private: // compose operation impl
         }
     };
 
+    struct acquire_unique_packet_id_wait_until_impl {
+        this_type& ep;
+        std::weak_ptr<as::steady_timer> retry_wp{ep.tim_retry_acq_pid_};
+        optional<packet_id_t> pid_opt = nullopt;
+        enum { dispatch, acquire, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& = error_code{}
+        ) {
+            if (retry_wp.expired()) return;
+            switch (state) {
+            case dispatch: {
+                state = acquire;
+                auto& a_ep{ep};
+                as::dispatch(
+                    as::bind_executor(
+                        a_ep.stream_->raw_strand(),
+                        force_move(self)
+                    )
+                );
+            } break;
+            case acquire: {
+                BOOST_ASSERT(ep.in_strand());
+                pid_opt = ep.pid_man_.acquire_unique_id();
+                if (pid_opt) {
+                    state = complete;
+                    bind_dispatch(force_move(self));
+                }
+                else {
+                    // infinity timer. cancel is retry trigger.
+                    auto& a_ep{ep};
+                    a_ep.tim_retry_acq_pid_->expires_at(std::chrono::steady_clock::time_point::max());
+                    a_ep.tim_retry_acq_pid_->async_wait(
+                        as::bind_executor(
+                            a_ep.stream_->raw_strand(),
+                            force_move(self)
+                        )
+                    );
+                }
+            } break;
+            case complete:
+                BOOST_ASSERT(pid_opt);
+                self.complete(*pid_opt);
+                break;
+            }
+        }
+    };
+
     struct register_packet_id_impl {
         this_type& ep;
         packet_id_t packet_id;
@@ -897,6 +974,7 @@ private: // compose operation impl
             case rel: {
                 BOOST_ASSERT(ep.in_strand());
                 ep.pid_man_.release_id(packet_id);
+                ep.tim_retry_acq_pid_->cancel();
                 state = complete;
                 bind_dispatch(force_move(self));
             } break;
@@ -1129,6 +1207,7 @@ private: // compose operation impl
                 }
                 if (actual_packet.clean_session()) {
                     ep.pid_man_.clear();
+                    ep.tim_retry_acq_pid_->cancel();
                     ep.store_.clear();
                     ep.need_store_ = false;
                 }
@@ -1147,6 +1226,7 @@ private: // compose operation impl
                 }
                 if (actual_packet.clean_start()) {
                     ep.pid_man_.clear();
+                    ep.tim_retry_acq_pid_->cancel();
                     ep.store_.clear();
                 }
                 for (auto const& prop : actual_packet.props()) {
@@ -1229,6 +1309,7 @@ private: // compose operation impl
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
                                         ep.pid_man_.release_id(packet_id);
+                                        ep.tim_retry_acq_pid_->cancel();
                                     }
                                     return false;
                                 }
@@ -1255,6 +1336,7 @@ private: // compose operation impl
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
                                         ep.pid_man_.release_id(packet_id);
+                                        ep.tim_retry_acq_pid_->cancel();
                                     }
                                     return false;
                                 }
@@ -1286,6 +1368,7 @@ private: // compose operation impl
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
                                         ep.pid_man_.release_id(packet_id);
+                                        ep.tim_retry_acq_pid_->cancel();
                                     }
                                     return false;
                                 }
@@ -1298,6 +1381,7 @@ private: // compose operation impl
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.pid_man_.release_id(packet_id);
+                                    ep.tim_retry_acq_pid_->cancel();
                                 }
                                 return false;
                             }
@@ -1325,6 +1409,7 @@ private: // compose operation impl
                         auto packet_id = actual_packet.packet_id();
                         if (packet_id != 0) {
                             ep.pid_man_.release_id(packet_id);
+                            ep.tim_retry_acq_pid_->cancel();
                         }
                         return false;
                     }
@@ -1344,6 +1429,7 @@ private: // compose operation impl
                             auto packet_id = actual_packet.packet_id();
                             if (packet_id != 0) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                             return false;
                         }
@@ -1434,6 +1520,7 @@ private: // compose operation impl
                     auto packet_id = actual_packet.packet_id();
                     if (packet_id != 0) {
                         ep.pid_man_.release_id(packet_id);
+                        ep.tim_retry_acq_pid_->cancel();
                     }
                 }
                 return false;
@@ -1651,6 +1738,7 @@ private: // compose operation impl
                                 }
                                 else {
                                     ep.pid_man_.clear();
+                                    ep.tim_retry_acq_pid_->cancel();
                                     ep.store_.clear();
                                 }
                             }
@@ -1686,6 +1774,7 @@ private: // compose operation impl
                                 }
                                 else {
                                     ep.pid_man_.clear();
+                                    ep.tim_retry_acq_pid_->cancel();
                                     ep.store_.clear();
                                 }
                             }
@@ -1866,6 +1955,7 @@ private: // compose operation impl
                             if (ep.pid_puback_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -1893,6 +1983,7 @@ private: // compose operation impl
                             if (ep.pid_puback_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_puback, packet_id);
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                                 --ep.publish_send_count_;
                                 send_publish_from_queue();
                             }
@@ -1955,6 +2046,7 @@ private: // compose operation impl
                                 ep.store_.erase(response_packet::v5_pubrec, packet_id);
                                 if (is_error(p.code())) {
                                     ep.pid_man_.release_id(packet_id);
+                                    ep.tim_retry_acq_pid_->cancel();
                                     ep.qos2_publish_processing_.erase(packet_id);
                                     --ep.publish_send_count_;
                                     send_publish_from_queue();
@@ -2012,6 +2104,7 @@ private: // compose operation impl
                             if (ep.pid_pubcomp_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                                 ep.qos2_publish_processing_.erase(packet_id);
                                 --ep.publish_send_count_;
                                 send_publish_from_queue();
@@ -2042,6 +2135,7 @@ private: // compose operation impl
                             if (ep.pid_pubcomp_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_pubcomp, packet_id);
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                                 ep.qos2_publish_processing_.erase(packet_id);
                             }
                             else {
@@ -2073,12 +2167,14 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_suback_.erase(packet_id)) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                         },
                         [&](v5::basic_suback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_suback_.erase(packet_id)) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                         },
                         [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
@@ -2089,12 +2185,14 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_unsuback_.erase(packet_id)) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                         },
                         [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_unsuback_.erase(packet_id)) {
                                 ep.pid_man_.release_id(packet_id);
+                                ep.tim_retry_acq_pid_->cancel();
                             }
                         },
                         [&](v3_1_1::pingreq_packet&) {
@@ -2510,6 +2608,7 @@ private:
             [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
                 if (pv.size() > maximum_packet_size_send_) {
                     pid_man_.release_id(pv.packet_id());
+                    tim_retry_acq_pid_->cancel();
                     return false;
                 }
                 pv.visit(
@@ -2756,6 +2855,10 @@ private:
 
     bool recv_processing_ = false;
     std::set<packet_id_t> qos2_publish_processing_;
+
+    std::shared_ptr<as::steady_timer> tim_retry_acq_pid_{
+        std::make_shared<as::steady_timer>(stream_->raw_strand())
+    };
 };
 
 /**
