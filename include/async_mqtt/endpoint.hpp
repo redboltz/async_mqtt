@@ -872,11 +872,11 @@ private: // compose operation impl
         this_type_wp retry_wp = ep.weak_from_this();
         optional<packet_id_t> pid_opt = nullopt;
         enum { dispatch, acquire, complete } state = dispatch;
-
+        
         template <typename Self>
         void operator()(
             Self& self,
-            error_code const& = error_code{}
+            error_code const& ec = error_code{}
         ) {
             if (retry_wp.expired()) return;
             switch (state) {
@@ -892,17 +892,35 @@ private: // compose operation impl
             } break;
             case acquire: {
                 BOOST_ASSERT(ep.in_strand());
-                pid_opt = ep.pid_man_.acquire_unique_id();
-                if (pid_opt) {
-                    state = complete;
-                    bind_dispatch(force_move(self));
+                auto acq_proc =
+                    [&] {
+                        pid_opt = ep.pid_man_.acquire_unique_id();
+                        if (pid_opt) {
+                            state = complete;
+                            bind_dispatch(force_move(self));
+                        }
+                        else {
+                            // infinity timer. cancel is retry trigger.
+                            auto& a_ep{ep};
+                            a_ep.add_retry(
+                                force_move(self)
+                            );
+                        }
+                    };
+
+                if (ec == errc::operation_canceled) {
+                    ep.complete_retry_one();
+                    acq_proc();
                 }
-                else {
+                else if (ep.has_retry()) {
                     // infinity timer. cancel is retry trigger.
                     auto& a_ep{ep};
                     a_ep.add_retry(
                         force_move(self)
                     );
+                }
+                else {
+                    acq_proc();
                 }
             } break;
             case complete:
@@ -2799,12 +2817,22 @@ private:
     
     void notify_retry_one() {
         if (!tim_retry_acq_pid_queue_.empty()) {
+            tim_retry_acq_pid_queue_.front()->cancel();
+        }
+    }
+
+    void complete_retry_one() {
+        if (!tim_retry_acq_pid_queue_.empty()) {
             tim_retry_acq_pid_queue_.pop_front();
         }
     }
     
     void notify_retry_all() {
         tim_retry_acq_pid_queue_.clear();
+    }
+
+    bool has_retry() const {
+        return !tim_retry_acq_pid_queue_.empty();
     }
 
     void clear_pid_man() {
