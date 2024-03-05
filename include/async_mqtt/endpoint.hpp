@@ -2812,12 +2812,17 @@ private:
                 std::forward<CompletionToken>(token)
             )
         );
-        tim_retry_acq_pid_queue_.push_back(force_move(tim));
+        tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
     }
     
     void notify_retry_one() {
-        if (!tim_retry_acq_pid_queue_.empty()) {
-            tim_retry_acq_pid_queue_.front()->cancel();
+        for (auto it = tim_retry_acq_pid_queue_.begin();
+             it != tim_retry_acq_pid_queue_.end();
+             ++it
+        ) {
+            if (it->cancelled) continue;
+            it->tim->cancel();
+            it->cancelled = true;
         }
     }
 
@@ -2893,7 +2898,11 @@ private:
     bool recv_processing_ = false;
     std::set<packet_id_t> qos2_publish_processing_;
 
-    std::deque<std::shared_ptr<as::steady_timer>> tim_retry_acq_pid_queue_;
+    struct tim_cancelled {
+        std::shared_ptr<as::steady_timer> tim;
+        bool cancelled = false;
+    };
+    std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
 };
 
 /**
