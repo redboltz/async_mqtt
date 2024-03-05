@@ -667,8 +667,7 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "release_packet_id:" << pid;
-        notify_retry_one();
-        pid_man_.release_id(pid);
+        release_pid(pid);
     }
 
     /**
@@ -970,8 +969,7 @@ private: // compose operation impl
             } break;
             case rel: {
                 BOOST_ASSERT(ep.in_strand());
-                ep.pid_man_.release_id(packet_id);
-                ep.notify_retry_one();
+                ep.release_pid(packet_id);
                 state = complete;
                 bind_dispatch(force_move(self));
             } break;
@@ -1203,8 +1201,7 @@ private: // compose operation impl
                     ep.pingreq_send_interval_ms_.emplace(keep_alive * 1000);
                 }
                 if (actual_packet.clean_session()) {
-                    ep.pid_man_.clear();
-                    ep.notify_retry_all();
+                    ep.clear_pid_man();
                     ep.store_.clear();
                     ep.need_store_ = false;
                 }
@@ -1222,8 +1219,7 @@ private: // compose operation impl
                     ep.pingreq_send_interval_ms_.emplace(keep_alive * 1000);
                 }
                 if (actual_packet.clean_start()) {
-                    ep.pid_man_.clear();
-                    ep.notify_retry_all();
+                    ep.clear_pid_man();
                     ep.store_.clear();
                 }
                 for (auto const& prop : actual_packet.props()) {
@@ -1305,8 +1301,7 @@ private: // compose operation impl
                                 if (!topic_opt) {
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
-                                        ep.pid_man_.release_id(packet_id);
-                                        ep.notify_retry_one();
+                                        ep.release_pid(packet_id);
                                     }
                                     return false;
                                 }
@@ -1332,8 +1327,7 @@ private: // compose operation impl
                                 if (!validate_maximum_packet_size(self, store_packet)) {
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
-                                        ep.pid_man_.release_id(packet_id);
-                                        ep.notify_retry_one();
+                                        ep.release_pid(packet_id);
                                     }
                                     return false;
                                 }
@@ -1364,8 +1358,7 @@ private: // compose operation impl
                                 if (!validate_maximum_packet_size(self, store_packet)) {
                                     auto packet_id = actual_packet.packet_id();
                                     if (packet_id != 0) {
-                                        ep.pid_man_.release_id(packet_id);
-                                        ep.notify_retry_one();
+                                        ep.release_pid(packet_id);
                                     }
                                     return false;
                                 }
@@ -1377,8 +1370,7 @@ private: // compose operation impl
                             if (!validate_maximum_packet_size(self, actual_packet)) {
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
-                                    ep.pid_man_.release_id(packet_id);
-                                    ep.notify_retry_one();
+                                    ep.release_pid(packet_id);
                                 }
                                 return false;
                             }
@@ -1405,8 +1397,7 @@ private: // compose operation impl
                         !validate_topic_alias(self, ta_opt)) {
                         auto packet_id = actual_packet.packet_id();
                         if (packet_id != 0) {
-                            ep.pid_man_.release_id(packet_id);
-                            ep.notify_retry_one();
+                            ep.release_pid(packet_id);
                         }
                         return false;
                     }
@@ -1425,8 +1416,7 @@ private: // compose operation impl
                         else {
                             auto packet_id = actual_packet.packet_id();
                             if (packet_id != 0) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                             return false;
                         }
@@ -1516,8 +1506,7 @@ private: // compose operation impl
                 if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
                     auto packet_id = actual_packet.packet_id();
                     if (packet_id != 0) {
-                        ep.pid_man_.release_id(packet_id);
-                        ep.notify_retry_one();
+                        ep.release_pid(packet_id);
                     }
                 }
                 return false;
@@ -1734,8 +1723,7 @@ private: // compose operation impl
                                     ep.send_stored();
                                 }
                                 else {
-                                    ep.pid_man_.clear();
-                                    ep.notify_retry_all();
+                                    ep.clear_pid_man();
                                     ep.store_.clear();
                                 }
                             }
@@ -1770,8 +1758,7 @@ private: // compose operation impl
                                     ep.send_stored();
                                 }
                                 else {
-                                    ep.pid_man_.clear();
-                                    ep.notify_retry_all();
+                                    ep.clear_pid_man();
                                     ep.store_.clear();
                                 }
                             }
@@ -1951,8 +1938,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_puback_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -1979,8 +1965,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_puback_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_puback, packet_id);
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                                 --ep.publish_send_count_;
                                 send_publish_from_queue();
                             }
@@ -2042,8 +2027,7 @@ private: // compose operation impl
                             if (ep.pid_pubrec_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_pubrec, packet_id);
                                 if (is_error(p.code())) {
-                                    ep.pid_man_.release_id(packet_id);
-                                    ep.notify_retry_one();
+                                    ep.release_pid(packet_id);
                                     ep.qos2_publish_processing_.erase(packet_id);
                                     --ep.publish_send_count_;
                                     send_publish_from_queue();
@@ -2100,8 +2084,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_pubcomp_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                                 ep.qos2_publish_processing_.erase(packet_id);
                                 --ep.publish_send_count_;
                                 send_publish_from_queue();
@@ -2131,8 +2114,7 @@ private: // compose operation impl
                             auto packet_id = p.packet_id();
                             if (ep.pid_pubcomp_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_pubcomp, packet_id);
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                                 ep.qos2_publish_processing_.erase(packet_id);
                             }
                             else {
@@ -2163,15 +2145,13 @@ private: // compose operation impl
                         [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_suback_.erase(packet_id)) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                         },
                         [&](v5::basic_suback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_suback_.erase(packet_id)) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                         },
                         [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
@@ -2181,15 +2161,13 @@ private: // compose operation impl
                         [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_unsuback_.erase(packet_id)) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                         },
                         [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
                             if (ep.pid_unsuback_.erase(packet_id)) {
-                                ep.pid_man_.release_id(packet_id);
-                                ep.notify_retry_one();
+                                ep.release_pid(packet_id);
                             }
                         },
                         [&](v3_1_1::pingreq_packet&) {
@@ -2604,8 +2582,7 @@ private:
         store_.for_each(
             [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
                 if (pv.size() > maximum_packet_size_send_) {
-                    pid_man_.release_id(pv.packet_id());
-                    notify_retry_one();
+                    release_pid(pv.packet_id());
                     return false;
                 }
                 pv.visit(
@@ -2828,6 +2805,16 @@ private:
     
     void notify_retry_all() {
         tim_retry_acq_pid_queue_.clear();
+    }
+
+    void clear_pid_man() {
+        pid_man_.clear();
+        notify_retry_all();
+    }
+
+    void release_pid(packet_id_t pid) {
+        pid_man_.release_id(pid);
+        notify_retry_one();
     }
     
 private:
