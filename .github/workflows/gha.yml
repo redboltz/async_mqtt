@@ -59,7 +59,7 @@ jobs:
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
-        CTEST_ARGS="--log_level=all -- trace" ctest -V
+        CTEST_ARGS="--log_level=all -- warning" ctest -V
     - name: Generate Coverage
       if: matrix.pattern == 3
       working-directory: ${{ runner.temp }}
@@ -125,7 +125,7 @@ jobs:
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
-        CTEST_ARGS="--log_level=all -- trace" ctest -V
+        CTEST_ARGS="--log_level=all -- warning" ctest -V
 
   windows:
     runs-on: windows-latest
