@@ -2899,8 +2899,13 @@ private:
     std::set<packet_id_t> qos2_publish_processing_;
 
     struct tim_cancelled {
+        tim_cancelled(
+            std::shared_ptr<as::steady_timer> tim,
+            bool cancelled = false
+        ):tim{force_move(tim)}, cancelled{cancelled}
+        {}
         std::shared_ptr<as::steady_timer> tim;
-        bool cancelled = false;
+        bool cancelled;
     };
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
 };
