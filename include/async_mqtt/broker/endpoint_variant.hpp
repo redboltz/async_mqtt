@@ -155,6 +155,20 @@ public:
 
     template <typename CompletionToken>
     auto
+    acquire_unique_packet_id_wait_until(
+        CompletionToken&& token
+    ) {
+        return visit(
+            [&](auto& ep) {
+                return ep.acquire_unique_packet_id_wait_until(
+                    std::forward<CompletionToken>(token)
+                );
+            }
+        );
+    }
+
+    template <typename CompletionToken>
+    auto
     register_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token
