@@ -2823,6 +2823,7 @@ private:
             if (it->cancelled) continue;
             it->tim->cancel();
             it->cancelled = true;
+            return;
         }
     }
 
