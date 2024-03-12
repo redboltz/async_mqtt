@@ -97,7 +97,7 @@ public:
     {
         topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
         endian_store(
-            boost::numeric_cast<std::uint16_t>(topic_name.size()),
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
             topic_name_length_buf_.data()
         );
         auto b = buffer_sequence_begin(payloads);
