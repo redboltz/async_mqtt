@@ -56,37 +56,50 @@ struct broker_runner {
         std::string const& auth = "st_auth.json"
     ) {
         if (!launch_broker_required()) return;
-#if _WIN32
-        brk.emplace(
-            pr::search_path("broker"),
-            "--cfg", config,
-            "--auth_file", auth
-        );
-#else  // _WIN32
         auto level_opt =
             [&] () -> std::optional<std::size_t> {
-            auto argv = boost::unit_test::framework::master_test_suite().argv;
-            auto sevstr = std::string_view(argv[1]);
-            if (sevstr == "fatal") {
-                return 0;
-            }
-            else if (sevstr == "error") {
-                return 1;
-            }
-            else if (sevstr == "warning") {
-                return 2;
-            }
-            else if (sevstr == "info") {
-                return 3;
-            }
-            else if (sevstr == "debug") {
-                return 4;
-            }
-            else if (sevstr == "trace") {
-                return 5;
+            auto argc = boost::unit_test::framework::master_test_suite().argc;
+            if (argc >= 2) {
+                auto argv = boost::unit_test::framework::master_test_suite().argv;
+                auto sevstr = std::string_view(argv[1]);
+                if (sevstr == "fatal") {
+                    return 0;
+                }
+                else if (sevstr == "error") {
+                    return 1;
+                }
+                else if (sevstr == "warning") {
+                    return 2;
+                }
+                else if (sevstr == "info") {
+                    return 3;
+                }
+                else if (sevstr == "debug") {
+                    return 4;
+                }
+                else if (sevstr == "trace") {
+                    return 5;
+                }
             }
             return std::nullopt;
         } ();
+#if _WIN32
+        if (level_opt) {
+            brk.emplace(
+                pr::search_path("broker"),
+                "--cfg", config,
+                "--auth_file", auth,
+                "--verbose", std::to_string(*level_opt)
+            );
+        }
+        else {
+            brk.emplace(
+                pr::search_path("broker"),
+                "--cfg", config,
+                "--auth_file", auth
+            );
+        }
+#else  // _WIN32
         std::vector<std::string> args;
         args.emplace_back("--cfg");
         args.emplace_back(config);
