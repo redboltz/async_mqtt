@@ -14,8 +14,9 @@ namespace async_mqtt {
 
 template <typename Proc>
 inline auto unique_scope_guard(Proc&& proc) {
-    auto deleter = [proc = std::forward<Proc>(proc)](void*) mutable { return std::forward<Proc>(proc)(); };
-    return std::unique_ptr<void, decltype(deleter)>(&deleter, force_move(deleter));
+    static int nouse;
+    auto deleter = [proc = std::forward<Proc>(proc)](void*) { std::move(proc)(); };
+    return std::unique_ptr<void, decltype(deleter)>(&nouse, force_move(deleter));
 }
 
 } // namespace async_mqtt
