@@ -57,11 +57,48 @@ struct broker_runner {
     ) {
         if (!launch_broker_required()) return;
 #if _WIN32
-        brk.emplace(pr::search_path("broker"), "--cfg", config, "--auth_file", auth);
+        brk.emplace(
+            pr::search_path("broker"),
+            "--cfg", config,
+            "--auth_file", auth
+        );
 #else  // _WIN32
-        brk.emplace(pr::args({"../../tool/broker", "--cfg", config, "--auth_file", auth}));
+        auto level_opt =
+            [&] () -> std::optional<std::size_t> {
+            auto argv = boost::unit_test::framework::master_test_suite().argv;
+            auto sevstr = std::string_view(argv[1]);
+            if (sevstr == "fatal") {
+                return 0;
+            }
+            else if (sevstr == "error") {
+                return 1;
+            }
+            else if (sevstr == "warning") {
+                return 2;
+            }
+            else if (sevstr == "info") {
+                return 3;
+            }
+            else if (sevstr == "debug") {
+                return 4;
+            }
+            else if (sevstr == "trace") {
+                return 5;
+            }
+            return std::nullopt;
+        } ();
+        std::vector<std::string> args;
+        args.emplace_back("--cfg");
+        args.emplace_back(config);
+        args.emplace_back("--auth_file");
+        args.emplace_back(auth);
+        if (level_opt) {
+            args.emplace_back("--verbose");
+            args.emplace_back(std::to_string(*level_opt));
+        }
+        brk.emplace("../../tool/broker", pr::args(args));
 #endif // _WIN32
-
+        
         // wait broker's socket ready
         {
             as::io_context ioc;
