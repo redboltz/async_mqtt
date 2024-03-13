@@ -56,13 +56,6 @@ struct broker_runner {
         std::string const& auth = "st_auth.json"
     ) {
         if (!launch_broker_required()) return;
-#if _WIN32
-        brk.emplace(
-            pr::search_path("broker"),
-            "--cfg", config,
-            "--auth_file", auth
-        );
-#else  // _WIN32
         auto level_opt =
             [&] () -> std::optional<std::size_t> {
             auto argc = boost::unit_test::framework::master_test_suite().argc;
@@ -90,6 +83,23 @@ struct broker_runner {
             }
             return std::nullopt;
         } ();
+#if _WIN32
+        if (level_opt) {
+            brk.emplace(
+                pr::search_path("broker"),
+                "--cfg", config,
+                "--auth_file", auth,
+                "--verbose", std::to_string(*level_opt)
+            );
+        }
+        else {
+            brk.emplace(
+                pr::search_path("broker"),
+                "--cfg", config,
+                "--auth_file", auth
+            );
+        }
+#else  // _WIN32
         std::vector<std::string> args;
         args.emplace_back("--cfg");
         args.emplace_back(config);
