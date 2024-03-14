@@ -187,7 +187,6 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
     );
 }
 
-#if 0
 
 BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
     char expected[] {
@@ -212,5 +211,6 @@ BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
         "v5::puback{pid:4660,rc:success}"
     );
 }
+#if 0
 #endif
 BOOST_AUTO_TEST_SUITE_END()
