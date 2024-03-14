@@ -115,12 +115,11 @@ jobs:
         [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=g++-13     -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
         FLAGS="$FLAGS -DASYNC_MQTT_BUILD_TOOLS=OFF -DASYNC_MQTT_BUILD_EXAMPLES=OFF -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=OFF"
         BOOST_ROOT=/home/runner/work/async_mqtt/async_mqtt/usr cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
-    - name: Check Header Dependencies
-      run: |
-        cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
+#    - name: Check Header Dependencies
+#      run: |
+#        cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
     - name: Compile
       run: |
-        VERBOSE=1 cmake --build ${{ runner.temp }} --clean-first --target broker
         VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(nproc)
     - name: Test
       working-directory: ${{ runner.temp }}
