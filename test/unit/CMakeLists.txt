@@ -17,7 +17,7 @@
 list(APPEND check_PROGRAMS
 #    ut_broker_security.cpp
 #    ut_buffer.cpp
-    ut_code.cpp
+#    ut_code.cpp
 #    ut_ep_con_discon.cpp
 #    ut_ep_pid.cpp
 #    ut_ep_topic_alias.cpp
@@ -68,7 +68,7 @@ list(APPEND check_PROGRAMS
 #    ut_topic_alias.cpp
 #    ut_topic_sharename.cpp
 #    ut_topic_subopts.cpp
-#    ut_unique_scope_guard.cpp
+    ut_unique_scope_guard.cpp
 #    ut_value_allocator.cpp
 )
 
