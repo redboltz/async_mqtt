@@ -104,7 +104,7 @@ jobs:
         NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
       run: |
         [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \
-        export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
+        export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 2 ] && \
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 3 ] && \
