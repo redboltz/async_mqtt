@@ -125,7 +125,7 @@ jobs:
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
-        CTEST_ARGS="--log_level=all -- warning" ctest -V
+        CTEST_ARGS="--log_level=all -- trace" ctest -V
 
   windows:
     runs-on: windows-latest

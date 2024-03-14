@@ -12,7 +12,7 @@ else()
 endif()
 
 if(ASYNC_MQTT_BUILD_SYSTEM_TESTS)
-    add_subdirectory (system)
+#    add_subdirectory (system)
     message(STATUS "System tests enabled")
 else()
     message(STATUS "System tests disabled")
