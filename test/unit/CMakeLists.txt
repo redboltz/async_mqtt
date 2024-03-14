@@ -17,7 +17,7 @@
 list(APPEND check_PROGRAMS
 #    ut_broker_security.cpp
 #    ut_buffer.cpp
-#    ut_code.cpp
+    ut_code.cpp
 #    ut_ep_con_discon.cpp
 #    ut_ep_pid.cpp
 #    ut_ep_topic_alias.cpp
@@ -45,7 +45,7 @@ list(APPEND check_PROGRAMS
 #    ut_packet_v5_connect.cpp
 #    ut_packet_v5_connack.cpp
 #    ut_packet_v5_publish.cpp
-    ut_packet_v5_puback.cpp
+#    ut_packet_v5_puback.cpp
 #    ut_packet_v5_pubrec.cpp
 #    ut_packet_v5_pubrel.cpp
 #    ut_packet_v5_pubcomp.cpp
