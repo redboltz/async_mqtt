@@ -149,8 +149,6 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_only) {
     );
 }
 
-#if 0
-
 BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
     auto p = am::v5::puback_packet{
         0x1234, // packet_id
@@ -188,6 +186,8 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
         "v5::puback{pid:4660,rc:success}"
     );
 }
+
+#if 0
 
 BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
     char expected[] {
