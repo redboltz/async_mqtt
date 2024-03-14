@@ -68,6 +68,7 @@ list(APPEND check_PROGRAMS
     ut_topic_alias.cpp
     ut_topic_sharename.cpp
     ut_topic_subopts.cpp
+    ut_unique_scope_guard.cpp
     ut_value_allocator.cpp
 )
 
