@@ -45,7 +45,7 @@ list(APPEND check_PROGRAMS
 #    ut_packet_v5_connect.cpp
 #    ut_packet_v5_connack.cpp
 #    ut_packet_v5_publish.cpp
-#    ut_packet_v5_puback.cpp
+    ut_packet_v5_puback.cpp
 #    ut_packet_v5_pubrec.cpp
 #    ut_packet_v5_pubrel.cpp
 #    ut_packet_v5_pubcomp.cpp
@@ -68,7 +68,7 @@ list(APPEND check_PROGRAMS
 #    ut_topic_alias.cpp
 #    ut_topic_sharename.cpp
 #    ut_topic_subopts.cpp
-    ut_unique_scope_guard.cpp
+#    ut_unique_scope_guard.cpp
 #    ut_value_allocator.cpp
 )
 
