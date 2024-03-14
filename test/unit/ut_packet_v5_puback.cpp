@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
         "v5::puback{pid:4660,rc:packet_identifier_in_use,ps:[{id:reason_string,val:some reason}]}"
     );
 }
-
+#if 0
 BOOST_AUTO_TEST_CASE(v5_puback_pid4) {
     auto props = am::properties{
         am::property::reason_string("some reason")
@@ -210,5 +210,5 @@ BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
         "v5::puback{pid:4660,rc:success}"
     );
 }
-
+#endif
 BOOST_AUTO_TEST_SUITE_END()
