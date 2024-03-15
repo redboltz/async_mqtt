@@ -16,15 +16,15 @@ namespace detail {
 template <typename Proc>
 class unique_sg {
 public:
-    unique_sg(Proc proc) noexcept
+    unique_sg(Proc proc)
         :proc_{std::move(proc)}
     {}
     unique_sg(unique_sg const&) = delete;
-    unique_sg(unique_sg&& other) noexcept
+    unique_sg(unique_sg&& other)
         :proc_{other.proc_} {
         other.moved_ = true;
     }
-    ~unique_sg() noexcept {
+    ~unique_sg() {
         if (!moved_) std::move(proc_)();
     }
 
@@ -36,7 +36,7 @@ private:
 } // namespace detail
 
 template <typename Proc>
-inline detail::unique_sg<Proc> unique_scope_guard(Proc&& proc) noexcept {
+inline detail::unique_sg<Proc> unique_scope_guard(Proc&& proc) {
     return detail::unique_sg<Proc>{std::forward<Proc>(proc)};
 }
 
