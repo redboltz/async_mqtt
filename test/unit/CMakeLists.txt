@@ -23,7 +23,7 @@ list(APPEND check_PROGRAMS
 #    ut_ep_topic_alias.cpp
 #    ut_ep_recv_filter.cpp
 #    ut_ep_recv_max.cpp
-#    ut_ep_send_rt_chk.cpp
+    ut_ep_send_rt_chk.cpp
 #    ut_ep_size_max.cpp
 #    ut_ep_store.cpp
 #    ut_host_port.cpp

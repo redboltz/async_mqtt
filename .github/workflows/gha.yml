@@ -124,7 +124,7 @@ jobs:
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
-         test/unit/ut_code --log_level=all -- warning
+         test/unit/ut_ep_send_rt_chk --log_level=all -- warning
 #        CTEST_ARGS="--log_level=all -- trace" ctest -V
 
   windows:
