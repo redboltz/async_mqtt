@@ -17,6 +17,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <async_mqtt/log.hpp>
+
 namespace as = boost::asio;
 namespace pr = boost::process;
 namespace am = async_mqtt;
@@ -62,23 +64,22 @@ struct broker_runner {
             if (argc >= 2) {
                 auto argv = boost::unit_test::framework::master_test_suite().argv;
                 auto sevstr = std::string_view(argv[1]);
-                if (sevstr == "fatal") {
-                    return 0;
-                }
-                else if (sevstr == "error") {
-                    return 1;
-                }
-                else if (sevstr == "warning") {
-                    return 2;
-                }
-                else if (sevstr == "info") {
-                    return 3;
-                }
-                else if (sevstr == "debug") {
-                    return 4;
-                }
-                else if (sevstr == "trace") {
-                    return 5;
+                auto sl_opt = am::severity_level_from_string(sevstr);
+                if (sl_opt) {
+                    switch (*sl_opt) {
+                    case am::severity_level::fatal:
+                        return 0;
+                    case am::severity_level::error:
+                        return 1;
+                    case am::severity_level::warning:
+                        return 2;
+                    case am::severity_level::info:
+                        return 3;
+                    case am::severity_level::debug:
+                        return 4;
+                    case am::severity_level::trace:
+                        return 5;
+                    }
                 }
             }
             return std::nullopt;

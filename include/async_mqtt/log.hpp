@@ -30,6 +30,8 @@
 
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
+#include <async_mqtt/util/optional.hpp>
+
 namespace async_mqtt {
 
 struct channel : std::string {
@@ -56,6 +58,29 @@ inline std::ostream& operator<<(std::ostream& o, severity_level sev) {
     };
     o << str[static_cast<std::size_t>(sev)];
     return o;
+}
+
+inline optional<severity_level> severity_level_from_string(std::string_view sevstr) {
+    using namespace std::string_view_literals;
+    if (sevstr == "fatal"sv) {
+        return async_mqtt::severity_level::fatal;
+    }
+    else if (sevstr == "error"sv) {
+        return async_mqtt::severity_level::error;
+    }
+    else if (sevstr == "warning"sv) {
+        return async_mqtt::severity_level::warning;
+    }
+    else if (sevstr == "info"sv) {
+        return async_mqtt::severity_level::info;
+    }
+    else if (sevstr == "debug"sv) {
+        return async_mqtt::severity_level::debug;
+    }
+    else if (sevstr == "trace"sv) {
+        return async_mqtt::severity_level::trace;
+    }
+    return nullopt;
 }
 
 namespace detail {
