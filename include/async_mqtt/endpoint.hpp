@@ -900,6 +900,9 @@ private: // compose operation impl
                             bind_dispatch(force_move(self));
                         }
                         else {
+                            ASYNC_MQTT_LOG("mqtt_impl", warning)
+                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                << "packet_id is fully allocated. waiting release";
                             // infinity timer. cancel is retry trigger.
                             auto& a_ep{ep};
                             a_ep.add_retry(
@@ -913,6 +916,9 @@ private: // compose operation impl
                     acq_proc();
                 }
                 else if (ep.has_retry()) {
+                    ASYNC_MQTT_LOG("mqtt_impl", warning)
+                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                        << "packet_id waiter exists. add the end of waiter queue";
                     // infinity timer. cancel is retry trigger.
                     auto& a_ep{ep};
                     a_ep.add_retry(
