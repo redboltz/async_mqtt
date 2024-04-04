@@ -1,5 +1,5 @@
 <map id="async_mqtt::property::subscription_identifier" name="async_mqtt::property::subscription_identifier">
-<area shape="rect" id="Node000001" title=" " alt="" coords="13,98,187,143"/>
-<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1variable__property.html" title="variable property" alt="" coords="5,5,195,50"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,66,103,98,97,98,97,66"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="11,96,167,139"/>
+<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1variable__property.html" title="variable property" alt="" coords="5,5,173,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,64,92,96,86,96,86,64"/>
 </map>

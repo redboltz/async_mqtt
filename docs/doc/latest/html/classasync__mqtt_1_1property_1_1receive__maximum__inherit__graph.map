@@ -1,5 +1,5 @@
 <map id="async_mqtt::property::receive_maximum" name="async_mqtt::property::receive_maximum">
-<area shape="rect" id="Node000001" title=" " alt="" coords="38,98,198,143"/>
-<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html" title=" " alt="" coords="5,5,231,50"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,66,121,98,115,98,115,66"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="33,96,177,139"/>
+<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html" title=" " alt="" coords="5,5,205,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="108,64,108,96,102,96,102,64"/>
 </map>
