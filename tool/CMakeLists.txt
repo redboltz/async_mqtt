@@ -15,7 +15,7 @@ include(FetchContent)
 FetchContent_Declare(
   cli
   GIT_REPOSITORY https://github.com/daniele77/cli.git
-  GIT_TAG v2.1.0
+  GIT_TAG af87753d86e5b2e16e5aebd07da7cd839a7fc4d
 )
 FetchContent_MakeAvailable(cli)
 

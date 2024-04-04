@@ -1,3 +1,25 @@
+## 4.1.0
+- Re-designed unique_scope_guard. #146, #148, #149
+- Fixed moved from object access. #144
+- Removed code repeat. #140
+- Added acquire_unique_packet_id_wait_until(). #138, #139, #141, #142, #151
+- Relaxed epsp_wrap constructor for broker. #137
+- Supported no matching subscribers reason code for broker. #133
+- Added all.hpp generator. #131
+- Refined client_cli. #130
+- Added print payload option. #129
+- Added keep_alive settiong to bench. #125
+- Fixed num_of_const_buffer_sequence. #120, #121
+- Refined tests. #120, #122, #123, #127, #128, #132, #134, #136, #145
+- Refined packet comparison. #119
+- Replaced return type with auto. #110
+- Added UTF-8 checking. #107
+- Replaced callback with CompletionToken on broker. #106
+- Refined C++20 couroutune example. #105
+- Used any_io_executor as the base of predefined mqtt protocol. #104
+- Refined documentation. #103
+
+
 ## 4.0.0
 ### breaking changes
 - Fixed multiple close problem. In order to do that endpoint become shared_ptr based design. #98, #100, #101, #102
