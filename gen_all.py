@@ -17,7 +17,7 @@ print(
  '''
 )
 
-for file in files:
+for file in sorted(files, key=lambda file: (file.count('/'), file)):
     if file.find("/all.hpp") != -1:
         continue
     if file.find("/broker/") != -1:
