@@ -58,15 +58,15 @@ template <typename NextLayer>
 struct is_tls<tls::stream<NextLayer>> : public std::true_type {};
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
-template <typename NextLayer>
-class stream : public std::enable_shared_from_this<stream<NextLayer>> {
+template <typename NextLayer, template <typename> typename Strand = as::strand>
+class stream : public std::enable_shared_from_this<stream<NextLayer, Strand>> {
 public:
-    using this_type = stream<NextLayer>;
+    using this_type = stream<NextLayer, Strand>;
     using this_type_sp = std::shared_ptr<this_type>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
     using raw_strand_type = as::strand<executor_type>;
-    using strand_type = as::strand<as::any_io_executor>;
+    using strand_type = Strand<as::any_io_executor>;
 
     template <typename T>
     friend class make_shared_helper;

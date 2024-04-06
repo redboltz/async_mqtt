@@ -16,6 +16,8 @@
 #include <boost/system/error_code.hpp>
 #include <boost/beast/websocket/stream.hpp>
 
+#include <async_mqtt/util/move.hpp>
+
 namespace async_mqtt {
 
 namespace as = boost::asio;

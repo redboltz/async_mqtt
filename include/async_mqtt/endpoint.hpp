@@ -63,8 +63,8 @@ auto bind_dispatch(Self&& self) {
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>>{
+template <role Role, std::size_t PacketIdBytes, typename NextLayer, template <typename> typename Strand = as::strand>
+class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer, Strand>>{
 
     enum class connection_status {
         connecting,
@@ -99,12 +99,13 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
         return ta_opt;
     }
 
-    using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
+    using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer, Strand>;
     using this_type_sp = std::shared_ptr<this_type>;
     using this_type_wp = std::weak_ptr<this_type>;
     using stream_type =
         stream<
-            NextLayer
+            NextLayer,
+            Strand
         >;
 
     template <typename T>
@@ -872,7 +873,7 @@ private: // compose operation impl
         this_type_wp retry_wp = ep.weak_from_this();
         optional<packet_id_t> pid_opt = nullopt;
         enum { dispatch, acquire, complete } state = dispatch;
-        
+
         template <typename Self>
         void operator()(
             Self& self,
@@ -2820,7 +2821,7 @@ private:
         );
         tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
     }
-    
+
     void notify_retry_one() {
         for (auto it = tim_retry_acq_pid_queue_.begin();
              it != tim_retry_acq_pid_queue_.end();
@@ -2838,7 +2839,7 @@ private:
             tim_retry_acq_pid_queue_.pop_front();
         }
     }
-    
+
     void notify_retry_all() {
         tim_retry_acq_pid_queue_.clear();
     }
@@ -2856,7 +2857,7 @@ private:
         pid_man_.release_id(pid);
         notify_retry_one();
     }
-    
+
 private:
     protocol_version protocol_version_;
     std::shared_ptr<stream_type> stream_;
@@ -2923,8 +2924,8 @@ private:
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <role Role, typename NextLayer>
-using endpoint = basic_endpoint<Role, 2, NextLayer>;
+template <role Role, typename NextLayer, template <typename> typename Strand = as::strand>
+using endpoint = basic_endpoint<Role, 2, NextLayer, Strand>;
 
 } // namespace async_mqtt
 
