@@ -69,7 +69,7 @@ jobs:
         lcov --list coverage.info --ignore-errors inconsistent # debug info
     - name: Upload coverage to Codecov
       if: matrix.pattern == 3
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v3
       with:
         files: ${{ runner.temp }}/coverage.info
         token: ${{ secrets.CODECOV_TOKEN }}
