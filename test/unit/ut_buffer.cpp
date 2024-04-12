@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_buffer)
@@ -86,5 +87,201 @@ BOOST_AUTO_TEST_CASE( buffers ) {
     BOOST_TEST(am::to_buffer(bufs) == "012345678"_mb);
 }
 
+BOOST_AUTO_TEST_CASE( buf_to_pv_size_error ) {
+    auto pv = am::buffer_to_packet_variant(am::buffer{}, am::protocol_version::v3_1_1);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_reserved_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x00\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_connect_version_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x10\x07\x00\x04MQTT\x06"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_packet_throw_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x10\x07\x00\x04MQTT\x05"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_connack_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x20\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_publish_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x30\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_puback_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x40\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_pubrec_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x50\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_pubrel_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x60\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_pubcomp_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x70\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_subscribe_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x80\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_suback_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\x90\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_unsubscribe_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xa0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_unsuback_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xb0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_pingreq_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xc0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_pingresp_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xd0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_disconnect_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xe0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
+
+BOOST_AUTO_TEST_CASE( buf_to_pv_auth_undetermined_error ) {
+    using namespace am::literals;
+    auto pv = am::buffer_to_packet_variant("\xf0\x00"_mb, am::protocol_version::undetermined);
+    if (auto const* p = pv.get_if<am::system_error>()) {
+        BOOST_TEST(p->code() == am::errc::bad_message);
+    }
+    else {
+        BOOST_TEST(false);
+    }
+}
 
 BOOST_AUTO_TEST_SUITE_END()
