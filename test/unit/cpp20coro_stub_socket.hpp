@@ -156,14 +156,14 @@ struct cpp20coro_basic_stub_socket {
                                         dis,
                                         pv
                                     ] () mutable {
-                                        force_move(completion_handler)(
-                                            boost::system::error_code{},
-                                            std::size_t(dis)
-                                        );
                                         ch_send_.async_send(
                                             pv,
                                             [](auto) {
                                             }
+                                        );
+                                        force_move(completion_handler)(
+                                            boost::system::error_code{},
+                                            std::size_t(dis)
                                         );
                                     }
                                 )
