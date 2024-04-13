@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    as::io_context queue_;
+    as::io_context queue_{BOOST_ASIO_CONCURRENCY_HINT_UNSAFE};
     bool working_ = false;
     optional<as::executor_work_guard<as::io_context::executor_type>> guard_;
 };
