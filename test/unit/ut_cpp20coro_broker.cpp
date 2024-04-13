@@ -28,9 +28,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
     as::io_context ioc;
     as::co_spawn(
         ioc.get_executor(),
-        [](
-            auto& ioc
-        ) -> as::awaitable<void> {
+        [&]() -> as::awaitable<void> {
             using epv_t = am::endpoint_variant<
                 am::role::server,
                 am::cpp20coro_stub_socket
@@ -214,7 +212,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
             }
 
             co_return;
-        }(ioc),
+        },
         as::detached
     );
     ioc.run();
