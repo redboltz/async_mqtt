@@ -72,6 +72,7 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         files: ${{ runner.temp }}/coverage.info
+        token: ${{ secrets.CODECOV_TOKEN }}
   linux:
     runs-on: ubuntu-latest
     strategy:
