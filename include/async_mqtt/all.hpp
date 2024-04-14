@@ -22,6 +22,7 @@
 #include <async_mqtt/setup_log.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/stream.hpp>
+#include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/time_point_t.hpp>
 #include <async_mqtt/tls.hpp>
 #include <async_mqtt/topic_alias_recv.hpp>
@@ -29,7 +30,6 @@
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/variable_bytes.hpp>
 #include <async_mqtt/ws_fixed_size_async_read.hpp>
-#include <async_mqtt/core/stream_traits.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
