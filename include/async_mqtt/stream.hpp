@@ -24,7 +24,7 @@
 #include <boost/beast/websocket/stream.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/core/stream_traits.hpp>
+#include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
