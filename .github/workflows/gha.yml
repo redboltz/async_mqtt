@@ -63,8 +63,9 @@ jobs:
     - name: Generate Coverage
       if: matrix.pattern == 3
       working-directory: ${{ runner.temp }}
+      continue-on-error: true
       run: |
-        export PATH="/usr/local/opt/llvm/bin:$PATH"
+        export PATH="/Library/Developer/CommandLineTools/usr/bin:$PATH"
         lcov --capture --directory ${{ runner.temp }} --exclude "/usr/*" -exclude "test/*" --output-file coverage.info --gcov-tool ${{ github.workspace }}/llvm-gcov.sh --ignore-errors inconsistent,gcov
         lcov --list coverage.info --ignore-errors inconsistent # debug info
     - name: Upload coverage to Codecov
