@@ -1,3 +1,12 @@
+## 5.0.0
+### breaking changes
+- Removed core sub directory and move file to upper directory. #158
+- Added null strand support. #153
+### other updates
+- Removed redundant locks from internal queue. #157
+- Added tests. #154, #156
+- Refined CI. #155
+
 ## 4.1.0
 - Re-designed unique_scope_guard. #146, #148, #149
 - Fixed moved from object access. #144
