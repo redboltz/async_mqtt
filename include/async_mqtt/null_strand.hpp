@@ -23,39 +23,39 @@ class null_strand {
 public:
     using inner_executor_type = Executor;
 
-    null_strand(Executor exe)
+    null_strand(Executor exe) noexcept
         :exe_{std::move(exe)}
     {
     }
-    null_strand() = default;
-    null_strand(null_strand<Executor> const&) = default;
-    null_strand(null_strand<Executor>&&) = default;
+    null_strand() noexcept = default;
+    null_strand(null_strand const&) noexcept = default;
+    null_strand(null_strand&&) noexcept = default;
     template <typename OtherExecutor>
-    null_strand(null_strand<OtherExecutor> const& other)
-        :exe_{std::move(other.exe_)}
+    null_strand(null_strand<OtherExecutor> const& other) noexcept
+        :exe_{other.exe_}
     {
     }
     template <typename OtherExecutor>
-    null_strand(null_strand<OtherExecutor>&& other)
+    null_strand(null_strand<OtherExecutor>&& other) noexcept
         :exe_{std::move(other.exe_)}
     {
     }
 
-    null_strand<Executor>& operator=(null_strand<Executor> const& other) {
+    null_strand<Executor>& operator=(null_strand const& other) noexcept {
         exe_ = other.exe_;
         return *this;
     }
-    null_strand<Executor>& operator=(null_strand<Executor>&& other) {
+    null_strand<Executor>& operator=(null_strand&& other) noexcept {
         exe_ = std::move(other.exe_);
         return *this;
     }
     template <typename OtherExecutor>
-    null_strand<Executor>& operator=(null_strand<OtherExecutor> const& other) {
+    null_strand<Executor>& operator=(null_strand<OtherExecutor> const& other) noexcept {
         exe_ = other.exe_;
         return *this;
     }
     template <typename OtherExecutor>
-    null_strand<Executor>& operator=(null_strand<OtherExecutor>&& other) {
+    null_strand<Executor>& operator=(null_strand<OtherExecutor>&& other) noexcept {
         exe_ = std::move(other.exe_);
         return *this;
     }
@@ -67,7 +67,15 @@ public:
     void dispatch(
         Function&& f,
         Allocator const& a) const {
-        exe_.dispatch(std::forward<Function>(f), a);
+        as::dispatch(
+            as::bind_executor(
+                exe_,
+                as::bind_allocator(
+                    a,
+                    std::forward<Function>(f)
+                )
+            )
+        );
     }
     template<
         typename Function,
@@ -76,7 +84,15 @@ public:
     void post(
         Function&& f,
         Allocator const& a) const {
-        exe_.post(std::forward<Function>(f), a);
+        as::post(
+            as::bind_executor(
+                exe_,
+                as::bind_allocator(
+                    a,
+                    std::forward<Function>(f)
+                )
+            )
+        );
     }
     template<
         typename Function,
@@ -85,16 +101,22 @@ public:
     void defer(
         Function&& f,
         Allocator const& a) const {
-        exe_.defer(std::forward<Function>(f), a);
+        as::defer(
+            as::bind_executor(
+                exe_,
+                as::bind_allocator(
+                    a,
+                    std::forward<Function>(f)
+                )
+            )
+        );
     }
 
-    void on_work_started() const {
-        exe_.on_work_started();
+    void on_work_started() const noexcept {
     }
-    void on_work_finished() const {
-        exe_.on_work_finished();
+    void on_work_finished() const noexcept {
     }
-    bool running_in_this_thread() const {
+    bool running_in_this_thread() const noexcept {
         return true;
     }
 
@@ -104,24 +126,24 @@ public:
     }
 
 
-    as::execution_context& context() const {
+    as::execution_context& context() const noexcept {
         return exe_.context();
     }
 
-    inner_executor_type get_inner_executor() const {
+    inner_executor_type get_inner_executor() const noexcept {
         return exe_;
     }
 
     friend bool operator==(
         null_strand<Executor> const& lhs,
         null_strand<Executor> const& rhs
-    ) {
+    ) noexcept {
         return lhs.exe_ == rhs.exe_;
     }
     friend bool operator!=(
         null_strand<Executor> const& lhs,
         null_strand<Executor> const& rhs
-    ) {
+    ) noexcept {
         return lhs.exe_ != rhs.exe_;
     }
 
