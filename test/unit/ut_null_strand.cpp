@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(ep) {
         }
     };
 
-    auto ep = am::endpoint<am::role::client, am::stub_socket, am::null_strand>::create(
+    auto ep = am::basic_endpoint<am::role::client, 2, am::null_strand, am::stub_socket>::create(
         version,
         // for stub_socket args
         version,
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(bep) {
         }
     };
 
-    auto ep = am::basic_endpoint<am::role::client, 4, am::stub_socket, am::null_strand>::create(
+    auto ep = am::basic_endpoint<am::role::client, 4, am::null_strand, am::stub_socket>::create(
         version,
         // for stub_socket args
         version,
