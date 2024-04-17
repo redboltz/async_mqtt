@@ -194,7 +194,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         int concurrency_hint = boost::numeric_cast<int>(threads_per_ioc);
         if (concurrency_hint == 1) {
-            concurrency_hint = BOOST_ASIO_CONCURRENCY_HINT_UNSAFE;
+            concurrency_hint = BOOST_ASIO_CONCURRENCY_HINT_UNSAFE_IO;
         }
         std::mutex mtx_con_iocs;
         std::vector<std::shared_ptr<as::io_context>> con_iocs;
@@ -785,21 +785,7 @@ int main(int argc, char *argv[]) {
         am::setup_log();
 #endif
 
-        auto threads_per_ioc =
-            [&] () -> std::size_t {
-                if (vm.count("threads_per_ioc")) {
-                    return vm["threads_per_ioc"].as<std::size_t>();
-                }
-                return 1;
-            } ();
-        if (threads_per_ioc == 1) {
-            // to avoid compile error
-            (void)std::is_nothrow_copy_constructible<am::null_strand<as::any_io_executor>>::value;
-            run_broker<am::null_strand>(vm);
-        }
-        else {
-            run_broker<as::strand>(vm);
-        }
+        run_broker<as::strand>(vm);
     }
     catch(std::exception const& e) {
         std::cerr << e.what() << std::endl;
