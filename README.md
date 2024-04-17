@@ -42,6 +42,17 @@ Document is https://github.com/redboltz/async_mqtt/blob/doc/README.adoc
 
 I recommend using [Stackless Coroutine (`boost::asio::coroutine`)](https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html) because it can avoid deep nested callbacks and higher performance than [`boost::asio::use_future`](https://www.boost.org/doc/html/boost_asio/overview/composition/futures.html). C++20 Coroutine is also a good choice. It requires C++20 support. It is more elegant than Stackless Coroutine but a little bit slower than Stackless coroutine.
 
+## Features
+
+- Not only client but also server is supported.
+  - endpoint(basic_endpoint) can be used to implement MQTT client application and/or server application like MQTT broker.
+- Both MQTT v3.1.1 and v5.0 are supported.
+  - In addition, undetermined is supported for server implementation. In this case, the protocol version is decided when you receive CONNECT packet.
+- Continuous packet sending
+  - You can send MQTT packets before the previous sending is not completed.
+- Auto acquiring/mapping topic alias is supported.
+  - In addition,  when resend PUBLISH packet after reconnecting, topic alias is removed and original topic is restored. It is required by MQTT v5.0 spec.
+
 ## Requirement
 
 - Compiler: C++17 or later
