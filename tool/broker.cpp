@@ -194,7 +194,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         int concurrency_hint = boost::numeric_cast<int>(threads_per_ioc);
         if (concurrency_hint == 1) {
-            concurrency_hint = BOOST_ASIO_CONCURRENCY_HINT_UNSAFE;
+            concurrency_hint = BOOST_ASIO_CONCURRENCY_HINT_UNSAFE_IO;
         }
         std::mutex mtx_con_iocs;
         std::vector<std::shared_ptr<as::io_context>> con_iocs;
