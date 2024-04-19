@@ -48,9 +48,9 @@ public:
     }
 
 private:
-    void async_read_packet(epsp_t epsp) {
+    void async_read_packet(epsp_t epsp, std::shared_ptr<session_state<epsp_t>> sssp = nullptr) {
         epsp.recv(
-            [this, epsp]
+            [this, epsp, sssp = force_move(sssp)]
             (packet_variant pv) mutable {
                 pv.visit(
                     overload {
@@ -81,6 +81,7 @@ private:
                         [&](v3_1_1::publish_packet& p) {
                             publish_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.opts(),
                                 p.topic(),
@@ -91,6 +92,7 @@ private:
                         [&](v5::publish_packet& p) {
                             publish_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.opts(),
                                 p.topic(),
@@ -165,6 +167,7 @@ private:
                         [&](v3_1_1::subscribe_packet& p) {
                             subscribe_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.entries(),
                                 properties{}
@@ -173,6 +176,7 @@ private:
                         [&](v5::subscribe_packet& p) {
                             subscribe_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.entries(),
                                 p.props()
@@ -187,6 +191,7 @@ private:
                         [&](v3_1_1::unsubscribe_packet& p) {
                             unsubscribe_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.entries(),
                                 properties{}
@@ -195,6 +200,7 @@ private:
                         [&](v5::unsubscribe_packet& p) {
                             unsubscribe_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.packet_id(),
                                 p.entries(),
                                 p.props()
@@ -202,17 +208,20 @@ private:
                         },
                         [&](v3_1_1::pingreq_packet&) {
                             pingreq_handler(
-                                force_move(epsp)
+                                force_move(epsp),
+                                force_move(sssp)
                             );
                         },
                         [&](v5::pingreq_packet&) {
                             pingreq_handler(
-                                force_move(epsp)
+                                force_move(epsp),
+                                force_move(sssp)
                             );
                         },
                         [&](v3_1_1::disconnect_packet&) {
                             disconnect_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 disconnect_reason_code::normal_disconnection,
                                 properties{}
                             );
@@ -220,6 +229,7 @@ private:
                         [&](v5::disconnect_packet& p) {
                             disconnect_handler(
                                 force_move(epsp),
+                                force_move(sssp),
                                 p.code(),
                                 p.props()
                             );
@@ -401,8 +411,8 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [this, epsp](system_error) mutable {
-                    async_read_packet(force_move(epsp));
+                [this, epsp, sssp = *it](system_error) mutable {
+                    async_read_packet(force_move(epsp), sssp);
                 }
             );
         }
@@ -482,8 +492,8 @@ private:
                             false, // session present
                             true,  // authenticated
                             force_move(connack_props),
-                            [this, epsp](system_error) mutable {
-                                async_read_packet(force_move(epsp));
+                            [this, epsp, sssp = *it](system_error) mutable {
+                                async_read_packet(force_move(epsp), sssp);
                             }
                         );
                     }
@@ -550,9 +560,10 @@ private:
                 force_move(connack_props),
                 [
                     this,
-                    epsp
+                    epsp,
+                    sssp = *it
                 ](system_error) mutable {
-                    async_read_packet(force_move(epsp));
+                    async_read_packet(force_move(epsp), sssp);
                 }
             );
         }
@@ -618,7 +629,7 @@ private:
                                 },
                                 [](auto&) { BOOST_ASSERT(false); }
                             );
-                            async_read_packet(force_move(epsp));
+                            async_read_packet(force_move(epsp), *it);
                         }
                     );
                 }
@@ -826,6 +837,7 @@ private:
     >
     publish_handler(
         epsp_t epsp,
+        std::shared_ptr<session_state<epsp_t>> sssp,
         packet_id_t packet_id,
         pub::opts opts,
         buffer topic,
@@ -834,7 +846,7 @@ private:
     ) {
         auto usg = unique_scope_guard(
             [&] {
-                async_read_packet(force_move(epsp));
+                async_read_packet(force_move(epsp), force_move(sssp));
             }
         );
 #if 0
@@ -1022,7 +1034,7 @@ private:
             };
 
         // See if this session is authorized to publish this topic
-        if (security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow) {
+        if (security_.auth_pub(topic, sssp->get_username()) != security::authorization::type::allow) {
             // Publish not authorized
             send_pubres(false, false);
             return;
@@ -1052,7 +1064,7 @@ private:
         }
 
         bool matched = do_publish(
-            **it,
+            *sssp,
             force_move(topic),
             std::forward<BufferSequence>(payload),
             opts.get_qos() | opts.get_retain(), // remove dup flag
@@ -1487,13 +1499,14 @@ private:
 
     void subscribe_handler(
         epsp_t epsp,
+        std::shared_ptr<session_state<epsp_t>> sssp,
         packet_id_t packet_id,
         std::vector<topic_subopts> const& entries,
         properties props
     ) {
         auto usg = unique_scope_guard(
             [&] {
-                async_read_packet(force_move(epsp));
+                async_read_packet(force_move(epsp), force_move(sssp));
             }
         );
 
@@ -1693,13 +1706,14 @@ private:
 
     void unsubscribe_handler(
         epsp_t epsp,
+        std::shared_ptr<session_state<epsp_t>> sssp,
         packet_id_t packet_id,
         std::vector<topic_sharename> entries,
         properties props
     ) {
         auto usg = unique_scope_guard(
             [&] {
-                async_read_packet(force_move(epsp));
+                async_read_packet(force_move(epsp), force_move(sssp));
             }
         );
 
@@ -1779,11 +1793,12 @@ private:
     }
 
     void pingreq_handler(
-        epsp_t epsp
+        epsp_t epsp,
+        std::shared_ptr<session_state<epsp_t>> sssp
     ) {
         auto usg = unique_scope_guard(
             [&] {
-                async_read_packet(force_move(epsp));
+                async_read_packet(force_move(epsp), force_move(sssp));
             }
         );
 
@@ -1824,6 +1839,7 @@ private:
 
     void disconnect_handler(
         epsp_t epsp,
+        std::shared_ptr<session_state<epsp_t>> /*sssp*/,
         disconnect_reason_code rc,
         properties /*props*/
     ) {
