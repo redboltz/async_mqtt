@@ -837,7 +837,7 @@ private:
                 async_read_packet(force_move(epsp));
             }
         );
-
+#if 0
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -848,7 +848,7 @@ private:
         // During async operation, spep is valid but it has already been
         // erased from sessions_
         if (it == idx.end()) return;
-
+#endif
         auto send_pubres =
             [&] (bool authorized, bool matched) {
                 switch (opts.get_qos()) {
