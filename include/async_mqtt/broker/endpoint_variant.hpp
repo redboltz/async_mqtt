@@ -14,10 +14,11 @@
 
 namespace async_mqtt {
 
-template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
-struct basic_endpoint_variant : std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
-    using this_type = basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>;
-    using base_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
+template <role Role, std::size_t PacketIdBytes, template <typename> typename Strand, typename... NextLayer>
+struct basic_endpoint_variant :
+        std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...> {
+    using this_type = basic_endpoint_variant<Role, PacketIdBytes, Strand, NextLayer...>;
+    using base_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
     using base_type::base_type;
 
     static constexpr role role_value = Role;
@@ -25,18 +26,18 @@ struct basic_endpoint_variant : std::variant<std::shared_ptr<basic_endpoint<Role
     using packet_id_t = typename packet_id_type<packet_id_bytes>::type;
 
     template <typename ActualNextLayer>
-    basic_endpoint<Role, PacketIdBytes, ActualNextLayer> const& as() const {
-        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
+    basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer> const& as() const {
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>>>(*this);
     }
     template <typename ActualNextLayer>
-    basic_endpoint<Role, PacketIdBytes, ActualNextLayer>& as() {
-        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
+    basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>& as() {
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>>>(*this);
     }
 
-    struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
-        using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
+    struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...> {
+        using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
         using base_type::base_type;
-        using shared_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
+        using shared_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
         this_type lock() {
             return std::visit(
                 [&](auto& wp) -> this_type {
@@ -62,7 +63,7 @@ struct basic_endpoint_variant : std::variant<std::shared_ptr<basic_endpoint<Role
 };
 
 template <role Role, typename... NextLayer>
-using endpoint_variant = basic_endpoint_variant<Role, 2, NextLayer...>;
+using endpoint_variant = basic_endpoint_variant<Role, 2, as::strand, NextLayer...>;
 
 template <typename Epsp>
 class epsp_wrap {

@@ -14,6 +14,7 @@
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
+#include <async_mqtt/null_strand.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/log.hpp>
@@ -61,10 +62,12 @@ auto bind_dispatch(Self&& self) {
  * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
+ * @tparam Strand        strand class template type. By default boost::asio::strand<T> should be used.
+ *                       You can replace it with null_strand if you run the endpoint on single thread environment.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <role Role, std::size_t PacketIdBytes, typename NextLayer, template <typename> typename Strand = as::strand>
-class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer, Strand>>{
+template <role Role, std::size_t PacketIdBytes, template <typename> typename Strand, typename NextLayer>
+class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>{
 
     enum class connection_status {
         connecting,
@@ -99,7 +102,7 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
         return ta_opt;
     }
 
-    using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer, Strand>;
+    using this_type = basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>;
     using this_type_sp = std::shared_ptr<this_type>;
     using this_type_wp = std::weak_ptr<this_type>;
     using stream_type =
@@ -2920,12 +2923,23 @@ private:
 
 /**
  * @related basic_endpoint
- * @brief Type alias of basic_endpoint (PacketIdBytes=2).
+ * @brief Type alias of basic_endpoint (PacketIdBytes=2, Strand=boost::asio::strand).
+ *        This is for typical usecase.
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <role Role, typename NextLayer, template <typename> typename Strand = as::strand>
-using endpoint = basic_endpoint<Role, 2, NextLayer, Strand>;
+template <role Role, typename NextLayer>
+using endpoint = basic_endpoint<Role, 2, as::strand, NextLayer>;
+
+/**
+ * @related basic_endpoint
+ * @brief Type alias of basic_endpoint (PacketIdBytes=2, Strand=null_strand).
+ *        This is only for single threaded environment.
+ * @tparam Role          role for packet sendable checking
+ * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
+ */
+template <role Role, typename NextLayer>
+using endpoint_st = basic_endpoint<Role, 2, null_strand, NextLayer>;
 
 } // namespace async_mqtt
 
