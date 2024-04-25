@@ -229,6 +229,27 @@ void run_broker(boost::program_options::variables_map const& vm) {
         am::optional<as::ip::tcp::endpoint> mqtt_endpoint;
         am::optional<as::ip::tcp::acceptor> mqtt_ac;
         std::function<void()> mqtt_async_accept;
+        auto apply_socket_opts =
+            [&](auto& lowest_layer) {
+                if (vm.count("tcp_no_delay")) {
+                    lowest_layer.set_option(as::ip::tcp::no_delay(vm["tcp_no_delay"].as<bool>()));
+                }
+                if (vm.count("recv_buf_size")) {
+                    lowest_layer.set_option(
+                        as::socket_base::receive_buffer_size(
+                            boost::numeric_cast<int>(vm["recv_buf_size"].as<std::size_t>())
+                        )
+                    );
+                }
+                if (vm.count("send_buf_size")) {
+                    lowest_layer.set_option(
+                        as::socket_base::send_buffer_size(
+                            boost::numeric_cast<int>(vm["send_buf_size"].as<std::size_t>())
+                        )
+                    );
+                }
+            };
+
         if (vm.count("tcp.port")) {
             mqtt_endpoint.emplace(as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>());
             mqtt_ac.emplace(accept_ioc, *mqtt_endpoint);
@@ -248,13 +269,14 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
-                        [&mqtt_async_accept, &brk, epsp]
+                        [&mqtt_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
+                                apply_socket_opts(lowest_layer);
                                 brk.handle_accept(epv_t{force_move(epsp)});
                             }
                             mqtt_async_accept();
@@ -288,13 +310,14 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     ws_ac->async_accept(
                         lowest_layer,
-                        [&ws_async_accept, &brk, epsp]
+                        [&ws_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
                                     << "TCP accept error:" << ec.message();
                             }
                             else {
+                                apply_socket_opts(lowest_layer);
                                 auto& ws_layer = epsp->next_layer();
                                 ws_layer.async_accept(
                                     [&brk, epsp]
@@ -382,7 +405,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
-                        [&mqtts_async_accept, &brk, epsp, username, mqtts_ctx]
+                        [&mqtts_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp, username, mqtts_ctx]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -390,6 +413,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
+                                apply_socket_opts(lowest_layer);
                                 epsp->next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username, mqtts_ctx]
@@ -475,7 +499,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
-                        [&wss_async_accept, &brk, epsp, username, wss_ctx]
+                        [&wss_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp, username, wss_ctx]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -483,6 +507,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 // TBD insert underlying timeout here
+                                apply_socket_opts(lowest_layer);
                                 epsp->next_layer().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
                                     [&brk, epsp, username, wss_ctx]
@@ -647,6 +672,21 @@ int main(int argc, char *argv[]) {
                 "threads_per_ioc",
                 boost::program_options::value<std::size_t>()->default_value(1),
                 "Number of worker threads for each io_context."
+            )
+            (
+                "tcp_no_delay",
+                boost::program_options::value<bool>()->default_value(true),
+                "Set tcp no_delay option for the sockets"
+            )
+            (
+                "recv_buf_size",
+                boost::program_options::value<std::size_t>(),
+                "Set receive buffer size of the underlying socket"
+            )
+            (
+                "send_buf_size",
+                boost::program_options::value<std::size_t>(),
+                "Set send buffer size of the underlying socket"
             )
             (
                 "verbose",

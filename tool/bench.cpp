@@ -94,7 +94,10 @@ struct bench_context {
         mode md,
         std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers,
         am::optional<am::host_port> const& manager_hp,
-        bool close_after_report
+        bool close_after_report,
+        am::optional<bool> tcp_no_delay_opt,
+        am::optional<std::size_t> send_buf_size_opt,
+        am::optional<std::size_t> recv_buf_size_opt
     )
     :res{res},
      ws_path{ws_path},
@@ -139,7 +142,10 @@ struct bench_context {
      md{md},
      workers{workers},
      manager_hp{manager_hp},
-     close_after_report{close_after_report}
+     close_after_report{close_after_report},
+     tcp_no_delay_opt{tcp_no_delay_opt},
+     send_buf_size_opt{send_buf_size_opt},
+     recv_buf_size_opt{recv_buf_size_opt}
     {
     }
 
@@ -191,6 +197,9 @@ struct bench_context {
     std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers;
     am::optional<am::host_port> const& manager_hp;
     bool close_after_report;
+    am::optional<bool> tcp_no_delay_opt;
+    am::optional<std::size_t> send_buf_size_opt;
+    am::optional<std::size_t> recv_buf_size_opt;
 };
 
 template <typename ClientInfo>
@@ -235,6 +244,7 @@ private:
         ClientInfo* pci
     ) {
         reenter (coro_) {
+            tp_con_ = std::chrono::steady_clock::now();
             // Setup
             for (auto& ci : cis_) {
                 ci.init_timer(ci.c->strand());
@@ -286,6 +296,23 @@ private:
             if (*ec) {
                 locked_cout() << "async_connect error:" << ec->message() << std::endl;
                 exit(-1);
+            }
+            if (bc_.tcp_no_delay_opt) {
+                pci->c->lowest_layer().set_option(as::ip::tcp::no_delay(*bc_.tcp_no_delay_opt));
+            }
+            if (bc_.recv_buf_size_opt) {
+                pci->c->lowest_layer().set_option(
+                    as::socket_base::receive_buffer_size(
+                        boost::numeric_cast<int>(*bc_.recv_buf_size_opt)
+                    )
+                );
+            }
+            if (bc_.send_buf_size_opt) {
+                pci->c->lowest_layer().set_option(
+                    as::socket_base::send_buffer_size(
+                        boost::numeric_cast<int>(*bc_.send_buf_size_opt)
+                    )
+                );
             }
 
             // TLS handshake
@@ -464,6 +491,12 @@ private:
                 }
             );
             if (bc_.rest_connect != 0) return;
+            locked_cout()
+                << "connect finished "
+                << std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::steady_clock::now() - tp_con_
+                ).count()
+                << "s" << std::endl;
 
             if (bc_.md == mode::single || bc_.md == mode::recv) {
                 // subscribe delay
@@ -475,7 +508,9 @@ private:
                     locked_cout() << "sub delay timer error:" << ec->message() << std::endl;
                     exit(-1);
                 }
+                locked_cout() << "sub_delay finished" << std::endl;
                 bc_.ph.store(phase::subscribe);
+                tp_sub_ = std::chrono::steady_clock::now();
                 bc_.tp_subscribe = std::chrono::steady_clock::now();
                 yield {
                     // sub interval
@@ -576,6 +611,14 @@ private:
                 if (bc_.md == mode::recv) {
                     locked_cout() << "all subscriberd. run `bench --mode send`" << std::endl;
                     bc_.tim_progress->cancel();
+                }
+                else {
+                    locked_cout()
+                        << "subscribe finished "
+                        << std::chrono::duration_cast<std::chrono::seconds>(
+                            std::chrono::steady_clock::now() - tp_sub_
+                        ).count()
+                        << "s" << std::endl;
                 }
             }
 
@@ -1065,6 +1108,8 @@ private:
     std::vector<ClientInfo>& cis_;
     bench_context& bc_;
     as::ip::tcp::resolver::results_type eps_;
+    std::chrono::time_point<std::chrono::steady_clock> tp_con_;
+    std::chrono::time_point<std::chrono::steady_clock> tp_sub_;
     as::coroutine coro_;
 };
 
@@ -1187,6 +1232,21 @@ int main(int argc, char *argv[]) {
                 "threads_per_ioc",
                 boost::program_options::value<std::size_t>()->default_value(1),
                 "Number of worker threads for each io_context."
+            )
+            (
+                "tcp_no_delay",
+                boost::program_options::value<bool>()->default_value(true),
+                "Set tcp no_delay option for the sockets"
+            )
+            (
+                "recv_buf_size",
+                boost::program_options::value<std::size_t>(),
+                "Set receive buffer size of the underlying socket"
+            )
+            (
+                "send_buf_size",
+                boost::program_options::value<std::size_t>(),
+                "Set send buffer size of the underlying socket"
             )
             (
                 "clients",
@@ -1508,6 +1568,28 @@ int main(int argc, char *argv[]) {
             } ();
 
         auto limit_ms = vm["limit_ms"].as<std::size_t>();
+
+        auto tcp_no_delay_opt =
+            [&] () -> am::optional<bool> {
+                if (vm.count("tcp_no_delay")) {
+                    return vm["tcp_no_delay"].as<bool>();
+                }
+                return am::nullopt;
+            } ();
+        auto send_buf_size_opt =
+            [&] () -> am::optional<std::size_t> {
+                if (vm.count("send_buf_size")) {
+                    return vm["send_buf_size"].as<std::size_t>();
+                }
+                return am::nullopt;
+            } ();
+        auto recv_buf_size_opt =
+            [&] () -> am::optional<std::size_t> {
+                if (vm.count("recv_buf_size")) {
+                    return vm["recv_buf_size"].as<std::size_t>();
+                }
+                return am::nullopt;
+            } ();
 
         mode md;
         auto md_str = vm["mode"].as<std::string>();
@@ -1927,7 +2009,10 @@ int main(int argc, char *argv[]) {
             md,
             workers,
             manager_hp,
-            vm["close_after_report"].as<bool>()
+            vm["close_after_report"].as<bool>(),
+            tcp_no_delay_opt,
+            send_buf_size_opt,
+            recv_buf_size_opt
         );
 
         if (protocol == "mqtt") {
