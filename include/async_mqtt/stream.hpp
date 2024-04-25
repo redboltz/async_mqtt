@@ -32,7 +32,6 @@
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/is_strand.hpp>
-#include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/tls.hpp>
 #include <async_mqtt/log.hpp>
@@ -46,8 +45,28 @@ template <typename Stream>
 struct is_ws : public std::false_type {};
 
 #if defined(ASYNC_MQTT_USE_WS)
+namespace bs = boost::beast;
+
 template <typename NextLayer>
 struct is_ws<bs::websocket::stream<NextLayer>> : public std::true_type {};
+
+template <
+    typename NextLayer,
+    typename ConstBufferSequence,
+    typename CompletionToken,
+    typename std::enable_if_t<
+        as::is_const_buffer_sequence<ConstBufferSequence>::value
+    >* = nullptr
+>
+auto
+async_write(
+    bs::websocket::stream<NextLayer>& stream,
+    ConstBufferSequence const& cbs,
+    CompletionToken&& token
+) {
+    return stream.async_write(cbs, std::forward<CompletionToken>(token));
+}
+
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 template <typename Stream>
@@ -195,6 +214,7 @@ private:
     stream(T&& t, Args&&... args)
         :nl_{std::forward<T>(t), std::forward<Args>(args)...}
     {
+#if defined(ASYNC_MQTT_USE_WS)
         if constexpr(is_ws<next_layer_type>::value) {
             nl_.binary(true);
             nl_.set_option(
@@ -205,6 +225,7 @@ private:
                 )
             );
         }
+#endif // defined(ASYNC_MQTT_USE_WS)
     }
 
     struct read_packet_impl {
@@ -561,6 +582,7 @@ private:
             BOOST_ASSERT(strm.in_strand());
             switch (state) {
             case close: {
+#if defined(ASYNC_MQTT_USE_WS)
                 if constexpr(is_ws<Stream>::value) {
                     if (stream.get().is_open()) {
                         state = drop1;
@@ -591,7 +613,9 @@ private:
                         );
                     }
                 }
-                else if constexpr(is_tls<Stream>::value) {
+                else
+#endif // defined(ASYNC_MQTT_USE_WS)
+                if constexpr(is_tls<Stream>::value) {
                     auto& a_strm{strm};
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -641,6 +665,7 @@ private:
                 }
             } break;
             case drop1: {
+#if defined(ASYNC_MQTT_USE_WS)
                 if constexpr(is_ws<Stream>::value) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -677,6 +702,9 @@ private:
                         )
                     );
                 }
+#else  // defined(ASYNC_MQTT_USE_WS)
+                (void)ec;
+#endif // defined(ASYNC_MQTT_USE_WS)
             } break;
             default:
                 BOOST_ASSERT(false);

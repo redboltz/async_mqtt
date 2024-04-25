@@ -6,7 +6,7 @@
 
 #if !defined(ASYNC_MQTT_ALL_HPP)
 #define ASYNC_MQTT_ALL_HPP
- 
+
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/constant.hpp>
@@ -29,7 +29,6 @@
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/variable_bytes.hpp>
-#include <async_mqtt/ws_fixed_size_async_read.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
@@ -105,4 +104,3 @@
 #include <async_mqtt/util/variant.hpp>
 
 #endif // ASYNC_MQTT_ALL_HPP
-
