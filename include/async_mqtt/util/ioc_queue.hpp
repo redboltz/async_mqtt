@@ -30,13 +30,17 @@ public:
         guard_.reset();
     }
 
+    bool immediate_executable() const {
+        return !working_ && queue_.stopped();
+    }
+
     template <typename CompletionToken>
     void post(CompletionToken&& token) {
         as::post(
             queue_,
             std::forward<CompletionToken>(token)
         );
-        if (!working_ && queue_.stopped()) {
+        if (immediate_executable()) {
             queue_.restart();
             queue_.poll_one();
         }

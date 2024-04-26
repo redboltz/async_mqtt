@@ -467,7 +467,7 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
+    std::size_t num_of_const_buffer_sequence() const {
         return
             1 +                   // fixed header
             1 +                   // remaining length
@@ -477,10 +477,26 @@ public:
 
             2 +                   // client id length, client id
 
-            2 +                   // will topic name length, will topic name
-            2 +                   // will message length, will message
-            2 +                   // user name length, user name
-            2;                    // password length, password
+            [&] () -> std::size_t {
+                if (connect_flags::has_will_flag(connect_flags_)) {
+                    return
+                        2 +       // will topic name length, will topic name
+                        2;        // will message length, will message
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_user_name_flag(connect_flags_)) {
+                    return 2;     // user name length, user name
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_password_flag(connect_flags_)) {
+                    return 2;     // password length, password
+                }
+                return 0;
+            } ();
     }
 
     /**

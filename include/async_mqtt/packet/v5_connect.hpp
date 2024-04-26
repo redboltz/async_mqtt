@@ -579,12 +579,28 @@ public:
 
             2 +                   // client id length, client id
 
-            1 +                   // will_property length
-            async_mqtt::num_of_const_buffer_sequence(will_props_) +
-            2 +                   // will topic name length, will topic name
-            2 +                   // will message length, will message
-            2 +                   // user name length, user name
-            2;                    // password length, password
+            [&] () -> std::size_t {
+                if (connect_flags::has_will_flag(connect_flags_)) {
+                    return
+                        1 +       // will_property length
+                        async_mqtt::num_of_const_buffer_sequence(will_props_) +
+                        2 +       // will topic name length, will topic name
+                        2;        // will message length, will message
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_user_name_flag(connect_flags_)) {
+                    return 2;     // user name length, user name
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_password_flag(connect_flags_)) {
+                    return 2;     // password length, password
+                }
+                return 0;
+            } ();
     }
 
     /**

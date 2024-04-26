@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP)
-#define ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP
+#if !defined(ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP)
+#define ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP
 
 #include <memory>
 #include <utility>
@@ -40,6 +40,12 @@ inline detail::unique_sg<Proc> unique_scope_guard(Proc&& proc) {
     return detail::unique_sg<Proc>{std::forward<Proc>(proc)};
 }
 
+template <typename Proc>
+inline auto shared_scope_guard(Proc&& proc) {
+    auto deleter = [proc = std::forward<Proc>(proc)](void*) mutable { std::move(proc)(); };
+    return std::shared_ptr<void>(nullptr, std::move(deleter));
+}
+
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP
+#endif // ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP

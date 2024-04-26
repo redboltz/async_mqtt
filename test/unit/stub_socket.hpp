@@ -85,13 +85,23 @@ struct basic_stub_socket {
     ) {
         auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
         auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
-        auto buf = allocate_buffer(it, end);
-        auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
-        if (write_packet_checker_) write_packet_checker_(pv);
+        auto dis = std::distance(it, end);
+        auto packet_begin = it;
+        while (it != end) {
+            ++it; // it points to the first byte of remaining length
+            if (auto remlen_opt = variable_bytes_to_val(it, end)) {
+                auto packet_end = std::next(it, *remlen_opt);
+                auto buf = allocate_buffer(packet_begin, packet_end);
+                auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
+                if (write_packet_checker_) write_packet_checker_(pv);
+                it = packet_end;
+                packet_begin = packet_end;
+            }
+        }
         as::post(
             as::bind_executor(
                 exe_,
-                [token = std::forward<CompletionToken>(token), dis = std::distance(it, end)] () mutable {
+                [token = std::forward<CompletionToken>(token), dis] () mutable {
                     auto exe = as::get_associated_executor(token);
                     as::dispatch(
                         as::bind_executor(
