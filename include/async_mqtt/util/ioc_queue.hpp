@@ -31,7 +31,7 @@ public:
     }
 
     template <typename CompletionToken>
-    void post(CompletionToken&& token) {
+    bool post(CompletionToken&& token) {
         as::post(
             queue_,
             std::forward<CompletionToken>(token)
@@ -39,7 +39,9 @@ public:
         if (!working_ && queue_.stopped()) {
             queue_.restart();
             queue_.poll_one();
+            return true;
         }
+        return false;
     }
 
     bool stopped() const {

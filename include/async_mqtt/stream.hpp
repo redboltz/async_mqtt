@@ -378,8 +378,9 @@ private:
     struct write_packet_impl {
         this_type& strm;
         std::shared_ptr<Packet> packet;
+        std::size_t size = packet->size();
         this_type_sp life_keeper = strm.shared_from_this();
-        enum { dispatch, post, write, complete } state = dispatch;
+        enum { dispatch, post, write, bulk_write, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -400,12 +401,19 @@ private:
                 BOOST_ASSERT(strm.in_strand());
                 state = write;
                 auto& a_strm{strm};
-                a_strm.queue_.post(
+                auto& a_packet{*packet};
+                auto& a_state{state};
+                auto handled = a_strm.queue_.post(
                     as::bind_executor(
                         a_strm.raw_strand_,
                         force_move(self)
                     )
                 );
+                if (!handled) {
+                    auto cbs = a_packet.const_buffer_sequence();
+                    std::copy(cbs.begin(), cbs.end(), std::back_inserter(a_strm.waiting_cbs_));
+                    a_state = bulk_write;
+                }
             } break;
             case write: {
                 BOOST_ASSERT(strm.in_strand());
@@ -413,15 +421,61 @@ private:
                 if (strm.lowest_layer().is_open()) {
                     state = complete;
                     auto& a_strm{strm};
-                    auto cbs = packet->const_buffer_sequence();
+                    auto& a_packet{*packet};
                     async_write(
                         a_strm.nl_,
-                        cbs,
+                        a_packet.const_buffer_sequence(),
                         as::bind_executor(
                             a_strm.raw_strand_,
                             force_move(self)
                         )
                     );
+                }
+                else {
+                    state = complete;
+                    auto& a_strm{strm};
+                    as::dispatch(
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            as::append(
+                                force_move(self),
+                                errc::make_error_code(errc::connection_reset),
+                                0
+                            )
+                        )
+                    );
+                }
+            } break;
+            case bulk_write: {
+                BOOST_ASSERT(strm.in_strand());
+                strm.queue_.start_work();
+                if (strm.lowest_layer().is_open()) {
+                    state = complete;
+                    auto& a_strm{strm};
+                    if (a_strm.waiting_cbs_.empty()) {
+                        auto& a_strm{strm};
+                        auto& a_size{size};
+                        as::dispatch(
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                as::append(
+                                    force_move(self),
+                                    errc::make_error_code(errc::success),
+                                    a_size
+                                )
+                            )
+                        );
+                    }
+                    else {
+                        async_write(
+                            a_strm.nl_,
+                            a_strm.waiting_cbs_,
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                force_move(self)
+                            )
+                        );
+                    }
                 }
                 else {
                     state = complete;
@@ -470,6 +524,7 @@ private:
             switch (state) {
             case complete: {
                 strm.queue_.stop_work();
+                strm.waiting_cbs_.clear();
                 auto& a_strm{strm};
                 as::post(
                     as::bind_executor(
@@ -481,7 +536,7 @@ private:
                         }
                     )
                 );
-                self.complete(ec, bytes_transferred);
+                self.complete(ec, size);
             } break;
             default:
                 BOOST_ASSERT(false);
@@ -721,6 +776,7 @@ private:
     strand_type strand_{as::any_io_executor{raw_strand_}};
     ioc_queue queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
+    std::vector<as::const_buffer> waiting_cbs_;
 };
 
 } // namespace async_mqtt
