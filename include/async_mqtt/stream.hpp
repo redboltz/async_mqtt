@@ -278,6 +278,8 @@ private:
             error_code const& ec,
             std::size_t bytes_transferred
         ) {
+            boost::ignore_unused(bytes_transferred);
+
             BOOST_ASSERT(strm.in_strand());
             if (ec) {
                 self.complete(ec, buffer{});
