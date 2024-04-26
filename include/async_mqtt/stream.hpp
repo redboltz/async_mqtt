@@ -278,6 +278,8 @@ private:
             error_code const& ec,
             std::size_t bytes_transferred
         ) {
+            (void)bytes_transferred; // Ignore unused argument in release build
+
             BOOST_ASSERT(strm.in_strand());
             if (ec) {
                 self.complete(ec, buffer{});
