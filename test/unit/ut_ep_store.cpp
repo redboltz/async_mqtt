@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         version,
         ioc
     );
-
+    ep->set_bulk_write(true);
     auto connect = am::v3_1_1::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive

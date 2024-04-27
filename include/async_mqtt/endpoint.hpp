@@ -281,6 +281,20 @@ public:
         }
     }
 
+    /**
+     * @brief Set bulk write mode.
+     * If true, then concatenate multiple packets' const buffer sequence
+     * when send() is called before the previous send() is not completed.
+     * Otherwise, send packet one by one.
+     * \n This function should be called before send() call.
+     * @note By default bulk write mode is false (disabled)
+     * @param val if true, enable bulk write mode, otherwise disable it.
+     */
+    void set_bulk_write(bool val) {
+        stream_->set_bulk_write(val);
+    }
+
+
     // async functions
 
     /**
