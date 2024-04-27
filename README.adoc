@@ -1,29 +1,29 @@
 = Index
 
 * https://redboltz.github.io/async_mqtt/[API Reference]
-* link:container.adoc[Run async_mqtt broker/client on the docker container]
-* link:trial.adoc[Free trial broker on cloud]
+* xref:container.adoc[Run async_mqtt broker/client on the docker container]
+* xref:trial.adoc[Free trial broker on cloud]
 * Tutorial
-** link:tutorial/create_endpoint.adoc[Create Endpoint]
-** link:tutorial/cpp20_coro.adoc[C++20 Coroutine]
-** link:tutorial/sl_coro.adoc[Stackless Coroutine] if you don't have C++20 coroutine
-** link:tutorial/send_recv.adoc[send/recv]
-** link:tutorial/non_packet_based.adoc[non packet based APIs]
-** link:tutorial/strand.adoc[strand]
+** xref:tutorial/create_endpoint.adoc[Create Endpoint]
+** xref:tutorial/cpp20_coro.adoc[C++20 Coroutine]
+** xref:tutorial/sl_coro.adoc[Stackless Coroutine] if you don't have C++20 coroutine
+** xref:tutorial/send_recv.adoc[send/recv]
+** xref:tutorial/non_packet_based.adoc[non packet based APIs]
+** xref:tutorial/strand.adoc[strand]
 * Functionality
-** link:functionality/connect_timeout.adoc[connect timeout]
+** xref:functionality/connect_timeout.adoc[connect timeout]
 ** logging
-** link:functionality/keep_session.adoc[Keep session]
-** link:functionality/topic_alias.adoc[Topic Alias]
-** link:functionality/request_response.adoc[Reuqest/Response]
-** link:functionality/receive_maximum.adoc[Receive Maximum]
-** link:functionality/maximum_packet_size.adoc[Maximum Packet Size]
+** xref:functionality/keep_session.adoc[Keep session]
+** xref:functionality/topic_alias.adoc[Topic Alias]
+** xref:functionality/request_response.adoc[Reuqest/Response]
+** xref:functionality/receive_maximum.adoc[Receive Maximum]
+** xref:functionality/maximum_packet_size.adoc[Maximum Packet Size]
 * Tools
 ** broker
-** link:tool/client_cli.adoc[client_cli]
+** xref:tool/client_cli.adoc[client_cli]
 ** bench
-* link:performance.adoc[Performance]
-* link:config.adoc[Config]
-* link:../main/CHANGELOG.md[History]
+* xref:performance.adoc[Performance]
+* xref:config.adoc[Config]
+* xref:../main/CHANGELOG.md[History]
 
 https://github.com/redboltz/async_mqtt/[back to the project top page]

@@ -4,7 +4,7 @@ This is stackless coroutine approach. It uses switch-case based Boost.Asio stack
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
 It is convenient but a little tricky. Due to switch-case based, there are some restrictions especially define local variables.
-If you can use link:cpp20_coro.adoc[C++20 coroutine], I recommend use it.
+If you can use xref:cpp20_coro.adoc[C++20 coroutine], I recommend use it.
 
 stackless coroutine can avoid deeply nested callbacks. The code becomes easy to read.
 
@@ -156,7 +156,7 @@ The important point is
             yield res.async_resolve(host, port, *this);
 ```
 
-The third argument of link:https://www.boost.org/doc/html/boost_asio/reference/ip__basic_resolver/async_resolve/overload2.html[async_resolve] is CompletionToken. In this case, asio document said it ResolveToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and async_resolve starts processing.
+The third argument of xref:https://www.boost.org/doc/html/boost_asio/reference/ip__basic_resolver/async_resolve/overload2.html[async_resolve] is CompletionToken. In this case, asio document said it ResolveToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and async_resolve starts processing.
 When async process (resolving hostname) is finished, then the following operator() is called:
 
 ```cpp
@@ -236,7 +236,7 @@ When async process is finished the function resumes at the following line:
 ```
 
 The parameter of the completion token is `system_error const& se`.
-See link:https://redboltz.github.io/async_mqtt/doc/latest/html/$$classasync__mqtt_1_1basic__endpoint$$.html[API reference].
+See xref:https://redboltz.github.io/async_mqtt/doc/latest/html/$$classasync__mqtt_1_1basic__endpoint$$.html[API reference].
 
 == Recv MQTT CONNACK packet
 
@@ -276,13 +276,13 @@ The parameter of the completion token is `packet_variant pv`. You can access the
 `pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
 
 == Send/Recv packets
-See the simple example link:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp].
+See the simple example xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp].
 
-If you want to know more complex usecase, link:../../main/tool/client_cli.cpp[client_cli.cpp] is helpful.
+If you want to know more complex usecase, xref:../../main/tool/client_cli.cpp[client_cli.cpp] is helpful.
 This is commandline MQTT client application.
 
 = Examples
-* link:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]
-* link:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]
-* link:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]
-* link:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]
+* xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]
+* xref:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]
+* xref:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]
+* xref:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]

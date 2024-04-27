@@ -1,7 +1,7 @@
 = Receive Maximum
 
 Receive Maximum is a way to flow control PUBLISH(QoS1, QoS2) packets. They require to store for resending. So the node should prepare the memory packet size * Receive Maximum.
-The maximum value of the packet size can be defined using link:maximum_packet_size.adoc[Maximum Packet Size].
+The maximum value of the packet size can be defined using xref:maximum_packet_size.adoc[Maximum Packet Size].
 If the node sends over the Receive Maximum packets, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).
 
 == When increase/decrease the receive count?
