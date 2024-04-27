@@ -19,7 +19,7 @@
 ** xref:functionality/receive_maximum.adoc[Receive Maximum]
 ** xref:functionality/maximum_packet_size.adoc[Maximum Packet Size]
 * Tools
-** broker
+** xref:tool/broker.adoc[broker]
 ** xref:tool/client_cli.adoc[client_cli]
 ** bench
 * xref:performance.adoc[Performance]
