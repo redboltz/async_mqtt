@@ -265,7 +265,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor()
                         );
-
+                    epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
@@ -307,6 +307,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol_version::undetermined,
                             con_ioc_getter().get_executor()
                         );
+                    epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
                     ws_ac->async_accept(
                         lowest_layer,
@@ -401,7 +402,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             con_ioc_getter().get_executor(),
                             *mqtts_ctx
                         );
-
+                    epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
@@ -495,7 +496,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             con_ioc_getter().get_executor(),
                             *wss_ctx
                         );
-
+                    epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
@@ -687,6 +688,11 @@ int main(int argc, char *argv[]) {
                 "send_buf_size",
                 boost::program_options::value<std::size_t>(),
                 "Set send buffer size of the underlying socket"
+            )
+            (
+                "bulk_write",
+                boost::program_options::value<bool>()->default_value(false),
+                "Set bulk write mode for all connections"
             )
             (
                 "verbose",

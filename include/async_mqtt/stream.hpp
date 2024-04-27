@@ -202,6 +202,10 @@ public:
             );
     }
 
+    void set_bulk_write(bool val) {
+        bulk_write_ = val;
+    }
+
 private:
 
     // constructor
@@ -401,8 +405,7 @@ private:
                 BOOST_ASSERT(strm.in_strand());
                 auto& a_strm{strm};
                 auto& a_packet{*packet};
-                auto ie = a_strm.queue_.immediate_executable();
-                if (ie) {
+                if (!a_strm.bulk_write_ || a_strm.queue_.immediate_executable()) {
                     state = write;
                 }
                 else {
@@ -783,6 +786,7 @@ private:
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
     std::vector<as::const_buffer> storing_cbs_;
     std::vector<as::const_buffer> sending_cbs_;
+    bool bulk_write_ = false;
 };
 
 } // namespace async_mqtt

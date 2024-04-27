@@ -1249,6 +1249,11 @@ int main(int argc, char *argv[]) {
                 "Set send buffer size of the underlying socket"
             )
             (
+                "bulk_write",
+                boost::program_options::value<bool>()->default_value(false),
+                "Set bulk write mode for all connections"
+            )
+            (
                 "clients",
                 boost::program_options::value<std::size_t>()->default_value(1),
                 "Number of clients."
@@ -2061,6 +2066,7 @@ int main(int argc, char *argv[]) {
                     hps[hps_index].host,
                     std::to_string(hps[hps_index].port)
                 );
+                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 ++hps_index;
                 if (hps_index == hps.size()) hps_index = 0;
             }
@@ -2127,6 +2133,7 @@ int main(int argc, char *argv[]) {
                     hps[hps_index].host,
                     std::to_string(hps[hps_index].port)
                 );
+                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 ++hps_index;
                 if (hps_index == hps.size()) hps_index = 0;
             }
@@ -2189,6 +2196,7 @@ int main(int argc, char *argv[]) {
                     hps[hps_index].host,
                     std::to_string(hps[hps_index].port)
                 );
+                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 ++hps_index;
                 if (hps_index == hps.size()) hps_index = 0;
             }
@@ -2246,6 +2254,7 @@ int main(int argc, char *argv[]) {
                 else {
                     ctx.set_verify_mode(am::tls::verify_none);
                 }
+                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 cis.emplace_back(
                     client_t::create(
                         version,
