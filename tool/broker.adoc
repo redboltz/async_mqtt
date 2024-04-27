@@ -10,3 +10,58 @@ You can also set command line options. The command line options are higher prior
 https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json is an example file.
 
 `broker` supports MQTT on TCP, TLS, WebSocket, and WebSocket on TLS. They can be mixed. `broker` supports MQTT v3.1.1 and v5.0. They can be mixed. `broker` can deliver packets between the different MQTT version clients. The packet is converted from/to v3.1.1 to/from v5.0.
+
+== authentication and authorization
+
+=== authentication
+
+Authentication means checking permission to connect to the broker.
+`broker` supports the following authentication method.
+
+==== sha256
+* name
+** User Name in MQTT CONNECT packet.
+* method
+** Set "sha256"
+* salt
+** salt for generating sha256 digest
+* digest
+** Hexadecimal string of `sha256(salt+password)`
+
+==== client certification
+* name
+** User Name in the client certification
+* method
+** Set "client_cert"
+
+The client needs to set its name to the `CN` field of the client certification.
+The filed can be changed using the broker option `--verify_field`.
+Don't set User Name and Password in MQTT CONNECT packet.
+
+==== plain password
+* name
+** User Name in MQTT CONNECT packet.
+* method
+** Set "plain_password"
+* password
+** Password string.
+
+==== anonymous
+* name
+** Set "anonymous"
+* method
+** Set "anonymous"
+
+If anonymous is appeared in authentication field, then the client that doesn't have User Name and Password in MQTT CONNECT packet can be authenticated. That doesn't mean empty string.
+
+==== unauthenticated
+* name
+** Set "unauthenticated"
+* method
+** Set "unauthenticated"
+
+If the client is unauthenticated, and if the authentication filed has this method, then the client can be connected. In this case, the connection's User Name is regard to one special "unauthenticated" name (not actual "unauthenticated" string).
+
+=== groups
+
+=== authorization
