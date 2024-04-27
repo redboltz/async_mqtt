@@ -1,0 +1,12 @@
+= broker
+
+`broker` is a MQTT broker.
+
+`broker` has Boost.ProgramOptions style options.
+https://github.com/redboltz/async_mqtt/blob/main/tool/broker.conf is config file.
+You can also set command line options. The command line options are higher priority than file options.
+
+`broker` has json like authenticate/authorize file.
+https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json is an example file.
+
+`broker` supports MQTT on TCP, TLS, WebSocket, and WebSocket on TLS. They can be mixed. `broker` supports MQTT v3.1.1 and v5.0. They can be mixed. `broker` can deliver packets between the different MQTT version clients. The packet is converted from/to v3.1.1 to/from v5.0.
