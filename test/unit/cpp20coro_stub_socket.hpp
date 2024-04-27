@@ -133,44 +133,57 @@ struct cpp20coro_basic_stub_socket {
                 auto completion_handler,
                 ConstBufferSequence const& buffers
             ) {
+                auto exe = as::get_associated_executor(completion_handler);
                 auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
                 auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
-                auto buf = allocate_buffer(it, end);
-                auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
-                as::post(
-                    as::bind_executor(
-                        exe_,
-                        [
-                            this,
-                            completion_handler = force_move(completion_handler),
-                            dis = std::distance(it, end),
-                            pv
-                        ] () mutable {
-                            auto exe = as::get_associated_executor(completion_handler);
-                            as::dispatch(
-                                as::bind_executor(
-                                    exe,
-                                    [
-                                        this,
-                                        completion_handler = force_move(completion_handler),
-                                        dis,
-                                        pv
-                                    ] () mutable {
-                                        ch_send_.async_send(
-                                            pv,
-                                            [](auto) {
-                                            }
-                                        );
-                                        force_move(completion_handler)(
-                                            boost::system::error_code{},
-                                            std::size_t(dis)
-                                        );
-                                    }
-                                )
-                            );
-                        }
-                    )
+                auto dis = std::distance(it, end);
+                auto packet_begin = it;
+                auto guard = shared_scope_guard(
+                    [completion_handler = force_move(completion_handler), dis] () mutable {
+                        force_move(completion_handler)(
+                            boost::system::error_code{},
+                            std::size_t(dis)
+                        );
+                    }
                 );
+
+                while (it != end) {
+                    ++it; // it points to the first byte of remaining length
+                    if (auto remlen_opt = variable_bytes_to_val(it, end)) {
+                        auto packet_end = std::next(it, *remlen_opt);
+                        auto buf = allocate_buffer(packet_begin, packet_end);
+                        auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
+                        as::post(
+                            as::bind_executor(
+                                exe_,
+                                [
+                                    this,
+                                    exe,
+                                    pv,
+                                    guard
+                                ] () mutable {
+                                    as::dispatch(
+                                        as::bind_executor(
+                                            exe,
+                                            [
+                                                this,
+                                                pv,
+                                                guard = force_move(guard)
+                                            ] () mutable {
+                                                ch_send_.async_send(
+                                                    pv,
+                                                    as::detached
+                                                );
+                                            }
+                                        )
+                                    );
+                                }
+                            )
+                        );
+                        it = packet_end;
+                        packet_begin = packet_end;
+                    }
+                }
             },
             token,
             buffers
