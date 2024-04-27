@@ -2,7 +2,7 @@
 
 `client_cli` is an intaractive MQTT client.
 
-`client_cli` Boost.ProgramOptions style options.
+`client_cli` has Boost.ProgramOptions style options.
 https://github.com/redboltz/async_mqtt/blob/main/tool/cli.conf is config file.
 You can also set command line options. The command line options are higher priority than file options.
 
