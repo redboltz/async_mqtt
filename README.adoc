@@ -21,7 +21,7 @@
 * Tools
 ** xref:tool/broker.adoc[broker]
 ** xref:tool/client_cli.adoc[client_cli]
-** bench
+** xref:tool/bench.adoc[bench]
 * xref:performance.adoc[Performance]
 * xref:config.adoc[Config]
 * xref:../main/CHANGELOG.md[History]
