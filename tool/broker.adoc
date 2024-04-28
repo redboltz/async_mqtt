@@ -13,10 +13,15 @@ https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json is an example fi
 
 == authentication and authorization
 
+https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json helps understanding the following descriptions:
+
 === authentication
 
-Authentication means checking permission to connect to the broker.
+`broker` has `user` concept. `user` means authentication and authorization unit. One `user` could have multiple MQTT connections if Client Identifier is different. If `user` and Client Identifier is the same, the connections and sessions regard to the same. The same online connection exists and then the same new connection is authenticated, the previous one is disconnected by the broker. It is **overwrite** model that is required by MQTT spec.
+
 `broker` supports the following authentication method.
+
+`name` filed is correspondint to `user`.
 
 ==== sha256
 * name
@@ -62,6 +67,20 @@ If anonymous is appeared in authentication field, then the client that doesn't h
 
 If the client is unauthenticated, and if the authentication filed has this method, then the client can be connected. In this case, the connection's User Name is regard to one special "unauthenticated" name (not actual "unauthenticated" string).
 
-=== groups
+=== group
+
+`group` is convenient concept to sum up `user`s. The name of `group` starts with `@`.
 
 === authorization
+
+`authorization` is a concept that granting publish/subscribe to the topics to `user`s or `group`s.
+
+* topic
+** Target topic to grant. Not only a topic name but also MQTT's multi-level wildcard `#` can be used to specify topics.
+* allow
+** Add permissions to the specified target `topic` for `user`s and `group`s
+* deny
+** Remove permissions to the specified target `topic` for `user`s and `group`s
+
+The permissions evaluates the top to bottom of the file. So recommended style is first, declaring widly permissions using `#` at the top side of `authorization` fileds, and then declaring specific topic's permissions. In other words, the recommended order is wide to narrow.
+
