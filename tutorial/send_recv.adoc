@@ -1,16 +1,16 @@
 = Send/Recv packets
 
-== xref:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] funtion
+== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] funtion
 
-You need to call xref:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
+You need to call link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
 You can control packet receiving timing. async_mqtt doesn't use handler registering style APIs such as `set_publish_handler()`. If you need handler registering APIs, you can create them using recv().
-recv() function is more flexible than handler registering APIs. In addition, it works well with xref:https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html[Completion Token].
+recv() function is more flexible than handler registering APIs. In addition, it works well with link:https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html[Completion Token].
 
 You cannot call recv() function continuously. You can call the next recv() function after the previous recv() function's CompletionToken is invoked or in the Completion handler.
 
-=== xref:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]
+=== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]
 
-recv()'s CompletionToken parameter is xref:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]. It is a variant type of all MQTT packets and error.
+recv()'s CompletionToken parameter is link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]. It is a variant type of all MQTT packets and error.
 
 NOTE: async_mqtt has basic_foobar type and foobar type if the type contains MQTT's Packet Identifier. basic_foobar takes PacketIdBytes parameter. basic_foobar<2> is the same as foobar. MQTT spec defines the size of Packet Identifier to 2. But some of clustering brokers use expanded Packet Identifer for inter brokers communication. General users doesn't need to care basic_foobar types, simply use foobar.
 
@@ -69,7 +69,7 @@ When you set `filter::except` as the first argument, the second parameter is a l
 If error is happened, completion_token is invoked with packet_variant that contains error.
 
 
-== xref:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#aeadb5049b6fba3dd8075ba4f8daadcd0++[send()] function
+== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#aeadb5049b6fba3dd8075ba4f8daadcd0++[send()] function
 
 MQTT has various packet types for example CONNECT, PUBLISH, SUBSCRIBE and so on. In order to send the packet, first create the packet and then pass it as send() parameter. If you send timing is a protocol error then the send() CompletionToken is invoked with system_error.
 You can call send() continuously. async_mqtt endpoint has queuing mechanism. When the previous send() function's CompletionToken is invoked, then the next packet in the queue is sent if exists.
