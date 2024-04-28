@@ -168,28 +168,31 @@ void run_broker(boost::program_options::variables_map const& vm) {
             << " threads_per_ioc:" << threads_per_ioc
             << " total threads:" << num_of_iocs * threads_per_ioc;
 
-        if (vm.count("auth_file")) {
-            std::string auth_file = vm["auth_file"].as<std::string>();
-            if (!auth_file.empty()) {
-                ASYNC_MQTT_LOG("mqtt_broker", info)
-                    << "auth_file:" << auth_file;
+        auto set_auth =
+            [&] {
+                if (vm.count("auth_file")) {
+                    std::string auth_file = vm["auth_file"].as<std::string>();
+                    if (!auth_file.empty()) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << "auth_file:" << auth_file;
 
-                std::ifstream input(auth_file);
+                        std::ifstream input(auth_file);
 
-                if (input) {
-                    am::security security;
-                    security.load_json(input);
-                    brk.set_security(am::force_move(security));
+                        if (input) {
+                            am::security security;
+                            security.load_json(input);
+                            brk.set_security(am::force_move(security));
+                        }
+                        else {
+                            ASYNC_MQTT_LOG("mqtt_broker", warning)
+                                << "Authorization file '"
+                                << auth_file
+                                << "' not found,  broker doesn't use authorization file.";
+                        }
+                    }
                 }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_broker", warning)
-                        << "Authorization file '"
-                        << auth_file
-                        << "' not found,  broker doesn't use authorization file.";
-                }
-            }
-        }
-
+            };
+        set_auth();
         as::io_context accept_ioc;
 
         int concurrency_hint = boost::numeric_cast<int>(threads_per_ioc);
@@ -602,19 +605,37 @@ void run_broker(boost::program_options::variables_map const& vm) {
         }
 
         as::io_context ioc_signal;
-        as::signal_set signals{ioc_signal, SIGINT, SIGTERM};
-        signals.async_wait(
-            [] (
+        as::signal_set signals{
+            ioc_signal,
+            SIGINT,
+            SIGTERM
+#if !defined(_WIN32)
+            ,
+            SIGUSR1
+#endif // !defined(_WIN32)
+        };
+        std::function<void(boost::system::error_code const&, int num)> handle_signal
+            = [&set_auth, &signals, &handle_signal] (
                 boost::system::error_code const& ec,
                 int num
             ) {
                 if (!ec) {
-                    ASYNC_MQTT_LOG("mqtt_broker", trace)
-                        << "Signal " << num << " received. exit program";
-                    exit(-1);
+                    if (num == SIGINT || num == SIGTERM) {
+                        ASYNC_MQTT_LOG("mqtt_broker", trace)
+                            << "Signal " << num << " received. exit program";
+                        exit(-1);
+                    }
+#if !defined(_WIN32)
+                    else if (num == SIGUSR1) {
+                        ASYNC_MQTT_LOG("mqtt_broker", trace)
+                            << "Signal " << num << " received. Update auth information";
+                        set_auth();
+                        signals.async_wait(handle_signal);
+                    }
+#endif // !defined(_WIN32)
                 }
-            }
-        );
+              };
+        signals.async_wait(handle_signal);
         std::thread th_signal {
             [&] {
                 try {
