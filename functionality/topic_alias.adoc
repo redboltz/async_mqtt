@@ -6,7 +6,9 @@ Topic Alias is a way to reduce PUBLISH packet size.
 
 There are two independent Topic Alias capacities. 
 
-```mermaid
+[mermaid]
+ifdef::env-github[[source,mermaid]]
+....
 sequenceDiagram
 Note left of client1: prepare 10 capacity
 client1->>broker: CONNECT TopicAliasMaximum=10
@@ -14,7 +16,7 @@ Note right of broker: broker can send 1-10 TopicAlias to client1
 Note right of broker: prepare 20 capacity for client1
 broker->>client1: CONNACK TopicAliasMaximum=20
 Note left of client1: client1 can send 1-20 TopicAlias to the broker
-```
+....
 
 
 === broker to client Topic Alias
@@ -29,7 +31,9 @@ If the client doesn't receive CONNACK packet with `Topic Alias Maximum` property
 
 == Using Topic Alias
 
-```mermaid
+[mermaid]
+ifdef::env-github[[source,mermaid]]
+....
 sequenceDiagram
 Note right of client1: Register
 client1->>broker: PUBLISH TopicName=topic1, TopicAlias=1
@@ -41,7 +45,7 @@ client1->>broker: PUBLISH TopicName=topic2, TopicAlias=1
 Note right of client1: Use
 client1->>broker: PUBLISH TopicName="", TopicAlias=1
 Note right of broker: Extract topic2 from TopicAlias 1
-```
+....
 
 === Register/Overwrite
 
@@ -83,7 +87,9 @@ In order to solve the problem, the client/broker needs to extract TopicName from
 
 This process is automatically done by async_mqtt internally. Users don't need to care about this issue.
 
-```mermaid
+[mermaid]
+ifdef::env-github[[source,mermaid]]
+....
 sequenceDiagram
 client1->>broker: CONNECT SessionExpiryInterval=0xffffffff(inifinity)
 broker->>client1: CONNACK SessionPresent=0
@@ -105,7 +111,7 @@ Note right of client1: If client1 doesn't resend the packet, it is QoS=1 (At lea
 
 Note right of client1: Expected behavior is resending the following packet.
 client1->>broker: PUBLISH TopicName=topic1, QoS=1
-```
+....
 
 async_mqtt does expected behavior automatically.
 
