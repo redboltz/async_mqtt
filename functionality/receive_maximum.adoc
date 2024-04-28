@@ -19,7 +19,9 @@ NOTE: Packet Identifier and Receive Maximum are not directly related. Packet Ide
 
 There are two independent Receive Maximum. 
 
-```mermaid
+[mermaid]
+ifdef::env-github[[source,mermaid]]
+....
 sequenceDiagram
 Note left of client1: prepare 10 * MaximumPacketSize memory
 client1->>broker: CONNECT ReceiveMaximum=10
@@ -27,7 +29,7 @@ Note right of broker: broker can send at most 10 PUBLISH (QoS1 or QoS2) packets 
 Note right of broker: prepare 20 * MaximumPacketSize memory for client1
 broker->>client1: CONNACK ReceiveMaximum=20
 Note left of client1: client1 can send at most 20 PUBLISH (QoS1 or QoS2) packets to the broker
-```
+....
 
 === broker to client Receive Maximum
 
