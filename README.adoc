@@ -12,7 +12,7 @@
 ** xref:tutorial/strand.adoc[strand]
 * Functionality
 ** xref:functionality/connect_timeout.adoc[connect timeout]
-** logging
+** xref:logging.adoc[logging]
 ** xref:functionality/keep_session.adoc[Keep session]
 ** xref:functionality/topic_alias.adoc[Topic Alias]
 ** xref:functionality/request_response.adoc[Reuqest/Response]
