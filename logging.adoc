@@ -1,0 +1,14 @@
+= logging
+
+async_mqtt supports Boost.Log style logging. The severity levels are `fatal`, `error`, `warning`, `info`, `debug`, and `trace`.
+
+The easiest way to setup logging is
+
+```cpp
+async_mqtt::setup_log(async_mqtt::severity_level::info); // you can use any other severity_level
+```
+
+You can setup your custom settings.
+
+See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/setup_log.hpp
+
