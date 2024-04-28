@@ -1,0 +1,5 @@
+= bench
+
+`bench` is a performance measuring utility.
+
+`bench` has Boost.ProgramOptions style options. https://github.com/redboltz/async_mqtt/blob/main/tool/bench.conf is config file. You can also set command line options. The command line options are higher priority than file options.
