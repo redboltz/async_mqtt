@@ -370,8 +370,8 @@ struct security {
                 throw std::runtime_error("An invalid method was specified: " + method);
             }
         }
-        if (root.get_child_optional("groups")) {
-            for (auto const& i: root.get_child("groups")) {
+        if (root.get_child_optional("group")) {
+            for (auto const& i: root.get_child("group")) {
                 std::string name = i.second.get<std::string>("name");
                 if (!is_valid_group_name(name)) {
                     throw std::runtime_error("An invalid group name was specified: " + name);

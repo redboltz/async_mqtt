@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(json_load) {
                     "method": "anonymous"
                 }
             ],
-            "groups": [
+            "group": [
                 {
                     "name": "@g1",
                     "members": ["u1", "u2", "anonymous"]
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Group references non-existing user
     std::string nonexisting_1 = R"*(
             {  # JSON Comment
-                "groups": [
+                "group": [
                     {
                         "name": "@g1",
                         "members": ["u1", "u2"]
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Duplicate group
     std::string duplicate_group = R"*(
             {
-                "groups": [
+                "group": [
                     {
                         "name": "@g1",
                         "members": ["u1", "u2"]
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Redefine any group
     std::string redefine_any_group = R"*(
             {
-                "groups": [
+                "group": [
                     {
                         "name": "@any",
                         "members": ["u1", "u2"]
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(check_errors) {
     // Invalid group name
     std::string invalid_group_name = R"*(
             {
-                "groups": [
+                "group": [
                     {
                         "name": "g1",
                         "members": ["u1", "u2"]
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE(check_publish) {
                         "method": "anonymous"
                     }
                 ],
-                "groups": [
+                "group": [
                     {
                         "name": "@g1",
                         "members": ["u1", "u2"]
@@ -583,7 +583,7 @@ BOOST_AUTO_TEST_CASE(auth_check) {
                         "method": "anonymous"
                     }
                 ],
-                "groups": [
+                "group": [
                     {
                         "name": "@g1",
                         "members": ["u1", "u2", "anonymous"]
