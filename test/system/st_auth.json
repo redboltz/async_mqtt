@@ -1,5 +1,5 @@
 {
-    # Configure username/login
+    # Grant users to connect the broker
     "authentication": [
         {
             "name": "u1",
@@ -24,7 +24,7 @@
         }
     ]
     ,
-    # Give access to topics
+    # Grant users an groups to access topics
     "authorization": [
         {
             # Specified users and groups are denied to subscribe and publish on this topic
