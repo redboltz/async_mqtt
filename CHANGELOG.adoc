@@ -1,3 +1,5 @@
+= History
+
 == 5.0.0
 
 === breaking changes
