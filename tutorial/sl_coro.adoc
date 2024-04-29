@@ -245,7 +245,7 @@ When async process is finished the function resumes at the following line:
 ```
 
 The parameter of the completion token is `system_error const& se`.
-See xref:https://redboltz.github.io/async_mqtt/doc/latest/html/$$classasync__mqtt_1_1basic__endpoint$$.html[API reference].
+See {api-base}/++classasync__mqtt_1_1basic__endpoint.html++[API reference].
 
 == Recv MQTT CONNACK packet
 
@@ -285,23 +285,13 @@ The parameter of the completion token is `packet_variant pv`. You can access the
 `pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
 
 == Send/Recv packets
-See the simple example
-ifdef::env-github[xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-ifndef::env-github[xref:../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-.
+See the simple example xref:{am-base-path}/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp].
 
-If you want to know more complex usecase,
-ifdef::env-github[xref:../../main/tool/client_cli.cpp[client_cli.cpp]]
-ifndef::env-github[xref:../../tool/client_cli.cpp[client_cli.cpp]]
-is helpful.
+If you want to know more complex usecase, xref:{am-base-path}/tool/client_cli.cpp[client_cli.cpp] is helpful.
 This is commandline MQTT client application.
 
 == Examples
-ifdef::env-github[* xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-ifdef::env-github[* xref:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]]
-ifdef::env-github[* xref:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]]
-ifdef::env-github[* xref:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]]
-ifndef::env-github[* xref:../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-ifndef::env-github[* xref:../../example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]]
-ifndef::env-github[* xref:../../example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]]
-ifndef::env-github[* xref:../../example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]]
+* xref:{am-base-path}/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]
+* xref:{am-base-path}/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]
+* xref:{am-base-path}/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]
+* xref:{am-base-path}/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]
