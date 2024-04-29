@@ -8,7 +8,9 @@ Distributed under the Boost Software License, Version 1.0. (See accompanying fil
 
 == Table of Contents
 
-* https://redboltz.github.io/async_mqtt/[API Reference]
+ifdef::env-github[* https://redboltz.github.io/async_mqtt/[API Reference]]
+ifndef::env-github[* xref:api/index.html[API Reference]]
+
 * ${include("container.adoc")}
 * ${include("trial.adoc")}
 * Tutorial

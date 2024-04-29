@@ -1,10 +1,13 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Topic Alias
 
 Topic Alias is a way to reduce PUBLISH packet size.
 
 == Notifying capacity
 
-There are two independent Topic Alias capacities. 
+There are two independent Topic Alias capacities.
 
 [mermaid]
 ifdef::env-github[[source,mermaid]]
@@ -114,5 +117,3 @@ client1->>broker: PUBLISH TopicName=topic1, QoS=1
 ....
 
 async_mqtt does expected behavior automatically.
-
-

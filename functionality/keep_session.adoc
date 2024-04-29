@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Keep session
 
 MQTT has the concept "session". See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230
@@ -76,4 +79,3 @@ NOTE: the halfway packets are for the previous session. If the previous session 
 ==== CONNECT without Session Expiry Interval is greater than 0
 
 * Both the client and the broker don't store session during the connection and after disconnection.
-

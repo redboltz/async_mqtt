@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = bench
 
 `bench` is a performance measuring utility.

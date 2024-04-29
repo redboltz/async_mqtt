@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Performance
 
 I've measured how many publishes per second can async_mqtt broker treated.

@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = logging
 
 async_mqtt supports Boost.Log style logging. The severity levels are `fatal`, `error`, `warning`, `info`, `debug`, and `trace`.
@@ -11,4 +14,3 @@ async_mqtt::setup_log(async_mqtt::severity_level::info); // you can use any othe
 You can setup your custom settings.
 
 See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/setup_log.hpp
-

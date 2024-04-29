@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Send/Recv packets
 
 == link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] funtion

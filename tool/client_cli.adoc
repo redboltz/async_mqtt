@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = client_cli
 
 `client_cli` is an intaractive MQTT client.
@@ -74,7 +77,7 @@ Commands available:
  - cli
         Top menu
 ```
-In order to return to top menu, you need to type `cli`. 
+In order to return to top menu, you need to type `cli`.
 
 === Build publish packet
 
@@ -121,4 +124,4 @@ Commands available:
         Top menu
 ```
 
-In order to return to top menu, you need to type `cli`. 
+In order to return to top menu, you need to type `cli`.

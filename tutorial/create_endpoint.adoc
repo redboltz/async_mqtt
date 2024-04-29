@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Create endpoint
 
 First, choose underlying layer.

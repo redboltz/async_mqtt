@@ -1,7 +1,7 @@
-= C++20 coroutine
-
 :source-highlighter: rouge
-:rouge-style: monokai
+:rouge-style: base16.monokai
+
+= C++20 coroutine
 
 C++20 coroutine is supported by the language.
 

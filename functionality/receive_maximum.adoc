@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Receive Maximum
 
 Receive Maximum is a way to flow control PUBLISH(QoS1, QoS2) packets. They require to store for resending. So the node should prepare the memory packet size * Receive Maximum.
@@ -17,7 +20,7 @@ NOTE: Packet Identifier and Receive Maximum are not directly related. Packet Ide
 
 == Notifying Receive Maximum
 
-There are two independent Receive Maximum. 
+There are two independent Receive Maximum.
 
 [mermaid]
 ifdef::env-github[[source,mermaid]]
@@ -43,4 +46,3 @@ The broker can set `Receive Maximum` property that value is greater than 0 to th
 
 asnyc_mqtt automatically respect Receive Maximum so user doesn't care about that. If user calls send() with PUBLISH (QoS1 or QoS2) packets over received Receive Maximum times before the publish sequence is not finished, async_mqtt queuing the PUBLISH packet internally. When the receive count is decreased, then send the queued PUBLISH packet. The order of sending the PUBLISH is the same as user's send() function call order.
 There is no explicit limitation for the number of queuing packets. But in order to create PUBLISH (QoS1 or QoS2) packet, user needs to acquire a Packet Identifier. It is limited at most 65535, so it is also the limit of queuing packets.
-

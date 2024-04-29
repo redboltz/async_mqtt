@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Strand
 
 endpoint has boost asio's strand internally.CompletionToken is called in the endpoint's strand. Strand is useful to avoid locks and mutexes.

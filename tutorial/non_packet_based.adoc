@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Non packet based APIs
 
 Most of async_mqtt APIs are xref:send_recv.adoc#packet-based-apis[packet based] so functionalities are automatically applied by simply set packets parameters and send/recv them. However, some of functionalities cannot be explained the packets.

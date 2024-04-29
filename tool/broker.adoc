@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = broker
 
 `broker` is a MQTT broker.
@@ -83,4 +86,3 @@ If the client is unauthenticated, and if the authentication filed has this metho
 ** Remove permissions to the specified target `topic` for `user`s and `group`s
 
 The permissions evaluates the top to bottom of the file. So recommended style is first, declaring widly permissions using `#` at the top side of `authorization` fileds, and then declaring specific topic's permissions. In other words, the recommended order is wide to narrow.
-

@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Config
 
 == cmake
@@ -25,4 +28,3 @@
 |ASYNC_MQTT_USE_LOG|Enable logging via Boost.Log
 |ASYNC_MQTT_PRINT_PAYLOAD|Output payload when publish packet is output
 |===
-

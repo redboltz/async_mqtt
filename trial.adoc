@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Free trial broker on cloud
 
 You can connect to the broker `async-mqtt.redboltz.net` for testing.
@@ -15,4 +18,3 @@ You can connect to the broker `async-mqtt.redboltz.net` for testing.
 
 You are free to use it for any application, but please do not abuse or rely upon it for anything of importance. This server runs on an very low spec vps. It is not intended to demonstrate any performance characteristics.
 Please don't publish anything sensitive, anybody could be listening.
-

@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Using stackless coroutine
 
 This is stackless coroutine approach. It uses switch-case based Boost.Asio stackless corotuine.

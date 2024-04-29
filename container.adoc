@@ -1,3 +1,6 @@
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
 = Run async_mqtt broker/client on the docker container
 
 You can run async_mqtt broker, benchmarking tool, and CLI client using docker.
