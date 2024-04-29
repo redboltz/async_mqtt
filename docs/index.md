@@ -1,7 +1,11 @@
-# [async_mqtt](https://github.com/redboltz/async_mqtt) API reference
+# Since 5.0.0 all docments is here
 
 ## latest
-- [main](doc/latest/html/index.html)
+- [main](doc/latest/index.html)
+- [5.0.0](doc/5.0.0/index.html)
+
+
+# Older versions' [async_mqtt](https://github.com/redboltz/async_mqtt) API reference
 
 ## releases
 - [4.1.0](doc/4.1.0/html/index.html)
