@@ -2,8 +2,8 @@
 :source-highlighter: rouge
 :rouge-style: base16.monokai
 
-ifdef::env-github[:am-base-path: ../../main]
-ifndef::env-github[:am-base-path: ../..]
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:api]
 
@@ -19,4 +19,4 @@ async_mqtt::setup_log(async_mqtt::severity_level::info); // you can use any othe
 
 You can setup your custom settings.
 
-See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/setup_log.hpp
+See xref:{am-base-path}/include/async_mqtt/setup_log.hpp[include/async_mqtt/setup_log.hpp]
