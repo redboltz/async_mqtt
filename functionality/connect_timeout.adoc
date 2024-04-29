@@ -13,7 +13,7 @@ NOTE: Step1-4 is outside of async_mqtt.
 
 Typically, user can set timer before the Step1, and cancel the timer after Step6. If the timer is fired, then call `close()` function.
 
-= PINGRESP timeout
+== PINGRESP timeout
 
 After MQTT connection is established (Step6 is finished successfully), if underlying connection is disconnected, then `recv()` function returns as error. However, if the broker is freezed or disconnect is not detected but acutually disconnected, the client want to know the status of the connection.
 In this case, you can use `set_pingresp_recv_timeout_ms()` and send PINGREQ packet.

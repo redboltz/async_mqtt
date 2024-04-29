@@ -1,5 +1,8 @@
 = C++20 coroutine
 
+:source-highlighter: rouge
+:rouge-style: monokai
+
 C++20 coroutine is supported by the language.
 
 See https://en.cppreference.com/w/cpp/language/coroutines
@@ -134,11 +137,10 @@ If se is evalueted as true, that means some error happened. So the code printss 
         }
 ```
 
-= whole code (example)
+== whole code (example)
 
 xref:../../main/example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]
 
-= Other Completion Tokens
+== Other Completion Tokens
 
 You can use not only `as::use_awaitabe` but also `as::deferred`, `as::experiemntal::use_promise`. See asio document.
-

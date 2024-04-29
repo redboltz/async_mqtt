@@ -2,7 +2,8 @@
 
 First, choose underlying layer.
 
-image::../img/layer.svg[layer structure]
+ifdef::env-github[image::../img/layer.svg[layer structure]]
+ifndef::env-github[image::layer.svg[layer structure]]
 
 == mqtt
 
@@ -10,7 +11,7 @@ image::../img/layer.svg[layer structure]
     as::io_context ioc;
 
     // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc}; 
+    as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
     //                     endpoint is client  choose underlying layer
@@ -25,7 +26,7 @@ image::../img/layer.svg[layer structure]
 
 ```cpp
     as::io_context ioc;
-    
+
     // To get IP address from hostname
     as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
@@ -34,7 +35,7 @@ image::../img/layer.svg[layer structure]
     ctx.set_verify_mode(am::tls::verify_none);
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
-  
+
     auto amep = am::endpoint<am::role::client, am::protocol::mqtts>::create(
         am::protocol_version::v5, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
@@ -68,12 +69,12 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
     // To get IP address from hostname
     as::ip::tcp::socket resolve_sock{ioc};
     as::ip::tcp::resolver res{resolve_sock.get_executor()};
-    
+
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
-    
+
     auto amep = am::endpoint<am::role::client, am::protocol::wss>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
@@ -81,7 +82,7 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
     );
 ```
 
-= Layer access
+== Layer access
 
 |===
 |Layer access | mqtt | mqtts | ws | wss
@@ -91,4 +92,3 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 |next_layer().next_layer().next_layer()|-|-|-|TCP stream
 |lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 |===
-

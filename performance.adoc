@@ -8,7 +8,6 @@ AWS EC2 c5.4xlarge, c5.12xlarge
 
 - Benchmark targets
   - mosquitto version:2.0.11
-  - hivemqt-ce-2023.4
   - async_mqtt 1.0.6
 
 Single broker, multiple clients.
@@ -24,10 +23,10 @@ Publish payload is 1024 bytes.
 === QoS0
 
 |===
-|ec2\broker|mosquitto|HiveMQ-CE|async_mqtt
+|ec2\broker|mosquitto|async_mqtt
 
-|c5.4xlarge|90|53|250
-|c5.12xlarge|90|66|610
+|c5.4xlarge|90|250
+|c5.12xlarge|90|610
 |===
 
 value is Kpps (Kilo publish per second)
@@ -35,10 +34,10 @@ value is Kpps (Kilo publish per second)
 === QoS1
 
 |===
-|ec2\broker|mosquitto|HiveMQ-CE|async_mqtt
+|ec2\broker|mosquitto|async_mqtt
 
-|c5.4xlarge|52|36|155
-|c5.12xlarge|52|58|390
+|c5.4xlarge|52|155
+|c5.12xlarge|52|390
 |===
 
 value is Kpps (Kilo publish per second)
@@ -46,12 +45,13 @@ value is Kpps (Kilo publish per second)
 === QoS2
 
 |===
-|ec2\broker|mosquitto|HiveMQ-CE|async_mqtt
+|ec2\broker|mosquitto|async_mqtt
 
-|c5.4xlarge|28|24|89
-|c5.12xlarge|28|38|210
+|c5.4xlarge|28|89
+|c5.12xlarge|28|210
 |===
 
 value is Kpps (Kilo publish per second)
 
-image::img/bench.png[]
+ifdef::env-github[image::img/bench.png[]]
+ifndef::env-github[image::bench.png[]]
