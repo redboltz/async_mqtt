@@ -37,6 +37,6 @@ ifndef::env-github[* xref:api/index.html[API Reference]]
 ** ${include("tool/bench.adoc")}
 * ${include("performance.adoc")}
 * ${include("config.adoc")}
-* ${include("../../CHANGELOG.adoc")}
+* ${include("CHANGELOG.adoc")}
 
 https://github.com/redboltz/async_mqtt/[back to the project top page]
