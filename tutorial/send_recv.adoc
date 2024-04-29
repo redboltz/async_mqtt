@@ -7,7 +7,7 @@ ifndef::env-github[:am-base-path: ../..]
 = Send/Recv packets
 
 ifdef::env-github[== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()] funtion]
-ifndef::env-github[== link:++api/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()] funtion]
+ifndef::env-github[== link:++../api/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()] funtion]
 
 
 You need to call link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
