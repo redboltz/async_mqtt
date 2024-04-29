@@ -139,7 +139,8 @@ If se is evalueted as true, that means some error happened. So the code printss 
 
 == whole code (example)
 
-xref:../../main/example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]
+ifdef::env-github[* xref:../../main/example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]]
+ifndef::env-github[* xref:../../../example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]]
 
 == Other Completion Tokens
 
