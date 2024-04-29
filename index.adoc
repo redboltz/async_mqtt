@@ -1,6 +1,5 @@
-:am-version: latest
-:source-highlighter: rouge
-:rouge-style: base16.monokai
+:nofooter:
+
 = async_mqtt
 
 Takatoshi Kondo
