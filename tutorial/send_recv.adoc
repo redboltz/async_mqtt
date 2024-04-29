@@ -10,15 +10,22 @@ ifdef::env-github[== link:++https://redboltz.github.io/async_mqtt/doc/latest/htm
 ifndef::env-github[== link:++../api/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()] funtion]
 
 
-You need to call link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#ae43f3f6c57a9e9267409132de7e44f25++[recv()] function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
+You need to call 
+ifdef::env-github[link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()]]
+ifndef::env-github[link:++../api/classasync__mqtt_1_1basic__endpoint.html#a6a1d7d1d565ad54bdfb7a7ee347351d5++[recv()]]
+function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
 You can control packet receiving timing. async_mqtt doesn't use handler registering style APIs such as `set_publish_handler()`. If you need handler registering APIs, you can create them using recv().
 recv() function is more flexible than handler registering APIs. In addition, it works well with link:https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html[Completion Token].
 
 You cannot call recv() function continuously. You can call the next recv() function after the previous recv() function's CompletionToken is invoked or in the Completion handler.
 
-=== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]
+ifdef::env-github[=== link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]]
+ifndef::env-github[=== link:++../api/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]
 
-recv()'s CompletionToken parameter is link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]. It is a variant type of all MQTT packets and error.
+recv()'s CompletionToken parameter is 
+ifdef::env-github[link:++https://redboltz.github.io/async_mqtt/doc/latest/html/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]]
+ifndef::env-github[link:++../api/classasync__mqtt_1_1basic__packet__variant.html++[packet_variant]
+It is a variant type of all MQTT packets and error.
 
 NOTE: async_mqtt has basic_foobar type and foobar type if the type contains MQTT's Packet Identifier. basic_foobar takes PacketIdBytes parameter. basic_foobar<2> is the same as foobar. MQTT spec defines the size of Packet Identifier to 2. But some of clustering brokers use expanded Packet Identifer for inter brokers communication. General users doesn't need to care basic_foobar types, simply use foobar.
 
