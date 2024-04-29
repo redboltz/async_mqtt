@@ -1,11 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html" title=" " alt="" coords="5,105,205,148"/>
-<area shape="rect" id="Node000001" href="$classasync__mqtt_1_1property_1_1maximum__packet__size.html" title=" " alt="" coords="258,5,421,48"/>
-<area shape="poly" id="edge23_Node000000_Node000001" title=" " alt="" coords="165,96,252,58,279,46,281,51,254,62,168,101"/>
-<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1property_1_1message__expiry__interval.html" title=" " alt="" coords="253,72,426,115"/>
-<area shape="poly" id="edge24_Node000000_Node000002" title=" " alt="" coords="220,108,252,103,253,108,221,113"/>
-<area shape="rect" id="Node000003" href="$classasync__mqtt_1_1property_1_1session__expiry__interval.html" title=" " alt="" coords="257,139,422,181"/>
-<area shape="poly" id="edge25_Node000000_Node000003" title=" " alt="" coords="220,140,257,146,256,151,220,146"/>
-<area shape="rect" id="Node000004" href="$classasync__mqtt_1_1property_1_1will__delay__interval.html" title=" " alt="" coords="267,205,412,248"/>
-<area shape="poly" id="edge26_Node000000_Node000004" title=" " alt="" coords="168,153,254,191,281,202,279,207,252,196,165,157"/>
+<area shape="rect" id="Node000000" href="$structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html" title=" " alt="" coords="5,109,231,154"/>
+<area shape="rect" id="Node000001" href="$classasync__mqtt_1_1property_1_1maximum__packet__size.html" title=" " alt="" coords="286,5,465,50"/>
+<area shape="poly" id="edge23_Node000000_Node000001" title=" " alt="" coords="183,100,278,60,308,48,310,53,280,65,185,105"/>
+<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1property_1_1message__expiry__interval.html" title=" " alt="" coords="279,75,472,119"/>
+<area shape="poly" id="edge24_Node000000_Node000002" title=" " alt="" coords="246,112,278,107,279,113,246,117"/>
+<area shape="rect" id="Node000003" href="$classasync__mqtt_1_1property_1_1session__expiry__interval.html" title=" " alt="" coords="284,144,467,189"/>
+<area shape="poly" id="edge25_Node000000_Node000003" title=" " alt="" coords="247,146,283,151,283,157,246,152"/>
+<area shape="rect" id="Node000004" href="$classasync__mqtt_1_1property_1_1will__delay__interval.html" title=" " alt="" coords="295,213,456,258"/>
+<area shape="poly" id="edge26_Node000000_Node000004" title=" " alt="" coords="185,158,280,199,310,210,308,215,278,203,183,163"/>
 </map>

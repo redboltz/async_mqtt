@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;4.1.0</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.0.0</span>
    </div>
   </td>
  </tr>
@@ -141,7 +141,7 @@ class async_mqtt::v5::basic_pubrel_packet&lt; PacketIdBytes &gt;</div><p>MQTT PU
   </table>
   </dd>
 </dl>
-<p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBREC <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">v5::basic_pubrec_packet</a> is received. If both the client and the broker keeping the session, this packet is stored in the endpoint for resending if disconnect/reconnect happens. If the session doesn' exist or lost, then the stored packets are erased. <br  />
+<p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#af48e23bfba52bb9938a7d24f2112296c" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBREC <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">v5::basic_pubrec_packet</a> is received. If both the client and the broker keeping the session, this packet is stored in the endpoint for resending if disconnect/reconnect happens. If the session doesn' exist or lost, then the stored packets are erased. <br  />
  See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901141">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901141</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a44b4bf22c5294247a0351b1060b60173" name="a44b4bf22c5294247a0351b1060b60173"></a>

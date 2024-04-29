@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;4.1.0</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.0.0</span>
    </div>
   </td>
  </tr>
@@ -126,7 +126,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT PINGRESP packet (v3.1.1) </p>
-<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e77ec0b180801e25279d35d225a7771" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v3.1.1)">v3_1_1::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout_ms()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed from the client side. <br  />
+<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a8a7f4f653920a8139c907caefc764193" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v3.1.1)">v3_1_1::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a33de735f6ac4f8aa9fbca3f120c38ac0" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout_ms()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed from the client side. <br  />
  See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086</a> </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab074b326b3d3a2b1d1a2d98b3781a316" name="ab074b326b3d3a2b1d1a2d98b3781a316"></a>

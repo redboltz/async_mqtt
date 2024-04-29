@@ -1,6 +1,6 @@
 var endpoint_8hpp =
 [
-    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", "classasync__mqtt_1_1basic__endpoint" ],
+    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, Strand, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", "classasync__mqtt_1_1basic__endpoint" ],
     [ "filter", "endpoint_8hpp.html#aed6ebca93cac28c67f2b4fb8641e775a", [
       [ "match", "endpoint_8hpp.html#aed6ebca93cac28c67f2b4fb8641e775aae3cc92c14a5e6dd1a7d94b6ff634d7fc", null ],
       [ "except", "endpoint_8hpp.html#aed6ebca93cac28c67f2b4fb8641e775aad1cc652b86b9858fe78058511716e92f", null ]

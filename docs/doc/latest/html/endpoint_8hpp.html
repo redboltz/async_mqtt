@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;4.1.0</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.0.0</span>
    </div>
   </td>
  </tr>
@@ -104,6 +104,7 @@ $(function(){initNavTree('endpoint_8hpp.html',''); initResizable(); });
 <code>#include &lt;async_mqtt/packet/packet_variant.hpp&gt;</code><br />
 <code>#include &lt;async_mqtt/util/value_allocator.hpp&gt;</code><br />
 <code>#include &lt;async_mqtt/util/make_shared_helper.hpp&gt;</code><br />
+<code>#include &lt;async_mqtt/null_strand.hpp&gt;</code><br />
 <code>#include &lt;async_mqtt/stream.hpp&gt;</code><br />
 <code>#include &lt;async_mqtt/store.hpp&gt;</code><br />
 <code>#include &lt;async_mqtt/log.hpp&gt;</code><br />
@@ -118,7 +119,7 @@ $(function(){initNavTree('endpoint_8hpp.html',''); initResizable(); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, Strand, NextLayer &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT endpoint corresponding to the connection.  <a href="classasync__mqtt_1_1basic__endpoint.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">

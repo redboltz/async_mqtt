@@ -1,7 +1,7 @@
 var hierarchy =
 [
     [ "async_mqtt::v5::auth_packet", "classasync__mqtt_1_1v5_1_1auth__packet.html", null ],
-    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
+    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, Strand, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
     [ "async_mqtt::basic_packet_variant< PacketIdBytes >", "classasync__mqtt_1_1basic__packet__variant.html", null ],
     [ "async_mqtt::v3_1_1::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html", null ],
     [ "async_mqtt::v5::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html", null ],

@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;4.1.0</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.0.0</span>
    </div>
   </td>
  </tr>
@@ -106,8 +106,8 @@ $(function(){initNavTree('scope__guard_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">// (See accompanying file LICENSE_1_0.txt or copy at</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// http://www.boost.org/LICENSE_1_0.txt)</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#if !defined(ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP)</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#if !defined(ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP)</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
@@ -142,9 +142,15 @@ $(function(){initNavTree('scope__guard_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> detail::unique_sg&lt;Proc&gt;{std::forward&lt;Proc&gt;(proc)};</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_UNIQUE_SCOPE_GUARD_HPP</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Proc&gt;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">inline</span> <span class="keyword">auto</span> shared_scope_guard(Proc&amp;&amp; proc) {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">auto</span> deleter = [proc = std::forward&lt;Proc&gt;(proc)](<span class="keywordtype">void</span>*) <span class="keyword">mutable</span> { std::move(proc)(); };</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;void&gt;(<span class="keyword">nullptr</span>, std::move(deleter));</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_SCOPE_GUARD_HPP</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

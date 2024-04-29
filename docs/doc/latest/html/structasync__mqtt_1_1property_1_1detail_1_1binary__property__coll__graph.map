@@ -1,5 +1,5 @@
 <map id="async_mqtt::property::detail::binary_property" name="async_mqtt::property::detail::binary_property">
-<area shape="rect" id="Node000001" title="binary_property" alt="" coords="5,96,163,139"/>
-<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1buffer.html" title="buffer that has string_view interface This class provides string_view interface. This class hold stri..." alt="" coords="19,5,149,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,48,87,95,81,95,81,48"/>
+<area shape="rect" id="Node000001" title="binary_property" alt="" coords="5,98,183,143"/>
+<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1buffer.html" title="buffer that has string_view interface This class provides string_view interface. This class hold stri..." alt="" coords="22,5,166,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,48,97,97,91,97,91,48"/>
 </map>
