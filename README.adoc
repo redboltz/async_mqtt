@@ -1,3 +1,12 @@
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:api]
+
 = Index
 
 * https://redboltz.github.io/async_mqtt/[API Reference]
@@ -24,6 +33,6 @@
 ** xref:tool/bench.adoc[bench]
 * xref:performance.adoc[Performance]
 * xref:config.adoc[Config]
-* xref:../main/CHANGELOG.md[History]
+* xref:{am-base-path}/CHANGELOG.adoc[History]
 
-https://github.com/redboltz/async_mqtt/[back to the project top page]
+https://github.com/redboltz/async_mqtt/[async_mqtt project top page]
