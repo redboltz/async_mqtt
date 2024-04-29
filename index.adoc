@@ -1,0 +1,37 @@
+= async_mqtt
+
+Takatoshi Kondo
+
+Copyright © 2024 Takatoshi Kondo
+
+Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+== Table of Contents
+
+* https://redboltz.github.io/async_mqtt/[API Reference]
+* ${include("container.adoc")}
+* ${include("trial.adoc")}
+* Tutorial
+** ${include("tutorial/create_endpoint.adoc", leveloffset="+1")}
+** ${include("tutorial/cpp20_coro.adoc")}
+** ${include("tutorial/sl_coro.adoc")}
+** ${include("tutorial/send_recv.adoc")}
+** ${include("tutorial/non_packet_based.adoc")}
+** ${include("tutorial/strand.adoc")}
+* Functionality
+** ${include("functionality/connect_timeout.adoc")}
+** ${include("logging.adoc")}
+** ${include("functionality/keep_session.adoc")}
+** ${include("functionality/topic_alias.adoc")}
+** ${include("functionality/request_response.adoc")}
+** ${include("functionality/receive_maximum.adoc")}
+** ${include("functionality/maximum_packet_size.adoc")}
+* Tools
+** ${include("tool/broker.adoc")}
+** ${include("tool/client_cli.adoc")}
+** ${include("tool/bench.adoc")}
+* ${include("performance.adoc")}
+* ${include("config.adoc")}
+* https://github.com/redboltz/async_mqtt/blob/main/CHANGELOG.md[History]
+
+https://github.com/redboltz/async_mqtt/[back to the project top page]
