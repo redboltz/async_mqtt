@@ -32,6 +32,7 @@ public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
          tim_disconnect_{timer_ioc_} {
+        std::unique_lock<mutex> g_sec{mtx_security_};
         security_.default_config();
     }
 
@@ -44,6 +45,7 @@ public:
      * @brief configure the security settings
      */
     void set_security(security&& sec) {
+        std::unique_lock<mutex> g_sec{mtx_security_};
         security_ = force_move(sec);
     }
 
@@ -264,19 +266,25 @@ private:
     ) {
         optional<std::string> username;
         if (auto paun_opt = epsp.get_preauthed_user_name()) {
+            std::shared_lock<mutex> g_sec{mtx_security_};
             if (security_.login_cert(*paun_opt)) {
                 username = force_move(*paun_opt);
             }
         }
         else if (!noauth_username && !password) {
+            std::shared_lock<mutex> g_sec{mtx_security_};
             username = security_.login_anonymous();
         }
         else if (noauth_username && password) {
+            std::shared_lock<mutex> g_sec{mtx_security_};
             username = security_.login(*noauth_username, *password);
         }
 
         // If login fails, try the unauthenticated user
-        if (!username) username = security_.login_unauthenticated();
+        if (!username) {
+            std::shared_lock<mutex> g_sec{mtx_security_};
+            username = security_.login_unauthenticated();
+        }
 
         optional<std::chrono::steady_clock::duration> session_expiry_interval;
         optional<std::chrono::steady_clock::duration> will_expiry_interval;
@@ -641,16 +649,21 @@ private:
                 return rt;
             } ();
 
-        auto rule_nr = security_.add_auth(
-            response_topic,
-            { "@any" }, security::authorization::type::allow,
-            { username }, security::authorization::type::allow
-        );
+        auto rule_nr =
+            [&] {
+                std::unique_lock<mutex> g_sec{mtx_security_};
+                return security_.add_auth(
+                    response_topic,
+                    { "@any" }, security::authorization::type::allow,
+                    { username }, security::authorization::type::allow
+                );
+            } ();
 
         s.set_clean_handler(
             [this, response_topic, rule_nr]() {
                 std::lock_guard<mutex> g(mtx_retains_);
                 retains_.erase(response_topic);
+                std::unique_lock<mutex> g_sec{mtx_security_};
                 security_.remove_auth(rule_nr);
             }
         );
@@ -1022,7 +1035,11 @@ private:
             };
 
         // See if this session is authorized to publish this topic
-        if (security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow) {
+        if ([&] {
+                std::shared_lock<mutex> g_sec{mtx_security_};
+                return security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow;
+            } ()
+        ) {
             // Publish not authorized
             send_pubres(false, false);
             return;
@@ -1087,7 +1104,11 @@ private:
 
         // Get auth rights for this topic
         // auth_users prepared once here, and then referred multiple times in subs_map_.modify() for efficiency
-        auto auth_users = security_.auth_sub(topic);
+        auto auth_users =
+            [&] {
+                std::shared_lock<mutex> g_sec{mtx_security_};
+                return security_.auth_sub(topic);
+            } ();
 
         // publish the message to subscribers.
         // retain is delivered as the original only if rap_value is rap::retain.
@@ -1096,9 +1117,11 @@ private:
             [&] (session_state<epsp_t>& ss, subscription<epsp_t>& sub, auto const& auth_users) {
 
                 // See if this session is authorized to subscribe this topic
-                auto access = security_.auth_sub_user(auth_users, ss.get_username());
-                if (access != security::authorization::type::allow) return false;
-
+                {
+                    std::shared_lock<mutex> g_sec{mtx_security_};
+                    auto access = security_.auth_sub_user(auth_users, ss.get_username());
+                    if (access != security::authorization::type::allow) return false;
+                }
                 pub::opts new_opts = std::min(opts.get_qos(), sub.opts.get_qos());
                 if (sub.opts.get_rap() == sub::rap::retain && opts.get_retain() == pub::retain::yes) {
                     new_opts |= pub::retain::yes;
@@ -1496,7 +1519,6 @@ private:
                 async_read_packet(force_move(epsp));
             }
         );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1569,7 +1591,12 @@ private:
             std::vector<suback_return_code> res;
             res.reserve(entries.size());
             for (auto& e : entries) {
-                if (!e || security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                if (!e ||
+                    [&] {
+                        std::shared_lock<mutex> g_sec{mtx_security_};
+                        return security_.is_subscribe_authorized(ss.get_username(), e.topic());
+                    } ()
+                ) {
                     res.emplace_back(qos_to_suback_return_code(e.opts().get_qos())); // converts to granted_qos_x
                     ssr.get().subscribe(
                         e.sharename(),
@@ -1632,7 +1659,11 @@ private:
             res.reserve(entries.size());
             for (auto& e : entries) {
                 if (e) {
-                    if (security_.is_subscribe_authorized(ss.get_username(), e.topic())) {
+                    if ([&] {
+                            std::shared_lock<mutex> g_sec{mtx_security_};
+                            return security_.is_subscribe_authorized(ss.get_username(), e.topic());
+                        } ()
+                    ) {
                         res.emplace_back(qos_to_suback_reason_code(e.opts().get_qos())); // converts to granted_qos_x
                         ssr.get().subscribe(
                             e.sharename(),
@@ -2106,6 +2137,7 @@ private:
     optional<std::chrono::steady_clock::duration> delay_disconnect_; ///< Used to delay disconnect handling for testing
 
     // Authorization and authentication settings
+    mutable mutex mtx_security_;
     security security_;
 
     mutable mutex mtx_subs_map_;
