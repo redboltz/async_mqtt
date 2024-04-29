@@ -8,7 +8,17 @@ ifndef::env-github[:am-base-path: ..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:api]
 
-= Index
+= Document
+
+== Latest
+
+https://redboltz.github.io/async_mqtt/doc/5.0.0/index.html[5.0.0 document]
+
+== Older
+
+https://redboltz.github.io/async_mqtt/[Older releases document]
+
+== Under development 
 
 * https://redboltz.github.io/async_mqtt/[API Reference]
 * xref:container.adoc[Run async_mqtt broker/client on the docker container]
