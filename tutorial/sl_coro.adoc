@@ -278,12 +278,12 @@ The parameter of the completion token is `packet_variant pv`. You can access the
 == Send/Recv packets
 See the simple example
 ifdef::env-github[xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-ifndef::env-github[xref:../../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
+ifndef::env-github[xref:../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
 .
 
 If you want to know more complex usecase,
 ifdef::env-github[xref:../../main/tool/client_cli.cpp[client_cli.cpp]]
-ifndef::env-github[xref:../../../tool/client_cli.cpp[client_cli.cpp]]
+ifndef::env-github[xref:../../tool/client_cli.cpp[client_cli.cpp]]
 is helpful.
 This is commandline MQTT client application.
 
@@ -292,7 +292,7 @@ ifdef::env-github[* xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_
 ifdef::env-github[* xref:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]]
 ifdef::env-github[* xref:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]]
 ifdef::env-github[* xref:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]]
-ifndef::env-github[* xref:../../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
-ifndef::env-github[* xref:../../../example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]]
-ifndef::env-github[* xref:../../../example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]]
-ifndef::env-github[* xref:../../../example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]]
+ifndef::env-github[* xref:../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
+ifndef::env-github[* xref:../../example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]]
+ifndef::env-github[* xref:../../example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]]
+ifndef::env-github[* xref:../../example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]]
