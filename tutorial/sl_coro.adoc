@@ -282,7 +282,9 @@ If you want to know more complex usecase, xref:../../main/tool/client_cli.cpp[cl
 This is commandline MQTT client application.
 
 == Examples
-* xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]
+
+ifdef::env-github[* xref:../../main/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
+ifndef::env-github[* xref:../../../example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]]
 * xref:../../main/example/ep_slcoro_mqtts_client.cpp[ep_slcoro_mqtts_client.cpp]
 * xref:../../main/example/ep_slcoro_ws_client.cpp[ep_slcoro_ws_client.cpp]
 * xref:../../main/example/ep_slcoro_wss_client.cpp[ep_slcoro_wss_client.cpp]
