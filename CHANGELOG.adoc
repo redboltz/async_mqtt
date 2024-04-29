@@ -14,7 +14,7 @@
 * Added bulk packet writing functionality. #169, #170
 * Fixed unused variable in release build. #167
 * Refined web socket async_read using Boost.Asio's free function. #165
-* Refined documents. #162, 173
+* Refined documents. #162, 173, #174, #175, #176
 * Removed redundant locks from internal queue. #157
 * Added tests. #154, #156
 * Refined CI. #155, #166
