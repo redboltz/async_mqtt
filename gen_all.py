@@ -14,7 +14,7 @@ print(
 
 #if !defined(ASYNC_MQTT_ALL_HPP)
 #define ASYNC_MQTT_ALL_HPP
- '''
+'''
 )
 
 for file in sorted(files, key=lambda file: (file.count('/'), file)):
@@ -27,6 +27,5 @@ for file in sorted(files, key=lambda file: (file.count('/'), file)):
     print("#include <{}>".format(file))
 print(
     r'''
-#endif // ASYNC_MQTT_ALL_HPP
-'''
+#endif // ASYNC_MQTT_ALL_HPP'''
 )

@@ -4,6 +4,14 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+    set(CMAKE_CXX_STANDARD 20)
+    message(STATUS "C++20 examples added")
+    list(APPEND check_PROGRAMS
+        st_cpp20coro_client.cpp
+    )
+endif()
+
 list(APPEND check_PROGRAMS
     st_auth.cpp
     st_conflict_cid.cpp
