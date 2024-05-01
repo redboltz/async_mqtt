@@ -97,3 +97,28 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 |next_layer().next_layer().next_layer()|-|-|-|TCP stream
 |lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 |===
+
+== Handshaking underlying layer
+
+You can use underlying handshaking functions as follows:
+
+```cpp
+// Underlying TCP connect
+co_await as::async_connect(
+    amcl.next_layer(),
+    eps,
+    as::use_awaitable
+);
+std::cout << "TCP connected" << std::endl;
+```
+
+Similarly, handshake TLS, WebSocket layers if needed.
+
+== Send MQTT CONNECT packet and start receive loop
+
+After underlying layers' handshaking is completed, then start MQTT layer connection.
+
+== {api-base}/++classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80++[start()] funtion
+
+
+
