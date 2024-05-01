@@ -74,6 +74,7 @@ var annotated_dup =
         [ "pingreq_packet", "classasync__mqtt_1_1v5_1_1pingreq__packet.html", "classasync__mqtt_1_1v5_1_1pingreq__packet" ],
         [ "pingresp_packet", "classasync__mqtt_1_1v5_1_1pingresp__packet.html", "classasync__mqtt_1_1v5_1_1pingresp__packet" ]
       ] ],
+      [ "basic_client", "classasync__mqtt_1_1basic__client.html", "classasync__mqtt_1_1basic__client" ],
       [ "basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html", "classasync__mqtt_1_1basic__endpoint" ],
       [ "basic_packet_variant", "classasync__mqtt_1_1basic__packet__variant.html", "classasync__mqtt_1_1basic__packet__variant" ],
       [ "basic_store_packet_variant", "classasync__mqtt_1_1basic__store__packet__variant.html", "classasync__mqtt_1_1basic__store__packet__variant" ],

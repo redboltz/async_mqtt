@@ -1,6 +1,7 @@
 var hierarchy =
 [
     [ "async_mqtt::v5::auth_packet", "classasync__mqtt_1_1v5_1_1auth__packet.html", null ],
+    [ "async_mqtt::basic_client< Version, Strand, NextLayer >", "classasync__mqtt_1_1basic__client.html", null ],
     [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, Strand, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
     [ "async_mqtt::basic_packet_variant< PacketIdBytes >", "classasync__mqtt_1_1basic__packet__variant.html", null ],
     [ "async_mqtt::v3_1_1::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html", null ],
@@ -71,6 +72,7 @@ var hierarchy =
     [ "async_mqtt::v3_1_1::pingresp_packet", "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html", null ],
     [ "async_mqtt::v5::pingresp_packet", "classasync__mqtt_1_1v5_1_1pingresp__packet.html", null ],
     [ "async_mqtt::property_variant", "classasync__mqtt_1_1property__variant.html", null ],
+    [ "async_mqtt::basic_client< Version, Strand, NextLayer >::pubres_t", "structasync__mqtt_1_1basic__client_1_1pubres__t.html", null ],
     [ "async_mqtt::system_error", "structasync__mqtt_1_1system__error.html", null ],
     [ "async_mqtt::topic_sharename", "classasync__mqtt_1_1topic__sharename.html", null ],
     [ "async_mqtt::topic_subopts", "classasync__mqtt_1_1topic__subopts.html", null ],

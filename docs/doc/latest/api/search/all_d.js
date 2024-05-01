@@ -19,10 +19,15 @@ var searchData=
   ['protocol_5fversion_16',['protocol_version',['../protocol__version_8hpp.html#a133d6d106d4e527d07fea2d12544c0c0',1,'async_mqtt']]],
   ['protocol_5fversion_2ehpp_17',['protocol_version.hpp',['../protocol__version_8hpp.html',1,'']]],
   ['protocol_5fversion_5fto_5fstr_18',['protocol_version_to_str',['../protocol__version_8hpp.html#af85e0e1bf4a3ffa4862091ea286b0fb7',1,'async_mqtt']]],
-  ['puback_5fpacket_19',['puback_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html#ad1ac458a5a1912a4c6bdfaedd407b8f3',1,'async_mqtt::v3_1_1::basic_puback_packet']]],
-  ['pubcomp_5fpacket_20',['pubcomp_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubcomp__packet.html#ad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v3_1_1::basic_pubcomp_packet']]],
-  ['publish_5fpacket_21',['publish_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a9db7a5336b9296dd1f7413b5c2f5290a',1,'async_mqtt::v3_1_1::basic_publish_packet']]],
-  ['pubopts_2ehpp_22',['pubopts.hpp',['../pubopts_8hpp.html',1,'']]],
-  ['pubrec_5fpacket_23',['pubrec_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html#acd2bd0951db1235ee3c026bcb016329a',1,'async_mqtt::v3_1_1::basic_pubrec_packet']]],
-  ['pubrel_5fpacket_24',['pubrel_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ac621c1b7011518ff60a9fbedde43b367',1,'async_mqtt::v3_1_1::basic_pubrel_packet']]]
+  ['puback_5fopt_19',['puback_opt',['../structasync__mqtt_1_1basic__client_1_1pubres__t.html#a2bd405a21ad6a03ede0e6088bb0ffba9',1,'async_mqtt::basic_client::pubres_t']]],
+  ['puback_5fpacket_20',['puback_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html#ad1ac458a5a1912a4c6bdfaedd407b8f3',1,'async_mqtt::v3_1_1::basic_puback_packet']]],
+  ['pubcomp_5fopt_21',['pubcomp_opt',['../structasync__mqtt_1_1basic__client_1_1pubres__t.html#ac2c7b366fadb0e4a2f3286f4dbae314f',1,'async_mqtt::basic_client::pubres_t']]],
+  ['pubcomp_5fpacket_22',['pubcomp_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubcomp__packet.html#ad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v3_1_1::basic_pubcomp_packet']]],
+  ['publish_23',['publish',['../classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c',1,'async_mqtt::basic_client']]],
+  ['publish_5fpacket_24',['publish_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a9db7a5336b9296dd1f7413b5c2f5290a',1,'async_mqtt::v3_1_1::basic_publish_packet']]],
+  ['pubopts_2ehpp_25',['pubopts.hpp',['../pubopts_8hpp.html',1,'']]],
+  ['pubrec_5fopt_26',['pubrec_opt',['../structasync__mqtt_1_1basic__client_1_1pubres__t.html#a6f31d3efe86904177e1f8baedae50a56',1,'async_mqtt::basic_client::pubres_t']]],
+  ['pubrec_5fpacket_27',['pubrec_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html#acd2bd0951db1235ee3c026bcb016329a',1,'async_mqtt::v3_1_1::basic_pubrec_packet']]],
+  ['pubrel_5fpacket_28',['pubrel_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ac621c1b7011518ff60a9fbedde43b367',1,'async_mqtt::v3_1_1::basic_pubrel_packet']]],
+  ['pubres_5ft_29',['pubres_t',['../structasync__mqtt_1_1basic__client_1_1pubres__t.html',1,'async_mqtt::basic_client']]]
 ];
