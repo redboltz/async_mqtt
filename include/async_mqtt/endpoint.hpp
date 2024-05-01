@@ -2305,7 +2305,7 @@ private: // compose operation impl
                 ep.recv_processing_ = false;
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                    << "recv code triggers close:" << decided_error->what();
+                    << "recv code triggers close:" << decided_error->code().message();
                 pv_opt.emplace(force_move(*decided_error));
                 state = complete;
                 bind_dispatch(force_move(self));
