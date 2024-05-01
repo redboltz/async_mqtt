@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(v311) {
             am::packet_variant puback1 = *pubres1.puback_opt;
             BOOST_TEST(puback1 == exp_puback1);
 
-            // MQTT publish QoS2 and wait response (puback receive)
+            // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
             auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
             auto [ec_pub2, pubres2] = co_await amcl.publish(
                 am::v3_1_1::publish_packet{
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             am::packet_variant puback1 = *pubres1.puback_opt;
             BOOST_TEST(puback1 == exp_puback1);
 
-            // MQTT publish QoS2 and wait response (puback receive)
+            // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
             auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
             auto [ec_pub2, pubres2] = co_await amcl.publish(
                 am::v5::publish_packet{

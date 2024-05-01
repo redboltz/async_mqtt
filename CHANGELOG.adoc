@@ -1,3 +1,5 @@
+:last-update-label!:
+
 = History
 
 == 5.0.0

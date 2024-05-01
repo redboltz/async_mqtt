@@ -46,8 +46,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "all_8hpp_source.html",
-"classasync__mqtt_1_1v3__1__1_1_1connack__packet.html",
-"protocol__version_8hpp.html"
+"classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html",
+"index.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['endpoint_0',['endpoint',['../classasync__mqtt_1_1basic__endpoint.html#af3c69b0590e773ada1b40d8a48901acd',1,'async_mqtt::basic_endpoint']]],
-  ['endpoint_5fst_1',['endpoint_st',['../classasync__mqtt_1_1basic__endpoint.html#a91a14929f8b506ff8af125eb6c4c3966',1,'async_mqtt::basic_endpoint']]]
+  ['client_0',['client',['../classasync__mqtt_1_1basic__client.html#a9dd11900baa797fded499766bde8b81e',1,'async_mqtt::basic_client']]],
+  ['client_5fst_1',['client_st',['../classasync__mqtt_1_1basic__client.html#a0bb29717d22dda60a005f97c3a24b853',1,'async_mqtt::basic_client']]]
 ];
