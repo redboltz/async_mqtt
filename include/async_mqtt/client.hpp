@@ -89,9 +89,9 @@ public:
      * @brief publish completion handler parameter class
      */
     struct pubres_t {
-        optional<puback_packet> puback_opt;   /// puback_packet as the response when you send QoS1 publish
-        optional<pubrec_packet> pubrec_opt;   /// pubrec_packet as the response when you send QoS2 publish
-        optional<pubcomp_packet> pubcomp_opt; /// pubcomp_packet as the response when you send QoS2 publish
+        optional<puback_packet> puback_opt;   ///< puback_packet as the response when you send QoS1 publish
+        optional<pubrec_packet> pubrec_opt;   ///< pubrec_packet as the response when you send QoS2 publish
+        optional<pubcomp_packet> pubcomp_opt; ///< pubcomp_packet as the response when you send QoS2 publish
     };
 
     /**

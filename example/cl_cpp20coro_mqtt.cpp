@@ -136,7 +136,7 @@ proc(
             }
         );
 
-        // MQTT publish QoS2 and wait response (puback receive)
+        // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
         auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
         auto pubres2 = co_await amcl.publish(
             am::v5::publish_packet{

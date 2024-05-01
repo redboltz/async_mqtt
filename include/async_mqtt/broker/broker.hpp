@@ -2141,8 +2141,8 @@ private:
     security security_;
 
     mutable mutex mtx_subs_map_;
-    sub_con_map<epsp_t> subs_map_;   /// subscription information
-    shared_target<epsp_t> shared_targets_; /// shared subscription targets
+    sub_con_map<epsp_t> subs_map_;   ///< subscription information
+    shared_target<epsp_t> shared_targets_; ///< shared subscription targets
 
     ///< Map of active client id and connections
     /// session_state has references of subs_map_ and shared_targets_.
