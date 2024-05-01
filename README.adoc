@@ -10,9 +10,13 @@ ifndef::env-github[:api-base: link:api]
 
 = Document
 
-== Latest
+== Latest release
 
 https://redboltz.github.io/async_mqtt/doc/5.0.0/index.html[5.0.0 document]
+
+== Current main branch
+
+https://redboltz.github.io/async_mqtt/doc/latest/index.html[main branch document]
 
 == Older
 
