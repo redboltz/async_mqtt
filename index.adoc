@@ -16,7 +16,7 @@ ifndef::env-github[* xref:api/index.html[API Reference]]
 * ${include("container.adoc")}
 * ${include("trial.adoc")}
 * Tutorial
-** ${include("tutorial/client.adoc")}[Client] - For casual MQTT client operations
+** ${include("tutorial/client.adoc")} - For casual MQTT client operations
 ** endpoint - For more detailed MQTT operations
 *** ${include("tutorial/create_endpoint.adoc")}
 *** ${include("tutorial/cpp20_coro.adoc")}
