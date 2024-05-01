@@ -215,6 +215,47 @@ CompletionToken parameters are error_code and unsuback_packet (optional). unsuba
 
 === {api-base}/++classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c++[publish()] funtion
 
+Here is a code example that sending QoS0 PUBLISH packet.
+
+```cpp
+// MQTT publish QoS0 and wait response (socket write complete)
+auto pubres0 = co_await amcl.publish(
+    am::v5::publish_packet{
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_most_once
+    },
+    as::use_awaitable
+);
+```
+
+CompletionToken parameters are error_code and {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t].
+When you send QoS0 PUBLISH packet, no response packet is expected, so the CompletionToken is invoked when underlying layer's async_write operation is finished.
+All the members of pubres_t are nullopt.
+
+Here is a code example that sending QoS1 PUBLISH packet.
+
+```cpp
+// MQTT publish QoS1 and wait response (puback receive)
+auto pid_pub1_opt = co_await amcl.acquire_unique_packet_id(as::use_awaitable); // async version
+auto pubres1 = co_await amcl.publish(
+    am::v5::publish_packet{
+        *pid_pub1_opt,
+        am::allocate_buffer("topic2"),
+        am::allocate_buffer("payload2"),
+        am::qos::at_least_once
+    },
+    as::use_awaitable
+);
+```
+
+In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1basic__client.html#aa5a37f75664bb4dd8b883e464f2016e5++[acquire_unique_packet_id()]. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version {api-base}/++classasync__mqtt_1_1basic__client.html#acaea92142dca0924af36e5acef91d8bb++[acquire_unique_packet_id()] exists. When you use callback function approach, it could help keep the code simple.
+
+
+
+
+
+
 
 == Receive PUBLISH packet from the broker
 
