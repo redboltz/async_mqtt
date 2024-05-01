@@ -8,7 +8,9 @@ ifndef::env-github[:am-base-path: ../..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:../api]
 
-= Create client
+= Client
+
+== Create client
 First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying layer.
 
 ifdef::env-github[image::../img/layer.svg[layer structure]]
@@ -118,7 +120,106 @@ Similarly, handshake TLS, WebSocket layers if needed.
 
 After underlying layers' handshaking is completed, then start MQTT layer connection.
 
-== {api-base}/++classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80++[start()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80++[start()] funtion
 
+```cpp
+// MQTT connect and receive loop start
+auto connack_opt = co_await amcl.start(
+    am::v5::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::nullopt, // username set like allocate_buffer("user1"),
+        am::nullopt  // password set like allocate_buffer("pass1")
+    },
+    as::use_awaitable
+);
+if (connack_opt) {
+    std::cout << *connack_opt << std::endl;
+}
+```
+
+CompletionToken parameters are error_code and connack_packet (optional). connack_packet has a value only if error_code is success. When you use CompletionToken such as `as::use_awaitable`, `as::use_future`, `as::deferred`, the first error_code is converted to exception. If you want to have the error_code as the return value, you can do as follows:
+
+```cpp
+// MQTT connect and receive loop start
+auto [ec, connack_opt] = co_await amcl.start(
+    am::v5::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        am::allocate_buffer("cid1"),
+        am::nullopt, // will
+        am::nullopt, // username set like allocate_buffer("user1"),
+        am::nullopt  // password set like allocate_buffer("pass1")
+    },
+    as::as_tuple(as::use_awaitable)
+);
+std::cout << ec.message() << std::endl;
+if (connack_opt) {
+    std::cout << *connack_opt << std::endl;
+}
+```
+
+== Send MQTT SUBSCRIBE/UNSUBSCRIBE and wait SUBACK/UNSUBACK
+
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#ae74159d835dca15f87b760b53acb4d51++[subscribe()] funtion
+
+```cpp
+// subscribe
+// MQTT send subscribe and wait suback
+std::vector<am::topic_subopts> sub_entry{
+    {am::allocate_buffer("topic1"), am::qos::at_most_once},
+    {am::allocate_buffer("topic2"), am::qos::at_least_once},
+    {am::allocate_buffer("topic3"), am::qos::exactly_once},
+};
+auto suback_opt = co_await amcl.subscribe(
+    am::v5::subscribe_packet{
+        *amcl.acquire_unique_packet_id(), // sync version only in strand
+        am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
+    },
+    as::use_awaitable
+);
+if (suback_opt) {
+    std::cout << *suback_opt << std::endl;
+}
+```
+
+CompletionToken parameters are error_code and suback_packet (optional). suback_packet has a value only if error_code is success.
+
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#a0ff1b5b724340a3df4c9ce9fab7a4b90++[unsubscribe()] funtion
+
+```cpp
+// MQTT send unsubscribe and wait unsuback
+std::vector<am::topic_sharename> unsub_entry{
+    {am::allocate_buffer("topic1")},
+    {am::allocate_buffer("topic2")},
+    {am::allocate_buffer("topic3")},
+};
+
+auto unsuback_opt = co_await amcl.unsubscribe(
+    am::v5::unsubscribe_packet{
+        *amcl.acquire_unique_packet_id(), // sync version only in strand
+        am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
+    },
+    as::use_awaitable
+);
+if (unsuback_opt) {
+    std::cout << *unsuback_opt << std::endl;
+}
+```
+
+CompletionToken parameters are error_code and unsuback_packet (optional). unsuback_packet has a value only if error_code is success.
+
+== Send PUBLISH packet and wait response
+
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c++[publish()] funtion
+
+
+== Receive PUBLISH packet from the broker
+
+== Whole code
+
+* xref:{am-base-path}/example/cl_cpp20coro_mqtt.cpp[cl_cpp20coro_mqtt.cpp]
 
 
