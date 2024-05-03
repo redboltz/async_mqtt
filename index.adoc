@@ -1,5 +1,4 @@
 :last-update-label!:
-:nofooter:
 
 = async_mqtt
 

@@ -1,5 +1,4 @@
 :last-update-label!:
-:nofooter:
 :am-version: latest
 :source-highlighter: rouge
 :rouge-style: base16.monokai
@@ -320,5 +319,3 @@ If you want to close the socket forcibly, you can call close() function. For exa
 == Whole code
 
 * xref:{am-base-path}/example/cl_cpp20coro_mqtt.cpp[cl_cpp20coro_mqtt.cpp]
-
-[%hardbreaks]
