@@ -33,6 +33,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 version,
                 ioc.get_executor()
             );
+            ep->set_pingresp_recv_timeout_ms(0); // for coverage
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
             {

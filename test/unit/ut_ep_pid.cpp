@@ -44,6 +44,16 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         ep->acquire_unique_packet_id_wait_until(as::use_future).get();
     }
 
+    as::dispatch(
+        as::bind_executor(
+            ep->strand(),
+            [&] {
+                auto pid_opt = ep->acquire_unique_packet_id();
+                BOOST_CHECK(!pid_opt);
+            }
+        )
+    );
+
     auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
     auto fut2 = ep->acquire_unique_packet_id_wait_until(as::use_future);
     auto fut3 = ep->acquire_unique_packet_id_wait_until(as::use_future);
