@@ -1,4 +1,5 @@
 :last-update-label!:
+:nofooter:
 :am-version: latest
 :source-highlighter: rouge
 :rouge-style: base16.monokai
@@ -22,7 +23,7 @@ https://redboltz.github.io/async_mqtt/doc/latest/index.html[main branch document
 
 https://redboltz.github.io/async_mqtt/[Older releases document]
 
-== Under development 
+== Under development
 
 * https://redboltz.github.io/async_mqtt/[API Reference]
 * xref:container.adoc[Run async_mqtt broker/client on the docker container]
