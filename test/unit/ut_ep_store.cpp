@@ -1744,4 +1744,43 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     th.join();
 }
 
+BOOST_AUTO_TEST_CASE(restore_packets_error) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+        version,
+        // for stub_socket args
+        version,
+        ioc
+    );
+
+    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
+    BOOST_TEST(pid_opt1.has_value());
+    auto publish1 = am::v3_1_1::publish_packet(
+        *pid_opt1,
+        am::allocate_buffer("topic1"),
+        am::allocate_buffer("payload1"),
+        am::qos::at_least_once
+    );
+    as::dispatch(
+        as::bind_executor(
+            ep->strand(),
+            [&] {
+                ep->restore_packets({am::store_packet_variant{publish1}}); // pid is already used
+                auto stored = ep->get_stored_packets();
+                BOOST_TEST(stored.empty());
+            }
+        )
+    );
+    guard.reset();
+    th.join();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
