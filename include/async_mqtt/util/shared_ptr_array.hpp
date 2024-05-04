@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_UTIL_SHARED_PTR_ARRAY_HPP
 
 #include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/smart_ptr/allocate_shared_array.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 
 #include <async_mqtt/util/allocator.hpp>
 

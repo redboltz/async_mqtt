@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
-#include <async_mqtt/util/set.hpp>
+#include <set>
 #include <deque>
 #include <atomic>
 
@@ -476,7 +476,7 @@ public:
     template <typename CompletionToken>
     auto
     recv(
-        set<control_packet_type> types,
+        std::set<control_packet_type> types,
         CompletionToken&& token
     ) {
         ASYNC_MQTT_LOG("mqtt_api", info)
@@ -512,7 +512,7 @@ public:
     auto
     recv(
         filter fil,
-        set<control_packet_type> types,
+        std::set<control_packet_type> types,
         CompletionToken&& token
     ) {
         ASYNC_MQTT_LOG("mqtt_api", info)
@@ -694,7 +694,7 @@ public:
      * @return set of packet_ids
      * @note This function is SYNC function that must only be called in the strand.
      */
-    set<packet_id_t> get_qos2_publish_handled_pids() const {
+    std::set<packet_id_t> get_qos2_publish_handled_pids() const {
         BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -708,7 +708,7 @@ public:
      * @param pids packet ids
      * @note This function is SYNC function that must only be called in the strand.
      */
-    void restore_qos2_publish_handled_pids(set<packet_id_t> pids) {
+    void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
         BOOST_ASSERT(in_strand());
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -1644,7 +1644,7 @@ private: // compose operation impl
     struct recv_impl {
         this_type& ep;
         optional<filter> fil = nullopt;
-        set<control_packet_type> types = {};
+        std::set<control_packet_type> types = {};
         optional<system_error> decided_error = nullopt;
         optional<basic_packet_variant<PacketIdBytes>> pv_opt = nullopt;
         enum { initiate, disconnect, close, read, complete } state = initiate;
@@ -2879,11 +2879,11 @@ private:
     protocol_version protocol_version_;
     std::shared_ptr<stream_type> stream_;
     packet_id_manager<packet_id_t> pid_man_;
-    set<packet_id_t> pid_suback_;
-    set<packet_id_t> pid_unsuback_;
-    set<packet_id_t> pid_puback_;
-    set<packet_id_t> pid_pubrec_;
-    set<packet_id_t> pid_pubcomp_;
+    std::set<packet_id_t> pid_suback_;
+    std::set<packet_id_t> pid_unsuback_;
+    std::set<packet_id_t> pid_puback_;
+    std::set<packet_id_t> pid_pubrec_;
+    std::set<packet_id_t> pid_pubcomp_;
 
     bool need_store_ = false;
     store<PacketIdBytes, as::strand<as::any_io_executor>> store_{stream_->raw_strand()};
@@ -2900,7 +2900,7 @@ private:
     receive_maximum_t publish_recv_max_{receive_maximum_max};
     receive_maximum_t publish_send_count_{0};
 
-    set<packet_id_t> publish_recv_;
+    std::set<packet_id_t> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
 
     ioc_queue close_queue_;
@@ -2918,10 +2918,10 @@ private:
     std::shared_ptr<as::steady_timer> tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
     std::shared_ptr<as::steady_timer> tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
 
-    set<packet_id_t> qos2_publish_handled_;
+    std::set<packet_id_t> qos2_publish_handled_;
 
     bool recv_processing_ = false;
-    set<packet_id_t> qos2_publish_processing_;
+    std::set<packet_id_t> qos2_publish_processing_;
 
     struct tim_cancelled {
         tim_cancelled(

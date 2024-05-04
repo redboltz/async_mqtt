@@ -19,12 +19,15 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/append.hpp>
 #include <boost/asio/consign.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/smart_ptr/make_shared.hpp>
 
 #if defined(ASYNC_MQTT_USE_WS)
 #include <boost/beast/websocket/stream.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #include <async_mqtt/stream_traits.hpp>
+#include <async_mqtt/util/allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -161,7 +164,7 @@ public:
             >(
                 write_packet_impl<Packet>{
                     *this,
-                        boost::allocate_shared<Packet>(allocator<Packet>(), force_move(packet))
+                    boost::allocate_shared<Packet>(allocator<Packet>(), force_move(packet))
                 },
                 token
             );
@@ -381,7 +384,7 @@ private:
     template <typename Packet>
     struct write_packet_impl {
         this_type& strm;
-        std::shared_ptr<Packet> packet;
+        boost::shared_ptr<Packet> packet;
         std::size_t size = packet->size();
         this_type_sp life_keeper = strm.shared_from_this();
         enum { dispatch, post, write, bulk_write, complete } state = dispatch;
