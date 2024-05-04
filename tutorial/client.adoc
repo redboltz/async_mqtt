@@ -319,3 +319,15 @@ If you want to close the socket forcibly, you can call close() function. For exa
 == Whole code
 
 * xref:{am-base-path}/example/cl_cpp20coro_mqtt.cpp[cl_cpp20coro_mqtt.cpp]
+
+== Supported Functionality
+
+client supports the following functionalities:
+
+* xref:../functionality/connect_timeout.adoc[Connect Timeout]
+* xref:../functionality/keep_session.adoc[Keep Session]
+* xref:../functionality/topic_alias.adoc[Topic Alias]
+* xref:../functionality/request_response.adoc[Request Response]
+* xref:../functionality/receive_maximum.adoc[Receive Maximum]
+* xref:../functionality/maximum_packet_size.adoc[Maximum Packet Size]
+* xref:../logging.adoc[Logging]
