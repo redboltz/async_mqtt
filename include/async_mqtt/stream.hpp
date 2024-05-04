@@ -161,7 +161,7 @@ public:
             >(
                 write_packet_impl<Packet>{
                     *this,
-                    std::make_shared<Packet>(force_move(packet))
+                        boost::allocate_shared<Packet>(allocator<Packet>(), force_move(packet))
                 },
                 token
             );
@@ -784,8 +784,8 @@ private:
     strand_type strand_{as::any_io_executor{raw_strand_}};
     ioc_queue queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
-    std::vector<as::const_buffer> storing_cbs_;
-    std::vector<as::const_buffer> sending_cbs_;
+    std::vector<as::const_buffer, allocator<as::const_buffer>> storing_cbs_;
+    std::vector<as::const_buffer, allocator<as::const_buffer>> sending_cbs_;
     bool bulk_write_ = false;
 };
 
