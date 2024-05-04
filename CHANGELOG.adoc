@@ -2,6 +2,10 @@
 
 = History
 
+== 5.1.0
+* Added tests. #180
+* Added high level MQTT client APIs support. #178
+
 == 5.0.0
 
 === breaking changes
