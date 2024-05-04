@@ -2,7 +2,7 @@
 
 Asynchronous MQTT communication library.
 
-Version 5.0.0 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
+Version 5.1.0 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
 
 This is Boost.Asio oriented asynchronous MQTT communication library. You can use async_mqtt to develop not only your MQTT client application but also your server (e.g. broker).
 Based on https://github.com/redboltz/mqtt_cpp experience, there are many improvements. See overview.
@@ -41,6 +41,10 @@ Document is https://github.com/redboltz/async_mqtt/blob/doc/README.adoc
 - [and more](https://www.boost.org/doc/html/boost_asio/overview/composition.html)
 
 I recommend using [Stackless Coroutine (`boost::asio::coroutine`)](https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html) because it can avoid deep nested callbacks and higher performance than [`boost::asio::use_future`](https://www.boost.org/doc/html/boost_asio/overview/composition/futures.html). C++20 Coroutine is also a good choice. It requires C++20 support. It is more elegant than Stackless Coroutine but a little bit slower than Stackless coroutine.
+
+## High level MQTT client APIs support (since 5.1.0)
+
+See [document](https://redboltz.github.io/async_mqtt/doc/latest/tutorial/client.html) and [example](example/cl_cpp20coro_mqtt.cpp).
 
 ## Features
 
