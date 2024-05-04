@@ -117,8 +117,18 @@ In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send P
 </div>
 </div>
 <div class="sect1">
-<h2 id="_set_pingresp_recv_timeout_ms"><a href="../apiclassasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0">set_pingresp_recv_timeout_ms()</a></h2>
+<h2 id="_set_pingresp_recv_timeout_ms">set_pingresp_recv_timeout_ms()</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../apiclassasync__mqtt_1_1basic__client.html#ae6de76e91012ea196666ca450d025560">set_pingresp_recv_timeout_ms() for client</a></p>
+</li>
+<li>
+<p><a href="../apiclassasync__mqtt_1_1basic__endpoint.html#a33de735f6ac4f8aa9fbca3f120c38ac0">set_pingresp_recv_timeout_ms() for endpoint</a></p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>The parameter is milliseconds. You need to call this function before sending MQTT CONNECT packet. The timer is automatically set when PINGREQ packet is sent. If PINGRESP packet is received from the broker, then the timer is cancelled. If the timer is fired, the connection is disconnected from the client side. Finally, the client gets error from the <code>recv()</code> function.</p>
 </div>
