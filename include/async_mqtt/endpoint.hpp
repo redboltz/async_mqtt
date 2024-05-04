@@ -11,6 +11,8 @@
 #include <deque>
 #include <atomic>
 
+#include <boost/container/flat_set.hpp>
+
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
@@ -699,7 +701,7 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "get_qos2_publish_handled_pids";
-        return qos2_publish_handled_;
+        return std::set<packet_id_t>(qos2_publish_handled_.begin(), qos2_publish_handled_.end());
     }
 
     /**
@@ -713,7 +715,10 @@ public:
         ASYNC_MQTT_LOG("mqtt_api", info)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "restore_qos2_publish_handled_pids";
-        qos2_publish_handled_ = force_move(pids);
+        qos2_publish_handled_.reserve(pids.size());
+        for (auto pid : pids) {
+            qos2_publish_handled_.insert(qos2_publish_handled_.end(), pid);
+        }
     }
 
     /**
@@ -2879,11 +2884,11 @@ private:
     protocol_version protocol_version_;
     std::shared_ptr<stream_type> stream_;
     packet_id_manager<packet_id_t> pid_man_;
-    std::set<packet_id_t> pid_suback_;
-    std::set<packet_id_t> pid_unsuback_;
-    std::set<packet_id_t> pid_puback_;
-    std::set<packet_id_t> pid_pubrec_;
-    std::set<packet_id_t> pid_pubcomp_;
+    boost::container::flat_set<packet_id_t> pid_suback_;
+    boost::container::flat_set<packet_id_t> pid_unsuback_;
+    boost::container::flat_set<packet_id_t> pid_puback_;
+    boost::container::flat_set<packet_id_t> pid_pubrec_;
+    boost::container::flat_set<packet_id_t> pid_pubcomp_;
 
     bool need_store_ = false;
     store<PacketIdBytes, as::strand<as::any_io_executor>> store_{stream_->raw_strand()};
@@ -2900,7 +2905,7 @@ private:
     receive_maximum_t publish_recv_max_{receive_maximum_max};
     receive_maximum_t publish_send_count_{0};
 
-    std::set<packet_id_t> publish_recv_;
+    boost::container::flat_set<packet_id_t> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
 
     ioc_queue close_queue_;
@@ -2918,10 +2923,10 @@ private:
     std::shared_ptr<as::steady_timer> tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
     std::shared_ptr<as::steady_timer> tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
 
-    std::set<packet_id_t> qos2_publish_handled_;
+    boost::container::flat_set<packet_id_t> qos2_publish_handled_;
 
     bool recv_processing_ = false;
-    std::set<packet_id_t> qos2_publish_processing_;
+    boost::container::flat_set<packet_id_t> qos2_publish_processing_;
 
     struct tim_cancelled {
         tim_cancelled(
