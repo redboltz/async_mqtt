@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Topic Alias</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Topic Alias</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Topic Alias is a way to reduce PUBLISH packet size.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notifying_capacity">Notifying capacity</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are two independent Topic Alias capacities.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../images/diag-mermaid-md5-14872b2cf8a0ffd42279a877a9da8d96.png" alt="Diagram" width="784" height="330">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_broker_to_client_topic_alias">broker to client Topic Alias</h3>
+<div class="paragraph">
+<p>The client can set <code>Topic Alias Maximum</code> property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH packet with <code>Topic Alias</code> property that the value is less than or equal to <code>Topic Alias Maximum</code>. The broker could send the PUBLISH packet using <code>Topic Alias</code> property.
+If the broker doesn&#8217;t receive CONNECT packet with <code>Topic Alias Maximum</code> property that value is greater than 0, then the broker cannot use <code>Topic Alias</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_client_to_broker_topic_alias">client to broker Topic Alias</h3>
+<div class="paragraph">
+<p>The broker can set <code>Topic Alias Maximum</code> property that value is greater than 0 to the CONNACK packet. This means the broker can receive the PUBLISH packet with <code>Topic Alias</code> property that the value is less than or equal to <code>Topic Alias Maximum</code>. The client could send the PUBLISH packet using <code>Topic Alias</code> property.
+If the client doesn&#8217;t receive CONNACK packet with <code>Topic Alias Maximum</code> property that value is greater than 0, then the client cannot use <code>Topic Alias</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_topic_alias">Using Topic Alias</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../images/diag-mermaid-md5-5bca675a1b9c772d88ab5c2b0f741b3d.png" alt="Diagram" width="784" height="633">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registeroverwrite">Register/Overwrite</h3>
+<div class="paragraph">
+<p>When you set TopicName and <code>Topic Alias</code> property to the PUBLISH packet, then the mapping is registered. If the <code>Topic Alias</code> is already mapped, then the mapping is overwritten.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_use">Use</h3>
+<div class="paragraph">
+<p>When you set empty (zero length) TopicName and <code>Topic Alias</code> property to the PUBLISH packet, then the receiver needs to extract the TopicName that is corresponding to the <code>Topic Alias</code>.
+In this case, the packet size is usually reduced. (Especially the TopicName is long).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_async_mqtt_support">async_mqtt support</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_setup">setup</h3>
+<div class="paragraph">
+<p>If you are using the async_mqtt as the client, all you need to do is set <code>Topic Alias Maximum</code> property to CONNECT packet.
+If you are using the async_mqtt as the server(broker), all you need to do is set <code>Topic Alias Maximum</code> property to CONNACK packet.</p>
+</div>
+<div class="paragraph">
+<p>Then mapping functionality is automatically set up.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_auto_map_topic_alias_sendbool">set_auto_map_topic_alias_send(bool)</h3>
+<div class="paragraph">
+<p>When you set this function is called with argument true, then <code>Topic Alias</code> is automatically allocated and used when you send PUBLISH packet. If you run out all <code>Topic Alias</code>, the oldest mapping is automatically replaced. It is called LRU algorithm.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_replace_map_topic_alias_sendbool">set_replace_map_topic_alias_send(bool)</h3>
+<div class="paragraph">
+<p>When you set this function is called with argument true, then <code>Topic Alias</code> is automatically used if the mapping is registered when you send PUBLISH packet.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manual_use">manual use</h3>
+<div class="paragraph">
+<p>You can register/use Topic Alias manually by setting PUBLISH packet. This works well with above two automatic functionalities.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pitfall">Pitfall</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>async_mqtt has already solved this problem. This is implementation note.
+If client/broker <a href="keep_session.html">keep the session</a>, the halfway QoS1 and QoS2 PUBLISH packet should be resent just after reconnection. What happened if the PUBLISH packet <strong>uses</strong> Topic Alias? In this case, the TopicName is empty. The counter part <code>Topic Alias Maximum</code> could be reduced (or removed) on reconnection. MQTT spec said that the lifetime of Topic Alias mapping should end on disconnect. In other words, the lifetime of Topic Alias mapping is the same as the lifetime of connection, <strong>not the lifetime of the session</strong>.
+So, the client/broker sends PUBLISH packet with empty length TopicName and <code>Topic Alias</code> property on just after reconnection, it is protocol violation.</p>
+</div>
+<div class="paragraph">
+<p>In order to solve the problem, the client/broker needs to extract TopicName from the <code>Topic Alias</code> property <strong>on sending</strong> and create the new PUBLISH packet for storing that is contained from the extracted TopicName and remove <code>Topic Alias</code> property form the sending PUBLISH packet. When resending, use the stored (non Topic Aliased) packet.</p>
+</div>
+<div class="paragraph">
+<p>This process is automatically done by async_mqtt internally. Users don&#8217;t need to care about this issue.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../images/diag-mermaid-md5-86ff713b1d907c7c420fc7b506f9d15b.png" alt="Diagram" width="784" height="721">
+</div>
+</div>
+<div class="paragraph">
+<p>async_mqtt does expected behavior automatically.</p>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="keep_session.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="request_response.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
