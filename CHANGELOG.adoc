@@ -2,6 +2,10 @@
 
 = History
 
+== 5.1.1
+* Added client's infinity timer cancelling without data arrival support. #185
+* Modified client::get_executor() return value.#184
+
 == 5.1.0
 * Added tests. #180
 * Added high level MQTT client APIs support. #178
