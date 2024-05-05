@@ -10,6 +10,10 @@ ifndef::env-github[:api-base: link:../api]
 
 = Client
 
+async_mqtt has class {api-base}/++classasync__mqtt_1_1basic__client.html#a9dd11900baa797fded499766bde8b81e++[client] for multi-threaded environment and class {api-base}/++classasync__mqtt_1_1basic__client.html#a0bb29717d22dda60a005f97c3a24b853++[client_st] for single-threaded environment.
+
+Both are implemented using {api-base}/++classasync__mqtt_1_1basic__client.html++[basic_client]
+
 == Create client
 First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying layer.
 
