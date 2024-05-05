@@ -13,6 +13,7 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/exception.hpp>
+#include <async_mqtt/get_inner_executor.hpp>
 #include <async_mqtt/host_port.hpp>
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/log.hpp>

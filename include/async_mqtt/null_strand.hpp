@@ -147,6 +147,91 @@ public:
         return lhs.exe_ != rhs.exe_;
     }
 
+
+    // customization points
+
+    template <typename Property>
+    typename as::query_result<const Executor&, Property>::type
+    query_helper(
+        std::false_type,
+        Property const& property
+    ) const {
+        return as::query(exe_, property);
+    }
+
+    template <typename Property>
+    as::execution::blocking_t
+    query_helper(
+        std::true_type,
+        Property const& property
+    ) const {
+        as::execution::blocking_t result = as::query(exe_, property);
+        return result == as::execution::blocking.always
+            ? as::execution::blocking.possibly : result;
+    }
+
+    template <typename Property>
+    typename as::constraint<
+        as::can_query<Executor const&, Property>::value,
+        typename std::conditional<
+            std::is_convertible<Property, as::execution::blocking_t>::value,
+            as::execution::blocking_t,
+            typename as::query_result<Executor const&, Property>::type
+        >::type
+    >::type
+    query(Property const& p) const
+        BOOST_ASIO_NOEXCEPT_IF((as::is_nothrow_query<Executor const&, Property>::value))
+    {
+        return
+            query_helper(
+                std::is_convertible<Property, as::execution::blocking_t>(),
+                p
+            );
+    }
+
+
+    template <typename Property>
+    typename as::constraint<
+        as::can_prefer<Executor const&, Property>::value
+        && !std::is_convertible<Property, as::execution::blocking_t::always_t>::value,
+        null_strand<
+            typename std::decay<
+                typename as::prefer_result<Executor const&, Property>::type
+            >::type
+        >
+    >::type
+    prefer(Property const& p) const
+        BOOST_ASIO_NOEXCEPT_IF((as::is_nothrow_prefer<Executor const&, Property>::value))
+    {
+        return
+            null_strand<
+                typename std::decay<
+                    typename as::prefer_result<Executor const&, Property>::type
+                >::type
+            >(as::prefer(exe_, p));
+    }
+
+    template <typename Property>
+    typename as::constraint<
+        as::can_require<Executor const&, Property>::value
+        && !std::is_convertible<Property, as::execution::blocking_t::always_t>::value,
+        null_strand<
+            typename std::decay<
+                typename as::require_result<Executor const&, Property>::type
+            >::type
+        >
+    >::type
+    require(Property const& p) const
+        BOOST_ASIO_NOEXCEPT_IF((as::is_nothrow_require<Executor const&, Property>::value))
+    {
+        return
+            null_strand<
+                typename std::decay<
+                    typename as::require_result<Executor const&, Property>::type
+                >::type
+            >(as::require(exe_, p));
+    }
+
 private:
     inner_executor_type exe_;
 };

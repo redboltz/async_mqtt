@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_CLIENT_HPP
 
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/get_inner_executor.hpp>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -446,10 +447,10 @@ public:
 
     /**
      * @brief executor getter
-     * @return strand as an executor
+     * @return return internal executor (not guarded by the strand)
      */
     as::any_io_executor get_executor() const {
-        return ep_->strand();
+        return get_inner_executor(ep_->strand());
     }
 
     /**
