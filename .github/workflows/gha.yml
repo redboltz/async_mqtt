@@ -29,10 +29,10 @@ jobs:
       env:
         OPENSSL_ROOT_DIR: /usr/local/opt/openssl
         S_CFLAGS:      -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
-        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         S_LDFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
         NS_CFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
-        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         PROF_CXXFLAGS: -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -fprofile-arcs -ftest-coverage
         NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
       run: |
@@ -87,7 +87,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: usr
-        key: ${{ runner.os }}-boost-20230507
+        key: ${{ runner.os }}-boost-20240507-2
     - name: install clang++15
       run: |
          sudo apt-get install clang-15 clang++-15
@@ -97,12 +97,12 @@ jobs:
     - name: Configure
       env:
         S_CFLAGS:      -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
-        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         S_LDFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
         NS_CFLAGS:     -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
-        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         PROF_CXXFLAGS: -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -fprofile-arcs -ftest-coverage
-        NS_CXXFLAGS_GCC:  -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING
+        NS_CXXFLAGS_GCC:  -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
       run: |
         [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \

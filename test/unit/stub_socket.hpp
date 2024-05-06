@@ -228,6 +228,162 @@ void async_read(
     socket.async_read_some(mb, std::forward<CompletionToken>(token));
 }
 
+template <>
+struct layer_customize<stub_socket> {
+    template <
+        typename MutableBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_read(
+        as::any_io_executor exe,
+        stub_socket& stream,
+        MutableBufferSequence const& mbs,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor exe,
+                stub_socket& stream,
+                MutableBufferSequence const& mbs
+            ) {
+                return stream.async_read_some(
+                    mbs,
+                    // You must bind exe to the handler if you use underlying async_function
+                    // using the completion handler that you defined.
+                    as::bind_executor(
+                        exe,
+                        [completion_handler = force_move(completion_handler)]
+                        (error_code const& ec, std::size_t size) mutable {
+                            force_move(completion_handler)(ec, size);
+                        }
+                    )
+                );
+            },
+            token,
+            exe,
+            std::ref(stream),
+            std::ref(mbs)
+        );
+    }
+
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_close(
+        as::any_io_executor exe,
+        stub_socket& stream,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor /* exe */,
+                stub_socket& stream
+            ) {
+                error_code ec;
+                if (stream.is_open()) {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "stub close";
+                    stream.close(ec);
+                }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "stub already closed";
+                }
+                force_move(completion_handler)(ec);
+            },
+            token,
+            exe,
+            std::ref(stream)
+        );
+    }
+};
+
+template <>
+struct layer_customize<basic_stub_socket<4>> {
+    template <
+        typename MutableBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_read(
+        as::any_io_executor exe,
+        basic_stub_socket<4>& stream,
+        MutableBufferSequence const& mbs,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor exe,
+                basic_stub_socket<4>& stream,
+                MutableBufferSequence const& mbs
+            ) {
+                return stream.async_read_some(
+                    mbs,
+                    // You must bind exe to the handler if you use underlying async_function
+                    // using the completion handler that you defined.
+                    as::bind_executor(
+                        exe,
+                        [completion_handler = force_move(completion_handler)]
+                        (error_code const& ec, std::size_t size) mutable {
+                            force_move(completion_handler)(ec, size);
+                        }
+                    )
+                );
+            },
+            token,
+            exe,
+            std::ref(stream),
+            std::ref(mbs)
+        );
+    }
+
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_close(
+        as::any_io_executor exe,
+        basic_stub_socket<4>& stream,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor /* exe */,
+                basic_stub_socket<4>& stream
+            ) {
+                error_code ec;
+                if (stream.is_open()) {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "stub close";
+                    stream.close(ec);
+                }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "stub already closed";
+                }
+                force_move(completion_handler)(ec);
+            },
+            token,
+            exe,
+            std::ref(stream)
+        );
+    }
+};
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_STUB_SOCKET_HPP
