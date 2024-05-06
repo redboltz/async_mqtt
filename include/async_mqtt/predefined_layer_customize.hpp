@@ -7,8 +7,7 @@
 #if !defined(ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZE_HPP)
 #define ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZE_HPP
 
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/steady_timer.hpp>
+#include <boost/asio.hpp>
 
 #if defined(ASYNC_MQTT_USE_WS)
 #include <boost/beast/websocket/stream.hpp>
