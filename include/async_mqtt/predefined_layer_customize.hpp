@@ -10,10 +10,6 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/steady_timer.hpp>
 
-#if defined(ASYNC_MQTT_USE_WS)
-#include <boost/beast/websocket/stream.hpp>
-#endif // defined(ASYNC_MQTT_USE_WS)
-
 #include <async_mqtt/constant.hpp>
 
 #if defined(ASYNC_MQTT_USE_TLS)

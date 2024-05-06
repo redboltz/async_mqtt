@@ -16,7 +16,13 @@
 #include <async_mqtt/constant.hpp>
 
 #if defined(ASYNC_MQTT_USE_TLS)
+
 #include <async_mqtt/tls.hpp>
+
+#if defined(ASYNC_MQTT_USE_WS) && !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
+#define ASYNC_MQTT_TLS_WS_INCLUDE <boost/beast/websocket/ssl.hpp>
+#endif // defined(ASYNC_MQTT_USE_WS) && !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
+
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
 /// @file
