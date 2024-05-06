@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        pattern: [0, 1]
+        pattern: [0, 1, 2, 3]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
