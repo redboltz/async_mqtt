@@ -20,10 +20,6 @@
 #include <boost/asio/append.hpp>
 #include <boost/asio/consign.hpp>
 
-#if defined(ASYNC_MQTT_USE_WS)
-#include <boost/beast/websocket/stream.hpp>
-#endif // defined(ASYNC_MQTT_USE_WS)
-
 #include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/optional.hpp>
@@ -40,42 +36,6 @@ namespace async_mqtt {
 
 namespace as = boost::asio;
 namespace sys = boost::system;
-
-template <typename Stream>
-struct is_ws : public std::false_type {};
-
-#if defined(ASYNC_MQTT_USE_WS)
-namespace bs = boost::beast;
-
-template <typename NextLayer>
-struct is_ws<bs::websocket::stream<NextLayer>> : public std::true_type {};
-
-template <
-    typename NextLayer,
-    typename ConstBufferSequence,
-    typename CompletionToken,
-    typename std::enable_if_t<
-        as::is_const_buffer_sequence<ConstBufferSequence>::value
-    >* = nullptr
->
-auto
-async_write(
-    bs::websocket::stream<NextLayer>& stream,
-    ConstBufferSequence const& cbs,
-    CompletionToken&& token
-) {
-    return stream.async_write(cbs, std::forward<CompletionToken>(token));
-}
-
-#endif // defined(ASYNC_MQTT_USE_WS)
-
-template <typename Stream>
-struct is_tls : public std::false_type {};
-
-#if defined(ASYNC_MQTT_USE_TLS)
-template <typename NextLayer>
-struct is_tls<tls::stream<NextLayer>> : public std::true_type {};
-#endif // defined(ASYNC_MQTT_USE_TLS)
 
 template <typename NextLayer, template <typename> typename Strand = as::strand>
 class stream : public std::enable_shared_from_this<stream<NextLayer, Strand>> {
@@ -218,18 +178,17 @@ private:
     stream(T&& t, Args&&... args)
         :nl_{std::forward<T>(t), std::forward<Args>(args)...}
     {
-#if defined(ASYNC_MQTT_USE_WS)
-        if constexpr(is_ws<next_layer_type>::value) {
-            nl_.binary(true);
-            nl_.set_option(
-                bs::websocket::stream_base::decorator(
-                    [](bs::websocket::request_type& req) {
-                        req.set("Sec-WebSocket-Protocol", "mqtt");
-                    }
-                )
-            );
+        initialize(nl_);
+    }
+
+    template <typename Layer>
+    static void initialize(Layer& layer) {
+        if constexpr (has_next_layer<Layer>::value) {
+            initialize(layer.next_layer());
         }
-#endif // defined(ASYNC_MQTT_USE_WS)
+        if constexpr(has_initialize<Layer>::value) {
+            layer_customize<Layer>::initialize(layer);
+        }
     }
 
     struct read_packet_impl {
@@ -261,14 +220,28 @@ private:
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
                 auto& a_strm{strm};
-                async_read(
-                    a_strm.nl_,
-                    as::buffer(address, 1),
-                    as::bind_executor(
+                if constexpr (
+                    has_async_read<NextLayer>::value) {
+                    layer_customize<NextLayer>::async_read(
                         a_strm.raw_strand_,
-                        force_move(self)
-                    )
-                );
+                        a_strm.nl_,
+                        as::buffer(address, 1),
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            force_move(self)
+                        )
+                    );
+                }
+                else {
+                    async_read(
+                        a_strm.nl_,
+                        as::buffer(address, 1),
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            force_move(self)
+                        )
+                    );
+                }
             } break;
             default:
                 BOOST_ASSERT(false);
@@ -299,14 +272,28 @@ private:
                 {
                     auto address = &strm.header_remaining_length_buf_[received];
                     auto& a_strm{strm};
-                    async_read(
-                        a_strm.nl_,
-                        as::buffer(address, 1),
-                        as::bind_executor(
-                            a_strm.raw_strand_,
-                            force_move(self)
-                        )
-                    );
+                    if constexpr (
+                        has_async_read<NextLayer>::value) {
+                            layer_customize<NextLayer>::async_read(
+                                a_strm.raw_strand_,
+                                a_strm.nl_,
+                                as::buffer(address, 1),
+                                as::bind_executor(
+                                    a_strm.raw_strand_,
+                                    force_move(self)
+                                )
+                            );
+                    }
+                    else {
+                        async_read(
+                            a_strm.nl_,
+                            as::buffer(address, 1),
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                force_move(self)
+                            )
+                        );
+                    }
                 }
                 break;
             case remaining_length:
@@ -328,14 +315,28 @@ private:
                     mul *= 128;
                     auto address = &strm.header_remaining_length_buf_[received];
                     auto& a_strm{strm};
-                    async_read(
-                        a_strm.nl_,
-                        as::buffer(address, 1),
-                        as::bind_executor(
-                            a_strm.raw_strand_,
-                            force_move(self)
-                        )
-                    );
+                    if constexpr (
+                        has_async_read<NextLayer>::value) {
+                            layer_customize<NextLayer>::async_read(
+                                a_strm.raw_strand_,
+                                a_strm.nl_,
+                                as::buffer(address, 1),
+                                as::bind_executor(
+                                    a_strm.raw_strand_,
+                                    force_move(self)
+                                )
+                            );
+                    }
+                    else {
+                        async_read(
+                            a_strm.nl_,
+                            as::buffer(address, 1),
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                force_move(self)
+                            )
+                        );
+                    }
                 }
                 else {
                     // remaining_length end
@@ -356,14 +357,28 @@ private:
                         state = complete;
                         auto address = &spa[std::ptrdiff_t(received)];
                         auto& a_strm{strm};
-                        async_read(
-                            a_strm.nl_,
-                            as::buffer(address, rl),
-                            as::bind_executor(
-                                a_strm.raw_strand_,
-                                force_move(self)
-                            )
-                        );
+                        if constexpr (
+                            has_async_read<NextLayer>::value) {
+                                layer_customize<NextLayer>::async_read(
+                                    a_strm.raw_strand_,
+                                    a_strm.nl_,
+                                    as::buffer(address, rl),
+                                    as::bind_executor(
+                                        a_strm.raw_strand_,
+                                        force_move(self)
+                                    )
+                                );
+                        }
+                        else {
+                            async_read(
+                                a_strm.nl_,
+                                as::buffer(address, rl),
+                                as::bind_executor(
+                                    a_strm.raw_strand_,
+                                    force_move(self)
+                                )
+                            );
+                        }
                     }
                 }
                 break;
@@ -427,14 +442,28 @@ private:
                     state = complete;
                     auto& a_strm{strm};
                     auto& a_packet{*packet};
-                    async_write(
-                        a_strm.nl_,
-                        a_packet.const_buffer_sequence(),
-                        as::bind_executor(
+                    if constexpr (
+                        has_async_write<NextLayer>::value) {
+                        layer_customize<NextLayer>::async_write(
                             a_strm.raw_strand_,
-                            force_move(self)
-                        )
-                    );
+                            a_strm.nl_,
+                            a_packet.const_buffer_sequence(),
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                force_move(self)
+                            )
+                        );
+                    }
+                    else {
+                        async_write(
+                            a_strm.nl_,
+                            a_packet.const_buffer_sequence(),
+                            as::bind_executor(
+                                a_strm.raw_strand_,
+                                force_move(self)
+                            )
+                        );
+                    }
                 }
                 else {
                     state = complete;
@@ -473,14 +502,28 @@ private:
                     }
                     else {
                         a_strm.sending_cbs_ = force_move(a_strm.storing_cbs_);
-                        async_write(
-                            a_strm.nl_,
-                            a_strm.sending_cbs_,
-                            as::bind_executor(
+                        if constexpr (
+                            has_async_write<NextLayer>::value) {
+                            layer_customize<NextLayer>::async_write(
                                 a_strm.raw_strand_,
-                                force_move(self)
-                            )
-                        );
+                                a_strm.nl_,
+                                a_strm.sending_cbs_,
+                                as::bind_executor(
+                                    a_strm.raw_strand_,
+                                    force_move(self)
+                                )
+                            );
+                        }
+                        else {
+                            async_write(
+                                a_strm.nl_,
+                                a_strm.sending_cbs_,
+                                as::bind_executor(
+                                    a_strm.raw_strand_,
+                                    force_move(self)
+                                )
+                            );
+                        }
                     }
                 }
                 else {
@@ -556,224 +599,73 @@ private:
         enum {
             dispatch,
             close,
-            drop1,
             complete
         } state = dispatch;
         this_type_sp life_keeper = strm.shared_from_this();
 
         template <typename Self>
         void operator()(
-            Self& self
+            Self& self,
+            error_code const& ec = error_code{}
         ) {
-            BOOST_ASSERT(state == dispatch);
-            state = close;
-            auto& a_strm{strm};
-            as::dispatch(
-                as::bind_executor(
-                    a_strm.raw_strand_,
-                    as::append(
-                        force_move(self),
-                        error_code{},
-                        std::ref(a_strm.nl_)
+            if (state == dispatch) {
+                state = close;
+                auto& a_strm{strm};
+                as::dispatch(
+                    as::bind_executor(
+                        a_strm.raw_strand_,
+                        as::append(
+                            force_move(self),
+                            error_code{},
+                            std::ref(a_strm.nl_)
+                        )
                     )
-                )
-            );
+                );
+            }
+            else {
+                BOOST_ASSERT(state == complete);
+                BOOST_ASSERT(strm.in_strand());
+                strm.storing_cbs_.clear();
+                strm.sending_cbs_.clear();
+                self.complete(ec);
+            }
         }
 
-#if defined(ASYNC_MQTT_USE_WS)
         template <typename Self, typename Stream>
         void operator()(
             Self& self,
-            error_code const& ec,
-            std::size_t /*size*/,
+            error_code const& /* ec */,
             std::reference_wrapper<Stream> stream
         ) {
+            BOOST_ASSERT(state == close);
             BOOST_ASSERT(strm.in_strand());
-            if constexpr(is_ws<Stream>::value) {
-                BOOST_ASSERT(state == complete);
-                if (ec) {
-                    if (ec == bs::websocket::error::closed) {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "ws async_read (for close)  success";
-                    }
-                    else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "ws async_read (for close):" << ec.message();
-                    }
-                    state = close;
-                    auto& a_strm{strm};
-                    as::dispatch(
+            if constexpr(has_async_close<Stream>::value) {
+                auto& a_strm{strm};
+                if constexpr (has_next_layer<Stream>::value) {
+                    layer_customize<Stream>::async_close(
+                        a_strm.raw_strand_,
+                        stream.get(),
                         as::bind_executor(
                             a_strm.raw_strand_,
                             as::append(
                                 force_move(self),
-                                error_code{},
                                 std::ref(stream.get().next_layer())
                             )
                         )
                     );
                 }
                 else {
-                    auto& a_strm{strm};
-                    auto buffer = std::make_shared<bs::flat_buffer>();
-                    stream.get().async_read(
-                        *buffer,
-                        as::bind_executor(
-                            a_strm.raw_strand_,
-                            as::append(
-                                as::consign(
-                                    force_move(self),
-                                    buffer
-                                ),
-                                force_move(stream)
-                            )
-                        )
-                    );
-                }
-            }
-        }
-#endif // defined(ASYNC_MQTT_USE_WS)
-
-        template <typename Self, typename Stream>
-        void operator()(
-            Self& self,
-            error_code const& ec,
-            std::reference_wrapper<Stream> stream
-        ) {
-            BOOST_ASSERT(strm.in_strand());
-            switch (state) {
-            case close: {
-#if defined(ASYNC_MQTT_USE_WS)
-                if constexpr(is_ws<Stream>::value) {
-                    if (stream.get().is_open()) {
-                        state = drop1;
-                        auto& a_strm{strm};
-                        stream.get().async_close(
-                            bs::websocket::close_code::none,
-                            as::bind_executor(
-                                a_strm.raw_strand_,
-                                as::append(
-                                    force_move(self),
-                                    force_move(stream)
-                                )
-                            )
-                        );
-                    }
-                    else {
-                        state = close;
-                        auto& a_strm{strm};
-                        as::dispatch(
-                            as::bind_executor(
-                                a_strm.raw_strand_,
-                                as::append(
-                                    force_move(self),
-                                    error_code{},
-                                    std::ref(stream.get().next_layer())
-                                )
-                            )
-                        );
-                    }
-                }
-                else
-#endif // defined(ASYNC_MQTT_USE_WS)
-                if constexpr(is_tls<Stream>::value) {
-                    auto& a_strm{strm};
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                        << "TLS async_shutdown start with timeout";
-                    auto tim = std::make_shared<as::steady_timer>(a_strm.raw_strand_, shutdown_timeout);
-                    tim->async_wait(
-                        as::bind_executor(
-                            a_strm.raw_strand_,
-                            [this, &next_layer = stream.get().next_layer()] (error_code const& ec) {
-                                if (!ec) {
-                                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                                        << "TLS async_shutdown timeout";
-                                    error_code ec;
-                                    next_layer.close(ec);
-                                }
-                            }
-                        )
-                    );
-                    stream.get().async_shutdown(
-                        as::bind_executor(
-                            a_strm.raw_strand_,
-                            as::append(
-                                as::consign(
-                                    force_move(self),
-                                    tim
-                                ),
-                                std::ref(stream.get().next_layer())
-                            )
-                        )
-                    );
-                }
-                else {
-                    error_code ec;
-                    if (stream.get().is_open()) {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "TCP close";
-                        stream.get().close(ec);
-                    }
-                    else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "TCP already closed";
-                    }
-                    strm.storing_cbs_.clear();
-                    strm.sending_cbs_.clear();
-                    self.complete(ec);
-                }
-            } break;
-            case drop1: {
-#if defined(ASYNC_MQTT_USE_WS)
-                if constexpr(is_ws<Stream>::value) {
-                    if (ec) {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
-                            << ASYNC_MQTT_ADD_VALUE(address, this)
-                            << "ws async_close:" << ec.message();
-                        state = close;
-                        auto& a_strm{strm};
-                        as::dispatch(
-                            as::bind_executor(
-                                a_strm.raw_strand_,
-                                as::append(
-                                    force_move(self),
-                                    error_code{},
-                                    std::ref(stream.get().next_layer())
-                                )
-                            )
-                        );
-                        return;
-                    }
                     state = complete;
-                    auto& a_strm{strm};
-                    auto buffer = std::make_shared<bs::flat_buffer>();
-                    stream.get().async_read(
-                        *buffer,
+                    layer_customize<Stream>::async_close(
+                        a_strm.raw_strand_,
+                        stream.get(),
                         as::bind_executor(
                             a_strm.raw_strand_,
-                            as::append(
-                                as::consign(
-                                    force_move(self),
-                                    buffer
-                                ),
-                                force_move(stream)
-                            )
+                            force_move(self)
                         )
                     );
                 }
-#else  // defined(ASYNC_MQTT_USE_WS)
-                (void)ec;
-#endif // defined(ASYNC_MQTT_USE_WS)
-            } break;
-            default:
-                BOOST_ASSERT(false);
-                break;
+                return;
             }
         }
     };
