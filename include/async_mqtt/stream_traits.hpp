@@ -8,8 +8,17 @@
 #define ASYNC_MQTT_STREAM_TRAITS_HPP
 
 #include <type_traits>
+#include <vector>
+
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/any_completion_handler.hpp>
+#include <boost/asio/any_io_executor.hpp>
+
+#include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
+
+namespace as = boost::asio;
 
 namespace detail {
 
@@ -20,8 +29,13 @@ template <typename T>
 auto has_next_layer_impl(decltype(nullptr)) ->
     decltype(std::declval<T&>().next_layer(), std::true_type{});
 
+} // namespace detail
+
 template <typename T>
-using has_next_layer = decltype(has_next_layer_impl<T>(nullptr));
+using has_next_layer = decltype(detail::has_next_layer_impl<T>(nullptr));
+
+
+namespace detail {
 
 template<typename T, bool = has_next_layer<T>::value>
 struct lowest_layer_type_impl {
@@ -34,8 +48,12 @@ struct lowest_layer_type_impl<T, true> {
         decltype(std::declval<T&>().next_layer())>::type;
 };
 
+} // namespace detail
+
 template<typename T>
-using lowest_layer_type = typename lowest_layer_type_impl<T>::type;
+using lowest_layer_type = typename detail::lowest_layer_type_impl<T>::type;
+
+namespace detail {
 
 template<typename T>
 T&
@@ -55,21 +73,72 @@ get_lowest_layer_impl(T& t, std::true_type) noexcept {
 
 } // namespace detail
 
-template<typename T>
-using executor_type = decltype(std::declval<T>().get_executor());
+
 
 template<typename T>
-using lowest_layer_type = detail::lowest_layer_type<T>;
+using executor_type = decltype(std::declval<T>().get_executor());
 
 template<typename T>
 lowest_layer_type<T>& get_lowest_layer(T& t) noexcept {
     return
         detail::get_lowest_layer_impl(
             t,
-            detail::has_next_layer<T>{}
+            has_next_layer<T>{}
         );
 }
 
+/**
+ * @brief customization class for underlying layer
+ * @tparam Layer Specialized parameter for your own layer
+ */
+template <typename Layer>
+struct layer_customize;
+
+template <typename Layer, typename = void>
+struct has_initialize : std::false_type {};
+
+template <typename Layer>
+struct has_initialize<
+    Layer,
+    std::void_t<
+        decltype(layer_customize<Layer>::initialize(std::declval<Layer&>()))
+    >
+> : std::true_type {};
+
+template <typename Layer, typename = void>
+struct has_async_write : std::false_type {};
+
+template <typename Layer>
+struct has_async_write<
+    Layer,
+    std::void_t<
+        decltype(
+            layer_customize<Layer>::async_write(
+                std::declval<as::any_io_executor>(),
+                std::declval<Layer&>(),
+                std::declval<std::vector<as::const_buffer> const&>(),
+                std::declval<as::any_completion_handler<void(error_code const&, std::size_t)>>()
+            )
+        )
+    >
+> : std::true_type {};
+
+template <typename Layer, typename = void>
+struct has_async_close : std::false_type {};
+
+template <typename Layer>
+struct has_async_close<
+    Layer,
+    std::void_t<
+        decltype(
+            layer_customize<Layer>::async_close(
+                std::declval<as::any_io_executor>(),
+                std::declval<Layer&>(),
+                std::declval<as::any_completion_handler<void(error_code const&)>>()
+            )
+        )
+    >
+> : std::true_type {};
 
 } // namespace async_mqtt
 
