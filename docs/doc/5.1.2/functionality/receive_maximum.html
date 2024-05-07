@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Receive Maximum</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Receive Maximum</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Receive Maximum is a way to flow control PUBLISH(QoS1, QoS2) packets. They require to store for resending. So the node should prepare the memory packet size * Receive Maximum.
+The maximum value of the packet size can be defined using <a href="maximum_packet_size.html">Maximum Packet Size</a>.
+If the node sends over the Receive Maximum packets, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_increasedecrease_the_receive_count">When increase/decrease the receive count?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>When the node send/receive PUBLISH (QoS1 or QoS2) packet, then increase the receive count.</p>
+</li>
+<li>
+<p>When the node send/receive PUBACK packet corresponding to the PUBLISH QoS1 packet, then decrease the receive count.</p>
+</li>
+<li>
+<p>When the node send/receive PUBCOMP packet corresponding to the PUBLISH QoS2 packet, then decrease the receive count.</p>
+</li>
+<li>
+<p>When the node send/receive PUBREC packet corresponding to the PUBLISH QoS2 packet and if the PUBREC Reason Code is error, then decrease the receive count.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The timing is the same as Packet Identifier becomes reusable.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Packet Identifier and Receive Maximum are not directly related. Packet Identifier is not only used for PUBLISH (QoS1 or QoS2) packet but also SUBSCRIBE/UNSUBSCRIBE packet.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_notifying_receive_maximum">Notifying Receive Maximum</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are two independent Receive Maximum.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../images/diag-mermaid-md5-b5a6df7a586f3e0fd104cd6968ba9105.png" alt="Diagram" width="784" height="243">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_broker_to_client_receive_maximum">broker to client Receive Maximum</h3>
+<div class="paragraph">
+<p>The client can set <code>Receive Maximum</code> property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_client_to_client_receive_maximum">client to client Receive Maximum</h3>
+<div class="paragraph">
+<p>The broker can set <code>Receive Maximum</code> property that value is greater than 0 to the CONNACK packet. This means the broker can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_async_mqtt_implementation">async_mqtt implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>asnyc_mqtt automatically respect Receive Maximum so user doesn&#8217;t care about that. If user calls send() with PUBLISH (QoS1 or QoS2) packets over received Receive Maximum times before the publish sequence is not finished, async_mqtt queuing the PUBLISH packet internally. When the receive count is decreased, then send the queued PUBLISH packet. The order of sending the PUBLISH is the same as user&#8217;s send() function call order.
+There is no explicit limitation for the number of queuing packets. But in order to create PUBLISH (QoS1 or QoS2) packet, user needs to acquire a Packet Identifier. It is limited at most 65535, so it is also the limit of queuing packets.</p>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="request_response.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="maximum_packet_size.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Send/Recv packets</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Send/Recv packets</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#aec0ad1e5c8b1a748160b3445583845c1">recv()</a> funtion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You need to call <a href="../api/classasync__mqtt_1_1basic__endpoint.html#aec0ad1e5c8b1a748160b3445583845c1">recv()</a> function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
+You can control packet receiving timing. async_mqtt doesn&#8217;t use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using recv().
+recv() function is more flexible than handler registering APIs. In addition, it works well with <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a>.</p>
+</div>
+<div class="paragraph">
+<p>You cannot call recv() function continuously. You can call the next recv() function after the previous recv() function&#8217;s CompletionToken is invoked or in the Completion handler.</p>
+</div>
+<div class="sect2">
+<h3 id="_packet_variant"><a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a></h3>
+<div class="paragraph">
+<p>recv()'s CompletionToken parameter is <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.
+It is a variant type of all MQTT packets and error.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+async_mqtt has basic_foobar type and foobar type if the type contains MQTT&#8217;s Packet Identifier. basic_foobar takes PacketIdBytes parameter. basic_foobar&lt;2&gt; is the same as foobar. MQTT spec defines the size of Packet Identifier to 2. But some of clustering brokers use expanded Packet Identifer for inter brokers communication. General users doesn&#8217;t need to care basic_foobar types, simply use foobar.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can access packet_variant as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">namespace</span> <span class="n">am</span> <span class="o">=</span> <span class="n">async_mqtt</span><span class="p">;</span> <span class="c1">// always use this namespace alias in this document</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// from CompletionToken</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pv is packet_variant</span>
+     <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+         <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+              <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                      <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv "</span>
+                      <span class="o">&lt;&lt;</span> <span class="s">"sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                      <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+              <span class="p">},</span>
+              <span class="c1">// other packets handling code here</span>
+              <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
+         <span class="p">}</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+         <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
+         <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
+         <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>pv</code> can evaluated as bool. If <code>pv</code> has valid packet then it is convert to true, otherwise false. Typically, when underlying socket is disconnected, <code>pv</code> contains error and it is evaluated as false.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_control_packet_type_filter">Control Packet Type filter</h3>
+<div class="paragraph">
+<p>You might interested in the specific packets. Your application doesn&#8217;t want to care non important packet like pingresp, puback, pubrec, pubrel, and pubcomp packets.</p>
+</div>
+<div class="paragraph">
+<p>You can filter packets as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// ep is endpoint shared_ptr</span>
+<span class="n">ep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">match</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">publish</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you set <code>filter::match</code> as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, completion_token isn&#8217;t invoked but received packets are apropriately proccessed.
+If error is happened, completion_token is invoked with packet_variant that contains error.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// ep is endpoint</span>
+<span class="n">ep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">except</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">pingresp</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">puback</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you set <code>filter::except</code> as the first argument, the second parameter is a list of ignoring MQTT Control Packet types. If the packets int the list are received, completion_token isn&#8217;t invoked but received packets are apropriately proccessed.
+If error is happened, completion_token is invoked with packet_variant that contains error.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_function"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a472d7f318e9c576c364d148c817d6598">send()</a> function</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MQTT has various packet types for example CONNECT, PUBLISH, SUBSCRIBE and so on. In order to send the packet, first create the packet and then pass it as send() parameter. If you send timing is a protocol error then the send() CompletionToken is invoked with system_error.
+You can call send() continuously. async_mqtt endpoint has queuing mechanism. When the previous send() function&#8217;s CompletionToken is invoked, then the next packet in the queue is sent if exists.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_packet_based_apis">Packet Based APIs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>async_mqtt automatically update endpoint&#8217;s interenal state when packet sending and receiving. For example, When you send CONNECT packet with maximum_packet_size property, endpoint set maximum packet size for receiving. See the packet and property API reference and functionality documents.</p>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="sl_coro.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="non_packet_based.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
