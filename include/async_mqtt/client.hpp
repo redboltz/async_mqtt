@@ -833,8 +833,8 @@ using client = basic_client<Version, as::strand, NextLayer>;
  *        This is for typical usecase.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <protocol_version Version, typename NextLayer>
-using client_st = basic_client<Version, null_strand, NextLayer>;
+// template <protocol_version Version, typename NextLayer>
+// using client_st = basic_client<Version, null_strand, NextLayer>;
 
 } // namespace async_mqtt
 
