@@ -665,7 +665,31 @@ private:
                         )
                     );
                 }
-                return;
+            }
+            else {
+                if constexpr (has_next_layer<Stream>::value) {
+                    auto& a_strm{strm};
+                    as::dispatch(
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            as::append(
+                                force_move(self),
+                                error_code{},
+                                std::ref(a_strm.nl_)
+                            )
+                        )
+                    );
+                }
+                else {
+                    state = complete;
+                    auto& a_strm{strm};
+                    as::dispatch(
+                        as::bind_executor(
+                            a_strm.raw_strand_,
+                            force_move(self)
+                        )
+                    );
+                }
             }
         }
     };
