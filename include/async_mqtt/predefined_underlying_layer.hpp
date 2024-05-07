@@ -24,7 +24,7 @@
 
 #if !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
 #define ASYNC_MQTT_TLS_WS_INCLUDE <boost/beast/websocket/ssl.hpp>
-#incdif // !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
+#endif // !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
 
 #include ASYNC_MQTT_TLS_WS_INCLUDE
 
