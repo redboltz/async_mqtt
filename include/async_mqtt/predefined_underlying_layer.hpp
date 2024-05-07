@@ -7,10 +7,11 @@
 #if !defined(ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP)
 #define ASYNC_MQTT_PREDEFINED_UNDERLYING_LAYER_HPP
 
-#include <boost/asio/ip/tcp.hpp>
+#include <boost/asio.hpp>
 
 #if defined(ASYNC_MQTT_USE_WS)
 #include <boost/beast/websocket/stream.hpp>
+#include <boost/beast/websocket/error.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #include <async_mqtt/constant.hpp>
@@ -22,6 +23,8 @@
 #if defined(ASYNC_MQTT_USE_WS) && !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
 #define ASYNC_MQTT_TLS_WS_INCLUDE <boost/beast/websocket/ssl.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS) && !defined(ASYNC_MQTT_TLS_WS_INCLUDE)
+
+#include ASYNC_MQTT_TLS_WS_INCLUDE
 
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
