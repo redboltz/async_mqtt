@@ -1,0 +1,176 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:api]
+
+= Customize Underlying Layer
+
+== Customization Points
+
+You can use async_mqtt with not only predefined underlying layers (mqtt, mqtts, ws, and wss) but also your own underlying layers.
+In order to use your own underlying layer with async_mqtt, you need to define a class template specilization.
+
+Lets' say you want to use `your_own_stream` as the underlying layer of async_mqtt.
+
+=== Four check points
+If you need some custom processes for `your_own_stream` at least one of the following four points, you need to define `struct layer_customize` specilization. If you don't define the specialization, or its static member functions, the default version is used.
+
+==== 1. initialize
+* Do nothing by default.
+* initialize is called from the bottom layer to the top layer synchronously.
+* initialize is called when the endpoint is created.
+
+==== 2. async_read
+* Call Boost.Asio's `async_read()` with `your_own_stream` by default. 
+** See https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html
+
+==== 3. async_write
+* Call Boost.Asio's `async_write()` with `your_own_stream` by default. 
+** See https://www.boost.org/doc/html/boost_asio/reference/async_write/overload1.html
+
+==== 4. async_close
+* Do nothing by default.
+* async_close is called from the top layer to the bottom layer asynchronously.
+* initialize is called when the endpoint is created.
+
+Only if you want to customize some of the four points, then define the member function as follows:
+
+```cpp
+// Partial or full specialization here
+template <typename NextLayer>
+struct layer_customize<your_own_stream<NextLayer>> {
+
+    // define if you want to customize initialize process
+    static void initialize(your_own_stream<NextLayer>& stream) {
+        // Special initialization for your_own_stream
+    }
+
+    // define if you want to customize async_read process
+    template <
+        typename MutableBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_read(
+        as::any_io_executor exe,
+        your_own_stream<NextLayer>& stream,
+        MutableBufferSequence const& mbs,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor exe,
+                your_own_stream<NextLayer>& stream,
+                MutableBufferSequence const& mbs
+            ) {
+                return stream.your_async_read_function(
+                    mbs,
+                    // You must bind exe to the handler if you use underlying async_function
+                    // using the completion handler that you defined.
+                    as::bind_executor(
+                        exe,
+                        [completion_handler = force_move(completion_handler)]
+                        (error_code const& ec, std::size_t size) mutable {
+                            force_move(completion_handler)(ec, size);
+                        }
+                    )
+                );
+            },
+            token,
+            exe,
+            std::ref(stream),
+            std::ref(mbs)
+        );
+    }
+
+    // define if you want to customize async_write process
+    template <
+        typename ConstBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_write(
+        as::any_io_executor exe,
+        your_own_stream<NextLayer>& stream,
+        ConstBufferSequence const& cbs,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor exe,
+                your_own_stream<NextLayer>& stream,
+                ConstBufferSequence const& cbs
+            ) {
+                stream.your_async_write_function(
+                    cbs,
+                    // You must bind exe to the handler if you use underlying async_function
+                    // using the completion handler that you defined.
+                    as::bind_executor(
+                        exe,
+                        [completion_handler = std::forward<CompletionToken>(completion_handler)]
+                        (error_code const& ec_write, std::size_t size) mutable {
+                            force_move(completion_handler)(ec_write, size);
+                        }
+                    )
+                );
+            },
+            token,
+            exe,
+            std::ref(stream),
+            std::ref(cbs)
+        );
+    }
+
+    // define if you want to customize async_close process
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_close(
+        as::any_io_executor exe,
+        your_own_stream<NextLayer>& stream,
+        CompletionToken&& token
+    ) {
+        return as::async_initiate<
+            CompletionToken,
+            void(error_code const& ec)
+        > (
+            [] (auto completion_handler,
+                as::any_io_executor exe,
+                your_own_stream<NextLayer>& stream
+            ) {
+                stream.your_async_close_function(
+                    // You must bind exe to the handler if you use underlying async_function
+                    // using the completion handler that you defined.
+                    as::bind_executor(
+                        exe,
+                        [completion_handler = force_move(completion_handler)]
+                        (error_code const& ec_stream) mutable {
+                            force_move(completion_handler)(ec_stream);
+                        }
+                    )
+                );
+            },
+            token,
+            exe,
+            std::ref(stream)
+        );
+    }
+};
+```
+
+You can replace `your_***_function()`. async_mqtt has some of predefined `struct layer_customize` specializations.
+See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_underlying_layer.hpp
+It helps defining your own underlaying layer.
+
