@@ -28,6 +28,18 @@
 
 #include <async_mqtt/all.hpp>
 
+#if defined(ASYNC_MQTT_USE_TLS)
+#include <async_mqtt/predefined_layer/tls.hpp>
+#endif // defined(ASYNC_MQTT_USE_TLS)
+
+#if defined(ASYNC_MQTT_USE_WS)
+#include <async_mqtt/predefined_layer/ws.hpp>
+#endif // defined(ASYNC_MQTT_USE_WS)
+
+#if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
+#include <async_mqtt/predefined_layer/wss.hpp>
+#endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
+
 namespace as = boost::asio;
 namespace po = boost::program_options;
 namespace am = async_mqtt;

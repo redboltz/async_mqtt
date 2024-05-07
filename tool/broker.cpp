@@ -15,13 +15,24 @@
 #include <boost/format.hpp>
 #include <boost/asio/signal_set.hpp>
 
-#include <async_mqtt/predefined_layer_customize.hpp>
+#include <async_mqtt/all.hpp>
+
+#if defined(ASYNC_MQTT_USE_TLS)
+#include <async_mqtt/predefined_layer/tls.hpp>
+#endif // defined(ASYNC_MQTT_USE_TLS)
+
+#if defined(ASYNC_MQTT_USE_WS)
+#include <async_mqtt/predefined_layer/ws.hpp>
+#endif // defined(ASYNC_MQTT_USE_WS)
+
+#if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
+#include <async_mqtt/predefined_layer/wss.hpp>
+#endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
+
 #include <async_mqtt/broker/endpoint_variant.hpp>
 #include <async_mqtt/broker/broker.hpp>
 #include <async_mqtt/broker/constant.hpp>
 #include <async_mqtt/broker/fixed_core_map.hpp>
-#include <async_mqtt/null_strand.hpp>
-#include <async_mqtt/setup_log.hpp>
 
 namespace am = async_mqtt;
 namespace as = boost::asio;

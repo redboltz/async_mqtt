@@ -1,73 +1,37 @@
-// Copyright Takatoshi Kondo 2024
+// Copyright Takatoshi Kondo 2022
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZE_HPP)
-#define ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZE_HPP
+#if !defined(ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP)
+#define ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP
 
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/steady_timer.hpp>
-
-#include <async_mqtt/constant.hpp>
-
-#if defined(ASYNC_MQTT_USE_TLS)
-#include <async_mqtt/tls.hpp>
-#endif // defined(ASYNC_MQTT_USE_TLS)
+#include <boost/asio.hpp>
+#include <boost/beast/websocket/stream.hpp>
 
 #include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/log.hpp>
-#include <async_mqtt/util/move.hpp>
-#include <async_mqtt/predefined_underlying_layer.hpp>
 
 /// @file
 
 namespace async_mqtt {
 
 namespace as = boost::asio;
-
-template <typename Protocol, typename Executor>
-struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
-    template <
-        typename CompletionToken
-    >
-    static auto
-    async_close(
-        as::any_io_executor exe,
-        as::basic_stream_socket<Protocol, Executor>& stream,
-        CompletionToken&& token
-    ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec)
-        > (
-            [] (auto completion_handler,
-                as::any_io_executor /* exe */,
-                as::basic_stream_socket<Protocol, Executor>& stream
-            ) {
-                error_code ec;
-                if (stream.is_open()) {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "TCP close";
-                    stream.close(ec);
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "TCP already closed";
-                }
-                force_move(completion_handler)(ec);
-            },
-            token,
-            exe,
-            std::ref(stream)
-        );
-    }
-};
-
-#if defined(ASYNC_MQTT_USE_WS)
-
 namespace bs = boost::beast;
+
+namespace protocol {
+
+namespace detail {
+using mqtt_beast_workaround = as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>;
+} // namespace detail
+
+/**
+ * @breif Type alias of Boost.Beast WebScoket
+ */
+using ws = bs::websocket::stream<detail::mqtt_beast_workaround>;
+
+} // namespace protocol
 
 template <typename NextLayer>
 struct layer_customize<bs::websocket::stream<NextLayer>> {
@@ -198,74 +162,6 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
     }
 };
 
-#endif // defined(ASYNC_MQTT_USE_WS)
-
-#if defined(ASYNC_MQTT_USE_TLS)
-
-template <typename NextLayer>
-struct layer_customize<tls::stream<NextLayer>> {
-    template <
-        typename CompletionToken
-    >
-    static auto
-    async_close(
-        as::any_io_executor exe,
-        tls::stream<NextLayer>& stream,
-        CompletionToken&& token
-    ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec)
-        > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                tls::stream<NextLayer>& stream
-            ) {
-                auto tim = std::make_shared<as::steady_timer>(
-                    exe,
-                    shutdown_timeout
-                );
-                auto ch_sp = std::make_shared<decltype(completion_handler)>(force_move(completion_handler));
-                tim->async_wait(
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [wp = std::weak_ptr<as::steady_timer>(tim), ch_sp]
-                        (error_code const& ec) mutable {
-                            if (!ec) {
-                                if (auto sp = wp.lock()) {
-                                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                                        << "TLS async_shutdown timeout";
-                                    force_move(*ch_sp)(ec);
-                                }
-                            }
-                        }
-                    )
-                );
-                stream.async_shutdown(
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [tim, ch_sp]
-                        (error_code const& ec_shutdown) mutable {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "TLS async_shutdown ec:" << ec_shutdown.message();
-                            force_move(*ch_sp)(ec_shutdown);
-                        }
-                    )
-                );
-            },
-            token,
-            exe,
-            std::ref(stream)
-        );
-    }
-};
-
-#endif // defined(ASYNC_MQTT_USE_TLS)
-
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZE_HPP
+#endif // ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP

@@ -22,6 +22,12 @@ for file in sorted(files, key=lambda file: (file.count('/'), file)):
         continue
     if file.find("/broker/") != -1:
         continue
+    if file.find("/predefined_layer/tls.hpp") != -1:
+        continue
+    if file.find("/predefined_layer/ws.hpp") != -1:
+        continue
+    if file.find("/predefined_layer/wss.hpp") != -1:
+        continue
     if file.find("/picosha2.h") != -1:
         continue
     print("#include <{}>".format(file))

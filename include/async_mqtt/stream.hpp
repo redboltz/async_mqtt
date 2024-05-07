@@ -29,7 +29,6 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/tls.hpp>
 #include <async_mqtt/log.hpp>
 
 namespace async_mqtt {

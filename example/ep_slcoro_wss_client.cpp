@@ -10,6 +10,7 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/all.hpp>
+#include <async_mqtt/predefined_layer/wss.hpp>
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
