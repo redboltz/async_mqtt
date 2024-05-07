@@ -20,8 +20,11 @@ namespace as = boost::asio;
 template <typename Strand>
 as::any_io_executor get_inner_executor(Strand& str) {
     if constexpr (
-        is_strand_template<Strand>::value ||
+        is_strand_template<Strand>::value
+#if 0
+        ||
         is_null_strand_template<Strand>::value
+#endif
     ) {
         return str.get_inner_executor();
     }
