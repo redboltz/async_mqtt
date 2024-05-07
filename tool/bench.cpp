@@ -15,7 +15,7 @@
 #include <async_mqtt/all.hpp>
 
 #if defined(ASYNC_MQTT_USE_TLS)
-#include <async_mqtt/predefined_layer/tls.hpp>
+#include <async_mqtt/predefined_layer/mqtts.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
 #if defined(ASYNC_MQTT_USE_WS)

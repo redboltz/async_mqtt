@@ -84,8 +84,7 @@
 #include <async_mqtt/packet/v5_unsubscribe.hpp>
 #include <async_mqtt/packet/validate_property.hpp>
 #include <async_mqtt/packet/will.hpp>
-#include <async_mqtt/predefined_layer/basic_stream.hpp>
-#include <async_mqtt/predefined_layer/tcp.hpp>
+#include <async_mqtt/predefined_layer/mqtt.hpp>
 #include <async_mqtt/util/any.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/hex_dump.hpp>
