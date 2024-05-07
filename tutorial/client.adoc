@@ -14,6 +14,30 @@ async_mqtt has class {api-base}/++classasync__mqtt_1_1basic__client.html#a9dd119
 
 Both are implemented using {api-base}/++classasync__mqtt_1_1basic__client.html++[basic_client]
 
+== Include header files
+
+In order to use async_mqtt, include the following header file:
+```cpp
+#include <async_mqtt/all.hpp>
+```
+
+In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in `all.hpp`.
+
+For TLS:
+```cpp
+#include <async_mqtt/predefined_layer/mqtts.hpp>
+```
+
+For Websocket
+```cpp
+#include <async_mqtt/predefined_layer/ws.hpp>
+```
+
+For Websocket on TLS
+```cpp
+#include <async_mqtt/predefined_layer/wss.hpp>
+```
+
 == Create client
 First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying layer.
 
