@@ -15,8 +15,8 @@ ifndef::env-github[:api-base: link:api]
 |===
 |Flag|Effects
 
-|ASYNC_MQTT_USE_TLS|Enables TLS
-|ASYNC_MQTT_USE_WS|Enables Websockets (compilation time becomes longer)
+|ASYNC_MQTT_USE_TLS|Enables TLS for tools (broker, bench, client_cli, ...)
+|ASYNC_MQTT_USE_WS|Enables Websocket for tools (broker, bench, client_cli, ...) (compilation time becomes longer)
 |ASYNC_MQTT_USE_LOG|Enable logging via Boost.Log
 |ASYNC_MQTT_PRINT_PAYLOAD|Output payload when publish packet is output
 |ASYNC_MQTT_BUILD_UNIT_TESTS|Build unit tests
@@ -24,6 +24,24 @@ ifndef::env-github[:api-base: link:api]
 |ASYNC_MQTT_BUILD_TOOLS|Build tools (broker, bench, etc)
 |ASYNC_MQTT_BUILD_EXAMPLES|Build examples
 |===
+
+If you want to use TLS, Websocket, and Websocket on TLS, you don't need to define ASYNC_MQTT_USE_TLS and/or ASYNC_MQTT_USE_WS. Simply include the following files that are not included in `async_mqtt/all.hpp`.
+
+For TLS:
+```cpp
+#include <async_mqtt/predefined_layer/tls.hpp>
+```
+
+For Websocket
+```cpp
+#include <async_mqtt/predefined_layer/ws.hpp>
+```
+
+For Websocket on TLS
+```cpp
+#include <async_mqtt/predefined_layer/wss.hpp>
+```
+
 
 == C++ preprocessor macro
 

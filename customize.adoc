@@ -172,6 +172,6 @@ struct layer_customize<your_own_stream<NextLayer>> {
 
 You can replace `your_***_function()`. async_mqtt has some of predefined `struct layer_customize` specializations.
 
-See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer_customize.hpp
+See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/
 
 It helps defining your own underlaying layer.
