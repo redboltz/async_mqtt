@@ -80,14 +80,9 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
                     // using the completion handler that you defined.
                     as::bind_executor(
                         exe,
-                        [exe, &ws, ch_sp]
+                        [exe, ch_sp]
                         (error_code const& ec_ws) mutable {
-                            if (ec_ws) {
-                                force_move(*ch_sp)(ec_ws);
-                            }
-                            else {
-                                do_read(exe, ws, force_move(*ch_sp));
-                            }
+                            force_move(*ch_sp)(ec_ws);
                         }
                     )
                 );
@@ -97,7 +92,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
             std::ref(ws)
         );
     }
-
+#if 0
     template <typename CompletionToken>
     static void do_read(
         as::any_io_executor exe,
@@ -133,6 +128,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         );
 
     }
+#endif
 };
 
 #endif // defined(ASYNC_MQTT_USE_WS)
