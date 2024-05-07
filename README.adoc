@@ -50,6 +50,7 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 ** xref:tool/bench.adoc[bench]
 * xref:performance.adoc[Performance]
 * xref:config.adoc[Config]
+* xref:customize.adoc[Customize Underlying Layer]
 * xref:{am-base-path}/CHANGELOG.adoc[History]
 
 https://github.com/redboltz/async_mqtt/[async_mqtt project top page]
