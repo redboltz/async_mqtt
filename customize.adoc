@@ -26,11 +26,11 @@ If you need some custom processes for `your_own_stream` at least one of the foll
 * initialize is called when the endpoint is created.
 
 ==== 2. async_read
-* Call Boost.Asio's `async_read()` with `your_own_stream` by default. 
+* Call Boost.Asio's `async_read()` with `your_own_stream` by default.
 ** See https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html
 
 ==== 3. async_write
-* Call Boost.Asio's `async_write()` with `your_own_stream` by default. 
+* Call Boost.Asio's `async_write()` with `your_own_stream` by default.
 ** See https://www.boost.org/doc/html/boost_asio/reference/async_write/overload1.html
 
 ==== 4. async_close
@@ -171,6 +171,7 @@ struct layer_customize<your_own_stream<NextLayer>> {
 ```
 
 You can replace `your_***_function()`. async_mqtt has some of predefined `struct layer_customize` specializations.
-See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_underlying_layer.hpp
-It helps defining your own underlaying layer.
 
+See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer_customize.hpp
+
+It helps defining your own underlaying layer.
