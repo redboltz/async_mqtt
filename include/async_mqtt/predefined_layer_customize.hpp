@@ -73,19 +73,20 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
             void(error_code const& ec)
         > (
             [] (auto completion_handler, as::any_io_executor exe, bs::websocket::stream<NextLayer>& ws) {
+                auto ch_sp = std::make_shared<decltype(completion_handler)>(force_move(completion_handler));
                 ws.async_close(
                     bs::websocket::close_code::none,
                     // You must bind exe to the handler if you use underlying async_function
                     // using the completion handler that you defined.
                     as::bind_executor(
                         exe,
-                        [exe, &ws, completion_handler = force_move(completion_handler)]
+                        [exe, &ws, ch_sp]
                         (error_code const& ec_ws) mutable {
                             if (ec_ws) {
-                                force_move(completion_handler)(ec_ws);
+                                force_move(*ch_sp)(ec_ws);
                             }
                             else {
-                                do_read(exe, ws, force_move(completion_handler));
+                                do_read(exe, ws, force_move(*ch_sp));
                             }
                         }
                     )
@@ -104,13 +105,14 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         CompletionToken&& completion_handler
     ) {
         auto buffer = std::make_shared<bs::flat_buffer>();
+        auto ch_sp = std::make_shared<CompletionToken>(force_move(completion_handler));
         ws.async_read(
             *buffer,
             // You must bind exe to the handler if you use underlying async_function
             // using the completion handler that you defined.
             as::bind_executor(
                 exe,
-                [exe, &ws, buffer, completion_handler = std::forward<CompletionToken>(completion_handler)]
+                [exe, &ws, buffer, ch_sp]
                 (error_code const& ec_read, std::size_t) mutable {
                     if (ec_read) {
                         if (ec_read == bs::websocket::error::closed) {
@@ -121,10 +123,10 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
                             ASYNC_MQTT_LOG("mqtt_impl", info)
                                 << "ws async_read (for close):" << ec_read.message();
                         }
-                        force_move(completion_handler)(ec_read);
+                        force_move(*ch_sp)(ec_read);
                     }
                     else {
-                        do_read(exe, ws, force_move(completion_handler));
+                        do_read(exe, ws, force_move(*ch_sp));
                     }
                 }
             )
