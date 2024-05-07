@@ -79,6 +79,7 @@ var annotated_dup =
       [ "basic_packet_variant", "classasync__mqtt_1_1basic__packet__variant.html", "classasync__mqtt_1_1basic__packet__variant" ],
       [ "basic_store_packet_variant", "classasync__mqtt_1_1basic__store__packet__variant.html", "classasync__mqtt_1_1basic__store__packet__variant" ],
       [ "buffer", "classasync__mqtt_1_1buffer.html", "classasync__mqtt_1_1buffer" ],
+      [ "layer_customize", "structasync__mqtt_1_1layer__customize.html", null ],
       [ "property_variant", "classasync__mqtt_1_1property__variant.html", "classasync__mqtt_1_1property__variant" ],
       [ "system_error", "structasync__mqtt_1_1system__error.html", "structasync__mqtt_1_1system__error" ],
       [ "topic_sharename", "classasync__mqtt_1_1topic__sharename.html", "classasync__mqtt_1_1topic__sharename" ],

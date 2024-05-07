@@ -42,6 +42,7 @@ var hierarchy =
     [ "async_mqtt::v5::connect_packet", "classasync__mqtt_1_1v5_1_1connect__packet.html", null ],
     [ "async_mqtt::v3_1_1::disconnect_packet", "classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html", null ],
     [ "async_mqtt::v5::disconnect_packet", "classasync__mqtt_1_1v5_1_1disconnect__packet.html", null ],
+    [ "async_mqtt::layer_customize< Layer >", "structasync__mqtt_1_1layer__customize.html", null ],
     [ "async_mqtt::property::detail::n_bytes_property< N >", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html", null ],
     [ "async_mqtt::property::detail::n_bytes_property< 1 >", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html", [
       [ "async_mqtt::property::maximum_qos", "classasync__mqtt_1_1property_1_1maximum__qos.html", null ],
