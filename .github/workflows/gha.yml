@@ -122,7 +122,7 @@ jobs:
         cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
     - name: Compile
       run: |
-        VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(nproc)
+        VERBOSE=1 cmake --build ${{ runner.temp }}
     - name: Test
       working-directory: ${{ runner.temp }}
       run: |
