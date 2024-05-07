@@ -12,11 +12,7 @@
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 
-#include <async_mqtt/host_port.hpp>
-#include <async_mqtt/setup_log.hpp>
-#include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/predefined_underlying_layer.hpp>
+#include <async_mqtt/all.hpp>
 
 #include "locked_cout.hpp"
 
