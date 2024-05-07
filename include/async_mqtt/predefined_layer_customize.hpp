@@ -81,8 +81,8 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
                     as::bind_executor(
                         exe,
                         [exe, ch_sp]
-                        (error_code const& ec_ws) mutable {
-                            force_move(*ch_sp)(ec_ws);
+                        (error_code const& ec_ws) {
+                            (*ch_sp)(ec_ws);
                         }
                     )
                 );
