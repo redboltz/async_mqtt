@@ -14,7 +14,7 @@
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
-#include <async_mqtt/null_strand.hpp>
+//#include <async_mqtt/null_strand.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/log.hpp>
@@ -2952,8 +2952,8 @@ using endpoint = basic_endpoint<Role, 2, as::strand, NextLayer>;
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <role Role, typename NextLayer>
-using endpoint_st = basic_endpoint<Role, 2, null_strand, NextLayer>;
+// template <role Role, typename NextLayer>
+// using endpoint_st = basic_endpoint<Role, 2, null_strand, NextLayer>;
 
 } // namespace async_mqtt
 

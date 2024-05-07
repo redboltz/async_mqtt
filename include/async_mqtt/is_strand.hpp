@@ -12,7 +12,7 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/io_context.hpp>
 
-#include <async_mqtt/null_strand.hpp>
+// #include <async_mqtt/null_strand.hpp>
 
 namespace async_mqtt {
 
@@ -23,18 +23,19 @@ struct is_strand_template : std::false_type {};
 
 template <typename T>
 struct is_strand_template<as::strand<T>> : std::true_type {};
-
+#if 0
 template <typename T>
 struct is_null_strand_template : std::false_type {};
 
 template <typename T>
 struct is_null_strand_template<null_strand<T>> : std::true_type {};
+#endif
 
 template <typename T>
 constexpr bool is_strand() {
     return
         is_strand_template<T>::value ||
-        is_null_strand_template<T>::value ||
+        //        is_null_strand_template<T>::value ||
         std::is_same_v<T, as::io_context::strand>;
 }
 
