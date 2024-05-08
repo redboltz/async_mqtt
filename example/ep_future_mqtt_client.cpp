@@ -15,6 +15,8 @@ namespace as = boost::asio;
 namespace am = async_mqtt;
 
 int main(int argc, char* argv[]) {
+    using namespace am::literals;
+
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
@@ -69,10 +71,10 @@ int main(int argc, char* argv[]) {
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    am::allocate_buffer("cid1"),
+                    "cid1"_mb,
                     am::nullopt, // will
-                    am::nullopt, // username set like am::allocate_buffer("user1"),
-                    am::nullopt  // password set like am::allocate_buffer("pass1")
+                    am::nullopt, // username set like "user1"_mb,
+                    am::nullopt  // password set like "pass1"_mb
                 },
                 as::use_future
             );
@@ -117,7 +119,7 @@ int main(int argc, char* argv[]) {
             auto fut = amep->send(
                 am::v3_1_1::subscribe_packet{
                     *pid,
-                    { {am::allocate_buffer("topic1"), am::qos::at_most_once} }
+                    { {"topic1"_mb, am::qos::at_most_once} }
                 },
                 as::use_future
             );
@@ -165,8 +167,8 @@ int main(int argc, char* argv[]) {
             auto fut = amep->send(
                 am::v3_1_1::publish_packet{
                     *pid,
-                    am::allocate_buffer("topic1"),
-                    am::allocate_buffer("payload1"),
+                    "topic1"_mb,
+                    "payload1"_mb,
                     am::qos::at_least_once
                 },
                 as::use_future

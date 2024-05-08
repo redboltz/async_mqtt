@@ -19,6 +19,8 @@ proc(
     auto& amep,
     std::string_view host,
     std::string_view port) {
+    using namespace am::literals;
+
     auto exe = co_await as::this_coro::executor;
     as::ip::tcp::socket resolve_sock{exe};
     as::ip::tcp::resolver res{exe};
@@ -45,10 +47,10 @@ proc(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    am::allocate_buffer("cid1"),
+                    "cid1"_mb,
                     am::nullopt, // will
-                    am::nullopt, // username set like am::allocate_buffer("user1"),
-                    am::nullopt  // password set like am::allocate_buffer("pass1")
+                    am::nullopt, // username set like "user1"_mb,
+                    am::nullopt  // password set like "pass1"_mb
                 },
                 as::use_awaitable
             )
@@ -81,7 +83,7 @@ proc(
 
         // Send MQTT SUBSCRIBE
         std::vector<am::topic_subopts> sub_entry{
-            {am::allocate_buffer("topic1"), am::qos::at_most_once}
+            {"topic1"_mb, am::qos::at_most_once}
         };
         if (auto se = co_await amep->send(
                 am::v3_1_1::subscribe_packet{
@@ -123,8 +125,8 @@ proc(
         if (auto se = co_await amep->send(
                 am::v3_1_1::publish_packet{
                     *amep->acquire_unique_packet_id(),
-                    am::allocate_buffer("topic1"),
-                    am::allocate_buffer("payload1"),
+                    "topic1"_mb,
+                    "payload1"_mb,
                     am::qos::at_least_once
                 },
                 as::use_awaitable

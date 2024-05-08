@@ -21,6 +21,8 @@ proc(
     client_t& amcl,
     std::string_view host,
     std::string_view port) {
+    using namespace am::literals;
+
     auto exe = co_await as::this_coro::executor;
     as::ip::tcp::socket resolve_sock{exe};
     as::ip::tcp::resolver res{exe};
@@ -47,7 +49,7 @@ proc(
             am::v5::connect_packet{
                 true,   // clean_session
                 0x1234, // keep_alive
-                am::allocate_buffer("cid1"),
+                "cid1"_mb,
                 am::nullopt, // will
                 am::nullopt, // username set like allocate_buffer("user1"),
                 am::nullopt  // password set like allocate_buffer("pass1")
@@ -61,9 +63,9 @@ proc(
         // subscribe
         // MQTT send subscribe and wait suback
         std::vector<am::topic_subopts> sub_entry{
-            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-            {am::allocate_buffer("topic2"), am::qos::at_least_once},
-            {am::allocate_buffer("topic3"), am::qos::exactly_once},
+            {"topic1"_mb, am::qos::at_most_once},
+            {"topic2"_mb, am::qos::at_least_once},
+            {"topic3"_mb, am::qos::exactly_once},
         };
         auto suback_opt = co_await amcl.subscribe(
             am::v5::subscribe_packet{
@@ -92,8 +94,8 @@ proc(
         // MQTT publish QoS0 and wait response (socket write complete)
         auto pubres0 = co_await amcl.publish(
             am::v5::publish_packet{
-                am::allocate_buffer("topic1"),
-                am::allocate_buffer("payload1"),
+                "topic1"_mb,
+                "payload1"_mb,
                 am::qos::at_most_once
             },
             as::use_awaitable
@@ -105,8 +107,8 @@ proc(
         auto pubres1 = co_await amcl.publish(
             am::v5::publish_packet{
                 *pid_pub1_opt,
-                am::allocate_buffer("topic2"),
-                am::allocate_buffer("payload2"),
+                "topic2"_mb,
+                "payload2"_mb,
                 am::qos::at_least_once
             },
             as::use_awaitable
@@ -141,8 +143,8 @@ proc(
         auto pubres2 = co_await amcl.publish(
             am::v5::publish_packet{
                 pid_pub2,
-                am::allocate_buffer("topic3"),
-                am::allocate_buffer("payload3"),
+                "topic3"_mb,
+                "payload3"_mb,
                 am::qos::exactly_once
             },
             as::use_awaitable
@@ -151,9 +153,9 @@ proc(
 
         // MQTT send unsubscribe and wait unsuback
         std::vector<am::topic_sharename> unsub_entry{
-            {am::allocate_buffer("topic1")},
-            {am::allocate_buffer("topic2")},
-            {am::allocate_buffer("topic3")},
+            {"topic1"_mb},
+            {"topic2"_mb},
+            {"topic3"_mb},
         };
 
         auto unsuback_opt = co_await amcl.unsubscribe(
