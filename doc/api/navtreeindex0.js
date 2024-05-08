@@ -3,8 +3,6 @@ var NAVTREEINDEX0 =
 "all_8hpp_source.html":[1,0,0,0,3],
 "annotated.html":[0,0],
 "any_8hpp_source.html":[1,0,0,0,2,0],
-"basic__stream_8hpp.html":[1,0,0,0,1,0],
-"basic__stream_8hpp_source.html":[1,0,0,0,1,0],
 "buffer_8hpp_source.html":[1,0,0,0,4],
 "buffer__to__packet__variant_8hpp_source.html":[1,0,0,0,5],
 "classasync__mqtt_1_1basic__client.html":[0,0,0,5],
@@ -249,5 +247,7 @@ var NAVTREEINDEX0 =
 "classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html":[0,0,0,3,4],
 "classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#a07efede6ec6010305f8bd056f8f4a25c":[0,0,0,3,4,1],
 "classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ab76cb59bb22f9146bbc651460b5ab13a":[0,0,0,3,4,3],
-"classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ac621c1b7011518ff60a9fbedde43b367":[0,0,0,3,4,4]
+"classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ac621c1b7011518ff60a9fbedde43b367":[0,0,0,3,4,4],
+"classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#ae94bf6bf405ea182d707f877407859b6":[0,0,0,3,4,2],
+"classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html#af288c1857ca5ed1bcc84dff835d2d630":[0,0,0,3,4,0]
 };

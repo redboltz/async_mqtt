@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['client_2ehpp_0',['client.hpp',['../client_8hpp.html',1,'']]]
+  ['endpoint_2ehpp_0',['endpoint.hpp',['../endpoint_8hpp.html',1,'']]]
 ];

@@ -10,7 +10,7 @@
 #include "coro_base.hpp"
 
 #include <async_mqtt/all.hpp>
-#include <async_mqtt/predefined_layer/tls.hpp>
+#include <async_mqtt/predefined_layer/mqtts.hpp>
 
 #include <boost/asio/yield.hpp>
 
@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(cb) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 8883};
 
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
             amep->next_layer().async_handshake(
-                am::tls::stream_base::client,
+                as::ssl::stream_base::client,
                 [&](am::error_code const& ec) {
                     BOOST_TEST(ec == am::error_code{});
                     amep->send(
@@ -86,8 +86,8 @@ BOOST_AUTO_TEST_CASE(fut) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 8883};
 
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut = amep->next_layer().async_handshake(
-            am::tls::stream_base::client,
+            as::ssl::stream_base::client,
             as::use_future
         );
         try {
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE(fut) {
 BOOST_AUTO_TEST_CASE(coro) {
     broker_runner br;
     as::io_context ioc;
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtts>;
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                 );
                 BOOST_TEST(*ec == am::error_code{});
                 yield ep().next_layer().async_handshake(
-                    am::tls::stream_base::client,
+                    as::ssl::stream_base::client,
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -243,8 +243,8 @@ BOOST_AUTO_TEST_CASE(coro) {
 BOOST_AUTO_TEST_CASE(coro_client_cert) {
     broker_runner br;
     as::io_context ioc;
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
     ctx.use_certificate_chain_file("client.crt.pem");
     ctx.use_private_key_file("client.key.pem", boost::asio::ssl::context::pem);
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
                 );
                 BOOST_TEST(*ec == am::error_code{});
                 yield ep().next_layer().async_handshake(
-                    am::tls::stream_base::client,
+                    as::ssl::stream_base::client,
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
