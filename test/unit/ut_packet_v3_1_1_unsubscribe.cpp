@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v3_1_1::unsubscribe_packet>());
 
     std::vector<am::topic_sharename> args {
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("topic2"),
+        "topic1"_mb,
+        "topic2"_mb,
     };
 
     auto p = am::v3_1_1::unsubscribe_packet{
@@ -67,8 +67,8 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
 
 BOOST_AUTO_TEST_CASE(v311_unsubscribe_pid4) {
     std::vector<am::topic_sharename> args {
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("topic2"),
+        "topic1"_mb,
+        "topic2"_mb,
     };
 
     auto p = am::v3_1_1::basic_unsubscribe_packet<4>{

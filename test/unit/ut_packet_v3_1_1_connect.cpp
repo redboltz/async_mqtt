@@ -25,18 +25,18 @@ BOOST_AUTO_TEST_CASE(v311_connect) {
     BOOST_TEST(!am::is_server_sendable<am::v3_1_1::connect_packet>());
 
     auto w = am::will{
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1"_mb,
+        "payload1"_mb,
         am::pub::retain::yes | am::qos::at_least_once
     };
 
     auto p = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        am::allocate_buffer("cid1"),
+        "cid1"_mb,
         w,
-        am::allocate_buffer("user1"),
-        am::allocate_buffer("pass1")
+        "user1"_mb,
+        "pass1"_mb
     };
 
     BOOST_TEST(p.clean_session());

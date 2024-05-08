@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v5::subscribe_packet>());
 
     std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+        {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+        {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
     };
 
     auto props = am::properties{
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
 
 BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
     std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+        {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+        {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
     };
 
     auto props = am::properties{

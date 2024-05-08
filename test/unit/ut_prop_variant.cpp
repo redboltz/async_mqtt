@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
 
 BOOST_AUTO_TEST_CASE(content_type) {
     am::property_variant pv1{
-        am::property::content_type{am::allocate_buffer("html")}
+        am::property::content_type{"html"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
 
 BOOST_AUTO_TEST_CASE(response_topic) {
     am::property_variant pv1{
-        am::property::response_topic{am::allocate_buffer("restopic1")}
+        am::property::response_topic{"restopic1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
 
 BOOST_AUTO_TEST_CASE(correlation_data) {
     am::property_variant pv1{
-        am::property::correlation_data{am::allocate_buffer("reqid1")}
+        am::property::correlation_data{"reqid1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -735,7 +735,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
 
 BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
     am::property_variant pv1{
-        am::property::assigned_client_identifier{am::allocate_buffer("cid1")}
+        am::property::assigned_client_identifier{"cid1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -939,7 +939,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
 
 BOOST_AUTO_TEST_CASE(authentication_method) {
     am::property_variant pv1{
-        am::property::authentication_method{am::allocate_buffer("basic")}
+        am::property::authentication_method{"basic"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -1041,7 +1041,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
 
 BOOST_AUTO_TEST_CASE(authentication_data) {
     am::property_variant pv1{
-        am::property::authentication_data{am::allocate_buffer("data1")}
+        am::property::authentication_data{"data1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -1449,7 +1449,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
 
 BOOST_AUTO_TEST_CASE(response_information) {
     am::property_variant pv1{
-        am::property::response_information{am::allocate_buffer("restopic1")}
+        am::property::response_information{"restopic1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -1551,7 +1551,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
 
 BOOST_AUTO_TEST_CASE(server_reference) {
     am::property_variant pv1{
-        am::property::server_reference{am::allocate_buffer("server1")}
+        am::property::server_reference{"server1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -1653,7 +1653,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
 
 BOOST_AUTO_TEST_CASE(reason_string) {
     am::property_variant pv1{
-        am::property::reason_string{am::allocate_buffer("reason1")}
+        am::property::reason_string{"reason1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -2265,7 +2265,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
 
 BOOST_AUTO_TEST_CASE(user_property) {
     am::property_variant pv1{
-        am::property::user_property{am::allocate_buffer("key1"), am::allocate_buffer("val1")}
+        am::property::user_property{"key1"_mb, "val1"_mb}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==

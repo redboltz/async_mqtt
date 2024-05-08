@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(v311_subscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v3_1_1::subscribe_packet>());
 
     std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once},
+        {"topic1"_mb, am::qos::at_most_once},
+        {"topic2"_mb, am::qos::exactly_once},
     };
 
     auto p = am::v3_1_1::subscribe_packet{
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE(v311_subscribe) {
 
 BOOST_AUTO_TEST_CASE(v311_subscribe_pid4) {
     std::vector<am::topic_subopts> args {
-        {am::allocate_buffer("topic1"), am::qos::at_most_once},
-        {am::allocate_buffer("topic2"), am::qos::exactly_once},
+        {"topic1"_mb, am::qos::at_most_once},
+        {"topic2"_mb, am::qos::exactly_once},
     };
 
     auto p = am::v3_1_1::basic_subscribe_packet<4>{

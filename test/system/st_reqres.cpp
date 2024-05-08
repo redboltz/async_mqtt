@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         {
                             am::property::request_response_information{true},
                             am::property::session_expiry_interval{am::session_never_expire}
@@ -92,10 +92,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         false,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         {
                             am::property::request_response_information{true},
                             am::property::session_expiry_interval{am::session_never_expire}
@@ -140,10 +140,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         {
                             am::property::request_response_information{true}
                         }

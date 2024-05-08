@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     BOOST_TEST(!am::is_server_sendable<am::v5::connect_packet>());
 
     auto w = am::will{
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1"_mb,
+        "payload1"_mb,
         am::pub::retain::yes | am::qos::at_least_once,
         am::properties{
             am::property::will_delay_interval(0x0fffffff),
@@ -42,10 +42,10 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     auto p = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        am::allocate_buffer("cid1"),
+        "cid1"_mb,
         w,
-        am::allocate_buffer("user1"),
-        am::allocate_buffer("pass1"),
+        "user1"_mb,
+        "pass1"_mb,
         props
     };
 

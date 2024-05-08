@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(seq) {
 }
 
 BOOST_AUTO_TEST_CASE( allocate1 ) {
-    auto buf = am::allocate_buffer("01234");
+    auto buf = "01234"_mb;
     BOOST_TEST(buf == "01234");
     BOOST_TEST(buf.get_life().has_value());
     auto ss1 = buf.substr(2, 3);
@@ -90,11 +90,11 @@ BOOST_AUTO_TEST_CASE( buffers ) {
     BOOST_TEST(am::to_string(bufs).empty());
     BOOST_TEST(am::to_buffer(bufs).empty());
 
-    bufs.emplace_back(am::allocate_buffer("01234"));
+    bufs.emplace_back("01234"_mb);
     BOOST_TEST(am::to_string(bufs) == "01234");
     BOOST_TEST(am::to_buffer(bufs) == "01234"_mb);
 
-    bufs.emplace_back(am::allocate_buffer("5678"));
+    bufs.emplace_back("5678"_mb);
     BOOST_TEST(am::to_string(bufs) == "012345678");
     BOOST_TEST(am::to_buffer(bufs) == "012345678"_mb);
 }

@@ -42,10 +42,10 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        am::allocate_buffer("cid1"),
+        "cid1"_mb,
         am::nullopt, // will
-        am::allocate_buffer("user1"),
-        am::allocate_buffer("pass1"),
+        "user1"_mb,
+        "pass1"_mb,
         am::properties{}
     };
 
