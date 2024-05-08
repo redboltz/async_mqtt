@@ -17,6 +17,7 @@
 BOOST_AUTO_TEST_SUITE(st_connect)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(cb) {
@@ -48,10 +49,10 @@ BOOST_AUTO_TEST_CASE(cb) {
                         am::v3_1_1::connect_packet{
                             true,   // clean_session
                             0x1234, // keep_alive
-                            am::allocate_buffer("cid1"),
+                            "cid1"_mb,
                             am::nullopt, // will
-                            am::allocate_buffer("u1"),
-                            am::allocate_buffer("passforu1")
+                            "u1"_mb,
+                            "passforu1"_mb
                         },
                         [&](am::system_error const& se) {
                             BOOST_TEST(!se);
@@ -140,10 +141,10 @@ BOOST_AUTO_TEST_CASE(fut) {
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    am::allocate_buffer("cid1"),
+                    "cid1"_mb,
                     am::nullopt, // will
-                    am::allocate_buffer("u1"),
-                    am::allocate_buffer("passforu1")
+                    "u1"_mb,
+                    "passforu1"_mb
                 },
                 as::use_future
             );
@@ -209,10 +210,10 @@ BOOST_AUTO_TEST_CASE(coro) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -280,9 +281,9 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        am::allocate_buffer("cidxxx"),
+                        "cidxxx"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt // no password
                     },
                     *this

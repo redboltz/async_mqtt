@@ -19,6 +19,7 @@ BOOST_AUTO_TEST_SUITE(ut_property)
 
 namespace am = async_mqtt;
 using namespace am::literals;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE( payload_format_indicator ) {
     am::property::payload_format_indicator v1 { am::payload_format::binary };

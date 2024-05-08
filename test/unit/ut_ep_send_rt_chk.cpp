@@ -19,6 +19,7 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_send_rt_chk)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 using namespace std::literals::string_view_literals;
@@ -49,10 +50,10 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         auto p = am::v5::connect_packet{
             true,   // clean_start
             0x1234, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1"),
+            "user1"_mb,
+            "pass1"_mb,
             am::properties{}
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -62,10 +63,10 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         auto p = am::v3_1_1::connect_packet{
             true,   // clean_session
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1")
+            "user1"_mb,
+            "pass1"_mb
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
@@ -80,8 +81,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     }
     {
         auto p = am::v3_1_1::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -117,8 +118,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once},
+            {"topic1"_mb, am::qos::at_most_once},
+            {"topic2"_mb, am::qos::exactly_once},
         };
         auto p = am::v3_1_1::subscribe_packet{
             0x1234,         // packet_id
@@ -141,8 +142,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -199,10 +200,10 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         auto p = am::v3_1_1::connect_packet{
             true,   // clean_session
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1")
+            "user1"_mb,
+            "pass1"_mb
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
@@ -217,8 +218,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     }
     {
         auto p = am::v3_1_1::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -254,8 +255,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once},
+            {"topic1"_mb, am::qos::at_most_once},
+            {"topic2"_mb, am::qos::exactly_once},
         };
         auto p = am::v3_1_1::subscribe_packet{
             0x1234,         // packet_id
@@ -278,8 +279,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -337,10 +338,10 @@ BOOST_AUTO_TEST_CASE(v311_any) {
         auto p = am::v3_1_1::connect_packet{
             true,   // clean_session
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1")
+            "user1"_mb,
+            "pass1"_mb
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
@@ -355,8 +356,8 @@ BOOST_AUTO_TEST_CASE(v311_any) {
     }
     {
         auto p = am::v3_1_1::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -392,8 +393,8 @@ BOOST_AUTO_TEST_CASE(v311_any) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once},
+            {"topic1"_mb, am::qos::at_most_once},
+            {"topic2"_mb, am::qos::exactly_once},
         };
         auto p = am::v3_1_1::subscribe_packet{
             0x1234,         // packet_id
@@ -416,8 +417,8 @@ BOOST_AUTO_TEST_CASE(v311_any) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -474,10 +475,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         auto p = am::v3_1_1::connect_packet{
             true,   // clean_session
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1")
+            "user1"_mb,
+            "pass1"_mb
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "protocol version mismatch"));
@@ -486,10 +487,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         auto p = am::v5::connect_packet{
             true,   // clean_start
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1"),
+            "user1"_mb,
+            "pass1"_mb,
             am::properties{}
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -507,8 +508,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
     {
         auto p = am::v5::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
@@ -553,8 +554,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+            {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+            {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
         };
         auto p = am::v5::subscribe_packet{
             0x1234,         // packet_id
@@ -579,8 +580,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id
@@ -654,10 +655,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         auto p = am::v5::connect_packet{
             true,   // clean_start
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1"),
+            "user1"_mb,
+            "pass1"_mb,
             am::properties{}
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -675,8 +676,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
     {
         auto p = am::v5::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
@@ -721,8 +722,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+            {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+            {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
         };
         auto p = am::v5::subscribe_packet{
             0x1234,         // packet_id
@@ -747,8 +748,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id
@@ -822,10 +823,10 @@ BOOST_AUTO_TEST_CASE(v5_any) {
         auto p = am::v5::connect_packet{
             true,   // clean_start
             0x0, // keep_alive
-            am::allocate_buffer("cid1"),
+            "cid1"_mb,
             am::nullopt,
-            am::allocate_buffer("user1"),
-            am::allocate_buffer("pass1"),
+            "user1"_mb,
+            "pass1"_mb,
             am::properties{}
         };
         auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
@@ -843,8 +844,8 @@ BOOST_AUTO_TEST_CASE(v5_any) {
     }
     {
         auto p = am::v5::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
@@ -889,8 +890,8 @@ BOOST_AUTO_TEST_CASE(v5_any) {
     }
     {
         std::vector<am::topic_subopts> args {
-            {am::allocate_buffer("topic1"), am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-            {am::allocate_buffer("topic2"), am::qos::exactly_once | am::sub::rap::retain},
+            {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+            {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
         };
         auto p = am::v5::subscribe_packet{
             0x1234,         // packet_id
@@ -915,8 +916,8 @@ BOOST_AUTO_TEST_CASE(v5_any) {
     }
     {
         std::vector<am::topic_sharename> args {
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("topic2"),
+            "topic1"_mb,
+            "topic2"_mb,
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id

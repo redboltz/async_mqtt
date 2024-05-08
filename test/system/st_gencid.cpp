@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(st_gencid)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v311_cs1) {
@@ -45,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        am::allocate_buffer(""),
+                        ""_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -104,10 +105,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        am::allocate_buffer(""),
+                        ""_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -164,10 +165,10 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0,
-                        am::allocate_buffer(""),
+                        ""_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         am::properties{}
                     },
                     *this
@@ -239,10 +240,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0,
-                        am::allocate_buffer(""),
+                        ""_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         {am::property::session_expiry_interval{am::session_never_expire}}
                     },
                     *this
@@ -283,8 +284,8 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                         0,
                         am::allocate_buffer(v5_cs0_aci),
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );

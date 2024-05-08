@@ -18,6 +18,7 @@
 BOOST_AUTO_TEST_SUITE(ut_retained_map)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(general) {
     am::retained_topic_map<std::string> map;

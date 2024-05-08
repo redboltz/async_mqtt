@@ -15,6 +15,7 @@ BOOST_AUTO_TEST_SUITE(ut_retained_topic_map_broker)
 
 namespace am = async_mqtt;
 using namespace am::literals;
+using namespace am::literals;
 
 struct retain {
     retain(

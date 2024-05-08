@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(st_sub)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v311_sub) {
@@ -45,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -62,9 +63,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
-                            {am::allocate_buffer("topic1"), am::qos::at_most_once},
-                            {am::allocate_buffer("topic2"), am::qos::at_least_once},
-                            {am::allocate_buffer("topic3"), am::qos::exactly_once},
+                            {"topic1"_mb, am::qos::at_most_once},
+                            {"topic2"_mb, am::qos::at_least_once},
+                            {"topic3"_mb, am::qos::exactly_once},
                         }
                     },
                     *this
@@ -88,9 +89,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
-                            {am::allocate_buffer("topic1"), am::qos::at_least_once},
-                            {am::allocate_buffer("topic2"), am::qos::exactly_once},
-                            {am::allocate_buffer("topic3"), am::qos::at_most_once},
+                            {"topic1"_mb, am::qos::at_least_once},
+                            {"topic2"_mb, am::qos::exactly_once},
+                            {"topic3"_mb, am::qos::at_most_once},
                         }
                     },
                     *this
@@ -114,9 +115,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::unsubscribe_packet{
                         pid,
                         {
-                            am::allocate_buffer("topic1"),
-                            am::allocate_buffer("topic2"),
-                            am::allocate_buffer("topic3"),
+                            "topic1"_mb,
+                            "topic2"_mb,
+                            "topic3"_mb,
                         }
                     },
                     *this
@@ -169,10 +170,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
-                        am::allocate_buffer("cid1"),
+                        "cid1"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1"),
+                        "u1"_mb,
+                        "passforu1"_mb,
                         am::properties{}
                     },
                     *this
@@ -188,21 +189,21 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                         pid,
                         {
                             {
-                                am::allocate_buffer("topic1"),
+                                "topic1"_mb,
                                 am::qos::at_most_once |
                                 am::sub::retain_handling::send |
                                 am::sub::rap::dont |
                                 am::sub::nl::no
                             },
                             {
-                                am::allocate_buffer("topic2"),
+                                "topic2"_mb,
                                 am::qos::at_least_once |
                                 am::sub::retain_handling::send_only_new_subscription |
                                 am::sub::rap::retain |
                                 am::sub::nl::yes
                             },
                             {
-                                am::allocate_buffer("topic3"),
+                                "topic3"_mb,
                                 am::qos::exactly_once |
                                 am::sub::retain_handling::not_send
                             },
@@ -231,9 +232,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::subscribe_packet{
                         pid,
                         {
-                            {am::allocate_buffer("topic1"), am::qos::at_least_once},
-                            {am::allocate_buffer("topic2"), am::qos::exactly_once},
-                            {am::allocate_buffer("topic3"), am::qos::at_most_once},
+                            {"topic1"_mb, am::qos::at_least_once},
+                            {"topic2"_mb, am::qos::exactly_once},
+                            {"topic3"_mb, am::qos::at_most_once},
                         },
                         am::properties{}
                     },
@@ -259,9 +260,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::unsubscribe_packet{
                         pid,
                         {
-                            am::allocate_buffer("topic1"),
-                            am::allocate_buffer("topic2"),
-                            am::allocate_buffer("topic3"),
+                            "topic1"_mb,
+                            "topic2"_mb,
+                            "topic3"_mb,
                         },
                         am::properties{}
                     },

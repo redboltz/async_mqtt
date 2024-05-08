@@ -22,6 +22,7 @@
 BOOST_AUTO_TEST_SUITE(ut_broker)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(tc1) {
@@ -63,7 +64,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 auto c2b_packet = am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    am::allocate_buffer("cid1")
+                    "cid1"_mb
                 };
                 co_await ep1->next_layer().emulate_recv(
                     am::force_move(c2b_packet),
@@ -83,8 +84,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 auto c2b_packet = am::v3_1_1::subscribe_packet{
                     0x1234,         // packet_id
                     {
-                        {am::allocate_buffer("topic1"), am::qos::at_most_once},
-                        {am::allocate_buffer("topic2"), am::qos::exactly_once},
+                        {"topic1"_mb, am::qos::at_most_once},
+                        {"topic2"_mb, am::qos::exactly_once},
                     }
                 };
                 co_await ep1->next_layer().emulate_recv(
@@ -108,7 +109,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 auto c2b_packet = am::v5::connect_packet{
                     true,   // clean_start
                     0x1234, // keep_alive
-                    am::allocate_buffer("cid2")
+                    "cid2"_mb
                 };
                 co_await ep2->next_layer().emulate_recv(
                     am::force_move(c2b_packet),
@@ -132,7 +133,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 auto c2b_packet = am::v5::subscribe_packet{
                     0x1234,         // packet_id
                     {
-                        {am::allocate_buffer("topic1"), am::qos::at_most_once}
+                        {"topic1"_mb, am::qos::at_most_once}
                     }
                 };
                 co_await ep2->next_layer().emulate_recv(
@@ -154,8 +155,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 // publish ep2
                 auto c2b_packet = am::v5::publish_packet{
                     0x1234, // packet_id
-                    am::allocate_buffer("topic1"),
-                    am::allocate_buffer("payload1"),
+                    "topic1"_mb,
+                    "payload1"_mb,
                     am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::no,
                     am::properties{
                         am::property::content_type("json")
@@ -169,8 +170,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
             {
                 // recv ep1
                 auto exp_packet = am::v3_1_1::publish_packet{
-                    am::allocate_buffer("topic1"),
-                    am::allocate_buffer("payload1"),
+                    "topic1"_mb,
+                    "payload1"_mb,
                     am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no
                 };
                 auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
@@ -179,8 +180,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
             {
                 std::set<am::packet_variant> exp_packets {
                     am::v5::publish_packet{
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
+                        "topic1"_mb,
+                        "payload1"_mb,
                         am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no,
                         am::properties{
                             am::property::content_type("json")

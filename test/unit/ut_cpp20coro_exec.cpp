@@ -19,6 +19,7 @@
 BOOST_AUTO_TEST_SUITE(ut_cpp20coro_exec)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 // coroutine executor and endpoint executor are different.
@@ -58,10 +59,10 @@ BOOST_AUTO_TEST_CASE(different) {
             auto connect = am::v3_1_1::connect_packet{
                 true,   // clean_session
                 0, // keep_alive
-                am::allocate_buffer("cid1"),
+                "cid1"_mb,
                 am::nullopt, // will
-                am::allocate_buffer("user1"),
-                am::allocate_buffer("pass1")
+                "user1"_mb,
+                "pass1"_mb
             };
             auto connack = am::v3_1_1::connack_packet{
                 true,   // session_present
@@ -96,8 +97,8 @@ BOOST_AUTO_TEST_CASE(different) {
             BOOST_TEST(str_coro.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
-                am::allocate_buffer("topic1"),
-                am::allocate_buffer("payload1"),
+                "topic1"_mb,
+                "payload1"_mb,
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 
@@ -156,10 +157,10 @@ BOOST_AUTO_TEST_CASE(bind) {
             auto connect = am::v3_1_1::connect_packet{
                 true,   // clean_session
                 0, // keep_alive
-                am::allocate_buffer("cid1"),
+                "cid1"_mb,
                 am::nullopt, // will
-                am::allocate_buffer("user1"),
-                am::allocate_buffer("pass1")
+                "user1"_mb,
+                "pass1"_mb
             };
             auto connack = am::v3_1_1::connack_packet{
                 true,   // session_present
@@ -194,8 +195,8 @@ BOOST_AUTO_TEST_CASE(bind) {
             BOOST_TEST(str_ep.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
-                am::allocate_buffer("topic1"),
-                am::allocate_buffer("payload1"),
+                "topic1"_mb,
+                "payload1"_mb,
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 
@@ -249,10 +250,10 @@ BOOST_AUTO_TEST_CASE(same) {
             auto connect = am::v3_1_1::connect_packet{
                 true,   // clean_session
                 0, // keep_alive
-                am::allocate_buffer("cid1"),
+                "cid1"_mb,
                 am::nullopt, // will
-                am::allocate_buffer("user1"),
-                am::allocate_buffer("pass1")
+                "user1"_mb,
+                "pass1"_mb
             };
             auto connack = am::v3_1_1::connack_packet{
                 true,   // session_present
@@ -294,8 +295,8 @@ BOOST_AUTO_TEST_CASE(same) {
             BOOST_TEST(ep->in_strand());
 
             auto pub = am::v5::publish_packet{
-                am::allocate_buffer("topic1"),
-                am::allocate_buffer("payload1"),
+                "topic1"_mb,
+                "payload1"_mb,
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 

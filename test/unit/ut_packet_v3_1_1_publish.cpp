@@ -16,6 +16,7 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_publish) {
     BOOST_TEST(am::is_publish<am::v3_1_1::publish_packet>());
@@ -26,8 +27,8 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
     auto p = am::v3_1_1::publish_packet{
         0x1234, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1"_mb,
+        "payload1"_mb,
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
@@ -93,8 +94,8 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
     auto p = am::v3_1_1::publish_packet{
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1"_mb,
+        "payload1"_mb,
         am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
@@ -160,8 +161,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -172,8 +173,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
             1,
-            am::allocate_buffer("topic1"),
-            am::allocate_buffer("payload1"),
+            "topic1"_mb,
+            "payload1"_mb,
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -186,8 +187,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
 BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
     auto p = am::v3_1_1::basic_publish_packet<4>{
         0x12345678, // packet_id
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1"_mb,
+        "payload1"_mb,
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 

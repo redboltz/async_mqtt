@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(st_retain)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v5_mei_none) {
@@ -57,10 +58,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("pub"),
+                        "pub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -71,8 +72,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
+                        "topic1"_mb,
+                        "payload1"_mb,
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -83,8 +84,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload2"),
+                        "topic1"_mb,
+                        "payload2"_mb,
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -95,8 +96,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload3"),
+                        "topic1"_mb,
+                        "payload3"_mb,
                         am::qos::exactly_once | am::pub::retain::yes
                     },
                     *this
@@ -114,10 +115,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("sub"),
+                        "sub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -138,7 +139,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {am::allocate_buffer("topic1"), am::qos::exactly_once},
+                            {"topic1"_mb, am::qos::exactly_once},
                         }
                     },
                     *this
@@ -153,8 +154,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload3"),
+                        "topic1"_mb,
+                        "payload3"_mb,
                         am::qos::exactly_once | am::pub::retain::yes
                     })
                 );
@@ -212,10 +213,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("pub"),
+                        "pub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -226,8 +227,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
+                        "topic1"_mb,
+                        "payload1"_mb,
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -238,8 +239,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload2"),
+                        "topic1"_mb,
+                        "payload2"_mb,
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -250,8 +251,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload3"),
+                        "topic1"_mb,
+                        "payload3"_mb,
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{1}}
                     },
@@ -270,10 +271,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("sub"),
+                        "sub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -294,7 +295,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {am::allocate_buffer("topic1"), am::qos::exactly_once},
+                            {"topic1"_mb, am::qos::exactly_once},
                         }
                     },
                     *this
@@ -309,8 +310,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload3"),
+                        "topic1"_mb,
+                        "payload3"_mb,
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{0}}
                     })
@@ -369,10 +370,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("pub"),
+                        "pub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -383,8 +384,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
+                        "topic1"_mb,
+                        "payload1"_mb,
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -395,8 +396,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload2"),
+                        "topic1"_mb,
+                        "payload2"_mb,
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -407,8 +408,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload3"),
+                        "topic1"_mb,
+                        "payload3"_mb,
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{1}}
                     },
@@ -430,10 +431,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("sub"),
+                        "sub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -454,7 +455,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {am::allocate_buffer("topic1"), am::qos::exactly_once},
+                            {"topic1"_mb, am::qos::exactly_once},
                         }
                     },
                     *this
@@ -539,10 +540,10 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("pub"),
+                        "pub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -553,8 +554,8 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer("payload1"),
+                        "topic1"_mb,
+                        "payload1"_mb,
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -565,8 +566,8 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        am::allocate_buffer("topic1"),
-                        am::allocate_buffer(""),
+                        "topic1"_mb,
+                        ""_mb,
                         am::qos::exactly_once | am::pub::retain::yes
                     },
                     *this
@@ -584,10 +585,10 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        am::allocate_buffer("sub"),
+                        "sub"_mb,
                         am::nullopt, // will
-                        am::allocate_buffer("u1"),
-                        am::allocate_buffer("passforu1")
+                        "u1"_mb,
+                        "passforu1"_mb
                     },
                     *this
                 );
@@ -608,7 +609,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {am::allocate_buffer("topic1"), am::qos::exactly_once},
+                            {"topic1"_mb, am::qos::exactly_once},
                         }
                     },
                     *this

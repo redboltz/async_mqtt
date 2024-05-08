@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(ut_packet_id)
 
 namespace am = async_mqtt;
+
 using packet_id_t = typename am::packet_id_type<2>::type;
 
 BOOST_AUTO_TEST_CASE( initial ) {

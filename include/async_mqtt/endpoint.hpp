@@ -806,7 +806,7 @@ public:
             if (auto ta_opt = get_topic_alias(packet.props())) {
                 auto topic = topic_alias_send_->find_without_touch(*ta_opt);
                 if (!topic.empty()) {
-                    packet.remove_topic_alias_add_topic(allocate_buffer(topic));
+                    packet.remove_topic_alias_add_topic(buffer{force_move(topic)});
                 }
             }
         }
@@ -1361,7 +1361,7 @@ private: // compose operation impl
                                 auto store_packet =
                                     ActualPacket(
                                         actual_packet.packet_id(),
-                                        allocate_buffer(*topic_opt),
+                                        buffer{force_move(*topic_opt)},
                                         actual_packet.payload(),
                                         actual_packet.opts(),
                                         force_move(props)
@@ -1922,7 +1922,7 @@ private: // compose operation impl
                                             return;
                                         }
                                         else {
-                                            p.add_topic(allocate_buffer(topic));
+                                            p.add_topic(buffer{force_move(topic)});
                                         }
                                     }
                                 }

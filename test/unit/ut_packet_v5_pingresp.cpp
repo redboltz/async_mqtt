@@ -16,6 +16,7 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_pingresp) {
     BOOST_TEST(am::is_pingresp<am::v5::pingresp_packet>());

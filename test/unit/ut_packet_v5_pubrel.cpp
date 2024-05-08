@@ -16,6 +16,7 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_pubrel) {
     BOOST_TEST(am::is_pubrel<am::v5::pubrel_packet>());
