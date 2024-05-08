@@ -449,7 +449,7 @@ public:
     }
 
     bool has_life() const noexcept {
-        return std::get_if<monostate>(&life_) != nullptr;
+        return std::get_if<monostate>(&life_) == nullptr;
     }
 
 private:
