@@ -23,9 +23,9 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @brief buffer that has string_view interface
+ * @brief buffer that has string_view interface and shared ownership
  * This class provides string_view interface.
- * This class hold string_view target's lifetime optionally.
+ * This class holds string_view pointee's lifetime optionally.
  */
 class buffer {
 public:
@@ -75,12 +75,13 @@ public:
     {}
 
     /**
-     * @brief string constructor (deleted)
+     * @brief string constructor
      * @param string
-     * This constructor is intentionally deleted.
-     * Consider `buffer(std::string("ABC"))`, the buffer points to dangling reference.
      */
-    explicit buffer(std::string) = delete; // to avoid misuse
+    explicit buffer(std::string s)
+        : life_{force_move(s)},
+          view_{any_cast<std::string const&>(life_)}
+    {}
 
     /**
      * @brief string_view and lifetime constructor
@@ -88,19 +89,16 @@ public:
      * @param sp shared_ptr_array that holds sv target's lifetime
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
      */
-    buffer(string_view sv, any life)
-        : view_{force_move(sv)},
-          life_{force_move(life)}
+    buffer(string_view sv, std::shared_ptr<void> life)
+        : life_{force_move(life)},
+          view_{force_move(sv)}
     {
     }
 
-    buffer(char const* s, std::size_t count, any life)
-        : view_{s, count},
-          life_{force_move(life)}
-    {}
-    buffer(char const* s, any life)
-        : view_{s},
-          life_{force_move(life)}
+    buffer(char const* s, std::size_t count,std::shared_ptr<void> life)
+        : life_{force_move(life)},
+          view_{s, count}
+
     {}
 
     template <
@@ -111,9 +109,9 @@ public:
             is_input_iterator<End>::value
         >* = nullptr
     >
-    buffer(It first, End last, any life)
-        : view_{&*first, static_cast<std::size_t>(std::distance(first, last))},
-          life_{force_move(life)}
+    buffer(It first, End last, std::shared_ptr<void> life)
+        : life_{force_move(life)},
+          view_{&*first, static_cast<std::size_t>(std::distance(first, last))}
     {}
 
     constexpr const_iterator begin() const noexcept {
@@ -401,8 +399,16 @@ public:
         return o;
     }
 private:
-    string_view view_;
+    // for substring getter family
+    buffer(string_view sv, any life)
+        : life_{force_move(life)},
+          view_{force_move(sv)}
+    {
+    }
+
+private:
     any life_;
+    string_view view_;
 };
 
 inline std::size_t hash_value(buffer const& v) noexcept {

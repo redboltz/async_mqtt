@@ -72,6 +72,18 @@ BOOST_AUTO_TEST_CASE( view ) {
     BOOST_TEST(!ss2.get_life().has_value());
 }
 
+BOOST_AUTO_TEST_CASE( string ) {
+    am::buffer buf{ std::string{"01234"} };
+    BOOST_TEST(buf == "01234");
+    BOOST_TEST(buf.get_life().has_value());
+    auto ss1 = buf.substr(2, 3);
+    BOOST_TEST(ss1 == "234");
+    BOOST_TEST(ss1.get_life().has_value());
+    auto ss2 = ss1.substr(1);
+    BOOST_TEST(ss2 == "34");
+    BOOST_TEST(ss2.get_life().has_value());
+}
+
 BOOST_AUTO_TEST_CASE( buffers ) {
     using namespace am::literals;
     std::vector<am::buffer> bufs;
