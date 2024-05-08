@@ -19,6 +19,7 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_recv_filter)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 // To test the bug fix for https://github.com/redboltz/async_mqtt/issues/42

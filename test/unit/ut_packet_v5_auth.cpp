@@ -16,6 +16,7 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_auth) {
     BOOST_TEST(am::is_auth<am::v5::auth_packet>());

@@ -11,6 +11,7 @@
 BOOST_AUTO_TEST_SUITE(ut_subscription_map)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE( failed_erase ) {
     using elem_t = int;

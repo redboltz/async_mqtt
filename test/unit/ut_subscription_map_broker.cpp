@@ -22,6 +22,7 @@ BOOST_AUTO_TEST_SUITE(ut_subscription_map_broker)
 
 namespace am = async_mqtt;
 using namespace am::literals;
+using namespace am::literals;
 
 namespace mi = boost::multi_index;
 

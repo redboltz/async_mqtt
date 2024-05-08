@@ -15,6 +15,7 @@
 BOOST_AUTO_TEST_SUITE(ut_buffer)
 
 namespace am = async_mqtt;
+using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(seq) {
     BOOST_TEST(am::is_buffer_sequence<am::buffer>::value);
@@ -22,32 +23,32 @@ BOOST_AUTO_TEST_CASE(seq) {
     BOOST_TEST(am::is_buffer_sequence<std::decay_t<std::vector<am::buffer> const&>>::value);
 }
 
-BOOST_AUTO_TEST_CASE( allocate1 ) {
-    auto buf = "01234"_mb;
-    BOOST_TEST(buf == "01234");
-    BOOST_TEST(buf.get_life().has_value());
-    auto ss1 = buf.substr(2, 3);
-    BOOST_TEST(ss1 == "234");
-    BOOST_TEST(ss1.get_life().has_value());
-    auto ss2 = ss1.substr(1);
-    BOOST_TEST(ss2 == "34");
-    BOOST_TEST(ss2.get_life().has_value());
-}
-
-BOOST_AUTO_TEST_CASE( allocate2 ) {
+BOOST_AUTO_TEST_CASE( allocate ) {
     std::string s{"01234"};
     auto buf = am::allocate_buffer(s.begin(), s.end());
     BOOST_TEST(buf == "01234");
-    BOOST_TEST(buf.get_life().has_value());
+    BOOST_TEST(buf.has_life());
     auto ss1 = buf.substr(2, 3);
     BOOST_TEST(ss1 == "234");
-    BOOST_TEST(ss1.get_life().has_value());
+    BOOST_TEST(ss1.has_life());
     auto ss2 = ss1.substr(1);
     BOOST_TEST(ss2 == "34");
-    BOOST_TEST(ss2.get_life().has_value());
+    BOOST_TEST(ss2.has_life());
 }
 
-BOOST_AUTO_TEST_CASE( literals ) {
+BOOST_AUTO_TEST_CASE( literals1 ) {
+    auto buf = "01234"_mb;
+    BOOST_TEST(buf == "01234");
+    BOOST_TEST(!buf.has_life());
+    auto ss1 = buf.substr(2, 3);
+    BOOST_TEST(ss1 == "234");
+    BOOST_TEST(!ss1.has_life());
+    auto ss2 = ss1.substr(1);
+    BOOST_TEST(ss2 == "34");
+    BOOST_TEST(!ss2.has_life());
+}
+
+BOOST_AUTO_TEST_CASE( literals2 ) {
     using namespace am::literals;
     using namespace std::literals::string_view_literals;
     auto buf1 = "abcde"_mb;
@@ -63,25 +64,48 @@ BOOST_AUTO_TEST_CASE( view ) {
     std::string s{"01234"};
     am::buffer buf{ std::string_view{s} };
     BOOST_TEST(buf == "01234");
-    BOOST_TEST(!buf.get_life().has_value());
+    BOOST_TEST(!buf.has_life());
     auto ss1 = buf.substr(2, 3);
     BOOST_TEST(ss1 == "234");
-    BOOST_TEST(!ss1.get_life().has_value());
+    BOOST_TEST(!ss1.has_life());
     auto ss2 = ss1.substr(1);
     BOOST_TEST(ss2 == "34");
-    BOOST_TEST(!ss2.get_life().has_value());
+    BOOST_TEST(!ss2.has_life());
 }
 
 BOOST_AUTO_TEST_CASE( string ) {
-    am::buffer buf{ std::string{"01234"} };
-    BOOST_TEST(buf == "01234");
-    BOOST_TEST(buf.get_life().has_value());
-    auto ss1 = buf.substr(2, 3);
-    BOOST_TEST(ss1 == "234");
-    BOOST_TEST(ss1.get_life().has_value());
-    auto ss2 = ss1.substr(1);
-    BOOST_TEST(ss2 == "34");
-    BOOST_TEST(ss2.get_life().has_value());
+    {
+        am::buffer moved;
+        {
+            am::buffer buf{ std::string{"01234"} };
+            BOOST_TEST(buf == "01234");
+            BOOST_TEST(buf.has_life());
+            auto ss1 = buf.substr(2, 3);
+            BOOST_TEST(ss1 == "234");
+            BOOST_TEST(ss1.has_life());
+            auto ss2 = ss1.substr(1);
+            BOOST_TEST(ss2 == "34");
+            BOOST_TEST(ss2.has_life());
+            moved = am::force_move(buf);
+        }
+        BOOST_TEST(moved == "01234");
+    }
+    {
+        am::buffer moved;
+        {
+            am::buffer buf{ std::string{"0123456789abcdefghijklmnopqrstuvwxyz"} };
+            BOOST_TEST(buf == "0123456789abcdefghijklmnopqrstuvwxyz");
+            BOOST_TEST(buf.has_life());
+            auto ss1 = buf.substr(2, 3);
+            BOOST_TEST(ss1 == "234");
+            BOOST_TEST(ss1.has_life());
+            auto ss2 = ss1.substr(1);
+            BOOST_TEST(ss2 == "34");
+            BOOST_TEST(ss2.has_life());
+            moved = am::force_move(buf);
+        }
+        BOOST_TEST(moved == "0123456789abcdefghijklmnopqrstuvwxyz");
+    }
 }
 
 BOOST_AUTO_TEST_CASE( buffers ) {

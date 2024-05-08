@@ -13,6 +13,7 @@
 #include "stub_socket.hpp"
 
 namespace am = async_mqtt;
+using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(tc) {

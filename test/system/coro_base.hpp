@@ -16,6 +16,7 @@
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
+using namespace am::literals;
 
 template <typename Ep, std::size_t PidBytes = 2>
 struct coro_base : as::coroutine {
