@@ -13,7 +13,7 @@
 #include <boost/container_hash/hash.hpp>
 
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/any.hpp>
+#include <async_mqtt/util/variant.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/is_iterator.hpp>
 #include <async_mqtt/util/string_view.hpp>
@@ -29,6 +29,7 @@ namespace as = boost::asio;
  */
 class buffer {
 public:
+    using life_type = std::variant<monostate, std::shared_ptr<void>, std::string>;
     using traits_type = string_view::traits_type;
     using value_type = string_view::value_type;
     using pointer = string_view::pointer;
@@ -45,6 +46,54 @@ public:
     static constexpr size_type npos = string_view::npos;
 
     constexpr buffer() noexcept = default;
+    buffer(buffer const& other)
+        :life_{other.life_},
+         view_{
+             [&] {
+                 if (auto p = std::get_if<std::string>(&life_)) {
+                     return string_view{*p};
+                 }
+                 else {
+                     return other.view_;
+                 }
+             }()
+         }
+    {}
+    buffer(buffer&& other)
+        :life_{force_move(other.life_)},
+         view_{
+             [&] {
+                 if (auto p = std::get_if<std::string>(&life_)) {
+                     return string_view{*p};
+                 }
+                 else {
+                     return other.view_;
+                 }
+             }()
+         }
+    {}
+
+    buffer& operator=(buffer const& other) {
+        life_ = other.life_;
+        if (auto p = std::get_if<std::string>(&life_)) {
+            view_ = *p;
+        }
+        else {
+            view_ = other.view_;
+        }
+        return *this;
+    }
+    buffer& operator=(buffer&& other) {
+        life_ = force_move(other.life_);
+        if (auto p = std::get_if<std::string>(&life_)) {
+            view_ = *p;
+        }
+        else {
+            view_ = force_move(other.view_);
+        }
+        return *this;
+    }
+
     constexpr buffer(char const* s, std::size_t count)
         :view_{s, count}
     {}
@@ -80,7 +129,7 @@ public:
      */
     explicit buffer(std::string s)
         : life_{force_move(s)},
-          view_{any_cast<std::string const&>(life_)}
+          view_{std::get<std::string>(life_)}
     {}
 
     /**
@@ -356,7 +405,7 @@ public:
         return view_.find_last_not_of(s, pos);
     }
 
-    any const& get_life() const {
+    life_type const& get_life() const {
         return life_;
     }
 
@@ -398,16 +447,21 @@ public:
         o << buf.view_;
         return o;
     }
+
+    bool has_life() const noexcept {
+        return std::get_if<monostate>(&life_) != nullptr;
+    }
+
 private:
     // for substring getter family
-    buffer(string_view sv, any life)
+    buffer(string_view sv, life_type life)
         : life_{force_move(life)},
           view_{force_move(sv)}
     {
     }
 
 private:
-    any life_;
+    life_type life_;
     string_view view_;
 };
 
