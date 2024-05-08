@@ -856,14 +856,14 @@ private:
             yield {
                 if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::mqtts>>) {
                     ep_.next_layer().async_handshake(
-                        am::tls::stream_base::client,
+                        as::ssl::stream_base::client,
                         *this
                     );
                 }
 #if defined(ASYNC_MQTT_USE_WS)
                 else if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>) {
                     ep_.next_layer().next_layer().async_handshake(
-                        am::tls::stream_base::client,
+                        as::ssl::stream_base::client,
                         *this
                     );
                 }
@@ -1266,13 +1266,13 @@ int main(int argc, char* argv[]) {
         else if (protocol == "mqtts") {
             as::ip::tcp::socket resolve_sock{ioc};
             as::ip::tcp::resolver res{resolve_sock.get_executor()};
-            am::tls::context ctx{am::tls::context::tlsv12};
+            as::ssl::context ctx{as::ssl::context::tlsv12};
             if (vm.count("verify_file")) {
                 ctx.load_verify_file(vm["verify_file"].as<std::string>());
-                ctx.set_verify_mode(am::tls::verify_peer);
+                ctx.set_verify_mode(as::ssl::verify_peer);
             }
             else {
-                ctx.set_verify_mode(am::tls::verify_none);
+                ctx.set_verify_mode(as::ssl::verify_none);
             }
             if (vm.count("certificate") || vm.count("private_key")) {
                 if (!vm.count("certificate")) {
@@ -1317,13 +1317,13 @@ int main(int argc, char* argv[]) {
         else if (protocol == "wss") {
             as::ip::tcp::socket resolve_sock{ioc};
             as::ip::tcp::resolver res{resolve_sock.get_executor()};
-            am::tls::context ctx{am::tls::context::tlsv12};
+            as::ssl::context ctx{as::ssl::context::tlsv12};
             if (vm.count("verify_file")) {
                 ctx.load_verify_file(vm["verify_file"].as<std::string>());
-                ctx.set_verify_mode(am::tls::verify_peer);
+                ctx.set_verify_mode(as::ssl::verify_peer);
             }
             else {
-                ctx.set_verify_mode(am::tls::verify_none);
+                ctx.set_verify_mode(as::ssl::verify_none);
             }
             if (vm.count("certificate") || vm.count("private_key")) {
                 if (!vm.count("certificate")) {

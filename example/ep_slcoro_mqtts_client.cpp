@@ -31,7 +31,7 @@ struct app {
           )
       }
     {
-        ctx_.set_verify_mode(am::tls::verify_none);
+        ctx_.set_verify_mode(as::ssl::verify_none);
         impl_();
     }
 
@@ -92,7 +92,7 @@ private:
 
                 // Underlying TLS handshake
                 yield app_.amep_->next_layer().async_handshake(
-                    am::tls::stream_base::client,
+                    as::ssl::stream_base::client,
                     *this
                 );
                 std::cout
@@ -240,7 +240,7 @@ private:
     as::ip::tcp::resolver res_;
     std::string_view host_;
     std::string_view port_;
-    am::tls::context ctx_{am::tls::context::tlsv12};
+    as::ssl::context ctx_{as::ssl::context::tlsv12};
     std::shared_ptr<am::endpoint<am::role::client, am::protocol::mqtts>> amep_;
     std::size_t count_ = 0;
     impl impl_{*this};

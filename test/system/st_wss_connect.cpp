@@ -25,8 +25,8 @@ BOOST_AUTO_TEST_CASE(cb) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 10443};
 
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
             amep->next_layer().next_layer().async_handshake(
-                am::tls::stream_base::client,
+                as::ssl::stream_base::client,
                 [&](am::error_code const& ec) {
                     BOOST_TEST(ec == am::error_code{});
                     amep->next_layer().async_handshake(
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(fut) {
     as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
     as::ip::tcp::endpoint endpoint{address, 10443};
 
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut = amep->next_layer().next_layer().async_handshake(
-            am::tls::stream_base::client,
+            as::ssl::stream_base::client,
             as::use_future
         );
         try {
@@ -194,8 +194,8 @@ BOOST_AUTO_TEST_CASE(fut) {
 BOOST_AUTO_TEST_CASE(coro) {
     broker_runner br;
     as::io_context ioc;
-    am::tls::context ctx{am::tls::context::tlsv12};
-    ctx.set_verify_mode(am::tls::verify_peer);
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    ctx.set_verify_mode(as::ssl::verify_peer);
     ctx.load_verify_file("cacert.pem");
 
     using ep_t = am::endpoint<am::role::client, am::protocol::wss>;
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                 );
                 BOOST_TEST(*ec == am::error_code{});
                 yield ep().next_layer().next_layer().async_handshake(
-                    am::tls::stream_base::client,
+                    as::ssl::stream_base::client,
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});

@@ -2,6 +2,14 @@
 
 = History
 
+== 6.0.0
+=== breaking changes
+* Organized predefined headers. #194
+** For mqtt, include `async_mqtt/all.hpp`. In addition,
+** For mqtts, include `async_mqtt/predefined_layer/mqtts.hpp`
+** For ws, include `async_mqtt/predefined_layer/ws.hpp`
+** For wss, include `async_mqtt/predefined_layer/wss.hpp`
+
 == 5.1.2
 * Refined custom underlying layer support. #190, #191, #193
 

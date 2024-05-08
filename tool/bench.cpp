@@ -329,7 +329,7 @@ private:
             yield {
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::mqtts>>) {
                     pci->c->next_layer().async_handshake(
-                        am::tls::stream_base::client,
+                        as::ssl::stream_base::client,
                         as::append(
                             *this,
                             pci
@@ -340,7 +340,7 @@ private:
 #if defined(ASYNC_MQTT_USE_WS)
                 if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
                     pci->c->next_layer().next_layer().async_handshake(
-                        am::tls::stream_base::client,
+                        as::ssl::stream_base::client,
                         as::append(
                             *this,
                             pci
@@ -2119,13 +2119,13 @@ int main(int argc, char *argv[]) {
             cis.reserve(clients);
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
-                am::tls::context ctx{am::tls::context::tlsv12};
+                as::ssl::context ctx{as::ssl::context::tlsv12};
                 if (cacert) {
-                    ctx.set_verify_mode(am::tls::verify_peer);
+                    ctx.set_verify_mode(as::ssl::verify_peer);
                     ctx.load_verify_file(*cacert);
                 }
                 else {
-                    ctx.set_verify_mode(am::tls::verify_none);
+                    ctx.set_verify_mode(as::ssl::verify_none);
                 }
                 cis.emplace_back(
                     client_t::create(
@@ -2254,13 +2254,13 @@ int main(int argc, char *argv[]) {
             cis.reserve(clients);
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
-                am::tls::context ctx{am::tls::context::tlsv12};
+                as::ssl::context ctx{as::ssl::context::tlsv12};
                 if (cacert) {
-                    ctx.set_verify_mode(am::tls::verify_peer);
+                    ctx.set_verify_mode(as::ssl::verify_peer);
                     ctx.load_verify_file(*cacert);
                 }
                 else {
-                    ctx.set_verify_mode(am::tls::verify_none);
+                    ctx.set_verify_mode(as::ssl::verify_none);
                 }
                 cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 cis.emplace_back(
