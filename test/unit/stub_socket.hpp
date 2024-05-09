@@ -33,10 +33,6 @@ struct basic_stub_socket {
          exe_{force_move(exe)}
     {}
 
-    void init(as::any_io_executor exe) {
-        guarded_exe_.emplace(force_move(exe));
-    }
-
     void set_write_packet_checker(std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> c) {
         open_ = true;
         write_packet_checker_ = force_move(c);
@@ -111,83 +107,75 @@ struct basic_stub_socket {
     };
 
     template <typename MutableBufferSequence, typename CompletionToken>
-    void async_read_some(
+    auto async_read_some(
         MutableBufferSequence const& mb,
         CompletionToken&& token
     ) {
-        // empty
-        if (recv_pvs_it_ == recv_pvs_.end()) {
-            as::dispatch(
-                as::bind_executor(
-                    as::get_associated_executor(token),
-                    [token = force_move(token)] () mutable {
-                        token(errc::make_error_code(errc::no_message), 0);
-                    }
-                )
-            );
-            return;
-        }
-        if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
-            ++recv_pvs_it_;
-            as::dispatch(
-                as::bind_executor(
-                    as::get_associated_executor(token),
-                    [token = force_move(token), code = ec->code()] () mutable {
-                        token(code, 0);
-                    }
-                )
-            );
-            return;
-        }
-
-        if (!pv_r_) {
-            cbs_ = recv_pvs_it_->const_buffer_sequence();
-            pv_r_ = make_packet_range(cbs_);
-        }
-
-        while (pv_r_->first == pv_r_->second) {
-            pv_r_ = nullopt;
-            ++recv_pvs_it_;
-            if (recv_pvs_it_ == recv_pvs_.end()) {
-                as::dispatch(
-                    as::bind_executor(
-                        as::get_associated_executor(token),
-                        [token = force_move(token)] () mutable {
-                            token(errc::make_error_code(errc::no_message), 0);
-                        }
-                    )
-                );
-                return;
-            }
-            if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
-                ++recv_pvs_it_;
-                as::dispatch(
-                    as::bind_executor(
-                        as::get_associated_executor(token),
-                        [token = force_move(token), code = ec->code()] () mutable {
-                            token(code, 0);
-                        }
-                    )
-                );
-                return;
-            }
-            cbs_ = recv_pvs_it_->const_buffer_sequence();
-            pv_r_ = make_packet_range(cbs_);
-        }
-
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(pv_r_->first, pv_r_->second)) >= mb.size());
-        as::mutable_buffer mb_copy = mb;
-        std::copy(pv_r_->first, std::next(pv_r_->first, std::ptrdiff_t(mb.size())), static_cast<char*>(mb_copy.data()));
-        std::advance(pv_r_->first, mb.size());
-        as::dispatch(
-            as::bind_executor(
-                as::get_associated_executor(token),
-                [token = force_move(token), size = mb.size()] () mutable {
-                    token(errc::make_error_code(errc::success), size);
-                }
-            )
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            async_read_some_impl<MutableBufferSequence>{
+                *this,
+                mb
+            },
+            token
         );
     }
+
+    template <typename MutableBufferSequence>
+    struct async_read_some_impl {
+        this_type& socket;
+        MutableBufferSequence mb;
+        enum { read, complete } state = read;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            // empty
+            if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
+                self.complete(errc::make_error_code(errc::no_message), 0);
+                return;
+            }
+            if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+                ++socket.recv_pvs_it_;
+                self.complete(ec->code(), 0);
+                return;
+            }
+            if (!socket.pv_r_) {
+                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.pv_r_ = make_packet_range(socket.cbs_);
+            }
+            while (socket.pv_r_->first == socket.pv_r_->second) {
+                socket.pv_r_ = nullopt;
+                ++socket.recv_pvs_it_;
+                if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
+                    self.complete(errc::make_error_code(errc::no_message), 0);
+                    return;
+                }
+                if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+                    ++socket.recv_pvs_it_;
+                    self.complete(ec->code(), 0);
+                    return;
+                }
+                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.pv_r_ = make_packet_range(socket.cbs_);
+            }
+
+            BOOST_ASSERT(
+                static_cast<std::size_t>(std::distance(socket.pv_r_->first, socket.pv_r_->second)) >= mb.size()
+            );
+            as::mutable_buffer mb_copy = mb;
+            std::copy(
+                socket.pv_r_->first,
+                std::next(socket.pv_r_->first, std::ptrdiff_t(mb.size())),
+                static_cast<char*>(mb_copy.data())
+            );
+            std::advance(socket.pv_r_->first, mb.size());
+            self.complete(errc::make_error_code(errc::success), mb.size());
+        }
+    };
 
 private:
 
@@ -200,7 +188,6 @@ private:
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
-    optional<as::any_io_executor> guarded_exe_;
 };
 
 using stub_socket = basic_stub_socket<2>;
