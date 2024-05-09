@@ -147,7 +147,7 @@ jobs:
       if: steps.cache-boost.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.81.0/boost_1_81_0-msvc-14.3-64.exe"
+        $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.85.0/boost_1_85_0-msvc-14.3-64.exe"
          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
         Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=$PWD\boost"
 
