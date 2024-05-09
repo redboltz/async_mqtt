@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(different) {
             };
 
             auto se = co_await ep->send(connect, as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
                     // receive packets
@@ -79,22 +79,22 @@ BOOST_AUTO_TEST_CASE(different) {
             );
 
             auto pv = co_await ep->recv(as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             auto pid_opt = co_await ep->acquire_unique_packet_id(as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             co_await ep->register_packet_id(*pid_opt, as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             co_await ep->release_packet_id(*pid_opt, as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             auto packets = co_await ep->get_stored_packets(as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             co_await ep->restore_packets(packets, as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
                 "topic1"_mb,
@@ -103,10 +103,10 @@ BOOST_AUTO_TEST_CASE(different) {
             };
 
             co_await ep->regulate_for_store(pub, as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             co_await ep->close(as::deferred);
-            BOOST_TEST(str_coro.running_in_this_thread());
+            BOOST_TEST(str_ep.running_in_this_thread());
 
             guard_coro.reset();
             co_return;

@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v3_1_1::connect_packet{
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v3_1_1::connect_packet{
@@ -739,13 +739,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep2 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v3_1_1::connect_packet{
@@ -980,7 +980,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v3_1_1::connect_packet{
@@ -1435,7 +1435,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -1719,7 +1719,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -2212,14 +2212,14 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto ep2 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -2502,7 +2502,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{

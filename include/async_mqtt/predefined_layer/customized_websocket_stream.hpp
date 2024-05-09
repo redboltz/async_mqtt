@@ -22,6 +22,9 @@ namespace bs = boost::beast;
 
 template <typename NextLayer>
 struct layer_customize<bs::websocket::stream<NextLayer>> {
+
+    // initialize
+
     static void initialize(bs::websocket::stream<NextLayer>& stream) {
         stream.binary(true);
         stream.set_option(
@@ -33,120 +36,138 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         );
     }
 
+    // async_write
+
     template <
         typename ConstBufferSequence,
         typename CompletionToken
     >
     static auto
     async_write(
-        as::any_io_executor exe,
         bs::websocket::stream<NextLayer>& stream,
         ConstBufferSequence const& cbs,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
-            void(error_code const& ec, std::size_t)
+            void(error_code const& ec, std::size_t size)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                bs::websocket::stream<NextLayer>& stream,
-                ConstBufferSequence const& cbs
-            ) {
-                stream.async_write(
-                    cbs,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = std::forward<CompletionToken>(completion_handler)]
-                        (error_code const& ec_write, std::size_t size) mutable {
-                            force_move(completion_handler)(ec_write, size);
-                        }
-                    )
-                );
+            async_write_impl<ConstBufferSequence>{
+                stream,
+                cbs
             },
-            token,
-            exe,
-            std::ref(stream),
-            std::ref(cbs)
+            token
         );
     }
+
+    template <typename ConstBufferSequence>
+    struct async_write_impl {
+        bs::websocket::stream<NextLayer>& stream;
+        ConstBufferSequence const& cbs;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            stream.async_write(
+                cbs,
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec,
+            std::size_t size
+        ) {
+            self.complete(ec, size);
+        }
+    };
+
+    // async_close
 
     template <
         typename CompletionToken
     >
     static auto
     async_close(
-        as::any_io_executor exe,
         bs::websocket::stream<NextLayer>& stream,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                bs::websocket::stream<NextLayer>& stream
-            ) {
-                stream.async_close(
-                    bs::websocket::close_code::none,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [exe, &stream, completion_handler = force_move(completion_handler)]
-                        (error_code const& ec_stream) mutable {
-                            if (ec_stream) {
-                                force_move(completion_handler)(ec_stream);
-                            }
-                            else {
-                                do_read(exe, stream, force_move(completion_handler));
-                            }
-                        }
-                    )
-                );
+            async_close_impl{
+                stream
             },
-            token,
-            exe,
-            std::ref(stream)
+            token
         );
     }
 
-    template <typename CompletionToken>
-    static void do_read(
-        as::any_io_executor exe,
-        bs::websocket::stream<NextLayer>& stream,
-        CompletionToken&& completion_handler
-    ) {
-        auto buffer = std::make_shared<bs::flat_buffer>();
-        stream.async_read(
-            *buffer,
-            // You must bind exe to the handler if you use underlying async_function
-            // using the completion handler that you defined.
-            as::bind_executor(
-                exe,
-                [exe, &stream, buffer, completion_handler = std::forward<CompletionToken>(completion_handler)]
-                (error_code const& ec_read, std::size_t) mutable {
-                    if (ec_read) {
-                        if (ec_read == bs::websocket::error::closed) {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "ws async_read (for close)  success";
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "ws async_read (for close):" << ec_read.message();
-                        }
-                        force_move(completion_handler)(ec_read);
-                    }
-                    else {
-                        do_read(exe, stream, force_move(completion_handler));
-                    }
+    struct async_close_impl {
+        bs::websocket::stream<NextLayer>& stream;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            stream.async_close(
+                bs::websocket::close_code::none,
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec
+        ) {
+            if (ec) {
+                self.complete(ec);
+            }
+            else {
+                auto buffer = std::make_shared<bs::flat_buffer>();
+                stream.async_read(
+                    *buffer,
+                    as::consign(
+                        force_move(self),
+                        buffer
+                    )
+                );
+            }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec,
+            std::size_t /* size */
+        ) {
+            if (ec) {
+                if (ec == bs::websocket::error::closed) {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "ws async_read (for close)  success";
                 }
-            )
-        );
-    }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_impl", info)
+                        << "ws async_read (for close):" << ec.message();
+                }
+                self.complete(ec);
+            }
+            else {
+                auto buffer = std::make_shared<bs::flat_buffer>();
+                stream.async_read(
+                    *buffer,
+                    as::consign(
+                        force_move(self),
+                        buffer
+                    )
+                );
+            }
+        }
+    };
 };
 
 } // namespace async_mqtt

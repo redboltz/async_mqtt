@@ -118,7 +118,6 @@ struct has_async_read<
     std::void_t<
         decltype(
             layer_customize<Layer>::async_read(
-                std::declval<as::any_io_executor>(),
                 std::declval<Layer&>(),
                 std::declval<as::mutable_buffer const&>(),
                 std::declval<as::any_completion_handler<void(error_code const&, std::size_t)>>()
@@ -138,7 +137,6 @@ struct has_async_write<
     std::void_t<
         decltype(
             layer_customize<Layer>::async_write(
-                std::declval<as::any_io_executor>(),
                 std::declval<Layer&>(),
                 std::declval<std::vector<as::const_buffer> const&>(),
                 std::declval<as::any_completion_handler<void(error_code const&, std::size_t)>>()
@@ -158,7 +156,6 @@ struct has_async_close<
     std::void_t<
         decltype(
             layer_customize<Layer>::async_close(
-                std::declval<as::any_io_executor>(),
                 std::declval<Layer&>(),
                 std::declval<as::any_completion_handler<void(error_code const&)>>()
             )

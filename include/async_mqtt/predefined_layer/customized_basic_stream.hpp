@@ -25,18 +25,14 @@ struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
     >
     static auto
     async_close(
-        as::any_io_executor exe,
         as::basic_stream_socket<Protocol, Executor>& stream,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor /* exe */,
-                as::basic_stream_socket<Protocol, Executor>& stream
-            ) {
+            [&stream](auto& self) {
                 error_code ec;
                 if (stream.is_open()) {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -47,11 +43,9 @@ struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << "TCP already closed";
                 }
-                force_move(completion_handler)(ec);
+                self.complete(ec);
             },
-            token,
-            exe,
-            std::ref(stream)
+            token
         );
     }
 };
