@@ -28,12 +28,14 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
     as::co_spawn(
         ioc.get_executor(),
         [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
             auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
                 version,
                 // for stub_socket args
                 version,
-                ioc.get_executor()
+                am::force_move(exe)
             );
+            ep->next_layer().init(ep->strand());
             ep->set_pingresp_recv_timeout_ms(0); // for coverage
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
@@ -79,12 +81,14 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
     as::co_spawn(
         ioc.get_executor(),
         [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
             auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
                 version,
                 // for stub_socket args
                 version,
-                ioc.get_executor()
+                am::force_move(exe)
             );
+            ep->next_layer().init(ep->strand());
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
             {

@@ -30,19 +30,11 @@ struct cpp20coro_basic_stub_socket {
         as::any_io_executor exe
     )
         :version_{version},
-         exe_{force_move(exe)}
+         raw_exe_{force_move(exe)}
     {}
 
-    cpp20coro_basic_stub_socket(
-        protocol_version version,
-        as::io_context& ioc
-    )
-        :version_{version},
-         exe_{ioc.get_executor()}
-    {}
-
-    void set_executor(as::any_io_executor exe) {
-        exe_ = force_move(exe);
+    void init(as::any_io_executor exe) {
+        guarded_exe_.emplace(force_move(exe));
     }
 
     template <typename CompletionToken>
@@ -70,10 +62,11 @@ struct cpp20coro_basic_stub_socket {
         void operator()(
             Self& self
         ) {
+            BOOST_ASSERT_MSG(socket.guarded_exe_, "You need to call call init(as::any_io_executor).");
             socket.ch_recv_.async_send(
                 force_move(pv),
                 as::bind_executor(
-                    socket.exe_,
+                    *socket.guarded_exe_,
                     force_move(self)
                 )
             );
@@ -116,9 +109,10 @@ struct cpp20coro_basic_stub_socket {
         void operator()(
             Self& self
         ) {
+            BOOST_ASSERT_MSG(socket.guarded_exe_, "You need to call call init(as::any_io_executor).");
             socket.ch_send_.async_receive(
                 as::bind_executor(
-                    socket.exe_,
+                    *socket.guarded_exe_,
                     force_move(self)
                 )
             );
@@ -133,8 +127,8 @@ struct cpp20coro_basic_stub_socket {
         }
     };
 
-    as::any_io_executor  get_executor() const {
-        return exe_;
+    as::any_io_executor get_executor() const {
+        return raw_exe_;
     }
 
     bool is_open() const {
@@ -230,9 +224,10 @@ struct cpp20coro_basic_stub_socket {
                     state = complete;
                 }
                 else {
+                    BOOST_ASSERT_MSG(socket.guarded_exe_, "You need to call call init(as::any_io_executor).");
                     socket.ch_recv_.async_receive(
                         as::bind_executor(
-                            socket.exe_,
+                            *socket.guarded_exe_,
                             force_move(self)
                         )
                     );
@@ -282,13 +277,14 @@ struct cpp20coro_basic_stub_socket {
 private:
     using channel_t = as::experimental::channel<void(basic_packet_variant<PacketIdBytes>)>;
     protocol_version version_;
-    as::any_io_executor exe_;
+    as::any_io_executor raw_exe_;
+    optional<as::any_io_executor> guarded_exe_;
     basic_packet_variant<PacketIdBytes> pv_;
     std::vector<as::const_buffer> cbs_;
     optional<packet_range> pv_r_;
     bool open_ = true;
-    channel_t ch_recv_{exe_, 1};
-    channel_t ch_send_{exe_, 1};
+    channel_t ch_recv_{raw_exe_, 1};
+    channel_t ch_send_{raw_exe_, 1};
 };
 
 using cpp20coro_stub_socket = cpp20coro_basic_stub_socket<2>;
