@@ -48,7 +48,6 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::protocol_version::v3_1_1,       // for emulated client so should already be known
                     exe
                 );
-            ep1->next_layer().init(ep1->strand());
             brk.handle_accept(epv_t{ep1});
 
             // underlying connect
@@ -60,7 +59,6 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::protocol_version::v5,
                     exe
                 );
-            ep2->next_layer().init(ep2->strand());
             brk.handle_accept(epv_t{ep2});
 
             {

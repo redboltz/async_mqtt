@@ -35,7 +35,6 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 version,
                 am::force_move(exe)
             );
-            ep->next_layer().init(ep->strand());
             ep->set_pingresp_recv_timeout_ms(0); // for coverage
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
@@ -88,7 +87,6 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                 version,
                 am::force_move(exe)
             );
-            ep->next_layer().init(ep->strand());
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
             {
