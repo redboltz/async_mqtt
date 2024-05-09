@@ -142,7 +142,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path:  D:\a\async_mqtt\async_mqtt\boost
-        key: ${{ runner.os }}-boost-20230507
+        key: ${{ runner.os }}-boost-20240509
     - name: install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       shell: powershell

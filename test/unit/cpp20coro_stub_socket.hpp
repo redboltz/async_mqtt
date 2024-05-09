@@ -298,6 +298,12 @@ struct layer_customize<cpp20coro_stub_socket> {
 
     template <typename MutableBufferSequence>
     struct async_read_impl {
+        async_read_impl(
+            cpp20coro_stub_socket& stream,
+            MutableBufferSequence const& mbs
+        ): stream{stream}, mbs{mbs}
+        {}
+
         cpp20coro_stub_socket& stream;
         MutableBufferSequence mbs;
 
@@ -378,6 +384,12 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
 
     template <typename MutableBufferSequence>
     struct async_read_impl {
+        async_read_impl(
+            cpp20coro_basic_stub_socket<4>& stream,
+            MutableBufferSequence const& mbs
+        ): stream{stream}, mbs{mbs}
+        {}
+
         cpp20coro_basic_stub_socket<4>& stream;
         MutableBufferSequence mbs;
 
