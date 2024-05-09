@@ -2769,19 +2769,48 @@ private:
     }
 
     template <typename CompletionToken>
-    void add_retry(
+    auto add_retry(
         CompletionToken&& token
     ) {
-        auto tim = std::make_shared<as::steady_timer>(stream_->raw_strand());
-        tim->expires_at(std::chrono::steady_clock::time_point::max());
-        tim->async_wait(
-            as::bind_executor(
-                stream_->raw_strand(),
-                std::forward<CompletionToken>(token)
-            )
-        );
-        tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec)
+            >(
+                add_retry_impl{
+                    *this
+                },
+                token
+            );
     }
+
+    struct add_retry_impl {
+        this_type& ep;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto tim = std::make_shared<as::steady_timer>(ep.stream_->raw_strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            auto& a_ep{ep};
+            tim->async_wait(
+                as::bind_executor(
+                    a_ep.stream_->raw_strand(),
+                    force_move(self)
+                )
+            );
+            a_ep.tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec
+        ) {
+            self.complete(ec);
+        }
+    };
 
     void notify_retry_one() {
         for (auto it = tim_retry_acq_pid_queue_.begin();
