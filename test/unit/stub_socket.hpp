@@ -255,7 +255,7 @@ struct layer_customize<stub_socket> {
     template <typename MutableBufferSequence>
     struct async_read_impl {
         stub_socket& stream;
-        MutableBufferSequence const& mbs;
+        MutableBufferSequence mbs;
 
         template <typename Self>
         void operator()(
@@ -334,7 +334,7 @@ struct layer_customize<basic_stub_socket<4>> {
     template <typename MutableBufferSequence>
     struct async_read_impl {
         basic_stub_socket<4>& stream;
-        MutableBufferSequence const& mbs;
+        MutableBufferSequence mbs;
 
         template <typename Self>
         void operator()(

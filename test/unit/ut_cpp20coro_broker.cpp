@@ -46,6 +46,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::protocol_version::v3_1_1,       // for emulated client so should already be known
                     ioc.get_executor()
                 );
+            ep1->next_layer().set_executor(ep1->strand());
             brk.handle_accept(epv_t{ep1});
 
             // underlying connect
@@ -57,6 +58,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::protocol_version::v5,
                     ioc.get_executor()
                 );
+            ep2->next_layer().set_executor(ep2->strand());
             brk.handle_accept(epv_t{ep2});
 
             {

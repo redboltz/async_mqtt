@@ -41,6 +41,10 @@ struct cpp20coro_basic_stub_socket {
          exe_{ioc.get_executor()}
     {}
 
+    void set_executor(as::any_io_executor exe) {
+        exe_ = force_move(exe);
+    }
+
     template <typename CompletionToken>
     auto emulate_recv(
         basic_packet_variant<PacketIdBytes> pv,
@@ -68,7 +72,10 @@ struct cpp20coro_basic_stub_socket {
         ) {
             socket.ch_recv_.async_send(
                 force_move(pv),
-                force_move(self)
+                as::bind_executor(
+                    socket.exe_,
+                    force_move(self)
+                )
             );
         }
 
@@ -110,7 +117,10 @@ struct cpp20coro_basic_stub_socket {
             Self& self
         ) {
             socket.ch_send_.async_receive(
-                force_move(self)
+                as::bind_executor(
+                    socket.exe_,
+                    force_move(self)
+                )
             );
         }
 
@@ -159,7 +169,7 @@ struct cpp20coro_basic_stub_socket {
     template <typename ConstBufferSequence>
     struct async_write_some_impl {
         this_type& socket;
-        ConstBufferSequence const& buffers;
+        ConstBufferSequence buffers;
 
         template <typename Self>
         void operator()(
@@ -189,7 +199,7 @@ struct cpp20coro_basic_stub_socket {
     };
 
     template <typename MutableBufferSequence, typename CompletionToken>
-    void async_read_some(
+    auto async_read_some(
         MutableBufferSequence const& mb,
         CompletionToken&& token
     ) {
@@ -208,7 +218,7 @@ struct cpp20coro_basic_stub_socket {
     template <typename MutableBufferSequence>
     struct async_read_some_impl {
         this_type& socket;
-        MutableBufferSequence const& mb;
+        MutableBufferSequence mb;
         enum { read, complete } state = read;
 
         template <typename Self>
@@ -259,6 +269,9 @@ struct cpp20coro_basic_stub_socket {
                 socket.cbs_ = socket.pv_.const_buffer_sequence();
                 socket.pv_r_ = make_packet_range(socket.cbs_);
                 state = complete;
+                as::dispatch(
+                    force_move(self)
+                );
             }
             else {
                 self.complete(pv.template get<system_error>().code(), 0);
@@ -307,7 +320,7 @@ struct layer_customize<cpp20coro_stub_socket> {
     template <typename MutableBufferSequence>
     struct async_read_impl {
         cpp20coro_stub_socket& stream;
-        MutableBufferSequence const& mbs;
+        MutableBufferSequence mbs;
 
         template <typename Self>
         void operator()(
@@ -387,7 +400,7 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
     template <typename MutableBufferSequence>
     struct async_read_impl {
         cpp20coro_basic_stub_socket<4>& stream;
-        MutableBufferSequence const& mbs;
+        MutableBufferSequence mbs;
 
         template <typename Self>
         void operator()(

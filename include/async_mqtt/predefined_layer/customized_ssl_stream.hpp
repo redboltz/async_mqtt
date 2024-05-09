@@ -42,7 +42,7 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
         );
     }
 
-    struct async_close_impl{
+    struct async_close_impl {
         as::ssl::stream<NextLayer>& stream;
 
         template <typename Self>
