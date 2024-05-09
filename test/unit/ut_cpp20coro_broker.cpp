@@ -30,6 +30,8 @@ BOOST_AUTO_TEST_CASE(tc1) {
     as::co_spawn(
         ioc.get_executor(),
         [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+
             using epv_t = am::endpoint_variant<
                 am::role::server,
                 am::cpp20coro_stub_socket
@@ -44,9 +46,9 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     am::protocol_version::undetermined, // for broker decided by connect packet
                     // for cpp20coro_stub_socket args
                     am::protocol_version::v3_1_1,       // for emulated client so should already be known
-                    ioc.get_executor()
+                    exe
                 );
-            ep1->next_layer().set_executor(ep1->strand());
+            ep1->next_layer().init(ep1->strand());
             brk.handle_accept(epv_t{ep1});
 
             // underlying connect
@@ -56,9 +58,9 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     //am::protocol_version::undetermined,
                     // for cpp20coro_stub_socket args
                     am::protocol_version::v5,
-                    ioc.get_executor()
+                    exe
                 );
-            ep2->next_layer().set_executor(ep2->strand());
+            ep2->next_layer().init(ep2->strand());
             brk.handle_accept(epv_t{ep2});
 
             {

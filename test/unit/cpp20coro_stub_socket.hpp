@@ -265,7 +265,10 @@ struct cpp20coro_basic_stub_socket {
                 socket.pv_r_ = make_packet_range(socket.cbs_);
                 state = complete;
                 as::dispatch(
-                    force_move(self)
+                    as::bind_executor(
+                        *socket.guarded_exe_,
+                        force_move(self)
+                    )
                 );
             }
             else {
