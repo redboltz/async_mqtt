@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     ep->set_bulk_write(true);
     auto connect = am::v3_1_1::connect_packet{
@@ -343,25 +343,25 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep2 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep3 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep4 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect_no_clean = am::v3_1_1::connect_packet{
@@ -722,7 +722,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -1035,25 +1035,25 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep2 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep3 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep4 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect_no_clean = am::v5::connect_packet{
@@ -1422,7 +1422,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -1759,7 +1759,7 @@ BOOST_AUTO_TEST_CASE(restore_packets_error) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();

@@ -19,6 +19,7 @@ namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
 struct basic_stub_socket {
+    using this_type = basic_stub_socket<PacketIdBytes>;
     using executor_type = as::any_io_executor;
     using pv_queue_t = std::deque<basic_packet_variant<PacketIdBytes>>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
@@ -32,13 +33,9 @@ struct basic_stub_socket {
          exe_{force_move(exe)}
     {}
 
-    basic_stub_socket(
-        protocol_version version,
-        as::io_context& ioc
-    )
-        :version_{version},
-         exe_{ioc.get_executor()}
-    {}
+    void init(as::any_io_executor exe) {
+        guarded_exe_.emplace(force_move(exe));
+    }
 
     void set_write_packet_checker(std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> c) {
         open_ = true;
@@ -56,20 +53,10 @@ struct basic_stub_socket {
         close_checker_ = force_move(c);
     }
 
-#if 0
-    auto const& lowest_layer() const {
-        return exe_;
-    }
-    auto& lowest_layer() {
-        return exe_;
-    }
-#endif
     auto get_executor() const {
         return exe_;
     }
-    auto get_executor() {
-        return exe_;
-    }
+
     bool is_open() const {
         return open_;
     }
@@ -79,42 +66,49 @@ struct basic_stub_socket {
     }
 
     template <typename ConstBufferSequence, typename CompletionToken>
-    void async_write_some(
+    auto async_write_some(
         ConstBufferSequence const& buffers,
         CompletionToken&& token
     ) {
-        auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
-        auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
-        auto dis = std::distance(it, end);
-        auto packet_begin = it;
-        while (it != end) {
-            ++it; // it points to the first byte of remaining length
-            if (auto remlen_opt = variable_bytes_to_val(it, end)) {
-                auto packet_end = std::next(it, *remlen_opt);
-                auto buf = allocate_buffer(packet_begin, packet_end);
-                auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
-                if (write_packet_checker_) write_packet_checker_(pv);
-                it = packet_end;
-                packet_begin = packet_end;
-            }
-        }
-        as::post(
-            as::bind_executor(
-                exe_,
-                [token = std::forward<CompletionToken>(token), dis] () mutable {
-                    auto exe = as::get_associated_executor(token);
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            [token = force_move(token), dis] () mutable {
-                                token(boost::system::error_code{}, std::size_t(dis));
-                            }
-                        )
-                    );
-                }
-            )
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            async_write_some_impl<ConstBufferSequence>{
+                *this,
+                buffers
+            },
+            token
         );
     }
+
+    template <typename ConstBufferSequence>
+    struct async_write_some_impl {
+        this_type& socket;
+        ConstBufferSequence buffers;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
+            auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
+            auto dis = std::distance(it, end);
+            auto packet_begin = it;
+            while (it != end) {
+                ++it; // it points to the first byte of remaining length
+                if (auto remlen_opt = variable_bytes_to_val(it, end)) {
+                    auto packet_end = std::next(it, *remlen_opt);
+                    auto buf = allocate_buffer(packet_begin, packet_end);
+                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_);
+                    if (socket.write_packet_checker_) socket.write_packet_checker_(pv);
+                    it = packet_end;
+                    packet_begin = packet_end;
+                }
+            }
+            self.complete(boost::system::error_code{}, std::size_t(dis));
+        }
+    };
 
     template <typename MutableBufferSequence, typename CompletionToken>
     void async_read_some(
@@ -206,6 +200,7 @@ private:
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
+    optional<as::any_io_executor> guarded_exe_;
 };
 
 using stub_socket = basic_stub_socket<2>;
