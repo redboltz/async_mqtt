@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {
@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {
@@ -648,7 +648,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {
@@ -816,7 +816,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     {

@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
