@@ -130,7 +130,7 @@ jobs:
         CTEST_ARGS="--log_level=all -- warning" ctest -V
 
   windows:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         pattern: [0, 1, 2]
