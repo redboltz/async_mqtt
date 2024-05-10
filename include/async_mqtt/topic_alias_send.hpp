@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_TOPIC_ALIAS_SEND_HPP
 
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <array>
 
@@ -19,10 +20,9 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/optional.hpp>
+#include <optional>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/time_point.hpp>
-#include <async_mqtt/util/string_view.hpp>
 
 namespace async_mqtt {
 
@@ -33,7 +33,7 @@ public:
     topic_alias_send(topic_alias_t max)
         :max_{max}, va_{min_, max_} {}
 
-    void insert_or_update(string_view topic, topic_alias_t alias) {
+    void insert_or_update(std::string_view topic, topic_alias_t alias) {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "topic_alias_send insert"
@@ -93,7 +93,7 @@ public:
         return it->topic;
     }
 
-    optional<topic_alias_t> find(string_view topic) const {
+    std::optional<topic_alias_t> find(std::string_view topic) const {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "find_alias_by_topic"
@@ -101,7 +101,7 @@ public:
 
         auto& idx = aliases_.get<tag_topic_name>();
         auto it = idx.find(topic);
-        if (it == idx.end()) return nullopt;
+        if (it == idx.end()) return std::nullopt;
         return it->alias;
     }
 
@@ -132,7 +132,7 @@ private:
         entry(std::string topic, topic_alias_t alias, time_point_t tp)
             : topic{force_move(topic)}, alias{alias}, tp{force_move(tp)} {}
 
-        string_view get_topic_as_view() const {
+        std::string_view get_topic_as_view() const {
             return topic;
         }
 

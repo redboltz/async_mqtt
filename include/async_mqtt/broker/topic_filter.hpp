@@ -14,7 +14,7 @@
 
 #include <boost/assert.hpp>
 
-#include <async_mqtt/util/string_view.hpp>
+#include <async_mqtt/util/string_view_helper.hpp>
 
 namespace async_mqtt {
 
@@ -39,11 +39,11 @@ inline std::size_t topic_filter_tokenizer(Iterator first, Iterator last, Output 
 
 
 template<typename Output>
-inline std::size_t topic_filter_tokenizer(string_view str, Output write) {
+inline std::size_t topic_filter_tokenizer(std::string_view str, Output write) {
     return topic_filter_tokenizer(
         std::begin(str),
         std::end(str),
-        [&write](string_view::const_iterator token_begin, string_view::const_iterator token_end) {
+        [&write](std::string_view::const_iterator token_begin, std::string_view::const_iterator token_end) {
             return write(
                 make_string_view(
                     token_begin,
@@ -60,7 +60,7 @@ inline std::size_t topic_filter_tokenizer(string_view str, Output write) {
 // to conduct the search for the wildcard characters using a proper
 // UTF-8 API to avoid problems of interpreting parts of multi-byte characters
 // as if they were individual ASCII characters
-constexpr bool validate_topic_filter(string_view topic_filter) {
+constexpr bool validate_topic_filter(std::string_view topic_filter) {
     /*
      * Confirm the topic pattern is valid before registering it.
      * Use rules from http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718106
@@ -72,9 +72,9 @@ constexpr bool validate_topic_filter(string_view topic_filter) {
         return false;
     }
 
-    for (string_view::size_type idx = topic_filter.find_first_of(string_view("\0+#", 3));
-         string_view::npos != idx;
-         idx = topic_filter.find_first_of(string_view("\0+#", 3), idx+1)) {
+    for (std::string_view::size_type idx = topic_filter.find_first_of(std::string_view("\0+#", 3));
+         std::string_view::npos != idx;
+         idx = topic_filter.find_first_of(std::string_view("\0+#", 3), idx+1)) {
         BOOST_ASSERT(
             ('\0' == topic_filter[idx])
             || ('+'  == topic_filter[idx])
@@ -130,7 +130,7 @@ constexpr bool validate_topic_filter(string_view topic_filter) {
 // The following rules come from https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901247
 static_assert( ! validate_topic_filter(""), "All Topic Names and Topic Filters MUST be at least one character long");
 static_assert(validate_topic_filter("/"), "A Topic Name or Topic Filter consisting only of the ‘/’ character is valid");
-static_assert( ! validate_topic_filter(string_view("\0", 1)), "Topic Names and Topic Filters MUST NOT include the null character (Unicode U+0000)");
+static_assert( ! validate_topic_filter(std::string_view("\0", 1)), "Topic Names and Topic Filters MUST NOT include the null character (Unicode U+0000)");
 static_assert(validate_topic_filter(" "), "Topic Names and Topic Filters can include the space character");
 static_assert(validate_topic_filter("/////"), "Topic level separators can appear anywhere in a Topic Filter or Topic Name. Adjacent Topic level separators indicate a zero-length topic level");
 static_assert(validate_topic_filter("#"), "The multi-level wildcard character MUST be specified either on its own or following a topic level separator");
@@ -153,7 +153,7 @@ static_assert( ! validate_topic_filter("/a+"), "Where it is used, the single-lev
 static_assert( ! validate_topic_filter("a+/"), "Where it is used, the single-level wildcard MUST occupy an entire level of the filter.");
 static_assert( ! validate_topic_filter("/a+/"), "Where it is used, the single-level wildcard MUST occupy an entire level of the filter.");
 
-constexpr bool validate_topic_name(string_view topic_name) {
+constexpr bool validate_topic_name(std::string_view topic_name) {
     /*
      * Confirm the topic name is valid
      * Use rules from https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901247
@@ -166,13 +166,13 @@ constexpr bool validate_topic_name(string_view topic_name) {
     return
         ! topic_name.empty()
         && (topic_name.size() <= std::numeric_limits<std::uint16_t>::max())
-        && (string_view::npos == topic_name.find_first_of(string_view("\0+#", 3)));
+        && (std::string_view::npos == topic_name.find_first_of(std::string_view("\0+#", 3)));
 }
 
 // The following rules come from https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901247
 static_assert( ! validate_topic_name(""), "All Topic Names and Topic Filters MUST be at least one character long");
 static_assert(validate_topic_name("/"), "A Topic Name or Topic Filter consisting only of the ‘/’ character is valid");
-static_assert( ! validate_topic_name(string_view("\0", 1)), "Topic Names and Topic Filters MUST NOT include the null character (Unicode U+0000)");
+static_assert( ! validate_topic_name(std::string_view("\0", 1)), "Topic Names and Topic Filters MUST NOT include the null character (Unicode U+0000)");
 static_assert(validate_topic_name(" "), "Topic Names and Topic Filters can include the space character");
 static_assert(validate_topic_name("/////"), "Topic level separators can appear anywhere in a Topic Filter or Topic Name. Adjacent Topic level separators indicate a zero-length topic level");
 static_assert( ! validate_topic_name("#"), "The wildcard characters can be used in Topic Filters, but MUST NOT be used within a Topic Name");
@@ -182,7 +182,7 @@ static_assert( ! validate_topic_name("+/#"), "The wildcard characters can be use
 static_assert( ! validate_topic_name("f#"), "The wildcard characters can be used in Topic Filters, but MUST NOT be used within a Topic Name");
 static_assert( ! validate_topic_name("#/"), "The wildcard characters can be used in Topic Filters, but MUST NOT be used within a Topic Name");
 
-constexpr bool compare_topic_filter(string_view topic_filter, string_view topic_name) {
+constexpr bool compare_topic_filter(std::string_view topic_filter, std::string_view topic_name) {
     if ( ! validate_topic_filter(topic_filter)) {
         BOOST_ASSERT(validate_topic_filter(topic_filter));
         return false;
@@ -194,8 +194,8 @@ constexpr bool compare_topic_filter(string_view topic_filter, string_view topic_
     }
 
     // TODO: The Server MUST NOT match Topic Filters starting with a wildcard character (# or +) with Topic Names beginning with a $ character
-    for (string_view::size_type idx = topic_filter.find_first_of("+#");
-         string_view::npos != idx;
+    for (std::string_view::size_type idx = topic_filter.find_first_of("+#");
+         std::string_view::npos != idx;
          idx = topic_filter.find_first_of("+#")) {
         BOOST_ASSERT(
             ('+' == topic_filter[idx])

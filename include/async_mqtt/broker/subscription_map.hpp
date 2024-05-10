@@ -9,12 +9,11 @@
 
 #include <unordered_map>
 #include <string_view>
+#include <optional>
 
 #include <boost/functional/hash.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
-#include <async_mqtt/util/optional.hpp>
-#include <async_mqtt/util/string_view.hpp>
 #include <async_mqtt/buffer.hpp>
 
 #include <async_mqtt/broker/topic_filter.hpp>
@@ -244,13 +243,13 @@ protected:
         return path.back()->first;
     }
 
-    std::vector< map_type_iterator> find_topic_filter(string_view topic_filter) {
+    std::vector< map_type_iterator> find_topic_filter(std::string_view topic_filter) {
         auto parent_id = get_root()->second.id;
         std::vector< map_type_iterator > path;
 
         topic_filter_tokenizer(
             topic_filter,
-            [this, &path, &parent_id](string_view t) mutable {
+            [this, &path, &parent_id](std::string_view t) mutable {
                 auto entry = map.find(path_entry_key(parent_id, t));
 
                 if (entry == map.end()) {
@@ -267,14 +266,14 @@ protected:
         return path;
     }
 
-    std::vector<map_type_iterator> create_topic_filter(string_view topic_filter) {
+    std::vector<map_type_iterator> create_topic_filter(std::string_view topic_filter) {
         auto parent = get_root();
 
         std::vector<map_type_iterator> result;
 
         topic_filter_tokenizer(
             topic_filter,
-            [this, &parent, &result](string_view t) mutable {
+            [this, &parent, &result](std::string_view t) mutable {
                 auto entry = map.find(path_entry_key(parent->second.id, t));
 
                 if (entry == map.end()) {
@@ -342,7 +341,7 @@ protected:
     }
 
     template <typename ThisType, typename Output>
-    static void find_match_impl(ThisType& self, string_view topic, Output&& callback) {
+    static void find_match_impl(ThisType& self, std::string_view topic, Output&& callback) {
         using iterator_type = decltype(self.map.end()); // const_iterator or iterator depends on self
 
         std::vector<iterator_type> entries;
@@ -350,7 +349,7 @@ protected:
 
         topic_filter_tokenizer(
             topic,
-            [&self, &entries, &callback](string_view t) {
+            [&self, &entries, &callback](std::string_view t) {
                 std::vector<iterator_type> new_entries;
 
                 for (auto& entry : entries) {
@@ -361,7 +360,7 @@ protected:
                     }
 
                     if (entry->second.count .has_plus_child()) {
-                        i = self.map.find(path_entry_key(parent, string_view("+")));
+                        i = self.map.find(path_entry_key(parent, std::string_view("+")));
                         if (i != self.map.end()) {
                             if (parent != self.root_node_id || t.empty() || t[0] != '$') {
                                 new_entries.push_back(i);
@@ -370,7 +369,7 @@ protected:
                     }
 
                     if (entry->second.count.has_hash_child()) {
-                        i = self.map.find(path_entry_key(parent, string_view("#")));
+                        i = self.map.find(path_entry_key(parent, std::string_view("#")));
                         if (i != self.map.end()) {
                             if (parent != self.root_node_id || t.empty() || t[0] != '$'){
                                 callback(i->second.value);
@@ -391,13 +390,13 @@ protected:
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find_match(string_view topic, Output&& callback) const {
+    void find_match(std::string_view topic, Output&& callback) const {
         find_match_impl(*this, topic, std::forward<Output>(callback));
     }
 
     // Find all topic filters and allow modification
     template<typename Output>
-    void modify_match(string_view topic, Output&& callback) {
+    void modify_match(std::string_view topic, Output&& callback) {
         find_match_impl(*this, topic, std::forward<Output>(callback));
     }
 
@@ -473,10 +472,10 @@ public:
     std::size_t size() const { return this->map_size; }
 
     // Lookup a topic filter
-    optional<handle> lookup(string_view topic_filter) {
+    std::optional<handle> lookup(std::string_view topic_filter) {
         auto path = this->find_topic_filter(topic_filter);
         if(path.empty())
-            return optional<handle>();
+            return std::optional<handle>();
         else
             return this->path_to_handle(force_move(path));
     }
@@ -500,7 +499,7 @@ public:
 
 template<typename Value>
 class single_subscription_map
-    : public subscription_map_base<optional<Value>> {
+    : public subscription_map_base<std::optional<Value>> {
 
 public:
 
@@ -509,7 +508,7 @@ public:
 
     // Insert a value at the specified topic_filter
     template <typename V>
-    std::pair<handle, bool> insert(string_view topic_filter, V&& value) {
+    std::pair<handle, bool> insert(std::string_view topic_filter, V&& value) {
         auto existing_subscription = this->find_topic_filter(topic_filter);
         if (!existing_subscription.empty()) {
             if(existing_subscription.back()->second.value)
@@ -527,7 +526,7 @@ public:
 
     // Update a value at the specified topic filter
     template <typename V>
-    void update(string_view topic_filter, V&& value) {
+    void update(std::string_view topic_filter, V&& value) {
         auto path = this->find_topic_filter(topic_filter);
         if (path.empty()) {
             this->throw_invalid_topic_filter();
@@ -546,7 +545,7 @@ public:
     }
 
     // Remove a value at the specified topic filter
-    std::size_t erase(string_view topic_filter) {
+    std::size_t erase(std::string_view topic_filter) {
         auto path = this->find_topic_filter(topic_filter);
         if (path.empty() || !path.back()->second.value) {
             return 0;
@@ -571,10 +570,10 @@ public:
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find(string_view topic, Output&& callback) const {
+    void find(std::string_view topic, Output&& callback) const {
         this->find_match(
             topic,
-            [&callback]( optional<Value> const& value ) {
+            [&callback](std::optional<Value> const& value) {
                 if (value) {
                     callback(*value);
                 }
@@ -615,7 +614,7 @@ public:
     // Insert a key => value at the specified topic filter
     // returns the handle and true if key was inserted, false if key was updated
     template <typename K, typename V>
-    std::pair<handle, bool> insert_or_assign(string_view topic_filter, K&& key, V&& value) {
+    std::pair<handle, bool> insert_or_assign(std::string_view topic_filter, K&& key, V&& value) {
         auto path = this->find_topic_filter(topic_filter);
         if (path.empty()) {
             auto new_topic_filter = this->create_topic_filter(topic_filter);
@@ -700,7 +699,7 @@ public:
 
     // Remove a value at the specified topic filter
     // returns the number of removed elements
-    std::size_t erase(string_view topic_filter, Key const& key) {
+    std::size_t erase(std::string_view topic_filter, Key const& key) {
         // Find the topic filter in the map
         auto path = this->find_topic_filter(topic_filter);
         if (path.empty()) {
@@ -719,7 +718,7 @@ public:
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find(string_view topic, Output&& callback) const {
+    void find(std::string_view topic, Output&& callback) const {
         this->find_match(
             topic,
             [&callback]( Cont const &values ) {
@@ -732,7 +731,7 @@ public:
 
     // Find all topic filters that match and allow modification
     template<typename Output>
-    void modify(string_view topic, Output&& callback) {
+    void modify(std::string_view topic, Output&& callback) {
         this->modify_match(
             topic,
             [&callback]( Cont &values ) {

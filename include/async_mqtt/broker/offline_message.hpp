@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_BROKER_OFFLINE_MESSAGE_HPP)
 #define ASYNC_MQTT_BROKER_OFFLINE_MESSAGE_HPP
 
+#include <optional>
 
 #include <boost/asio/steady_timer.hpp>
 #include <boost/multi_index_container.hpp>
@@ -190,7 +191,7 @@ public:
         BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {
-        optional<std::chrono::steady_clock::duration> message_expiry_interval;
+        std::optional<std::chrono::steady_clock::duration> message_expiry_interval;
 
         for (auto const& prop : props) {
             prop.visit(

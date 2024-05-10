@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <ostream>
 
-#include <async_mqtt/util/optional.hpp>
+#include <optional>
 
 namespace async_mqtt {
 
@@ -88,7 +88,7 @@ enum class control_packet_reserved_bits : std::uint8_t {
     auth        = 0b00000000,
 };
 
-inline optional<control_packet_type> get_control_packet_type_with_check(std::uint8_t v) {
+inline std::optional<control_packet_type> get_control_packet_type_with_check(std::uint8_t v) {
     auto cpt = static_cast<control_packet_type>(v & 0b11110000);
     auto valid =
         [&] {
@@ -129,7 +129,7 @@ inline optional<control_packet_type> get_control_packet_type_with_check(std::uin
             }
         } ();
     if (valid) return cpt;
-    return nullopt;
+    return std::nullopt;
 }
 
 } // namespace async_mqtt

@@ -36,7 +36,7 @@ public:
         security_.default_config();
     }
 
-    void handle_accept(epsp_t epsp, optional<std::string> preauthed_user_name = {}) {
+    void handle_accept(epsp_t epsp, std::optional<std::string> preauthed_user_name = {}) {
         epsp.set_preauthed_user_name(force_move(preauthed_user_name));
         async_read_packet(force_move(epsp));
     }
@@ -257,14 +257,14 @@ private:
     void connect_handler(
         epsp_t epsp,
         buffer client_id,
-        optional<buffer> noauth_username,
-        optional<buffer> password,
-        optional<will> will,
+        std::optional<buffer> noauth_username,
+        std::optional<buffer> password,
+        std::optional<will> will,
         bool clean_start,
         std::uint16_t /*keep_alive*/,
         properties props
     ) {
-        optional<std::string> username;
+        std::optional<std::string> username;
         if (auto paun_opt = epsp.get_preauthed_user_name()) {
             std::shared_lock<mutex> g_sec{mtx_security_};
             if (security_.login_cert(*paun_opt)) {
@@ -286,8 +286,8 @@ private:
             username = security_.login_unauthenticated();
         }
 
-        optional<std::chrono::steady_clock::duration> session_expiry_interval;
-        optional<std::chrono::steady_clock::duration> will_expiry_interval;
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval;
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval;
         bool response_topic_requested = false;
 
         auto version = epsp.get_protocol_version();
@@ -518,9 +518,9 @@ private:
     template <typename Idx, typename It>
     void offline_to_online(
         epsp_t epsp,
-        optional<will> will,
-        optional<std::chrono::steady_clock::duration> will_expiry_interval,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval,
+        std::optional<will> will,
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval,
         bool clean_start,
         std::string username,
         Idx& idx,
@@ -1151,7 +1151,7 @@ private:
             };
 
         //                  share_name   topic_filter
-        std::set<std::tuple<string_view, string_view>> sent;
+        std::set<std::tuple<std::string_view, std::string_view>> sent;
 
         {
             std::shared_lock<mutex> g{mtx_subs_map_};
@@ -1182,7 +1182,7 @@ private:
             );
         }
 
-        optional<std::chrono::steady_clock::duration> message_expiry_interval;
+        std::optional<std::chrono::steady_clock::duration> message_expiry_interval;
         if (source_ss.get_protocol_version() == protocol_version::v5) {
             for (auto const& prop : props) {
                 prop.visit(
@@ -1533,7 +1533,7 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        optional<session_state_ref<epsp_t>> ssr_opt;
+        std::optional<session_state_ref<epsp_t>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
@@ -1544,7 +1544,7 @@ private:
         session_state_ref<epsp_t> ssr {*ssr_opt};
 
         auto publish_proc =
-            [this, &ssr, &epsp](retain_t const& r, qos qos_value, optional<std::size_t> sid) {
+            [this, &ssr, &epsp](retain_t const& r, qos qos_value, std::optional<std::size_t> sid) {
                 auto props = r.props;
                 if (sid) {
                     props.push_back(property::subscription_identifier(std::uint32_t(*sid)));
@@ -1579,7 +1579,7 @@ private:
         retain_deliver.reserve(entries.size());
 
         // subscription identifier
-        optional<std::size_t> sid;
+        std::optional<std::size_t> sid;
 
         // An in-order list of qos settings, used to send the reply.
         // The MQTT protocol 3.1.1 - 3.8.4 Response - paragraph 6
@@ -1749,7 +1749,7 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        optional<session_state_ref<epsp_t>> ssr_opt;
+        std::optional<session_state_ref<epsp_t>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
@@ -1884,7 +1884,7 @@ private:
     auto close_proc_no_lock(
         epsp_t epsp,
         bool send_will,
-        optional<disconnect_reason_code> rc_opt,
+        std::optional<disconnect_reason_code> rc_opt,
         CompletionToken&& token) {
 
         auto init =
@@ -1893,7 +1893,7 @@ private:
                 auto completion_handler,
                 epsp_t epsp,
                 bool send_will,
-                optional<disconnect_reason_code> rc_opt
+                std::optional<disconnect_reason_code> rc_opt
             ) {
                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -2039,7 +2039,7 @@ private:
     void close_proc(
         epsp_t epsp,
         bool send_will,
-        optional<disconnect_reason_code> rc_opt = nullopt
+        std::optional<disconnect_reason_code> rc_opt = std::nullopt
     ) {
         ASYNC_MQTT_LOG("mqtt_broker", trace)
             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -2134,7 +2134,7 @@ private:
 
     as::io_context& timer_ioc_; ///< The boost asio context to run this broker on.
     as::steady_timer tim_disconnect_; ///< Used to delay disconnect handling for testing
-    optional<std::chrono::steady_clock::duration> delay_disconnect_; ///< Used to delay disconnect handling for testing
+    std::optional<std::chrono::steady_clock::duration> delay_disconnect_; ///< Used to delay disconnect handling for testing
 
     // Authorization and authentication settings
     mutable mutex mtx_security_;

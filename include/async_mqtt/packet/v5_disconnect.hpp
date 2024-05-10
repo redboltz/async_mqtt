@@ -56,7 +56,7 @@ public:
         disconnect_reason_code reason_code,
         properties props
     ) : disconnect_packet{
-            optional<disconnect_reason_code>(reason_code),
+            std::optional<disconnect_reason_code>(reason_code),
             force_move(props)
         }
     {}
@@ -66,7 +66,7 @@ public:
      */
     disconnect_packet(
     ) : disconnect_packet{
-            nullopt,
+            std::nullopt,
             properties{}
         }
     {}
@@ -80,7 +80,7 @@ public:
     disconnect_packet(
         disconnect_reason_code reason_code
     ) : disconnect_packet{
-            optional<disconnect_reason_code>(reason_code),
+            std::optional<disconnect_reason_code>(reason_code),
             properties{}
         }
     {}
@@ -286,7 +286,7 @@ public:
 
 private:
     disconnect_packet(
-        optional<disconnect_reason_code> reason_code,
+        std::optional<disconnect_reason_code> reason_code,
         properties props
     )
         : fixed_header_{
@@ -338,7 +338,7 @@ private:
     std::size_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 
-    optional<disconnect_reason_code> reason_code_;
+    std::optional<disconnect_reason_code> reason_code_;
 
     std::size_t property_length_ = 0;
     static_vector<char, 4> property_length_buf_;

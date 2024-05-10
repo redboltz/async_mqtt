@@ -91,9 +91,9 @@ public:
      * @brief publish completion handler parameter class
      */
     struct pubres_t {
-        optional<puback_packet> puback_opt;   ///< puback_packet as the response when you send QoS1 publish
-        optional<pubrec_packet> pubrec_opt;   ///< pubrec_packet as the response when you send QoS2 publish
-        optional<pubcomp_packet> pubcomp_opt; ///< pubcomp_packet as the response when you send QoS2 publish
+        std::optional<puback_packet> puback_opt;   ///< puback_packet as the response when you send QoS1 publish
+        std::optional<pubrec_packet> pubrec_opt;   ///< pubrec_packet as the response when you send QoS2 publish
+        std::optional<pubcomp_packet> pubcomp_opt; ///< pubcomp_packet as the response when you send QoS2 publish
     };
 
     /**
@@ -116,7 +116,7 @@ public:
     /**
      * @brief send CONNECT packet and start packet receive loop
      * @param packet CONNECT packet
-     * @param token the params are error_code, optional<connack_packet>
+     * @param token the params are error_code, std::optional<connack_packet>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -130,7 +130,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(error_code const& ec, optional<connack_packet>)
+                void(error_code const& ec, std::optional<connack_packet>)
             >(
                 start_impl{
                     *this,
@@ -143,7 +143,7 @@ public:
     /**
      * @brief send SUBSCRIBE packet
      * @param packet SUBSCRIBE packet
-     * @param token the params are error_code, optional<suback_packet>
+     * @param token the params are error_code, std::optional<suback_packet>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -157,7 +157,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(error_code const& ec, optional<suback_packet>)
+                void(error_code const& ec, std::optional<suback_packet>)
             >(
                 subscribe_impl{
                     *this,
@@ -170,7 +170,7 @@ public:
     /**
      * @brief send UNSUBSCRIBE packet
      * @param packet UNSUBSCRIBE packet
-     * @param token the params are error_code, optional<unsuback_packet>
+     * @param token the params are error_code, std::optional<unsuback_packet>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -184,7 +184,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(error_code const& ec, optional<unsuback_packet>)
+                void(error_code const& ec, std::optional<unsuback_packet>)
             >(
                 unsubscribe_impl{
                     *this,
@@ -198,7 +198,7 @@ public:
      * @brief send PUBLISH packet
      * @param packet PUBLISH packet
      * @param token the params are error_code, pubres_t
-     *              When sending QoS0 packet, all members of pubres_t is nullopt.
+     *              When sending QoS0 packet, all members of pubres_t is std::nullopt.
      *              When sending QoS1 packet, only pubres_t::puback_opt is set.
      *              When sending QoS1 packet, only pubres_t::pubrec_opt pubres_t::pubcomp are set.
      * @return deduced by token
@@ -265,7 +265,7 @@ public:
     /**
      * @brief receive PUBLISH or DISCONNECT packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
-     * @param token the params are error_code, optional<publish_packet>, and optional<disconnect_packet>
+     * @param token the params are error_code, std::optional<publish_packet>, and std::optional<disconnect_packet>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -278,7 +278,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(error_code const& ec, optional<publish_packet>, optional<disconnect_packet>)
+                void(error_code const& ec, std::optional<publish_packet>, std::optional<disconnect_packet>)
             >(
                 recv_impl{
                     *this
@@ -399,7 +399,7 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token the param is optional<packet_id_t>
+     * @param token the param is std::optional<packet_id_t>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -445,10 +445,10 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @return optional<packet_id_t> if acquired return acquired packet id, otherwise nullopt
+     * @return std::optional<packet_id_t> if acquired return acquired packet id, otherwise std::nullopt
      * @note This function is SYNC function that must only be called in the strand.
      */
-    optional<packet_id_t> acquire_unique_packet_id() {
+    std::optional<packet_id_t> acquire_unique_packet_id() {
         return ep_->acquire_unique_packet_id();
     }
 
@@ -483,7 +483,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(0);
                             if (it != idx.end()) {
-                                const_cast<optional<packet_variant>&>(it->pv).emplace(p);
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                                 it->tim->cancel();
                                 recv_loop();
                             }
@@ -492,7 +492,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(p.packet_id());
                             if (it != idx.end()) {
-                                const_cast<optional<packet_variant>&>(it->pv).emplace(p);
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                                 it->tim->cancel();
                             }
                             recv_loop();
@@ -501,7 +501,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(p.packet_id());
                             if (it != idx.end()) {
-                                const_cast<optional<packet_variant>&>(it->pv).emplace(p);
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                                 it->tim->cancel();
                             }
                             recv_loop();
@@ -516,7 +516,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(p.packet_id());
                             if (it != idx.end()) {
-                                const_cast<optional<puback_packet>&>(it->res.puback_opt).emplace(p);
+                                const_cast<std::optional<puback_packet>&>(it->res.puback_opt).emplace(p);
                                 it->tim->cancel();
                             }
                             recv_loop();
@@ -525,7 +525,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(p.packet_id());
                             if (it != idx.end()) {
-                                const_cast<optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
+                                const_cast<std::optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
                                 if constexpr (Version == protocol_version::v5) {
                                     if (is_error(p.code())) {
                                         it->tim->cancel();
@@ -538,7 +538,7 @@ private:
                             auto& idx = pid_tim_pv_res_col_.template get<tag_pid>();
                             auto it = idx.find(p.packet_id());
                             if (it != idx.end()) {
-                                const_cast<optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
+                                const_cast<std::optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
                                 it->tim->cancel();
                             }
                             recv_loop();
@@ -585,7 +585,7 @@ private:
             system_error const& se
         ) {
             if (se) {
-                self.complete(se.code(), nullopt);
+                self.complete(se.code(), std::nullopt);
                 return;
             }
 
@@ -616,7 +616,7 @@ private:
             if (it == idx.end()) {
                 self.complete(
                     errc::make_error_code(sys::errc::operation_canceled),
-                    nullopt
+                    std::nullopt
                 );
             }
             else {
@@ -628,7 +628,7 @@ private:
                 else {
                     self.complete(
                         errc::make_error_code(sys::errc::protocol_error),
-                        nullopt
+                        std::nullopt
                     );
                 }
             }
@@ -662,7 +662,7 @@ private:
             packet_id_t pid
         ) {
             if (se) {
-                self.complete(se.code(), nullopt);
+                self.complete(se.code(), std::nullopt);
                 return;
             }
 
@@ -692,7 +692,7 @@ private:
             if (it == idx.end()) {
                 self.complete(
                     errc::make_error_code(sys::errc::operation_canceled),
-                    nullopt
+                    std::nullopt
                 );
             }
             else {
@@ -704,7 +704,7 @@ private:
                 else {
                     self.complete(
                         errc::make_error_code(sys::errc::protocol_error),
-                        nullopt
+                        std::nullopt
                     );
                 }
             }
@@ -738,7 +738,7 @@ private:
             packet_id_t pid
         ) {
             if (se) {
-                self.complete(se.code(), nullopt);
+                self.complete(se.code(), std::nullopt);
                 return;
             }
 
@@ -768,7 +768,7 @@ private:
             if (it == idx.end()) {
                 self.complete(
                     errc::make_error_code(sys::errc::operation_canceled),
-                    nullopt
+                    std::nullopt
                 );
             }
             else {
@@ -780,7 +780,7 @@ private:
                 else {
                     self.complete(
                         errc::make_error_code(sys::errc::protocol_error),
-                        nullopt
+                        std::nullopt
                     );
                 }
             }
@@ -954,8 +954,8 @@ private:
             else {
                 self.complete(
                     errc::make_error_code(sys::errc::operation_canceled),
-                    nullopt,
-                    nullopt
+                    std::nullopt,
+                    std::nullopt
                 );
             }
         }
@@ -978,7 +978,7 @@ private:
         }
         packet_id_t pid = 0;
         std::shared_ptr<as::steady_timer> tim;
-        optional<packet_variant> pv;
+        std::optional<packet_variant> pv;
         pubres_t res;
     };
     struct tag_pid {};
@@ -1012,8 +1012,8 @@ private:
         {
         }
         error_code ec = error_code{};
-        optional<publish_packet> publish_opt;
-        optional<disconnect_packet> disconnect_opt;
+        std::optional<publish_packet> publish_opt;
+        std::optional<disconnect_packet> disconnect_opt;
     };
 
     ep_type_sp ep_;

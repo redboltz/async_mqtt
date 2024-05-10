@@ -104,9 +104,9 @@ private:
                         true,   // clean_session
                         0x1234, // keep_alive
                         "cid1"_mb,
-                        am::nullopt, // will
-                        am::nullopt, // username set like "user1"_mb,
-                        am::nullopt  // password set like "pass1"_mb
+                        std::nullopt, // will
+                        std::nullopt, // username set like "user1"_mb,
+                        std::nullopt  // password set like "pass1"_mb
                     },
                     *this
                 );

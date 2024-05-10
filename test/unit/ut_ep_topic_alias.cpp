@@ -24,8 +24,8 @@ using namespace am::literals;
 namespace as = boost::asio;
 using namespace am::literals;
 
-inline am::optional<am::topic_alias_t> get_topic_alias(am::properties const& props) {
-    am::optional<am::topic_alias_t> ta_opt;
+inline std::optional<am::topic_alias_t> get_topic_alias(am::properties const& props) {
+    std::optional<am::topic_alias_t> ta_opt;
     for (auto const& prop : props) {
         prop.visit(
             am::overload {
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -753,7 +753,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -918,7 +918,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -1228,7 +1228,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}

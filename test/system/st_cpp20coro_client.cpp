@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                     true,   // clean_session
                     0,      // keep_alive
                     "cid1"_mb,
-                    am::nullopt, // will
+                    std::nullopt, // will
                     "u1"_mb,
                     "passforu1"_mb
                 },
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                     true,   // clean_session
                     0,      // keep_alive
                     "cid1"_mb,
-                    am::nullopt, // will
+                    std::nullopt, // will
                     "u1"_mb,
                     "passforu1"_mb
                 },

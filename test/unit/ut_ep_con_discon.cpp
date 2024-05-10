@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -752,7 +752,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -987,7 +987,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -1442,7 +1442,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -1726,7 +1726,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -2226,7 +2226,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -2509,7 +2509,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}

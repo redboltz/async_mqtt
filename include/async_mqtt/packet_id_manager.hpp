@@ -7,6 +7,8 @@
 #if !defined(ASYNC_MQTT_PACKET_ID_MANAGER_HPP)
 #define ASYNC_MQTT_PACKET_ID_MANAGER_HPP
 
+#include <optional>
+
 #include <async_mqtt/util/value_allocator.hpp>
 
 namespace async_mqtt {
@@ -19,13 +21,13 @@ public:
 
     /**
      * @brief Acquire the new unique packet id.
-     *        If all packet ids are already in use, then returns nullopt
+     *        If all packet ids are already in use, then returns std::nullopt
      *        After acquiring the packet id, you can call acquired_* functions.
      *        The ownership of packet id is moved to the library.
      *        Or you can call release_packet_id to release it.
      * @return packet id
      */
-    optional<packet_id_type> acquire_unique_id() {
+    std::optional<packet_id_type> acquire_unique_id() {
         return va_.allocate();
     }
 

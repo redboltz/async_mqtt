@@ -7,7 +7,9 @@
 #if !defined(ASYNC_MQTT_PACKET_STORE_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_PACKET_STORE_PACKET_VARIANT_HPP
 
-#include <async_mqtt/util/variant.hpp>
+#include <variant>
+
+#include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/v3_1_1_pubrel.hpp>
@@ -111,7 +113,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) const& {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 var_
             );
@@ -124,7 +126,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) & {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 var_
             );
@@ -137,7 +139,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) && {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 force_move(var_)
             );
@@ -260,7 +262,7 @@ public:
     }
 
 private:
-    using variant_t = variant<
+    using variant_t = std::variant<
         v3_1_1::basic_publish_packet<PacketIdBytes>,
         v3_1_1::basic_pubrel_packet<PacketIdBytes>,
         v5::basic_publish_packet<PacketIdBytes>,

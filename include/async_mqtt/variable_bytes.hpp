@@ -8,9 +8,9 @@
 #define ASYNC_MQTT_VARIABLE_BYTES_HPP
 
 #include <cstdint>
+#include <optional>
 
 #include <async_mqtt/util/static_vector.hpp>
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/is_iterator.hpp>
 
 namespace async_mqtt {
@@ -33,7 +33,7 @@ constexpr
 std::enable_if_t<
     is_input_iterator<It>::value &&
     is_input_iterator<End>::value,
-    optional<std::uint32_t>
+    std::optional<std::uint32_t>
 >
 variable_bytes_to_val(It& it, End e) {
     std::size_t val = 0;
@@ -43,7 +43,7 @@ variable_bytes_to_val(It& it, End e) {
         mul *= 128;
         if (mul > 128 * 128 * 128 * 128) {
             ++it;
-            return nullopt;
+            return std::nullopt;
         }
         if (!(*it & 0b10000000)) {
             ++it;

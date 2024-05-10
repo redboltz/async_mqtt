@@ -50,9 +50,9 @@ proc(
                 true,   // clean_session
                 0x1234, // keep_alive
                 "cid1"_mb,
-                am::nullopt, // will
-                am::nullopt, // username set like allocate_buffer("user1"),
-                am::nullopt  // password set like allocate_buffer("pass1")
+                std::nullopt, // will
+                std::nullopt, // username set like allocate_buffer("user1"),
+                std::nullopt  // password set like allocate_buffer("pass1")
             },
             as::use_awaitable
         );

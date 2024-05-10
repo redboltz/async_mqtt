@@ -263,12 +263,12 @@ public:
                 pub_topic_ = am::buffer{};
                 pub_qos_ = am::qos::at_most_once;
                 pub_retain_ = am::pub::retain::no;
-                pub_pfi_ = am::nullopt;
-                pub_mei_ = am::nullopt;
-                pub_ct_ = am::nullopt;
-                pub_rt_ = am::nullopt;
-                pub_cd_ = am::nullopt;
-                pub_ta_ = am::nullopt;
+                pub_pfi_ = std::nullopt;
+                pub_mei_ = std::nullopt;
+                pub_ct_ = std::nullopt;
+                pub_rt_ = std::nullopt;
+                pub_cd_ = std::nullopt;
+                pub_ta_ = std::nullopt;
                 pub_ups_.clear();
                 print_pub(o);
             },
@@ -380,7 +380,7 @@ public:
             [this](std::ostream& o, std::string sid_str) {
                 auto sid = boost::lexical_cast<std::uint32_t>(sid_str);
                 if (sid == 0) {
-                    sub_sid_ = am::nullopt;
+                    sub_sid_ = std::nullopt;
                 }
                 else {
                     sub_sid_ = sid;
@@ -413,7 +413,7 @@ public:
                 sub_nl_ = am::sub::nl::no;
                 sub_rap_ = am::sub::rap::dont;
                 sub_rh_ = am::sub::retain_handling::send;
-                sub_sid_ = am::nullopt;
+                sub_sid_ = std::nullopt;
                 sub_ups_.clear();
                 print_sub(o);
             },
@@ -592,7 +592,7 @@ private:
                     payload = am::force_move(payload),
                     opts
                 ]
-                (am::optional<packet_id_t> pid_opt) mutable {
+                (std::optional<packet_id_t> pid_opt) mutable {
                     if (pid_opt) {
                         publish(
                             *pid_opt,
@@ -629,7 +629,7 @@ private:
                 topic = am::force_move(topic),
                 opts
             ]
-            (am::optional<packet_id_t> pid_opt) mutable {
+            (std::optional<packet_id_t> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.send(
@@ -685,7 +685,7 @@ private:
                 this,
                 topic = am::force_move(topic)
             ]
-            (am::optional<packet_id_t> pid_opt) mutable {
+            (std::optional<packet_id_t> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.send(
@@ -735,12 +735,12 @@ private:
     am::buffer pub_payload_;
     am::qos pub_qos_ = am::qos::at_most_once;
     am::pub::retain pub_retain_ = am::pub::retain::no;
-    am::optional<am::payload_format> pub_pfi_;
-    am::optional<std::uint32_t> pub_mei_;
-    am::optional<std::string> pub_ct_;
-    am::optional<std::string> pub_rt_;
-    am::optional<std::string> pub_cd_;
-    am::optional<std::uint16_t> pub_ta_;
+    std::optional<am::payload_format> pub_pfi_;
+    std::optional<std::uint32_t> pub_mei_;
+    std::optional<std::string> pub_ct_;
+    std::optional<std::string> pub_rt_;
+    std::optional<std::string> pub_cd_;
+    std::optional<std::uint16_t> pub_ta_;
     std::vector<am::property::user_property> pub_ups_;
 
     am::buffer sub_topic_;
@@ -748,7 +748,7 @@ private:
     am::sub::nl sub_nl_ = am::sub::nl::no;
     am::sub::rap sub_rap_ = am::sub::rap::dont;
     am::sub::retain_handling sub_rh_ = am::sub::retain_handling::send;
-    am::optional<std::uint32_t> sub_sid_;
+    std::optional<std::uint32_t> sub_sid_;
     std::vector<am::property::user_property> sub_ups_;
 
 };
@@ -786,7 +786,7 @@ public:
     void operator()(am::system_error const& se) {
         proc({}, se, {}, {}, {});
     }
-    void operator()(am::optional<packet_id_t> pid_opt) {
+    void operator()(std::optional<packet_id_t> pid_opt) {
         proc({}, {}, pid_opt, {}, {});
     }
     void operator()(am::packet_variant pv) {
@@ -797,25 +797,25 @@ private:
     void proc(
         am::error_code const& ec,
         am::system_error const& se,
-        am::optional<packet_id_t> /*pid_opt*/,
+        std::optional<packet_id_t> /*pid_opt*/,
         am::packet_variant pv,
         std::optional<as::ip::tcp::resolver::results_type> eps
     ) {
         reenter (coro_) {
             yield {
                 username_ =
-                    [&] () -> am::optional<am::buffer> {
+                    [&] () -> std::optional<am::buffer> {
                         if (vm_.count("username")) {
                             return am::allocate_buffer(vm_["username"].template as<std::string>());
                         }
-                        return am::nullopt;
+                        return std::nullopt;
                     } ();
                 password_ =
-                    [&] () -> am::optional<am::buffer> {
+                    [&] () -> std::optional<am::buffer> {
                         if (vm_.count("password")) {
                             return am::allocate_buffer(vm_["password"].template as<std::string>());
                         }
-                        return am::nullopt;
+                        return std::nullopt;
                     } ();
                 client_id_ =
                     [&] () -> am::buffer {
@@ -935,7 +935,7 @@ private:
                             clean_start_,
                             keep_alive_,
                             client_id_,
-                            am::nullopt, // will
+                            std::nullopt, // will
                             username_,
                             password_
                         },
@@ -957,7 +957,7 @@ private:
                             clean_start_,
                             keep_alive_,
                             client_id_,
-                            am::nullopt, // will
+                            std::nullopt, // will
                             username_,
                             password_,
                             am::force_move(props)
@@ -1024,8 +1024,8 @@ private:
     po::variables_map& vm_;
     am::protocol_version version_;
     am::buffer client_id_;
-    am::optional<am::buffer> username_;
-    am::optional<am::buffer> password_;
+    std::optional<am::buffer> username_;
+    std::optional<am::buffer> password_;
     std::uint16_t keep_alive_ = 0;
     bool clean_start_ = true;
     std::uint32_t sei_ = 0;

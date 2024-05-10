@@ -8,13 +8,13 @@
 #define ASYNC_MQTT_BROKER_SHARED_TARGET_HPP
 
 #include <map>
+#include <optional>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
 #include <async_mqtt/buffer.hpp>
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/time_point_t.hpp>
 
 #include <async_mqtt/broker/session_state_fwd.hpp>
@@ -32,7 +32,7 @@ public:
     void insert(buffer share_name, buffer topic_filter, subscription<Sp> sub, session_state<Sp>& ss);
     void erase(buffer share_name, buffer topic_filter, session_state<Sp> const& ss);
     void erase(session_state<Sp> const& ss);
-    optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> get_target(buffer const& share_name, buffer const& topic_filter);
+    std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> get_target(buffer const& share_name, buffer const& topic_filter);
 
 private:
     struct entry {

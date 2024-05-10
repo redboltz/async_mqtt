@@ -74,8 +74,8 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
         return static_cast<int>(r) & static_cast<int>(role::server);
     }
 
-    static inline optional<topic_alias_t> get_topic_alias(properties const& props) {
-        optional<topic_alias_t> ta_opt;
+    static inline std::optional<topic_alias_t> get_topic_alias(properties const& props) {
+        std::optional<topic_alias_t> ta_opt;
         for (auto const& prop : props) {
             prop.visit(
                 overload {
@@ -263,7 +263,7 @@ public:
      */
     void set_pingresp_recv_timeout_ms(std::size_t ms) {
         if (ms == 0) {
-            pingresp_recv_timeout_ms_ = nullopt;
+            pingresp_recv_timeout_ms_ = std::nullopt;
         }
         else {
             pingresp_recv_timeout_ms_.emplace(ms);
@@ -288,7 +288,7 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token the param is optional<packet_id_t>
+     * @param token the param is std::optional<packet_id_t>
      * @return deduced by token
      */
     template <typename CompletionToken>
@@ -302,7 +302,7 @@ public:
         return
             as::async_compose<
                 CompletionToken,
-                void(optional<packet_id_t>)
+                void(std::optional<packet_id_t>)
             >(
                 acquire_unique_packet_id_impl{
                     *this
@@ -630,10 +630,10 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @return optional<packet_id_t> if acquired return acquired packet id, otherwise nullopt
+     * @return std::optional<packet_id_t> if acquired return acquired packet id, otherwise std::nullopt
      * @note This function is SYNC function that must only be called in the strand.
      */
-    optional<packet_id_t> acquire_unique_packet_id() {
+    std::optional<packet_id_t> acquire_unique_packet_id() {
         BOOST_ASSERT(in_strand());
         auto pid = pid_man_.acquire_unique_id();
         if (pid) {
@@ -843,7 +843,7 @@ private: // compose operation impl
 
     struct acquire_unique_packet_id_impl {
         this_type& ep;
-        optional<packet_id_t> pid_opt = nullopt;
+        std::optional<packet_id_t> pid_opt = std::nullopt;
         enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
@@ -874,7 +874,7 @@ private: // compose operation impl
     struct acquire_unique_packet_id_wait_until_impl {
         this_type& ep;
         this_type_wp retry_wp = ep.weak_from_this();
-        optional<packet_id_t> pid_opt = nullopt;
+        std::optional<packet_id_t> pid_opt = std::nullopt;
         enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
@@ -1221,7 +1221,7 @@ private: // compose operation impl
                 else {
                     ep.need_store_ = true;
                 }
-                ep.topic_alias_send_ = nullopt;
+                ep.topic_alias_send_ = std::nullopt;
             }
 
             if constexpr(std::is_same_v<v5::connect_packet, std::decay_t<ActualPacket>>) {
@@ -1565,7 +1565,7 @@ private: // compose operation impl
         }
 
         template <typename Self>
-        optional<std::string> validate_topic_alias(Self& self, optional<topic_alias_t> ta_opt) {
+        std::optional<std::string> validate_topic_alias(Self& self, std::optional<topic_alias_t> ta_opt) {
             BOOST_ASSERT(ep.in_strand());
             if (!ta_opt) {
                 self.complete(
@@ -1574,11 +1574,11 @@ private: // compose operation impl
                         "topic is empty but topic_alias isn't set"
                     )
                 );
-                return nullopt;
+                return std::nullopt;
             }
 
             if (!validate_topic_alias_range(self, *ta_opt)) {
-                return nullopt;
+                return std::nullopt;
             }
 
             auto topic = ep.topic_alias_send_->find(*ta_opt);
@@ -1589,7 +1589,7 @@ private: // compose operation impl
                         "topic is empty but topic_alias is not registered"
                     )
                 );
-                return nullopt;
+                return std::nullopt;
             }
             return topic;
         }
@@ -1614,9 +1614,9 @@ private: // compose operation impl
 
     struct recv_impl {
         this_type& ep;
-        optional<filter> fil = nullopt;
+        std::optional<filter> fil = std::nullopt;
         std::set<control_packet_type> types = {};
-        optional<system_error> decided_error = nullopt;
+        std::optional<system_error> decided_error = std::nullopt;
         enum { initiate, disconnect, close, read, complete } state = initiate;
 
         template <typename Self>
@@ -2611,8 +2611,8 @@ private:
         BOOST_ASSERT(in_strand());
         publish_send_count_ = 0;
         publish_queue_.clear();
-        topic_alias_send_ = nullopt;
-        topic_alias_recv_ = nullopt;
+        topic_alias_send_ = std::nullopt;
+        topic_alias_recv_ = std::nullopt;
         publish_recv_.clear();
         qos2_publish_processing_.clear();
         need_store_ = false;
@@ -2866,8 +2866,8 @@ private:
 
     bool auto_map_topic_alias_send_ = false;
     bool auto_replace_topic_alias_send_ = false;
-    optional<topic_alias_send> topic_alias_send_;
-    optional<topic_alias_recv> topic_alias_recv_;
+    std::optional<topic_alias_send> topic_alias_send_;
+    std::optional<topic_alias_recv> topic_alias_recv_;
 
     receive_maximum_t publish_send_max_{receive_maximum_max};
     receive_maximum_t publish_recv_max_{receive_maximum_max};
@@ -2883,9 +2883,9 @@ private:
 
     connection_status status_{connection_status::closed};
 
-    optional<std::size_t> pingreq_send_interval_ms_;
-    optional<std::size_t> pingreq_recv_timeout_ms_;
-    optional<std::size_t> pingresp_recv_timeout_ms_;
+    std::optional<std::size_t> pingreq_send_interval_ms_;
+    std::optional<std::size_t> pingreq_recv_timeout_ms_;
+    std::optional<std::size_t> pingresp_recv_timeout_ms_;
 
     std::shared_ptr<as::steady_timer> tim_pingreq_send_{std::make_shared<as::steady_timer>(stream_->raw_strand())};
     std::shared_ptr<as::steady_timer> tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->raw_strand())};

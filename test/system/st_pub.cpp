@@ -31,10 +31,10 @@ BOOST_AUTO_TEST_CASE(v311_pub_to_broker) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 ep().set_auto_pub_response(true);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(v311_pub_to_broker) {
                         true,   // clean_session
                         0,      // keep_alive none
                         "cid1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -130,10 +130,10 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 ep().set_auto_pub_response(true);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
                         true,   // clean_start
                         0,      // keep_alive none
                         "cid1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -241,10 +241,10 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                         true,   // clean_session
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                         true,   // clean_session
                         0, // keep_alive
                         "pub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -430,10 +430,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
@@ -449,7 +449,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -493,7 +493,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "pub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },

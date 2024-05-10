@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             true,   // clean_start
             0x1234, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb,
             am::properties{}
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             true,   // clean_session
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb
         };
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             true,   // clean_session
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb
         };
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             true,   // clean_session
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb
         };
@@ -476,7 +476,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             true,   // clean_session
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb
         };
@@ -488,7 +488,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             true,   // clean_start
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb,
             am::properties{}
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             true,   // clean_start
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb,
             am::properties{}
@@ -824,7 +824,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             true,   // clean_start
             0x0, // keep_alive
             "cid1"_mb,
-            am::nullopt,
+            std::nullopt,
             "user1"_mb,
             "pass1"_mb,
             am::properties{}

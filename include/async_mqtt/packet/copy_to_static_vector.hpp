@@ -10,7 +10,7 @@
 #include <algorithm>
 
 #include <async_mqtt/util/static_vector.hpp>
-#include <async_mqtt/util/optional.hpp>
+#include <optional>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/variable_bytes.hpp>
@@ -42,8 +42,8 @@ bool insert_advance(buffer& buf, static_vector<char, N>& sv) {
 }
 
 inline
-optional<std::uint32_t> insert_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
-    if (buf.empty()) return nullopt;
+std::optional<std::uint32_t> insert_advance_variable_length(buffer& buf, static_vector<char, 4>& sv) {
+    if (buf.empty()) return std::nullopt;
     std::uint32_t variable_length = 0;
     auto it = buf.begin();
     // it is updated as consmed position
@@ -51,7 +51,7 @@ optional<std::uint32_t> insert_advance_variable_length(buffer& buf, static_vecto
         variable_length = *len_opt;
     }
     else {
-        return nullopt;
+        return std::nullopt;
     }
     std::copy(
         buf.begin(),

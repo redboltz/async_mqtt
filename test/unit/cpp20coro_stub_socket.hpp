@@ -232,7 +232,7 @@ struct cpp20coro_basic_stub_socket {
                 );
                 std::advance(socket.pv_r_->first, mb.size());
                 if (socket.pv_r_->first == socket.pv_r_->second) {
-                    socket.pv_r_ = nullopt;
+                    socket.pv_r_ = std::nullopt;
                 }
                 self.complete(errc::make_error_code(errc::success), mb.size());
             }
@@ -264,7 +264,7 @@ private:
     as::any_io_executor exe_;
     basic_packet_variant<PacketIdBytes> pv_;
     std::vector<as::const_buffer> cbs_;
-    optional<packet_range> pv_r_;
+    std::optional<packet_range> pv_r_;
     bool open_ = true;
     channel_t ch_recv_{exe_, 1};
     channel_t ch_send_{exe_, 1};

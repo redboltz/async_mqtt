@@ -39,10 +39,10 @@ BOOST_AUTO_TEST_CASE(v311_will) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                         true,   // clean_session
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -158,10 +158,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -281,10 +281,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -404,10 +404,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -534,10 +534,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -551,7 +551,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -676,10 +676,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
             sub
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -693,7 +693,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
