@@ -62,6 +62,7 @@ ASYNC_MQTT_PACKET_TYPE_GETTER(disconnect)
  */
 template <protocol_version Version, template <typename> typename Strand, typename NextLayer>
 class basic_client {
+    using this_type = basic_client<Version, Strand, NextLayer>;
     using ep_type = basic_endpoint<role::client, 2, Strand, NextLayer>;
     using ep_type_sp = std::shared_ptr<ep_type>;
 
@@ -123,58 +124,20 @@ public:
         connect_packet packet,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec, optional<connack_packet>)
-        >(
-            [this](
-                auto completion_handler,
-                connect_packet&& packet
-            ) {
-                ep_->send(
-                    force_move(packet),
-                    [this, completion_handler = force_move(completion_handler)]
-                    (auto const& se) mutable {
-                        if (se) {
-                            force_move(completion_handler)(se.code(), optional<connack_packet>{});
-                            return;
-                        }
-                        auto tim = std::make_shared<as::steady_timer>(ep_->strand());
-                        tim->expires_at(std::chrono::steady_clock::time_point::max());
-                        pid_tim_pv_res_col_.emplace(tim);
-                        recv_loop();
-                        tim->async_wait(
-                            [this, tim, completion_handler = force_move(completion_handler)]
-                            (error_code const& /*ec*/) mutable {
-                                auto& idx = pid_tim_pv_res_col_.template get<tag_tim>();
-                                auto it =idx.find(tim);
-                                if (it == idx.end()) {
-                                    force_move(completion_handler)(
-                                        errc::make_error_code(sys::errc::operation_canceled),
-                                        optional<connack_packet>{}
-                                    );
-                                }
-                                else {
-                                    auto pv = it->pv;
-                                    idx.erase(it);
-                                    if (auto *p = pv->template get_if<connack_packet>()) {
-                                        force_move(completion_handler)(error_code{}, *p);
-                                    }
-                                    else {
-                                        force_move(completion_handler)(
-                                            errc::make_error_code(sys::errc::protocol_error),
-                                            optional<connack_packet>{}
-                                        );
-                                    }
-                                }
-                            }
-                        );
-                    }
-                );
-            },
-            token,
-            force_move(packet)
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "start: " << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec, optional<connack_packet>)
+            >(
+                start_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
     }
 
     /**
@@ -188,58 +151,20 @@ public:
         subscribe_packet packet,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec, optional<suback_packet>)
-        >(
-            [this](
-                auto completion_handler,
-                subscribe_packet&& packet
-            ) {
-                auto pid = packet.packet_id();
-                ep_->send(
-                    force_move(packet),
-                    [this, pid, completion_handler = force_move(completion_handler)]
-                    (auto const& se) mutable {
-                        if (se) {
-                            force_move(completion_handler)(se.code(), optional<suback_packet>{});
-                            return;
-                        }
-                        auto tim = std::make_shared<as::steady_timer>(ep_->strand());
-                        tim->expires_at(std::chrono::steady_clock::time_point::max());
-                        pid_tim_pv_res_col_.emplace(pid, tim);
-                        tim->async_wait(
-                            [this, tim, completion_handler = force_move(completion_handler)]
-                            (error_code const& /*ec*/) mutable {
-                                auto& idx = pid_tim_pv_res_col_.template get<tag_tim>();
-                                auto it = idx.find(tim);
-                                if (it == idx.end()) {
-                                    force_move(completion_handler)(
-                                        errc::make_error_code(sys::errc::operation_canceled),
-                                        optional<suback_packet>{}
-                                    );
-                                }
-                                else {
-                                    auto pv = it->pv;
-                                    idx.erase(it);
-                                    if (auto *p = pv->template get_if<suback_packet>()) {
-                                        force_move(completion_handler)(error_code{}, *p);
-                                    }
-                                    else {
-                                        force_move(completion_handler)(
-                                            errc::make_error_code(sys::errc::protocol_error),
-                                            optional<suback_packet>{}
-                                        );
-                                    }
-                                }
-                            }
-                        );
-                    }
-                );
-            },
-            token,
-            force_move(packet)
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec, optional<suback_packet>)
+            >(
+                subscribe_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
     }
 
     /**
@@ -253,58 +178,20 @@ public:
         unsubscribe_packet packet,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec, optional<unsuback_packet>)
-        >(
-            [this](
-                auto completion_handler,
-                unsubscribe_packet&& packet
-            ) {
-                auto pid = packet.packet_id();
-                ep_->send(
-                    force_move(packet),
-                    [this, pid, completion_handler = force_move(completion_handler)]
-                    (auto const& se) mutable {
-                        if (se) {
-                            force_move(completion_handler)(se.code(), optional<unsuback_packet>{});
-                            return;
-                        }
-                        auto tim = std::make_shared<as::steady_timer>(ep_->strand());
-                        tim->expires_at(std::chrono::steady_clock::time_point::max());
-                        pid_tim_pv_res_col_.emplace(pid, tim);
-                        tim->async_wait(
-                            [this, tim, completion_handler = force_move(completion_handler)]
-                            (error_code const& /*ec*/) mutable {
-                                auto& idx = pid_tim_pv_res_col_.template get<tag_tim>();
-                                auto it = idx.find(tim);
-                                if (it == idx.end()) {
-                                    force_move(completion_handler)(
-                                        errc::make_error_code(sys::errc::operation_canceled),
-                                        optional<unsuback_packet>{}
-                                    );
-                                }
-                                else {
-                                    auto pv = it->pv;
-                                    idx.erase(it);
-                                    if (auto *p = pv->template get_if<unsuback_packet>()) {
-                                        force_move(completion_handler)(error_code{}, *p);
-                                    }
-                                    else {
-                                        force_move(completion_handler)(
-                                            errc::make_error_code(sys::errc::protocol_error),
-                                            optional<unsuback_packet>{}
-                                        );
-                                    }
-                                }
-                            }
-                        );
-                    }
-                );
-            },
-            token,
-            force_move(packet)
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec, optional<unsuback_packet>)
+            >(
+                unsubscribe_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
     }
 
     /**
@@ -321,55 +208,20 @@ public:
         publish_packet packet,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec, pubres_t res)
-        >(
-            [this](
-                auto completion_handler,
-                publish_packet&& packet
-            ) {
-                auto pid = packet.packet_id();
-                ep_->send(
-                    force_move(packet),
-                    [this, pid, completion_handler = force_move(completion_handler)]
-                    (auto const& se) mutable {
-                        if (se) {
-                            force_move(completion_handler)(se.code(), pubres_t{});
-                            return;
-                        }
-                        auto tim = std::make_shared<as::steady_timer>(ep_->strand());
-                        tim->expires_at(std::chrono::steady_clock::time_point::max());
-                        if (pid == 0) {
-                            // QoS: at_most_once
-                            force_move(completion_handler)(se.code(), pubres_t{});
-                            return;
-                        }
-                        pid_tim_pv_res_col_.emplace(pid, tim);
-                        tim->async_wait(
-                            [this, tim, completion_handler = force_move(completion_handler)]
-                            (error_code const& /*ec*/) mutable {
-                                auto& idx = pid_tim_pv_res_col_.template get<tag_tim>();
-                                auto it = idx.find(tim);
-                                if (it == idx.end()) {
-                                    force_move(completion_handler)(
-                                        errc::make_error_code(sys::errc::operation_canceled),
-                                        pubres_t{}
-                                    );
-                                }
-                                else {
-                                    auto res = it->res;
-                                    idx.erase(it);
-                                    force_move(completion_handler)(error_code{}, res);
-                                }
-                            }
-                        );
-                    }
-                );
-            },
-            token,
-            force_move(packet)
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec, pubres_t)
+            >(
+                publish_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
     }
 
     /**
@@ -383,25 +235,20 @@ public:
         disconnect_packet packet,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec)
-        >(
-            [this](
-                auto completion_handler,
-                disconnect_packet&& packet
-            ) {
-                ep_->send(
-                    force_move(packet),
-                    [completion_handler = force_move(completion_handler)]
-                    (auto const& se) mutable {
-                        force_move(completion_handler)(se.code());
-                    }
-                );
-            },
-            token,
-            force_move(packet)
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << packet;
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec)
+            >(
+                disconnect_impl{
+                    *this,
+                    force_move(packet)
+                },
+                token
+            );
     }
 
     /**
@@ -425,58 +272,19 @@ public:
     auto recv(
         CompletionToken&& token
     ) {
-        return as::async_initiate<
-            CompletionToken,
-            void(error_code const& ec, optional<publish_packet>, optional<disconnect_packet>)
-        >(
-            [this](
-                auto completion_handler
-            ) {
-                as::dispatch(
-                    as::bind_executor(
-                        ep_->strand(),
-                        [this, completion_handler = force_move(completion_handler)]
-                        () mutable {
-                            auto call_completion_handler =
-                                [this, completion_handler = force_move(completion_handler)]
-                                (bool get_queue = true) mutable {
-                                    if (get_queue) {
-                                        auto [ec, publish_opt, disconnect_opt] = recv_queue_.front();
-                                        recv_queue_.pop_front();
-                                        force_move(completion_handler)(
-                                            ec,
-                                            force_move(publish_opt),
-                                            force_move(disconnect_opt)
-                                        );
-                                    }
-                                    else {
-                                        force_move(completion_handler)(
-                                            errc::make_error_code(sys::errc::operation_canceled),
-                                            optional<publish_packet>{},
-                                            optional<disconnect_packet>{}
-                                        );
-                                    }
-                                };
-                            if (recv_queue_.empty()) {
-                                recv_queue_inserted_ = false;
-                                auto tim = std::make_shared<as::steady_timer>(ep_->strand());
-                                tim_notify_publish_recv_.expires_at(std::chrono::steady_clock::time_point::max());
-                                tim_notify_publish_recv_.async_wait(
-                                    [this, call_completion_handler = force_move(call_completion_handler)]
-                                    (error_code const& /*ec*/) mutable {
-                                        call_completion_handler(recv_queue_inserted_);
-                                    }
-                                );
-                            }
-                            else {
-                                call_completion_handler();
-                            }
-                        }
-                    )
-                );
-            },
-            token
-        );
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << "recv";
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec, optional<publish_packet>, optional<disconnect_packet>)
+            >(
+                recv_impl{
+                    *this
+                },
+                token
+            );
     }
 
     /**
@@ -754,6 +562,404 @@ private:
             }
         );
     }
+
+    struct start_impl {
+        this_type& cl;
+        connect_packet packet;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto& a_cl{cl};
+            auto a_packet{packet};
+            a_cl.ep_->send(
+                force_move(a_packet),
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const& se
+        ) {
+            if (se) {
+                self.complete(se.code(), nullopt);
+                return;
+            }
+
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            cl.pid_tim_pv_res_col_.emplace(tim);
+            cl.recv_loop();
+            auto& a_cl{cl};
+            tim->async_wait(
+                as::bind_executor(
+                    a_cl.strand(),
+                    as::append(
+                        force_move(self),
+                        tim
+                    )
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& /* ec */,
+            std::shared_ptr<as::steady_timer> tim
+        ) {
+            auto& idx = cl.pid_tim_pv_res_col_.template get<tag_tim>();
+            auto it = idx.find(tim);
+            if (it == idx.end()) {
+                self.complete(
+                    errc::make_error_code(sys::errc::operation_canceled),
+                    nullopt
+                );
+            }
+            else {
+                auto pv = it->pv;
+                idx.erase(it);
+                if (auto *p = pv->template get_if<connack_packet>()) {
+                    self.complete(error_code{}, *p);
+                }
+                else {
+                    self.complete(
+                        errc::make_error_code(sys::errc::protocol_error),
+                        nullopt
+                    );
+                }
+            }
+        }
+    };
+
+    struct subscribe_impl {
+        this_type& cl;
+        subscribe_packet packet;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto& a_cl{cl};
+            auto pid = packet.packet_id();
+            auto a_packet{packet};
+            a_cl.ep_->send(
+                force_move(a_packet),
+                as::append(
+                    force_move(self),
+                    pid
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const& se,
+            packet_id_t pid
+        ) {
+            if (se) {
+                self.complete(se.code(), nullopt);
+                return;
+            }
+
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            cl.pid_tim_pv_res_col_.emplace(pid, tim);
+            auto& a_cl{cl};
+            tim->async_wait(
+                as::bind_executor(
+                    a_cl.strand(),
+                    as::append(
+                        force_move(self),
+                        tim
+                    )
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& /* ec */,
+            std::shared_ptr<as::steady_timer> tim
+        ) {
+            auto& idx = cl.pid_tim_pv_res_col_.template get<tag_tim>();
+            auto it = idx.find(tim);
+            if (it == idx.end()) {
+                self.complete(
+                    errc::make_error_code(sys::errc::operation_canceled),
+                    nullopt
+                );
+            }
+            else {
+                auto pv = it->pv;
+                idx.erase(it);
+                if (auto *p = pv->template get_if<suback_packet>()) {
+                    self.complete(error_code{}, *p);
+                }
+                else {
+                    self.complete(
+                        errc::make_error_code(sys::errc::protocol_error),
+                        nullopt
+                    );
+                }
+            }
+        }
+    };
+
+    struct unsubscribe_impl {
+        this_type& cl;
+        unsubscribe_packet packet;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto& a_cl{cl};
+            auto pid = packet.packet_id();
+            auto a_packet{packet};
+            a_cl.ep_->send(
+                force_move(a_packet),
+                as::append(
+                    force_move(self),
+                    pid
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const& se,
+            packet_id_t pid
+        ) {
+            if (se) {
+                self.complete(se.code(), nullopt);
+                return;
+            }
+
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            cl.pid_tim_pv_res_col_.emplace(pid, tim);
+            auto& a_cl{cl};
+            tim->async_wait(
+                as::bind_executor(
+                    a_cl.strand(),
+                    as::append(
+                        force_move(self),
+                        tim
+                    )
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& /* ec */,
+            std::shared_ptr<as::steady_timer> tim
+        ) {
+            auto& idx = cl.pid_tim_pv_res_col_.template get<tag_tim>();
+            auto it = idx.find(tim);
+            if (it == idx.end()) {
+                self.complete(
+                    errc::make_error_code(sys::errc::operation_canceled),
+                    nullopt
+                );
+            }
+            else {
+                auto pv = it->pv;
+                idx.erase(it);
+                if (auto *p = pv->template get_if<unsuback_packet>()) {
+                    self.complete(error_code{}, *p);
+                }
+                else {
+                    self.complete(
+                        errc::make_error_code(sys::errc::protocol_error),
+                        nullopt
+                    );
+                }
+            }
+        }
+    };
+
+    struct publish_impl {
+        this_type& cl;
+        publish_packet packet;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto& a_cl{cl};
+            auto pid = packet.packet_id();
+            auto a_packet{packet};
+            a_cl.ep_->send(
+                force_move(a_packet),
+                as::append(
+                    force_move(self),
+                    pid
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const& se,
+            packet_id_t pid
+        ) {
+            if (se) {
+                self.complete(se.code(), pubres_t{});
+                return;
+            }
+            if (pid == 0) {
+                // QoS: at_most_once
+                self.complete(se.code(), pubres_t{});
+                return;
+            }
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            cl.pid_tim_pv_res_col_.emplace(pid, tim);
+            auto& a_cl{cl};
+            tim->async_wait(
+                as::bind_executor(
+                    a_cl.strand(),
+                    as::append(
+                        force_move(self),
+                        tim
+                    )
+                )
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& /* ec */,
+            std::shared_ptr<as::steady_timer> tim
+        ) {
+            auto& idx = cl.pid_tim_pv_res_col_.template get<tag_tim>();
+            auto it = idx.find(tim);
+            if (it == idx.end()) {
+                self.complete(
+                    errc::make_error_code(sys::errc::operation_canceled),
+                    pubres_t{}
+                );
+            }
+            else {
+                auto res = it->res;
+                idx.erase(it);
+                self.complete(error_code{}, force_move(res));
+            }
+        }
+    };
+
+    struct disconnect_impl {
+        this_type& cl;
+        disconnect_packet packet;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto& a_cl{cl};
+            auto a_packet{packet};
+            a_cl.ep_->send(
+                force_move(a_packet),
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error const& se
+        ) {
+            self.complete(se.code());
+        }
+    };
+
+    struct recv_impl {
+        this_type& cl;
+        enum { dispatch, recv, complete } state = dispatch;
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            if (state == dispatch) {
+                state = recv;
+                auto& a_cl{cl};
+                as::dispatch(
+                    as::bind_executor(
+                        a_cl.ep_->strand(),
+                        force_move(self)
+                    )
+                );
+            }
+            else {
+                BOOST_ASSERT(state == recv);
+                state = complete;
+                if (cl.recv_queue_.empty()) {
+                    cl.recv_queue_inserted_ = false;
+                    auto tim = std::make_shared<as::steady_timer>(
+                        cl.ep_->strand()
+                    );
+                    cl.tim_notify_publish_recv_.expires_at(
+                        std::chrono::steady_clock::time_point::max()
+                    );
+                    auto& a_cl{cl};
+                    a_cl.tim_notify_publish_recv_.async_wait(
+                        as::bind_executor(
+                            a_cl.strand(),
+                            as::append(
+                                force_move(self),
+                                a_cl.recv_queue_inserted_
+                            )
+                        )
+                    );
+                }
+                else {
+                    auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
+                    cl.recv_queue_.pop_front();
+                    self.complete(
+                        ec,
+                        force_move(publish_opt),
+                        force_move(disconnect_opt)
+                    );
+                }
+            }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& /* ec */,
+            bool get_queue
+        ) {
+            BOOST_ASSERT(state == complete);
+            if (get_queue) {
+                auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
+                cl.recv_queue_.pop_front();
+                self.complete(
+                    ec,
+                    force_move(publish_opt),
+                    force_move(disconnect_opt)
+                );
+            }
+            else {
+                self.complete(
+                    errc::make_error_code(sys::errc::operation_canceled),
+                    nullopt,
+                    nullopt
+                );
+            }
+        }
+    };
 
 private:
 

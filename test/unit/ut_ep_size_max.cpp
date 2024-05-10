@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     ep->next_layer().set_close_checker(
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(client_send_no_store) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     ep->next_layer().set_close_checker(
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     ep->next_layer().set_close_checker(
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     ep->next_layer().set_close_checker(

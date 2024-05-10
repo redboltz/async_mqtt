@@ -87,7 +87,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: usr
-        key: ${{ runner.os }}-boost-20240507-2
+        key: ${{ runner.os }}-boost-20240509
     - name: install clang++15
       run: |
          sudo apt-get install clang-15 clang++-15
@@ -142,15 +142,18 @@ jobs:
       uses: actions/cache@v3
       with:
         path:  D:\a\async_mqtt\async_mqtt\boost
-        key: ${{ runner.os }}-boost-20230507
+        key: ${{ runner.os }}-boost-20240509-2
     - name: install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.81.0/boost_1_81_0-msvc-14.3-64.exe"
-         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
-        Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=$PWD\boost"
 
+        $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
+         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
+        7z.exe x "$env:TEMP\boost_1_85_0.7z"
+        cd boost_1_85_0
+        .\bootstrap.bat
+        .\b2.exe toolset=msvc link=static,shared define=_WIN32_WINNT=0x0A00 install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
     - name: Build and test
       shell: powershell
       run: |
@@ -176,8 +179,8 @@ jobs:
         $env:BOOST_ROOT="$PWD\boost"
         mkdir build
         cd build
-        $env:CL="/D_WIN32_WINNT#0x0601 /DBOOST_THREAD_VERSION#3 /DBOOST_ASIO_NO_DEPRECATED /bigobj /EHsc"
-        $env:PATH="$env:BOOST_ROOT\lib64-msvc-14.3;"+$env:PATH
+        $env:CL="/D_WIN32_WINNT#0x0A00 /DBOOST_THREAD_VERSION#3 /DBOOST_ASIO_NO_DEPRECATED /bigobj /EHsc"
+        $env:PATH="$env:BOOST_ROOT\lib;"+$env:PATH
         cmake -A x64 -G "Visual Studio 17 2022" -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_LOG=ON -DASYNC_MQTT_PRINT_PAYLOAD=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS="$BUILD_SYSTEM_TESTS" -DASYNC_MQTT_BUILD_UNIT_TESTS="$BUILD_UNIT_TESTS" -DASYNC_MQTT_BUILD_EXAMPLES="$BUILD_EXAMPLES" -DASYNC_MQTT_BUILD_TOOLS="$BUILD_TOOLS" ..
         if (!$?) {
           return Write-Error "cmake failed"

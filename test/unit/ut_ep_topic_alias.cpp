@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -524,7 +524,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -746,7 +746,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -911,7 +911,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -1221,7 +1221,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{

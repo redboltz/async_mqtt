@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     for (std::size_t i = 0; i != 0xffff; ++i) {

@@ -222,7 +222,6 @@ private:
                 if constexpr (
                     has_async_read<NextLayer>::value) {
                     layer_customize<NextLayer>::async_read(
-                        a_strm.raw_strand_,
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::bind_executor(
@@ -274,7 +273,6 @@ private:
                     if constexpr (
                         has_async_read<NextLayer>::value) {
                             layer_customize<NextLayer>::async_read(
-                                a_strm.raw_strand_,
                                 a_strm.nl_,
                                 as::buffer(address, 1),
                                 as::bind_executor(
@@ -317,7 +315,6 @@ private:
                     if constexpr (
                         has_async_read<NextLayer>::value) {
                             layer_customize<NextLayer>::async_read(
-                                a_strm.raw_strand_,
                                 a_strm.nl_,
                                 as::buffer(address, 1),
                                 as::bind_executor(
@@ -359,7 +356,6 @@ private:
                         if constexpr (
                             has_async_read<NextLayer>::value) {
                                 layer_customize<NextLayer>::async_read(
-                                    a_strm.raw_strand_,
                                     a_strm.nl_,
                                     as::buffer(address, rl),
                                     as::bind_executor(
@@ -444,7 +440,6 @@ private:
                     if constexpr (
                         has_async_write<NextLayer>::value) {
                         layer_customize<NextLayer>::async_write(
-                            a_strm.raw_strand_,
                             a_strm.nl_,
                             a_packet.const_buffer_sequence(),
                             as::bind_executor(
@@ -504,7 +499,6 @@ private:
                         if constexpr (
                             has_async_write<NextLayer>::value) {
                             layer_customize<NextLayer>::async_write(
-                                a_strm.raw_strand_,
                                 a_strm.nl_,
                                 a_strm.sending_cbs_,
                                 as::bind_executor(
@@ -642,7 +636,6 @@ private:
                 auto& a_strm{strm};
                 if constexpr (has_next_layer<Stream>::value) {
                     layer_customize<Stream>::async_close(
-                        a_strm.raw_strand_,
                         stream.get(),
                         as::bind_executor(
                             a_strm.raw_strand_,
@@ -656,7 +649,6 @@ private:
                 else {
                     state = complete;
                     layer_customize<Stream>::async_close(
-                        a_strm.raw_strand_,
                         stream.get(),
                         as::bind_executor(
                             a_strm.raw_strand_,

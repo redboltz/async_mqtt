@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(write_cont) {
     auto s = strm_t::create(
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto p = am::v3_1_1::pingreq_packet();

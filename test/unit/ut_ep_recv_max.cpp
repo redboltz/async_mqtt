@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -474,7 +474,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{
@@ -778,13 +778,13 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto ep2 = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
 
     auto connect = am::v5::connect_packet{

@@ -19,6 +19,7 @@ namespace as = boost::asio;
 
 template <std::size_t PacketIdBytes>
 struct basic_stub_socket {
+    using this_type = basic_stub_socket<PacketIdBytes>;
     using executor_type = as::any_io_executor;
     using pv_queue_t = std::deque<basic_packet_variant<PacketIdBytes>>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
@@ -30,14 +31,6 @@ struct basic_stub_socket {
     )
         :version_{version},
          exe_{force_move(exe)}
-    {}
-
-    basic_stub_socket(
-        protocol_version version,
-        as::io_context& ioc
-    )
-        :version_{version},
-         exe_{ioc.get_executor()}
     {}
 
     void set_write_packet_checker(std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> c) {
@@ -56,20 +49,10 @@ struct basic_stub_socket {
         close_checker_ = force_move(c);
     }
 
-#if 0
-    auto const& lowest_layer() const {
-        return exe_;
-    }
-    auto& lowest_layer() {
-        return exe_;
-    }
-#endif
     auto get_executor() const {
         return exe_;
     }
-    auto get_executor() {
-        return exe_;
-    }
+
     bool is_open() const {
         return open_;
     }
@@ -79,121 +62,120 @@ struct basic_stub_socket {
     }
 
     template <typename ConstBufferSequence, typename CompletionToken>
-    void async_write_some(
+    auto async_write_some(
         ConstBufferSequence const& buffers,
         CompletionToken&& token
     ) {
-        auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
-        auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
-        auto dis = std::distance(it, end);
-        auto packet_begin = it;
-        while (it != end) {
-            ++it; // it points to the first byte of remaining length
-            if (auto remlen_opt = variable_bytes_to_val(it, end)) {
-                auto packet_end = std::next(it, *remlen_opt);
-                auto buf = allocate_buffer(packet_begin, packet_end);
-                auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, version_);
-                if (write_packet_checker_) write_packet_checker_(pv);
-                it = packet_end;
-                packet_begin = packet_end;
-            }
-        }
-        as::post(
-            as::bind_executor(
-                exe_,
-                [token = std::forward<CompletionToken>(token), dis] () mutable {
-                    auto exe = as::get_associated_executor(token);
-                    as::dispatch(
-                        as::bind_executor(
-                            exe,
-                            [token = force_move(token), dis] () mutable {
-                                token(boost::system::error_code{}, std::size_t(dis));
-                            }
-                        )
-                    );
-                }
-            )
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            async_write_some_impl<ConstBufferSequence>{
+                *this,
+                buffers
+            },
+            token
         );
     }
 
+    template <typename ConstBufferSequence>
+    struct async_write_some_impl {
+        this_type& socket;
+        ConstBufferSequence buffers;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto it = as::buffers_iterator<ConstBufferSequence>::begin(buffers);
+            auto end = as::buffers_iterator<ConstBufferSequence>::end(buffers);
+            auto dis = std::distance(it, end);
+            auto packet_begin = it;
+            while (it != end) {
+                ++it; // it points to the first byte of remaining length
+                if (auto remlen_opt = variable_bytes_to_val(it, end)) {
+                    auto packet_end = std::next(it, *remlen_opt);
+                    auto buf = allocate_buffer(packet_begin, packet_end);
+                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_);
+                    if (socket.write_packet_checker_) socket.write_packet_checker_(pv);
+                    it = packet_end;
+                    packet_begin = packet_end;
+                }
+            }
+            self.complete(boost::system::error_code{}, std::size_t(dis));
+        }
+    };
+
     template <typename MutableBufferSequence, typename CompletionToken>
-    void async_read_some(
+    auto async_read_some(
         MutableBufferSequence const& mb,
         CompletionToken&& token
     ) {
-        // empty
-        if (recv_pvs_it_ == recv_pvs_.end()) {
-            as::dispatch(
-                as::bind_executor(
-                    as::get_associated_executor(token),
-                    [token = force_move(token)] () mutable {
-                        token(errc::make_error_code(errc::no_message), 0);
-                    }
-                )
-            );
-            return;
-        }
-        if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
-            ++recv_pvs_it_;
-            as::dispatch(
-                as::bind_executor(
-                    as::get_associated_executor(token),
-                    [token = force_move(token), code = ec->code()] () mutable {
-                        token(code, 0);
-                    }
-                )
-            );
-            return;
-        }
-
-        if (!pv_r_) {
-            cbs_ = recv_pvs_it_->const_buffer_sequence();
-            pv_r_ = make_packet_range(cbs_);
-        }
-
-        while (pv_r_->first == pv_r_->second) {
-            pv_r_ = nullopt;
-            ++recv_pvs_it_;
-            if (recv_pvs_it_ == recv_pvs_.end()) {
-                as::dispatch(
-                    as::bind_executor(
-                        as::get_associated_executor(token),
-                        [token = force_move(token)] () mutable {
-                            token(errc::make_error_code(errc::no_message), 0);
-                        }
-                    )
-                );
-                return;
-            }
-            if (auto* ec = recv_pvs_it_->template get_if<system_error>()) {
-                ++recv_pvs_it_;
-                as::dispatch(
-                    as::bind_executor(
-                        as::get_associated_executor(token),
-                        [token = force_move(token), code = ec->code()] () mutable {
-                            token(code, 0);
-                        }
-                    )
-                );
-                return;
-            }
-            cbs_ = recv_pvs_it_->const_buffer_sequence();
-            pv_r_ = make_packet_range(cbs_);
-        }
-
-        BOOST_ASSERT(static_cast<std::size_t>(std::distance(pv_r_->first, pv_r_->second)) >= mb.size());
-        as::mutable_buffer mb_copy = mb;
-        std::copy(pv_r_->first, std::next(pv_r_->first, std::ptrdiff_t(mb.size())), static_cast<char*>(mb_copy.data()));
-        std::advance(pv_r_->first, mb.size());
-        as::dispatch(
-            as::bind_executor(
-                as::get_associated_executor(token),
-                [token = force_move(token), size = mb.size()] () mutable {
-                    token(errc::make_error_code(errc::success), size);
-                }
-            )
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            async_read_some_impl<MutableBufferSequence>{
+                *this,
+                mb
+            },
+            token
         );
     }
+
+    template <typename MutableBufferSequence>
+    struct async_read_some_impl {
+        this_type& socket;
+        MutableBufferSequence mb;
+        enum { read, complete } state = read;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            // empty
+            if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
+                self.complete(errc::make_error_code(errc::no_message), 0);
+                return;
+            }
+            if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+                ++socket.recv_pvs_it_;
+                self.complete(ec->code(), 0);
+                return;
+            }
+            if (!socket.pv_r_) {
+                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.pv_r_ = make_packet_range(socket.cbs_);
+            }
+            while (socket.pv_r_->first == socket.pv_r_->second) {
+                socket.pv_r_ = nullopt;
+                ++socket.recv_pvs_it_;
+                if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
+                    self.complete(errc::make_error_code(errc::no_message), 0);
+                    return;
+                }
+                if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+                    ++socket.recv_pvs_it_;
+                    self.complete(ec->code(), 0);
+                    return;
+                }
+                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.pv_r_ = make_packet_range(socket.cbs_);
+            }
+
+            BOOST_ASSERT(
+                static_cast<std::size_t>(std::distance(socket.pv_r_->first, socket.pv_r_->second)) >= mb.size()
+            );
+            as::mutable_buffer mb_copy = mb;
+            std::copy(
+                socket.pv_r_->first,
+                std::next(socket.pv_r_->first, std::ptrdiff_t(mb.size())),
+                static_cast<char*>(mb_copy.data())
+            );
+            std::advance(socket.pv_r_->first, mb.size());
+            self.complete(errc::make_error_code(errc::success), mb.size());
+        }
+    };
 
 private:
 
@@ -236,57 +218,66 @@ struct layer_customize<stub_socket> {
     >
     static auto
     async_read(
-        as::any_io_executor exe,
         stub_socket& stream,
         MutableBufferSequence const& mbs,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                stub_socket& stream,
-                MutableBufferSequence const& mbs
-            ) {
-                return stream.async_read_some(
-                    mbs,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = force_move(completion_handler)]
-                        (error_code const& ec, std::size_t size) mutable {
-                            force_move(completion_handler)(ec, size);
-                        }
-                    )
-                );
+            async_read_impl{
+                stream,
+                mbs
             },
-            token,
-            exe,
-            std::ref(stream),
-            std::ref(mbs)
+            token
         );
     }
+
+    template <typename MutableBufferSequence>
+    struct async_read_impl {
+        async_read_impl(
+            stub_socket& stream,
+            MutableBufferSequence const& mbs
+        ): stream{stream}, mbs{mbs}
+        {}
+
+        stub_socket& stream;
+        MutableBufferSequence mbs;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            return stream.async_read_some(
+                mbs,
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec,
+            std::size_t size
+        ) {
+            self.complete(ec, size);
+        }
+    };
 
     template <
         typename CompletionToken
     >
     static auto
     async_close(
-        as::any_io_executor exe,
         stub_socket& stream,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor /* exe */,
-                stub_socket& stream
-            ) {
+            [&stream](auto& self) {
                 error_code ec;
                 if (stream.is_open()) {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -297,11 +288,9 @@ struct layer_customize<stub_socket> {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << "stub already closed";
                 }
-                force_move(completion_handler)(ec);
+                self.complete(ec);
             },
-            token,
-            exe,
-            std::ref(stream)
+            token
         );
     }
 };
@@ -314,57 +303,66 @@ struct layer_customize<basic_stub_socket<4>> {
     >
     static auto
     async_read(
-        as::any_io_executor exe,
         basic_stub_socket<4>& stream,
         MutableBufferSequence const& mbs,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                basic_stub_socket<4>& stream,
-                MutableBufferSequence const& mbs
-            ) {
-                return stream.async_read_some(
-                    mbs,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = force_move(completion_handler)]
-                        (error_code const& ec, std::size_t size) mutable {
-                            force_move(completion_handler)(ec, size);
-                        }
-                    )
-                );
+            async_read_impl{
+                stream,
+                mbs
             },
-            token,
-            exe,
-            std::ref(stream),
-            std::ref(mbs)
+            token
         );
     }
+
+    template <typename MutableBufferSequence>
+    struct async_read_impl {
+        async_read_impl(
+            basic_stub_socket<4>& stream,
+            MutableBufferSequence const& mbs
+        ): stream{stream}, mbs{mbs}
+        {}
+
+        basic_stub_socket<4>& stream;
+        MutableBufferSequence mbs;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            return stream.async_read_some(
+                mbs,
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec,
+            std::size_t size
+        ) {
+            self.complete(ec, size);
+        }
+    };
 
     template <
         typename CompletionToken
     >
     static auto
     async_close(
-        as::any_io_executor exe,
         basic_stub_socket<4>& stream,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor /* exe */,
-                basic_stub_socket<4>& stream
-            ) {
+            [&stream](auto& self) {
                 error_code ec;
                 if (stream.is_open()) {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -375,14 +373,13 @@ struct layer_customize<basic_stub_socket<4>> {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << "stub already closed";
                 }
-                force_move(completion_handler)(ec);
+                self.complete(ec);
             },
-            token,
-            exe,
-            std::ref(stream)
+            token
         );
     }
 };
+
 
 } // namespace async_mqtt
 

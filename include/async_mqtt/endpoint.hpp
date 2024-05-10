@@ -47,17 +47,6 @@ enum class filter {
     except  ///< no matched control_packet_type is target
 };
 
-template <typename Self>
-auto bind_dispatch(Self&& self) {
-    auto exe = as::get_associated_executor(self);
-    return as::dispatch(
-        as::bind_executor(
-            exe,
-            std::forward<Self>(self)
-        )
-    );
-}
-
 /**
  * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
@@ -855,7 +844,7 @@ private: // compose operation impl
     struct acquire_unique_packet_id_impl {
         this_type& ep;
         optional<packet_id_t> pid_opt = nullopt;
-        enum { dispatch, acquire, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -863,7 +852,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = acquire;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -872,13 +861,10 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case acquire: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 pid_opt = ep.pid_man_.acquire_unique_id();
                 state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete(pid_opt);
                 break;
             }
@@ -889,7 +875,7 @@ private: // compose operation impl
         this_type& ep;
         this_type_wp retry_wp = ep.weak_from_this();
         optional<packet_id_t> pid_opt = nullopt;
-        enum { dispatch, acquire, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -899,7 +885,7 @@ private: // compose operation impl
             if (retry_wp.expired()) return;
             switch (state) {
             case dispatch: {
-                state = acquire;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -908,14 +894,13 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case acquire: {
+            case complete: {
                 BOOST_ASSERT(ep.in_strand());
                 auto acq_proc =
                     [&] {
                         pid_opt = ep.pid_man_.acquire_unique_id();
                         if (pid_opt) {
-                            state = complete;
-                            bind_dispatch(force_move(self));
+                            self.complete(*pid_opt);
                         }
                         else {
                             ASYNC_MQTT_LOG("mqtt_impl", warning)
@@ -947,10 +932,6 @@ private: // compose operation impl
                     acq_proc();
                 }
             } break;
-            case complete:
-                BOOST_ASSERT(pid_opt);
-                self.complete(*pid_opt);
-                break;
             }
         }
     };
@@ -959,7 +940,7 @@ private: // compose operation impl
         this_type& ep;
         packet_id_t packet_id;
         bool result = false;
-        enum { dispatch, regi, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -967,7 +948,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = regi;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -976,13 +957,9 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case regi: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 result = ep.pid_man_.register_id(packet_id);
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete(result);
                 break;
             }
@@ -992,7 +969,7 @@ private: // compose operation impl
     struct release_packet_id_impl {
         this_type& ep;
         packet_id_t packet_id;
-        enum { dispatch, rel, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -1000,7 +977,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = rel;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -1009,13 +986,10 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case rel: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 ep.release_pid(packet_id);
                 state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete();
                 break;
             }
@@ -1028,8 +1002,7 @@ private: // compose operation impl
         this_type& ep;
         Packet packet;
         bool from_queue = false;
-        error_code last_ec = error_code{};
-        enum { dispatch, write, bind, complete } state = dispatch;
+        enum { dispatch, write, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -1041,9 +1014,7 @@ private: // compose operation impl
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "send error:" << ec.message();
-                last_ec = ec;
-                state = complete;
-                bind_dispatch(force_move(self));
+                self.complete(ec);
                 return;
             }
 
@@ -1060,19 +1031,22 @@ private: // compose operation impl
             } break;
             case write: {
                 BOOST_ASSERT(ep.in_strand());
-                state = bind;
+                state = complete;
                 if constexpr(
                     std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
                     std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
                 ) {
                     packet.visit(
                         overload {
-                            [&](auto& actual_packet) {
+                            [&](auto actual_packet) {
                                 if (process_send_packet(self, actual_packet)) {
                                     auto& a_ep{ep};
                                     a_ep.stream_->write_packet(
-                                        force_move(actual_packet),
-                                        force_move(self)
+                                        actual_packet,
+                                        as::bind_executor(
+                                            a_ep.stream_->raw_strand(),
+                                            force_move(self)
+                                        )
                                     );
                                     if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                                         // server send stored packets after connack sent
@@ -1090,10 +1064,13 @@ private: // compose operation impl
                 else {
                     if (process_send_packet(self, packet)) {
                         auto& a_ep{ep};
-                        auto& a_packet{packet};
+                        auto a_packet{packet};
                         a_ep.stream_->write_packet(
                             force_move(a_packet),
-                            force_move(self)
+                            as::bind_executor(
+                                a_ep.stream_->raw_strand(),
+                                force_move(self)
+                            )
                         );
                         if constexpr(is_connack<Packet>()) {
                             // server send stored packets after connack sent
@@ -1105,15 +1082,9 @@ private: // compose operation impl
                     }
                 }
             } break;
-            case bind: {
-                BOOST_ASSERT(ep.in_strand());
-                last_ec = ec;
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
             case complete:
-                // out of strand
-                self.complete(last_ec);
+                BOOST_ASSERT(ep.in_strand());
+                self.complete(ec);
                 break;
             }
         }
@@ -1646,7 +1617,6 @@ private: // compose operation impl
         optional<filter> fil = nullopt;
         std::set<control_packet_type> types = {};
         optional<system_error> decided_error = nullopt;
-        optional<basic_packet_variant<PacketIdBytes>> pv_opt = nullopt;
         enum { initiate, disconnect, close, read, complete } state = initiate;
 
         template <typename Self>
@@ -2257,9 +2227,7 @@ private: // compose operation impl
                 auto try_to_comp =
                     [&] {
                         if (call_complete && !decided_error) {
-                            pv_opt.emplace(force_move(v));
-                            state = complete;
-                            bind_dispatch(force_move(self));
+                            self.complete(force_move(v));
                         }
                     };
 
@@ -2306,14 +2274,9 @@ private: // compose operation impl
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "recv code triggers close:" << decided_error->code().message();
-                pv_opt.emplace(force_move(*decided_error));
+                self.complete(force_move(*decided_error));
                 state = complete;
-                bind_dispatch(force_move(self));
             } break;
-            case complete:
-                BOOST_ASSERT(pv_opt);
-                self.complete(force_move(*pv_opt));
-                break;
             default:
                 BOOST_ASSERT(false);
                 break;
@@ -2399,7 +2362,7 @@ private: // compose operation impl
 
     struct close_impl {
         this_type& ep;
-        enum { dispatch, close, bind, complete } state = dispatch;
+        enum { dispatch, close, complete } state = dispatch;
         this_type_sp life_keeper = ep.shared_from_this();
 
         template <typename Self>
@@ -2427,7 +2390,7 @@ private: // compose operation impl
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                             << "close initiate status:" << static_cast<int>(ep.status_);
-                    state = bind;
+                    state = complete;
                     ep.status_ = connection_status::closing;
                     auto& a_ep{ep};
                     a_ep.stream_->close(force_move(self));
@@ -2449,28 +2412,21 @@ private: // compose operation impl
                     ASYNC_MQTT_LOG("mqtt_impl", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, &ep)
                         << "already closed";
-                    state = complete;
-                    bind_dispatch(force_move(self));
+                    self.complete();
                 } break;
-            case bind: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "close complete status:" << static_cast<int>(ep.status_);
-                auto& a_ep{ep};
-                a_ep.tim_pingreq_send_->cancel();
-                a_ep.tim_pingreq_recv_->cancel();
-                a_ep.tim_pingresp_recv_->cancel();
-                a_ep.status_ = connection_status::closed;
+                ep.tim_pingreq_send_->cancel();
+                ep.tim_pingreq_recv_->cancel();
+                ep.tim_pingresp_recv_->cancel();
+                ep.status_ = connection_status::closed;
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "process enqueued close";
-                a_ep.close_queue_.poll();
-                state = complete;
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
+                ep.close_queue_.poll();
                 self.complete();
                 break;
             }
@@ -2480,7 +2436,7 @@ private: // compose operation impl
     struct restore_packets_impl {
         this_type& ep;
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
-        enum { dispatch, restore, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2488,7 +2444,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = restore;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2497,13 +2453,9 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case restore: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 ep.restore_packets(force_move(pvs));
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete();
                 break;
             }
@@ -2513,7 +2465,7 @@ private: // compose operation impl
     struct get_stored_packets_impl {
         this_type const& ep;
         std::vector<basic_store_packet_variant<PacketIdBytes>> packets = {};
-        enum { dispatch, get, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2521,7 +2473,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = get;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2530,13 +2482,9 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case get: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 packets = ep.get_stored_packets();
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete(force_move(packets));
                 break;
             }
@@ -2546,7 +2494,7 @@ private: // compose operation impl
     struct regulate_for_store_impl {
         this_type const& ep;
         v5::basic_publish_packet<PacketIdBytes> packet;
-        enum { dispatch, regulate, complete } state = dispatch;
+        enum { dispatch, complete } state = dispatch;
 
         template <typename Self>
         void operator()(
@@ -2554,7 +2502,7 @@ private: // compose operation impl
         ) {
             switch (state) {
             case dispatch: {
-                state = regulate;
+                state = complete;
                 auto& a_ep{ep};
                 as::dispatch(
                     as::bind_executor(
@@ -2563,13 +2511,9 @@ private: // compose operation impl
                     )
                 );
             } break;
-            case regulate: {
+            case complete:
                 BOOST_ASSERT(ep.in_strand());
                 ep.regulate_for_store(packet);
-                state = complete;
-                bind_dispatch(force_move(self));
-            } break;
-            case complete:
                 self.complete(force_move(packet));
                 break;
             }
@@ -2825,19 +2769,48 @@ private:
     }
 
     template <typename CompletionToken>
-    void add_retry(
+    auto add_retry(
         CompletionToken&& token
     ) {
-        auto tim = std::make_shared<as::steady_timer>(stream_->raw_strand());
-        tim->expires_at(std::chrono::steady_clock::time_point::max());
-        tim->async_wait(
-            as::bind_executor(
-                stream_->raw_strand(),
-                std::forward<CompletionToken>(token)
-            )
-        );
-        tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
+        return
+            as::async_compose<
+                CompletionToken,
+                void(error_code const& ec)
+            >(
+                add_retry_impl{
+                    *this
+                },
+                token
+            );
     }
+
+    struct add_retry_impl {
+        this_type& ep;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            auto tim = std::make_shared<as::steady_timer>(ep.stream_->raw_strand());
+            tim->expires_at(std::chrono::steady_clock::time_point::max());
+            auto& a_ep{ep};
+            tim->async_wait(
+                as::bind_executor(
+                    a_ep.stream_->raw_strand(),
+                    force_move(self)
+                )
+            );
+            a_ep.tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec
+        ) {
+            self.complete(ec);
+        }
+    };
 
     void notify_retry_one() {
         for (auto it = tim_retry_acq_pid_queue_.begin();

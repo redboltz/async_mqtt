@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(epst) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(bep) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     );
     auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
