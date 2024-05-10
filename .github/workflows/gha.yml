@@ -152,8 +152,8 @@ jobs:
          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
-        bootstrap.bat
-        b2.exe install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost
+        .\bootstrap.bat
+        .\b2.exe install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost
     - name: Build and test
       shell: powershell
       run: |
