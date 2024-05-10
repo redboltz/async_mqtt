@@ -572,8 +572,9 @@ private:
             Self& self
         ) {
             auto& a_cl{cl};
+            auto a_packet{packet};
             a_cl.ep_->send(
-                force_move(packet),
+                force_move(a_packet),
                 force_move(self)
             );
         }
@@ -644,8 +645,9 @@ private:
         ) {
             auto& a_cl{cl};
             auto pid = packet.packet_id();
+            auto a_packet{packet};
             a_cl.ep_->send(
-                force_move(packet),
+                force_move(a_packet),
                 as::append(
                     force_move(self),
                     pid
@@ -719,8 +721,9 @@ private:
         ) {
             auto& a_cl{cl};
             auto pid = packet.packet_id();
+            auto a_packet{packet};
             a_cl.ep_->send(
-                force_move(packet),
+                force_move(a_packet),
                 as::append(
                     force_move(self),
                     pid
@@ -794,8 +797,9 @@ private:
         ) {
             auto& a_cl{cl};
             auto pid = packet.packet_id();
+            auto a_packet{packet};
             a_cl.ep_->send(
-                force_move(packet),
+                force_move(a_packet),
                 as::append(
                     force_move(self),
                     pid
@@ -864,8 +868,9 @@ private:
             Self& self
         ) {
             auto& a_cl{cl};
+            auto a_packet{packet};
             a_cl.ep_->send(
-                force_move(packet),
+                force_move(a_packet),
                 force_move(self)
             );
         }
