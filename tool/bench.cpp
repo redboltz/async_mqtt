@@ -2262,7 +2262,6 @@ int main(int argc, char *argv[]) {
                 else {
                     ctx.set_verify_mode(as::ssl::verify_none);
                 }
-                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 cis.emplace_back(
                     client_t::create(
                         version,
@@ -2277,6 +2276,7 @@ int main(int argc, char *argv[]) {
                     hps[hps_index].host,
                     std::to_string(hps[hps_index].port)
                 );
+                cis.back().c->set_bulk_write(vm["bulk_write"].as<bool>());
                 ++hps_index;
                 if (hps_index == hps.size()) hps_index = 0;
             }
