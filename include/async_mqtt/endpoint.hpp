@@ -1064,7 +1064,7 @@ private: // compose operation impl
                 else {
                     if (process_send_packet(self, packet)) {
                         auto& a_ep{ep};
-                        auto& a_packet{packet};
+                        auto a_packet{packet};
                         a_ep.stream_->write_packet(
                             force_move(a_packet),
                             as::bind_executor(
