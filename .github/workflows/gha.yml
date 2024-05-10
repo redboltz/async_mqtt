@@ -130,7 +130,7 @@ jobs:
         CTEST_ARGS="--log_level=all -- warning" ctest -V
 
   windows:
-    runs-on: windows-2019
+    runs-on: windows-latest
     strategy:
       matrix:
         pattern: [0, 1, 2]
@@ -142,15 +142,18 @@ jobs:
       uses: actions/cache@v3
       with:
         path:  D:\a\async_mqtt\async_mqtt\boost
-        key: ${{ runner.os }}-boost-20240509
+        key: ${{ runner.os }}-boost-20240509-2
     - name: install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.85.0/boost_1_85_0-msvc-14.3-64.exe"
-         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
-        Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES","/DIR=$PWD\boost"
 
+        $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
+         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
+        7z $env:TEMP\boost_1_85_0.7z
+        cd boost_1_85_0
+        bootstrap.bat
+        b2.exe install -j2 --prefix=$PWD\boost
     - name: Build and test
       shell: powershell
       run: |
