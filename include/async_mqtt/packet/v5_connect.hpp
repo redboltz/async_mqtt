@@ -69,14 +69,14 @@ public:
         bool clean_start,
         std::uint16_t keep_alive_sec,
         buffer client_id,
-        optional<buffer> user_name = nullopt,
-        optional<buffer> password = nullopt,
+        std::optional<buffer> user_name = std::nullopt,
+        std::optional<buffer> password = std::nullopt,
         properties props = {}
     ):connect_packet(
         clean_start,
         keep_alive_sec,
         force_move(client_id),
-        nullopt,
+        std::nullopt,
         force_move(user_name),
         force_move(password),
         force_move(props)
@@ -115,9 +115,9 @@ public:
         bool clean_start,
         std::uint16_t keep_alive_sec,
         buffer client_id,
-        optional<will> w,
-        optional<buffer> user_name = nullopt,
-        optional<buffer> password = nullopt,
+        std::optional<will> w,
+        std::optional<buffer> user_name = std::nullopt,
+        std::optional<buffer> password = std::nullopt,
         properties props = {}
     )
         : fixed_header_{
@@ -631,12 +631,12 @@ public:
      * @brief Get user_name.
      * @return user_name
      */
-    optional<buffer> user_name() const {
+    std::optional<buffer> user_name() const {
         if (connect_flags::has_user_name_flag(connect_flags_)) {
             return user_name_;
         }
         else {
-            return nullopt;
+            return std::nullopt;
         }
     }
 
@@ -644,12 +644,12 @@ public:
      * @brief Get password.
      * @return password
      */
-    optional<buffer> password() const {
+    std::optional<buffer> password() const {
         if (connect_flags::has_password_flag(connect_flags_)) {
             return password_;
         }
         else {
-            return nullopt;
+            return std::nullopt;
         }
     }
 
@@ -657,7 +657,7 @@ public:
      * @brief Get will.
      * @return will
      */
-    optional<will> get_will() const {
+    std::optional<will> get_will() const {
         if (connect_flags::has_will_flag(connect_flags_)) {
             pub::opts opts =
                 connect_flags::will_retain(connect_flags_) |
@@ -671,7 +671,7 @@ public:
                 };
         }
         else {
-            return nullopt;
+            return std::nullopt;
         }
     }
 

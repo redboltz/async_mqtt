@@ -85,7 +85,6 @@
 #include <async_mqtt/packet/validate_property.hpp>
 #include <async_mqtt/packet/will.hpp>
 #include <async_mqtt/predefined_layer/mqtt.hpp>
-#include <async_mqtt/util/any.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/hex_dump.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
@@ -93,15 +92,14 @@
 #include <async_mqtt/util/json_like_out.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/optional.hpp>
+#include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/util/packet_variant_operator.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/static_vector.hpp>
-#include <async_mqtt/util/string_view.hpp>
+#include <async_mqtt/util/string_view_helper.hpp>
 #include <async_mqtt/util/time_point.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
-#include <async_mqtt/util/variant.hpp>
 
 #endif // ASYNC_MQTT_ALL_HPP

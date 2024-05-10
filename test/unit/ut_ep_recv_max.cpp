@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -262,7 +262,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -481,7 +481,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -791,7 +791,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         true,   // clean_start
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}

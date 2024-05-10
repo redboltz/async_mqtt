@@ -44,7 +44,7 @@ bool verify_certificate(
     std::string const& verify_field,
     bool preverified,
     as::ssl::verify_context& ctx,
-    std::shared_ptr<am::optional<std::string>> const& username) {
+    std::shared_ptr<std::optional<std::string>> const& username) {
     if (!preverified) return false;
     int error = X509_STORE_CTX_get_error(ctx.native_handle());
     if (error != X509_V_OK) {
@@ -86,7 +86,7 @@ inline
 std::shared_ptr<as::ssl::context> init_ctx(
     std::string const& certificate_filename,
     std::string const& key_filename,
-    am::optional<std::string> const& verify_file
+    std::optional<std::string> const& verify_file
 ) {
     auto ctx = std::make_shared<as::ssl::context>(as::ssl::context::tlsv12);
     ctx->set_options(
@@ -240,8 +240,8 @@ void run_broker(boost::program_options::variables_map const& vm) {
             };
 
         // mqtt (MQTT on TCP)
-        am::optional<as::ip::tcp::endpoint> mqtt_endpoint;
-        am::optional<as::ip::tcp::acceptor> mqtt_ac;
+        std::optional<as::ip::tcp::endpoint> mqtt_endpoint;
+        std::optional<as::ip::tcp::acceptor> mqtt_ac;
         std::function<void()> mqtt_async_accept;
         auto apply_socket_opts =
             [&](auto& lowest_layer) {
@@ -303,8 +303,8 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
 #if defined(ASYNC_MQTT_USE_WS)
         // ws (MQTT on WebSocket)
-        am::optional<as::ip::tcp::endpoint> ws_endpoint;
-        am::optional<as::ip::tcp::acceptor> ws_ac;
+        std::optional<as::ip::tcp::endpoint> ws_endpoint;
+        std::optional<as::ip::tcp::acceptor> ws_ac;
         std::function<void()> ws_async_accept;
         if (vm.count("ws.port")) {
             ws_endpoint.emplace(as::ip::tcp::v4(), vm["ws.port"].as<std::uint16_t>());
@@ -359,10 +359,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
 #if defined(ASYNC_MQTT_USE_TLS)
         // mqtts (MQTT on TLS TCP)
-        am::optional<as::ip::tcp::endpoint> mqtts_endpoint;
-        am::optional<as::ip::tcp::acceptor> mqtts_ac;
+        std::optional<as::ip::tcp::endpoint> mqtts_endpoint;
+        std::optional<as::ip::tcp::acceptor> mqtts_ac;
         std::function<void()> mqtts_async_accept;
-        am::optional<as::steady_timer> mqtts_timer;
+        std::optional<as::steady_timer> mqtts_timer;
         mqtts_timer.emplace(accept_ioc);
         auto mqtts_verify_field_obj =
             std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
@@ -380,7 +380,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
             mqtts_ac.emplace(accept_ioc, *mqtts_endpoint);
             mqtts_async_accept =
                 [&] {
-                    am::optional<std::string> verify_file;
+                    std::optional<std::string> verify_file;
                     if (vm.count("verify_file")) {
                         verify_file = vm["verify_file"].as<std::string>();
                     }
@@ -390,7 +390,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         verify_file
                     );
                     // shared_ptr for username
-                    auto username = std::make_shared<am::optional<std::string>>();
+                    auto username = std::make_shared<std::optional<std::string>>();
                     mqtts_ctx->set_verify_mode(as::ssl::verify_peer);
                     mqtts_ctx->set_verify_callback(
                         [username, &vm] // copy capture socket shared_ptr
@@ -453,10 +453,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
 #if defined(ASYNC_MQTT_USE_WS)
         // wss (MQTT on WebScoket TLS TCP)
-        am::optional<as::ip::tcp::endpoint> wss_endpoint;
-        am::optional<as::ip::tcp::acceptor> wss_ac;
+        std::optional<as::ip::tcp::endpoint> wss_endpoint;
+        std::optional<as::ip::tcp::acceptor> wss_ac;
         std::function<void()> wss_async_accept;
-        am::optional<as::steady_timer> wss_timer;
+        std::optional<as::steady_timer> wss_timer;
         wss_timer.emplace(accept_ioc);
         auto wss_verify_field_obj =
             std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
@@ -474,7 +474,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
             wss_ac.emplace(accept_ioc, *wss_endpoint);
             wss_async_accept =
                 [&] {
-                    am::optional<std::string> verify_file;
+                    std::optional<std::string> verify_file;
                     if (vm.count("verify_file")) {
                         verify_file = vm["verify_file"].as<std::string>();
                     }
@@ -484,7 +484,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         verify_file
                     );
                     // shared_ptr for username
-                    auto username = std::make_shared<am::optional<std::string>>();
+                    auto username = std::make_shared<std::optional<std::string>>();
                     wss_ctx->set_verify_mode(as::ssl::verify_peer);
                     wss_ctx->set_verify_callback(
                         [username, &vm]

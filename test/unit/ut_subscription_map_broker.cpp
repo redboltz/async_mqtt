@@ -69,7 +69,7 @@ struct sub_con_online {
         con_sp_t con,
         am::buffer topic_filter,
         am::sub::opts subopts,
-        am::optional<std::size_t> sid)
+        std::optional<std::size_t> sid)
         :con(am::force_move(con)),
          topic_filter(am::force_move(topic_filter)),
          subopts(subopts),
@@ -82,8 +82,8 @@ struct sub_con_online {
     con_sp_t con;
     am::buffer topic_filter;
     am::sub::opts subopts;
-    am::optional<std::size_t> sid;
-    am::optional<sub_con_online_map::handle> h; // to efficient remove
+    std::optional<std::size_t> sid;
+    std::optional<sub_con_online_map::handle> h; // to efficient remove
 };
 
 
@@ -93,7 +93,7 @@ struct sub_con_offline {
         am::buffer client_id,
         am::buffer topic_filter,
         am::sub::opts subopts,
-        am::optional<std::size_t> sid)
+        std::optional<std::size_t> sid)
         :client_id(am::force_move(client_id)),
          topic_filter(am::force_move(topic_filter)),
          subopts(subopts),
@@ -106,7 +106,7 @@ struct sub_con_offline {
     am::buffer client_id;
     am::buffer topic_filter;
     am::sub::opts subopts;
-    am::optional<std::size_t> sid;
+    std::optional<std::size_t> sid;
     sub_con_offline_map::handle h; // to efficient remove
 };
 
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
             con_sp_t const& con,
             am::buffer topic_filter,
             am::sub::opts subopts,
-            am::optional<std::size_t> sid = am::nullopt
+            std::optional<std::size_t> sid = std::nullopt
         ) {
             auto& idx = scos.get<tag_con_topic_filter>();
             auto it = idx.lower_bound(std::make_tuple(con, topic_filter));
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud_ow ) {
             con_sp_t const& con,
             am::buffer topic_filter,
             am::sub::opts subopts,
-            am::optional<std::size_t> sid = am::nullopt
+            std::optional<std::size_t> sid = std::nullopt
         ) {
             auto& idx = scos.get<tag_con_topic_filter>();
             auto it = idx.lower_bound(std::make_tuple(con, topic_filter));
@@ -550,7 +550,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
             con_sp_t const& con,
             am::buffer topic_filter,
             am::sub::opts subopts,
-            am::optional<std::size_t> sid = am::nullopt
+            std::optional<std::size_t> sid = std::nullopt
         ) {
             auto& idx = scos.get<tag_con_topic_filter>();
             auto it = idx.lower_bound(std::make_tuple(con, topic_filter));

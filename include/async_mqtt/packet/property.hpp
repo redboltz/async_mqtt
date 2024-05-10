@@ -20,7 +20,6 @@
 #include <boost/container/static_vector.hpp>
 #include <boost/operators.hpp>
 
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>

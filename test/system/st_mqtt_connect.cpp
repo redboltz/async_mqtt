@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                     true,   // clean_session
                     0x1234, // keep_alive
                     "cid1"_mb,
-                    am::nullopt, // will
+                    std::nullopt, // will
                     "u1"_mb,
                     "passforu1"_mb
                 },
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(fut) {
                     true,   // clean_session
                     0x1234, // keep_alive
                     "cid1"_mb,
-                    am::nullopt, // will
+                    std::nullopt, // will
                     "u1"_mb,
                     "passforu1"_mb
                 },
@@ -153,10 +153,10 @@ BOOST_AUTO_TEST_CASE(coro) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                         true,   // clean_session
                         0x1234, // keep_alive
                         "cid1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },

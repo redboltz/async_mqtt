@@ -50,7 +50,7 @@ public:
         auth_reason_code reason_code,
         properties props
     ) : auth_packet{
-            optional<auth_reason_code>(reason_code),
+            std::optional<auth_reason_code>(reason_code),
             force_move(props)
         }
     {}
@@ -60,7 +60,7 @@ public:
      */
     auth_packet(
     ) : auth_packet{
-            nullopt,
+            std::nullopt,
             properties{}
         }
     {}
@@ -73,7 +73,7 @@ public:
     auth_packet(
         auth_reason_code reason_code
     ) : auth_packet{
-            optional<auth_reason_code>(reason_code),
+            std::optional<auth_reason_code>(reason_code),
             properties{}
         }
     {}
@@ -253,7 +253,7 @@ public:
 
 private:
     auth_packet(
-        optional<auth_reason_code> reason_code,
+        std::optional<auth_reason_code> reason_code,
         properties props
     )
         : fixed_header_{
@@ -305,7 +305,7 @@ private:
     std::size_t remaining_length_;
     static_vector<char, 4> remaining_length_buf_;
 
-    optional<auth_reason_code> reason_code_;
+    std::optional<auth_reason_code> reason_code_;
 
     std::size_t property_length_ = 0;
     static_vector<char, 4> property_length_buf_;

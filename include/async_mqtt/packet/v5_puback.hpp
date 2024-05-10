@@ -60,7 +60,7 @@ public:
         properties props
     ) : basic_puback_packet{
             packet_id,
-            optional<puback_reason_code>(reason_code),
+            std::optional<puback_reason_code>(reason_code),
             force_move(props)
         }
     {}
@@ -74,7 +74,7 @@ public:
         packet_id_t packet_id
     ) : basic_puback_packet{
             packet_id,
-            nullopt,
+            std::nullopt,
             properties{}
         }
     {}
@@ -91,7 +91,7 @@ public:
         puback_reason_code reason_code
     ) : basic_puback_packet{
             packet_id,
-            optional<puback_reason_code>(reason_code),
+            std::optional<puback_reason_code>(reason_code),
             properties{}
         }
     {}
@@ -297,7 +297,7 @@ public:
 private:
     basic_puback_packet(
         packet_id_t packet_id,
-        optional<puback_reason_code> reason_code,
+        std::optional<puback_reason_code> reason_code,
         properties props
     )
         : fixed_header_{
@@ -352,7 +352,7 @@ private:
     static_vector<char, 4> remaining_length_buf_;
     static_vector<char, PacketIdBytes> packet_id_;
 
-    optional<puback_reason_code> reason_code_;
+    std::optional<puback_reason_code> reason_code_;
 
     std::size_t property_length_ = 0;
     static_vector<char, 4> property_length_buf_;

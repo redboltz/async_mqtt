@@ -276,7 +276,7 @@ public:
 
     // sync APIs that reqire woking on strand
 
-    optional<packet_id_t> acquire_unique_packet_id() {
+    std::optional<packet_id_t> acquire_unique_packet_id() {
         return visit(
             [&](auto& ep) {
                 return ep.acquire_unique_packet_id();
@@ -344,11 +344,11 @@ public:
         );
     }
 
-    void set_preauthed_user_name(optional<std::string> user_name) {
+    void set_preauthed_user_name(std::optional<std::string> user_name) {
         preauthed_user_name_ = force_move(user_name);
     }
 
-    optional<std::string> const& get_preauthed_user_name() const {
+    std::optional<std::string> const& get_preauthed_user_name() const {
         return preauthed_user_name_;
     }
 
@@ -418,8 +418,8 @@ public:
 private:
     epsp_t epsp_;
     buffer client_id_;
-    optional<std::string> preauthed_user_name_;
-    mutable optional<protocol_version> protocol_version_;
+    std::optional<std::string> preauthed_user_name_;
+    mutable std::optional<protocol_version> protocol_version_;
 };
 
 } // namespace async_mqtt

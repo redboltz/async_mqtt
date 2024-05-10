@@ -56,13 +56,13 @@ using packet_id_t = am::packet_id_type<2>::type;
 struct bench_context {
     bench_context(
         as::ip::tcp::resolver& res,
-        am::optional<std::string> const& ws_path,
+        std::optional<std::string> const& ws_path,
         am::protocol_version version,
         std::uint32_t sei,
         bool clean_start,
         std::uint16_t keep_alive,
-        am::optional<std::string> const& username,
-        am::optional<std::string> const& password,
+        std::optional<std::string> const& username,
+        std::optional<std::string> const& password,
         std::string const& topic_prefix,
         am::qos qos,
         am::pub::retain retain,
@@ -101,11 +101,11 @@ struct bench_context {
         >& guard_iocs,
         mode md,
         std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers,
-        am::optional<am::host_port> const& manager_hp,
+        std::optional<am::host_port> const& manager_hp,
         bool close_after_report,
-        am::optional<bool> tcp_no_delay_opt,
-        am::optional<std::size_t> send_buf_size_opt,
-        am::optional<std::size_t> recv_buf_size_opt
+        std::optional<bool> tcp_no_delay_opt,
+        std::optional<std::size_t> send_buf_size_opt,
+        std::optional<std::size_t> recv_buf_size_opt
     )
     :res{res},
      ws_path{ws_path},
@@ -158,13 +158,13 @@ struct bench_context {
     }
 
     as::ip::tcp::resolver& res;
-    am::optional<std::string> const& ws_path;
+    std::optional<std::string> const& ws_path;
     am::protocol_version version;
     std::uint32_t sei;
     bool clean_start;
     std::uint16_t keep_alive;
-    am::optional<std::string> const& username;
-    am::optional<std::string> const& password;
+    std::optional<std::string> const& username;
+    std::optional<std::string> const& password;
     std::string const& topic_prefix;
     am::qos qos;
     am::pub::retain retain;
@@ -203,11 +203,11 @@ struct bench_context {
     >& guard_iocs;
     mode md;
     std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers;
-    am::optional<am::host_port> const& manager_hp;
+    std::optional<am::host_port> const& manager_hp;
     bool close_after_report;
-    am::optional<bool> tcp_no_delay_opt;
-    am::optional<std::size_t> send_buf_size_opt;
-    am::optional<std::size_t> recv_buf_size_opt;
+    std::optional<bool> tcp_no_delay_opt;
+    std::optional<std::size_t> send_buf_size_opt;
+    std::optional<std::size_t> recv_buf_size_opt;
 };
 
 template <typename ClientInfo>
@@ -245,10 +245,10 @@ struct bench {
 
 private:
     void proc(
-        am::optional<boost::system::error_code> ec,
-        am::optional<am::system_error> se,
+        std::optional<boost::system::error_code> ec,
+        std::optional<am::system_error> se,
         am::packet_variant pv,
-        am::optional<as::ip::tcp::resolver::results_type> eps,
+        std::optional<as::ip::tcp::resolver::results_type> eps,
         ClientInfo* pci
     ) {
         reenter (coro_) {
@@ -415,8 +415,8 @@ private:
 
             // MQTT connect send
             yield {
-                am::optional<am::buffer> un;
-                am::optional<am::buffer> pw;
+                std::optional<am::buffer> un;
+                std::optional<am::buffer> pw;
                 if (bc_.username) un.emplace(am::allocate_buffer(*bc_.username));
                 if (bc_.password) pw.emplace(am::allocate_buffer(*bc_.password));
                 switch (bc_.version) {
@@ -432,7 +432,7 @@ private:
                             bc_.clean_start,
                             bc_.keep_alive,
                             am::allocate_buffer(pci->get_client_id()),
-                            am::nullopt, // will
+                            std::nullopt, // will
                             am::force_move(un),
                             am::force_move(pw),
                             am::force_move(props)
@@ -449,7 +449,7 @@ private:
                             bc_.clean_start,
                             bc_.keep_alive,
                             am::allocate_buffer(pci->get_client_id()),
-                            am::nullopt, // will
+                            std::nullopt, // will
                             am::force_move(un),
                             am::force_move(pw)
                         },
@@ -1457,7 +1457,7 @@ int main(int argc, char *argv[]) {
 
         auto detail_report = vm["detail_report"].as<bool>();
 
-        am::optional<am::host_port> manager_hp;
+        std::optional<am::host_port> manager_hp;
         std::uint16_t manager_port = 0;
         std::size_t num_of_workers = 0;
 
@@ -1549,59 +1549,59 @@ int main(int argc, char *argv[]) {
 
         auto keep_alive = vm["keep_alive"].as<std::uint16_t>();
         auto username =
-            [&] () -> am::optional<std::string> {
+            [&] () -> std::optional<std::string> {
                 if (vm.count("username")) {
                     return vm["username"].as<std::string>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
         auto password =
-            [&] () -> am::optional<std::string> {
+            [&] () -> std::optional<std::string> {
                 if (vm.count("password")) {
                     return vm["password"].as<std::string>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
         auto cid_prefix = vm["cid_prefix"].as<std::string>();
         auto topic_prefix = vm["topic_prefix"].as<std::string>();
 
         auto cacert =
-            [&] () -> am::optional<std::string> {
+            [&] () -> std::optional<std::string> {
                 if (vm.count("cacert")) {
                     return vm["cacert"].as<std::string>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
         auto ws_path =
-            [&] () -> am::optional<std::string> {
+            [&] () -> std::optional<std::string> {
                 if (vm.count("ws_path")) {
                     return vm["ws_path"].as<std::string>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
 
         auto limit_ms = vm["limit_ms"].as<std::size_t>();
 
         auto tcp_no_delay_opt =
-            [&] () -> am::optional<bool> {
+            [&] () -> std::optional<bool> {
                 if (vm.count("tcp_no_delay")) {
                     return vm["tcp_no_delay"].as<bool>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
         auto send_buf_size_opt =
-            [&] () -> am::optional<std::size_t> {
+            [&] () -> std::optional<std::size_t> {
                 if (vm.count("send_buf_size")) {
                     return vm["send_buf_size"].as<std::size_t>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
         auto recv_buf_size_opt =
-            [&] () -> am::optional<std::size_t> {
+            [&] () -> std::optional<std::size_t> {
                 if (vm.count("recv_buf_size")) {
                     return vm["recv_buf_size"].as<std::size_t>();
                 }
-                return am::nullopt;
+                return std::nullopt;
             } ();
 
         mode md;

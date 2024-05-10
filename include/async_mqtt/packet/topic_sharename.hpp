@@ -27,13 +27,13 @@ public:
         buffer all_topic
     ): all_topic_{force_move(all_topic)} {
         BOOST_ASSERT(all_topic_.size() <= 0xffff);
-        auto const shared_prefix = string_view("$share/");
+        auto const shared_prefix = std::string_view("$share/");
         if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {
             // must have sharename
             sharename_ = all_topic_.substr(shared_prefix.size());
 
             auto const idx = sharename_.find_first_of('/');
-            if (idx == 0 || idx == string_view::npos) return;
+            if (idx == 0 || idx == std::string_view::npos) return;
 
             topic_ = sharename_.substr(idx + 1);
             sharename_.remove_suffix(sharename_.size() - idx);

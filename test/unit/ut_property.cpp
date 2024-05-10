@@ -11,7 +11,6 @@
 
 #include <boost/lexical_cast.hpp> // for operator<<() test
 
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/packet/property.hpp>
 #include <async_mqtt/packet//property_variant.hpp>
 

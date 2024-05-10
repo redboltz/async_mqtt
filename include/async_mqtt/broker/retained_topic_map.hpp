@@ -8,6 +8,8 @@
 #define ASYNC_MQTT_BROKER_RETAINED_TOPIC_MAP_HPP
 
 #include <deque>
+#include <optional>
+#include <string_view>
 
 #include <boost/functional/hash.hpp>
 #include <boost/multi_index_container.hpp>
@@ -15,8 +17,6 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/util/string_view.hpp>
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/buffer.hpp>
 
 #include <async_mqtt/broker/topic_filter.hpp>
@@ -41,7 +41,7 @@ class retained_topic_map {
     struct path_entry {
         node_id_t parent_id;
         buffer name_buffer;
-        string_view name;
+        std::string_view name;
 
         node_id_t id;
 
@@ -63,9 +63,9 @@ class retained_topic_map {
             --count;
         }
 
-        optional<Value> value;
+        std::optional<Value> value;
 
-        path_entry(node_id_t parent_id, string_view name, node_id_t id)
+        path_entry(node_id_t parent_id, std::string_view name, node_id_t id)
             : parent_id(parent_id), name_buffer(allocate_buffer(name)), name(name_buffer), id(id)
         { }
     };
@@ -82,7 +82,7 @@ class retained_topic_map {
             mi::tag<direct_index_tag>,
             mi::composite_key<path_entry,
                 BOOST_MULTI_INDEX_MEMBER(path_entry, node_id_t, parent_id),
-                BOOST_MULTI_INDEX_MEMBER(path_entry, string_view, name) >
+                BOOST_MULTI_INDEX_MEMBER(path_entry, std::string_view, name) >
             >,
 
         // index required for wildcard processing
@@ -99,12 +99,12 @@ class retained_topic_map {
 
     direct_const_iterator root;
 
-    direct_const_iterator create_topic(string_view topic) {
+    direct_const_iterator create_topic(std::string_view topic) {
          direct_const_iterator parent = root;
 
         topic_filter_tokenizer(
             topic,
-            [this, &parent](string_view t) {
+            [this, &parent](std::string_view t) {
                 if (t == "+" || t == "#") {
                     throw_no_wildcards_allowed();
                 }
@@ -132,13 +132,13 @@ class retained_topic_map {
         return parent;
     }
 
-    std::vector<direct_const_iterator> find_topic(string_view topic) {
+    std::vector<direct_const_iterator> find_topic(std::string_view topic) {
         std::vector<direct_const_iterator> path;
         direct_const_iterator parent = root;
 
         topic_filter_tokenizer(
             topic,
-            [this, &parent, &path](string_view t) {
+            [this, &parent, &path](std::string_view t) {
                 auto const& direct_index = map.template get<direct_index_tag>();
                 auto entry = direct_index.find(std::make_tuple(parent->id, t));
 
@@ -193,14 +193,14 @@ class retained_topic_map {
 
     // Find all topics that match the specified topic filter
     template<typename Output>
-    void find_match(string_view topic_filter, Output&& callback) const {
+    void find_match(std::string_view topic_filter, Output&& callback) const {
         std::deque<direct_const_iterator> entries;
         entries.push_back(root);
 
         std::deque<direct_const_iterator> new_entries;
         topic_filter_tokenizer(
             topic_filter,
-            [this, &entries, &new_entries, &callback](string_view t) {
+            [this, &entries, &new_entries, &callback](std::string_view t) {
                 auto const& direct_index = map.template get<direct_index_tag>();
                 auto const& wildcard_index = map.template get<wildcard_index_tag>();
                 new_entries.resize(0);
@@ -208,7 +208,7 @@ class retained_topic_map {
                 for (auto const& entry : entries) {
                     node_id_t parent = entry->id;
 
-                    if (t == string_view("+")) {
+                    if (t == std::string_view("+")) {
                         for (auto i = wildcard_index.lower_bound(parent); i != wildcard_index.end() && i->parent_id == parent; ++i) {
                             if (parent != root_node_id || i->name.empty() || i->name[0] != '$') {
                                 new_entries.push_back(map.template project<direct_index_tag, wildcard_const_iterator>(i));
@@ -218,7 +218,7 @@ class retained_topic_map {
                             }
                         }
                     }
-                    else if (t == string_view("#")) {
+                    else if (t == std::string_view("#")) {
                         match_hash_entries(parent, callback, parent == root_node_id);
                         return false;
                     }
@@ -243,13 +243,13 @@ class retained_topic_map {
     }
 
     // Remove a value at the specified topic
-    size_t erase_topic(string_view topic) {
+    size_t erase_topic(std::string_view topic) {
         auto path = find_topic(topic);
 
         // Reset the value if there is actually something stored
         if (!path.empty() && path.back()->value) {
             auto& direct_index = map.template get<direct_index_tag>();
-            direct_index.modify(path.back(), [](path_entry &entry){ entry.value = nullopt; });
+            direct_index.modify(path.back(), [](path_entry &entry){ entry.value = std::nullopt; });
 
             // Do iterators stay valid when erasing ? I think they do ?
             for (auto entry : path) {
@@ -305,7 +305,7 @@ public:
 
     // Insert a value at the specified topic
     template<typename V>
-    std::size_t insert_or_assign(string_view topic, V&& value) {
+    std::size_t insert_or_assign(std::string_view topic, V&& value) {
         auto& direct_index = map.template get<direct_index_tag>();
         auto path = this->find_topic(topic);
 
@@ -330,12 +330,12 @@ public:
 
     // Find all stored topics that math the specified topic_filter
     template<typename Output>
-    void find(string_view topic_filter, Output&& callback) const {
+    void find(std::string_view topic_filter, Output&& callback) const {
         find_match(topic_filter, std::forward<Output>(callback));
     }
 
     // Remove a stored value at the specified topic
-    std::size_t erase(string_view topic) {
+    std::size_t erase(std::string_view topic) {
         auto result = erase_topic(topic);
         decrease_map_size(result);
         return result;

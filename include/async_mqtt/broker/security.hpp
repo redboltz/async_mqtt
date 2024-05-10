@@ -8,8 +8,10 @@
 #define ASYNC_MQTT_BROKER_SECURITY_HPP
 
 #include <string>
+#include <string_view>
 #include <map>
 #include <set>
+#include <optional>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -36,9 +38,8 @@
 #endif
 
 #include <async_mqtt/broker/subscription_map.hpp>
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/log.hpp>
-#include <async_mqtt/util/string_view.hpp>
+#include <async_mqtt/util/string_view_helper.hpp>
 
 
 
@@ -84,7 +85,7 @@ struct security {
 
         authentication(
             method auth_method = method::sha256,
-            optional<std::string> const& digest = nullopt,
+            std::optional<std::string> const& digest = std::nullopt,
             std::string const& salt = std::string()
         )
             : auth_method(auth_method),
@@ -94,7 +95,7 @@ struct security {
         }
 
         method auth_method;
-        optional<std::string> digest;
+        std::optional<std::string> digest;
         std::string salt;
 
         std::vector<std::string> groups;
@@ -106,7 +107,7 @@ struct security {
             deny, allow, none
         };
 
-        authorization(string_view topic, std::size_t rule_nr)
+        authorization(std::string_view topic, std::size_t rule_nr)
             : topic(topic),
               rule_nr(rule_nr),
               sub_type(type::none),
@@ -132,12 +133,12 @@ struct security {
     };
 
     /** Return username of anonymous user */
-    optional<std::string> const& login_anonymous() const {
+    std::optional<std::string> const& login_anonymous() const {
         return anonymous;
     }
 
     /** Return username of unauthorized user */
-    optional<std::string> const& login_unauthenticated() const {
+    std::optional<std::string> const& login_unauthenticated() const {
         return unauthenticated;
     }
 
@@ -148,24 +149,24 @@ struct security {
         return result;
     }
 
-    static std::string sha256hash(string_view message) {
+    static std::string sha256hash(std::string_view message) {
         std::vector<unsigned char> hash(picosha2::k_digest_size);
         picosha2::hash256(message.begin(), message.end(), hash.begin(), hash.end());
         return picosha2::bytes_to_hex_string(hash.begin(), hash.end());
     }
 
-    bool login_cert(string_view username) const {
+    bool login_cert(std::string_view username) const {
         auto i = authentication_.find(std::string(username));
         return
             i != authentication_.end() &&
             i->second.auth_method == security::authentication::method::client_cert;
     }
 
-    optional<std::string> login(string_view username, string_view password) const {
+    std::optional<std::string> login(std::string_view username, std::string_view password) const {
         auto i = authentication_.find(std::string(username));
         if (i != authentication_.end() &&
             i->second.auth_method == security::authentication::method::sha256) {
-            return [&] () -> optional<std::string> {
+            return [&] () -> std::optional<std::string> {
                 if (boost::iequals(
                         i->second.digest.value(),
                         sha256hash(i->second.salt + std::string(password))
@@ -174,7 +175,7 @@ struct security {
                     return std::string(username);
                 }
                 else {
-                    return nullopt;
+                    return std::nullopt;
                 }
             } ();
 
@@ -182,19 +183,19 @@ struct security {
         else if (
             i != authentication_.end() &&
             i->second.auth_method == security::authentication::method::plain_password) {
-            return [&] () -> optional<std::string> {
+            return [&] () -> std::optional<std::string> {
                 if (i->second.digest.value() == password) {
                     return std::string(username);
                 }
                 else {
-                    return nullopt;
+                    return std::nullopt;
                 }
             } ();
         }
-        return nullopt;
+        return std::nullopt;
     }
 
-    static authorization::type get_auth_type(string_view type) {
+    static authorization::type get_auth_type(std::string_view type) {
         if (type == "allow") return authorization::type::allow;
         if (type == "deny") return authorization::type::deny;
         throw std::runtime_error(
@@ -203,11 +204,11 @@ struct security {
         );
     }
 
-    static bool is_valid_group_name(string_view name) {
+    static bool is_valid_group_name(std::string_view name) {
         return !name.empty() && name[0] == '@'; // TODO: validate utf-8
     }
 
-    static bool is_valid_user_name(string_view name) {
+    static bool is_valid_user_name(std::string_view name) {
         return !name.empty() && name[0] != '@'; // TODO: validate utf-8
     }
 
@@ -442,7 +443,7 @@ struct security {
     }
 
     template<typename T>
-    void get_auth_sub_by_user(string_view username, T&& callback) const {
+    void get_auth_sub_by_user(std::string_view username, T&& callback) const {
         std::set<std::string> username_and_groups;
         username_and_groups.insert(std::string(username));
 
@@ -482,7 +483,7 @@ struct security {
         }
     }
 
-    authorization::type auth_pub(string_view topic, string_view username) const {
+    authorization::type auth_pub(std::string_view topic, std::string_view username) const {
         authorization::type result_type = authorization::type::deny;
 
         std::set<std::string> username_and_groups;
@@ -519,7 +520,7 @@ struct security {
         return result_type;
     }
 
-    std::map<std::string, authorization::type> auth_sub(string_view topic) const {
+    std::map<std::string, authorization::type> auth_sub(std::string_view topic) const {
         std::map<std::string, authorization::type> result;
         std::map<std::string, std::size_t> priorities;
         auth_sub_map.find(
@@ -569,18 +570,18 @@ struct security {
         return authorization::type::deny;
     }
 
-    static bool is_hash(string_view level) { return level == "#"; }
-    static bool is_plus(string_view level) { return level == "+"; }
-    static bool is_literal(string_view level) { return !is_hash(level) && !is_plus(level); }
+    static bool is_hash(std::string_view level) { return level == "#"; }
+    static bool is_plus(std::string_view level) { return level == "+"; }
+    static bool is_literal(std::string_view level) { return !is_hash(level) && !is_plus(level); }
 
-    static optional<std::string>
+    static std::optional<std::string>
     is_subscribe_allowed(
         std::vector<std::string> const& authorized_filter,
-        string_view subscription_filter
+        std::string_view subscription_filter
     ) {
-        optional<std::string> result;
+        std::optional<std::string> result;
         auto append_result =
-            [&result](string_view token) {
+            [&result](std::string_view token) {
                 if (result) {
                     *result += topic_filter_separator;
                     result->append(token.data(), token.size());
@@ -597,7 +598,7 @@ struct security {
 
         while (true) {
             if (filter_begin == authorized_filter.end()) {
-                return nullopt;
+                return std::nullopt;
             }
 
             auto auth = *filter_begin;
@@ -637,7 +638,7 @@ struct security {
             }
             else {
                 if (auth != sub)  {
-                    return nullopt;
+                    return std::nullopt;
                 }
 
                 append_result(auth);
@@ -653,7 +654,7 @@ struct security {
         }
 
         if (filter_begin < authorized_filter.end()) {
-            return nullopt;
+            return std::nullopt;
         }
 
         return result;
@@ -661,7 +662,7 @@ struct security {
 
     static bool is_subscribe_denied(
         std::vector<std::string> const& deny_filter,
-        string_view subscription_filter
+        std::string_view subscription_filter
     ) {
         bool result = true;
         auto filter_begin = deny_filter.begin();
@@ -706,7 +707,7 @@ struct security {
     }
 
     std::vector<std::string>
-    get_auth_sub_topics(string_view username, string_view topic_filter) const {
+    get_auth_sub_topics(std::string_view username, std::string_view topic_filter) const {
         std::vector<std::string> auth_topics;
         get_auth_sub_by_user(
             username,
@@ -738,12 +739,12 @@ struct security {
      * @param topic_filter Topic filter the user would like to subscribe to
      * @return true if the user is authorized
      */
-    bool is_subscribe_authorized(string_view username, string_view topic_filter) const {
+    bool is_subscribe_authorized(std::string_view username, std::string_view topic_filter) const {
         return !get_auth_sub_topics(username, topic_filter).empty();
     }
 
     // Get the individual path elements of the topic filter
-    static std::vector<std::string> get_topic_filter_tokens(string_view topic_filter) {
+    static std::vector<std::string> get_topic_filter_tokens(std::string_view topic_filter) {
         std::vector<std::string> result;
         topic_filter_tokenizer(
             topic_filter,
@@ -761,8 +762,8 @@ struct security {
 
     std::vector<authorization> authorization_;
 
-    optional<std::string> anonymous;
-    optional<std::string> unauthenticated;
+    std::optional<std::string> anonymous;
+    std::optional<std::string> unauthenticated;
 
     using auth_map_type = multiple_subscription_map<std::string, std::pair<authorization::type, std::size_t>>;
     auth_map_type auth_pub_map;

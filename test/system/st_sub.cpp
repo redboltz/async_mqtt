@@ -31,10 +31,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                         true,   // clean_session
                         0,      // keep_alive none
                         "cid1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -155,10 +155,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                         true,   // clean_session
                         0,      // keep_alive none
                         "cid1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb,
                         am::properties{}

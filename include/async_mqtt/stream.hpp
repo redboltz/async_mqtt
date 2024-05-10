@@ -22,7 +22,6 @@
 
 #include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
-#include <async_mqtt/util/optional.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/buffer.hpp>

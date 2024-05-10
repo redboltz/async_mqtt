@@ -49,10 +49,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
             sub3,
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub2"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub3"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "pub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -367,10 +367,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
             sub3,
         };
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> pid
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> pid
         ) override {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub1"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -423,7 +423,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub2"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "sub3"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         true,   // clean_start
                         0, // keep_alive
                         "pub"_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },

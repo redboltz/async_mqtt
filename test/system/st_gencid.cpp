@@ -31,10 +31,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                         true,   // clean_session
                         0,
                         ""_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -90,10 +90,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                         false,   // clean_session
                         0,
                         ""_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },
@@ -150,10 +150,10 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                         true,   // clean_start
                         0,
                         ""_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb,
                         am::properties{}
@@ -225,10 +225,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            am::optional<am::error_code> ec,
-            am::optional<am::system_error> se,
-            am::optional<am::packet_variant> pv,
-            am::optional<packet_id_t> /*pid*/
+            std::optional<am::error_code> ec,
+            std::optional<am::system_error> se,
+            std::optional<am::packet_variant> pv,
+            std::optional<packet_id_t> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                         true,   // clean_start
                         0,
                         ""_mb,
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb,
                         {am::property::session_expiry_interval{am::session_never_expire}}
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                         false,   // clean_start
                         0,
                         am::allocate_buffer(v5_cs0_aci),
-                        am::nullopt, // will
+                        std::nullopt, // will
                         "u1"_mb,
                         "passforu1"_mb
                     },

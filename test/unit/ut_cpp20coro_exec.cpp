@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(different) {
                 true,   // clean_session
                 0, // keep_alive
                 "cid1"_mb,
-                am::nullopt, // will
+                std::nullopt, // will
                 "user1"_mb,
                 "pass1"_mb
             };
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(bind) {
                 true,   // clean_session
                 0, // keep_alive
                 "cid1"_mb,
-                am::nullopt, // will
+                std::nullopt, // will
                 "user1"_mb,
                 "pass1"_mb
             };
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(same) {
                 true,   // clean_session
                 0, // keep_alive
                 "cid1"_mb,
-                am::nullopt, // will
+                std::nullopt, // will
                 "user1"_mb,
                 "pass1"_mb
             };

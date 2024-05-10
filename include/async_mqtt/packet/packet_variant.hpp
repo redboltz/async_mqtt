@@ -7,7 +7,9 @@
 #if !defined(ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP
 
-#include <async_mqtt/util/variant.hpp>
+#include <variant>
+
+#include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
@@ -73,7 +75,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) const& {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 var_
             );
@@ -86,7 +88,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) & {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 var_
             );
@@ -99,7 +101,7 @@ public:
     template <typename Func>
     auto visit(Func&& func) && {
         return
-            async_mqtt::visit(
+            std::visit(
                 std::forward<Func>(func),
                 force_move(var_)
             );
@@ -143,16 +145,16 @@ public:
 
     /**
      * @brief Get control_packet_type.
-     * @return If packet is stored then return its control_packet_type, If error then return nullopt.
+     * @return If packet is stored then return its control_packet_type, If error then return std::nullopt.
      */
-    optional<control_packet_type> type() const {
+    std::optional<control_packet_type> type() const {
         return visit(
             overload {
-                [] (auto const& p) -> optional<control_packet_type>{
+                [] (auto const& p) -> std::optional<control_packet_type>{
                     return p.type();
                 },
-                [] (system_error const&) -> optional<control_packet_type>{
-                    return nullopt;
+                [] (system_error const&) -> std::optional<control_packet_type>{
+                    return std::nullopt;
                 }
             }
         );
@@ -181,7 +183,7 @@ public:
     }
 
 private:
-    using variant_t = variant<
+    using variant_t = std::variant<
         system_error,
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,

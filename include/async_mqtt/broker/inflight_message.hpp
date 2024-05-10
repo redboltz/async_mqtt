@@ -9,6 +9,8 @@
 
 
 #include <chrono>
+#include <optional>
+#include <variant>
 
 #include <boost/asio/steady_timer.hpp>
 #include <boost/multi_index_container.hpp>
@@ -16,8 +18,8 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/key.hpp>
 
+#include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/packet/store_packet_variant.hpp>
-#include <async_mqtt/util/any.hpp>
 #include <async_mqtt/log.hpp>
 
 #include <async_mqtt/broker/common_type.hpp>
@@ -44,7 +46,7 @@ public:
 
     template <typename Epsp>
     void send(Epsp& epsp) const {
-        optional<store_packet_variant> packet_opt;
+        std::optional<store_packet_variant> packet_opt;
         if (tim_message_expiry_) {
             packet_.visit(
                 overload {

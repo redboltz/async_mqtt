@@ -13,7 +13,7 @@
 #include <boost/asio/ip/address.hpp>
 
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/optional.hpp>
+#include <optional>
 #include <async_mqtt/log.hpp>
 
 namespace async_mqtt {
@@ -46,10 +46,10 @@ inline bool operator!=(host_port const& lhs, host_port const& rhs) {
     return !(lhs == rhs);
 }
 
-inline optional<host_port> host_port_from_string(std::string_view str) {
+inline std::optional<host_port> host_port_from_string(std::string_view str) {
     // parse port ...:1234
     auto last_colon = str.find_last_of(':');
-    if (last_colon == std::string::npos) return nullopt;
+    if (last_colon == std::string::npos) return std::nullopt;
 
     std::uint16_t port;
     try {
@@ -63,15 +63,15 @@ inline optional<host_port> host_port_from_string(std::string_view str) {
         ASYNC_MQTT_LOG("mqtt_api", error)
             << "invalid host port string:" << str
             << " " << e.what();
-        return nullopt;
+        return std::nullopt;
     }
 
-    if (str.empty()) return nullopt;
+    if (str.empty()) return std::nullopt;
     if (str.front() == '[' && str.back() == ']') {
         // IPv6 [host]
         str.remove_prefix(1);
         str.remove_suffix(1);
-        if (str.empty()) return nullopt;
+        if (str.empty()) return std::nullopt;
     }
 
     return host_port{std::string(str), port};

@@ -7,6 +7,8 @@
 #if !defined(ASYNC_MQTT_BROKER_SHARED_TARGET_IMPL_HPP)
 #define ASYNC_MQTT_BROKER_SHARED_TARGET_IMPL_HPP
 
+#include <optional>
+
 #include <async_mqtt/broker/shared_target.hpp>
 #include <async_mqtt/broker/session_state.hpp>
 
@@ -82,7 +84,7 @@ inline void shared_target<Sp>::erase(
 }
 
 template <typename Sp>
-inline optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> shared_target<Sp>::get_target(
+inline std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> shared_target<Sp>::get_target(
     buffer const& share_name,
     buffer const& topic_filter
 ) {
@@ -102,7 +104,7 @@ inline optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> shared_targ
         idx.modify(r.first, [](auto& e) { e.tp = std::chrono::steady_clock::now(); });
         return std::make_tuple(elem.ssr, it->second);
     }
-    return nullopt;
+    return std::nullopt;
 }
 
 template <typename Sp>

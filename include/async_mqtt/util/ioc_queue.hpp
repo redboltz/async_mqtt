@@ -7,9 +7,9 @@
 #if !defined(ASYNC_MQTT_UTIL_IOC_QUEUE_HPP)
 #define ASYNC_MQTT_UTIL_IOC_QUEUE_HPP
 
-#include <boost/asio.hpp>
+#include <optional>
 
-#include <async_mqtt/util/optional.hpp>
+#include <boost/asio.hpp>
 
 namespace async_mqtt {
 
@@ -65,7 +65,7 @@ public:
 private:
     as::io_context queue_{BOOST_ASIO_CONCURRENCY_HINT_UNSAFE};
     bool working_ = false;
-    optional<as::executor_work_guard<as::io_context::executor_type>> guard_;
+    std::optional<as::executor_work_guard<as::io_context::executor_type>> guard_;
 };
 
 } // namespace async_mqtt

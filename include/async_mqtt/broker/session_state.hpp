@@ -73,11 +73,11 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         epsp_t epsp,
         buffer client_id,
         std::string const& username,
-        optional<will> will,
+        std::optional<will> will,
         will_sender_t will_sender,
         bool clean_start,
-        optional<std::chrono::steady_clock::duration> will_expiry_interval,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval
     ) {
         struct impl : session_state<Sp> {
             impl(
@@ -90,7 +90,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 std::string const& username,
                 will_sender_t will_sender,
                 bool clean_start,
-                optional<std::chrono::steady_clock::duration> session_expiry_interval)
+                std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
                 :
                 session_state<Sp> {
                     timer_ioc,
@@ -212,10 +212,10 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
     void renew(
         epsp_t epsp,
-        optional<will> will,
+        std::optional<will> will,
         bool clean_start,
-        optional<std::chrono::steady_clock::duration> will_expiry_interval,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval
     ) {
         clean();
         epwp_ = epsp;
@@ -369,7 +369,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             << "clean";
         if (clean_handler_) clean_handler_();
         if (tim_will_expiry_) tim_will_expiry_->cancel();
-        will_value_ = nullopt;
+        will_value_ = std::nullopt;
         {
             std::lock_guard<mutex> g(mtx_inflight_messages_);
             inflight_messages_.clear();
@@ -382,10 +382,10 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         shared_targets_.erase(*this);
         tim_will_delay_.cancel();
 
-        session_expiry_interval_ = nullopt;
+        session_expiry_interval_ = std::nullopt;
         if (tim_session_expiry_) tim_session_expiry_->cancel();
         qos2_publish_handled_.clear();
-        response_topic_ = nullopt;
+        response_topic_ = std::nullopt;
     }
 
     template <typename PublishRetainHandler>
@@ -394,7 +394,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         buffer topic_filter,
         sub::opts subopts,
         PublishRetainHandler&& h,
-        optional<std::size_t> sid = nullopt
+        std::optional<std::size_t> sid = std::nullopt
     ) {
         subscription<epsp_t> sub {*this, share_name, topic_filter, subopts, sid };
         if (!share_name.empty()) {
@@ -465,8 +465,8 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
     void update_will(
         as::io_context& timer_ioc,
-        optional<async_mqtt::will> will,
-        optional<std::chrono::steady_clock::duration> will_expiry_interval) {
+        std::optional<async_mqtt::will> will,
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval) {
         tim_will_expiry_.reset();
         will_value_ = force_move(will);
 
@@ -490,7 +490,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "clear will. cid:" << client_id_;
         tim_will_expiry_.reset();
-        will_value_ = nullopt;
+        will_value_ = std::nullopt;
     }
 
     void send_will() {
@@ -498,7 +498,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
         auto wd_sec =
             [&] () -> std::size_t {
-                optional<property::will_delay_interval> wd_opt;
+                std::optional<property::will_delay_interval> wd_opt;
                 for (auto const& prop : will_value_->props()) {
                     prop.visit(
                         overload {
@@ -595,9 +595,9 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
     void inherit(
         epsp_t epsp,
-        optional<will> will,
-        optional<std::chrono::steady_clock::duration> will_expiry_interval,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval
+        std::optional<will> will,
+        std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval
     ) {
         ASYNC_MQTT_LOG("mqtt_broker", info)
             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -628,7 +628,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         return epwp_.lock();
     }
 
-    optional<std::chrono::steady_clock::duration> session_expiry_interval() const {
+    std::optional<std::chrono::steady_clock::duration> session_expiry_interval() const {
         return session_expiry_interval_;
     }
 
@@ -636,7 +636,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         response_topic_.emplace(force_move(topic));
     }
 
-    optional<std::string> get_response_topic() const {
+    std::optional<std::string> get_response_topic() const {
         return response_topic_;
     }
 
@@ -656,7 +656,7 @@ private:
         std::string const& username,
         will_sender_t will_sender,
         bool clean_start,
-        optional<std::chrono::steady_clock::duration> session_expiry_interval)
+        std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
         :timer_ioc_(timer_ioc),
          mtx_subs_map_(mtx_subs_map),
          subs_map_(subs_map),
@@ -711,7 +711,7 @@ private:
         }
 
 
-        will_value_ = nullopt;
+        will_value_ = std::nullopt;
         if (tim_will_expiry_) {
             auto d =
                 std::chrono::duration_cast<std::chrono::seconds>(
@@ -751,7 +751,7 @@ private:
 
     as::io_context& timer_ioc_;
     std::shared_ptr<as::steady_timer> tim_will_expiry_;
-    optional<async_mqtt::will> will_value_;
+    std::optional<async_mqtt::will> will_value_;
 
     mutex& mtx_subs_map_;
     sub_con_map<epsp_t>& subs_map_;
@@ -762,7 +762,7 @@ private:
 
     std::string username_;
 
-    optional<std::chrono::steady_clock::duration> session_expiry_interval_;
+    std::optional<std::chrono::steady_clock::duration> session_expiry_interval_;
     std::shared_ptr<as::steady_timer> tim_session_expiry_;
 
     mutable mutex mtx_inflight_messages_;
@@ -780,7 +780,7 @@ private:
 
     std::set<packet_id_t> qos2_publish_handled_;
 
-    optional<std::string> response_topic_;
+    std::optional<std::string> response_topic_;
     std::function<void()> clean_handler_;
 };
 

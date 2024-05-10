@@ -9,12 +9,11 @@
 
 #include <ostream>
 #include <limits>
+#include <optional>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
-
-#include <async_mqtt/util/optional.hpp>
 
 namespace async_mqtt {
 
@@ -91,10 +90,10 @@ public:
 
     /**
      * @brief Allocate one value.
-     * @return If allocator has at least one value, then returns lowest value, otherwise return nullopt.
+     * @return If allocator has at least one value, then returns lowest value, otherwise return std::nullopt.
      */
-    optional<value_type> allocate() {
-        if (pool_.empty()) return nullopt;
+    std::optional<value_type> allocate() {
+        if (pool_.empty()) return std::nullopt;
 
         // The smallest interval is the target.
         auto it = pool_.begin();
@@ -119,10 +118,10 @@ public:
 
     /**
      * @brief Get the first vacant value.
-     * @return If allocator has at least one vacant value, then returns lowest value, otherwise return nullopt.
+     * @return If allocator has at least one vacant value, then returns lowest value, otherwise return std::nullopt.
      */
-    optional<value_type> first_vacant() const {
-        if (pool_.empty()) return nullopt;
+    std::optional<value_type> first_vacant() const {
+        if (pool_.empty()) return std::nullopt;
 
         // The smallest interval is the target.
         auto it = pool_.begin();

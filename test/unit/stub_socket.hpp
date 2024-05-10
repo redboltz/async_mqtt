@@ -41,7 +41,7 @@ struct basic_stub_socket {
     void set_recv_packets(std::deque<basic_packet_variant<PacketIdBytes>> recv_pvs) {
         recv_pvs_ = force_move(recv_pvs);
         recv_pvs_it_ = recv_pvs_.begin();
-        pv_r_ = nullopt;
+        pv_r_ = std::nullopt;
 
     }
 
@@ -148,7 +148,7 @@ struct basic_stub_socket {
                 socket.pv_r_ = make_packet_range(socket.cbs_);
             }
             while (socket.pv_r_->first == socket.pv_r_->second) {
-                socket.pv_r_ = nullopt;
+                socket.pv_r_ = std::nullopt;
                 ++socket.recv_pvs_it_;
                 if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
                     self.complete(errc::make_error_code(errc::no_message), 0);
@@ -184,7 +184,7 @@ private:
     pv_queue_t recv_pvs_;
     typename pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();
     std::vector<as::const_buffer> cbs_;
-    optional<packet_range> pv_r_;
+    std::optional<packet_range> pv_r_;
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;

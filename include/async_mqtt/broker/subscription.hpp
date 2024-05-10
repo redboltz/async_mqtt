@@ -7,7 +7,8 @@
 #if !defined(ASYNC_MQTT_BROKER_SUBSCRIPTION_HPP)
 #define ASYNC_MQTT_BROKER_SUBSCRIPTION_HPP
 
-#include <async_mqtt/util/optional.hpp>
+#include <optional>
+
 #include <async_mqtt/packet/subopts.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/broker/session_state_fwd.hpp>
@@ -21,7 +22,7 @@ struct subscription {
         buffer sharename,
         buffer topic,
         sub::opts opts,
-        optional<std::size_t> sid)
+        std::optional<std::size_t> sid)
         :ss{ss},
          sharename{force_move(sharename)},
          topic{force_move(topic)},
@@ -33,7 +34,7 @@ struct subscription {
     buffer sharename;
     buffer topic;
     sub::opts opts;
-    optional<std::size_t> sid;
+    std::optional<std::size_t> sid;
 };
 
 template <typename Sp>

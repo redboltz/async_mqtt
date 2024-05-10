@@ -40,7 +40,7 @@ struct coro_base : as::coroutine {
     void operator()(am::packet_variant pv) {
         proc({}, {}, am::force_move(pv), {});
     }
-    void operator()(am::optional<packet_id_t> pid) {
+    void operator()(std::optional<packet_id_t> pid) {
         proc({}, {}, {}, am::force_move(pid));
     }
     bool finish() const {
@@ -57,10 +57,10 @@ protected:
     }
 private:
     virtual void proc(
-        am::optional<am::error_code> ec,
-        am::optional<am::system_error> se,
-        am::optional<am::packet_variant> pv,
-        am::optional<packet_id_t> pid
+        std::optional<am::error_code> ec,
+        std::optional<am::system_error> se,
+        std::optional<am::packet_variant> pv,
+        std::optional<packet_id_t> pid
     ) = 0;
     std::vector<std::reference_wrapper<Ep>> eps_;
     as::ip::tcp::endpoint dest_;

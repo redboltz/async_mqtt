@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         false,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         false,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -377,7 +377,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb
     };
@@ -729,7 +729,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         false,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -1060,7 +1060,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         false,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
@@ -1072,7 +1072,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         true,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{}
@@ -1429,7 +1429,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         false,   // clean_session
         0x1234, // keep_alive
         "cid1"_mb,
-        am::nullopt, // will
+        std::nullopt, // will
         "user1"_mb,
         "pass1"_mb,
         am::properties{
