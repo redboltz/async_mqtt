@@ -1038,11 +1038,11 @@ private: // compose operation impl
                 ) {
                     packet.visit(
                         overload {
-                            [&](auto& actual_packet) {
+                            [&](auto actual_packet) {
                                 if (process_send_packet(self, actual_packet)) {
                                     auto& a_ep{ep};
                                     a_ep.stream_->write_packet(
-                                        force_move(actual_packet),
+                                        actual_packet,
                                         as::bind_executor(
                                             a_ep.stream_->raw_strand(),
                                             force_move(self)
