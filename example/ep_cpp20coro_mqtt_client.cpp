@@ -188,6 +188,6 @@ int main(int argc, char* argv[]) {
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
-    as::co_spawn(amep->strand(), proc(amep, argv[1], argv[2]), as::detached);
+    as::co_spawn(amep->get_executor(), proc(amep, argv[1], argv[2]), as::detached);
     ioc.run();
 }

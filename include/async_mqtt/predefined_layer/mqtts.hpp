@@ -19,7 +19,7 @@ namespace tls = as::ssl; // for backword compatilibity
 
 namespace protocol {
 
-using mqtts = as::ssl::stream<protocol::mqtt>;
+using mqtts = as::ssl::stream<mqtt>;
 
 } // namespace protocol
 

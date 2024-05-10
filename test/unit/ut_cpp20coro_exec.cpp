@@ -245,7 +245,6 @@ BOOST_AUTO_TEST_CASE(same) {
         str,
         [&]() -> as::awaitable<void> {
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(!ep->in_strand());
 
             auto connect = am::v3_1_1::connect_packet{
                 true,   // clean_session
@@ -262,7 +261,6 @@ BOOST_AUTO_TEST_CASE(same) {
 
             auto se = co_await ep->send(connect, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
             ep->next_layer().set_recv_packets(
                 {
                     // receive packets
@@ -272,27 +270,21 @@ BOOST_AUTO_TEST_CASE(same) {
 
             auto pv = co_await ep->recv(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             auto pid_opt = co_await ep->acquire_unique_packet_id(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             co_await ep->register_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             co_await ep->release_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             auto packets = co_await ep->get_stored_packets(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             co_await ep->restore_packets(packets, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             auto pub = am::v5::publish_packet{
                 "topic1"_mb,
@@ -302,11 +294,9 @@ BOOST_AUTO_TEST_CASE(same) {
 
             co_await ep->regulate_for_store(pub, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             co_await ep->close(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
-            BOOST_TEST(ep->in_strand());
 
             guard.reset();
             co_return;

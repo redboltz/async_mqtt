@@ -69,7 +69,7 @@ proc(
         };
         auto suback_opt = co_await amcl.subscribe(
             am::v5::subscribe_packet{
-                *amcl.acquire_unique_packet_id(), // sync version only in strand
+                *amcl.acquire_unique_packet_id(), // sync version only works single threaded or in strand
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
             },
             as::use_awaitable
@@ -160,7 +160,7 @@ proc(
 
         auto unsuback_opt = co_await amcl.unsubscribe(
             am::v5::unsubscribe_packet{
-                *amcl.acquire_unique_packet_id(), // sync version only in strand
+                *amcl.acquire_unique_packet_id(), // sync version only works single threaded or in strand
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
             },
             as::use_awaitable

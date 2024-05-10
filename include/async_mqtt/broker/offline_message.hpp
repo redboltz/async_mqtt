@@ -67,7 +67,6 @@ public:
 
     template <typename Epsp>
     bool send(Epsp epsp, protocol_version ver) {
-        BOOST_ASSERT(epsp.in_strand());
         auto publish =
             [&] (packet_id_t pid) {
                 switch (ver) {

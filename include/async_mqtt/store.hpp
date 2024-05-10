@@ -24,13 +24,13 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace mi = boost::multi_index;
 
-template <std::size_t PacketIdBytes, typename Executor>
+template <std::size_t PacketIdBytes>
 class store {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     using store_packet_t = basic_store_packet_variant<PacketIdBytes>;
 
-    store(Executor exe):exe_{exe}{}
+    store(as::any_io_executor exe):exe_{exe}{}
 
     template <typename Packet>
     bool add(Packet const& packet) {
@@ -182,7 +182,7 @@ private:
     >;
 
     mi_elem elems_;
-    Executor exe_;
+    as::any_io_executor exe_;
 };
 
 } // namespace async_mqtt

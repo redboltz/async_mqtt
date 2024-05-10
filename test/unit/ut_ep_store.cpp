@@ -1772,7 +1772,7 @@ BOOST_AUTO_TEST_CASE(restore_packets_error) {
     );
     as::dispatch(
         as::bind_executor(
-            ep->strand(),
+            ep->get_executor(),
             [&] {
                 ep->restore_packets({am::store_packet_variant{publish1}}); // pid is already used
                 auto stored = ep->get_stored_packets();

@@ -14,11 +14,11 @@
 
 namespace async_mqtt {
 
-template <role Role, std::size_t PacketIdBytes, template <typename> typename Strand, typename... NextLayer>
+template <role Role, std::size_t PacketIdBytes, typename... NextLayer>
 struct basic_endpoint_variant :
-        std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...> {
-    using this_type = basic_endpoint_variant<Role, PacketIdBytes, Strand, NextLayer...>;
-    using base_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
+        std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
+    using this_type = basic_endpoint_variant<Role, PacketIdBytes, NextLayer...>;
+    using base_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
     using base_type::base_type;
 
     static constexpr role role_value = Role;
@@ -26,18 +26,18 @@ struct basic_endpoint_variant :
     using packet_id_t = typename packet_id_type<packet_id_bytes>::type;
 
     template <typename ActualNextLayer>
-    basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer> const& as() const {
-        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>>>(*this);
+    basic_endpoint<Role, PacketIdBytes, ActualNextLayer> const& as() const {
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
     }
     template <typename ActualNextLayer>
-    basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>& as() {
-        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, ActualNextLayer>>>(*this);
+    basic_endpoint<Role, PacketIdBytes, ActualNextLayer>& as() {
+        return *std::get<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, ActualNextLayer>>>(*this);
     }
 
-    struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...> {
-        using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
+    struct weak_type : std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...> {
+        using base_type = std::variant<std::weak_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
         using base_type::base_type;
-        using shared_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, Strand, NextLayer>>...>;
+        using shared_type = std::variant<std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>...>;
         this_type lock() {
             return std::visit(
                 [&](auto& wp) -> this_type {
@@ -63,7 +63,7 @@ struct basic_endpoint_variant :
 };
 
 template <role Role, typename... NextLayer>
-using endpoint_variant = basic_endpoint_variant<Role, 2, as::strand, NextLayer...>;
+using endpoint_variant = basic_endpoint_variant<Role, 2, NextLayer...>;
 
 template <typename Epsp>
 class epsp_wrap {
@@ -106,34 +106,10 @@ public:
             [&](auto& ep){
                 as::dispatch(
                     as::bind_executor(
-                        ep.strand(),
+                        ep.get_executor(),
                         std::forward<Func>(func)
                     )
                 );
-            }
-        );
-    }
-
-    bool in_strand() const {
-        return visit(
-            [&](auto& ep) -> bool {
-                return ep.in_strand();
-            }
-        );
-    }
-
-    decltype(auto) strand() const {
-        return visit(
-            [&](auto& ep) -> decltype(auto) {
-                return ep.strand();
-            }
-        );
-    }
-
-    decltype(auto) strand() {
-        return visit(
-            [&](auto& ep) -> decltype(auto) {
-                return ep.strand();
             }
         );
     }
@@ -274,7 +250,7 @@ public:
         );
     }
 
-    // sync APIs that reqire woking on strand
+    // sync APIs (Thread unsafe without strand)
 
     std::optional<packet_id_t> acquire_unique_packet_id() {
         return visit(
@@ -354,6 +330,7 @@ public:
 
     protocol_version get_protocol_version() const {
         if (!protocol_version_) {
+            // On multi threaded environment,
             // The following code requires running in ep's strand.
             // It is safe because it is always called from ep's strand
             // in connect_handler for the first time.
