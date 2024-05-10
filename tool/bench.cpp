@@ -255,7 +255,7 @@ private:
             tp_con_ = std::chrono::steady_clock::now();
             // Setup
             for (auto& ci : cis_) {
-                ci.init_timer(ci.c->strand());
+                ci.init_timer(ci.c->get_executor());
                 ci.c->set_auto_pub_response(true);
             }
 
@@ -350,7 +350,7 @@ private:
                 }
 #endif // defined(ASYNC_MQTT_USE_WS)
                 as::dispatch(
-                    pci->c->strand(),
+                    pci->c->get_executor(),
                     as::append(
                         *this,
                         am::error_code{},
@@ -399,7 +399,7 @@ private:
                 }
 #endif // defined(ASYNC_MQTT_USE_TLS)
                 as::dispatch(
-                    pci->c->strand(),
+                    pci->c->get_executor(),
                     as::append(
                         *this,
                         am::error_code{},
@@ -463,7 +463,7 @@ private:
                     locked_cout() << "invalid MQTT version" << std::endl;
                     exit(-1);
                 }
-                pci->init_timer(pci->c->strand());
+                pci->init_timer(pci->c->get_executor());
             }
             if (*se) {
                 locked_cout() << "connect send error:" << se->what() << std::endl;
@@ -574,7 +574,7 @@ private:
                         locked_cout() << "invalid MQTT version" << std::endl;
                         exit(-1);
                     }
-                    pci->init_timer(pci->c->strand());
+                    pci->init_timer(pci->c->get_executor());
                 }
                 if (*se) {
                     locked_cout() << "subscribe send error:" << se->what() << std::endl;
@@ -2064,7 +2064,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_t::create(
                         version,
-                        iocs.at(i % num_of_iocs).get_executor()
+                        as::make_strand(iocs.at(i % num_of_iocs).get_executor())
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2130,7 +2130,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_t::create(
                         version,
-                        iocs.at(i % num_of_iocs).get_executor(),
+                        as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
                         ctx
                     ),
                     cid_prefix,
@@ -2194,7 +2194,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_t::create(
                         version,
-                        iocs.at(i % num_of_iocs).get_executor()
+                        as::make_strand(iocs.at(i % num_of_iocs).get_executor())
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2266,7 +2266,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_t::create(
                         version,
-                        iocs.at(i % num_of_iocs).get_executor(),
+                        as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
                         ctx
                     ),
                     cid_prefix,

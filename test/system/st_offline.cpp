@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                 // not recv puback
                 yield {
                     ep().recv(*this); // 1st async call
-                    auto tim = std::make_shared<as::steady_timer>(ep().strand());
+                    auto tim = std::make_shared<as::steady_timer>(ep().get_executor());
                     tim->expires_after(std::chrono::seconds(1));
                     tim->async_wait(  // 2nd async call
                         as::consign(
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                 // not recv puback
                 yield {
                     ep().recv(*this); // 1st async call
-                    auto tim = std::make_shared<as::steady_timer>(ep().strand());
+                    auto tim = std::make_shared<as::steady_timer>(ep().get_executor());
                     tim->expires_after(std::chrono::seconds(1));
                     tim->async_wait(  // 2nd async call
                         as::consign(

@@ -9,28 +9,22 @@
 
 #include <boost/beast/ssl/ssl_stream.hpp>
 
-#include <async_mqtt/predefined_layer/customized_ssl_stream.hpp>
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
 /// @file
 
 namespace async_mqtt {
 
 namespace as = boost::asio;
+namespace bs = boost::beast;
 
 namespace protocol {
-
-// When https://github.com/boostorg/beast/issues/2775 would be fixed,
-// this detail part would be erased, and detail::mqtts_beast_workaround is
-// replaced with `mqtts`
-namespace detail {
-using mqtts_beast_workaround = as::ssl::stream<mqtt_beast_workaround>;
-} // namespace detail
 
 /**
  * @breif Type alias of Boost.Beast WebSocket on TLS stream
  */
-using wss = bs::websocket::stream<detail::mqtts_beast_workaround>;
+using wss = bs::websocket::stream<mqtts>;
 
 } // namespace protocol
 

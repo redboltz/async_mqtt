@@ -115,7 +115,6 @@ std::shared_ptr<as::ssl::context> init_ctx(
 
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
-template <template <typename> typename Strand>
 inline
 void run_broker(boost::program_options::variables_map const& vm) {
     try {
@@ -124,7 +123,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
         using epv_t = am::basic_endpoint_variant<
             am::role::server,
             2,
-            Strand,
             am::protocol::mqtt
 #if defined(ASYNC_MQTT_USE_WS)
             ,
@@ -273,11 +271,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         am::basic_endpoint<
                             am::role::server,
                             2,
-                            Strand,
                             am::protocol::mqtt
                         >::create(
                             am::protocol_version::undetermined,
-                            con_ioc_getter().get_executor()
+                            as::make_strand(con_ioc_getter().get_executor())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
@@ -315,11 +312,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         am::basic_endpoint<
                             am::role::server,
                             2,
-                            Strand,
                             am::protocol::ws
                         >::create(
                             am::protocol_version::undetermined,
-                            con_ioc_getter().get_executor()
+                            as::make_strand(con_ioc_getter().get_executor())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
@@ -409,11 +405,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         am::basic_endpoint<
                             am::role::server,
                             2,
-                            Strand,
                             am::protocol::mqtts
                         >::create(
                             am::protocol_version::undetermined,
-                            con_ioc_getter().get_executor(),
+                            as::make_strand(con_ioc_getter().get_executor()),
                             *mqtts_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
@@ -503,11 +498,10 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         am::basic_endpoint<
                             am::role::server,
                             2,
-                            Strand,
                             am::protocol::wss
                         >::create(
                             am::protocol_version::undetermined,
-                            con_ioc_getter().get_executor(),
+                            as::make_strand(con_ioc_getter().get_executor()),
                             *wss_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
@@ -863,7 +857,7 @@ int main(int argc, char *argv[]) {
         am::setup_log();
 #endif
 
-        run_broker<as::strand>(vm);
+        run_broker(vm);
     }
     catch(std::exception const& e) {
         std::cerr << e.what() << std::endl;

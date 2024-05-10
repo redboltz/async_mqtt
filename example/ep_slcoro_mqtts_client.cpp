@@ -257,6 +257,6 @@ int main(int argc, char* argv[]) {
     }
     am::setup_log(am::severity_level::trace);
     as::io_context ioc;
-    app a{ioc.get_executor(), argv[1], argv[2]};
+    app a{as::make_strand(ioc.get_executor()), argv[1], argv[2]};
     ioc.run();
 }

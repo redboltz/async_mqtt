@@ -13,7 +13,6 @@
 #include <type_traits>
 
 #include <boost/system/error_code.hpp>
-#include <boost/asio/strand.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/compose.hpp>
 #include <boost/asio/bind_executor.hpp>
@@ -26,7 +25,6 @@
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/constant.hpp>
-#include <async_mqtt/is_strand.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/log.hpp>
 
@@ -35,15 +33,13 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace sys = boost::system;
 
-template <typename NextLayer, template <typename> typename Strand = as::strand>
-class stream : public std::enable_shared_from_this<stream<NextLayer, Strand>> {
+template <typename NextLayer>
+class stream : public std::enable_shared_from_this<stream<NextLayer>> {
 public:
-    using this_type = stream<NextLayer, Strand>;
+    using this_type = stream<NextLayer>;
     using this_type_sp = std::shared_ptr<this_type>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
-    using raw_strand_type = as::strand<executor_type>;
-    using strand_type = Strand<as::any_io_executor>;
 
     template <typename T>
     friend class make_shared_helper;
@@ -82,13 +78,6 @@ public:
         return get_lowest_layer(nl_);
     }
 
-    auto get_executor() const {
-        return nl_.get_executor();
-    }
-    auto get_executor() {
-        return nl_.get_executor();
-    }
-
     template <typename CompletionToken>
     auto
     read_packet(
@@ -125,25 +114,9 @@ public:
             );
     }
 
-    strand_type const& strand() const {
-        return strand_;
-    }
-
-    strand_type& strand() {
-        return strand_;
-    }
-
-    raw_strand_type const& raw_strand() const {
-        return raw_strand_;
+    as::any_io_executor get_executor() {
+        return nl_.get_executor();
     };
-
-    raw_strand_type& raw_strand() {
-        return raw_strand_;
-    };
-
-    bool in_strand() const {
-        return raw_strand().running_in_this_thread();
-    }
 
     template<typename CompletionToken>
     auto
@@ -208,13 +181,12 @@ private:
                 auto& a_strm{strm};
                 as::dispatch(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         force_move(self)
                     )
                 );
             } break;
             case header: {
-                BOOST_ASSERT(strm.in_strand());
                 // read fixed_header
                 auto address = &strm.header_remaining_length_buf_[received];
                 auto& a_strm{strm};
@@ -224,7 +196,7 @@ private:
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             force_move(self)
                         )
                     );
@@ -234,7 +206,7 @@ private:
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             force_move(self)
                         )
                     );
@@ -254,7 +226,6 @@ private:
         ) {
             (void)bytes_transferred; // Ignore unused argument in release build
 
-            BOOST_ASSERT(strm.in_strand());
             if (ec) {
                 self.complete(ec, buffer{});
                 return;
@@ -275,7 +246,7 @@ private:
                                 a_strm.nl_,
                                 as::buffer(address, 1),
                                 as::bind_executor(
-                                    a_strm.raw_strand_,
+                                    a_strm.get_executor(),
                                     force_move(self)
                                 )
                             );
@@ -285,7 +256,7 @@ private:
                             a_strm.nl_,
                             as::buffer(address, 1),
                             as::bind_executor(
-                                a_strm.raw_strand_,
+                                a_strm.get_executor(),
                                 force_move(self)
                             )
                         );
@@ -317,7 +288,7 @@ private:
                                 a_strm.nl_,
                                 as::buffer(address, 1),
                                 as::bind_executor(
-                                    a_strm.raw_strand_,
+                                    a_strm.get_executor(),
                                     force_move(self)
                                 )
                             );
@@ -327,7 +298,7 @@ private:
                             a_strm.nl_,
                             as::buffer(address, 1),
                             as::bind_executor(
-                                a_strm.raw_strand_,
+                                a_strm.get_executor(),
                                 force_move(self)
                             )
                         );
@@ -358,7 +329,7 @@ private:
                                     a_strm.nl_,
                                     as::buffer(address, rl),
                                     as::bind_executor(
-                                        a_strm.raw_strand_,
+                                        a_strm.get_executor(),
                                         force_move(self)
                                     )
                                 );
@@ -368,7 +339,7 @@ private:
                                 a_strm.nl_,
                                 as::buffer(address, rl),
                                 as::bind_executor(
-                                    a_strm.raw_strand_,
+                                    a_strm.get_executor(),
                                     force_move(self)
                                 )
                             );
@@ -405,13 +376,12 @@ private:
                 auto& a_strm{strm};
                 as::dispatch(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         force_move(self)
                     )
                 );
             } break;
             case post: {
-                BOOST_ASSERT(strm.in_strand());
                 auto& a_strm{strm};
                 auto& a_packet{*packet};
                 if (!a_strm.bulk_write_ || a_strm.queue_.immediate_executable()) {
@@ -424,13 +394,12 @@ private:
                 }
                 a_strm.queue_.post(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         force_move(self)
                     )
                 );
             } break;
             case write: {
-                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.start_work();
                 if (strm.lowest_layer().is_open()) {
                     state = complete;
@@ -442,7 +411,7 @@ private:
                             a_strm.nl_,
                             a_packet.const_buffer_sequence(),
                             as::bind_executor(
-                                a_strm.raw_strand_,
+                                a_strm.get_executor(),
                                 force_move(self)
                             )
                         );
@@ -452,7 +421,7 @@ private:
                             a_strm.nl_,
                             a_packet.const_buffer_sequence(),
                             as::bind_executor(
-                                a_strm.raw_strand_,
+                                a_strm.get_executor(),
                                 force_move(self)
                             )
                         );
@@ -463,7 +432,7 @@ private:
                     auto& a_strm{strm};
                     as::dispatch(
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             as::append(
                                 force_move(self),
                                 errc::make_error_code(errc::connection_reset),
@@ -474,7 +443,6 @@ private:
                 }
             } break;
             case bulk_write: {
-                BOOST_ASSERT(strm.in_strand());
                 strm.queue_.start_work();
                 if (strm.lowest_layer().is_open()) {
                     state = complete;
@@ -484,7 +452,7 @@ private:
                         auto& a_size{size};
                         as::dispatch(
                             as::bind_executor(
-                                a_strm.raw_strand_,
+                                a_strm.get_executor(),
                                 as::append(
                                     force_move(self),
                                     errc::make_error_code(errc::success),
@@ -501,7 +469,7 @@ private:
                                 a_strm.nl_,
                                 a_strm.sending_cbs_,
                                 as::bind_executor(
-                                    a_strm.raw_strand_,
+                                    a_strm.get_executor(),
                                     force_move(self)
                                 )
                             );
@@ -511,7 +479,7 @@ private:
                                 a_strm.nl_,
                                 a_strm.sending_cbs_,
                                 as::bind_executor(
-                                    a_strm.raw_strand_,
+                                    a_strm.get_executor(),
                                     force_move(self)
                                 )
                             );
@@ -523,7 +491,7 @@ private:
                     auto& a_strm{strm};
                     as::dispatch(
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             as::append(
                                 force_move(self),
                                 errc::make_error_code(errc::connection_reset),
@@ -545,13 +513,12 @@ private:
             error_code const& ec,
             std::size_t bytes_transferred
         ) {
-            BOOST_ASSERT(strm.in_strand());
             if (ec) {
                 strm.queue_.stop_work();
                 auto& a_strm{strm};
                 as::post(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         [&a_strm,wp = a_strm.weak_from_this()] {
                             if (auto sp = wp.lock()) {
                                 a_strm.queue_.poll_one();
@@ -569,7 +536,7 @@ private:
                 auto& a_strm{strm};
                 as::post(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         [&a_strm, wp = a_strm.weak_from_this()] {
                             if (auto sp = wp.lock()) {
                                 a_strm.queue_.poll_one();
@@ -605,7 +572,7 @@ private:
                 auto& a_strm{strm};
                 as::dispatch(
                     as::bind_executor(
-                        a_strm.raw_strand_,
+                        a_strm.get_executor(),
                         as::append(
                             force_move(self),
                             error_code{},
@@ -616,7 +583,6 @@ private:
             }
             else {
                 BOOST_ASSERT(state == complete);
-                BOOST_ASSERT(strm.in_strand());
                 strm.storing_cbs_.clear();
                 strm.sending_cbs_.clear();
                 self.complete(ec);
@@ -630,14 +596,13 @@ private:
             std::reference_wrapper<Stream> stream
         ) {
             BOOST_ASSERT(state == close);
-            BOOST_ASSERT(strm.in_strand());
+            auto& a_strm{strm};
             if constexpr(has_async_close<Stream>::value) {
-                auto& a_strm{strm};
                 if constexpr (has_next_layer<Stream>::value) {
                     layer_customize<Stream>::async_close(
                         stream.get(),
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             as::append(
                                 force_move(self),
                                 std::ref(stream.get().next_layer())
@@ -650,7 +615,7 @@ private:
                     layer_customize<Stream>::async_close(
                         stream.get(),
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             force_move(self)
                         )
                     );
@@ -658,10 +623,9 @@ private:
             }
             else {
                 if constexpr (has_next_layer<Stream>::value) {
-                    auto& a_strm{strm};
                     as::dispatch(
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             as::append(
                                 force_move(self),
                                 error_code{},
@@ -672,10 +636,9 @@ private:
                 }
                 else {
                     state = complete;
-                    auto& a_strm{strm};
                     as::dispatch(
                         as::bind_executor(
-                            a_strm.raw_strand_,
+                            a_strm.get_executor(),
                             force_move(self)
                         )
                     );
@@ -686,8 +649,6 @@ private:
 
 private:
     next_layer_type nl_;
-    raw_strand_type raw_strand_{nl_.get_executor()};
-    strand_type strand_{as::any_io_executor{raw_strand_}};
     ioc_queue queue_;
     static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
     std::vector<as::const_buffer> storing_cbs_;

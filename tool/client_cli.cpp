@@ -870,7 +870,7 @@ private:
 #endif // defined(ASYNC_MQTT_USE_WS)
                 else {
                     as::dispatch(
-                        ep_.strand(),
+                        ep_.get_executor(),
                         *this
                     );
                 }
@@ -908,7 +908,7 @@ private:
                 }
                 else {
                     as::dispatch(
-                        ep_.strand(),
+                        ep_.get_executor(),
                         *this
                     );
                 }

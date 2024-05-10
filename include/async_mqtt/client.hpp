@@ -8,7 +8,6 @@
 #define ASYNC_MQTT_CLIENT_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/get_inner_executor.hpp>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -56,14 +55,12 @@ ASYNC_MQTT_PACKET_TYPE_GETTER(disconnect)
 /**
  * @brief MQTT client for casual usecases
  * @tparam Version       MQTT protocol version.
- * @tparam Strand        strand class template type. By default boost::asio::strand<T> should be used.
- *                       You can replace it with null_strand if you run the endpoint on single thread environment.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
-template <protocol_version Version, template <typename> typename Strand, typename NextLayer>
-class basic_client {
-    using this_type = basic_client<Version, Strand, NextLayer>;
-    using ep_type = basic_endpoint<role::client, 2, Strand, NextLayer>;
+template <protocol_version Version, typename NextLayer>
+class client {
+    using this_type = client<Version, NextLayer>;
+    using ep_type = basic_endpoint<role::client, 2, NextLayer>;
     using ep_type_sp = std::shared_ptr<ep_type>;
 
 
@@ -86,7 +83,6 @@ class basic_client {
 
 public:
     using packet_id_t = typename ep_type::packet_id_t;
-    using strand_type = typename ep_type::strand_type;
     /**
      * @brief publish completion handler parameter class
      */
@@ -104,7 +100,7 @@ public:
      *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
      */
     template <typename... Args>
-    basic_client(
+    client(
         Args&&... args
     ): ep_{ep_type::create(Version, std::forward<Args>(args)...)}
     {
@@ -289,34 +285,10 @@ public:
 
     /**
      * @brief executor getter
-     * @return return internal executor (not guarded by the strand)
+     * @return return endpoint's  executor.
      */
     as::any_io_executor get_executor() const {
-        return get_inner_executor(ep_->strand());
-    }
-
-    /**
-     * @brief strand getter
-     * @return const reference of the strand
-     */
-    strand_type const& strand() const {
-        return ep_->strand();
-    }
-
-    /**
-     * @brief strand getter
-     * @return reference of the strand
-     */
-    strand_type& strand() {
-        return ep_->strand();
-    }
-
-    /**
-     * @brief strand checker
-     * @return true if the current context running in the strand, otherwise false
-     */
-    bool in_strand() const {
-        return ep_->in_strand();
+        return ep_->get_executor();
     }
 
     /**
@@ -446,7 +418,7 @@ public:
     /**
      * @brief acuire unique packet_id.
      * @return std::optional<packet_id_t> if acquired return acquired packet id, otherwise std::nullopt
-     * @note This function is SYNC function that must only be called in the strand.
+     * @note This function is SYNC function that thread unsafe without strand.
      */
     std::optional<packet_id_t> acquire_unique_packet_id() {
         return ep_->acquire_unique_packet_id();
@@ -456,7 +428,7 @@ public:
      * @brief register packet_id.
      * @param packet_id packet_id to register
      * @return If true, success, otherwise the packet_id has already been used.
-     * @note This function is SYNC function that must only be called in the strand.
+     * @note This function is SYNC function that thread unsafe without strand.
      */
     bool register_packet_id(packet_id_t pid) {
         return ep_->register_packet_id(pid);
@@ -465,7 +437,7 @@ public:
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @note This function is SYNC function that must only be called in the strand.
+     * @note This function is SYNC function that thread unsafe without strand.
      */
     void release_packet_id(packet_id_t pid) {
         ep_->release_packet_id(pid);
@@ -589,14 +561,14 @@ private:
                 return;
             }
 
-            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
             tim->expires_at(std::chrono::steady_clock::time_point::max());
             cl.pid_tim_pv_res_col_.emplace(tim);
             cl.recv_loop();
             auto& a_cl{cl};
             tim->async_wait(
                 as::bind_executor(
-                    a_cl.strand(),
+                    a_cl.get_executor(),
                     as::append(
                         force_move(self),
                         tim
@@ -666,13 +638,13 @@ private:
                 return;
             }
 
-            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
             tim->expires_at(std::chrono::steady_clock::time_point::max());
             cl.pid_tim_pv_res_col_.emplace(pid, tim);
             auto& a_cl{cl};
             tim->async_wait(
                 as::bind_executor(
-                    a_cl.strand(),
+                    a_cl.get_executor(),
                     as::append(
                         force_move(self),
                         tim
@@ -742,13 +714,13 @@ private:
                 return;
             }
 
-            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
             tim->expires_at(std::chrono::steady_clock::time_point::max());
             cl.pid_tim_pv_res_col_.emplace(pid, tim);
             auto& a_cl{cl};
             tim->async_wait(
                 as::bind_executor(
-                    a_cl.strand(),
+                    a_cl.get_executor(),
                     as::append(
                         force_move(self),
                         tim
@@ -822,13 +794,13 @@ private:
                 self.complete(se.code(), pubres_t{});
                 return;
             }
-            auto tim = std::make_shared<as::steady_timer>(cl.ep_->strand());
+            auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
             tim->expires_at(std::chrono::steady_clock::time_point::max());
             cl.pid_tim_pv_res_col_.emplace(pid, tim);
             auto& a_cl{cl};
             tim->async_wait(
                 as::bind_executor(
-                    a_cl.strand(),
+                    a_cl.get_executor(),
                     as::append(
                         force_move(self),
                         tim
@@ -896,7 +868,7 @@ private:
                 auto& a_cl{cl};
                 as::dispatch(
                     as::bind_executor(
-                        a_cl.ep_->strand(),
+                        a_cl.ep_->get_executor(),
                         force_move(self)
                     )
                 );
@@ -907,7 +879,7 @@ private:
                 if (cl.recv_queue_.empty()) {
                     cl.recv_queue_inserted_ = false;
                     auto tim = std::make_shared<as::steady_timer>(
-                        cl.ep_->strand()
+                        cl.ep_->get_executor()
                     );
                     cl.tim_notify_publish_recv_.expires_at(
                         std::chrono::steady_clock::time_point::max()
@@ -915,7 +887,7 @@ private:
                     auto& a_cl{cl};
                     a_cl.tim_notify_publish_recv_.async_wait(
                         as::bind_executor(
-                            a_cl.strand(),
+                            a_cl.get_executor(),
                             as::append(
                                 force_move(self),
                                 a_cl.recv_queue_inserted_
@@ -1020,27 +992,8 @@ private:
     mi_pid_tim_pv_res pid_tim_pv_res_col_;
     std::deque<recv_t> recv_queue_;
     bool recv_queue_inserted_ = false;
-    as::steady_timer tim_notify_publish_recv_{ep_->strand()};
+    as::steady_timer tim_notify_publish_recv_{ep_->get_executor()};
 };
-
-
-/**
- * @related basic_client
- * @brief Type alias of basic_client (Strand=boost::asio::strand).
- *        This is for typical usecase.
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
-template <protocol_version Version, typename NextLayer>
-using client = basic_client<Version, as::strand, NextLayer>;
-
-/**
- * @related basic_client
- * @brief Type alias of basic_client (Strand=null_strand).
- *        This is for typical usecase.
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
-template <protocol_version Version, typename NextLayer>
-using client_st = basic_client<Version, null_strand, NextLayer>;
 
 } // namespace async_mqtt
 

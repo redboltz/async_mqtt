@@ -467,7 +467,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 // not recv publish (retain)
                 yield {
                     ep(sub).recv(*this); // 1st async call
-                    auto tim = std::make_shared<as::steady_timer>(ep(sub).strand());
+                    auto tim = std::make_shared<as::steady_timer>(ep(sub).get_executor());
                     tim->expires_after(std::chrono::seconds(1));
                     tim->async_wait(  // 2nd async call
                         as::consign(
@@ -621,7 +621,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 // not recv publish (retain)
                 yield {
                     ep(sub).recv(*this); // 1st async call
-                    auto tim = std::make_shared<as::steady_timer>(ep(sub).strand());
+                    auto tim = std::make_shared<as::steady_timer>(ep(sub).get_executor());
                     tim->expires_after(std::chrono::seconds(1));
                     tim->async_wait(  // 2nd async call
                         as::consign(

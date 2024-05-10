@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
 
     as::dispatch(
         as::bind_executor(
-            ep->strand(),
+            ep->get_executor(),
             [&] {
                 auto pid_opt = ep->acquire_unique_packet_id();
                 BOOST_CHECK(!pid_opt);
