@@ -670,7 +670,7 @@ private:
 
         connack_props.emplace_back(
             property::response_information{
-                allocate_buffer(response_topic)
+                force_move(response_topic)
             }
         );
     }
@@ -736,7 +736,7 @@ private:
                 // mqtt_cpp author's note: On v5.0, no Clean Start restriction is described.
                 epsp.set_client_id(allocate_buffer(create_uuid_string()));
                 connack_props.emplace_back(
-                    property::assigned_client_identifier{epsp.get_client_id()}
+                    property::assigned_client_identifier{std::string{epsp.get_client_id()}}
                 );
             }
             break;
