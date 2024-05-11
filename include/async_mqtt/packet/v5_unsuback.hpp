@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP)
 #define ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
 
+#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
