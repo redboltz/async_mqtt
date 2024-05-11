@@ -49,10 +49,10 @@ BOOST_AUTO_TEST_CASE(cb) {
                         am::v3_1_1::connect_packet{
                             true,   // clean_session
                             0x1234, // keep_alive
-                            "cid1"_mb,
+                            "cid1",
                             std::nullopt, // will
-                            "u1"_mb,
-                            "passforu1"_mb
+                            "u1",
+                            "passforu1"
                         },
                         [&](am::system_error const& se) {
                             BOOST_TEST(!se);
@@ -141,10 +141,10 @@ BOOST_AUTO_TEST_CASE(fut) {
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    "cid1"_mb,
+                    "cid1",
                     std::nullopt, // will
-                    "u1"_mb,
-                    "passforu1"_mb
+                    "u1",
+                    "passforu1"
                 },
                 as::use_future
             );
@@ -210,10 +210,10 @@ BOOST_AUTO_TEST_CASE(coro) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -281,9 +281,9 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cidxxx"_mb,
+                        "cidxxx",
                         std::nullopt, // will
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt // no password
                     },
                     *this

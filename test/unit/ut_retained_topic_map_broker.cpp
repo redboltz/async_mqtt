@@ -42,8 +42,8 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
     // publish
     {
         retain r {
-            "a/b/c"_mb,
-            "contents1"_mb,
+            "a/b/c",
+            "contents1",
             am::properties {},
             am::qos::at_most_once
         };
@@ -51,8 +51,8 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
     }
     {
         retain r {
-            "a/b"_mb,
-            "contents2"_mb,
+            "a/b",
+            "contents2",
             am::properties {},
             am::qos::at_most_once
         };
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
 
     // remove (publish with empty contents
     {
-        m.erase("a/b"_mb);
+        m.erase("a/b");
         m.find(
             "a/b",
             [&](retain const&) {
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
         BOOST_TEST(msgs.empty());
     }
     {
-        m.erase("a/b/c"_mb);
+        m.erase("a/b/c");
         m.find(
             "a/b",
             [&](retain const&) {
@@ -128,8 +128,8 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
     // publish
     {
         retain r {
-            "a/b/c"_mb,
-            "contents1"_mb,
+            "a/b/c",
+            "contents1",
             am::properties {},
             am::qos::at_most_once
         };
@@ -137,8 +137,8 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
     }
     {
         retain r {
-            "a/b"_mb,
-            "contents2"_mb,
+            "a/b",
+            "contents2",
             am::properties {},
             am::qos::at_most_once
         };
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
 
     // remove (publish with empty contents)
     {
-        m.erase("a/b"_mb);
+        m.erase("a/b");
         {
             std::set<std::string_view> msgs {
                 "contents1",
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
         }
     }
     {
-        m.erase("a/b/c"_mb);
+        m.erase("a/b/c");
         m.find(
             "a/+/c",
             [&](retain const&) {

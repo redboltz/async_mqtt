@@ -46,10 +46,10 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "invalid_pass"_mb
+                        "u1",
+                        "invalid_pass"
                     },
                     *this
                 );
@@ -106,10 +106,10 @@ BOOST_AUTO_TEST_CASE(success_digest) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u3"_mb,
-                        "passforu3"_mb // plain
+                        "u3",
+                        "passforu3" // plain
                     },
                     *this
                 );
@@ -166,10 +166,10 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u3"_mb,
-                        "invalid_pass"_mb
+                        "u3",
+                        "invalid_pass"
                     },
                     *this
                 );
@@ -226,10 +226,10 @@ BOOST_AUTO_TEST_CASE(send_auth) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );

@@ -28,10 +28,10 @@ BOOST_AUTO_TEST_CASE(tc) {
     auto p = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x0, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt,
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
     // static_assert fail as expected
     auto ec = ep->send(p, as::use_future).get();

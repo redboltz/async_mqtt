@@ -27,8 +27,8 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
     auto p = am::v3_1_1::publish_packet{
         0x1234, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
     auto p = am::v3_1_1::publish_packet{
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -173,8 +173,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
             1,
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -187,8 +187,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
 BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
     auto p = am::v3_1_1::basic_publish_packet<4>{
         0x12345678, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 

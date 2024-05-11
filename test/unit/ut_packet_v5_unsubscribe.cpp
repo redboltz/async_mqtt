@@ -26,8 +26,8 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v5::unsubscribe_packet>());
 
     std::vector<am::topic_sharename> args {
-        "topic1"_mb,
-        "topic2"_mb,
+        "topic1",
+        "topic2",
     };
 
     auto props = am::properties{
@@ -78,8 +78,8 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
 
 BOOST_AUTO_TEST_CASE(v5_unsubscribe_pid4) {
     std::vector<am::topic_sharename> args {
-        "topic1"_mb,
-        "topic2"_mb,
+        "topic1",
+        "topic2",
     };
 
     auto props = am::properties{

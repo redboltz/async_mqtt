@@ -46,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        ""_mb,
+                        "",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -105,10 +105,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        ""_mb,
+                        "",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -165,10 +165,10 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0,
-                        ""_mb,
+                        "",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         am::properties{}
                     },
                     *this
@@ -240,10 +240,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0,
-                        ""_mb,
+                        "",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {am::property::session_expiry_interval{am::session_never_expire}}
                     },
                     *this
@@ -284,8 +284,8 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                         0,
                         am::allocate_buffer(v5_cs0_aci),
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );

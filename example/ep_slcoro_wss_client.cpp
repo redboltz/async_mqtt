@@ -114,10 +114,10 @@ private:
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        std::nullopt, // username set like "user1"_mb,
-                        std::nullopt  // password set like "pass1"_mb
+                        std::nullopt, // username set like "user1",
+                        std::nullopt  // password set like "pass1"
                     },
                     *this
                 );
@@ -153,7 +153,7 @@ private:
                 yield app_.amep_->send(
                     am::v3_1_1::subscribe_packet{
                         *app_.amep_->acquire_unique_packet_id(),
-                        { {"topic1"_mb, am::qos::at_most_once} }
+                        { {"topic1", am::qos::at_most_once} }
                     },
                     *this
                 );
@@ -191,8 +191,8 @@ private:
                 yield app_.amep_->send(
                     am::v3_1_1::publish_packet{
                         *app_.amep_->acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_least_once
                     },
                     *this

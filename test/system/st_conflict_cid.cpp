@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -83,10 +83,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -151,10 +151,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -180,10 +180,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -248,10 +248,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -277,10 +277,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -345,10 +345,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -375,10 +375,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );

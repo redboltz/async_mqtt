@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(send_client) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -105,8 +105,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_reg_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -129,8 +129,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_reg_t2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -153,8 +153,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt5.has_value());
     auto publish_reg_t3 = am::v5::publish_packet(
         *pid_opt5,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -177,8 +177,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt7.has_value());
     auto publish_upd_t3 = am::v5::publish_packet(
         *pid_opt7,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update
@@ -198,13 +198,13 @@ BOOST_AUTO_TEST_CASE(send_client) {
     {   // check regulate
         auto p = publish_reg_t1;
         auto rp = ep->regulate_for_store(p, as::use_future).get();
-        BOOST_TEST(rp.topic() == "topic1"_mb);
+        BOOST_TEST(rp.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp.props()));
 
         // idempotence
         auto p2 = p;
         auto rp2 = ep->regulate_for_store(p2, as::use_future).get();
-        BOOST_TEST(rp2.topic() == "topic1"_mb);
+        BOOST_TEST(rp2.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp2.props()));
     }
 
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
     {   // check regulate
         auto p = publish_use_ta1;
         auto rp = ep->regulate_for_store(p, as::use_future).get();
-        BOOST_TEST(rp.topic() == "topic1"_mb);
+        BOOST_TEST(rp.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp.props()));
     }
 
@@ -305,10 +305,10 @@ BOOST_AUTO_TEST_CASE(send_server) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::topic_alias_maximum{2}
         }
@@ -348,8 +348,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_reg_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -372,8 +372,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_reg_t2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -396,8 +396,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt5.has_value());
     auto publish_reg_t3 = am::v5::publish_packet(
         *pid_opt5,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -420,8 +420,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt7.has_value());
     auto publish_upd_t3 = am::v5::publish_packet(
         *pid_opt7,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update
@@ -530,10 +530,10 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -575,15 +575,15 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
 
     auto publish_mapped_ta1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
+        "topic1",
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
@@ -605,15 +605,15 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_t2 = am::v5::publish_packet(
         *pid_opt2,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
 
     auto publish_mapped_ta2 = am::v5::publish_packet(
         *pid_opt2,
-        "topic2"_mb,
+        "topic2",
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
@@ -635,15 +635,15 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_t3 = am::v5::publish_packet(
         *pid_opt3,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
 
     auto publish_mapped_ta1_2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic3"_mb,
+        "topic3",
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
@@ -752,10 +752,10 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -797,8 +797,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -807,7 +807,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_map_ta1 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
+        "topic1",
         am::buffer("payload1"),
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
@@ -831,8 +831,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     BOOST_TEST(pid_opt4.has_value());
     auto publish_t1_2 = am::v5::publish_packet(
         *pid_opt4,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -917,10 +917,10 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::topic_alias_maximum{2}
         }
@@ -972,8 +972,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_reg_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -994,8 +994,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     auto publish_exp_t1 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1006,8 +1006,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_reg_t2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1028,8 +1028,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     auto publish_exp_t2 = am::v5::publish_packet(
         *pid_opt4,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1040,8 +1040,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt5.has_value());
     auto publish_reg_t3 = am::v5::publish_packet(
         *pid_opt5,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -1064,8 +1064,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt7.has_value());
     auto publish_upd_t3 = am::v5::publish_packet(
         *pid_opt7,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update
@@ -1086,8 +1086,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     auto publish_exp_t3 = am::v5::publish_packet(
         *pid_opt8,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update
@@ -1227,10 +1227,10 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -1283,8 +1283,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_reg_t1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1305,8 +1305,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     auto publish_exp_t1 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1317,8 +1317,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_reg_t2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1339,8 +1339,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     auto publish_exp_t2 = am::v5::publish_packet(
         *pid_opt4,
-        "topic2"_mb,
-        "payload1"_mb,
+        "topic2",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1351,8 +1351,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt5.has_value());
     auto publish_reg_t3 = am::v5::publish_packet(
         *pid_opt5,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -1375,8 +1375,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt7.has_value());
     auto publish_upd_t3 = am::v5::publish_packet(
         *pid_opt7,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update
@@ -1397,8 +1397,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     auto publish_exp_t3 = am::v5::publish_packet(
         *pid_opt8,
-        "topic3"_mb,
-        "payload1"_mb,
+        "topic3",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1} // update

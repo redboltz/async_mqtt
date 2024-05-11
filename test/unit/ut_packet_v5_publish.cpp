@@ -27,8 +27,8 @@ BOOST_AUTO_TEST_CASE(v5_publish) {
 
     auto p = am::v5::publish_packet{
         0x1234, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::content_type("json")
@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_CASE(v5_publish) {
 
 BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
     auto p = am::v5::publish_packet{
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::content_type("json")
@@ -162,8 +162,8 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
 BOOST_AUTO_TEST_CASE(v5_publish_invalid) {
     try {
         auto p = am::v5::publish_packet{
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE(v5_publish_invalid) {
     try {
         auto p = am::v5::publish_packet{
             1,
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -188,8 +188,8 @@ BOOST_AUTO_TEST_CASE(v5_publish_invalid) {
 BOOST_AUTO_TEST_CASE(v5_publish_pid4) {
     auto p = am::v5::basic_publish_packet<4>(
         0x12345678, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::content_type("json")
@@ -256,8 +256,8 @@ BOOST_AUTO_TEST_CASE(v5_publish_pid4) {
 
 BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     auto p1 = am::v5::publish_packet{
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no,
         am::properties{
             am::property::topic_alias(1)
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     }
 
     auto p4 = p3;
-    p4.remove_topic_alias_add_topic("topic1"_mb);
+    p4.remove_topic_alias_add_topic("topic1");
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p4) ==
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_topic_alias) {
     }
 
     auto p5 = p3;
-    p5.add_topic("topic1"_mb);
+    p5.add_topic("topic1");
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
         boost::lexical_cast<std::string>(p5) ==

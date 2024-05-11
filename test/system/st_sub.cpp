@@ -46,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -63,9 +63,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
-                            {"topic1"_mb, am::qos::at_most_once},
-                            {"topic2"_mb, am::qos::at_least_once},
-                            {"topic3"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::at_most_once},
+                            {"topic2", am::qos::at_least_once},
+                            {"topic3", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -89,9 +89,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
-                            {"topic1"_mb, am::qos::at_least_once},
-                            {"topic2"_mb, am::qos::exactly_once},
-                            {"topic3"_mb, am::qos::at_most_once},
+                            {"topic1", am::qos::at_least_once},
+                            {"topic2", am::qos::exactly_once},
+                            {"topic3", am::qos::at_most_once},
                         }
                     },
                     *this
@@ -115,9 +115,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     am::v3_1_1::unsubscribe_packet{
                         pid,
                         {
-                            "topic1"_mb,
-                            "topic2"_mb,
-                            "topic3"_mb,
+                            "topic1",
+                            "topic2",
+                            "topic3",
                         }
                     },
                     *this
@@ -170,10 +170,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         am::properties{}
                     },
                     *this
@@ -189,21 +189,21 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                         pid,
                         {
                             {
-                                "topic1"_mb,
+                                "topic1",
                                 am::qos::at_most_once |
                                 am::sub::retain_handling::send |
                                 am::sub::rap::dont |
                                 am::sub::nl::no
                             },
                             {
-                                "topic2"_mb,
+                                "topic2",
                                 am::qos::at_least_once |
                                 am::sub::retain_handling::send_only_new_subscription |
                                 am::sub::rap::retain |
                                 am::sub::nl::yes
                             },
                             {
-                                "topic3"_mb,
+                                "topic3",
                                 am::qos::exactly_once |
                                 am::sub::retain_handling::not_send
                             },
@@ -232,9 +232,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::subscribe_packet{
                         pid,
                         {
-                            {"topic1"_mb, am::qos::at_least_once},
-                            {"topic2"_mb, am::qos::exactly_once},
-                            {"topic3"_mb, am::qos::at_most_once},
+                            {"topic1", am::qos::at_least_once},
+                            {"topic2", am::qos::exactly_once},
+                            {"topic3", am::qos::at_most_once},
                         },
                         am::properties{}
                     },
@@ -260,9 +260,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     am::v5::unsubscribe_packet{
                         pid,
                         {
-                            "topic1"_mb,
-                            "topic2"_mb,
-                            "topic3"_mb,
+                            "topic1",
+                            "topic2",
+                            "topic3",
                         },
                         am::properties{}
                     },

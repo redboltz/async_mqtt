@@ -49,7 +49,7 @@ proc(
             am::v5::connect_packet{
                 true,   // clean_session
                 0x1234, // keep_alive
-                "cid1"_mb,
+                "cid1",
                 std::nullopt, // will
                 std::nullopt, // username set like allocate_buffer("user1"),
                 std::nullopt  // password set like allocate_buffer("pass1")
@@ -63,9 +63,9 @@ proc(
         // subscribe
         // MQTT send subscribe and wait suback
         std::vector<am::topic_subopts> sub_entry{
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::at_least_once},
-            {"topic3"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::at_least_once},
+            {"topic3", am::qos::exactly_once},
         };
         auto suback_opt = co_await amcl.subscribe(
             am::v5::subscribe_packet{
@@ -94,8 +94,8 @@ proc(
         // MQTT publish QoS0 and wait response (socket write complete)
         auto pubres0 = co_await amcl.publish(
             am::v5::publish_packet{
-                "topic1"_mb,
-                "payload1"_mb,
+                "topic1",
+                "payload1",
                 am::qos::at_most_once
             },
             as::use_awaitable
@@ -107,8 +107,8 @@ proc(
         auto pubres1 = co_await amcl.publish(
             am::v5::publish_packet{
                 *pid_pub1_opt,
-                "topic2"_mb,
-                "payload2"_mb,
+                "topic2",
+                "payload2",
                 am::qos::at_least_once
             },
             as::use_awaitable
@@ -143,8 +143,8 @@ proc(
         auto pubres2 = co_await amcl.publish(
             am::v5::publish_packet{
                 pid_pub2,
-                "topic3"_mb,
-                "payload3"_mb,
+                "topic3",
+                "payload3",
                 am::qos::exactly_once
             },
             as::use_awaitable
@@ -153,9 +153,9 @@ proc(
 
         // MQTT send unsubscribe and wait unsuback
         std::vector<am::topic_sharename> unsub_entry{
-            {"topic1"_mb},
-            {"topic2"_mb},
-            {"topic3"_mb},
+            {"topic1"},
+            {"topic2"},
+            {"topic3"},
         };
 
         auto unsuback_opt = co_await amcl.unsubscribe(

@@ -46,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         1,  // 1sec
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -98,10 +98,10 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                     am::v5::connect_packet{
                         true,   // clean_session
                         1,  // 1sec
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         am::properties{}
                     },
                     *this

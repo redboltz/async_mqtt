@@ -48,10 +48,10 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack = am::v3_1_1::connack_packet{
@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
 
     auto publish = am::v3_1_1::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
@@ -87,16 +87,16 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     auto subscribe = am::v3_1_1::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         }
     };
 
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         }
     };
 
@@ -290,10 +290,10 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack = am::v3_1_1::connack_packet{
@@ -305,8 +305,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
 
     auto publish = am::v3_1_1::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
@@ -329,8 +329,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     auto subscribe = am::v3_1_1::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         }
     };
 
@@ -345,8 +345,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         }
     };
 
@@ -751,10 +751,10 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack = am::v3_1_1::connack_packet{
@@ -764,8 +764,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     auto publish = am::v3_1_1::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
@@ -986,10 +986,10 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack = am::v3_1_1::connack_packet{
@@ -1001,8 +1001,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
 
     auto publish = am::v3_1_1::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     );
 
@@ -1025,8 +1025,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     auto subscribe = am::v3_1_1::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         }
     };
 
@@ -1041,8 +1041,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         }
     };
 
@@ -1441,10 +1441,10 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -1461,8 +1461,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
 
     auto publish = am::v5::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -1494,8 +1494,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     auto subscribe = am::v5::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         },
         am::properties{}
     };
@@ -1503,8 +1503,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         },
         am::properties{}
     };
@@ -1725,10 +1725,10 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -1745,8 +1745,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
 
     auto publish = am::v5::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -1778,8 +1778,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     auto subscribe = am::v5::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         },
         am::properties{}
     };
@@ -1796,8 +1796,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         },
         am::properties{}
     };
@@ -2225,10 +2225,10 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -2245,8 +2245,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     auto publish = am::v5::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -2508,10 +2508,10 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -2528,8 +2528,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
 
     auto publish = am::v5::publish_packet(
         0x1, // hard coded packet_id for just testing
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
@@ -2561,8 +2561,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     auto subscribe = am::v5::subscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_subopts> {
-            {"topic1"_mb, am::qos::at_most_once},
-            {"topic2"_mb, am::qos::exactly_once},
+            {"topic1", am::qos::at_most_once},
+            {"topic2", am::qos::exactly_once},
         },
         am::properties{}
     };
@@ -2579,8 +2579,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1"_mb,
-            "topic2"_mb,
+            "topic1",
+            "topic2",
         },
         am::properties{}
     };
