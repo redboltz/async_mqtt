@@ -460,7 +460,7 @@ private:
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_publish;
-    friend struct ::ut_packet::v5_publish_pid0;
+    friend struct ::ut_packet::v5_publish_qos0;
     friend struct ::ut_packet::v5_publish_invalid;
     friend struct ::ut_packet::v5_publish_pid4;
     friend struct ::ut_packet::v5_publish_topic_alias;
