@@ -14,7 +14,6 @@
 BOOST_AUTO_TEST_SUITE(st_cpp20coro_client)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 using namespace am;

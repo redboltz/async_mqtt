@@ -12,7 +12,6 @@
 BOOST_AUTO_TEST_SUITE(ut_broker_security)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 void load_config(am::security &security, std::string const& value)
 {

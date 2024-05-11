@@ -16,7 +16,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_puback) {
     BOOST_TEST(am::is_puback<am::v3_1_1::puback_packet>());

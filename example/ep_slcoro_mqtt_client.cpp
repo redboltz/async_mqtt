@@ -60,7 +60,6 @@ private:
             am::packet_variant pv,
             std::optional<as::ip::tcp::resolver::results_type> eps
         ) const {
-            using namespace am::literals;
 
             reenter (coro_) {
                 std::cout << "start" << std::endl;

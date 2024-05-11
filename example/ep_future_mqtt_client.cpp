@@ -15,7 +15,6 @@ namespace as = boost::asio;
 namespace am = async_mqtt;
 
 int main(int argc, char* argv[]) {
-    using namespace am::literals;
 
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;

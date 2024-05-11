@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_pid)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 // v3_1_1

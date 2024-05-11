@@ -20,9 +20,7 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_topic_alias)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
-using namespace am::literals;
 
 inline std::optional<am::topic_alias_t> get_topic_alias(am::properties const& props) {
     std::optional<am::topic_alias_t> ta_opt;

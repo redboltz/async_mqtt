@@ -16,7 +16,6 @@
 BOOST_AUTO_TEST_SUITE(ut_prop_variant)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(payload_format_indicator) {
     am::property_variant pv1{

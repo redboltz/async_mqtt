@@ -12,7 +12,6 @@
 BOOST_AUTO_TEST_SUITE(ut_topic_sharename)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 // success
 BOOST_AUTO_TEST_CASE( parse_success1 ) {

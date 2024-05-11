@@ -16,7 +16,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_disconnect) {
     BOOST_TEST(am::is_disconnect<am::v5::disconnect_packet>());

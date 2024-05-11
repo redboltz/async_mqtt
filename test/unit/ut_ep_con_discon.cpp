@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_con_discon)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 // packet_id is hard coded in this test case for just testing.

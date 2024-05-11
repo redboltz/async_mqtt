@@ -21,7 +21,6 @@ proc(
     client_t& amcl,
     std::string_view host,
     std::string_view port) {
-    using namespace am::literals;
 
     auto exe = co_await as::this_coro::executor;
     as::ip::tcp::socket resolve_sock{exe};

@@ -17,7 +17,6 @@
 BOOST_AUTO_TEST_SUITE(st_connect)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(cb) {

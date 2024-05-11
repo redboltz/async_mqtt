@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_send_rt_chk)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 using namespace std::literals::string_view_literals;
