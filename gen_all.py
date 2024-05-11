@@ -22,6 +22,8 @@ for file in sorted(files, key=lambda file: (file.count('/'), file)):
         continue
     if file.find("/broker/") != -1:
         continue
+    if file.find("/impl/") != -1:
+        continue
     if file.find("/predefined_layer/") != -1 and file.find("/predefined_layer/mqtt.hpp") == -1:
         continue
     if file.find("/picosha2.h") != -1:
