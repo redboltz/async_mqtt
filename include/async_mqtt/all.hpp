@@ -12,11 +12,13 @@
 #include <async_mqtt/client.hpp>
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/host_port.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/role.hpp>
 #include <async_mqtt/setup_log.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/stream.hpp>
@@ -26,6 +28,7 @@
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/detail/client_packet_type_getter.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
