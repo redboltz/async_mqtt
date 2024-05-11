@@ -163,6 +163,11 @@ private:
     friend basic_packet_variant<PacketIdBytes>
     buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
 
+#if defined(ASYNC_MQTT_UNIT_TEST)
+    friend struct ::ut_packet::v5_unsuback;
+    friend struct ::ut_packet::v5_unsuback_pid4;
+#endif // defined(ASYNC_MQTT_UNIT_TEST)
+
     // private constructor for internal use
     basic_unsuback_packet(buffer buf) {
         // fixed_header

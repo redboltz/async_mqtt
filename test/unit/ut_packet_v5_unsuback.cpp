@@ -9,6 +9,11 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v5_unsuback;
+struct v5_unsuback_pid4;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v5_unsuback.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>

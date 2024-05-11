@@ -23,7 +23,7 @@ public:
      * @brief constructor
      * @param all_topic TopicFilter. It could contain sharename on MQTT v5.0.
      */
-    explicit topic_sharename(
+    topic_sharename(
         std::string all_topic
     ): all_topic_{force_move(all_topic)} {
         BOOST_ASSERT(all_topic_.size() <= 0xffff);

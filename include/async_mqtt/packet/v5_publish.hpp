@@ -458,6 +458,14 @@ private:
     friend basic_packet_variant<PacketIdBytes>
     buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
 
+#if defined(ASYNC_MQTT_UNIT_TEST)
+    friend struct ::ut_packet::v5_publish;
+    friend struct ::ut_packet::v5_publish_pid0;
+    friend struct ::ut_packet::v5_publish_invalid;
+    friend struct ::ut_packet::v5_publish_pid4;
+    friend struct ::ut_packet::v5_publish_topic_alias;
+#endif // defined(ASYNC_MQTT_UNIT_TEST)
+
     // private constructor for internal use
     basic_publish_packet(buffer buf)
         : packet_id_(PacketIdBytes) {

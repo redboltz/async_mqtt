@@ -83,7 +83,11 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     link_directories(${Boost_LIBRARY_DIRS})
 endif()
 
+
 foreach(source_file ${check_PROGRAMS})
+    if(${source_file} MATCHES "ut_packet_.*")
+        add_compile_definitions(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    endif()
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
     target_link_libraries(${source_file_we} async_mqtt_iface)

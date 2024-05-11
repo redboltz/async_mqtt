@@ -90,6 +90,10 @@ private:
     friend basic_packet_variant<4>
     buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
 
+#if defined(ASYNC_MQTT_UNIT_TEST)
+    friend struct ::ut_packet::v5_pingreq;
+#endif // defined(ASYNC_MQTT_UNIT_TEST)
+
     // private constructor for internal use
     pingreq_packet(buffer buf) {
         // fixed_header

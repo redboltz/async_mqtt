@@ -9,6 +9,14 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v5_pubcomp;
+struct v5_pubcomp_pid4;
+struct v5_pubcomp_pid_only;
+struct v5_pubcomp_pid_rc;
+struct v5_pubcomp_prop_len_last;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v5_pubcomp.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>

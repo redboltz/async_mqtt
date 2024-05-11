@@ -141,8 +141,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -278,8 +278,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -416,8 +416,8 @@ BOOST_AUTO_TEST_CASE(v311_any) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
 
         auto p = am::v3_1_1::unsubscribe_packet{
@@ -579,8 +579,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id
@@ -747,8 +747,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id
@@ -915,8 +915,8 @@ BOOST_AUTO_TEST_CASE(v5_any) {
     }
     {
         std::vector<am::topic_sharename> args {
-            "topic1",
-            "topic2",
+            {"topic1"},
+            {"topic2"},
         };
         auto p = am::v5::unsubscribe_packet{
             0x1234,         // packet_id
