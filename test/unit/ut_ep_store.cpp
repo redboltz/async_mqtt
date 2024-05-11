@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_store)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 // v3_1_1
@@ -44,10 +43,10 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     auto connect = am::v3_1_1::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack_sp_false = am::v3_1_1::connack_packet{
@@ -88,8 +87,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
 
     auto publish0 = am::v3_1_1::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload0"_mb,
+        "topic1",
+        "payload0",
         am::qos::at_most_once
     );
 
@@ -97,8 +96,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v3_1_1::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once
     );
 
@@ -109,8 +108,8 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v3_1_1::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload2"_mb,
+        "topic1",
+        "payload2",
         am::qos::exactly_once
     );
 
@@ -367,19 +366,19 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     auto connect_no_clean = am::v3_1_1::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connect_clean = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb
+        "user1",
+        "pass1"
     };
 
     auto connack_sp_false = am::v3_1_1::connack_packet{
@@ -420,8 +419,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
 
     auto publish0 = am::v3_1_1::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload0"_mb,
+        "topic1",
+        "payload0",
         am::qos::at_most_once
     );
 
@@ -429,8 +428,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v3_1_1::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once
     );
 
@@ -441,8 +440,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v3_1_1::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload2"_mb,
+        "topic1",
+        "payload2",
         am::qos::exactly_once
     );
 
@@ -728,10 +727,10 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     auto connect = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::session_expiry_interval{am::session_never_expire}
         }
@@ -777,8 +776,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
 
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload0"_mb,
+        "topic1",
+        "payload0",
         am::qos::at_most_once,
         am::properties{}
     );
@@ -787,8 +786,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -800,8 +799,8 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload2"_mb,
+        "topic1",
+        "payload2",
         am::qos::exactly_once,
         am::properties{}
     );
@@ -1059,10 +1058,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     auto connect_no_clean = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::session_expiry_interval{am::session_never_expire}
         }
@@ -1071,10 +1070,10 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     auto connect_clean = am::v5::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -1118,8 +1117,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
 
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload0"_mb,
+        "topic1",
+        "payload0",
         am::qos::at_most_once,
         am::properties{}
     );
@@ -1128,8 +1127,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -1141,8 +1140,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload2"_mb,
+        "topic1",
+        "payload2",
         am::qos::exactly_once,
         am::properties{}
     );
@@ -1428,10 +1427,10 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     auto connect = am::v5::connect_packet{
         false,   // clean_session
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::session_expiry_interval{am::session_never_expire}
         }
@@ -1481,8 +1480,8 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     auto publish0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload0"_mb,
+        "topic1",
+        "payload0",
         am::qos::at_most_once,
         am::properties{}
     );
@@ -1491,8 +1490,8 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{
             am::property::topic_alias{1}
@@ -1501,8 +1500,8 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     auto publish1no_ta = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -1514,8 +1513,8 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        "payload2"_mb,
+        "",
+        "payload2",
         am::qos::exactly_once,
         am::properties{
             am::property::topic_alias{1}
@@ -1524,8 +1523,8 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
 
     auto publish2no_ta = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload2"_mb,
+        "topic1",
+        "payload2",
         am::qos::exactly_once,
         am::properties{}
     );
@@ -1766,8 +1765,8 @@ BOOST_AUTO_TEST_CASE(restore_packets_error) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish1 = am::v3_1_1::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once
     );
     as::dispatch(

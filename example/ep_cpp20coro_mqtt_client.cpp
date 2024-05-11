@@ -19,7 +19,6 @@ proc(
     auto& amep,
     std::string_view host,
     std::string_view port) {
-    using namespace am::literals;
 
     auto exe = co_await as::this_coro::executor;
     as::ip::tcp::socket resolve_sock{exe};
@@ -47,10 +46,10 @@ proc(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    "cid1"_mb,
+                    "cid1",
                     std::nullopt, // will
-                    std::nullopt, // username set like "user1"_mb,
-                    std::nullopt  // password set like "pass1"_mb
+                    std::nullopt, // username set like "user1",
+                    std::nullopt  // password set like "pass1"
                 },
                 as::use_awaitable
             )
@@ -83,7 +82,7 @@ proc(
 
         // Send MQTT SUBSCRIBE
         std::vector<am::topic_subopts> sub_entry{
-            {"topic1"_mb, am::qos::at_most_once}
+            {"topic1", am::qos::at_most_once}
         };
         if (auto se = co_await amep->send(
                 am::v3_1_1::subscribe_packet{
@@ -125,8 +124,8 @@ proc(
         if (auto se = co_await amep->send(
                 am::v3_1_1::publish_packet{
                     *amep->acquire_unique_packet_id(),
-                    "topic1"_mb,
-                    "payload1"_mb,
+                    "topic1",
+                    "payload1",
                     am::qos::at_least_once
                 },
                 as::use_awaitable
@@ -145,7 +144,7 @@ proc(
                                 << "MQTT PUBLISH recv"
                                 << " pid:" << p.packet_id()
                                 << " topic:" << p.topic()
-                                << " payload:" << am::to_string(p.payload())
+                                << " payload:" << p.payload()
                                 << " qos:" << p.opts().get_qos()
                                 << " retain:" << p.opts().get_retain()
                                 << " dup:" << p.opts().get_dup()

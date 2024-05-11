@@ -16,7 +16,6 @@
 BOOST_AUTO_TEST_SUITE(ut_prop_variant)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(payload_format_indicator) {
     am::property_variant pv1{
@@ -28,7 +27,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:payload_format_indicator,val:binary}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -130,7 +129,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:message_expiry_interval,val:4294967295}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -226,13 +225,13 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
 
 BOOST_AUTO_TEST_CASE(content_type) {
     am::property_variant pv1{
-        am::property::content_type{"html"_mb}
+        am::property::content_type{"html"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:content_type,val:html}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -328,13 +327,13 @@ BOOST_AUTO_TEST_CASE(content_type) {
 
 BOOST_AUTO_TEST_CASE(response_topic) {
     am::property_variant pv1{
-        am::property::response_topic{"restopic1"_mb}
+        am::property::response_topic{"restopic1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:response_topic,val:restopic1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -430,13 +429,13 @@ BOOST_AUTO_TEST_CASE(response_topic) {
 
 BOOST_AUTO_TEST_CASE(correlation_data) {
     am::property_variant pv1{
-        am::property::correlation_data{"reqid1"_mb}
+        am::property::correlation_data{"reqid1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:correlation_data,val:reqid1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -538,7 +537,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:subscription_identifier,val:268435455}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -640,7 +639,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:session_expiry_interval,val:4294967295}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -736,13 +735,13 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
 
 BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
     am::property_variant pv1{
-        am::property::assigned_client_identifier{"cid1"_mb}
+        am::property::assigned_client_identifier{"cid1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:assigned_client_identifier,val:cid1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -844,7 +843,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:server_keep_alive,val:65535}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -940,13 +939,13 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
 
 BOOST_AUTO_TEST_CASE(authentication_method) {
     am::property_variant pv1{
-        am::property::authentication_method{"basic"_mb}
+        am::property::authentication_method{"basic"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:authentication_method,val:basic}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1042,13 +1041,13 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
 
 BOOST_AUTO_TEST_CASE(authentication_data) {
     am::property_variant pv1{
-        am::property::authentication_data{"data1"_mb}
+        am::property::authentication_data{"data1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:authentication_data,val:data1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1150,7 +1149,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:request_problem_information,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1252,7 +1251,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:will_delay_interval,val:4294967295}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::will);
     BOOST_TEST(pv1 == pv2);
@@ -1354,7 +1353,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:request_response_information,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1450,13 +1449,13 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
 
 BOOST_AUTO_TEST_CASE(response_information) {
     am::property_variant pv1{
-        am::property::response_information{"restopic1"_mb}
+        am::property::response_information{"restopic1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:response_information,val:restopic1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -1552,13 +1551,13 @@ BOOST_AUTO_TEST_CASE(response_information) {
 
 BOOST_AUTO_TEST_CASE(server_reference) {
     am::property_variant pv1{
-        am::property::server_reference{"server1"_mb}
+        am::property::server_reference{"server1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:server_reference,val:server1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -1654,13 +1653,13 @@ BOOST_AUTO_TEST_CASE(server_reference) {
 
 BOOST_AUTO_TEST_CASE(reason_string) {
     am::property_variant pv1{
-        am::property::reason_string{"reason1"_mb}
+        am::property::reason_string{"reason1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:reason_string,val:reason1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -1762,7 +1761,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:receive_maximum,val:65535}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1864,7 +1863,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:topic_alias_maximum,val:65535}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -1966,7 +1965,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:topic_alias,val:65535}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
     BOOST_TEST(pv1 == pv2);
@@ -2068,7 +2067,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:maximum_qos,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2170,7 +2169,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:retain_available,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2266,13 +2265,13 @@ BOOST_AUTO_TEST_CASE(retain_available) {
 
 BOOST_AUTO_TEST_CASE(user_property) {
     am::property_variant pv1{
-        am::property::user_property{"key1"_mb, "val1"_mb}
+        am::property::user_property{"key1", "val1"}
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
         "{id:user_property,key:key1,val:val1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2374,7 +2373,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:maximum_packet_size,val:4294967295}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
     BOOST_TEST(pv1 == pv2);
@@ -2476,7 +2475,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:wildcard_subscription_available,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2578,7 +2577,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:subscription_identifier_available,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2680,7 +2679,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         boost::lexical_cast<std::string>(pv1) ==
         "{id:shared_subscription_available,val:1}"
     );
-    auto buf{am::allocate_buffer(am::to_string(pv1.const_buffer_sequence()))};
+    am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
     auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
     BOOST_TEST(pv1 == pv2);
@@ -2785,7 +2784,7 @@ BOOST_AUTO_TEST_CASE(props) {
         boost::lexical_cast<std::string>(ps1) ==
         "[{id:payload_format_indicator,val:binary},{id:message_expiry_interval,val:4294967295}]"
     );
-    auto buf{am::allocate_buffer(am::to_string(am::const_buffer_sequence(ps1)))};
+    am::buffer buf{am::to_string(am::const_buffer_sequence(ps1))};
     auto ps2 = am::make_properties(buf, am::property_location::publish);
     BOOST_TEST(ps1 == ps2);
 }

@@ -346,8 +346,8 @@ send_op {
                             auto store_packet =
                                 ActualPacket(
                                     actual_packet.packet_id(),
-                                    buffer{force_move(*topic_opt)},
-                                    actual_packet.payload(),
+                                    force_move(*topic_opt),
+                                    actual_packet.payload_as_buffer(),
                                     actual_packet.opts(),
                                     force_move(props)
                                 );
@@ -378,7 +378,7 @@ send_op {
                                 ActualPacket(
                                     actual_packet.packet_id(),
                                     actual_packet.topic(),
-                                    actual_packet.payload(),
+                                    actual_packet.payload_as_buffer(),
                                     actual_packet.opts(),
                                     force_move(props)
                                 );

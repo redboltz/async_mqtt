@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -55,6 +56,62 @@ public:
         endian_store(packet_id, &all_[2]);
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::pubcomp;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+
+        ret.emplace_back(as::buffer(all_.data(), all_.size()));
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return all_.size();
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
+
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(&all_[2]);
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v311_pubcomp;
+    friend struct ::ut_packet::v311_pubcomp_pid4;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     basic_pubcomp_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -99,50 +156,13 @@ public:
         std::copy(buf.begin(), buf.end(), std::back_inserter(all_));
     }
 
-    constexpr control_packet_type type() const {
-        return control_packet_type::pubcomp;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-
-        ret.emplace_back(as::buffer(all_.data(), all_.size()));
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return all_.size();
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
-        return 1; // all
-    }
-
-    /**
-     * @brief Get packet_id.
-     * @return packet_id
-     */
-    packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(&all_[2]);
-    }
-
 private:
     boost::container::static_vector<char, 2 + PacketIdBytes> all_;
 };
 
+/**
+ * @brief stream output operator
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_pubcomp_packet<PacketIdBytes> const& v) {
     o <<

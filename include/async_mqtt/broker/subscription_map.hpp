@@ -168,7 +168,7 @@ template<typename Value>
 class subscription_map_base {
 public:
     using node_id_t = std::size_t;
-    using path_entry_key = std::pair<node_id_t, buffer>;
+    using path_entry_key = std::pair<node_id_t, std::string>;
     using handle = path_entry_key;
 
 private:
@@ -281,7 +281,7 @@ protected:
                         map.emplace(
                             path_entry_key(
                                 parent->second.id,
-                                allocate_buffer(t)
+                                t
                             ),
                             path_entry(generate_node_id(), parent->first)
                         ).first;

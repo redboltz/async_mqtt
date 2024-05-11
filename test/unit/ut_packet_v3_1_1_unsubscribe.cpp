@@ -9,6 +9,11 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v311_unsubscribe;
+struct v311_unsubscribe_pid4;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v3_1_1_unsubscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +21,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
     BOOST_TEST(am::is_unsubscribe<am::v3_1_1::unsubscribe_packet>());
@@ -26,8 +30,8 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v3_1_1::unsubscribe_packet>());
 
     std::vector<am::topic_sharename> args {
-        "topic1"_mb,
-        "topic2"_mb,
+        "topic1",
+        "topic2",
     };
 
     auto p = am::v3_1_1::unsubscribe_packet{
@@ -50,7 +54,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::unsubscribe_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
@@ -68,8 +72,8 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
 
 BOOST_AUTO_TEST_CASE(v311_unsubscribe_pid4) {
     std::vector<am::topic_sharename> args {
-        "topic1"_mb,
-        "topic2"_mb,
+        "topic1",
+        "topic2",
     };
 
     auto p = am::v3_1_1::basic_unsubscribe_packet<4>{
@@ -92,7 +96,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe_pid4) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::basic_unsubscribe_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));

@@ -9,6 +9,11 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v311_suback;
+struct v311_suback_pid4;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v3_1_1_suback.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +21,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_suback) {
     BOOST_TEST(am::is_suback<am::v3_1_1::suback_packet>());
@@ -49,7 +53,7 @@ BOOST_AUTO_TEST_CASE(v311_suback) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::suback_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
@@ -90,7 +94,7 @@ BOOST_AUTO_TEST_CASE(v311_suback_pid4) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::basic_suback_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));

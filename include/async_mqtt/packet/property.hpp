@@ -38,6 +38,11 @@ namespace async_mqtt {
 
 namespace as = boost::asio;
 
+// forward declarations
+class property_variant;
+enum class property_location;
+property_variant make_property_variant(buffer& buf, property_location loc);
+
 /**
  * @breif payload_format
  */
@@ -323,10 +328,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    payload_format_indicator(It b, End e)
-        : detail::n_bytes_property<1>{id::payload_format_indicator, b, e} {}
-
     /**
      * @brief Get value
      * @return payload_format
@@ -340,6 +341,16 @@ public:
     }
 
     static constexpr detail::ostream_format const of_ = detail::ostream_format::binary_string;
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    payload_format_indicator(It b, End e)
+        : detail::n_bytes_property<1>{id::payload_format_indicator, b, e} {}
+
+
 };
 
 
@@ -355,10 +366,6 @@ public:
     message_expiry_interval(std::uint32_t val)
         : detail::n_bytes_property<4>{id::message_expiry_interval, endian_static_vector(val)} {}
 
-    template <typename It, typename End>
-    message_expiry_interval(It b, End e)
-        : detail::n_bytes_property<4>{id::message_expiry_interval, b, e} {}
-
     /**
      * @brief Get value
      * @return message_expiry_interval seconds
@@ -366,6 +373,14 @@ public:
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    message_expiry_interval(It b, End e)
+        : detail::n_bytes_property<4>{id::message_expiry_interval, b, e} {}
 };
 
 /**
@@ -375,10 +390,21 @@ class content_type : public detail::string_property {
 public:
     /**
      * @brief constructor
-     * @param val content_type string
+     * @param val content type string
      */
-    explicit content_type(buffer val)
-        : detail::string_property{id::content_type, force_move(val)} {}
+    explicit content_type(std::string val)
+        : detail::string_property{id::content_type, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit content_type(Buffer&& val)
+        : detail::string_property{id::content_type, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -390,8 +416,18 @@ public:
      * @brief constructor
      * @param val response_topic string
      */
-    explicit response_topic(buffer val)
-        : detail::string_property{id::response_topic, force_move(val)} {}
+    explicit response_topic(std::string val)
+        : detail::string_property{id::response_topic, buffer{force_move(val)}} {}
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit response_topic(Buffer&& val)
+        : detail::string_property{id::response_topic, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -403,8 +439,18 @@ public:
      * @brief constructor
      * @param val correlation_data string
      */
-    explicit correlation_data(buffer val)
-        : detail::binary_property{id::correlation_data, force_move(val)} {}
+    explicit correlation_data(std::string val)
+        : detail::binary_property{id::correlation_data, buffer{force_move(val)}} {}
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit correlation_data(Buffer&& val)
+        : detail::binary_property{id::correlation_data, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -433,10 +479,6 @@ public:
         : detail::n_bytes_property<4>{id::session_expiry_interval, endian_static_vector(val)} {
     }
 
-    template <typename It>
-    session_expiry_interval(It b, It e)
-        : detail::n_bytes_property<4>{id::session_expiry_interval, b, e} {}
-
     /**
      * @brief Get value
      * @return session_expiry_interval seconds
@@ -444,6 +486,14 @@ public:
     std::uint32_t val() const {
         return endian_load<std::uint32_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It>
+    session_expiry_interval(It b, It e)
+        : detail::n_bytes_property<4>{id::session_expiry_interval, b, e} {}
 };
 
 /**
@@ -455,8 +505,19 @@ public:
      * @brief constructor
      * @param val assigned_client_identifier string
      */
-    explicit assigned_client_identifier(buffer val)
-        : detail::string_property{id::assigned_client_identifier, force_move(val)} {}
+    explicit assigned_client_identifier(std::string val)
+        : detail::string_property{id::assigned_client_identifier, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit assigned_client_identifier(Buffer&& val)
+        : detail::string_property{id::assigned_client_identifier, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -471,10 +532,6 @@ public:
     server_keep_alive(std::uint16_t val)
         : detail::n_bytes_property<2>{id::server_keep_alive, endian_static_vector(val)} {}
 
-    template <typename It, typename End>
-    server_keep_alive(It b, End e)
-        : detail::n_bytes_property<2>{id::server_keep_alive, b, e} {}
-
     /**
      * @brief Get value
      * @return server_keep_alive seconds
@@ -482,6 +539,14 @@ public:
     std::uint16_t val() const {
         return endian_load<uint16_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    server_keep_alive(It b, End e)
+        : detail::n_bytes_property<2>{id::server_keep_alive, b, e} {}
 };
 
 /**
@@ -493,8 +558,19 @@ public:
      * @brief constructor
      * @param val authentication_method string
      */
-    explicit authentication_method(buffer val)
-        : detail::string_property{id::authentication_method, force_move(val)} {}
+    explicit authentication_method(std::string val)
+        : detail::string_property{id::authentication_method, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit authentication_method(Buffer&& val)
+        : detail::string_property{id::authentication_method, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -506,8 +582,18 @@ public:
      * @brief constructor
      * @param val authentication_data string
      */
-    explicit authentication_data(buffer val)
-        : detail::binary_property{id::authentication_data, force_move(val)} {}
+    explicit authentication_data(std::string val)
+        : detail::binary_property{id::authentication_data, buffer{force_move(val)}} {}
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit authentication_data(Buffer&& val)
+        : detail::binary_property{id::authentication_data, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -530,9 +616,6 @@ public:
               }
           }
     {}
-    template <typename It, typename End>
-    request_problem_information(It b, End e)
-        : detail::n_bytes_property<1>{id::request_problem_information, b, e} {}
 
     /**
      * @brief Get value
@@ -541,6 +624,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    request_problem_information(It b, End e)
+        : detail::n_bytes_property<1>{id::request_problem_information, b, e} {}
 };
 
 /**
@@ -555,10 +646,6 @@ public:
     will_delay_interval(std::uint32_t val)
         : detail::n_bytes_property<4>{id::will_delay_interval, endian_static_vector(val)} {}
 
-    template <typename It, typename End>
-    will_delay_interval(It b, End e)
-        : detail::n_bytes_property<4>{id::will_delay_interval, b, e} {}
-
     /**
      * @brief Get value
      * @return will_delay_interval seconds
@@ -566,6 +653,14 @@ public:
     std::uint32_t val() const {
         return endian_load<uint32_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    will_delay_interval(It b, End e)
+        : detail::n_bytes_property<4>{id::will_delay_interval, b, e} {}
 };
 
 /**
@@ -589,10 +684,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    request_response_information(It b, End e)
-        : detail::n_bytes_property<1>(id::request_response_information, b, e) {}
-
     /**
      * @brief Get value
      * @return value
@@ -600,6 +691,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    request_response_information(It b, End e)
+        : detail::n_bytes_property<1>(id::request_response_information, b, e) {}
 };
 
 /**
@@ -611,8 +710,19 @@ public:
      * @brief constructor
      * @param val response_information string
      */
-    explicit response_information(buffer val)
-        : detail::string_property{id::response_information, force_move(val)} {}
+    explicit response_information(std::string val)
+        : detail::string_property{id::response_information, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit response_information(Buffer&& val)
+        : detail::string_property{id::response_information, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -624,8 +734,19 @@ public:
      * @brief constructor
      * @param val server_reference string
      */
-    explicit server_reference(buffer val)
-        : detail::string_property{id::server_reference, force_move(val)} {}
+    explicit server_reference(std::string val)
+        : detail::string_property{id::server_reference, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit server_reference(Buffer&& val)
+        : detail::string_property{id::server_reference, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -637,8 +758,19 @@ public:
      * @brief constructor
      * @param val reason_string
      */
-    explicit reason_string(buffer val)
-        : detail::string_property{id::reason_string, force_move(val)} {}
+    explicit reason_string(std::string val)
+        : detail::string_property{id::reason_string, buffer{force_move(val)}} {}
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit reason_string(Buffer&& val)
+        : detail::string_property{id::reason_string, std::forward<Buffer>(val)} {}
 };
 
 /**
@@ -660,6 +792,18 @@ public:
         }
     }
 
+    /**
+     * @brief Get value
+     * @return value
+     */
+    std::uint16_t val() const {
+        return endian_load<std::uint16_t>(buf_.data());
+    }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
     template <typename It, typename End>
     receive_maximum(It b, End e)
         : detail::n_bytes_property<2>{id::receive_maximum, b, e} {
@@ -669,14 +813,6 @@ public:
                 "property::receive_maximum value is invalid"
             );
         }
-    }
-
-    /**
-     * @brief Get value
-     * @return value
-     */
-    std::uint16_t val() const {
-        return endian_load<std::uint16_t>(buf_.data());
     }
 };
 
@@ -693,10 +829,6 @@ public:
     topic_alias_maximum(std::uint16_t val)
         : detail::n_bytes_property<2>{id::topic_alias_maximum, endian_static_vector(val)} {}
 
-    template <typename It, typename End>
-    topic_alias_maximum(It b, End e)
-        : detail::n_bytes_property<2>{id::topic_alias_maximum, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -704,6 +836,14 @@ public:
     std::uint16_t val() const {
         return endian_load<std::uint16_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    topic_alias_maximum(It b, End e)
+        : detail::n_bytes_property<2>{id::topic_alias_maximum, b, e} {}
 };
 
 
@@ -719,10 +859,6 @@ public:
     topic_alias(std::uint16_t val)
         : detail::n_bytes_property<2>{id::topic_alias, endian_static_vector(val)} {}
 
-    template <typename It, typename End>
-    topic_alias(It b, End e)
-        : detail::n_bytes_property<2>(id::topic_alias, b, e) {}
-
     /**
      * @brief Get value
      * @return value
@@ -730,6 +866,14 @@ public:
     std::uint16_t val() const {
         return endian_load<std::uint16_t>(buf_.data());
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    topic_alias(It b, End e)
+        : detail::n_bytes_property<2>(id::topic_alias, b, e) {}
 };
 
 /**
@@ -752,10 +896,6 @@ public:
         }
     }
 
-    template <typename It, typename End>
-    maximum_qos(It b, End e)
-        : detail::n_bytes_property<1>{id::maximum_qos, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -765,6 +905,14 @@ public:
     }
 
     static constexpr const detail::ostream_format of_ = detail::ostream_format::int_cast;
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    maximum_qos(It b, End e)
+        : detail::n_bytes_property<1>{id::maximum_qos, b, e} {}
 };
 
 /**
@@ -788,10 +936,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    retain_available(It b, End e)
-        : detail::n_bytes_property<1>{id::retain_available, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -799,6 +943,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    retain_available(It b, End e)
+        : detail::n_bytes_property<1>{id::retain_available, b, e} {}
 };
 
 
@@ -811,21 +963,9 @@ public:
      * @brief constructor
      * @param val response_information string
      */
-    user_property(buffer key, buffer val)
-        : key_{force_move(key)}, val_{force_move(val)} {
-        if (key_.size() > 0xffff) {
-            throw make_error(
-                errc::bad_message,
-                "property::user_property key length is invalid"
-            );
-        }
-        if (val_.size() > 0xffff) {
-            throw make_error(
-                errc::bad_message,
-                "property::user_property val length is invalid"
-            );
-        }
-    }
+    user_property(std::string key, std::string val)
+        : user_property{buffer{force_move(key)}, buffer{force_move(val)}}
+    {}
 
     /**
      * @brief Add const buffer sequence into the given buffer.
@@ -918,6 +1058,30 @@ private:
     };
 
 private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <
+        typename Buffer,
+        std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
+    >
+    explicit user_property(Buffer&& key, Buffer&& val)
+        : key_{std::forward<Buffer>(key)}, val_{std::forward<Buffer>(val)} {
+        if (key_.size() > 0xffff) {
+            throw make_error(
+                errc::bad_message,
+                "property::user_property key length is invalid"
+            );
+        }
+        if (val_.size() > 0xffff) {
+            throw make_error(
+                errc::bad_message,
+                "property::user_property val length is invalid"
+            );
+        }
+    }
+
+private:
     property::id id_ = id::user_property;
     len_str key_;
     len_str val_;
@@ -942,6 +1106,18 @@ public:
         }
     }
 
+    /**
+     * @brief Get value
+     * @return value
+     */
+    std::uint32_t val() const {
+        return endian_load<std::uint32_t>(buf_.data());
+    }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
     template <typename It, typename End>
     maximum_packet_size(It b, End e)
         : detail::n_bytes_property<4>{id::maximum_packet_size, b, e} {
@@ -951,14 +1127,6 @@ public:
                 "property::maximum_packet_size value is invalid"
             );
         }
-    }
-
-    /**
-     * @brief Get value
-     * @return value
-     */
-    std::uint32_t val() const {
-        return endian_load<std::uint32_t>(buf_.data());
     }
 };
 
@@ -984,10 +1152,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    wildcard_subscription_available(It b, End e)
-        : detail::n_bytes_property<1>{id::wildcard_subscription_available, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -995,6 +1159,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    wildcard_subscription_available(It b, End e)
+        : detail::n_bytes_property<1>{id::wildcard_subscription_available, b, e} {}
 };
 
 
@@ -1019,10 +1191,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    subscription_identifier_available(It b, End e)
-        : detail::n_bytes_property<1>{id::subscription_identifier_available, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -1030,6 +1198,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    subscription_identifier_available(It b, End e)
+        : detail::n_bytes_property<1>{id::subscription_identifier_available, b, e} {}
 };
 
 
@@ -1054,10 +1230,6 @@ public:
           }
     {}
 
-    template <typename It, typename End>
-    shared_subscription_available(It b, End e)
-        : detail::n_bytes_property<1>{id::shared_subscription_available, b, e} {}
-
     /**
      * @brief Get value
      * @return value
@@ -1065,6 +1237,14 @@ public:
     bool val() const {
         return buf_.front() == 1;
     }
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+
+    // private constructor for internal use
+    template <typename It, typename End>
+    shared_subscription_available(It b, End e)
+        : detail::n_bytes_property<1>{id::shared_subscription_available, b, e} {}
 };
 
 template <typename Property>

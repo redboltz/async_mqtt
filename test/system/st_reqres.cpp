@@ -15,7 +15,6 @@
 BOOST_AUTO_TEST_SUITE(st_reqres)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
@@ -46,10 +45,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::request_response_information{true},
                             am::property::session_expiry_interval{am::session_never_expire}
@@ -93,10 +92,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         false,   // clean_start
                         0, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::request_response_information{true},
                             am::property::session_expiry_interval{am::session_never_expire}
@@ -141,10 +140,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "cid1"_mb,
+                        "cid1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::request_response_information{true}
                         }

@@ -15,7 +15,6 @@ namespace as = boost::asio;
 namespace am = async_mqtt;
 
 int main(int argc, char* argv[]) {
-    using namespace am::literals;
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
@@ -59,10 +58,10 @@ int main(int argc, char* argv[]) {
                         am::v3_1_1::connect_packet{
                             true,   // clean_session
                             0x1234, // keep_alive
-                            "cid1"_mb,
+                            "cid1",
                             std::nullopt, // will
-                            std::nullopt, // username set like "user1"_mb,
-                            std::nullopt  // password set like "pass1"_mb
+                            std::nullopt, // username set like "user1",
+                            std::nullopt  // password set like "pass1"
                         },
                         [&]
                         (am::system_error const& se) {
@@ -86,7 +85,7 @@ int main(int argc, char* argv[]) {
                                                     amep->send(
                                                         am::v3_1_1::subscribe_packet{
                                                             *amep->acquire_unique_packet_id(),
-                                                            { {"topic1"_mb, am::qos::at_most_once} }
+                                                            { {"topic1", am::qos::at_most_once} }
                                                         },
                                                         [&]
                                                         (am::system_error const& se) {
@@ -114,8 +113,8 @@ int main(int argc, char* argv[]) {
                                                                                     amep->send(
                                                                                         am::v3_1_1::publish_packet{
                                                                                             *amep->acquire_unique_packet_id(),
-                                                                                            "topic1"_mb,
-                                                                                            "payload1"_mb,
+                                                                                            "topic1",
+                                                                                            "payload1",
                                                                                             am::qos::at_least_once
                                                                                         },
                                                                                         [&]
@@ -137,7 +136,7 @@ int main(int argc, char* argv[]) {
                                                                                                                         << "MQTT PUBLISH recv"
                                                                                                                         << " pid:" << p.packet_id()
                                                                                                                         << " topic:" << p.topic()
-                                                                                                                        << " payload:" << am::to_string(p.payload())
+                                                                                                                        << " payload:" << p.payload()
                                                                                                                         << " qos:" << p.opts().get_qos()
                                                                                                                         << " retain:" << p.opts().get_retain()
                                                                                                                         << " dup:" << p.opts().get_dup()

@@ -15,7 +15,6 @@
 BOOST_AUTO_TEST_SUITE(st_invalid)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 char invalid_remaining_length_packet[] { 0x10, char(0xff), char(0xff), char(0xff), char(0xff)};

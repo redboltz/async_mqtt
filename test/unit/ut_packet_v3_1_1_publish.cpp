@@ -9,6 +9,13 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v311_publish;
+struct v311_publish_qos0;
+struct v311_publish_invalid;
+struct v311_publish_pid4;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +23,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_publish) {
     BOOST_TEST(am::is_publish<am::v3_1_1::publish_packet>());
@@ -27,15 +33,15 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
     auto p = am::v3_1_1::publish_packet{
         0x1234, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -60,12 +66,12 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::publish_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -94,15 +100,15 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
     auto p = am::v3_1_1::publish_packet{
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
     BOOST_TEST(p.packet_id() == 0);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -126,12 +132,12 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::publish_packet{buf};
         BOOST_TEST(p.packet_id() == 0);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -161,8 +167,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_least_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -173,8 +179,8 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
     try {
         auto p = am::v3_1_1::publish_packet{
             1,
-            "topic1"_mb,
-            "payload1"_mb,
+            "topic1",
+            "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
         BOOST_TEST(false);
@@ -187,15 +193,15 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
 BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
     auto p = am::v3_1_1::basic_publish_packet<4>{
         0x12345678, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes
     };
 
     BOOST_TEST(p.packet_id() == 0x12345678);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -220,12 +226,12 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::basic_publish_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));

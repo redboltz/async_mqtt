@@ -15,7 +15,6 @@
 BOOST_AUTO_TEST_SUITE(st_will)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v311_will) {
@@ -55,10 +54,10 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -79,7 +78,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                     am::v3_1_1::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -98,14 +97,14 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once
                         },
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -119,8 +118,8 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                     *pv
                     ==
                     (am::v3_1_1::publish_packet{
-                        "topic1"_mb,
-                        "payload0"_mb,
+                        "topic1",
+                        "payload0",
                         am::qos::at_most_once
                     })
                 );
@@ -174,10 +173,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -198,7 +197,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -217,15 +216,15 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once,
                             {am::property::will_delay_interval{1}},
                         },
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::session_expiry_interval{2},
                         }
@@ -242,8 +241,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload0"_mb,
+                        "topic1",
+                        "payload0",
                         am::qos::at_most_once
                     })
                 );
@@ -297,10 +296,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -321,7 +320,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -340,15 +339,15 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once,
                             {am::property::will_delay_interval{2}},
                         },
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::session_expiry_interval{1},
                         }
@@ -365,8 +364,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload0"_mb,
+                        "topic1",
+                        "payload0",
                         am::qos::at_most_once
                     })
                 );
@@ -420,10 +419,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -444,7 +443,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -463,15 +462,15 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once,
                             {am::property::will_delay_interval{2}},
                         },
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::session_expiry_interval{1},
                         }
@@ -495,8 +494,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload0"_mb,
+                        "topic1",
+                        "payload0",
                         am::qos::at_most_once
                     })
                 );
@@ -550,10 +549,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -574,7 +573,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -593,15 +592,15 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once,
                             {am::property::will_delay_interval{1}},
                         },
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -692,10 +691,10 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -716,7 +715,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -735,18 +734,18 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         am::will{
-                            "topic1"_mb,
-                            "payload0"_mb,
+                            "topic1",
+                            "payload0",
                             am::qos::at_most_once,
                             {
                                 am::property::will_delay_interval{2},
                                 am::property::message_expiry_interval{1}
                             },
                         },
-                        "u1"_mb,
-                        "passforu1"_mb,
+                        "u1",
+                        "passforu1",
                         {
                             am::property::session_expiry_interval{2}
                         }

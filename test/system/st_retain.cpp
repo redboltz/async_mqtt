@@ -15,7 +15,6 @@
 BOOST_AUTO_TEST_SUITE(st_retain)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v5_mei_none) {
@@ -58,10 +57,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -72,8 +71,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -84,8 +83,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -96,8 +95,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once | am::pub::retain::yes
                     },
                     *this
@@ -115,10 +114,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -139,7 +138,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -154,8 +153,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once | am::pub::retain::yes
                     })
                 );
@@ -213,10 +212,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -227,8 +226,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -239,8 +238,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -251,8 +250,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{1}}
                     },
@@ -271,10 +270,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -295,7 +294,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -310,8 +309,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{0}}
                     })
@@ -370,10 +369,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -384,8 +383,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -396,8 +395,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once | am::pub::retain::yes
                     },
                     *this
@@ -408,8 +407,8 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once | am::pub::retain::yes,
                         {am::property::message_expiry_interval{1}}
                     },
@@ -431,10 +430,10 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -455,7 +454,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -540,10 +539,10 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -554,8 +553,8 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 // publish QoS0
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once | am::pub::retain::yes
                     },
                     *this
@@ -566,8 +565,8 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        ""_mb,
+                        "topic1",
+                        "",
                         am::qos::exactly_once | am::pub::retain::yes
                     },
                     *this
@@ -585,10 +584,10 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub"_mb,
+                        "sub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -609,7 +608,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     am::v5::subscribe_packet{
                         *ep(sub).acquire_unique_packet_id(),
                         {
-                            {"topic1"_mb, am::qos::exactly_once},
+                            {"topic1", am::qos::exactly_once},
                         }
                     },
                     *this

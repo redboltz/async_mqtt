@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
@@ -40,24 +41,48 @@ template <std::size_t PacketIdBytes>
 class basic_publish_packet {
 public:
     using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
+
+    /**
+     * @brief constructor
+     * @tparam BufferSequence Type of the payload
+     * @param packet_id  MQTT PacketIdentifier. If QoS0 then it must be 0. You can use no packet_id version constructor.
+     *                   If QoS is 0 or 1 then, the packet_id must be acquired by
+     *                   basic_endpoint::acquire_unique_packet_id(), or must be registered by
+     *                   basic_endpoint::register_packet_id().
+     *                   \n If QoS0, the packet_id is not sent actually.
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901108
+     * @param topic_name MQTT TopicName
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107
+     * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119
+     * @param pubopts    Publish Options. It contains the following elements:
+     *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
+     *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
+     *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     */
     template <
+        typename StringViewLike,
         typename BufferSequence,
         std::enable_if_t<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+            std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
+            (
+                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
+                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
+            ),
             std::nullptr_t
         > = nullptr
     >
     basic_publish_packet(
         packet_id_t packet_id,
-        buffer topic_name,
-        BufferSequence payloads,
+        StringViewLike&& topic_name,
+        BufferSequence&& payloads,
         pub::opts pubopts,
         properties props = {}
     )
         : fixed_header_(
               make_fixed_header(control_packet_type::publish, 0b0000) | std::uint8_t(pubopts)
           ),
-          topic_name_{force_move(topic_name)},
+          topic_name_{std::string{std::forward<StringViewLike>(topic_name)}},
           packet_id_(PacketIdBytes),
           property_length_(async_mqtt::size(props)),
           props_(force_move(props)),
@@ -75,14 +100,21 @@ public:
             boost::numeric_cast<std::uint16_t>(topic_name_.size()),
             topic_name_length_buf_.data()
         );
-        auto b = buffer_sequence_begin(payloads);
-        auto e = buffer_sequence_end(payloads);
-        auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
-        payloads_.reserve(num_of_payloads);
-        for (; b != e; ++b) {
-            auto const& payload = *b;
-            remaining_length_ += payload.size();
-            payloads_.push_back(payload);
+
+        if constexpr (std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>) {
+            remaining_length_ += std::string_view(payloads).size();
+            payloads_.emplace_back(buffer{std::string{payloads}});
+        }
+        else {
+            auto b = buffer_sequence_begin(payloads);
+            auto e = buffer_sequence_end(payloads);
+            auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
+            payloads_.reserve(num_of_payloads);
+            for (; b != e; ++b) {
+                auto const& payload = *b;
+                remaining_length_ += payload.size();
+                payloads_.push_back(payload);
+            }
         }
 
         if (!utf8string_check(topic_name_)) {
@@ -135,21 +167,358 @@ public:
         }
     }
 
+    /**
+     * @brief constructor for QoS0
+     * @param topic_name MQTT TopicName
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107
+     * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119
+     * @param pubopts    Publish Options. It contains the following elements:
+     *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
+     *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
+     *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     */
     template <
+        typename StringViewLike,
         typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+        std::enable_if_t<
+            std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
+            (
+                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
+                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
+            ),
             std::nullptr_t
-        >::type = nullptr
+        > = nullptr
     >
     basic_publish_packet(
-        buffer topic_name,
-        BufferSequence payloads,
+        StringViewLike&& topic_name,
+        BufferSequence&& payloads,
         pub::opts pubopts,
         properties props = {}
-    ) : basic_publish_packet(0, force_move(topic_name), force_move(payloads), pubopts, force_move(props)) {
+    ) : basic_publish_packet{
+            0,
+            std::forward<StringViewLike>(topic_name),
+            std::forward<BufferSequence>(payloads),
+            pubopts,
+            force_move(props)
+        }
+    {
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::publish;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+        ret.emplace_back(as::buffer(topic_name_length_buf_.data(), topic_name_length_buf_.size()));
+        ret.emplace_back(as::buffer(topic_name_));
+        if (packet_id() != 0) {
+            ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
+        }
+        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
+        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
+        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
+        for (auto const& payload : payloads_) {
+            ret.emplace_back(as::buffer(payload));
+        }
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    std::size_t num_of_const_buffer_sequence() const {
+        return
+            1U +                   // fixed header
+            1U +                   // remaining length
+            2U +                   // topic name length, topic name
+            [&] {
+                if (packet_id() == 0) return 0U;
+                return 1U;
+            }() +
+            1U +                   // property length
+            async_mqtt::num_of_const_buffer_sequence(props_) +
+            payloads_.size();
+    }
+
+    /**
+     * @brief Get packet id
+     * @return packet_id
+     */
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_.data());
+    }
+
+    /**
+     * @brief Get publish_options
+     * @return publish_options.
+     */
+    constexpr pub::opts opts() const {
+        return pub::opts(fixed_header_);
+    }
+
+    /**
+     * @brief Get topic name
+     * @return topic name
+     */
+    std::string topic() const {
+        return std::string{topic_name_};
+    }
+
+    /**
+     * @brief Get topic as a buffer
+     * @return topic name
+     */
+    buffer const& topic_as_buffer() const {
+        return topic_name_;
+    }
+
+    /**
+     * @brief Get payload
+     * @return payload
+     */
+    std::string payload() const {
+        return to_string(payloads_);
+    }
+
+    /**
+     * @brief Get payload range
+     * @return A pair of forward iterators
+     */
+    auto payload_range() const {
+        return make_packet_range(payloads_);
+    }
+
+    /**
+     * @brief Get payload as a sequence of buffer
+     * @return payload
+     */
+    std::vector<buffer> const& payload_as_buffer() const {
+        return payloads_;
+    }
+
+    /**
+     * @brief Set dup flag
+     * @param dup flag value to set
+     */
+    constexpr void set_dup(bool dup) {
+        pub::set_dup(fixed_header_, dup);
+    }
+
+    /**
+     * @breif Get properties
+     * @return properties
+     */
+    properties const& props() const {
+        return props_;
+    }
+
+    /**
+     * @breif Remove topic and add topic_alias
+     *
+     * This is for applying topic_alias.
+     * @param val topic_alias
+     */
+    void remove_topic_add_topic_alias(topic_alias_t val) {
+        // add topic_alias property
+        auto prop{property::topic_alias{val}};
+        auto prop_size = prop.size();
+        property_length_ += prop_size;
+        props_.push_back(force_move(prop));
+
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // remove topic_name
+        auto old_topic_name_size = topic_name_.size();
+        topic_name_ = buffer{};
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
+            topic_name_length_buf_.data()
+        );
+
+        // update remaining_length
+        remaining_length_ +=
+            prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size) -
+            old_topic_name_size;
+        update_remaining_length_buf();
+    }
+
+    /**
+     * @breif Add topic_alias
+     *
+     * This is for registering topic_alias.
+     * @param val topic_alias
+     */
+    void add_topic_alias(topic_alias_t val) {
+        // add topic_alias property
+        auto prop{property::topic_alias{val}};
+        auto prop_size = prop.size();
+        property_length_ += prop_size;
+        props_.push_back(force_move(prop));
+
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // update remaining_length
+        remaining_length_ +=
+            prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size);
+        update_remaining_length_buf();
+    }
+
+    /**
+     * @breif Remove topic and add topic_alias
+     *
+     * This is for extracting topic from the topic_alias.
+     * @param val topic_alias
+     */
+    void add_topic(std::string topic) {
+        add_topic_impl(force_move(topic));
+        // update remaining_length
+        remaining_length_ += topic_name_.size();
+        update_remaining_length_buf();
+    }
+
+    void remove_topic_alias() {
+        auto prop_size = remove_topic_alias_impl();
+        property_length_ -= prop_size;
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // update remaining_length
+        remaining_length_ +=
+            -prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size);
+        update_remaining_length_buf();
+    }
+
+    void remove_topic_alias_add_topic(std::string topic) {
+        auto prop_size = remove_topic_alias_impl();
+        property_length_ -= prop_size;
+        add_topic_impl(force_move(topic));
+        // update property_length_buf
+        auto [old_property_length_buf_size, new_property_length_buf_size] =
+            update_property_length_buf();
+
+        // update remaining_length
+        remaining_length_ +=
+            topic_name_.size() -
+            prop_size +
+            (new_property_length_buf_size - old_property_length_buf_size);
+        update_remaining_length_buf();
+    }
+
+    /**
+     * @breif Update MessageExpiryInterval property
+     * @param val message_expiry_interval
+     */
+    void update_message_expiry_interval(std::uint32_t val) {
+        bool updated = false;
+        for (auto& prop : props_) {
+            prop.visit(
+                overload {
+                    [&](property::message_expiry_interval& p) {
+                        p = property::message_expiry_interval(val);
+                        updated = true;
+                    },
+                    [&](auto&){}
+                }
+            );
+            if (updated) return;
+        }
+    }
+
+private:
+    void update_remaining_length_buf() {
+        remaining_length_buf_.clear();
+        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
+        for (auto e : rb) {
+            remaining_length_buf_.push_back(e);
+        }
+    }
+
+    std::tuple<std::size_t, std::size_t> update_property_length_buf() {
+        auto old_property_length_buf_size = property_length_buf_.size();
+        property_length_buf_.clear();
+        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+        auto new_property_length_buf_size = property_length_buf_.size();
+        return {old_property_length_buf_size, new_property_length_buf_size};
+    }
+
+    std::size_t remove_topic_alias_impl() {
+        auto it = props_.cbegin();
+        std::size_t size = 0;
+        while (it != props_.cend()) {
+            if (it->id() == property::id::topic_alias) {
+                size += it->size();
+                it = props_.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+        return size;
+    }
+
+    void add_topic_impl(std::string topic) {
+        BOOST_ASSERT(topic_name_.empty());
+
+        // add topic
+        topic_name_ = buffer{force_move(topic)};
+        endian_store(
+            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
+            topic_name_length_buf_.data()
+        );
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v5_publish;
+    friend struct ::ut_packet::v5_publish_qos0;
+    friend struct ::ut_packet::v5_publish_invalid;
+    friend struct ::ut_packet::v5_publish_pid4;
+    friend struct ::ut_packet::v5_publish_topic_alias;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     basic_publish_packet(buffer buf)
         : packet_id_(PacketIdBytes) {
         // fixed_header
@@ -247,286 +616,6 @@ public:
             payloads_.emplace_back(force_move(buf));
         }
     }
-
-    constexpr control_packet_type type() const {
-        return control_packet_type::publish;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-        ret.emplace_back(as::buffer(topic_name_length_buf_.data(), topic_name_length_buf_.size()));
-        ret.emplace_back(as::buffer(topic_name_));
-        if (packet_id() != 0) {
-            ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
-        }
-        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
-        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
-        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
-        for (auto const& payload : payloads_) {
-            ret.emplace_back(as::buffer(payload));
-        }
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    std::size_t num_of_const_buffer_sequence() const {
-        return
-            1U +                   // fixed header
-            1U +                   // remaining length
-            2U +                   // topic name length, topic name
-            [&] {
-                if (packet_id() == 0) return 0U;
-                return 1U;
-            }() +
-            1U +                   // property length
-            async_mqtt::num_of_const_buffer_sequence(props_) +
-            payloads_.size();
-    }
-
-    /**
-     * @brief Get packet id
-     * @return packet_id
-     */
-    packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_.data());
-    }
-
-    /**
-     * @brief Get publish_options
-     * @return publish_options.
-     */
-    constexpr pub::opts opts() const {
-        return pub::opts(fixed_header_);
-    }
-
-    /**
-     * @brief Get topic name
-     * @return topic name
-     */
-    constexpr buffer const& topic() const {
-        return topic_name_;
-    }
-
-    /**
-     * @brief Get payload
-     * @return payload
-     */
-    std::vector<buffer> const& payload() const {
-        return payloads_;
-    }
-
-    /**
-     * @brief Get payload range
-     * @return A pair of forward iterators
-     */
-    auto payload_range() const {
-        return make_packet_range(payloads_);
-    }
-
-    /**
-     * @brief Set dup flag
-     * @param dup flag value to set
-     */
-    constexpr void set_dup(bool dup) {
-        pub::set_dup(fixed_header_, dup);
-    }
-
-    /**
-     * @breif Get properties
-     * @return properties
-     */
-    properties const& props() const {
-        return props_;
-    }
-
-    /**
-     * @breif Remove topic and add topic_alias
-     *
-     * This is for applying topic_alias.
-     * @param val topic_alias
-     */
-    void remove_topic_add_topic_alias(topic_alias_t val) {
-        // add topic_alias property
-        auto prop{property::topic_alias{val}};
-        auto prop_size = prop.size();
-        property_length_ += prop_size;
-        props_.push_back(force_move(prop));
-
-        // update property_length_buf
-        auto [old_property_length_buf_size, new_property_length_buf_size] =
-            update_property_length_buf();
-
-        // remove topic_name
-        auto old_topic_name_size = topic_name_.size();
-        topic_name_ = buffer{};
-        endian_store(
-            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
-            topic_name_length_buf_.data()
-        );
-
-        // update remaining_length
-        remaining_length_ +=
-            prop_size +
-            (new_property_length_buf_size - old_property_length_buf_size) -
-            old_topic_name_size;
-        update_remaining_length_buf();
-    }
-
-    /**
-     * @breif Add topic_alias
-     *
-     * This is for registering topic_alias.
-     * @param val topic_alias
-     */
-    void add_topic_alias(topic_alias_t val) {
-        // add topic_alias property
-        auto prop{property::topic_alias{val}};
-        auto prop_size = prop.size();
-        property_length_ += prop_size;
-        props_.push_back(force_move(prop));
-
-        // update property_length_buf
-        auto [old_property_length_buf_size, new_property_length_buf_size] =
-            update_property_length_buf();
-
-        // update remaining_length
-        remaining_length_ +=
-            prop_size +
-            (new_property_length_buf_size - old_property_length_buf_size);
-        update_remaining_length_buf();
-    }
-
-    /**
-     * @breif Remove topic and add topic_alias
-     *
-     * This is for extracting topic from the topic_alias.
-     * @param val topic_alias
-     */
-    void add_topic(buffer topic) {
-        add_topic_impl(force_move(topic));
-        // update remaining_length
-        remaining_length_ += topic_name_.size();
-        update_remaining_length_buf();
-    }
-
-    void remove_topic_alias() {
-        auto prop_size = remove_topic_alias_impl();
-        property_length_ -= prop_size;
-        // update property_length_buf
-        auto [old_property_length_buf_size, new_property_length_buf_size] =
-            update_property_length_buf();
-
-        // update remaining_length
-        remaining_length_ +=
-            -prop_size +
-            (new_property_length_buf_size - old_property_length_buf_size);
-        update_remaining_length_buf();
-    }
-
-    void remove_topic_alias_add_topic(buffer topic) {
-        auto prop_size = remove_topic_alias_impl();
-        property_length_ -= prop_size;
-        add_topic_impl(force_move(topic));
-        // update property_length_buf
-        auto [old_property_length_buf_size, new_property_length_buf_size] =
-            update_property_length_buf();
-
-        // update remaining_length
-        remaining_length_ +=
-            topic_name_.size() -
-            prop_size +
-            (new_property_length_buf_size - old_property_length_buf_size);
-        update_remaining_length_buf();
-    }
-
-    /**
-     * @breif Update MessageExpiryInterval property
-     * @param val message_expiry_interval
-     */
-    void update_message_expiry_interval(std::uint32_t val) {
-        bool updated = false;
-        for (auto& prop : props_) {
-            prop.visit(
-                overload {
-                    [&](property::message_expiry_interval& p) {
-                        p = property::message_expiry_interval(val);
-                        updated = true;
-                    },
-                    [&](auto&){}
-                }
-            );
-            if (updated) return;
-        }
-    }
-
-private:
-    void update_remaining_length_buf() {
-        remaining_length_buf_.clear();
-        auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
-        for (auto e : rb) {
-            remaining_length_buf_.push_back(e);
-        }
-    }
-
-    std::tuple<std::size_t, std::size_t> update_property_length_buf() {
-        auto old_property_length_buf_size = property_length_buf_.size();
-        property_length_buf_.clear();
-        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
-        for (auto e : pb) {
-            property_length_buf_.push_back(e);
-        }
-        auto new_property_length_buf_size = property_length_buf_.size();
-        return {old_property_length_buf_size, new_property_length_buf_size};
-    }
-
-    std::size_t remove_topic_alias_impl() {
-        auto it = props_.cbegin();
-        std::size_t size = 0;
-        while (it != props_.cend()) {
-            if (it->id() == property::id::topic_alias) {
-                size += it->size();
-                it = props_.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
-        return size;
-    }
-
-    void add_topic_impl(buffer topic) {
-        BOOST_ASSERT(topic_name_.empty());
-
-        // add topic
-        topic_name_ = force_move(topic);
-        endian_store(
-            boost::numeric_cast<std::uint16_t>(topic_name_.size()),
-            topic_name_length_buf_.data()
-        );
-    }
-
 private:
     std::uint8_t fixed_header_;
     buffer topic_name_;
@@ -540,6 +629,9 @@ private:
     static_vector<char, 4> remaining_length_buf_;
 };
 
+/**
+ * @brief stream output operator
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v) {
     o << "v5::publish{" <<
@@ -553,7 +645,7 @@ inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBy
     }
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     o << ",payload:";
-    for (auto const& e : v.payload()) {
+    for (auto const& e : v.payload_as_buffer()) {
         o << json_like_out(e);
     }
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)

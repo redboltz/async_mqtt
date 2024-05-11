@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP)
 #define ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -76,84 +77,10 @@ public:
         remaining_length_buf_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
     }
 
-    basic_unsuback_packet(buffer buf) {
-        // fixed_header
-        if (buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::unsuback_packet fixed_header doesn't exist"
-            );
-        }
-        fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        buf.remove_prefix(1);
-        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
-        if (!cpt_opt || *cpt_opt != control_packet_type::unsuback) {
-            throw make_error(
-                errc::bad_message,
-                "v5::unsuback_packet fixed_header is invalid"
-            );
-        }
-
-        // remaining_length
-        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
-            remaining_length_ = *vl_opt;
-        }
-        else {
-            throw make_error(errc::bad_message, "v5::unsuback_packet remaining length is invalid");
-        }
-        if (remaining_length_ != buf.size()) {
-            throw make_error(errc::bad_message, "v5::unsuback_packet remaining length doesn't match buf.size()");
-        }
-
-        // packet_id
-        if (!copy_advance(buf, packet_id_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::unsuback_packet packet_id doesn't exist"
-            );
-        }
-
-        // property
-        auto it = buf.begin();
-        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
-            property_length_ = *pl_opt;
-            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
-            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
-            if (buf.size() < property_length_) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::unsuback_packet properties_don't match its length"
-                );
-            }
-            auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf, property_location::unsuback);
-            buf.remove_prefix(property_length_);
-        }
-        else {
-            throw make_error(
-                errc::bad_message,
-                "v5::unsuback_packet property_length is invalid"
-            );
-        }
-
-        if (remaining_length_ == 0) {
-            throw make_error(errc::bad_message, "v5::unsuback_packet doesn't have entries");
-        }
-
-        while (!buf.empty()) {
-            // reason_code
-            if (buf.empty()) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::unsuback_packet unsuback_reason_code  doesn't exist"
-                );
-            }
-            auto rc = static_cast<unsuback_reason_code>(buf.front());
-            entries_.emplace_back(rc);
-            buf.remove_prefix(1);
-        }
-    }
-
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
     constexpr control_packet_type type() const {
         return control_packet_type::unsuback;
     }
@@ -236,6 +163,96 @@ public:
     }
 
 private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v5_unsuback;
+    friend struct ::ut_packet::v5_unsuback_pid4;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
+    basic_unsuback_packet(buffer buf) {
+        // fixed_header
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v5::unsuback_packet fixed_header doesn't exist"
+            );
+        }
+        fixed_header_ = static_cast<std::uint8_t>(buf.front());
+        buf.remove_prefix(1);
+        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
+        if (!cpt_opt || *cpt_opt != control_packet_type::unsuback) {
+            throw make_error(
+                errc::bad_message,
+                "v5::unsuback_packet fixed_header is invalid"
+            );
+        }
+
+        // remaining_length
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v5::unsuback_packet remaining length is invalid");
+        }
+        if (remaining_length_ != buf.size()) {
+            throw make_error(errc::bad_message, "v5::unsuback_packet remaining length doesn't match buf.size()");
+        }
+
+        // packet_id
+        if (!copy_advance(buf, packet_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v5::unsuback_packet packet_id doesn't exist"
+            );
+        }
+
+        // property
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::unsuback_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf, property_location::unsuback);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::unsuback_packet property_length is invalid"
+            );
+        }
+
+        if (remaining_length_ == 0) {
+            throw make_error(errc::bad_message, "v5::unsuback_packet doesn't have entries");
+        }
+
+        while (!buf.empty()) {
+            // reason_code
+            if (buf.empty()) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::unsuback_packet unsuback_reason_code  doesn't exist"
+                );
+            }
+            auto rc = static_cast<unsuback_reason_code>(buf.front());
+            entries_.emplace_back(rc);
+            buf.remove_prefix(1);
+        }
+    }
+
+private:
     std::uint8_t fixed_header_;
     std::vector<unsuback_reason_code> entries_;
     static_vector<char, PacketIdBytes> packet_id_ = static_vector<char, PacketIdBytes>(PacketIdBytes);
@@ -247,6 +264,9 @@ private:
     properties props_;
 };
 
+/**
+ * @brief stream output operator
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdBytes> const& v) {
     o <<

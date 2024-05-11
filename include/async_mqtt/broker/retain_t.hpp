@@ -26,7 +26,7 @@ struct retain_t {
         > = nullptr
     >
     retain_t(
-        buffer topic,
+        std::string topic,
         BufferSequence&& payload,
         properties props,
         qos qos_value,
@@ -43,7 +43,7 @@ struct retain_t {
         }
     }
 
-    buffer topic;
+    std::string topic;
     std::vector<buffer> payload;
     properties props;
     qos qos_value;

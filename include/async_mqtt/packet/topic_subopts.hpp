@@ -24,7 +24,7 @@ public:
      * @param opts      subscribe options
      */
     topic_subopts(
-        buffer all_topic,
+        std::string all_topic,
         sub::opts opts
     ): topic_sharename_{force_move(all_topic)},
        opts_{opts}
@@ -35,15 +35,15 @@ public:
      * @brief Get topic
      * @return topic
      */
-    buffer const& topic() const {
+    std::string const& topic() const {
         return topic_sharename_.topic();
     }
 
     /**
      * @brief Get sharename
-     * @return sharename. If no sharename then return empty size buffer.
+     * @return sharename. If no sharename then return empty size std::string.
      */
-    buffer const& sharename() const {
+    std::string const& sharename() const {
         return topic_sharename_.sharename();
     }
 
@@ -53,7 +53,7 @@ public:
      * If sharename is contained, $share/ prefix is contained.
      * @return all_topic that is given to the constructor.
      */
-    buffer const& all_topic() const {
+    std::string const& all_topic() const {
         return topic_sharename_.all_topic();
     }
 

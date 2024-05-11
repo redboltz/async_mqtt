@@ -77,8 +77,8 @@ public:
                     return;
                 }
                 publish(
-                    am::allocate_buffer(topic),
-                    am::allocate_buffer(payload),
+                    topic,
+                    payload,
                     static_cast<am::qos>(qos)
                 );
             },
@@ -94,7 +94,7 @@ public:
                     return;
                 }
                 subscribe(
-                    am::allocate_buffer(topic),
+                    topic,
                     static_cast<am::qos>(qos)
                 );
             },
@@ -106,7 +106,7 @@ public:
             {"topic_filter"},
             [this](std::ostream& /*out*/, std::string topic) {
                 unsubscribe(
-                    am::allocate_buffer(topic)
+                    topic
                 );
             },
             "unsubscribe"
@@ -120,7 +120,7 @@ public:
             "topic",
             {"TopicName"},
             [this](std::ostream& o, std::string topic) {
-                pub_topic_ = am::allocate_buffer(topic);
+                pub_topic_ = topic;
                 print_pub(o);
             }
         );
@@ -128,7 +128,7 @@ public:
             "payload",
             {"Payload"},
             [this](std::ostream& o, std::string payload) {
-                pub_payload_ = am::allocate_buffer(payload);
+                pub_payload_ = payload;
                 print_pub(o);
             }
         );
@@ -244,7 +244,7 @@ public:
             "add_up",
             {"key", "val"},
             [this](std::ostream& o, std::string key, std::string val) {
-                pub_ups_.emplace_back(am::allocate_buffer(key), am::allocate_buffer(val));
+                pub_ups_.emplace_back(key, val);
                 print_pub(o);
             },
             "Subscription Identifier Property"
@@ -259,8 +259,8 @@ public:
         pub_menu->Insert(
             "clear",
             [this](std::ostream& o) {
-                pub_payload_ = am::buffer{};
-                pub_topic_ = am::buffer{};
+                pub_payload_ = std::string{};
+                pub_topic_ = std::string{};
                 pub_qos_ = am::qos::at_most_once;
                 pub_retain_ = am::pub::retain::no;
                 pub_pfi_ = std::nullopt;
@@ -278,8 +278,8 @@ public:
             "send",
             [this](std::ostream& /*out*/) {
                 publish(
-                    am::allocate_buffer(pub_topic_),
-                    am::allocate_buffer(pub_payload_),
+                    pub_topic_,
+                    pub_payload_,
                     pub_qos_ | pub_retain_
                 );
             },
@@ -295,7 +295,7 @@ public:
             "topic",
             {"TopicFilter"},
             [this](std::ostream& o, std::string topic) {
-                sub_topic_ = am::allocate_buffer(topic),
+                sub_topic_ = topic,
                 print_sub(o);
             }
         );
@@ -393,7 +393,7 @@ public:
             "add_up",
             {"key", "val"},
             [this](std::ostream& o, std::string key, std::string val) {
-                sub_ups_.emplace_back(am::allocate_buffer(key), am::allocate_buffer(val));
+                sub_ups_.emplace_back(key, val);
                 print_sub(o);
             },
             "Subscription Identifier Property"
@@ -408,7 +408,7 @@ public:
         sub_menu->Insert(
             "clear",
             [this](std::ostream& o) {
-                sub_topic_ = am::buffer{};
+                sub_topic_ = std::string{};
                 sub_qos_ = am::qos::at_most_once;
                 sub_nl_ = am::sub::nl::no;
                 sub_rap_ = am::sub::rap::dont;
@@ -423,7 +423,7 @@ public:
             "send",
             [this](std::ostream& /*out*/) {
                 subscribe(
-                    am::allocate_buffer(sub_topic_),
+                    sub_topic_,
                     sub_qos_ | sub_nl_ | sub_rap_ | sub_rh_
                 );
             },
@@ -507,8 +507,8 @@ private:
 
     void publish(
         packet_id_t pid,
-        am::buffer topic,
-        am::buffer payload,
+        std::string topic,
+        std::string payload,
         am::pub::opts opts
     ) {
         if (version_ == am::protocol_version::v3_1_1) {
@@ -540,17 +540,17 @@ private:
             }
             if (pub_ct_) {
                 props.push_back(
-                    am::property::content_type{am::allocate_buffer(*pub_ct_)}
+                    am::property::content_type{*pub_ct_}
                 );
             }
             if (pub_rt_) {
                 props.push_back(
-                    am::property::response_topic{am::allocate_buffer(*pub_rt_)}
+                    am::property::response_topic{*pub_rt_}
                 );
             }
             if (pub_cd_) {
                 props.push_back(
-                    am::property::correlation_data{am::allocate_buffer(*pub_cd_)}
+                    am::property::correlation_data{*pub_cd_}
                 );
             }
             if (pub_ta_) {
@@ -579,8 +579,8 @@ private:
     }
 
     void publish(
-        am::buffer topic,
-        am::buffer payload,
+        std::string topic,
+        std::string payload,
         am::pub::opts opts
     ) {
         if (opts.get_qos() == am::qos::at_least_once ||
@@ -620,7 +620,7 @@ private:
     }
 
     void subscribe(
-        am::buffer topic,
+        std::string topic,
         am::sub::opts opts
     ) {
         ep_.acquire_unique_packet_id(
@@ -678,7 +678,7 @@ private:
     }
 
     void unsubscribe(
-        am::buffer topic
+        std::string topic
     ) {
         ep_.acquire_unique_packet_id(
             [
@@ -731,8 +731,8 @@ private:
     std::unique_ptr<cli::Cli> cli_;
     std::unique_ptr<cli::CliLocalTerminalSession> session_;
 
-    am::buffer pub_topic_;
-    am::buffer pub_payload_;
+    std::string pub_topic_;
+    std::string pub_payload_;
     am::qos pub_qos_ = am::qos::at_most_once;
     am::pub::retain pub_retain_ = am::pub::retain::no;
     std::optional<am::payload_format> pub_pfi_;
@@ -743,7 +743,7 @@ private:
     std::optional<std::uint16_t> pub_ta_;
     std::vector<am::property::user_property> pub_ups_;
 
-    am::buffer sub_topic_;
+    std::string sub_topic_;
     am::qos sub_qos_ = am::qos::at_most_once;
     am::sub::nl sub_nl_ = am::sub::nl::no;
     am::sub::rap sub_rap_ = am::sub::rap::dont;
@@ -804,25 +804,25 @@ private:
         reenter (coro_) {
             yield {
                 username_ =
-                    [&] () -> std::optional<am::buffer> {
+                    [&] () -> std::optional<std::string> {
                         if (vm_.count("username")) {
-                            return am::allocate_buffer(vm_["username"].template as<std::string>());
+                            return vm_["username"].template as<std::string>();
                         }
                         return std::nullopt;
                     } ();
                 password_ =
-                    [&] () -> std::optional<am::buffer> {
+                    [&] () -> std::optional<std::string> {
                         if (vm_.count("password")) {
-                            return am::allocate_buffer(vm_["password"].template as<std::string>());
+                            return vm_["password"].template as<std::string>();
                         }
                         return std::nullopt;
                     } ();
                 client_id_ =
-                    [&] () -> am::buffer {
+                    [&] () -> std::string {
                         if (vm_.count("client_id")) {
-                            return am::allocate_buffer(vm_["client_id"].template as<std::string>());
+                            return vm_["client_id"].template as<std::string>();
                         }
-                        return am::buffer();
+                        return std::string();
                     } ();
                 keep_alive_ = vm_["keep_alive"].template as<std::uint16_t>();
                 ws_path_ = vm_["ws_path"].template as<std::string>();
@@ -981,9 +981,7 @@ private:
                                 std::cout << color_recv;
                                 std::cout << p << std::endl;
                                 std::cout << "  payload:";
-                                for (auto const& e : p.payload()) {
-                                    std::cout << am::json_like_out(e);
-                                }
+                                std::cout << am::json_like_out(p.payload());
                                 std::cout << std::endl;
                                 std::cout << color_none;
                             },
@@ -991,9 +989,7 @@ private:
                                 std::cout << color_recv;
                                 std::cout << p << std::endl;
                                 std::cout << "  payload:";
-                                for (auto const& e : p.payload()) {
-                                    std::cout << am::json_like_out(e);
-                                }
+                                std::cout << am::json_like_out(p.payload());
                                 std::cout << std::endl;
                                 std::cout << color_none;
                             },
@@ -1023,9 +1019,9 @@ private:
     as::ip::tcp::resolver& res_;
     po::variables_map& vm_;
     am::protocol_version version_;
-    am::buffer client_id_;
-    std::optional<am::buffer> username_;
-    std::optional<am::buffer> password_;
+    std::string client_id_;
+    std::optional<std::string> username_;
+    std::optional<std::string> password_;
     std::uint16_t keep_alive_ = 0;
     bool clean_start_ = true;
     std::uint32_t sei_ = 0;

@@ -16,8 +16,8 @@ namespace async_mqtt {
 
 template <typename Sp>
 inline void shared_target<Sp>::insert(
-    buffer share_name,
-    buffer topic_filter,
+    std::string share_name,
+    std::string topic_filter,
     subscription<Sp> sub,
     session_state<Sp>& ss
 ) {
@@ -46,8 +46,8 @@ inline void shared_target<Sp>::insert(
 
 template <typename Sp>
 inline void shared_target<Sp>::erase(
-    buffer share_name,
-    buffer topic_filter,
+    std::string share_name,
+    std::string topic_filter,
     session_state<Sp> const& ss
 ) {
     std::lock_guard<mutex> g{mtx_targets_};
@@ -85,8 +85,8 @@ inline void shared_target<Sp>::erase(
 
 template <typename Sp>
 inline std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> shared_target<Sp>::get_target(
-    buffer const& share_name,
-    buffer const& topic_filter
+    std::string const& share_name,
+    std::string const& topic_filter
 ) {
     std::lock_guard<mutex> g{mtx_targets_};
     // get share_name matched range ordered by timestamp (ascending)
@@ -109,7 +109,7 @@ inline std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> shared
 
 template <typename Sp>
 inline shared_target<Sp>::entry::entry(
-    buffer share_name,
+    std::string share_name,
     session_state<Sp>& ss,
     time_point_t tp)
     : share_name { force_move(share_name) },
@@ -118,7 +118,7 @@ inline shared_target<Sp>::entry::entry(
 {}
 
 template <typename Sp>
-inline buffer const& shared_target<Sp>::entry::client_id() const {
+inline std::string const& shared_target<Sp>::entry::client_id() const {
     return ssr.get().client_id();
 }
 

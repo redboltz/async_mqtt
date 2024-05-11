@@ -8,10 +8,11 @@
 #define ASYNC_MQTT_BROKER_SUBSCRIPTION_HPP
 
 #include <optional>
+#include <string>
 
 #include <async_mqtt/packet/subopts.hpp>
-#include <async_mqtt/buffer.hpp>
 #include <async_mqtt/broker/session_state_fwd.hpp>
+#include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt {
 
@@ -19,8 +20,8 @@ template <typename Sp>
 struct subscription {
     subscription(
         session_state_ref<Sp> ss,
-        buffer sharename,
-        buffer topic,
+        std::string sharename,
+        std::string topic,
         sub::opts opts,
         std::optional<std::size_t> sid)
         :ss{ss},
@@ -31,8 +32,8 @@ struct subscription {
     {}
 
     session_state_ref<Sp> ss;
-    buffer sharename;
-    buffer topic;
+    std::string sharename;
+    std::string topic;
     sub::opts opts;
     std::optional<std::size_t> sid;
 };

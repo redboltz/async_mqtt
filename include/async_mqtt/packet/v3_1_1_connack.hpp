@@ -10,6 +10,7 @@
 #include <utility>
 #include <numeric>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -53,6 +54,69 @@ public:
     {
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::connack;
+    }
+
+    /**
+     * @brief Create const buffer sequence.
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+
+        ret.emplace_back(as::buffer(all_.data(), all_.size()));
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return all_.size();
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence.
+     * @return number of element of const_buffer_sequence
+     */
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
+
+    /**
+     * @brief Get session_present.
+     * @return session_present
+     */
+    bool session_present() const {
+        return is_session_present(all_[2]);
+    }
+
+    /**
+     * @brief Get connect_return_code.
+     * @return connect_return_code
+     */
+    connect_return_code code() const {
+        return static_cast<connect_return_code>(all_[3]);
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v311_connack;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     connack_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -111,58 +175,13 @@ public:
         }
     }
 
-    constexpr control_packet_type type() const {
-        return control_packet_type::connack;
-    }
-
-    /**
-     * @brief Create const buffer sequence.
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-
-        ret.emplace_back(as::buffer(all_.data(), all_.size()));
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return all_.size();
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence.
-     * @return number of element of const_buffer_sequence
-     */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
-        return 1; // all
-    }
-
-    /**
-     * @brief Get session_present.
-     * @return session_present
-     */
-    bool session_present() const {
-        return is_session_present(all_[2]);
-    }
-
-    /**
-     * @brief Get connect_return_code.
-     * @return connect_return_code
-     */
-    connect_return_code code() const {
-        return static_cast<connect_return_code>(all_[3]);
-    }
-
 private:
     static_vector<char, 4> all_;
 };
 
+/**
+ * @brief stream output operator
+ */
 inline std::ostream& operator<<(std::ostream& o, connack_packet const& v) {
     o <<
         "v3_1_1::connack{" <<
