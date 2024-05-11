@@ -11,7 +11,7 @@
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 struct v311_pubrec;
-struct v311_pubreck_pid4;
+struct v311_pubrec_pid4;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v3_1_1_pubrec.hpp>

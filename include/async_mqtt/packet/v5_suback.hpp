@@ -164,10 +164,10 @@ private:
     friend basic_packet_variant<PacketIdBytes>
     buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
 
-#if defined(ASYNC_MQTT_UNIT_TEST)
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_suback;
     friend struct ::ut_packet::v5_suback_pid4;
-#endif // defined(ASYNC_MQTT_UNIT_TEST)
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
     basic_suback_packet(buffer buf) {

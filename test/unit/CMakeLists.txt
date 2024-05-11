@@ -85,11 +85,12 @@ endif()
 
 
 foreach(source_file ${check_PROGRAMS})
-    if(${source_file} MATCHES "ut_packet_.*")
-        add_compile_definitions(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
-    endif()
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
+    if(${source_file} MATCHES "ut_packet_v.*")
+        message(STATUS ${source_file})
+        target_compile_definitions(${source_file_we} PUBLIC ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    endif()
     target_link_libraries(${source_file_we} async_mqtt_iface)
     target_compile_definitions(
         ${source_file_we}

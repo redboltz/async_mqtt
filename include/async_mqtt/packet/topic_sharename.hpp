@@ -23,9 +23,16 @@ public:
      * @brief constructor
      * @param all_topic TopicFilter. It could contain sharename on MQTT v5.0.
      */
+    template <
+        typename AllTopic,
+        typename std::enable_if_t<
+            std::is_convertible_v<std::decay_t<AllTopic>, std::string_view>,
+            std::nullptr_t
+        > = nullptr
+    >
     topic_sharename(
-        std::string all_topic
-    ): all_topic_{force_move(all_topic)} {
+        AllTopic&& all_topic
+    ): all_topic_{std::forward<AllTopic>(all_topic)} {
         BOOST_ASSERT(all_topic_.size() <= 0xffff);
         auto const shared_prefix = std::string_view("$share/");
         if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {

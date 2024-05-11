@@ -228,19 +228,19 @@ private:
     friend basic_packet_variant<4>
     buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
 
-#if defined(ASYNC_MQTT_UNIT_TEST)
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_auth;
     friend struct ::ut_packet::v5_auth_no_arg;
     friend struct ::ut_packet::v5_auth_pid_rc;
     friend struct ::ut_packet::v5_auth_prop_len_last;
-#endif // defined(ASYNC_MQTT_UNIT_TEST)
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
     auth_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
             throw make_error(
-a                errc::bad_message,
+                errc::bad_message,
                 "v5::auth_packet fixed_header doesn't exist"
             );
         }

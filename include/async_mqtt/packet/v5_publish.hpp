@@ -146,11 +146,11 @@ public:
 
     template <
         typename BufferSequence,
-        typename std::enable_if<
+        typename std::enable_if_t<
             is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
             std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>,
             std::nullptr_t
-        >::type = nullptr
+        > = nullptr
     >
     basic_publish_packet(
         std::string topic_name,
@@ -458,13 +458,13 @@ private:
     friend basic_packet_variant<PacketIdBytes>
     buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
 
-#if defined(ASYNC_MQTT_UNIT_TEST)
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_publish;
     friend struct ::ut_packet::v5_publish_pid0;
     friend struct ::ut_packet::v5_publish_invalid;
     friend struct ::ut_packet::v5_publish_pid4;
     friend struct ::ut_packet::v5_publish_topic_alias;
-#endif // defined(ASYNC_MQTT_UNIT_TEST)
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
     basic_publish_packet(buffer buf)

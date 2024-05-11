@@ -11,6 +11,8 @@
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 struct v311_publish;
+struct v311_publish_qos0;
+struct v311_publish_invalid;
 struct v311_publish_pid4;
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -39,7 +41,7 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -69,7 +71,7 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -106,7 +108,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
     BOOST_TEST(p.packet_id() == 0);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -135,7 +137,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         BOOST_TEST(p.packet_id() == 0);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -199,7 +201,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
     BOOST_TEST(p.packet_id() == 0x12345678);
     BOOST_TEST(p.topic() == "topic1");
     {
-        auto const& bs = p.payload();
+        auto const& bs = p.payload_as_buffer();
         auto [b, e] = am::make_packet_range(bs);
         std::string_view expected = "payload1";
         BOOST_TEST(std::equal(b, e, expected.begin()));
@@ -229,7 +231,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.topic() == "topic1");
         {
-            auto const& bs = p.payload();
+            auto const& bs = p.payload_as_buffer();
             auto [b, e] = am::make_packet_range(bs);
             std::string_view expected = "payload1";
             BOOST_TEST(std::equal(b, e, expected.begin()));

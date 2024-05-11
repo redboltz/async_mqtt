@@ -1513,7 +1513,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish2 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
+        "",
         "payload2",
         am::qos::exactly_once,
         am::properties{

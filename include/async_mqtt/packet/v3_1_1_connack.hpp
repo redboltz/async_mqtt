@@ -109,9 +109,9 @@ private:
     friend basic_packet_variant<4>
     buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
 
-#if defined(ASYNC_MQTT_UNIT_TEST)
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v311_connack;
-#endif // defined(ASYNC_MQTT_UNIT_TEST)
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
     connack_packet(buffer buf) {

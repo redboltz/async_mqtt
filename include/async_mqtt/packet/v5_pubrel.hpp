@@ -257,13 +257,13 @@ private:
     friend basic_packet_variant<PacketIdBytes>
     buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
 
-#if defined(ASYNC_MQTT_UNIT_TEST)
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_pubrel;
     friend struct ::ut_packet::v5_pubrel_pid4;
     friend struct ::ut_packet::v5_pubrel_pid_only;
     friend struct ::ut_packet::v5_pubrel_pid_rc;
     friend struct ::ut_packet::v5_pubrel_prop_len_last;
-#endif // defined(ASYNC_MQTT_UNIT_TEST)
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
     basic_pubrel_packet(buffer buf) {
