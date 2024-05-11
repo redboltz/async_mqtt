@@ -256,9 +256,9 @@ private:
 
     void connect_handler(
         epsp_t epsp,
-        buffer client_id,
-        std::optional<buffer> noauth_username,
-        std::optional<buffer> password,
+        std::string client_id,
+        std::optional<std::string> noauth_username,
+        std::optional<std::string> password,
         std::optional<will> will,
         bool clean_start,
         std::uint16_t /*keep_alive*/,
@@ -677,7 +677,7 @@ private:
 
     bool handle_empty_client_id(
         epsp_t& epsp,
-        buffer const& client_id,
+        std::string const& client_id,
         bool clean_start,
         properties& connack_props
     ) {

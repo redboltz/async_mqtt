@@ -23,8 +23,8 @@ public:
      * @brief constructor
      * @param all_topic TopicFilter. It could contain sharename on MQTT v5.0.
      */
-    topic_sharename(
-        buffer all_topic
+    explicit topic_sharename(
+        std::string all_topic
     ): all_topic_{force_move(all_topic)} {
         BOOST_ASSERT(all_topic_.size() <= 0xffff);
         auto const shared_prefix = std::string_view("$share/");
@@ -36,7 +36,7 @@ public:
             if (idx == 0 || idx == std::string_view::npos) return;
 
             topic_ = sharename_.substr(idx + 1);
-            sharename_.remove_suffix(sharename_.size() - idx);
+            sharename_ = sharename_.substr(0, sharename_.size() - idx);
         }
         else {
             topic_ = all_topic_;
@@ -47,15 +47,15 @@ public:
      * @brief Get topic
      * @return topic
      */
-    buffer const& topic() const {
+    std::string const& topic() const {
         return topic_;
     }
 
     /**
      * @brief Get sharename
-     * @return sharename. If no sharename then return empty size buffer.
+     * @return sharename. If no sharename then return empty size std::string.
      */
-    buffer const& sharename() const {
+    std::string const& sharename() const {
         return sharename_;
     }
 
@@ -65,7 +65,7 @@ public:
      * If sharename is contained, $share/ prefix is contained.
      * @return all_topic that is given to the constructor.
      */
-    buffer const& all_topic() const {
+    std::string const& all_topic() const {
         return all_topic_;
     }
 
@@ -99,9 +99,9 @@ public:
     }
 
 private:
-    buffer all_topic_;
-    buffer topic_;
-    buffer sharename_;
+    std::string all_topic_;
+    std::string topic_;
+    std::string sharename_;
 };
 
 } // namespace async_mqtt

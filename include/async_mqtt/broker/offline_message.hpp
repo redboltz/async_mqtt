@@ -48,7 +48,7 @@ public:
         >* = nullptr
     >
     offline_message(
-        buffer topic,
+        std::string topic,
         BufferSequence&& payload,
         pub::opts pubopts,
         properties props,
@@ -141,7 +141,7 @@ public:
 private:
     friend class offline_messages;
 
-    buffer topic_;
+    std::string topic_;
     std::vector<buffer> payload_;
     pub::opts pubopts_;
     properties props_;
@@ -186,7 +186,7 @@ public:
     >
     push_back(
         as::io_context& timer_ioc,
-        buffer pub_topic,
+        std::string pub_topic,
         BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {

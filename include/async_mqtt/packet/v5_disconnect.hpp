@@ -12,7 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -85,112 +85,6 @@ public:
             properties{}
         }
     {}
-
-    disconnect_packet(buffer buf) {
-        // fixed_header
-        if (buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::disconnect_packet fixed_header doesn't exist"
-            );
-        }
-        fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        buf.remove_prefix(1);
-
-        // remaining_length
-        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
-            remaining_length_ = *vl_opt;
-        }
-        else {
-            throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
-        }
-
-        if (remaining_length_ == 0) {
-            if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
-            }
-            return;
-        }
-
-        // reason_code
-        reason_code_.emplace(static_cast<disconnect_reason_code>(buf.front()));
-        buf.remove_prefix(1);
-        switch (*reason_code_) {
-        case disconnect_reason_code::normal_disconnection:
-        case disconnect_reason_code::disconnect_with_will_message:
-        case disconnect_reason_code::unspecified_error:
-        case disconnect_reason_code::malformed_packet:
-        case disconnect_reason_code::protocol_error:
-        case disconnect_reason_code::implementation_specific_error:
-        case disconnect_reason_code::not_authorized:
-        case disconnect_reason_code::server_busy:
-        case disconnect_reason_code::server_shutting_down:
-        case disconnect_reason_code::keep_alive_timeout:
-        case disconnect_reason_code::session_taken_over:
-        case disconnect_reason_code::topic_filter_invalid:
-        case disconnect_reason_code::topic_name_invalid:
-        case disconnect_reason_code::receive_maximum_exceeded:
-        case disconnect_reason_code::topic_alias_invalid:
-        case disconnect_reason_code::packet_too_large:
-        case disconnect_reason_code::message_rate_too_high:
-        case disconnect_reason_code::quota_exceeded:
-        case disconnect_reason_code::administrative_action:
-        case disconnect_reason_code::payload_format_invalid:
-        case disconnect_reason_code::retain_not_supported:
-        case disconnect_reason_code::qos_not_supported:
-        case disconnect_reason_code::use_another_server:
-        case disconnect_reason_code::server_moved:
-        case disconnect_reason_code::shared_subscriptions_not_supported:
-        case disconnect_reason_code::connection_rate_exceeded:
-        case disconnect_reason_code::maximum_connect_time:
-        case disconnect_reason_code::subscription_identifiers_not_supported:
-        case disconnect_reason_code::wildcard_subscriptions_not_supported:
-            break;
-        default:
-            throw make_error(
-                errc::bad_message,
-                "v5::disconnect_packet connect reason_code is invalid"
-            );
-            break;
-        }
-
-        if (remaining_length_ == 1) {
-            if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
-            }
-            return;
-        }
-
-        // property
-        auto it = buf.begin();
-        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
-            property_length_ = *pl_opt;
-            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
-            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
-            if (buf.size() < property_length_) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::disconnect_packet properties_don't match its length"
-                );
-            }
-            auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf, property_location::disconnect);
-            buf.remove_prefix(property_length_);
-        }
-        else {
-            throw make_error(
-                errc::bad_message,
-                "v5::disconnect_packet property_length is invalid"
-            );
-        }
-
-        if (!buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::disconnect_packet properties don't match its length"
-            );
-        }
-    }
 
     constexpr control_packet_type type() const {
         return control_packet_type::disconnect;
@@ -332,6 +226,120 @@ private:
         }
 
         remaining_length_ += property_length_buf_.size() + property_length_;
+    }
+
+private:
+
+    friend basic_packet_variant<2>
+    buffer_to_basic_packet_variant<2>(buffer buf, protocol_version ver);
+    friend basic_packet_variant<4>
+    buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
+
+    // private constructor for internal use
+    disconnect_packet(buffer buf) {
+        // fixed_header
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v5::disconnect_packet fixed_header doesn't exist"
+            );
+        }
+        fixed_header_ = static_cast<std::uint8_t>(buf.front());
+        buf.remove_prefix(1);
+
+        // remaining_length
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
+        }
+
+        if (remaining_length_ == 0) {
+            if (!buf.empty()) {
+                throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
+            }
+            return;
+        }
+
+        // reason_code
+        reason_code_.emplace(static_cast<disconnect_reason_code>(buf.front()));
+        buf.remove_prefix(1);
+        switch (*reason_code_) {
+        case disconnect_reason_code::normal_disconnection:
+        case disconnect_reason_code::disconnect_with_will_message:
+        case disconnect_reason_code::unspecified_error:
+        case disconnect_reason_code::malformed_packet:
+        case disconnect_reason_code::protocol_error:
+        case disconnect_reason_code::implementation_specific_error:
+        case disconnect_reason_code::not_authorized:
+        case disconnect_reason_code::server_busy:
+        case disconnect_reason_code::server_shutting_down:
+        case disconnect_reason_code::keep_alive_timeout:
+        case disconnect_reason_code::session_taken_over:
+        case disconnect_reason_code::topic_filter_invalid:
+        case disconnect_reason_code::topic_name_invalid:
+        case disconnect_reason_code::receive_maximum_exceeded:
+        case disconnect_reason_code::topic_alias_invalid:
+        case disconnect_reason_code::packet_too_large:
+        case disconnect_reason_code::message_rate_too_high:
+        case disconnect_reason_code::quota_exceeded:
+        case disconnect_reason_code::administrative_action:
+        case disconnect_reason_code::payload_format_invalid:
+        case disconnect_reason_code::retain_not_supported:
+        case disconnect_reason_code::qos_not_supported:
+        case disconnect_reason_code::use_another_server:
+        case disconnect_reason_code::server_moved:
+        case disconnect_reason_code::shared_subscriptions_not_supported:
+        case disconnect_reason_code::connection_rate_exceeded:
+        case disconnect_reason_code::maximum_connect_time:
+        case disconnect_reason_code::subscription_identifiers_not_supported:
+        case disconnect_reason_code::wildcard_subscriptions_not_supported:
+            break;
+        default:
+            throw make_error(
+                errc::bad_message,
+                "v5::disconnect_packet connect reason_code is invalid"
+            );
+            break;
+        }
+
+        if (remaining_length_ == 1) {
+            if (!buf.empty()) {
+                throw make_error(errc::bad_message, "v5::disconnect_packet remaining length is invalid");
+            }
+            return;
+        }
+
+        // property
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::disconnect_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf, property_location::disconnect);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::disconnect_packet property_length is invalid"
+            );
+        }
+
+        if (!buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v5::disconnect_packet properties don't match its length"
+            );
+        }
     }
 
 private:

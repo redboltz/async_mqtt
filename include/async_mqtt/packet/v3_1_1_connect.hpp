@@ -12,7 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
@@ -68,9 +68,9 @@ public:
     connect_packet(
         bool clean_session,
         std::uint16_t keep_alive_sec,
-        buffer client_id,
-        std::optional<buffer> user_name = std::nullopt,
-        std::optional<buffer> password = std::nullopt
+        std::string client_id,
+        std::optional<std::string> user_name = std::nullopt,
+        std::optional<std::string> password = std::nullopt
     ):connect_packet(
         clean_session,
         keep_alive_sec,
@@ -111,10 +111,10 @@ public:
     connect_packet(
         bool clean_session,
         std::uint16_t keep_alive_sec,
-        buffer client_id,
+        std::string client_id,
         std::optional<will> w,
-        std::optional<buffer> user_name = std::nullopt,
-        std::optional<buffer> password = std::nullopt
+        std::optional<std::string> user_name = std::nullopt,
+        std::optional<std::string> password = std::nullopt
     )
         : fixed_header_{
               make_fixed_header(control_packet_type::connect, 0b0000)
@@ -154,13 +154,13 @@ public:
                 );
             }
             connect_flags_ |= connect_flags::mask_user_name_flag;
-            user_name_ = force_move(*user_name);
+            user_name_ = buffer{force_move(*user_name)};
             user_name_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(user_name_.size()));
             remaining_length_ += 2 + user_name_.size();
         }
         if (password) {
             connect_flags_ |= connect_flags::mask_password_flag;
-            password_ = force_move(*password);
+            password_ = buffer{force_move(*password)};
             password_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(password_.size()));
             remaining_length_ += 2 + password_.size();
         }
@@ -194,6 +194,175 @@ public:
         }
     }
 
+    constexpr control_packet_type type() const {
+        return control_packet_type::connect;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+        ret.emplace_back(as::buffer(protocol_name_and_level_.data(), protocol_name_and_level_.size()));
+        ret.emplace_back(as::buffer(&connect_flags_, 1));
+        ret.emplace_back(as::buffer(keep_alive_buf_.data(), keep_alive_buf_.size()));
+
+        ret.emplace_back(as::buffer(client_id_length_buf_.data(), client_id_length_buf_.size()));
+        ret.emplace_back(as::buffer(client_id_));
+
+        if (connect_flags::has_will_flag(connect_flags_)) {
+            ret.emplace_back(as::buffer(will_topic_length_buf_.data(), will_topic_length_buf_.size()));
+            ret.emplace_back(as::buffer(will_topic_));
+            ret.emplace_back(as::buffer(will_message_length_buf_.data(), will_message_length_buf_.size()));
+            ret.emplace_back(as::buffer(will_message_));
+        }
+
+        if (connect_flags::has_user_name_flag(connect_flags_)) {
+            ret.emplace_back(as::buffer(user_name_length_buf_.data(), user_name_length_buf_.size()));
+            ret.emplace_back(as::buffer(user_name_));
+        }
+
+        if (connect_flags::has_password_flag(connect_flags_)) {
+            ret.emplace_back(as::buffer(password_length_buf_.data(), password_length_buf_.size()));
+            ret.emplace_back(as::buffer(password_));
+        }
+
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    std::size_t num_of_const_buffer_sequence() const {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            1 +                   // protocol name and level
+            1 +                   // connect flags
+            1 +                   // keep alive
+
+            2 +                   // client id length, client id
+
+            [&] () -> std::size_t {
+                if (connect_flags::has_will_flag(connect_flags_)) {
+                    return
+                        2 +       // will topic name length, will topic name
+                        2;        // will message length, will message
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_user_name_flag(connect_flags_)) {
+                    return 2;     // user name length, user name
+                }
+                return 0;
+            } () +
+            [&] () -> std::size_t {
+                if (connect_flags::has_password_flag(connect_flags_)) {
+                    return 2;     // password length, password
+                }
+                return 0;
+            } ();
+    }
+
+    /**
+     * @brief Get clean_session.
+     * @return clean_session
+     */
+    bool clean_session() const {
+        return connect_flags::has_clean_session(connect_flags_);
+    }
+
+    /**
+     * @brief Get keep_alive.
+     * @return keep_alive
+     */
+    std::uint16_t keep_alive() const {
+        return endian_load<std::uint16_t>(keep_alive_buf_.data());
+    }
+
+    /**
+     * @brief Get client_id
+     * @return client_id
+     */
+    std::string client_id() const {
+        return std::string{client_id_};
+    }
+
+    /**
+     * @brief Get user_name.
+     * @return user_name
+     */
+    std::optional<std::string> user_name() const {
+        if (connect_flags::has_user_name_flag(connect_flags_)) {
+            return std::string{user_name_};
+        }
+        else {
+            return std::nullopt;
+        }
+    }
+
+    /**
+     * @brief Get password.
+     * @return password
+     */
+    std::optional<std::string> password() const {
+        if (connect_flags::has_password_flag(connect_flags_)) {
+            return std::string{password_};
+        }
+        else {
+            return std::nullopt;
+        }
+    }
+
+    /**
+     * @brief Get will.
+     * @return will
+     */
+    std::optional<will> get_will() const {
+        if (connect_flags::has_will_flag(connect_flags_)) {
+            pub::opts opts =
+                connect_flags::will_retain(connect_flags_) |
+                connect_flags::will_qos(connect_flags_);
+            return
+                async_mqtt::will{
+                    will_topic_,
+                    will_message_,
+                    opts,
+                    properties{}
+                };
+        }
+        else {
+            return std::nullopt;
+        }
+    }
+
+private:
+
+    friend basic_packet_variant<2>
+    buffer_to_basic_packet_variant<2>(buffer buf, protocol_version ver);
+    friend basic_packet_variant<4>
+    buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
+
+    // private constructor for internal use
     connect_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -408,167 +577,6 @@ public:
             }
             password_ = buf.substr(0, password_length);
             buf.remove_prefix(password_length);
-        }
-    }
-
-    constexpr control_packet_type type() const {
-        return control_packet_type::connect;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-        ret.emplace_back(as::buffer(protocol_name_and_level_.data(), protocol_name_and_level_.size()));
-        ret.emplace_back(as::buffer(&connect_flags_, 1));
-        ret.emplace_back(as::buffer(keep_alive_buf_.data(), keep_alive_buf_.size()));
-
-        ret.emplace_back(as::buffer(client_id_length_buf_.data(), client_id_length_buf_.size()));
-        ret.emplace_back(as::buffer(client_id_));
-
-        if (connect_flags::has_will_flag(connect_flags_)) {
-            ret.emplace_back(as::buffer(will_topic_length_buf_.data(), will_topic_length_buf_.size()));
-            ret.emplace_back(as::buffer(will_topic_));
-            ret.emplace_back(as::buffer(will_message_length_buf_.data(), will_message_length_buf_.size()));
-            ret.emplace_back(as::buffer(will_message_));
-        }
-
-        if (connect_flags::has_user_name_flag(connect_flags_)) {
-            ret.emplace_back(as::buffer(user_name_length_buf_.data(), user_name_length_buf_.size()));
-            ret.emplace_back(as::buffer(user_name_));
-        }
-
-        if (connect_flags::has_password_flag(connect_flags_)) {
-            ret.emplace_back(as::buffer(password_length_buf_.data(), password_length_buf_.size()));
-            ret.emplace_back(as::buffer(password_));
-        }
-
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    std::size_t num_of_const_buffer_sequence() const {
-        return
-            1 +                   // fixed header
-            1 +                   // remaining length
-            1 +                   // protocol name and level
-            1 +                   // connect flags
-            1 +                   // keep alive
-
-            2 +                   // client id length, client id
-
-            [&] () -> std::size_t {
-                if (connect_flags::has_will_flag(connect_flags_)) {
-                    return
-                        2 +       // will topic name length, will topic name
-                        2;        // will message length, will message
-                }
-                return 0;
-            } () +
-            [&] () -> std::size_t {
-                if (connect_flags::has_user_name_flag(connect_flags_)) {
-                    return 2;     // user name length, user name
-                }
-                return 0;
-            } () +
-            [&] () -> std::size_t {
-                if (connect_flags::has_password_flag(connect_flags_)) {
-                    return 2;     // password length, password
-                }
-                return 0;
-            } ();
-    }
-
-    /**
-     * @brief Get clean_session.
-     * @return clean_session
-     */
-    bool clean_session() const {
-        return connect_flags::has_clean_session(connect_flags_);
-    }
-
-    /**
-     * @brief Get keep_alive.
-     * @return keep_alive
-     */
-    std::uint16_t keep_alive() const {
-        return endian_load<std::uint16_t>(keep_alive_buf_.data());
-    }
-
-    /**
-     * @brief Get client_id
-     * @return client_id
-     */
-    buffer client_id() const {
-        return client_id_;
-    }
-
-    /**
-     * @brief Get user_name.
-     * @return user_name
-     */
-    std::optional<buffer> user_name() const {
-        if (connect_flags::has_user_name_flag(connect_flags_)) {
-            return user_name_;
-        }
-        else {
-            return std::nullopt;
-        }
-    }
-
-    /**
-     * @brief Get password.
-     * @return password
-     */
-    std::optional<buffer> password() const {
-        if (connect_flags::has_password_flag(connect_flags_)) {
-            return password_;
-        }
-        else {
-            return std::nullopt;
-        }
-    }
-
-    /**
-     * @brief Get will.
-     * @return will
-     */
-    std::optional<will> get_will() const {
-        if (connect_flags::has_will_flag(connect_flags_)) {
-            pub::opts opts =
-                connect_flags::will_retain(connect_flags_) |
-                connect_flags::will_qos(connect_flags_);
-            return
-                async_mqtt::will{
-                    will_topic_,
-                    will_message_,
-                    opts,
-                    properties{}
-                };
-        }
-        else {
-            return std::nullopt;
         }
     }
 

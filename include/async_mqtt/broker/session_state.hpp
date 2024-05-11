@@ -58,8 +58,8 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     using will_sender_t = std::function<
         void(
             session_state<epsp_t> const& source_ss,
-            buffer topic,
-            buffer payload,
+            std::string topic,
+            std::string payload,
             pub::opts pubopts,
             properties props
         )
@@ -71,7 +71,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         sub_con_map<epsp_t>& subs_map,
         shared_target<epsp_t>& shared_targets,
         epsp_t epsp,
-        buffer client_id,
+        std::string client_id,
         std::string const& username,
         std::optional<will> will,
         will_sender_t will_sender,
@@ -86,7 +86,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 sub_con_map<epsp_t>& subs_map,
                 shared_target<epsp_t>& shared_targets,
                 epsp_t epsp,
-                buffer client_id,
+                std::string client_id,
                 std::string const& username,
                 will_sender_t will_sender,
                 bool clean_start,
@@ -240,7 +240,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     publish(
         epsp_t& epsp,
         as::io_context& timer_ioc,
-        buffer pub_topic,
+        std::string pub_topic,
         BufferSequence&& payload,
         pub::opts pubopts,
         properties props) {
@@ -585,7 +585,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         return version_;
     }
 
-    buffer const& client_id() const {
+    std::string const& client_id() const {
         return client_id_;
     }
 
@@ -652,7 +652,7 @@ private:
         sub_con_map<epsp_t>& subs_map,
         shared_target<epsp_t>& shared_targets,
         epsp_t epsp,
-        buffer client_id,
+        std::string client_id,
         std::string const& username,
         will_sender_t will_sender,
         bool clean_start,
@@ -758,7 +758,7 @@ private:
     shared_target<epsp_t>& shared_targets_;
     epwp_t epwp_;
     protocol_version version_;
-    buffer client_id_;
+    std::string client_id_;
 
     std::string username_;
 

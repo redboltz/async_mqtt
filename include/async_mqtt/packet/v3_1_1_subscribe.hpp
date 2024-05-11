@@ -9,7 +9,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -109,6 +109,82 @@ public:
         remaining_length_buf_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
     }
 
+    constexpr control_packet_type type() const {
+        return control_packet_type::subscribe;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+
+        ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
+
+        BOOST_ASSERT(entries_.size() == topic_length_buf_entries_.size());
+        auto it = topic_length_buf_entries_.begin();
+        for (auto const& e : entries_) {
+            ret.emplace_back(as::buffer(it->data(), it->size()));
+            ret.emplace_back(as::buffer(e.all_topic()));
+            ret.emplace_back(as::buffer(&e.opts(), 1));
+            ++it;
+        }
+
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    std::size_t num_of_const_buffer_sequence() const {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            1 +                   // packet id
+            entries_.size() * 3;  // topic name length, topic name, qos
+    }
+
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_.data());
+    }
+
+    /**
+     * @brief Get entries
+     * @return entries
+     */
+    std::vector<topic_subopts> const& entries() const {
+        return entries_;
+    }
+
+private:
+
+    friend basic_packet_variant<PacketIdBytes>
+    buffer_to_basic_packet_variant<PacketIdBytes>(buffer buf, protocol_version ver);
+
+    // private constructor for internal use
     basic_subscribe_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -206,79 +282,9 @@ public:
                 );
                 break;
             }
-            entries_.emplace_back(force_move(topic), opts);
+            entries_.emplace_back(std::string{topic}, opts);
             buf.remove_prefix(1);
         }
-    }
-
-    constexpr control_packet_type type() const {
-        return control_packet_type::subscribe;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-
-        ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
-
-        BOOST_ASSERT(entries_.size() == topic_length_buf_entries_.size());
-        auto it = topic_length_buf_entries_.begin();
-        for (auto const& e : entries_) {
-            ret.emplace_back(as::buffer(it->data(), it->size()));
-            ret.emplace_back(as::buffer(e.all_topic()));
-            ret.emplace_back(as::buffer(&e.opts(), 1));
-            ++it;
-        }
-
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    std::size_t num_of_const_buffer_sequence() const {
-        return
-            1 +                   // fixed header
-            1 +                   // remaining length
-            1 +                   // packet id
-            entries_.size() * 3;  // topic name length, topic name, qos
-    }
-
-    /**
-     * @brief Get packet_id.
-     * @return packet_id
-     */
-    packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_.data());
-    }
-
-    /**
-     * @brief Get entries
-     * @return entries
-     */
-    std::vector<topic_subopts> const& entries() const {
-        return entries_;
     }
 
 private:

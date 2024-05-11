@@ -14,7 +14,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/buffer.hpp>
 #include <async_mqtt/time_point_t.hpp>
 
 #include <async_mqtt/broker/session_state_fwd.hpp>
@@ -29,20 +28,20 @@ namespace mi = boost::multi_index;
 template <typename Sp>
 class shared_target {
 public:
-    void insert(buffer share_name, buffer topic_filter, subscription<Sp> sub, session_state<Sp>& ss);
-    void erase(buffer share_name, buffer topic_filter, session_state<Sp> const& ss);
+    void insert(std::string share_name, std::string topic_filter, subscription<Sp> sub, session_state<Sp>& ss);
+    void erase(std::string share_name, std::string topic_filter, session_state<Sp> const& ss);
     void erase(session_state<Sp> const& ss);
-    std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> get_target(buffer const& share_name, buffer const& topic_filter);
+    std::optional<std::tuple<session_state_ref<Sp>, subscription<Sp>>> get_target(std::string const& share_name, std::string const& topic_filter);
 
 private:
     struct entry {
-        entry(buffer share_name, session_state<Sp>& ss, time_point_t tp);
+        entry(std::string share_name, session_state<Sp>& ss, time_point_t tp);
 
-        buffer const& client_id() const;
-        buffer share_name;
+        std::string const& client_id() const;
+        std::string share_name;
         session_state_ref<Sp> ssr;
         time_point_t tp;
-        std::map<buffer, subscription<Sp>> tf_subs;
+        std::map<std::string, subscription<Sp>> tf_subs;
     };
 
     using mi_shared_target = mi::multi_index_container<

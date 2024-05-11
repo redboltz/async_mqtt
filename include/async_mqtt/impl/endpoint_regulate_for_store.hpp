@@ -82,7 +82,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
         if (auto ta_opt = get_topic_alias(packet.props())) {
             auto topic = topic_alias_send_->find_without_touch(*ta_opt);
             if (!topic.empty()) {
-                packet.remove_topic_alias_add_topic(buffer{force_move(topic)});
+                packet.remove_topic_alias_add_topic(force_move(topic));
             }
         }
     }

@@ -9,39 +9,55 @@
 
 #include <variant>
 
-#include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/packet/v3_1_1_connect.hpp>
-#include <async_mqtt/packet/v3_1_1_connack.hpp>
-#include <async_mqtt/packet/v3_1_1_publish.hpp>
-#include <async_mqtt/packet/v3_1_1_puback.hpp>
-#include <async_mqtt/packet/v3_1_1_pubrec.hpp>
-#include <async_mqtt/packet/v3_1_1_pubrel.hpp>
-#include <async_mqtt/packet/v3_1_1_pubcomp.hpp>
-#include <async_mqtt/packet/v3_1_1_subscribe.hpp>
-#include <async_mqtt/packet/v3_1_1_suback.hpp>
-#include <async_mqtt/packet/v3_1_1_unsubscribe.hpp>
-#include <async_mqtt/packet/v3_1_1_unsuback.hpp>
-#include <async_mqtt/packet/v3_1_1_pingreq.hpp>
-#include <async_mqtt/packet/v3_1_1_pingresp.hpp>
-#include <async_mqtt/packet/v3_1_1_disconnect.hpp>
-#include <async_mqtt/packet/v5_connect.hpp>
-#include <async_mqtt/packet/v5_connack.hpp>
-#include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/packet/v5_puback.hpp>
-#include <async_mqtt/packet/v5_pubrec.hpp>
-#include <async_mqtt/packet/v5_pubrel.hpp>
-#include <async_mqtt/packet/v5_pubcomp.hpp>
-#include <async_mqtt/packet/v5_subscribe.hpp>
-#include <async_mqtt/packet/v5_suback.hpp>
-#include <async_mqtt/packet/v5_unsubscribe.hpp>
-#include <async_mqtt/packet/v5_unsuback.hpp>
-#include <async_mqtt/packet/v5_pingreq.hpp>
-#include <async_mqtt/packet/v5_pingresp.hpp>
-#include <async_mqtt/packet/v5_disconnect.hpp>
-#include <async_mqtt/packet/v5_auth.hpp>
+#include <boost/asio/buffer.hpp>
+
 #include <async_mqtt/exception.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+
+#include <async_mqtt/util/overload.hpp>
+
 namespace async_mqtt {
+namespace as = boost::asio;
+
+namespace v3_1_1 {
+
+class connack_packet;
+class connect_packet;
+template <std::size_t PacketIdBytes> class basic_publish_packet;
+template <std::size_t PacketIdBytes> class basic_puback_packet;
+template <std::size_t PacketIdBytes> class basic_pubrec_packet;
+template <std::size_t PacketIdBytes> class basic_pubrel_packet;
+template <std::size_t PacketIdBytes> class basic_pubcomp_packet;
+template <std::size_t PacketIdBytes> class basic_subscribe_packet;
+template <std::size_t PacketIdBytes> class basic_suback_packet;
+template <std::size_t PacketIdBytes> class basic_unsubscribe_packet;
+template <std::size_t PacketIdBytes> class basic_unsuback_packet;
+class pingreq_packet;
+class pingresp_packet;
+class disconnect_packet;
+
+} // namespace v3_1_1
+
+namespace v5 {
+
+class connack_packet;
+class connect_packet;
+template <std::size_t PacketIdBytes> class basic_publish_packet;
+template <std::size_t PacketIdBytes> class basic_puback_packet;
+template <std::size_t PacketIdBytes> class basic_pubrec_packet;
+template <std::size_t PacketIdBytes> class basic_pubrel_packet;
+template <std::size_t PacketIdBytes> class basic_pubcomp_packet;
+template <std::size_t PacketIdBytes> class basic_subscribe_packet;
+template <std::size_t PacketIdBytes> class basic_suback_packet;
+template <std::size_t PacketIdBytes> class basic_unsubscribe_packet;
+template <std::size_t PacketIdBytes> class basic_unsuback_packet;
+class pingreq_packet;
+class pingresp_packet;
+class disconnect_packet;
+class auth_packet;
+
+} // namespace v5
 
 /**
  * @breif The varaint type of all packets and system_error

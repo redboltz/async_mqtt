@@ -12,7 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -40,6 +40,10 @@ namespace as = boost::asio;
  */
 class pingreq_packet {
 public:
+
+    /**
+     * @brief Constructor
+     */
     pingreq_packet()
         : all_(all_.capacity())
     {
@@ -47,9 +51,46 @@ public:
         all_[1] = char(0);
     }
 
+    constexpr control_packet_type type() const {
+        return control_packet_type::pingreq;
+    }
+
     /**
-     * @brief constructor
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
      */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+
+        ret.emplace_back(as::buffer(all_.data(), all_.size()));
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return all_.size();
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
+
+private:
+
+    friend basic_packet_variant<2>
+    buffer_to_basic_packet_variant<2>(buffer buf, protocol_version ver);
+    friend basic_packet_variant<4>
+    buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
+
+    // private constructor for internal use
     pingreq_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -83,38 +124,6 @@ public:
                 "v5::pingreq_packet remaining_length is invalid"
             );
         }
-    }
-
-    constexpr control_packet_type type() const {
-        return control_packet_type::pingreq;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-
-        ret.emplace_back(as::buffer(all_.data(), all_.size()));
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return all_.size();
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
-        return 1; // all
     }
 
 private:

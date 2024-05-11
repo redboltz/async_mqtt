@@ -9,11 +9,9 @@
 
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/buffer.hpp>
+#include <async_mqtt/packet/packet_variant.hpp>
 
 namespace async_mqtt {
-
-template <std::size_t PacketIdBytes>
-class basic_packet_variant;
 
 template <std::size_t PacketIdBytes>
 basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, protocol_version ver);

@@ -36,24 +36,26 @@ BOOST_AUTO_TEST_CASE( allocate ) {
 }
 
 BOOST_AUTO_TEST_CASE( literals1 ) {
-    auto buf = "01234";
-    BOOST_TEST(buf == "01234");
+    using namespace am::literals;
+    auto buf = "01234"_mb;
+    BOOST_TEST(buf == "01234"_mb);
     BOOST_TEST(!buf.has_life());
     auto ss1 = buf.substr(2, 3);
-    BOOST_TEST(ss1 == "234");
+    BOOST_TEST(ss1 == "234"_mb);
     BOOST_TEST(!ss1.has_life());
     auto ss2 = ss1.substr(1);
-    BOOST_TEST(ss2 == "34");
+    BOOST_TEST(ss2 == "34"_mb);
     BOOST_TEST(!ss2.has_life());
 }
 
 BOOST_AUTO_TEST_CASE( literals2 ) {
+    using namespace am::literals;
     using namespace std::literals::string_view_literals;
-    auto buf1 = "abcde";
+    auto buf1 = "abcde"_mb;
     BOOST_TEST(buf1.size() == 5);
     BOOST_TEST(buf1 == "abcde"sv);
 
-    auto buf2 = "ab\0cde";
+    auto buf2 = "ab\0cde"_mb;
     BOOST_TEST(buf2.size() == 6);
     BOOST_TEST(buf2 == "ab\0cde"sv);
 }

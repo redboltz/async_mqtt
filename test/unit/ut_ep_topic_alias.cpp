@@ -115,8 +115,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt4.has_value());
     auto publish_use_ta2 = am::v5::publish_packet(
         *pid_opt4,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -163,8 +163,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
     BOOST_TEST(pid_opt6.has_value());
     auto publish_use_ta3 = am::v5::publish_packet(
         *pid_opt6,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -358,8 +358,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -382,8 +382,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt4.has_value());
     auto publish_use_ta2 = am::v5::publish_packet(
         *pid_opt4,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -406,8 +406,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
     BOOST_TEST(pid_opt6.has_value());
     auto publish_use_ta3 = am::v5::publish_packet(
         *pid_opt6,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -582,7 +582,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     auto publish_mapped_ta1 = am::v5::publish_packet(
         *pid_opt1,
         "topic1",
-        am::buffer("payload1"),
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -591,8 +591,8 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
 
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt1,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     auto publish_mapped_ta2 = am::v5::publish_packet(
         *pid_opt2,
         "topic2",
-        am::buffer("payload1"),
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -621,8 +621,8 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
 
     auto publish_use_ta2 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -642,7 +642,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     auto publish_mapped_ta1_2 = am::v5::publish_packet(
         *pid_opt3,
         "topic3",
-        am::buffer("payload1"),
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -651,8 +651,8 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
 
     auto publish_use_ta1_2 = am::v5::publish_packet(
         *pid_opt3,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -806,7 +806,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     auto publish_map_ta1 = am::v5::publish_packet(
         *pid_opt2,
         "topic1",
-        am::buffer("payload1"),
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -817,8 +817,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt3,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -837,8 +837,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
 
     auto publish_exp_ta1 = am::v5::publish_packet(
         *pid_opt4,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -982,8 +982,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1016,8 +1016,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt4.has_value());
     auto publish_use_ta2 = am::v5::publish_packet(
         *pid_opt4,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1050,8 +1050,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt6.has_value());
     auto publish_use_ta3 = am::v5::publish_packet(
         *pid_opt6,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -1074,8 +1074,8 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     BOOST_TEST(pid_opt8.has_value());
     auto publish_use_ta1_t3 = am::v5::publish_packet(
         *pid_opt8,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1293,8 +1293,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_use_ta1 = am::v5::publish_packet(
         *pid_opt2,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}
@@ -1327,8 +1327,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt4.has_value());
     auto publish_use_ta2 = am::v5::publish_packet(
         *pid_opt4,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{2}
@@ -1361,8 +1361,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt6.has_value());
     auto publish_use_ta3 = am::v5::publish_packet(
         *pid_opt6,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{3} // over
@@ -1385,8 +1385,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     BOOST_TEST(pid_opt8.has_value());
     auto publish_use_ta1_t3 = am::v5::publish_packet(
         *pid_opt8,
-        am::buffer{},
-        am::buffer("payload1"),
+        "",
+        "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{
             am::property::topic_alias{1}

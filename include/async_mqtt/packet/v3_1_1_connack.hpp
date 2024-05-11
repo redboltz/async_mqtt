@@ -10,7 +10,7 @@
 #include <utility>
 #include <numeric>
 
-#include <async_mqtt/buffer_to_basic_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -103,9 +103,11 @@ public:
     }
 
 private:
-    template <std::size_t PacketIdBytes>
-    friend basic_packet_variant<PacketIdBytes>
-    buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+    friend basic_packet_variant<2>
+    buffer_to_basic_packet_variant<2>(buffer buf, protocol_version ver);
+    friend basic_packet_variant<4>
+    buffer_to_basic_packet_variant<4>(buffer buf, protocol_version ver);
 
     // private constructor for internal use
     connack_packet(buffer buf) {

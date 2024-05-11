@@ -94,8 +94,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         }
     };
 
@@ -344,8 +344,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         }
     };
 
@@ -1040,8 +1040,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     auto unsubscribe = am::v3_1_1::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         }
     };
 
@@ -1502,8 +1502,8 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         },
         am::properties{}
     };
@@ -1795,8 +1795,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         },
         am::properties{}
     };
@@ -2578,8 +2578,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     auto unsubscribe = am::v5::unsubscribe_packet{
         0x1, // hard coded packet_id for just testing
         std::vector<am::topic_sharename> {
-            "topic1",
-            "topic2",
+            am::topic_sharename{"topic1"},
+            am::topic_sharename{"topic2"},
         },
         am::properties{}
     };

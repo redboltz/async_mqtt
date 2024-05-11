@@ -311,7 +311,7 @@ recv_op {
                                         return;
                                     }
                                     else {
-                                        p.add_topic(buffer{force_move(topic)});
+                                        p.add_topic(force_move(topic));
                                     }
                                 }
                             }
