@@ -43,15 +43,25 @@ proc(
         );
         std::cout << "TCP connected" << std::endl;
 
+        am::will will{
+            "WillTopic1",
+            "WillMessage1",
+            am::qos::at_most_once,
+            { // properties
+                am::property::user_property{"key1", "val1"},
+                am::property::content_type{"text"},
+            }
+        };
+
         // MQTT connect and receive loop start
         auto connack_opt = co_await amcl.start(
             am::v5::connect_packet{
                 true,   // clean_session
                 0x1234, // keep_alive
-                "cid1",
-                std::nullopt, // will
-                std::nullopt, // username set like allocate_buffer("user1"),
-                std::nullopt  // password set like allocate_buffer("pass1")
+                "ClientIdentifier1",
+                will,
+                "UserName1",
+                "Password1"
             },
             as::use_awaitable
         );
@@ -174,7 +184,9 @@ proc(
 
         // disconnect
         co_await amcl.disconnect(
-            am::v5::disconnect_packet{},
+            am::v5::disconnect_packet{
+                am::disconnect_reason_code::disconnect_with_will_message
+            },
             as::use_awaitable
         );
         std::cout << "finished" << std::endl;
