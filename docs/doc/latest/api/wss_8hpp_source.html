@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.1.2</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;6.0.0</span>
    </div>
   </td>
  </tr>
@@ -109,35 +109,35 @@ $(function(){initNavTree('wss_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#if !defined(ASYNC_MQTT_PREDEFINED_LAYER_WSS_HPP)</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_PREDEFINED_LAYER_WSS_HPP</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;boost/asio.hpp&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;boost/beast/websocket/ssl.hpp&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;<a class="code" href="tls_8hpp.html">async_mqtt/predefined_layer/tls.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;<a class="code" href="ws_8hpp.html">async_mqtt/predefined_layer/ws.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>async_mqtt {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>as = boost::asio;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span>protocol {</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">namespace </span>detail {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">using </span>mqtts_beast_workaround = tls::stream&lt;mqtt_beast_workaround&gt;;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>} <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">   31</a></span><span class="keyword">using </span><a class="code hl_typedef" href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">wss</a> = bs::websocket::stream&lt;detail::mqtts_beast_workaround&gt;;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>} <span class="comment">// namespace protocol</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;boost/beast/ssl/ssl_stream.hpp&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;<a class="code" href="customized__ssl__stream_8hpp.html">async_mqtt/predefined_layer/customized_ssl_stream.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;<a class="code" href="ws_8hpp.html">async_mqtt/predefined_layer/ws.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>async_mqtt {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>as = boost::asio;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>protocol {</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">// When https://github.com/boostorg/beast/issues/2775 would be fixed,</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">// this detail part would be erased, and detail::mqtts_beast_workaround is</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// replaced with `mqtts`</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">namespace </span>detail {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">using </span>mqtts_beast_workaround = as::ssl::stream&lt;mqtt_beast_workaround&gt;;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">   33</a></span><span class="keyword">using </span><a class="code hl_typedef" href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">wss</a> = bs::websocket::stream&lt;detail::mqtts_beast_workaround&gt;;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <span class="comment">// namespace protocol</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_WSS_HPP</span></div>
-<div class="ttc" id="atls_8hpp_html"><div class="ttname"><a href="tls_8hpp.html">tls.hpp</a></div></div>
+<div class="ttc" id="acustomized__ssl__stream_8hpp_html"><div class="ttname"><a href="customized__ssl__stream_8hpp.html">customized_ssl_stream.hpp</a></div></div>
 <div class="ttc" id="aws_8hpp_html"><div class="ttname"><a href="ws_8hpp.html">ws.hpp</a></div></div>
-<div class="ttc" id="awss_8hpp_html_a3f43ad7309eefaa8f5e4dde369e19212"><div class="ttname"><a href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">async_mqtt::protocol::wss</a></div><div class="ttdeci">bs::websocket::stream&lt; detail::mqtts_beast_workaround &gt; wss</div><div class="ttdef"><b>Definition</b> wss.hpp:31</div></div>
+<div class="ttc" id="awss_8hpp_html_a3f43ad7309eefaa8f5e4dde369e19212"><div class="ttname"><a href="wss_8hpp.html#a3f43ad7309eefaa8f5e4dde369e19212">async_mqtt::protocol::wss</a></div><div class="ttdeci">bs::websocket::stream&lt; detail::mqtts_beast_workaround &gt; wss</div><div class="ttdef"><b>Definition</b> wss.hpp:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

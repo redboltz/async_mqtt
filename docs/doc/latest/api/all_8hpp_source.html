@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;5.1.2</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;6.0.0</span>
    </div>
   </td>
  </tr>
@@ -186,31 +186,30 @@ $(function(){initNavTree('all_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="preprocessor">#include &lt;async_mqtt/packet/v5_unsubscribe.hpp&gt;</span></div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#include &lt;async_mqtt/packet/validate_property.hpp&gt;</span></div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#include &lt;async_mqtt/packet/will.hpp&gt;</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">#include &lt;<a class="code" href="basic__stream_8hpp.html">async_mqtt/predefined_layer/basic_stream.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#include &lt;<a class="code" href="tcp_8hpp.html">async_mqtt/predefined_layer/tcp.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#include &lt;async_mqtt/util/any.hpp&gt;</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#include &lt;async_mqtt/util/endian_convert.hpp&gt;</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#include &lt;async_mqtt/util/hex_dump.hpp&gt;</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#include &lt;async_mqtt/util/ioc_queue.hpp&gt;</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#include &lt;async_mqtt/util/is_iterator.hpp&gt;</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#include &lt;async_mqtt/util/json_like_out.hpp&gt;</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#include &lt;async_mqtt/util/make_shared_helper.hpp&gt;</span></div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#include &lt;async_mqtt/util/move.hpp&gt;</span></div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="preprocessor">#include &lt;async_mqtt/util/optional.hpp&gt;</span></div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="preprocessor">#include &lt;async_mqtt/util/packet_variant_operator.hpp&gt;</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="preprocessor">#include &lt;async_mqtt/util/scope_guard.hpp&gt;</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="preprocessor">#include &lt;async_mqtt/util/shared_ptr_array.hpp&gt;</span></div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#include &lt;async_mqtt/util/static_vector.hpp&gt;</span></div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="preprocessor">#include &lt;async_mqtt/util/string_view.hpp&gt;</span></div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="preprocessor">#include &lt;async_mqtt/util/time_point.hpp&gt;</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="preprocessor">#include &lt;async_mqtt/util/utf8validate.hpp&gt;</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="preprocessor">#include &lt;async_mqtt/util/value_allocator.hpp&gt;</span></div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="preprocessor">#include &lt;async_mqtt/util/variant.hpp&gt;</span></div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_ALL_HPP</span></div>
-<div class="ttc" id="abasic__stream_8hpp_html"><div class="ttname"><a href="basic__stream_8hpp.html">basic_stream.hpp</a></div></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">#include &lt;<a class="code" href="mqtt_8hpp.html">async_mqtt/predefined_layer/mqtt.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#include &lt;async_mqtt/util/any.hpp&gt;</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="preprocessor">#include &lt;async_mqtt/util/endian_convert.hpp&gt;</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#include &lt;async_mqtt/util/hex_dump.hpp&gt;</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#include &lt;async_mqtt/util/ioc_queue.hpp&gt;</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#include &lt;async_mqtt/util/is_iterator.hpp&gt;</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#include &lt;async_mqtt/util/json_like_out.hpp&gt;</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#include &lt;async_mqtt/util/make_shared_helper.hpp&gt;</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#include &lt;async_mqtt/util/move.hpp&gt;</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#include &lt;async_mqtt/util/optional.hpp&gt;</span></div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="preprocessor">#include &lt;async_mqtt/util/packet_variant_operator.hpp&gt;</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="preprocessor">#include &lt;async_mqtt/util/scope_guard.hpp&gt;</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="preprocessor">#include &lt;async_mqtt/util/shared_ptr_array.hpp&gt;</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="preprocessor">#include &lt;async_mqtt/util/static_vector.hpp&gt;</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#include &lt;async_mqtt/util/string_view.hpp&gt;</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="preprocessor">#include &lt;async_mqtt/util/time_point.hpp&gt;</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="preprocessor">#include &lt;async_mqtt/util/utf8validate.hpp&gt;</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="preprocessor">#include &lt;async_mqtt/util/value_allocator.hpp&gt;</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="preprocessor">#include &lt;async_mqtt/util/variant.hpp&gt;</span></div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_ALL_HPP</span></div>
 <div class="ttc" id="aclient_8hpp_html"><div class="ttname"><a href="client_8hpp.html">client.hpp</a></div></div>
 <div class="ttc" id="aendpoint_8hpp_html"><div class="ttname"><a href="endpoint_8hpp.html">endpoint.hpp</a></div></div>
+<div class="ttc" id="amqtt_8hpp_html"><div class="ttname"><a href="mqtt_8hpp.html">mqtt.hpp</a></div></div>
 <div class="ttc" id="aproperty_8hpp_html"><div class="ttname"><a href="property_8hpp.html">property.hpp</a></div></div>
 <div class="ttc" id="aprotocol__version_8hpp_html"><div class="ttname"><a href="protocol__version_8hpp.html">protocol_version.hpp</a></div></div>
 <div class="ttc" id="apubopts_8hpp_html"><div class="ttname"><a href="pubopts_8hpp.html">pubopts.hpp</a></div></div>
@@ -218,7 +217,6 @@ $(function(){initNavTree('all_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="astore__packet__variant_8hpp_html"><div class="ttname"><a href="store__packet__variant_8hpp.html">store_packet_variant.hpp</a></div></div>
 <div class="ttc" id="asuback__return__code_8hpp_html"><div class="ttname"><a href="suback__return__code_8hpp.html">suback_return_code.hpp</a></div></div>
 <div class="ttc" id="asubopts_8hpp_html"><div class="ttname"><a href="subopts_8hpp.html">subopts.hpp</a></div></div>
-<div class="ttc" id="atcp_8hpp_html"><div class="ttname"><a href="tcp_8hpp.html">tcp.hpp</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
