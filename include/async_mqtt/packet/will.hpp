@@ -27,42 +27,110 @@ public:
      * @param qos
      *        qos
      */
-    will(buffer topic,
-         buffer message,
-         pub::opts pubopts = {},
-         properties props = {}
-    )
-        :topic_{force_move(topic)},
-         message_{force_move(message)},
-         pubopts_{pubopts},
-         props_(force_move(props))
+    template <
+        typename StringViewLikeTopic,
+        typename StringViewLikeMessage,
+        std::enable_if_t<
+            std::is_convertible_v<std::decay_t<StringViewLikeTopic>, std::string_view> &&
+            std::is_convertible_v<std::decay_t<StringViewLikeMessage>, std::string_view>,
+            std::nullptr_t
+        > = nullptr
+    >
+    will(
+        StringViewLikeTopic&& topic,
+        StringViewLikeMessage&& message,
+        pub::opts pubopts = {},
+        properties props = {}
+    ) :
+        topic_{std::string{std::forward<StringViewLikeTopic>(topic)}},
+        message_{std::string{std::forward<StringViewLikeMessage>(message)}},
+        pubopts_{pubopts},
+        props_(force_move(props))
     {}
 
-    constexpr buffer const& topic() const {
+    /**
+     * @brief Get topic
+     * @return topic
+     */
+    std::string topic() const {
+        return std::string{topic_};
+    }
+
+    /**
+     * @brief Get topic as a buffer
+     * @return topic
+     */
+    buffer const& topic_as_buffer() const {
         return topic_;
     }
-    constexpr buffer& topic() {
+
+    /**
+     * @brief Get topic as a buffer
+     * @return topic
+     */
+    buffer& topic_as_buffer() {
         return topic_;
     }
-    constexpr buffer const& message() const {
+
+    /**
+     * @brief Get message
+     * @return message
+     */
+    std::string message() const {
+        return std::string{message_};
+    }
+
+    /**
+     * @brief Get message as a buffer
+     * @return message
+     */
+    buffer const& message_as_buffer() const {
         return message_;
     }
-    constexpr buffer& message() {
+
+    /**
+     * @brief Get message as a buffer
+     * @return message
+     */
+    buffer& message_as_buffer() {
         return message_;
     }
+
+    /**
+     * @brief Get retain
+     * @return retain
+     */
     constexpr pub::retain get_retain() const {
         return pubopts_.get_retain();
     }
+
+    /**
+     * @brief Get QoS
+     * @return QoS
+     */
     constexpr qos get_qos() const {
         return pubopts_.get_qos();
     }
+
+    /**
+     * @brief Get properties
+     * @return properties
+     */
     constexpr properties const& props() const {
         return props_;
     }
+
+    /**
+     * @brief Get properties
+     * @return properties
+     */
     constexpr properties& props() {
         return props_;
     }
 
+    /**
+     * @brief equality comparison operator
+     */
     friend
     bool operator==(will const& lhs, will const& rhs) {
         return
@@ -70,6 +138,9 @@ public:
             std::tie(rhs.topic_, rhs.message_, rhs.pubopts_, rhs.props_);
     }
 
+    /**
+     * @brief less than comparison operator
+     */
     friend
     bool operator<(will const& lhs, will const& rhs) {
         return
@@ -84,10 +155,13 @@ private:
     properties props_;
 };
 
+/**
+ * @brief stream output operator
+ */
 inline std::ostream& operator<<(std::ostream& o, will const& val) {
     o << "{" <<
-        "topic:" << val.topic() << "," <<
-        "message:" << json_like_out(val.message()) << "," <<
+        "topic:" << val.topic_as_buffer() << "," <<
+        "message:" << json_like_out(val.message_as_buffer()) << "," <<
         "qos:" << val.get_qos() << "," <<
         "retain:" << val.get_retain();
     if (!val.props().empty()) {

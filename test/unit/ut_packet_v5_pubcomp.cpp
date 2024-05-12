@@ -9,6 +9,14 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v5_pubcomp;
+struct v5_pubcomp_pid4;
+struct v5_pubcomp_pid_only;
+struct v5_pubcomp_pid_rc;
+struct v5_pubcomp_prop_len_last;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v5_pubcomp.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +24,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_pubcomp) {
     BOOST_TEST(am::is_pubcomp<am::v5::pubcomp_packet>());
@@ -52,7 +59,7 @@ BOOST_AUTO_TEST_CASE(v5_pubcomp) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::pubcomp_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::pubcomp_reason_code::packet_identifier_not_found);
@@ -98,7 +105,7 @@ BOOST_AUTO_TEST_CASE(v5_pubcomp_pid4) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::basic_pubcomp_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.code() == am::pubcomp_reason_code::packet_identifier_not_found);
@@ -134,7 +141,7 @@ BOOST_AUTO_TEST_CASE(v5_pubcomp_pid_only) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::pubcomp_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::pubcomp_reason_code::success);
@@ -172,7 +179,7 @@ BOOST_AUTO_TEST_CASE(v5_pubcomp_pid_rc) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::pubcomp_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::pubcomp_reason_code::success);
@@ -197,7 +204,7 @@ BOOST_AUTO_TEST_CASE(v5_pubcomp_prop_len_last) {
         0x00,                               // reason_code
         0x00,                               // property_length
     };
-    auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+    am::buffer buf{std::begin(expected), std::end(expected)};
     auto p = am::v5::pubcomp_packet{buf};
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.code() == am::pubcomp_reason_code::success);

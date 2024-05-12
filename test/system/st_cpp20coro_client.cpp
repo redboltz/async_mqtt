@@ -14,7 +14,6 @@
 BOOST_AUTO_TEST_SUITE(st_cpp20coro_client)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 using namespace am;
@@ -49,10 +48,10 @@ BOOST_AUTO_TEST_CASE(v311) {
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0,      // keep_alive
-                    "cid1"_mb,
+                    "cid1",
                     std::nullopt, // will
-                    "u1"_mb,
-                    "passforu1"_mb
+                    "u1",
+                    "passforu1"
                 },
                 as::as_tuple(as::use_awaitable)
             );
@@ -64,9 +63,9 @@ BOOST_AUTO_TEST_CASE(v311) {
 
             // MQTT send subscribe and wait suback
             std::vector<am::topic_subopts> sub_entry{
-                {"topic1"_mb, am::qos::at_most_once},
-                {"topic2"_mb, am::qos::at_least_once},
-                {"topic3"_mb, am::qos::exactly_once},
+                {"topic1", am::qos::at_most_once},
+                {"topic2", am::qos::at_least_once},
+                {"topic3", am::qos::exactly_once},
             };
             auto pid_sub_opt = amcl.acquire_unique_packet_id();
             BOOST_CHECK(pid_sub_opt);
@@ -94,8 +93,8 @@ BOOST_AUTO_TEST_CASE(v311) {
             // MQTT publish QoS0 and wait response (socket write complete)
             auto [ec_pub0, pubres0] = co_await amcl.publish(
                 am::v3_1_1::publish_packet{
-                    "topic1"_mb,
-                    "payload1"_mb,
+                    "topic1",
+                    "payload1",
                     am::qos::at_most_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -110,8 +109,8 @@ BOOST_AUTO_TEST_CASE(v311) {
             auto [ec_pub1, pubres1] = co_await amcl.publish(
                 am::v3_1_1::publish_packet{
                     *pid_pub1_opt,
-                    "topic1"_mb,
-                    "payload1"_mb,
+                    "topic1",
+                    "payload1",
                     am::qos::at_least_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -129,8 +128,8 @@ BOOST_AUTO_TEST_CASE(v311) {
             auto [ec_pub2, pubres2] = co_await amcl.publish(
                 am::v3_1_1::publish_packet{
                     pid_pub2,
-                    "topic1"_mb,
-                    "payload1"_mb,
+                    "topic1",
+                    "payload1",
                     am::qos::exactly_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -148,9 +147,9 @@ BOOST_AUTO_TEST_CASE(v311) {
 
             // MQTT send unsubscribe and wait unsuback
             std::vector<am::topic_sharename> unsub_entry{
-                {"topic1"_mb},
-                {"topic2"_mb},
-                {"topic3"_mb},
+                {"topic1"},
+                {"topic2"},
+                {"topic3"},
             };
             auto pid_unsub_opt = amcl.acquire_unique_packet_id();
             BOOST_CHECK(pid_unsub_opt);
@@ -217,10 +216,10 @@ BOOST_AUTO_TEST_CASE(v5) {
                 am::v5::connect_packet{
                     true,   // clean_session
                     0,      // keep_alive
-                    "cid1"_mb,
+                    "cid1",
                     std::nullopt, // will
-                    "u1"_mb,
-                    "passforu1"_mb
+                    "u1",
+                    "passforu1"
                 },
                 as::as_tuple(as::use_awaitable)
             );
@@ -239,9 +238,9 @@ BOOST_AUTO_TEST_CASE(v5) {
 
             // MQTT send subscribe and wait suback
             std::vector<am::topic_subopts> sub_entry{
-                {"topic1"_mb, am::qos::at_most_once},
-                {"topic2"_mb, am::qos::at_least_once},
-                {"topic3"_mb, am::qos::exactly_once},
+                {"topic1", am::qos::at_most_once},
+                {"topic2", am::qos::at_least_once},
+                {"topic3", am::qos::exactly_once},
             };
             auto pid_sub_opt = amcl.acquire_unique_packet_id();
             BOOST_CHECK(pid_sub_opt);
@@ -269,8 +268,8 @@ BOOST_AUTO_TEST_CASE(v5) {
             // MQTT publish QoS0 and wait response (socket write complete)
             auto [ec_pub0, pubres0] = co_await amcl.publish(
                 am::v5::publish_packet{
-                    "topic1"_mb,
-                    "payload1"_mb,
+                    "topic1",
+                    "payload1",
                     am::qos::at_most_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -285,8 +284,8 @@ BOOST_AUTO_TEST_CASE(v5) {
             auto [ec_pub1, pubres1] = co_await amcl.publish(
                 am::v5::publish_packet{
                     *pid_pub1_opt,
-                    "topic2"_mb,
-                    "payload2"_mb,
+                    "topic2",
+                    "payload2",
                     am::qos::at_least_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -304,8 +303,8 @@ BOOST_AUTO_TEST_CASE(v5) {
             auto [ec_pub2, pubres2] = co_await amcl.publish(
                 am::v5::publish_packet{
                     pid_pub2,
-                    "topic3"_mb,
-                    "payload3"_mb,
+                    "topic3",
+                    "payload3",
                     am::qos::exactly_once
                 },
                 as::as_tuple(as::use_awaitable)
@@ -323,9 +322,9 @@ BOOST_AUTO_TEST_CASE(v5) {
 
             // MQTT send unsubscribe and wait unsuback
             std::vector<am::topic_sharename> unsub_entry{
-                {"topic1"_mb},
-                {"topic2"_mb},
-                {"topic3"_mb},
+                {"topic1"},
+                {"topic2"},
+                {"topic3"},
             };
             auto pid_unsub_opt = amcl.acquire_unique_packet_id();
             BOOST_CHECK(pid_unsub_opt);

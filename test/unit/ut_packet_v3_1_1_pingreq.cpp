@@ -9,6 +9,10 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v311_pingreq;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v3_1_1_pingreq.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +20,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_pingreq) {
     BOOST_TEST(am::is_pingreq<am::v3_1_1::pingreq_packet>());
@@ -37,7 +40,7 @@ BOOST_AUTO_TEST_CASE(v311_pingreq) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::pingreq_packet{buf};
 
         auto cbs2 = p.const_buffer_sequence();

@@ -12,18 +12,17 @@
 BOOST_AUTO_TEST_SUITE(ut_topic_sharename)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 // success
 BOOST_AUTO_TEST_CASE( parse_success1 ) {
-    am::topic_sharename ts{"$share/share_name/topic_filter"_mb};
+    am::topic_sharename ts{"$share/share_name/topic_filter"};
     BOOST_CHECK(ts);
     BOOST_TEST(ts.sharename() == "share_name");
     BOOST_TEST(ts.topic() == "topic_filter");
 }
 
 BOOST_AUTO_TEST_CASE( parse_success2 ) {
-    am::topic_sharename ts{"topic_filter"_mb};
+    am::topic_sharename ts{"topic_filter"};
     BOOST_CHECK(ts);
     BOOST_TEST(ts.sharename() == "");
     BOOST_TEST(ts.topic() == "topic_filter");
@@ -31,7 +30,7 @@ BOOST_AUTO_TEST_CASE( parse_success2 ) {
 
 
 BOOST_AUTO_TEST_CASE( parse_success3 ) {
-    am::topic_sharename ts{"$share/share_name//"_mb};
+    am::topic_sharename ts{"$share/share_name//"};
     BOOST_CHECK(ts);
     BOOST_TEST(ts.sharename() == "share_name");
     BOOST_TEST(ts.topic() == "/");
@@ -40,18 +39,18 @@ BOOST_AUTO_TEST_CASE( parse_success3 ) {
 // error
 
 BOOST_AUTO_TEST_CASE( parse_error1 ) {
-    am::topic_sharename ts{"$share//topic_filter"_mb};
+    am::topic_sharename ts{"$share//topic_filter"};
     BOOST_CHECK(!ts);
 }
 
 
 BOOST_AUTO_TEST_CASE( parse_error2 ) {
-    am::topic_sharename ts{"$share/share_name"_mb};
+    am::topic_sharename ts{"$share/share_name"};
     BOOST_CHECK(!ts);
 }
 
 BOOST_AUTO_TEST_CASE( parse_error3 ) {
-    am::topic_sharename ts{"$share/share_name/"_mb};
+    am::topic_sharename ts{"$share/share_name/"};
     BOOST_CHECK(!ts);
 }
 

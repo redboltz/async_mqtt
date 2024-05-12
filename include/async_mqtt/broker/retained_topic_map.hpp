@@ -39,15 +39,6 @@ class retained_topic_map {
     static constexpr node_id_t max_node_id = std::numeric_limits<node_id_t>::max();
 
     struct path_entry {
-        node_id_t parent_id;
-        buffer name_buffer;
-        std::string_view name;
-
-        node_id_t id;
-
-        std::size_t count = 1;
-        static constexpr std::size_t max_count = std::numeric_limits<std::size_t>::max();
-
         // Increase the count for this node
         void increase_count() {
             if (count == max_count) {
@@ -66,8 +57,20 @@ class retained_topic_map {
         std::optional<Value> value;
 
         path_entry(node_id_t parent_id, std::string_view name, node_id_t id)
-            : parent_id(parent_id), name_buffer(allocate_buffer(name)), name(name_buffer), id(id)
+            : parent_id{parent_id}, name{name}, id{id}
         { }
+
+        std::string_view name_as_string_view() const {
+            return name;
+        }
+
+        node_id_t parent_id;
+        std::string name;
+
+        node_id_t id;
+
+        std::size_t count = 1;
+        static constexpr std::size_t max_count = std::numeric_limits<std::size_t>::max();
     };
 
     struct wildcard_index_tag { };
@@ -75,19 +78,22 @@ class retained_topic_map {
 
     // allow for two indices on retained topics
     using path_entry_set = mi::multi_index_container<
-      path_entry,
-      mi::indexed_by<
-        // index required for direct child access
-        mi::hashed_unique <
-            mi::tag<direct_index_tag>,
-            mi::composite_key<path_entry,
-                BOOST_MULTI_INDEX_MEMBER(path_entry, node_id_t, parent_id),
-                BOOST_MULTI_INDEX_MEMBER(path_entry, std::string_view, name) >
+        path_entry,
+        mi::indexed_by<
+            // index required for direct child access
+            mi::hashed_unique <
+                mi::tag<direct_index_tag>,
+                mi::key<
+                    &path_entry::parent_id,
+                    &path_entry::name_as_string_view
+                >
             >,
-
-        // index required for wildcard processing
-        mi::ordered_non_unique< mi::tag<wildcard_index_tag>, BOOST_MULTI_INDEX_MEMBER(path_entry, node_id_t, parent_id) >
-      >
+            // index required for wildcard processing
+            mi::ordered_non_unique<
+                mi::tag<wildcard_index_tag>,
+                mi::key<&path_entry::parent_id>
+            >
+        >
     >;
 
     using direct_const_iterator = typename path_entry_set::template index<direct_index_tag>::type::const_iterator;

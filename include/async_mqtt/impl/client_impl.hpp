@@ -167,91 +167,94 @@ inline
 void
 client<Version, NextLayer>::recv_loop() {
     ep_->recv(
-        [this]
-        (packet_variant pv) mutable {
-            pv.visit(
-                overload {
-                    [&](connack_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(0);
-                        if (it != idx.end()) {
-                            const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
-                            it->tim->cancel();
+        as::bind_executor(
+            get_executor(),
+            [this]
+            (packet_variant pv) mutable {
+                pv.visit(
+                    overload {
+                        [&](connack_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(0);
+                            if (it != idx.end()) {
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
+                                it->tim->cancel();
+                                recv_loop();
+                            }
+                        },
+                        [&](suback_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(p.packet_id());
+                            if (it != idx.end()) {
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
+                                it->tim->cancel();
+                            }
                             recv_loop();
-                        }
-                    },
-                    [&](suback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(p.packet_id());
-                        if (it != idx.end()) {
-                            const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
-                            it->tim->cancel();
-                        }
-                        recv_loop();
-                    },
-                    [&](unsuback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(p.packet_id());
-                        if (it != idx.end()) {
-                            const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
-                            it->tim->cancel();
-                        }
-                        recv_loop();
-                    },
-                    [&](publish_packet& p) {
-                        recv_queue_.emplace_back(force_move(p));
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
-                        recv_loop();
-                    },
-                    [&](puback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(p.packet_id());
-                        if (it != idx.end()) {
-                            const_cast<std::optional<puback_packet>&>(it->res.puback_opt).emplace(p);
-                            it->tim->cancel();
-                        }
-                        recv_loop();
-                    },
-                    [&](pubrec_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(p.packet_id());
-                        if (it != idx.end()) {
-                            const_cast<std::optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
-                            if constexpr (Version == protocol_version::v5) {
-                                if (is_error(p.code())) {
-                                    it->tim->cancel();
+                        },
+                        [&](unsuback_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(p.packet_id());
+                            if (it != idx.end()) {
+                                const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
+                                it->tim->cancel();
+                            }
+                            recv_loop();
+                        },
+                        [&](publish_packet& p) {
+                            recv_queue_.emplace_back(force_move(p));
+                            recv_queue_inserted_  = true;
+                            tim_notify_publish_recv_.cancel();
+                            recv_loop();
+                        },
+                        [&](puback_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(p.packet_id());
+                            if (it != idx.end()) {
+                                const_cast<std::optional<puback_packet>&>(it->res.puback_opt).emplace(p);
+                                it->tim->cancel();
+                            }
+                            recv_loop();
+                        },
+                        [&](pubrec_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(p.packet_id());
+                            if (it != idx.end()) {
+                                const_cast<std::optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
+                                if constexpr (Version == protocol_version::v5) {
+                                    if (is_error(p.code())) {
+                                        it->tim->cancel();
+                                    }
                                 }
                             }
+                            recv_loop();
+                        },
+                        [&](pubcomp_packet& p) {
+                            auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                            auto it = idx.find(p.packet_id());
+                            if (it != idx.end()) {
+                                const_cast<std::optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
+                                it->tim->cancel();
+                            }
+                            recv_loop();
+                        },
+                        [&](disconnect_packet& p) {
+                            recv_queue_.emplace_back(force_move(p));
+                            recv_queue_inserted_  = true;
+                            tim_notify_publish_recv_.cancel();
+                            recv_loop();
+                        },
+                        [&](system_error const& se) {
+                            recv_queue_.emplace_back(se.code());
+                            recv_queue_inserted_  = true;
+                            tim_notify_publish_recv_.cancel();
+                        },
+                        [&](auto const&) {
+                            recv_loop();
                         }
-                        recv_loop();
-                    },
-                    [&](pubcomp_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
-                        auto it = idx.find(p.packet_id());
-                        if (it != idx.end()) {
-                            const_cast<std::optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
-                            it->tim->cancel();
-                        }
-                        recv_loop();
-                    },
-                    [&](disconnect_packet& p) {
-                        recv_queue_.emplace_back(force_move(p));
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
-                        recv_loop();
-                    },
-                    [&](system_error const& se) {
-                        recv_queue_.emplace_back(se.code());
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
-                    },
-                    [&](auto const&) {
-                        recv_loop();
                     }
-                }
-            );
-        }
+                );
+            }
+        )
     );
 }
 

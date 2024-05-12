@@ -23,9 +23,16 @@ public:
      * @brief constructor
      * @param all_topic TopicFilter. It could contain sharename on MQTT v5.0.
      */
+    template <
+        typename AllTopic,
+        typename std::enable_if_t<
+            std::is_convertible_v<std::decay_t<AllTopic>, std::string_view>,
+            std::nullptr_t
+        > = nullptr
+    >
     topic_sharename(
-        buffer all_topic
-    ): all_topic_{force_move(all_topic)} {
+        AllTopic&& all_topic
+    ): all_topic_{std::forward<AllTopic>(all_topic)} {
         BOOST_ASSERT(all_topic_.size() <= 0xffff);
         auto const shared_prefix = std::string_view("$share/");
         if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {
@@ -36,7 +43,7 @@ public:
             if (idx == 0 || idx == std::string_view::npos) return;
 
             topic_ = sharename_.substr(idx + 1);
-            sharename_.remove_suffix(sharename_.size() - idx);
+            sharename_ = sharename_.substr(0, sharename_.size() - topic_.size() - 1);
         }
         else {
             topic_ = all_topic_;
@@ -47,15 +54,15 @@ public:
      * @brief Get topic
      * @return topic
      */
-    buffer const& topic() const {
+    std::string const& topic() const {
         return topic_;
     }
 
     /**
      * @brief Get sharename
-     * @return sharename. If no sharename then return empty size buffer.
+     * @return sharename. If no sharename then return empty size std::string.
      */
-    buffer const& sharename() const {
+    std::string const& sharename() const {
         return sharename_;
     }
 
@@ -65,7 +72,7 @@ public:
      * If sharename is contained, $share/ prefix is contained.
      * @return all_topic that is given to the constructor.
      */
-    buffer const& all_topic() const {
+    std::string const& all_topic() const {
         return all_topic_;
     }
 
@@ -99,9 +106,9 @@ public:
     }
 
 private:
-    buffer all_topic_;
-    buffer topic_;
-    buffer sharename_;
+    std::string all_topic_;
+    std::string topic_;
+    std::string sharename_;
 };
 
 } // namespace async_mqtt

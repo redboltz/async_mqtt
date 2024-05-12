@@ -9,6 +9,11 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v5_subscribe;
+struct v5_subscribe_pid4;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v5_subscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +21,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_subscribe) {
     BOOST_TEST(am::is_subscribe<am::v5::subscribe_packet>());
@@ -26,8 +30,8 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     BOOST_TEST(!am::is_server_sendable<am::v5::subscribe_packet>());
 
     std::vector<am::topic_subopts> args {
-        {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
+        {"topic1", am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+        {"topic2", am::qos::exactly_once | am::sub::rap::retain},
     };
 
     auto props = am::properties{
@@ -59,7 +63,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::subscribe_packet{buf};
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
@@ -78,8 +82,8 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
 
 BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
     std::vector<am::topic_subopts> args {
-        {"topic1"_mb, am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
-        {"topic2"_mb, am::qos::exactly_once | am::sub::rap::retain},
+        {"topic1", am::qos::at_most_once | am::sub::nl::yes | am::sub::retain_handling::not_send},
+        {"topic2", am::qos::exactly_once | am::sub::rap::retain},
     };
 
     auto props = am::properties{
@@ -110,7 +114,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::basic_subscribe_packet<4>{buf};
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));

@@ -9,6 +9,10 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v5_connect;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +20,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v5_connect) {
     BOOST_TEST(am::is_connect<am::v5::connect_packet>());
@@ -26,8 +29,8 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     BOOST_TEST(!am::is_server_sendable<am::v5::connect_packet>());
 
     auto w = am::will{
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::pub::retain::yes | am::qos::at_least_once,
         am::properties{
             am::property::will_delay_interval(0x0fffffff),
@@ -43,10 +46,10 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
     auto p = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         w,
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         props
     };
 
@@ -93,7 +96,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v5::connect_packet{buf};
         BOOST_TEST(p.clean_start());
         BOOST_TEST(p.keep_alive() == 0x1234);

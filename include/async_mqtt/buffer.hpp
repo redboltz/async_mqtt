@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_BUFFER_HPP
 
 #include <string_view>
-#include <variant>
+#include <memory>
 
 
 #include <boost/asio/buffer.hpp>
@@ -29,7 +29,7 @@ namespace as = boost::asio;
  */
 class buffer {
 public:
-    using life_type = std::variant<std::monostate, std::shared_ptr<void>, std::string>;
+    using life_type = std::shared_ptr<void>;
     using traits_type = std::string_view::traits_type;
     using value_type = std::string_view::value_type;
     using pointer = std::string_view::pointer;
@@ -45,62 +45,58 @@ public:
 
     static constexpr size_type npos = std::string_view::npos;
 
+    /**
+     * @brief default constructor
+     */
     constexpr buffer() noexcept = default;
-    buffer(buffer const& other)
-        :life_{other.life_},
-         view_{
-             [&] {
-                 if (auto p = std::get_if<std::string>(&life_)) {
-                     return std::string_view{*p};
-                 }
-                 else {
-                     return other.view_;
-                 }
-             }()
-         }
-    {}
-    buffer(buffer&& other)
-        :life_{force_move(other.life_)},
-         view_{
-             [&] {
-                 if (auto p = std::get_if<std::string>(&life_)) {
-                     return std::string_view{*p};
-                 }
-                 else {
-                     return other.view_;
-                 }
-             }()
-         }
-    {}
 
-    buffer& operator=(buffer const& other) {
-        life_ = other.life_;
-        if (auto p = std::get_if<std::string>(&life_)) {
-            view_ = *p;
-        }
-        else {
-            view_ = other.view_;
-        }
-        return *this;
-    }
-    buffer& operator=(buffer&& other) {
-        life_ = force_move(other.life_);
-        if (auto p = std::get_if<std::string>(&life_)) {
-            view_ = *p;
-        }
-        else {
-            view_ = force_move(other.view_);
-        }
-        return *this;
-    }
+    /**
+     * @brief copy constructor
+     */
+    buffer(buffer const& other) = default;
 
+    /**
+     * @brief move constructor
+     */
+    buffer(buffer&& other) = default;
+
+    /**
+     * @brief copy assign operator
+     */
+    buffer& operator=(buffer const& other) = default;
+
+    /**
+     * @brief move assign operator
+     */
+    buffer& operator=(buffer&& other) = default;
+
+    /**
+     * @brief constructor
+     *        The buffer doesn't manage the lifetime
+     * @param s the begin pointer of continuous  memory that contains characters
+     * @param count the length of the continuours memory
+     */
     constexpr buffer(char const* s, std::size_t count)
         :view_{s, count}
     {}
+
+    /**
+     * @brief constructor
+     *        The buffer doesn't manage the lifetime
+     * @param s the begin pointer of continuous  memory that contains characters.
+     *          The characters must be null terminated.
+     */
     constexpr buffer(char const* s)
         :view_{s}
     {}
 
+    /**
+     * @brief move assign operator
+     *        The buffer doesn't manage the lifetime.
+     *        The memory between first and last must be continuous.
+     * @param first the begin pointer of continuous  memory that contains characters
+     * @param last  the end pointer of continuous  memory that contains characters
+     */
     template <
         typename It,
         typename End,
@@ -127,29 +123,42 @@ public:
      * @brief string constructor
      * @param string
      */
-    explicit buffer(std::string s)
-        : life_{force_move(s)},
-          view_{std::get<std::string>(life_)}
-    {}
+    explicit buffer(std::string s) {
+        auto str = std::make_shared<std::string>(force_move(s));
+        view_ = *str;
+        life_ = force_move(str);
+    }
 
     /**
      * @brief std::string_view and lifetime constructor
      * @param sv std::string_view
-     * @param sp shared_ptr_array that holds sv target's lifetime
+     * @param life sv target's lifetime keeping object by shared ownership
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
      */
     buffer(std::string_view sv, std::shared_ptr<void> life)
-        : life_{force_move(life)},
-          view_{force_move(sv)}
-    {
-    }
-
-    buffer(char const* s, std::size_t count,std::shared_ptr<void> life)
-        : life_{force_move(life)},
-          view_{s, count}
-
+        : view_{force_move(sv)},
+          life_{force_move(life)}
     {}
 
+    /**
+     * @brief pointer, size,  and lifetime constructor
+     * @param p     pointer to the beginning of the view
+     * @param count size of the view
+     * @param life sv target's lifetime keeping object by shared ownership
+     * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
+     */
+    buffer(char const* s, std::size_t count,std::shared_ptr<void> life)
+        : view_{s, count},
+          life_{force_move(life)}
+    {}
+
+    /**
+     * @brief range and lifetime constructor
+     * @param first  iterator to the beginning of the view
+     * @param last   iterator to the end of the view
+     * @param life sv target's lifetime keeping object by shared ownership
+     * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
+     */
     template <
         typename It,
         typename End,
@@ -159,8 +168,9 @@ public:
         >* = nullptr
     >
     buffer(It first, End last, std::shared_ptr<void> life)
-        : life_{force_move(life)},
-          view_{&*first, static_cast<std::size_t>(std::distance(first, last))}
+        : view_{&*first, static_cast<std::size_t>(std::distance(first, last))},
+          life_{force_move(life)}
+
     {}
 
     constexpr const_iterator begin() const noexcept {
@@ -449,79 +459,18 @@ public:
     }
 
     bool has_life() const noexcept {
-        return std::get_if<std::monostate>(&life_) == nullptr;
+        return bool(life_);
     }
 
 private:
-    // for substring getter family
-    buffer(std::string_view sv, life_type life)
-        : life_{force_move(life)},
-          view_{force_move(sv)}
-    {
-    }
-
-private:
-    life_type life_;
     std::string_view view_;
+    life_type life_;
 };
 
 inline std::size_t hash_value(buffer const& v) noexcept {
     std::size_t result = 0;
     boost::hash_combine(result, static_cast<std::string_view const&>(v));
     return result;
-}
-
-inline namespace literals {
-
-/**
- * @brief user defined literals for buffer
- * If user use this out of mqtt scope, then user need to declare
- * `using namespace literals`.
- * When user write "ABC"_mb, then this function is called.
- * The created buffer doesn't hold any lifetimes because the string literals
- * has static strage duration, so buffer doesn't need to hold the lifetime.
- *
- * @param str     the address of the string literal
- * @param length  the length of the string literal
- * @return buffer
- */
-inline buffer operator""_mb(char const* str, std::size_t length) {
-    return buffer(str, length);
-}
-
-} // namespace literals
-
-/**
- * @brief create buffer from the pair of iterators
- * It copies string that from b to e into shared_ptr_array.
- * Then create buffer and return it.
- * The buffer holds the lifetime of shared_ptr_array.
- *
- * @param b  begin position iterator
- * @param e  end position iterator
- * @return buffer
- */
-template <typename Iterator>
-inline buffer allocate_buffer(Iterator b, Iterator e) {
-    auto size = static_cast<std::size_t>(std::distance(b, e));
-    if (size == 0) return buffer(&*b, size);
-    auto spa = make_shared_ptr_array(size);
-    std::copy(b, e, spa.get());
-    auto p = spa.get();
-    return buffer(p, size, force_move(spa));
-}
-
-/**
- * @brief create buffer from the std::string_view
- * It copies string that from std::string_view into shared_ptr_array.
- * Then create buffer and return it.
- * The buffer holds the lifetime of shared_ptr_array.
- *
- * @param sv  the source std::string_view
- * @return buffer
- */
-inline buffer allocate_buffer(std::string_view sv) {
-    return allocate_buffer(sv.begin(), sv.end());
 }
 
 inline buffer const* buffer_sequence_begin(buffer const& buf) {

@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_recv_max)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(client_send) {
@@ -42,10 +41,10 @@ BOOST_AUTO_TEST_CASE(client_send) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -85,8 +84,8 @@ BOOST_AUTO_TEST_CASE(client_send) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -95,8 +94,8 @@ BOOST_AUTO_TEST_CASE(client_send) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -105,16 +104,16 @@ BOOST_AUTO_TEST_CASE(client_send) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_3_q2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once,
         am::properties{}
     );
 
     auto publish_4_q0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once,
         am::properties{}
     );
@@ -261,10 +260,10 @@ BOOST_AUTO_TEST_CASE(server_send) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::receive_maximum{2}
         }
@@ -304,8 +303,8 @@ BOOST_AUTO_TEST_CASE(server_send) {
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -314,8 +313,8 @@ BOOST_AUTO_TEST_CASE(server_send) {
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -324,16 +323,16 @@ BOOST_AUTO_TEST_CASE(server_send) {
     BOOST_TEST(pid_opt3.has_value());
     auto publish_3_q2 = am::v5::publish_packet(
         *pid_opt3,
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once,
         am::properties{}
     );
 
     auto publish_4_q0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once,
         am::properties{}
     );
@@ -480,10 +479,10 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{
             am::property::receive_maximum{2}
         }
@@ -528,48 +527,48 @@ BOOST_AUTO_TEST_CASE(client_recv) {
 
     auto publish_1_q1 = am::v5::publish_packet(
         0x1, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_2_q1 = am::v5::publish_packet(
         0x2, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_3_q0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once,
         am::properties{}
     );
 
     auto publish_4_q2 = am::v5::publish_packet(
         0x3, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once,
         am::properties{}
     );
 
     auto publish_5_q1 = am::v5::publish_packet(
         0x5, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_6_q1 = am::v5::publish_packet(
         0x6, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
@@ -790,10 +789,10 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 
@@ -838,48 +837,48 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     auto publish_1_q1 = am::v5::publish_packet(
         0x1, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_2_q1 = am::v5::publish_packet(
         0x2, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_3_q0 = am::v5::publish_packet(
         0x0, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_most_once,
         am::properties{}
     );
 
     auto publish_4_q2 = am::v5::publish_packet(
         0x3, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::exactly_once,
         am::properties{}
     );
 
     auto publish_5_q1 = am::v5::publish_packet(
         0x5, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );
 
     auto publish_6_q1 = am::v5::publish_packet(
         0x6, // packet_id
-        "topic1"_mb,
-        "payload1"_mb,
+        "topic1",
+        "payload1",
         am::qos::at_least_once,
         am::properties{}
     );

@@ -86,7 +86,7 @@ private:
                                 p.packet_id(),
                                 p.opts(),
                                 p.topic(),
-                                p.payload(),
+                                p.payload_as_buffer(),
                                 properties{}
                             );
                         },
@@ -96,7 +96,7 @@ private:
                                 p.packet_id(),
                                 p.opts(),
                                 p.topic(),
-                                p.payload(),
+                                p.payload_as_buffer(),
                                 p.props()
                             );
                         },
@@ -256,9 +256,9 @@ private:
 
     void connect_handler(
         epsp_t epsp,
-        buffer client_id,
-        std::optional<buffer> noauth_username,
-        std::optional<buffer> password,
+        std::string client_id,
+        std::optional<std::string> noauth_username,
+        std::optional<std::string> password,
         std::optional<will> will,
         bool clean_start,
         std::uint16_t /*keep_alive*/,
@@ -670,14 +670,14 @@ private:
 
         connack_props.emplace_back(
             property::response_information{
-                allocate_buffer(response_topic)
+                force_move(response_topic)
             }
         );
     }
 
     bool handle_empty_client_id(
         epsp_t& epsp,
-        buffer const& client_id,
+        std::string const& client_id,
         bool clean_start,
         properties& connack_props
     ) {
@@ -685,7 +685,7 @@ private:
         case protocol_version::v3_1_1:
             if (client_id.empty()) {
                 if (clean_start) {
-                    epsp.set_client_id(allocate_buffer(create_uuid_string()));
+                    epsp.set_client_id(create_uuid_string());
                 }
                 else {
                     // https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349242
@@ -734,9 +734,9 @@ private:
                 // Handling errors, and then it MUST close the Network Connection [MQTT-3.1.3-8].
                 //
                 // mqtt_cpp author's note: On v5.0, no Clean Start restriction is described.
-                epsp.set_client_id(allocate_buffer(create_uuid_string()));
+                epsp.set_client_id(create_uuid_string());
                 connack_props.emplace_back(
-                    property::assigned_client_identifier{epsp.get_client_id()}
+                    property::assigned_client_identifier{std::string{epsp.get_client_id()}}
                 );
             }
             break;
@@ -841,7 +841,7 @@ private:
         epsp_t epsp,
         packet_id_t packet_id,
         pub::opts opts,
-        buffer topic,
+        std::string topic,
         BufferSequence&& payload,
         properties props
     ) {
@@ -1095,7 +1095,7 @@ private:
     >
     do_publish(
         session_state<epsp_t> const& source_ss,
-        buffer topic,
+        std::string topic,
         BufferSequence&& payload,
         pub::opts opts,
         properties props
@@ -1157,7 +1157,7 @@ private:
             std::shared_lock<mutex> g{mtx_subs_map_};
             subs_map_.modify(
                 topic,
-                [&](buffer const& /*key*/, subscription<epsp_t>& sub) {
+                [&](std::string const& /*key*/, subscription<epsp_t>& sub) {
                     if (sub.sharename.empty()) {
                         // Non shared subscriptions
 
@@ -1242,7 +1242,7 @@ private:
                 retains_.insert_or_assign(
                     topic,
                     retain_t {
-                        force_move(topic),
+                        topic,
                         std::forward<BufferSequence>(payload),
                         force_move(props),
                         opts.get_qos(),

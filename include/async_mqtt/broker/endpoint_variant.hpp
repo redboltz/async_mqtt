@@ -353,11 +353,11 @@ public:
         );
     }
 
-    void set_client_id(buffer cid) {
+    void set_client_id(std::string cid) {
         client_id_ = force_move(cid);
     }
 
-    buffer const& get_client_id() const {
+    std::string const& get_client_id() const {
         return client_id_;
     }
 
@@ -394,7 +394,7 @@ public:
 
 private:
     epsp_t epsp_;
-    buffer client_id_;
+    std::string client_id_;
     std::optional<std::string> preauthed_user_name_;
     mutable std::optional<protocol_version> protocol_version_;
 };

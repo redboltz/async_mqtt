@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
@@ -70,22 +71,27 @@ public:
      *                   \n RETAIN See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349265
      */
     template <
+        typename StringViewLike,
         typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+        std::enable_if_t<
+            std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
+            (
+                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
+                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
+            ),
             std::nullptr_t
-        >::type = nullptr
+        > = nullptr
     >
     basic_publish_packet(
         packet_id_t packet_id,
-        buffer topic_name,
-        BufferSequence payloads,
+        StringViewLike&& topic_name,
+        BufferSequence&& payloads,
         pub::opts pubopts
     )
         : fixed_header_(
               make_fixed_header(control_packet_type::publish, 0b0000) | std::uint8_t(pubopts)
           ),
-          topic_name_{force_move(topic_name)},
+          topic_name_{std::string{std::forward<StringViewLike>(topic_name)}},
           packet_id_(PacketIdBytes),
           remaining_length_(
               2                      // topic name length
@@ -100,14 +106,21 @@ public:
             boost::numeric_cast<std::uint16_t>(topic_name_.size()),
             topic_name_length_buf_.data()
         );
-        auto b = buffer_sequence_begin(payloads);
-        auto e = buffer_sequence_end(payloads);
-        auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
-        payloads_.reserve(num_of_payloads);
-        for (; b != e; ++b) {
-            auto const& payload = *b;
-            remaining_length_ += payload.size();
-            payloads_.push_back(payload);
+
+        if constexpr (std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>) {
+            remaining_length_ += std::string_view(payloads).size();
+            payloads_.emplace_back(buffer{std::string{payloads}});
+        }
+        else {
+            auto b = buffer_sequence_begin(payloads);
+            auto e = buffer_sequence_end(payloads);
+            auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
+            payloads_.reserve(num_of_payloads);
+            for (; b != e; ++b) {
+                auto const& payload = *b;
+                remaining_length_ += payload.size();
+                payloads_.push_back(payload);
+            }
         }
 
         if (!utf8string_check(topic_name_)) {
@@ -164,19 +177,165 @@ public:
      *                   \n RETAIN See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349265
      */
     template <
+        typename StringViewLike,
         typename BufferSequence,
-        typename std::enable_if<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
+        std::enable_if_t<
+            std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
+            (
+                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
+                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
+            ),
             std::nullptr_t
-        >::type = nullptr
+        > = nullptr
     >
     basic_publish_packet(
-        buffer topic_name,
-        BufferSequence payloads,
+        StringViewLike&& topic_name,
+        BufferSequence&& payloads,
         pub::opts pubopts
-    ) : basic_publish_packet(0, force_move(topic_name), force_move(payloads), pubopts) {
+    ) : basic_publish_packet{
+            0,
+            std::forward<StringViewLike>(topic_name),
+            std::forward<BufferSequence>(payloads),
+            pubopts
+        }
+    {
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::publish;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+        ret.emplace_back(as::buffer(topic_name_length_buf_.data(), topic_name_length_buf_.size()));
+        ret.emplace_back(as::buffer(topic_name_));
+        if (packet_id() != 0) {
+            ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
+        }
+        for (auto const& payload : payloads_) {
+            ret.emplace_back(as::buffer(payload));
+        }
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    std::size_t num_of_const_buffer_sequence() const {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            2 +                   // topic name length, topic name
+            [&] () -> std::size_t {
+                if (packet_id() == 0) return 0;
+                return 1;
+            }() +
+            payloads_.size();
+
+    }
+
+    /**
+     * @brief Get packet id
+     * @return packet_id
+     */
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_.data());
+    }
+
+    /**
+     * @brief Get publish_options
+     * @return publish_options.
+     */
+    constexpr pub::opts opts() const {
+        return pub::opts(fixed_header_);
+    }
+
+    /**
+     * @brief Get topic name
+     * @return topic name
+     */
+    std::string topic() const {
+        return std::string{topic_name_};
+    }
+
+    /**
+     * @brief Get topic as a buffer
+     * @return topic name
+     */
+    buffer const& topic_as_buffer() const {
+        return topic_name_;
+    }
+
+    /**
+     * @brief Get payload
+     * @return payload
+     */
+    std::string payload() const {
+        return to_string(payloads_);
+    }
+
+    /**
+     * @brief Get payload range
+     * @return A pair of forward iterators
+     */
+    auto payload_range() const {
+        return make_packet_range(payloads_);
+    }
+
+    /**
+     * @brief Get payload as a sequence of buffer
+     * @return payload
+     */
+    std::vector<buffer> const& payload_as_buffer() const {
+        return payloads_;
+    }
+
+    /**
+     * @brief Set dup flag
+     * @param dup flag value to set
+     */
+    constexpr void set_dup(bool dup) {
+        pub::set_dup(fixed_header_, dup);
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v311_publish;
+    friend struct ::ut_packet::v311_publish_qos0;
+    friend struct ::ut_packet::v311_publish_invalid;
+    friend struct ::ut_packet::v311_publish_pid4;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     basic_publish_packet(buffer buf)
         : packet_id_(PacketIdBytes) {
         // fixed_header
@@ -263,106 +422,6 @@ public:
         }
     }
 
-    constexpr control_packet_type type() const {
-        return control_packet_type::publish;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-        ret.emplace_back(as::buffer(topic_name_length_buf_.data(), topic_name_length_buf_.size()));
-        ret.emplace_back(as::buffer(topic_name_));
-        if (packet_id() != 0) {
-            ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
-        }
-        for (auto const& payload : payloads_) {
-            ret.emplace_back(as::buffer(payload));
-        }
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    std::size_t num_of_const_buffer_sequence() const {
-        return
-            1 +                   // fixed header
-            1 +                   // remaining length
-            2 +                   // topic name length, topic name
-            [&] () -> std::size_t {
-                if (packet_id() == 0) return 0;
-                return 1;
-            }() +
-            payloads_.size();
-
-    }
-
-    /**
-     * @brief Get packet id
-     * @return packet_id
-     */
-    packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_.data());
-    }
-
-    /**
-     * @brief Get publish_options
-     * @return publish_options.
-     */
-    constexpr pub::opts opts() const {
-        return pub::opts(fixed_header_);
-    }
-
-    /**
-     * @brief Get topic name
-     * @return topic name
-     */
-    constexpr buffer const& topic() const {
-        return topic_name_;
-    }
-
-    /**
-     * @brief Get payload
-     * @return payload
-     */
-    std::vector<buffer> const& payload() const {
-        return payloads_;
-    }
-
-    /**
-     * @brief Get payload range
-     * @return A pair of forward iterators
-     */
-    auto payload_range() const {
-        return make_packet_range(payloads_);
-    }
-
-    /**
-     * @brief Set dup flag
-     * @param dup flag value to set
-     */
-    constexpr void set_dup(bool dup) {
-        pub::set_dup(fixed_header_, dup);
-    }
 
 private:
     std::uint8_t fixed_header_;
@@ -374,6 +433,9 @@ private:
     static_vector<char, 4> remaining_length_buf_;
 };
 
+/**
+ * @brief stream output operator
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v) {
     o << "v3_1_1::publish{" <<
@@ -387,7 +449,7 @@ inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBy
     }
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     o << ",payload:";
-    for (auto const& e : v.payload()) {
+    for (auto const& e : v.payload_as_buffer()) {
         o << json_like_out(e);
     }
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)

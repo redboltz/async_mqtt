@@ -17,8 +17,7 @@
 BOOST_AUTO_TEST_SUITE(ut_property)
 
 namespace am = async_mqtt;
-using namespace am::literals;
-using namespace am::literals;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE( payload_format_indicator ) {
     am::property::payload_format_indicator v1 { am::payload_format::binary };
@@ -127,55 +126,54 @@ BOOST_AUTO_TEST_CASE( shared_subscription_available ) {
 // property has _ref
 
 BOOST_AUTO_TEST_CASE( content_type ) {
-    am::property::content_type v1 { "abc"_mb };
+    am::property::content_type v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:content_type,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( response_topic ) {
-    am::property::response_topic v1 { "abc"_mb };
+    am::property::response_topic v1 { "abc" };
 
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:response_topic,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( correlation_data ) {
-    using namespace std::literals::string_view_literals;
-    am::property::correlation_data v1 { "a\0bc"_mb };
+    am::property::correlation_data v1 { std::string{"a\0bc"sv} };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:correlation_data,val:a\\u0000bc}"sv);
     BOOST_TEST(v1.val() == "a\0bc"sv);
 }
 
 BOOST_AUTO_TEST_CASE( assigned_client_identifier ) {
-    am::property::assigned_client_identifier v1 { "abc"_mb };
+    am::property::assigned_client_identifier v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:assigned_client_identifier,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( authentication_method ) {
-    am::property::authentication_method v1 { "abc"_mb };
+    am::property::authentication_method v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:authentication_method,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( authentication_data ) {
-    am::property::authentication_data v1 { "abc"_mb };
+    am::property::authentication_data v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:authentication_data,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( response_information ) {
-    am::property::response_information v1 { "abc"_mb };
+    am::property::response_information v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:response_information,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( server_reference ) {
-    am::property::server_reference v1 { "abc"_mb };
+    am::property::server_reference v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:server_reference,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( reason_string ) {
-    am::property::reason_string v1 { "abc"_mb };
+    am::property::reason_string v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:reason_string,val:abc}");
 }
 
 BOOST_AUTO_TEST_CASE( user_property ) {
-    am::property::user_property v1 { "abc"_mb, "def"_mb };
+    am::property::user_property v1 { "abc", "def" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:user_property,key:abc,val:def}");
 }
 
@@ -300,79 +298,79 @@ BOOST_AUTO_TEST_CASE(comparison) {
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::content_type v1 { "abc"_mb };
-        am::property::content_type v2 { "def"_mb };
+        am::property::content_type v1 { "abc" };
+        am::property::content_type v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::response_topic v1 { "abc"_mb };
-        am::property::response_topic v2 { "def"_mb };
+        am::property::response_topic v1 { "abc" };
+        am::property::response_topic v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::correlation_data v1 { "ab\0c"_mb };
-        am::property::correlation_data v2 { "ab\0f"_mb };
+        am::property::correlation_data v1 { std::string{"ab\0c"sv} };
+        am::property::correlation_data v2 { std::string{"ab\0f"sv} };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::assigned_client_identifier v1 { "abc"_mb };
-        am::property::assigned_client_identifier v2 { "def"_mb };
+        am::property::assigned_client_identifier v1 { "abc" };
+        am::property::assigned_client_identifier v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::authentication_method v1 { "abc"_mb };
-        am::property::authentication_method v2 { "def"_mb };
+        am::property::authentication_method v1 { "abc" };
+        am::property::authentication_method v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::authentication_data v1 { "abc"_mb };
-        am::property::authentication_data v2 { "def"_mb };
+        am::property::authentication_data v1 { "abc" };
+        am::property::authentication_data v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::response_information v1 { "abc"_mb };
-        am::property::response_information v2 { "def"_mb };
+        am::property::response_information v1 { "abc" };
+        am::property::response_information v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::server_reference v1 { "abc"_mb };
-        am::property::server_reference v2 { "def"_mb };
+        am::property::server_reference v1 { "abc" };
+        am::property::server_reference v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::reason_string v1 { "abc"_mb };
-        am::property::reason_string v2 { "def"_mb };
+        am::property::reason_string v1 { "abc" };
+        am::property::reason_string v2 { "def" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
     {
-        am::property::user_property v1 { "abc"_mb, "def"_mb };
-        am::property::user_property v2 { "abc"_mb, "ghi"_mb };
+        am::property::user_property v1 { "abc", "def" };
+        am::property::user_property v2 { "abc", "ghi" };
         BOOST_TEST(v1 == v1);
         BOOST_TEST(v1 != v2);
         BOOST_TEST(v1 < v2);
     }
 
     {
-        am::property::user_property v1 { "abc"_mb, "def"_mb };
-        am::property::user_property v2 { "abc"_mb, "ghi"_mb };
+        am::property::user_property v1 { "abc", "def" };
+        am::property::user_property v2 { "abc", "ghi" };
 
         am::properties ps1 { v1, v2 };
         am::properties ps2 { v2, v1 };

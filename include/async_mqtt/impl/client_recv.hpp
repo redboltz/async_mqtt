@@ -49,10 +49,7 @@ recv_op {
                 a_cl.tim_notify_publish_recv_.async_wait(
                     as::bind_executor(
                         a_cl.get_executor(),
-                        as::append(
-                            force_move(self),
-                            a_cl.recv_queue_inserted_
-                        )
+                        force_move(self)
                     )
                 );
             }
@@ -71,11 +68,10 @@ recv_op {
     template <typename Self>
     void operator()(
         Self& self,
-        error_code /* ec */,
-        bool get_queue
+        error_code /* ec */
     ) {
         BOOST_ASSERT(state == complete);
-        if (get_queue) {
+        if (cl.recv_queue_inserted_) {
             auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
             cl.recv_queue_.pop_front();
             self.complete(

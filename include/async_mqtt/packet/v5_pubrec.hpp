@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -93,6 +94,185 @@ public:
         }
     {}
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::pubrec;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+
+        ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
+
+        if (reason_code_) {
+            ret.emplace_back(as::buffer(&*reason_code_, 1));
+
+            if (property_length_buf_.size() != 0) {
+                ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
+                auto props_cbs = async_mqtt::const_buffer_sequence(props_);
+                std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    constexpr std::size_t num_of_const_buffer_sequence() const {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            1 +                   // packet_id
+            [&] () -> std::size_t {
+                if (reason_code_) {
+                    return
+                        1 +       // reason_code
+                        [&] () -> std::size_t {
+                            if (property_length_buf_.size() == 0) return 0;
+                            return
+                                1 +                   // property length
+                                async_mqtt::num_of_const_buffer_sequence(props_);
+                        }();
+                }
+                return 0;
+            }();
+    }
+
+    /**
+     * @brief Get packet_id.
+     * @return packet_id
+     */
+    packet_id_t packet_id() const {
+        return endian_load<packet_id_t>(packet_id_.data());
+    }
+
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
+    pubrec_reason_code code() const {
+        if (reason_code_) return *reason_code_;
+        return pubrec_reason_code::success;
+    }
+
+    /**
+     * @breif Get properties
+     * @return properties
+     */
+    properties const& props() const {
+        return props_;
+    }
+
+    /**
+     * @brief stream output operator
+     */
+    friend
+    inline std::ostream& operator<<(std::ostream& o, basic_pubrec_packet<PacketIdBytes> const& v) {
+        o <<
+            "v5::pubrec{" <<
+            "pid:" << v.packet_id();
+        if (v.reason_code_) {
+            o << ",rc:" << *v.reason_code_;
+        }
+        if (!v.props().empty()) {
+            o << ",ps:" << v.props();
+        };
+        o << "}";
+        return o;
+    }
+
+private:
+    basic_pubrec_packet(
+        packet_id_t packet_id,
+        std::optional<pubrec_reason_code> reason_code,
+        properties props
+    )
+        : fixed_header_{
+              make_fixed_header(control_packet_type::pubrec, 0b0000)
+          },
+          remaining_length_{
+              PacketIdBytes
+          },
+          packet_id_(packet_id_.capacity()),
+          reason_code_{reason_code},
+          property_length_(async_mqtt::size(props)),
+          props_(force_move(props))
+    {
+        using namespace std::literals;
+        endian_store(packet_id, packet_id_.data());
+
+        auto guard = unique_scope_guard(
+            [&] {
+                auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
+                for (auto e : rb) {
+                    remaining_length_buf_.push_back(e);
+                }
+            }
+        );
+
+        if (!reason_code_) return;
+        remaining_length_ += 1;
+
+        if (property_length_ == 0) return;
+
+        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
+        for (auto e : pb) {
+            property_length_buf_.push_back(e);
+        }
+
+        for (auto const& prop : props_) {
+            auto id = prop.id();
+            if (!validate_property(property_location::pubrec, id)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::pubrec_packet property "s + id_to_str(id) + " is not allowed"
+                );
+            }
+        }
+
+        remaining_length_ += property_length_buf_.size() + property_length_;
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v5_pubrec;
+    friend struct ::ut_packet::v5_pubrec_pid4;
+    friend struct ::ut_packet::v5_pubrec_pid_only;
+    friend struct ::ut_packet::v5_pubrec_pid_rc;
+    friend struct ::ut_packet::v5_pubrec_prop_len_last;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     basic_pubrec_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -185,163 +365,6 @@ public:
                 "v5::pubrec_packet properties don't match its length"
             );
         }
-    }
-
-    constexpr control_packet_type type() const {
-        return control_packet_type::pubrec;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-
-        ret.emplace_back(as::buffer(packet_id_.data(), packet_id_.size()));
-
-        if (reason_code_) {
-            ret.emplace_back(as::buffer(&*reason_code_, 1));
-
-            if (property_length_buf_.size() != 0) {
-                ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
-                auto props_cbs = async_mqtt::const_buffer_sequence(props_);
-                std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    constexpr std::size_t num_of_const_buffer_sequence() const {
-        return
-            1 +                   // fixed header
-            1 +                   // remaining length
-            1 +                   // packet_id
-            [&] () -> std::size_t {
-                if (reason_code_) {
-                    return
-                        1 +       // reason_code
-                        [&] () -> std::size_t {
-                            if (property_length_buf_.size() == 0) return 0;
-                            return
-                                1 +                   // property length
-                                async_mqtt::num_of_const_buffer_sequence(props_);
-                        }();
-                }
-                return 0;
-            }();
-    }
-
-    /**
-     * @brief Get packet_id.
-     * @return packet_id
-     */
-    packet_id_t packet_id() const {
-        return endian_load<packet_id_t>(packet_id_.data());
-    }
-
-    /**
-     * @breif Get reason code
-     * @return reason_code
-     */
-    pubrec_reason_code code() const {
-        if (reason_code_) return *reason_code_;
-        return pubrec_reason_code::success;
-    }
-
-    /**
-     * @breif Get properties
-     * @return properties
-     */
-    properties const& props() const {
-        return props_;
-    }
-
-    friend
-    inline std::ostream& operator<<(std::ostream& o, basic_pubrec_packet<PacketIdBytes> const& v) {
-        o <<
-            "v5::pubrec{" <<
-            "pid:" << v.packet_id();
-        if (v.reason_code_) {
-            o << ",rc:" << *v.reason_code_;
-        }
-        if (!v.props().empty()) {
-            o << ",ps:" << v.props();
-        };
-        o << "}";
-        return o;
-    }
-
-private:
-    basic_pubrec_packet(
-        packet_id_t packet_id,
-        std::optional<pubrec_reason_code> reason_code,
-        properties props
-    )
-        : fixed_header_{
-              make_fixed_header(control_packet_type::pubrec, 0b0000)
-          },
-          remaining_length_{
-              PacketIdBytes
-          },
-          packet_id_(packet_id_.capacity()),
-          reason_code_{reason_code},
-          property_length_(async_mqtt::size(props)),
-          props_(force_move(props))
-    {
-        using namespace std::literals;
-        endian_store(packet_id, packet_id_.data());
-
-        auto guard = unique_scope_guard(
-            [&] {
-                auto rb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
-                for (auto e : rb) {
-                    remaining_length_buf_.push_back(e);
-                }
-            }
-        );
-
-        if (!reason_code_) return;
-        remaining_length_ += 1;
-
-        if (property_length_ == 0) return;
-
-        auto pb = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(property_length_));
-        for (auto e : pb) {
-            property_length_buf_.push_back(e);
-        }
-
-        for (auto const& prop : props_) {
-            auto id = prop.id();
-            if (!validate_property(property_location::pubrec, id)) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::pubrec_packet property "s + id_to_str(id) + " is not allowed"
-                );
-            }
-        }
-
-        remaining_length_ += property_length_buf_.size() + property_length_;
     }
 
 private:

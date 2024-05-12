@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -50,6 +51,53 @@ public:
         all_[1] = char(0);
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::pingresp;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+
+        ret.emplace_back(as::buffer(all_.data(), all_.size()));
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return all_.size();
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v311_pingresp;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     pingresp_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -85,42 +133,14 @@ public:
         }
     }
 
-    constexpr control_packet_type type() const {
-        return control_packet_type::pingresp;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-
-        ret.emplace_back(as::buffer(all_.data(), all_.size()));
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return all_.size();
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    static constexpr std::size_t num_of_const_buffer_sequence() {
-        return 1; // all
-    }
 
 private:
     static_vector<char, 2> all_;
 };
 
+/**
+ * @brief stream output operator
+ */
 inline std::ostream& operator<<(std::ostream& o, pingresp_packet const& /*v*/) {
     o <<
         "v3_1_1::pingresp{}";

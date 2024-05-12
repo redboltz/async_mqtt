@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_ep_recv_filter)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 // To test the bug fix for https://github.com/redboltz/async_mqtt/issues/42
@@ -43,10 +42,10 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     auto connect = am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
-        "cid1"_mb,
+        "cid1",
         std::nullopt, // will
-        "user1"_mb,
-        "pass1"_mb,
+        "user1",
+        "pass1",
         am::properties{}
     };
 

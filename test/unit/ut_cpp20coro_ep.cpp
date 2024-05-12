@@ -19,7 +19,6 @@
 BOOST_AUTO_TEST_SUITE(ut_broker)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
@@ -42,7 +41,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 auto connect = am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    "cid1"_mb
+                    "cid1"
                 };
                 auto se = co_await ep->send(connect, as::deferred);
                 BOOST_TEST(!se);
@@ -93,7 +92,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                 auto connect = am::v5::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
-                    "cid1"_mb
+                    "cid1"
                 };
                 auto se = co_await ep->send(connect, as::deferred);
                 BOOST_TEST(!se);

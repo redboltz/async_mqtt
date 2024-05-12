@@ -12,6 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -78,86 +79,10 @@ public:
         }
     {}
 
-    auth_packet(buffer buf) {
-        // fixed_header
-        if (buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::auth_packet fixed_header doesn't exist"
-            );
-        }
-        fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        buf.remove_prefix(1);
-
-        // remaining_length
-        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
-            remaining_length_ = *vl_opt;
-        }
-        else {
-            throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
-        }
-
-        if (remaining_length_ == 0) {
-            if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
-            }
-            return;
-        }
-
-        // connect_reason_code
-        reason_code_.emplace(static_cast<auth_reason_code>(buf.front()));
-        buf.remove_prefix(1);
-        switch (*reason_code_) {
-        case auth_reason_code::success:
-        case auth_reason_code::continue_authentication:
-        case auth_reason_code::re_authenticate:
-            break;
-        default:
-            throw make_error(
-                errc::bad_message,
-                "v5::auth_packet connect reason_code is invalid"
-            );
-            break;
-        }
-
-        if (remaining_length_ == 1) {
-            if (!buf.empty()) {
-                throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
-            }
-            return;
-        }
-
-        // property
-        auto it = buf.begin();
-        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
-            property_length_ = *pl_opt;
-            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
-            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
-            if (buf.size() < property_length_) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::auth_packet properties_don't match its length"
-                );
-            }
-            auto prop_buf = buf.substr(0, property_length_);
-            props_ = make_properties(prop_buf, property_location::auth);
-            buf.remove_prefix(property_length_);
-        }
-        else {
-            throw make_error(
-                errc::bad_message,
-                "v5::auth_packet property_length is invalid"
-            );
-        }
-
-        if (!buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::auth_packet properties don't match its length"
-            );
-        }
-    }
-
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
     constexpr control_packet_type type() const {
         return control_packet_type::auth;
     }
@@ -237,6 +162,9 @@ public:
         return props_;
     }
 
+    /**
+     * @brief stream output operator
+     */
     friend
     inline std::ostream& operator<<(std::ostream& o, auth_packet const& v) {
         o <<
@@ -298,6 +226,100 @@ private:
         }
 
         remaining_length_ += property_length_buf_.size() + property_length_;
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v5_auth;
+    friend struct ::ut_packet::v5_auth_no_arg;
+    friend struct ::ut_packet::v5_auth_pid_rc;
+    friend struct ::ut_packet::v5_auth_prop_len_last;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
+    auth_packet(buffer buf) {
+        // fixed_header
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v5::auth_packet fixed_header doesn't exist"
+            );
+        }
+        fixed_header_ = static_cast<std::uint8_t>(buf.front());
+        buf.remove_prefix(1);
+
+        // remaining_length
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
+        }
+
+        if (remaining_length_ == 0) {
+            if (!buf.empty()) {
+                throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
+            }
+            return;
+        }
+
+        // connect_reason_code
+        reason_code_.emplace(static_cast<auth_reason_code>(buf.front()));
+        buf.remove_prefix(1);
+        switch (*reason_code_) {
+        case auth_reason_code::success:
+        case auth_reason_code::continue_authentication:
+        case auth_reason_code::re_authenticate:
+            break;
+        default:
+            throw make_error(
+                errc::bad_message,
+                "v5::auth_packet connect reason_code is invalid"
+            );
+            break;
+        }
+
+        if (remaining_length_ == 1) {
+            if (!buf.empty()) {
+                throw make_error(errc::bad_message, "v5::auth_packet remaining length is invalid");
+            }
+            return;
+        }
+
+        // property
+        auto it = buf.begin();
+        if (auto pl_opt = variable_bytes_to_val(it, buf.end())) {
+            property_length_ = *pl_opt;
+            std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
+            buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
+            if (buf.size() < property_length_) {
+                throw make_error(
+                    errc::bad_message,
+                    "v5::auth_packet properties_don't match its length"
+                );
+            }
+            auto prop_buf = buf.substr(0, property_length_);
+            props_ = make_properties(prop_buf, property_location::auth);
+            buf.remove_prefix(property_length_);
+        }
+        else {
+            throw make_error(
+                errc::bad_message,
+                "v5::auth_packet property_length is invalid"
+            );
+        }
+
+        if (!buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v5::auth_packet properties don't match its length"
+            );
+        }
     }
 
 private:

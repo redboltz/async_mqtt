@@ -9,7 +9,12 @@
 
 #include <variant>
 
-#include <async_mqtt/util/overload.hpp>
+#include <boost/asio/buffer.hpp>
+
+#include <async_mqtt/exception.hpp>
+
+#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/packet/packet_fwd.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
@@ -39,9 +44,11 @@
 #include <async_mqtt/packet/v5_pingresp.hpp>
 #include <async_mqtt/packet/v5_disconnect.hpp>
 #include <async_mqtt/packet/v5_auth.hpp>
-#include <async_mqtt/exception.hpp>
+
+#include <async_mqtt/util/overload.hpp>
 
 namespace async_mqtt {
+namespace as = boost::asio;
 
 /**
  * @breif The varaint type of all packets and system_error
@@ -214,7 +221,7 @@ private:
         v5::pingresp_packet,
         v5::disconnect_packet,
         v5::auth_packet
->;
+    >;
 
     variant_t var_;
 };

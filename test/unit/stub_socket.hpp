@@ -13,6 +13,8 @@
 
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 
+#include "test_allocate_buffer.hpp"
+
 namespace async_mqtt {
 
 namespace as = boost::asio;

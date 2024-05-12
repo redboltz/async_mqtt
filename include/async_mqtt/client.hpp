@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_CLIENT_HPP
 
 #include <deque>
+#include <optional>
 
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/any_io_executor.hpp>

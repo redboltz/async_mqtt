@@ -9,6 +9,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -88,78 +89,10 @@ public:
         remaining_length_buf_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
     }
 
-    basic_unsubscribe_packet(buffer buf) {
-        // fixed_header
-        if (buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v3_1_1::unsubscribe_packet fixed_header doesn't exist"
-            );
-        }
-        fixed_header_ = static_cast<std::uint8_t>(buf.front());
-        buf.remove_prefix(1);
-        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
-        if (!cpt_opt || *cpt_opt != control_packet_type::unsubscribe) {
-            throw make_error(
-                errc::bad_message,
-                "v3_1_1::unsubscribe_packet fixed_header is invalid"
-            );
-        }
-
-        // remaining_length
-        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
-            remaining_length_ = *vl_opt;
-        }
-        else {
-            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet remaining length is invalid");
-        }
-        if (remaining_length_ != buf.size()) {
-            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet remaining length doesn't match buf.size()");
-        }
-
-        // packet_id
-        if (!copy_advance(buf, packet_id_)) {
-            throw make_error(
-                errc::bad_message,
-                "v3_1_1::unsubscribe_packet packet_id doesn't exist"
-            );
-        }
-
-        if (remaining_length_ == 0) {
-            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet doesn't have entries");
-        }
-
-        while (!buf.empty()) {
-            // topic_length
-            static_vector<char, 2> topic_length_buf;
-            if (!insert_advance(buf, topic_length_buf)) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::unsubscribe_packet length of topic is invalid"
-                );
-            }
-            auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
-            topic_length_buf_entries_.push_back(topic_length_buf);
-
-            // topic
-            if (buf.size() < topic_length) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::unsubscribe_packet topic doesn't match its length"
-                );
-            }
-            auto topic = buf.substr(0, topic_length);
-            if (!utf8string_check(topic)) {
-                throw make_error(
-                    errc::bad_message,
-                    "v3_1_1::unsubscribe_packet topic filter invalid utf8"
-                );
-            }
-            entries_.emplace_back(force_move(topic));
-            buf.remove_prefix(topic_length);
-        }
-    }
-
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
     constexpr control_packet_type type() const {
         return control_packet_type::unsubscribe;
     }
@@ -230,6 +163,90 @@ public:
     }
 
 private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v311_unsubscribe;
+    friend struct ::ut_packet::v311_unsubscribe_pid4;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
+    basic_unsubscribe_packet(buffer buf) {
+        // fixed_header
+        if (buf.empty()) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::unsubscribe_packet fixed_header doesn't exist"
+            );
+        }
+        fixed_header_ = static_cast<std::uint8_t>(buf.front());
+        buf.remove_prefix(1);
+        auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
+        if (!cpt_opt || *cpt_opt != control_packet_type::unsubscribe) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::unsubscribe_packet fixed_header is invalid"
+            );
+        }
+
+        // remaining_length
+        if (auto vl_opt = insert_advance_variable_length(buf, remaining_length_buf_)) {
+            remaining_length_ = *vl_opt;
+        }
+        else {
+            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet remaining length is invalid");
+        }
+        if (remaining_length_ != buf.size()) {
+            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet remaining length doesn't match buf.size()");
+        }
+
+        // packet_id
+        if (!copy_advance(buf, packet_id_)) {
+            throw make_error(
+                errc::bad_message,
+                "v3_1_1::unsubscribe_packet packet_id doesn't exist"
+            );
+        }
+
+        if (remaining_length_ == 0) {
+            throw make_error(errc::bad_message, "v3_1_1::unsubscribe_packet doesn't have entries");
+        }
+
+        while (!buf.empty()) {
+            // topic_length
+            static_vector<char, 2> topic_length_buf;
+            if (!insert_advance(buf, topic_length_buf)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::unsubscribe_packet length of topic is invalid"
+                );
+            }
+            auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
+            topic_length_buf_entries_.push_back(topic_length_buf);
+
+            // topic
+            if (buf.size() < topic_length) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::unsubscribe_packet topic doesn't match its length"
+                );
+            }
+            auto topic = buf.substr(0, topic_length);
+            if (!utf8string_check(topic)) {
+                throw make_error(
+                    errc::bad_message,
+                    "v3_1_1::unsubscribe_packet topic filter invalid utf8"
+                );
+            }
+            entries_.emplace_back(std::string{topic});
+            buf.remove_prefix(topic_length);
+        }
+    }
+
+private:
     std::uint8_t fixed_header_;
     std::vector<static_vector<char, 2>> topic_length_buf_entries_;
     std::vector<topic_sharename> entries_;
@@ -238,6 +255,9 @@ private:
     static_vector<char, 4> remaining_length_buf_;
 };
 
+/**
+ * @brief stream output operator
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes> const& v) {
     o <<

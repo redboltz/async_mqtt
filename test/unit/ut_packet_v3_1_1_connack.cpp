@@ -9,6 +9,10 @@
 
 #include <boost/lexical_cast.hpp>
 
+BOOST_AUTO_TEST_SUITE(ut_packet)
+struct v311_connack;
+BOOST_AUTO_TEST_SUITE_END()
+
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
@@ -16,7 +20,6 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 
 BOOST_AUTO_TEST_CASE(v311_connack) {
     BOOST_TEST(am::is_connack<am::v3_1_1::connack_packet>());
@@ -44,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v311_connack) {
         auto [b, e] = am::make_packet_range(cbs);
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
-        auto buf = am::allocate_buffer(std::begin(expected), std::end(expected));
+        am::buffer buf{std::begin(expected), std::end(expected)};
         auto p = am::v3_1_1::connack_packet{buf};
         BOOST_TEST(p.session_present());
         BOOST_TEST(p.code() == am::connect_return_code::not_authorized);

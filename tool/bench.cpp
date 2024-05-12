@@ -415,10 +415,10 @@ private:
 
             // MQTT connect send
             yield {
-                std::optional<am::buffer> un;
-                std::optional<am::buffer> pw;
-                if (bc_.username) un.emplace(am::allocate_buffer(*bc_.username));
-                if (bc_.password) pw.emplace(am::allocate_buffer(*bc_.password));
+                std::optional<std::string> un;
+                std::optional<std::string> pw;
+                if (bc_.username) un.emplace(*bc_.username);
+                if (bc_.password) pw.emplace(*bc_.password);
                 switch (bc_.version) {
                 case am::protocol_version::v5: {
                     am::properties props;
@@ -431,7 +431,7 @@ private:
                         am::v5::connect_packet{
                             bc_.clean_start,
                             bc_.keep_alive,
-                            am::allocate_buffer(pci->get_client_id()),
+                            pci->get_client_id(),
                             std::nullopt, // will
                             am::force_move(un),
                             am::force_move(pw),
@@ -448,7 +448,7 @@ private:
                         am::v3_1_1::connect_packet{
                             bc_.clean_start,
                             bc_.keep_alive,
-                            am::allocate_buffer(pci->get_client_id()),
+                            pci->get_client_id(),
                             std::nullopt, // will
                             am::force_move(un),
                             am::force_move(pw)
@@ -545,7 +545,7 @@ private:
                                 // sync version can be called because the previous timer handler is on the strand
                                 *pci->c->acquire_unique_packet_id(),
                                 {
-                                    { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
+                                    { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 },
                                 am::properties{}
                             },
@@ -561,7 +561,7 @@ private:
                                 // sync version can be called because the previous timer handler is on the strand
                                 *pci->c->acquire_unique_packet_id(),
                                 {
-                                    { am::allocate_buffer(bc_.topic_prefix + pci->index_str), bc_.qos }
+                                    { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 }
                             },
                             as::append(
@@ -744,7 +744,7 @@ private:
                             pci->c->send(
                                 am::v5::publish_packet{
                                     pid,
-                                    am::allocate_buffer(bc_.topic_prefix + pci->index_str),
+                                    bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts,
                                     am::properties{}
@@ -760,7 +760,7 @@ private:
                             pci->c->send(
                                 am::v3_1_1::publish_packet{
                                     pid,
-                                    am::allocate_buffer(bc_.topic_prefix + pci->index_str),
+                                    bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts
                                 },
@@ -1032,8 +1032,8 @@ private:
         ClientInfo& ci,
         packet_id_t /*packet_id*/,
         am::pub::opts pubopts,
-        am::buffer topic_name,
-        std::vector<am::buffer> const& payload,
+        std::string topic_name,
+        std::string const& payload,
         am::properties /*props*/) {
         if (pubopts.get_retain() == am::pub::retain::yes) {
             locked_cout() << "retained publish received and ignored topic:" << topic_name << std::endl;
@@ -1057,7 +1057,7 @@ private:
                     else {
                         auto recv = std::chrono::system_clock::now();
                         BOOST_ASSERT(bc_.md == mode::recv);
-                        auto ts = payload.front().substr(8 + 8, ts_size);
+                        auto ts = payload.substr(8 + 8, ts_size);
                         auto ts_val = boost::lexical_cast<std::int64_t>(ts);
                         return
                             static_cast<std::int64_t>(
@@ -1077,10 +1077,10 @@ private:
                 locked_cout() << "RTT:" << (dur_us / 1000) << "ms over " << bc_.limit_ms << "ms" << std::endl;
             }
             if (bc_.compare && bc_.md == mode::single) {
-                if (payload.front() != ci.recv_payload()) {
+                if (payload != ci.recv_payload()) {
                     locked_cout() << "received payload doesn't match to sent one" << std::endl;
                     locked_cout() << "  expected: " << ci.recv_payload() << std::endl;
-                    locked_cout() << "  received: " << payload.front() << std::endl;;
+                    locked_cout() << "  received: " << payload << std::endl;;
                 }
             }
             if (topic_name != std::string_view(bc_.topic_prefix + ci.index_str)) {
@@ -1766,7 +1766,7 @@ int main(int argc, char *argv[]) {
             std::string get_client_id() const {
                 return cid_prefix + index_str;
             }
-            am::buffer send_payload(mode md) {
+            std::string send_payload(mode md) {
                 std::string ret = payload_str;
                 auto variable =
                     [&] {
@@ -1789,14 +1789,14 @@ int main(int argc, char *argv[]) {
                     } ();
 
                 std::copy(variable.begin(), variable.end(), ret.begin());
-                return am::allocate_buffer(ret);
+                return ret;
             }
 
-            am::buffer recv_payload() const {
+            std::string recv_payload() const {
                 std::string ret = payload_str;
                 auto variable = (boost::format("%s%08d") %index_str % recv_times).str();
                 std::copy(variable.begin(), variable.end(), ret.begin());
-                return am::allocate_buffer(ret);
+                return ret;
             }
 
 #if BOOST_VERSION < 107400 || defined(BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT)

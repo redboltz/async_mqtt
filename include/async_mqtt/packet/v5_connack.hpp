@@ -10,6 +10,7 @@
 #include <utility>
 #include <numeric>
 
+#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/buffer.hpp>
 
@@ -87,6 +88,91 @@ public:
         }
     }
 
+    /**
+     * @brief Get MQTT control packet type
+     * @return control packet type
+     */
+    constexpr control_packet_type type() const {
+        return control_packet_type::connack;
+    }
+
+    /**
+     * @brief Create const buffer sequence
+     *        it is for boost asio APIs
+     * @return const buffer sequence
+     */
+    std::vector<as::const_buffer> const_buffer_sequence() const {
+        std::vector<as::const_buffer> ret;
+        ret.reserve(num_of_const_buffer_sequence());
+
+        ret.emplace_back(as::buffer(&fixed_header_, 1));
+        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
+        ret.emplace_back(as::buffer(&connect_acknowledge_flags_, 1));
+        ret.emplace_back(as::buffer(&reason_code_, 1));
+
+        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
+        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
+        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
+
+        return ret;
+    }
+
+    /**
+     * @brief Get packet size.
+     * @return packet size
+     */
+    std::size_t size() const {
+        return
+            1 +                            // fixed header
+            remaining_length_buf_.size() +
+            remaining_length_;
+    }
+
+    /**
+     * @brief Get number of element of const_buffer_sequence
+     * @return number of element of const_buffer_sequence
+     */
+    std::size_t num_of_const_buffer_sequence() const {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            1 +                   // connect_acknowledge_flags
+            1 +                   // reason_code
+            1 +                   // property length
+            async_mqtt::num_of_const_buffer_sequence(props_);
+    }
+
+    bool session_present() const {
+        return is_session_present(static_cast<char>(connect_acknowledge_flags_));
+    }
+
+    /**
+     * @breif Get reason code
+     * @return reason_code
+     */
+    connect_reason_code code() const {
+        return reason_code_;
+    }
+
+    /**
+     * @breif Get properties
+     * @return properties
+     */
+    properties const& props() const {
+        return props_;
+    }
+
+private:
+
+    template <std::size_t PacketIdBytesArg>
+    friend basic_packet_variant<PacketIdBytesArg>
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+
+#if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+    friend struct ::ut_packet::v5_connack;
+#endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
+
+    // private constructor for internal use
     connack_packet(buffer buf) {
         // fixed_header
         if (buf.empty()) {
@@ -198,76 +284,6 @@ public:
         }
     }
 
-    constexpr control_packet_type type() const {
-        return control_packet_type::connack;
-    }
-
-    /**
-     * @brief Create const buffer sequence
-     *        it is for boost asio APIs
-     * @return const buffer sequence
-     */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        std::vector<as::const_buffer> ret;
-        ret.reserve(num_of_const_buffer_sequence());
-
-        ret.emplace_back(as::buffer(&fixed_header_, 1));
-        ret.emplace_back(as::buffer(remaining_length_buf_.data(), remaining_length_buf_.size()));
-        ret.emplace_back(as::buffer(&connect_acknowledge_flags_, 1));
-        ret.emplace_back(as::buffer(&reason_code_, 1));
-
-        ret.emplace_back(as::buffer(property_length_buf_.data(), property_length_buf_.size()));
-        auto props_cbs = async_mqtt::const_buffer_sequence(props_);
-        std::move(props_cbs.begin(), props_cbs.end(), std::back_inserter(ret));
-
-        return ret;
-    }
-
-    /**
-     * @brief Get packet size.
-     * @return packet size
-     */
-    std::size_t size() const {
-        return
-            1 +                            // fixed header
-            remaining_length_buf_.size() +
-            remaining_length_;
-    }
-
-    /**
-     * @brief Get number of element of const_buffer_sequence
-     * @return number of element of const_buffer_sequence
-     */
-    std::size_t num_of_const_buffer_sequence() const {
-        return
-            1 +                   // fixed header
-            1 +                   // remaining length
-            1 +                   // connect_acknowledge_flags
-            1 +                   // reason_code
-            1 +                   // property length
-            async_mqtt::num_of_const_buffer_sequence(props_);
-    }
-
-    bool session_present() const {
-        return is_session_present(static_cast<char>(connect_acknowledge_flags_));
-    }
-
-    /**
-     * @breif Get reason code
-     * @return reason_code
-     */
-    connect_reason_code code() const {
-        return reason_code_;
-    }
-
-    /**
-     * @breif Get properties
-     * @return properties
-     */
-    properties const& props() const {
-        return props_;
-    }
-
 private:
     std::uint8_t fixed_header_;
 
@@ -283,6 +299,9 @@ private:
     properties props_;
 };
 
+/**
+ * @brief stream output operator
+ */
 inline std::ostream& operator<<(std::ostream& o, connack_packet const& v) {
     o <<
         "v5::connack{" <<

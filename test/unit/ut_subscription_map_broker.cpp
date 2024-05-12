@@ -21,8 +21,6 @@
 BOOST_AUTO_TEST_SUITE(ut_subscription_map_broker)
 
 namespace am = async_mqtt;
-using namespace am::literals;
-using namespace am::literals;
 
 namespace mi = boost::multi_index;
 
@@ -233,7 +231,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
 
     // new subscribe
     {
-        auto it_success = insert_or_update(con1, "a/b/c"_mb, am::qos::at_most_once, 1);
+        auto it_success = insert_or_update(con1, "a/b/c", am::qos::at_most_once, 1);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -251,7 +249,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
         BOOST_CHECK(elem.h);
     }
     {
-        auto it_success = insert_or_update(con2, "a/b/c"_mb, am::qos::at_most_once, 5);
+        auto it_success = insert_or_update(con2, "a/b/c", am::qos::at_most_once, 5);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -300,7 +298,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
     // unsubscribe (con1 "a/b/c")
     {
         auto& idx = scos.get<tag_con_topic_filter>();
-        auto it = idx.find(std::make_tuple(con1, "a/b/c"_mb));
+        auto it = idx.find(std::make_tuple(con1, "a/b/c"));
         BOOST_TEST((it != idx.end()));
         m.erase(*it->h, *it);
         idx.erase(it);
@@ -322,7 +320,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud ) {
 
     // update subscribe (con2 "a/b/c")
     {
-        auto it_success = insert_or_update(con2, "a/b/c"_mb, am::qos::at_least_once, 10);
+        auto it_success = insert_or_update(con2, "a/b/c", am::qos::at_least_once, 10);
         BOOST_TEST(!it_success.second);
 
         std::set<int> entries {
@@ -404,7 +402,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud_ow ) {
 
     // new subscribe
     {
-        auto it_success = insert_or_update(con1, "a/b/c"_mb, am::qos::at_most_once, 1);
+        auto it_success = insert_or_update(con1, "a/b/c", am::qos::at_most_once, 1);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -422,7 +420,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud_ow ) {
         BOOST_CHECK(elem.h);
     }
     {
-        auto it_success = insert_or_update(con2, "a/b"_mb, am::qos::at_most_once, 5);
+        auto it_success = insert_or_update(con2, "a/b", am::qos::at_most_once, 5);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -490,7 +488,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud_ow ) {
     // unsubscribe (con2 "a/b")
     {
         auto& idx = scos.get<tag_con_topic_filter>();
-        auto it = idx.find(std::make_tuple(con2, "a/b"_mb));
+        auto it = idx.find(std::make_tuple(con2, "a/b"));
         BOOST_TEST((it != idx.end()));
         m.erase(*it->h, *it);
         idx.erase(it);
@@ -519,7 +517,7 @@ BOOST_AUTO_TEST_CASE( multi_non_wc_crud_ow ) {
     // unsubscribe (con1 "a/b/c")
     {
         auto& idx = scos.get<tag_con_topic_filter>();
-        auto it = idx.find(std::make_tuple(con1, "a/b/c"_mb));
+        auto it = idx.find(std::make_tuple(con1, "a/b/c"));
         BOOST_TEST((it != idx.end()));
         m.erase(*it->h, *it);
         idx.erase(it);
@@ -576,7 +574,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
 
     // new subscribe
     {
-        auto it_success = insert_or_update(con1, "a/+/c"_mb, am::qos::at_most_once, 1);
+        auto it_success = insert_or_update(con1, "a/+/c", am::qos::at_most_once, 1);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -594,7 +592,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
         BOOST_CHECK(elem.h);
     }
     {
-        auto it_success = insert_or_update(con2, "a/#"_mb, am::qos::at_most_once, 5);
+        auto it_success = insert_or_update(con2, "a/#", am::qos::at_most_once, 5);
         BOOST_TEST(it_success.second);
         auto it = it_success.first; // it is const_iterator due to multi_index
         auto& elem = *it;
@@ -663,7 +661,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
     // unsubscribe (con1 "a/+/c")
     {
         auto& idx = scos.get<tag_con_topic_filter>();
-        auto it = idx.find(std::make_tuple(con1, "a/+/c"_mb));
+        auto it = idx.find(std::make_tuple(con1, "a/+/c"));
         BOOST_TEST((it != idx.end()));
         m.erase(*it->h, *it);
         idx.erase(it);
@@ -684,7 +682,7 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
 
     // update subscribe (con2 "a/#")
     {
-        auto it_success = insert_or_update(con2, "a/#"_mb, am::qos::at_least_once, 10);
+        auto it_success = insert_or_update(con2, "a/#", am::qos::at_least_once, 10);
         BOOST_TEST(!it_success.second);
 
         std::set<int> entries {

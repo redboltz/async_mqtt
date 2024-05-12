@@ -13,7 +13,7 @@
 namespace async_mqtt {
 
 template <typename Sp>
-using sub_con_map = multiple_subscription_map<buffer, subscription<Sp>, boost::hash<buffer>>;
+using sub_con_map = multiple_subscription_map<std::string, subscription<Sp>>;
 
 } // namespace async_mqtt
 

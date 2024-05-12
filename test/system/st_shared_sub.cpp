@@ -15,7 +15,6 @@
 BOOST_AUTO_TEST_SUITE(st_shared_sub)
 
 namespace am = async_mqtt;
-using namespace am::literals;
 namespace as = boost::asio;
 
 BOOST_AUTO_TEST_CASE(v5_from_broker) {
@@ -70,10 +69,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub1"_mb,
+                        "sub1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -84,7 +83,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub1).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::at_most_once},
+                            {"$share/sn1/topic1", am::qos::at_most_once},
                         }
                     },
                     *this
@@ -103,10 +102,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub2"_mb,
+                        "sub2",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -117,7 +116,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub2).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::at_least_once},
+                            {"$share/sn1/topic1", am::qos::at_least_once},
                         }
                     },
                     *this
@@ -136,10 +135,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub3"_mb,
+                        "sub3",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -150,7 +149,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub3).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::exactly_once},
+                            {"$share/sn1/topic1", am::qos::exactly_once},
                         }
                     },
                     *this
@@ -169,10 +168,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -183,8 +182,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 // publish 1
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once
                     },
                     *this
@@ -195,8 +194,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once
                     },
                     *this
@@ -208,8 +207,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once
                     },
                     *this
@@ -220,8 +219,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 // publish 4
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload4"_mb,
+                        "topic1",
+                        "payload4",
                         am::qos::at_most_once
                     },
                     *this
@@ -232,8 +231,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload5"_mb,
+                        "topic1",
+                        "payload5",
                         am::qos::at_least_once
                     },
                     *this
@@ -245,8 +244,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload6"_mb,
+                        "topic1",
+                        "payload6",
                         am::qos::exactly_once
                     },
                     *this
@@ -259,8 +258,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once
                     })
                 );
@@ -270,8 +269,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once
                     })
                 );
@@ -281,8 +280,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once
                     })
                 );
@@ -292,8 +291,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload4"_mb,
+                        "topic1",
+                        "payload4",
                         am::qos::at_most_once
                     })
                 );
@@ -303,8 +302,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         2,
-                        "topic1"_mb,
-                        "payload5"_mb,
+                        "topic1",
+                        "payload5",
                         am::qos::at_least_once
                     })
                 );
@@ -314,8 +313,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         2,
-                        "topic1"_mb,
-                        "payload6"_mb,
+                        "topic1",
+                        "payload6",
                         am::qos::exactly_once
                     })
                 );
@@ -388,10 +387,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub1"_mb,
+                        "sub1",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -402,7 +401,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub1).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::at_most_once},
+                            {"$share/sn1/topic1", am::qos::at_most_once},
                         },
                         {am::property::subscription_identifier{1}}
                     },
@@ -422,10 +421,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub2"_mb,
+                        "sub2",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -436,7 +435,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub2).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::at_least_once},
+                            {"$share/sn1/topic1", am::qos::at_least_once},
                         },
                         {am::property::subscription_identifier{1}}
                     },
@@ -456,10 +455,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "sub3"_mb,
+                        "sub3",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -470,7 +469,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::subscribe_packet{
                         *ep(sub3).acquire_unique_packet_id(),
                         {
-                            {"$share/sn1/topic1"_mb, am::qos::exactly_once},
+                            {"$share/sn1/topic1", am::qos::exactly_once},
                         },
                         {am::property::subscription_identifier{10}}
                     },
@@ -490,10 +489,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
-                        "pub"_mb,
+                        "pub",
                         std::nullopt, // will
-                        "u1"_mb,
-                        "passforu1"_mb
+                        "u1",
+                        "passforu1"
                     },
                     *this
                 );
@@ -504,8 +503,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 // publish 1
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once
                     },
                     *this
@@ -516,8 +515,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once
                     },
                     *this
@@ -529,8 +528,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once
                     },
                     *this
@@ -544,8 +543,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload1"_mb,
+                        "topic1",
+                        "payload1",
                         am::qos::at_most_once,
                         {am::property::subscription_identifier{1}}
                     })
@@ -556,8 +555,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload2"_mb,
+                        "topic1",
+                        "payload2",
                         am::qos::at_least_once,
                         {am::property::subscription_identifier{1}}
                     })
@@ -568,8 +567,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload3"_mb,
+                        "topic1",
+                        "payload3",
                         am::qos::exactly_once,
                         {am::property::subscription_identifier{10}}
                     })
@@ -581,7 +580,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     am::v5::unsubscribe_packet{
                         *pid,
                         {
-                            "$share/sn1/topic1"_mb
+                            "$share/sn1/topic1"
                         }
                     },
                     *this
@@ -593,8 +592,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 // publish 4
                 yield ep(pub).send(
                     am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload4"_mb,
+                        "topic1",
+                        "payload4",
                         am::qos::at_most_once
                     },
                     *this
@@ -605,8 +604,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload5"_mb,
+                        "topic1",
+                        "payload5",
                         am::qos::at_least_once
                     },
                     *this
@@ -618,8 +617,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(pub).send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
-                        "topic1"_mb,
-                        "payload6"_mb,
+                        "topic1",
+                        "payload6",
                         am::qos::exactly_once
                     },
                     *this
@@ -632,8 +631,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *pv
                     ==
                     (am::v5::publish_packet{
-                        "topic1"_mb,
-                        "payload4"_mb,
+                        "topic1",
+                        "payload4",
                         am::qos::at_most_once,
                         {am::property::subscription_identifier{1}}
                     })
@@ -645,8 +644,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         2,
-                        "topic1"_mb,
-                        "payload5"_mb,
+                        "topic1",
+                        "payload5",
                         am::qos::at_least_once,
                         {am::property::subscription_identifier{10}}
                     })
@@ -657,8 +656,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     ==
                     (am::v5::publish_packet{
                         1,
-                        "topic1"_mb,
-                        "payload6"_mb,
+                        "topic1",
+                        "payload6",
                         am::qos::at_least_once,
                         {am::property::subscription_identifier{1}}
                     })
