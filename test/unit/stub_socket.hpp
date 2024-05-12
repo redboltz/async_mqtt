@@ -51,6 +51,10 @@ struct basic_stub_socket {
         close_checker_ = force_move(c);
     }
 
+    void set_associated_cheker(std::size_t num) {
+        associated_allocator_num_ = num;
+    }
+
     auto get_executor() const {
         return exe_;
     }
@@ -68,6 +72,19 @@ struct basic_stub_socket {
         ConstBufferSequence const& buffers,
         CompletionToken&& token
     ) {
+        if (associated_allocator_num_ != 0) {
+            BOOST_ASIO_REBIND_ALLOC(
+                typename as::associated_allocator<CompletionToken>::type,
+                char
+            ) alloc1(
+                as::get_associated_allocator(token)
+            );
+            alloc1.deallocate(
+                alloc1.allocate(associated_allocator_num_),
+                associated_allocator_num_
+            );
+        }
+
         return as::async_compose<
             CompletionToken,
             void(error_code const& ec, std::size_t)
@@ -190,6 +207,7 @@ private:
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
+    std::size_t associated_allocator_num_ = 0;
 };
 
 using stub_socket = basic_stub_socket<2>;
