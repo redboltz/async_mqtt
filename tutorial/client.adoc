@@ -128,6 +128,8 @@ namespace tls = as::ssl;
 
 == Layer access
 
+You usually need to access only `next_layer()` to pass underlying_handshake() argument. But if you want to some configuration for each layers, you can access all underlying layers.
+
 |===
 |Layer access | mqtt | mqtts | ws | wss
 
@@ -136,22 +138,6 @@ namespace tls = as::ssl;
 |next_layer().next_layer().next_layer()|-|-|-|TCP stream
 |lowest_layer()|TCP stream|TCP stream|TCP stream|TCP stream
 |===
-
-== Handshaking underlying layer
-
-You can use underlying handshaking functions as follows:
-
-```cpp
-// Underlying TCP connect
-co_await as::async_connect(
-    amcl.next_layer(),
-    eps,
-    as::use_awaitable
-);
-std::cout << "TCP connected" << std::endl;
-```
-
-Similarly, handshake TLS, WebSocket layers if needed.
 
 == Send MQTT CONNECT packet and start receive loop
 
