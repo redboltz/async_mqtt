@@ -12,13 +12,17 @@
 
 #include <async_mqtt/packet/qos.hpp>
 
-/// @file
+/**
+ * @defgroup subscribe_options
+ * @ingroup subscribe_v5
+ */
 
 namespace async_mqtt {
 
 namespace sub {
 
 /**
+ * @ingroup subscribe_options
  * @brief MQTT RetainHandling
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169
@@ -31,6 +35,7 @@ enum class retain_handling : std::uint8_t
 };
 
 /**
+ * @ingroup subscribe_options
  * @brief MQTT RetainAsPublished
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169
@@ -42,6 +47,7 @@ enum class rap : std::uint8_t
 };
 
 /**
+ * @ingroup subscribe_options
  * @brief MQTT NoLocal
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169
@@ -53,6 +59,7 @@ enum class nl : std::uint8_t
 };
 
 /**
+ * @ingroup subscribe_options
  * @brief MQTT SubscribeOptions
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169
@@ -97,43 +104,71 @@ struct opts final {
 
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(opts rhs) const { return opts(data_ | rhs.data_); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(retain_handling rhs) const   { return *this | opts(rhs); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(rap rhs) const               { return *this | opts(rhs); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(nl rhs) const                { return *this | opts(rhs); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(qos rhs) const               { return *this | opts(rhs); }
 
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(opts rhs) { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(retain_handling rhs)   { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(rap rhs)               { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(nl rhs)                { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(qos rhs)               { return (*this = (*this | rhs)); }
 
@@ -178,11 +213,15 @@ struct opts final {
 
     /**
      * @brief equal operator
+     * @param rhs compare target
+     * @return true if this opts equal to the rhs, otherwise false.
      */
     constexpr bool operator==(opts rhs) const { return data_ == rhs.data_; }
 
     /**
      * @brief less than operator
+     * @param rhs compare target
+     * @return true if this opts less than the rhs, otherwise false.
      */
     constexpr bool operator<(opts rhs) const { return data_ < rhs.data_; }
 
@@ -193,70 +232,117 @@ private:
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(retain_handling lhs, rap rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(retain_handling lhs, nl rhs)  { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(retain_handling lhs, qos rhs) { return opts(lhs) | rhs; }
 
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(rap lhs, retain_handling rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(rap lhs, nl rhs)              { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(rap lhs, qos rhs)             { return opts(lhs) | rhs; }
 
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(nl lhs, retain_handling rhs)  { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(nl lhs, rap rhs)              { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(nl lhs, qos rhs)              { return opts(lhs) | rhs; }
 
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(qos lhs, retain_handling rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(qos lhs, rap rhs)             { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(qos lhs, nl rhs)              { return opts(lhs) | rhs; }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
  * @brief stringize retain_handling
+ * @param v target
+ * @return retain_handling string
  */
 constexpr char const* retain_handling_to_str(retain_handling v) {
     switch(v) {
@@ -268,19 +354,26 @@ constexpr char const* retain_handling_to_str(retain_handling v) {
 }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
  * @brief output to the stream retain_handling
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, retain_handling val)
+std::ostream& operator<<(std::ostream& os, retain_handling v)
 {
-    os << retain_handling_to_str(val);
+    os << retain_handling_to_str(v);
     return os;
 }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
- * @brief stringize rap
+ * @brief stringize rap(retain as published)
+ * @param v target
+ * @return rap(retain as published) string
  */
 constexpr char const* rap_to_str(rap v) {
     switch(v) {
@@ -291,19 +384,26 @@ constexpr char const* rap_to_str(rap v) {
 }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
- * @brief output to the stream rap
+ * @brief output to the stream rap(retain as published)
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, rap val)
+std::ostream& operator<<(std::ostream& os, rap v)
 {
-    os << rap_to_str(val);
+    os << rap_to_str(v);
     return os;
 }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
- * @brief stringize nl
+ * @brief stringize nl(no local)
+ * @param v target
+ * @return nl(no local) string
  */
 constexpr char const* nl_to_str(nl v) {
     switch(v) {
@@ -314,13 +414,17 @@ constexpr char const* nl_to_str(nl v) {
 }
 
 /**
+ * @ingroup subscribe_options
  * @related opts
- * @brief output to the stream nl
+ * @brief output to the stream nl(no local)
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, nl val)
+std::ostream& operator<<(std::ostream& os, nl v)
 {
-    os << nl_to_str(val);
+    os << nl_to_str(v);
     return os;
 }
 

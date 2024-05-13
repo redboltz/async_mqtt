@@ -10,11 +10,16 @@
 #include <cstdint>
 #include <ostream>
 
-/// @file
+/**
+ * @defgroup mqtt
+ * @ingroup connection
+ * @brief MQTT protocol related topics
+ */
 
 namespace async_mqtt {
 
 /**
+ * @ingroup mqtt
  * @brief MQTT protocol version
  */
 enum class protocol_version {
@@ -24,7 +29,10 @@ enum class protocol_version {
 };
 
 /**
+ * @ingroup mqtt
  * @brief stringize protocol_version
+ * @param v target
+ * @return  version string
  */
 constexpr char const* protocol_version_to_str(protocol_version v) {
     switch(v) {
@@ -36,7 +44,11 @@ constexpr char const* protocol_version_to_str(protocol_version v) {
 }
 
 /**
+ * @ingroup mqtt
  * @brief output to the stream protocol_version
+ * @param os  output stream
+ * @param val target
+ * @return output stream
  */
 inline
 std::ostream& operator<<(std::ostream& os, protocol_version val)

@@ -17,6 +17,7 @@
 namespace async_mqtt {
 
 /**
+ * @ingroup packet
  * @brief MQTT suback_return_code
  *
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
@@ -29,6 +30,7 @@ enum class suback_return_code : std::uint8_t {
 };
 
 /**
+ * @ingroup packet
  * @brief create suback_return_code from qos
  * @param q qos
  * @return suback_retun_code
@@ -38,6 +40,7 @@ constexpr suback_return_code qos_to_suback_return_code(qos q) {
 }
 
 /**
+ * @ingroup packet
  * @brief stringize suback_return_code
  */
 constexpr

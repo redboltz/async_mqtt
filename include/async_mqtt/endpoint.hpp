@@ -25,11 +25,21 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-/// @file
+/**
+ * @defgroup connection
+ * @brief MQTT and underlying layer connection related topics
+ */
+
+/**
+ * @defgroup endpoint
+ * @ingroup connection
+ * @brief MQTT connection layer that can be used not only a client but also a server (broker).
+ */
 
 namespace async_mqtt {
 
 /**
+ * @ingroup endpoint
  * @brief receive packet filter
  */
 enum class filter {
@@ -38,6 +48,7 @@ enum class filter {
 };
 
 /**
+ * @ingroup endpoint
  * @brief MQTT endpoint corresponding to the connection
  * @tparam Role          role for packet sendable checking
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
@@ -269,10 +280,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(std::optional<packet_id_t>)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     acquire_unique_packet_id(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -286,10 +299,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(packet_id_t)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -303,10 +318,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(bool)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     register_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -321,10 +338,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void()
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     release_packet_id(
         packet_id_t packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -341,10 +360,12 @@ public:
         typename Packet,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(system_error)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     send(
         Packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -359,10 +380,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(packet_variant_type)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     recv(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -379,10 +402,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(packet_variant_type)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     recv(
         std::set<control_packet_type> types,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -401,10 +426,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(packet_variant_type)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     recv(
         filter fil,
         std::set<control_packet_type> types,
@@ -419,10 +446,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void()
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -437,10 +466,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void()
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -458,10 +489,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     get_stored_packets(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     ) const;
@@ -475,10 +508,12 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(v5::basic_publish_packet<PacketIdBytes>)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -608,10 +643,12 @@ private:
         typename Packet,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(system_error)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     send(
         Packet packet,
         bool from_queue,
@@ -621,10 +658,12 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
+#if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
         void(error_code)
     )
+#endif // !defined(GENERATING_DOCUMENTATION)
     add_retry(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -698,6 +737,7 @@ private:
 };
 
 /**
+ * @ingroup endpoint
  * @related basic_endpoint
  * @brief Type alias of basic_endpoint (PacketIdBytes=2).
  *        This is for typical usecase.
@@ -706,16 +746,6 @@ private:
  */
 template <role Role, typename NextLayer>
 using endpoint = basic_endpoint<Role, 2, NextLayer>;
-
-/**
- * @related basic_endpoint
- * @brief Type alias of basic_endpoint (PacketIdBytes=2).
- *        This is only for single threaded environment.
- * @tparam Role          role for packet sendable checking
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
-template <role Role, typename NextLayer>
-using endpoint_st = basic_endpoint<Role, 2, NextLayer>;
 
 } // namespace async_mqtt
 

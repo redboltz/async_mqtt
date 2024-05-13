@@ -27,11 +27,17 @@
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/will.hpp>
 
+/**
+ * @defgroup connect_v3_1_1
+ * @ingroup packet_v3_1_1
+ */
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup connect_v3_1_1
  * @brief MQTT CONNECT packet (v3.1.1)
  *
  * Only MQTT client can send this packet.
@@ -40,7 +46,7 @@ namespace as = boost::asio;
 class connect_packet {
 public:
     /**
-     * @bried constructor
+     * @brief constructor
      * @param clean_session  When the endpoint sends CONNECT packet with clean_session is true,
      *                       then stored packets are erased.
      *                       When the endpoint receives CONNECT packet with clean_session is false,
@@ -81,7 +87,7 @@ public:
     )
     {}
     /**
-     * @bried constructor
+     * @brief constructor
      * @param clean_session  When the endpoint sends CONNECT packet with clean_session is true,
      *                       then stored packets are erased.
      *                       When the endpoint receives CONNECT packet with clean_session is false,
@@ -612,7 +618,11 @@ private:
 };
 
 /**
+ * @related connect_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 inline std::ostream& operator<<(std::ostream& o, connect_packet const& v) {
     o <<

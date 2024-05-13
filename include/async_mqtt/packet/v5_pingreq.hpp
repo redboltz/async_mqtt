@@ -23,11 +23,17 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 
+/**
+ * @defgroup pingreq_v5
+ * @ingroup packet_v5
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup pingreq_v5
  * @brief MQTT PINGREQ packet (v5)
  *
  * Only MQTT client can send this packet.
@@ -138,9 +144,14 @@ private:
 };
 
 /**
+ * @related pingreq_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
-inline std::ostream& operator<<(std::ostream& o, pingreq_packet const& /*v*/) {
+inline std::ostream& operator<<(std::ostream& o, pingreq_packet const& v) {
+    (void)v;
     o <<
         "v5::pingreq{}";
     return o;

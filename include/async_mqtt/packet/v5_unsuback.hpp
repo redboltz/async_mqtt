@@ -21,11 +21,23 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+/**
+ * @defgroup unsuback_v5
+ * @ingroup packet_v5
+ */
+
+/**
+ * @defgroup unsuback_v5_detail
+ * @ingroup unsuback_v5
+ * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup unsuback_v5_detail
  * @brief MQTT UNSUBACK packet (v5)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -155,7 +167,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -265,7 +277,11 @@ private:
 };
 
 /**
+ * @related basic_unsuback_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdBytes> const& v) {
@@ -288,6 +304,11 @@ inline std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdB
     return o;
 }
 
+/**
+ * @ingroup unsuback_v5
+ * @related basic_unsuback_packet
+ * @brief Type alias of basic_unsuback_packet (PacketIdBytes=2).
+ */
 using unsuback_packet = basic_unsuback_packet<2>;
 
 } // namespace async_mqtt::v5

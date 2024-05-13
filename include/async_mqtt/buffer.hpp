@@ -18,12 +18,20 @@
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/is_iterator.hpp>
 
+/**
+ * @defgroup buffer
+ * @ingroup packet_detail
+ */
+
 namespace async_mqtt {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup buffer
  * @brief buffer that has string_view interface and shared ownership
+ * This class is only for advanced usecase such as developping high performance MQTT broker.
+ * Typical MQTT client developpers don't need to care about the buffer.
  * This class provides string_view interface.
  * This class holds string_view pointee's lifetime optionally.
  */
@@ -567,6 +575,7 @@ namespace boost {
 namespace asio {
 
 /**
+ * @ingroup buffer
  * @brief create boost::asio::const_buffer from the async_mqtt::buffer
  * boost::asio::const_buffer is a kind of view class.
  * So the class doesn't hold any lifetimes.

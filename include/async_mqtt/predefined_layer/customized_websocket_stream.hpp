@@ -20,6 +20,10 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace bs = boost::beast;
 
+/**
+ * @ingroup predefined_customize
+ * @brief customization class template specialization for boost::beast::websocket::stream
+ */
 template <typename NextLayer>
 struct layer_customize<bs::websocket::stream<NextLayer>> {
 

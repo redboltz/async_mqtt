@@ -16,13 +16,33 @@
 #include <boost/assert.hpp>
 #include <boost/operators.hpp>
 
+/**
+ * @defgroup error
+ * @brief Common error
+ */
+
 namespace async_mqtt {
 
+/**
+ * @ingroup error
+ * @brief type alias of boost::sytem.
+ */
 namespace sys = boost::system;
+
+/**
+ * @ingroup error
+ * @brief type alias of boost::sytem::error_code.
+ */
 using error_code = sys::error_code;
+
+/**
+ * @ingroup error
+ * @brief type alias of boost::sytem::errc.
+ */
 namespace errc = sys::errc;
 
 /**
+ * @ingroup error
  * @brief async_mqtt error class. It is used as CompletionToken parameter and exception.
  */
 struct system_error : sys::system_error, private boost::totally_ordered<system_error> {
@@ -73,18 +93,39 @@ inline system_error make_error(errc::errc_t ec, WhatArg&& wa) {
     return system_error(make_error_code(ec), std::forward<WhatArg>(wa));
 }
 
+/**
+ * @related system_error
+ * @brief system_error equality comparison operator
+ * @param lhs left hand side operand
+ * @param rhs right hand side operand
+ * @return true if lhs code() and what() equal to rhs, otherwise false.
+ */
 inline bool operator==(system_error const& lhs, system_error const& rhs) {
     return
         std::tuple<error_code, std::string_view>(lhs.code(), lhs.what()) ==
         std::tuple<error_code, std::string_view>(rhs.code(), rhs.what());
 }
 
+/**
+ * @related system_error
+ * @brief system_error less than comparison operator
+ * @param lhs left hand side operand
+ * @param rhs right hand side operand
+ * @return true if lhs code() and what() is less than rhs, otherwise false.
+ */
 inline bool operator<(system_error const& lhs, system_error const& rhs) {
     return
         std::tuple<error_code, std::string_view>(lhs.code(), lhs.what()) <
         std::tuple<error_code, std::string_view>(rhs.code(), rhs.what());
 }
 
+/**
+ * @related system_error
+ * @brief system_error stream output operator
+ * @param o output stream
+ * @param v output object
+ * @return  output stream
+ */
 inline std::ostream& operator<<(std::ostream& o, system_error const& v) {
     o << v.what();
     return o;

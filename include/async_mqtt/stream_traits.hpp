@@ -88,7 +88,14 @@ lowest_layer_type<T>& get_lowest_layer(T& t) noexcept {
 }
 
 /**
- * @brief customization class for underlying layer
+ * @defgroup underlying_customize
+ * @ingroup underlying_layer
+ */
+
+/**
+ * @ingroup underlying_customize
+ * @brief customization class template for underlying layer
+ * In order to adapt your layer to async_mqtt, specialize the class template.
  * @tparam Layer Specialized parameter for your own layer
  */
 template <typename Layer>

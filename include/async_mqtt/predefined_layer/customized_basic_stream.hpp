@@ -12,12 +12,19 @@
 #include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/log.hpp>
 
-/// @file
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
 
+/**
+ * @defgroup predefined_customize
+ * @ingroup underlying_customize
+ */
+
+/**
+ * @ingroup predefined_customize
+ * @brief customization class template specialization for boost::asio::basic_stream_socket
+ */
 template <typename Protocol, typename Executor>
 struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
     template <

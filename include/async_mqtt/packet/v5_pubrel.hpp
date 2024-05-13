@@ -27,11 +27,23 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+/**
+ * @defgroup pubrel_v5
+ * @ingroup packet_v5
+ */
+
+/**
+ * @defgroup pubrel_v5_detail
+ * @ingroup pubrel_v5
+ * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup pubrel_v5_detail
  * @brief MQTT PUBREL packet (v5)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -173,7 +185,7 @@ public:
     }
 
     /**
-     * @breif Get reason code
+     * @brief Get reason code
      * @return reason_code
      */
     pubrel_reason_code code() const {
@@ -182,7 +194,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -191,6 +203,9 @@ public:
 
     /**
      * @brief stream output operator
+     * @param o output stream
+     * @param v target
+     * @return  output stream
      */
     friend
     inline std::ostream& operator<<(std::ostream& o, basic_pubrel_packet<PacketIdBytes> const& v) {
@@ -374,6 +389,11 @@ private:
     properties props_;
 };
 
+/**
+ * @ingroup pubrel_v5
+ * @related basic_pubrel_packet
+ * @brief Type alias of basic_pubrel_packet (PacketIdBytes=2).
+ */
 using pubrel_packet = basic_pubrel_packet<2>;
 
 } // namespace async_mqtt::v5

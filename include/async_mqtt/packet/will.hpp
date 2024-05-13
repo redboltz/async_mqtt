@@ -156,6 +156,7 @@ private:
 };
 
 /**
+ * @ingroup packet
  * @brief stream output operator
  */
 inline std::ostream& operator<<(std::ostream& o, will const& val) {

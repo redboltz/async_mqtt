@@ -23,11 +23,17 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 
+/**
+ * @defgroup disconnect_v3_1_1
+ * @ingroup packet_v3_1_1
+ */
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup disconnect_v3_1_1
  * @brief MQTT DISCONNECT packet (v3.1.1)
  *
  * Only MQTT client can send this packet.
@@ -140,7 +146,11 @@ private:
 };
 
 /**
+ * @related disconnect_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 inline std::ostream& operator<<(std::ostream& o, disconnect_packet const& /*v*/) {
     o <<

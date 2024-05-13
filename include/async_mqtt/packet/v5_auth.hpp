@@ -27,11 +27,17 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+/**
+ * @defgroup auth_v5
+ * @ingroup packet_v5
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup auth_v5
  * @brief MQTT AUTH packet (v35)
  *
  * MQTT UNSUBACK packet.
@@ -146,7 +152,7 @@ public:
     }
 
     /**
-     * @breif Get reason code
+     * @brief Get reason code
      * @return reason_code
      */
     auth_reason_code code() const {
@@ -155,7 +161,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -164,6 +170,9 @@ public:
 
     /**
      * @brief stream output operator
+     * @param o output stream
+     * @param v target
+     * @return  output stream
      */
     friend
     inline std::ostream& operator<<(std::ostream& o, auth_packet const& v) {

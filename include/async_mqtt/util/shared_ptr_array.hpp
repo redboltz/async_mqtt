@@ -10,6 +10,7 @@
 #if defined(_DOXYGEN_)
 
 /**
+ * @ingroup packet
  * @brief Type alias of shared_ptr char array.
  * You can choose the target type.
  * - If ASYNC_MQTT_STD_SHARED_PTR_ARRAY is defined, `std::shared_ptr<char []>` is used.
@@ -21,6 +22,7 @@ using shared_ptr_array = std::shared_ptr<char []>;
 using const_shared_ptr_array = std::shared_ptr<char const []>;
 
 /**
+ * @ingroup packet
  * @brief shared_ptr_array creating function.
  * You can choose the target type.
  * - If ASYNC_MQTT_STD_SHARED_PTR_ARRAY is defined,

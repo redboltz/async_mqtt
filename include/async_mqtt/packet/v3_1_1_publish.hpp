@@ -32,11 +32,23 @@
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
+/**
+ * @defgroup publish_v3_1_1
+ * @ingroup packet_v3_1_1
+ */
+
+/**
+ * @defgroup publish_v3_1_1_detail
+ * @ingroup publish_v3_1_1
+ * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ */
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup publish_v3_1_1_detail
  * @brief MQTT PUBLISH packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -434,7 +446,11 @@ private:
 };
 
 /**
+ * @related basic_publish_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v) {
@@ -458,6 +474,7 @@ inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBy
 }
 
 /**
+ * @ingroup publish_v3_1_1
  * @related basic_publish_packet
  * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
  */

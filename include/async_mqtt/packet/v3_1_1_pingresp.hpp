@@ -23,11 +23,17 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 
+/**
+ * @defgroup pingresp_v3_1_1
+ * @ingroup packet_v3_1_1
+ */
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup pingresp_v3_1_1
  * @brief MQTT PINGRESP packet (v3.1.1)
  *
  * Only MQTT broker(sever) can send this packet.
@@ -139,9 +145,14 @@ private:
 };
 
 /**
+ * @related pingresp_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
-inline std::ostream& operator<<(std::ostream& o, pingresp_packet const& /*v*/) {
+inline std::ostream& operator<<(std::ostream& o, pingresp_packet const& v) {
+    (void)v;
     o <<
         "v3_1_1::pingresp{}";
     return o;

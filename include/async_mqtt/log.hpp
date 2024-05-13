@@ -30,19 +30,29 @@
 
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
+/**
+ * @defgroup log
+ * @brief logging that async_mqtt internally use
+ */
+
 namespace async_mqtt {
 
 struct channel : std::string {
     using std::string::string;
 };
 
+/**
+ * @ingroup log
+ * log severity level
+ * warning is recommended for actual operation because there is no output except something important.
+ */
 enum class severity_level {
-    trace,
-    debug,
-    info,
-    warning,
-    error,
-    fatal
+    trace,   ///< trace level for detaied behavior and reporting issue
+    debug,   ///< debug level not used in async_mqtt, so far
+    info,    ///< info level api call is output
+    warning, ///< warning level such as timeout
+    error,   ///< error level error report such as connection is failed
+    fatal    ///< fatal level it is logic error of async_mqtt
 };
 
 inline std::ostream& operator<<(std::ostream& o, severity_level sev) {
@@ -117,7 +127,7 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(address, "MqttAddress", void const*)
 
 #if !defined(ASYNC_MQTT_LOG)
 
-#define ASYNC_MQTT_LOG(chan, sev)                                             \
+#define ASYNC_MQTT_LOG(chan, sev)                                       \
     BOOST_PP_IF(                                                        \
         BOOST_PP_GREATER_EQUAL(ASYNC_MQTT_GET_LOG_SEV_NUM(sev), ASYNC_MQTT_GET_LOG_SEV_NUM(ASYNC_MQTT_LOG_SEV)), \
         ASYNC_MQTT_LOG_FP(chan, async_mqtt::severity_level::sev),                \

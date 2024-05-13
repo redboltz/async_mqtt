@@ -23,12 +23,18 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+/**
+ * @defgroup connack_v5
+ * @ingroup packet_v5
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @bried MQTT CONNACK packet (v5)
+ * @ingroup connack_v5
+ * @brief MQTT CONNACK packet (v5)
  *
  * Only MQTT broker(sever) can send this packet.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074
@@ -37,7 +43,7 @@ class connack_packet {
 public:
 
     /**
-     * @bried constructor
+     * @brief constructor
      * @param session_present If the broker stores the session, then true, otherwise false.
      *                        When the endpoint receives CONNACK packet with session_present is false,
      *                        then stored packets are erased.
@@ -147,7 +153,7 @@ public:
     }
 
     /**
-     * @breif Get reason code
+     * @brief Get reason code
      * @return reason_code
      */
     connect_reason_code code() const {
@@ -155,7 +161,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -300,7 +306,11 @@ private:
 };
 
 /**
+ * @related connack_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 inline std::ostream& operator<<(std::ostream& o, connack_packet const& v) {
     o <<

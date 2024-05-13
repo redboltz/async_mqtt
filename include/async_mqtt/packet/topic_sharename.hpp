@@ -14,6 +14,7 @@
 namespace async_mqtt {
 
 /**
+ * @ingroup packet
  * @brief topic and sharename
  */
 class topic_sharename {

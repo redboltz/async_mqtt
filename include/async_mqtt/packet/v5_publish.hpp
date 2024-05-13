@@ -33,10 +33,33 @@
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
+/**
+ * @defgroup publish_v5
+ * @ingroup packet_v5
+ */
+
+/**
+ * @defgroup publish_v5_detail
+ * @ingroup publish_v5
+ * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
+/**
+ * @ingroup publish_v5_detail
+ * @brief MQTT PUBLISH packet (v5)
+ * @tparam PacketIdBytes size of packet_id
+ *
+ * If both the client and the broker keeping the session, QoS1 and QoS2 PUBLISH packet is
+ * stored in the endpoint for resending if disconnect/reconnect happens. In addition,
+ * the client can sent the packet at offline. The packets are stored and will send after
+ * the next connection is established.
+ * If the session doesn' exist or lost, then the stored packets are erased.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100
+ */
 template <std::size_t PacketIdBytes>
 class basic_publish_packet {
 public:
@@ -331,7 +354,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -339,7 +362,7 @@ public:
     }
 
     /**
-     * @breif Remove topic and add topic_alias
+     * @brief Remove topic and add topic_alias
      *
      * This is for applying topic_alias.
      * @param val topic_alias
@@ -372,7 +395,7 @@ public:
     }
 
     /**
-     * @breif Add topic_alias
+     * @brief Add topic_alias
      *
      * This is for registering topic_alias.
      * @param val topic_alias
@@ -396,7 +419,7 @@ public:
     }
 
     /**
-     * @breif Remove topic and add topic_alias
+     * @brief Remove topic and add topic_alias
      *
      * This is for extracting topic from the topic_alias.
      * @param val topic_alias
@@ -439,7 +462,7 @@ public:
     }
 
     /**
-     * @breif Update MessageExpiryInterval property
+     * @brief Update MessageExpiryInterval property
      * @param val message_expiry_interval
      */
     void update_message_expiry_interval(std::uint32_t val) {
@@ -630,7 +653,11 @@ private:
 };
 
 /**
+ * @related basic_publish_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v) {
@@ -656,6 +683,11 @@ inline std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBy
     return o;
 }
 
+/**
+ * @ingroup publish_v5
+ * @related basic_publish_packet
+ * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
+ */
 using publish_packet = basic_publish_packet<2>;
 
 } // namespace async_mqtt::v5
