@@ -110,7 +110,7 @@ $(function(){initNavTree('connect__flags_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_CONNECT_FLAGS_HPP</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cstdint&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;<a class="code" href="pubopts_8hpp.html">async_mqtt/packet/pubopts.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;async_mqtt/packet/pubopts.hpp&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
@@ -135,11 +135,11 @@ $(function(){initNavTree('connect__flags_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> (v &amp; mask_will_flag) != 0;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">constexpr</span> pub::retain will_retain(<span class="keywordtype">char</span> v) {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">constexpr</span> <a class="code hl_enumeration" href="group__publish__options.html#ga89fabc81d8448fa347b2146349ae4737">pub::retain</a> will_retain(<span class="keywordtype">char</span> v) {</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">return</span></div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        [&amp;] {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            <span class="keywordflow">if</span> (v &amp; mask_will_retain) <span class="keywordflow">return</span> pub::retain::yes;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            <span class="keywordflow">return</span> pub::retain::no;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            <span class="keywordflow">if</span> (v &amp; mask_will_retain) <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="group__publish__options.html#gga89fabc81d8448fa347b2146349ae4737aa6105c0a611b41b08f1209506350279e">pub::retain::yes</a>;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="group__publish__options.html#gga89fabc81d8448fa347b2146349ae4737a7fa3b767c460b54a2be4d49030b349c7">pub::retain::no</a>;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        }();</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
@@ -151,12 +151,12 @@ $(function(){initNavTree('connect__flags_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">return</span> (v &amp; mask_user_name_flag) != 0;</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">constexpr</span> <span class="keywordtype">void</span> set_will_qos(<span class="keywordtype">char</span>&amp; v, qos qos_value) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">constexpr</span> <span class="keywordtype">void</span> set_will_qos(<span class="keywordtype">char</span>&amp; v, <a class="code hl_enumeration" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> qos_value) {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    v |= <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span>std::uint8_t<span class="keyword">&gt;</span>(qos_value) &lt;&lt; 3);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">constexpr</span> <a class="code hl_enumeration" href="qos_8hpp.html#a38e773082414bb272ab22275c56eb4df">qos</a> will_qos(<span class="keywordtype">char</span> v) {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumeration" href="qos_8hpp.html#a38e773082414bb272ab22275c56eb4df">qos</a><span class="keyword">&gt;</span>((v &amp; 0b00011000) &gt;&gt; 3);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">constexpr</span> <a class="code hl_enumeration" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> will_qos(<span class="keywordtype">char</span> v) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumeration" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a><span class="keyword">&gt;</span>((v &amp; 0b00011000) &gt;&gt; 3);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>} <span class="comment">// namespace connect_flags</span></div>
@@ -164,8 +164,10 @@ $(function(){initNavTree('connect__flags_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#endif </span><span class="comment">// MQTT_CONNECT_FLAGS_HPP</span></div>
-<div class="ttc" id="apubopts_8hpp_html"><div class="ttname"><a href="pubopts_8hpp.html">pubopts.hpp</a></div></div>
-<div class="ttc" id="aqos_8hpp_html_a38e773082414bb272ab22275c56eb4df"><div class="ttname"><a href="qos_8hpp.html#a38e773082414bb272ab22275c56eb4df">async_mqtt::qos</a></div><div class="ttdeci">qos</div><div class="ttdoc">MQTT QoS.</div><div class="ttdef"><b>Definition</b> qos.hpp:23</div></div>
+<div class="ttc" id="agroup__publish__options_html_ga89fabc81d8448fa347b2146349ae4737"><div class="ttname"><a href="group__publish__options.html#ga89fabc81d8448fa347b2146349ae4737">async_mqtt::pub::retain</a></div><div class="ttdeci">retain</div><div class="ttdoc">MQTT RETAIN.</div><div class="ttdef"><b>Definition</b> pubopts.hpp:75</div></div>
+<div class="ttc" id="agroup__publish__options_html_gga89fabc81d8448fa347b2146349ae4737a7fa3b767c460b54a2be4d49030b349c7"><div class="ttname"><a href="group__publish__options.html#gga89fabc81d8448fa347b2146349ae4737a7fa3b767c460b54a2be4d49030b349c7">async_mqtt::pub::retain::no</a></div><div class="ttdeci">@ no</div><div class="ttdoc">No Retain.</div></div>
+<div class="ttc" id="agroup__publish__options_html_gga89fabc81d8448fa347b2146349ae4737aa6105c0a611b41b08f1209506350279e"><div class="ttname"><a href="group__publish__options.html#gga89fabc81d8448fa347b2146349ae4737aa6105c0a611b41b08f1209506350279e">async_mqtt::pub::retain::yes</a></div><div class="ttdeci">@ yes</div><div class="ttdoc">Retain.</div></div>
+<div class="ttc" id="agroup__qos_html_ga38e773082414bb272ab22275c56eb4df"><div class="ttname"><a href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">async_mqtt::qos</a></div><div class="ttdeci">qos</div><div class="ttdoc">MQTT QoS.</div><div class="ttdef"><b>Definition</b> qos.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -110,19 +110,19 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_TOPIC_ALIAS_RECV_HPP</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;boost/assert.hpp&gt;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;boost/multi_index_container.hpp&gt;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;boost/multi_index/ordered_index.hpp&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;boost/multi_index/key.hpp&gt;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;async_mqtt/constant.hpp&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;async_mqtt/type.hpp&gt;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;async_mqtt/log.hpp&gt;</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;async_mqtt/util/move.hpp&gt;</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;async_mqtt/util/string_view.hpp&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;string_view&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;boost/assert.hpp&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;boost/multi_index_container.hpp&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;boost/multi_index/ordered_index.hpp&gt;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;boost/multi_index/key.hpp&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;async_mqtt/constant.hpp&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;async_mqtt/type.hpp&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;async_mqtt/log.hpp&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;async_mqtt/util/move.hpp&gt;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
@@ -133,8 +133,8 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    topic_alias_recv(topic_alias_t max)</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        :max_{max} {}</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> insert_or_update(string_view topic, topic_alias_t alias) {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, trace)</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> insert_or_update(std::string_view topic, topic_alias_t alias) {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182">trace</a>)</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            &lt;&lt; <span class="stringliteral">&quot;topic_alias_recv insert&quot;</span></div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            &lt;&lt; <span class="stringliteral">&quot; topic:&quot;</span> &lt;&lt; topic</div>
@@ -162,7 +162,7 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">auto</span> it = aliases_.find(alias);</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keywordflow">if</span> (it != aliases_.end()) topic = it-&gt;topic;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, info)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            &lt;&lt; <span class="stringliteral">&quot;find_topic_by_alias&quot;</span></div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            &lt;&lt; <span class="stringliteral">&quot; alias:&quot;</span> &lt;&lt; alias</div>
@@ -172,7 +172,7 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    }</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">void</span> clear() {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, info)</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            &lt;&lt; <span class="stringliteral">&quot;clear_topic_alias&quot;</span>;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        aliases_.clear();</div>
@@ -206,6 +206,8 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_TOPIC_ALIAS_RECV_HPP</span></div>
+<div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182">async_mqtt::severity_level::trace</a></div><div class="ttdeci">@ trace</div><div class="ttdoc">trace level for detaied behavior and reporting issue</div></div>
+<div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">async_mqtt::severity_level::info</a></div><div class="ttdeci">@ info</div><div class="ttdoc">info level api call is output</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -159,6 +159,46 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="sect1">
+<h2 id="_include_header_files">Include header files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to use async_mqtt, include the following header file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/all.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in <code>all.hpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>For TLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/mqtts.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/ws.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket on TLS</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/wss.hpp&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_mqtt">mqtt</h2>
 <div class="sectionbody">
 <div class="listingblock">

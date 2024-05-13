@@ -8,5 +8,8 @@ var classasync__mqtt_1_1v5_1_1basic__puback__packet =
     [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#ad9ab7a1fef2f0be038ab214d159e34ae", null ],
     [ "packet_id", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#aac06ae179c16d0ce0ed0cf0458468d95", null ],
     [ "props", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#a411cd4cefe3b285b8b671459011d5d40", null ],
-    [ "size", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#a9260977b086e8432c1d165de5ddf79d3", null ]
+    [ "size", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#a9260977b086e8432c1d165de5ddf79d3", null ],
+    [ "type", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#ae49dca1f3e93ea83f7f79b48d3a22f24", null ],
+    [ "operator<<", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html#a9c9b9bd5ec4809e777a67dcc787867a7", null ],
+    [ "puback_packet", "group__puback__v5.html#gad1ac458a5a1912a4c6bdfaedd407b8f3", null ]
 ];

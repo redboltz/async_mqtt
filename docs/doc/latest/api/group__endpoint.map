@@ -1,0 +1,4 @@
+<map id="Endpoint" name="Endpoint">
+<area shape="rect" id="Node000002" href="$group__connection.html" title="MQTT and underlying layer connection related topics." alt="" coords="5,5,100,33"/>
+<area shape="rect" id="Node000001" title="MQTT connection layer that can be used not only a client but also a server (broker)." alt="" coords="148,5,226,33"/>
+</map>

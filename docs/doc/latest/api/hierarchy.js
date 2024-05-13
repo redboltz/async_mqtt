@@ -1,14 +1,14 @@
 var hierarchy =
 [
     [ "async_mqtt::v5::auth_packet", "classasync__mqtt_1_1v5_1_1auth__packet.html", null ],
-    [ "async_mqtt::basic_client< Version, Strand, NextLayer >", "classasync__mqtt_1_1basic__client.html", null ],
-    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, Strand, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
+    [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
     [ "async_mqtt::basic_packet_variant< PacketIdBytes >", "classasync__mqtt_1_1basic__packet__variant.html", null ],
     [ "async_mqtt::v3_1_1::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html", null ],
     [ "async_mqtt::v5::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html", null ],
     [ "async_mqtt::v3_1_1::basic_pubcomp_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__pubcomp__packet.html", null ],
     [ "async_mqtt::v5::basic_pubcomp_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__pubcomp__packet.html", null ],
     [ "async_mqtt::v3_1_1::basic_publish_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html", null ],
+    [ "async_mqtt::v5::basic_publish_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html", null ],
     [ "async_mqtt::v3_1_1::basic_pubrec_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html", null ],
     [ "async_mqtt::v5::basic_pubrec_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html", null ],
     [ "async_mqtt::v3_1_1::basic_pubrel_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html", null ],
@@ -36,6 +36,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "async_mqtt::buffer", "classasync__mqtt_1_1buffer.html", null ],
+    [ "async_mqtt::client< Version, NextLayer >", "classasync__mqtt_1_1client.html", null ],
     [ "async_mqtt::v3_1_1::connack_packet", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html", null ],
     [ "async_mqtt::v5::connack_packet", "classasync__mqtt_1_1v5_1_1connack__packet.html", null ],
     [ "async_mqtt::v3_1_1::connect_packet", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html", null ],
@@ -43,6 +44,9 @@ var hierarchy =
     [ "async_mqtt::v3_1_1::disconnect_packet", "classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html", null ],
     [ "async_mqtt::v5::disconnect_packet", "classasync__mqtt_1_1v5_1_1disconnect__packet.html", null ],
     [ "async_mqtt::layer_customize< Layer >", "structasync__mqtt_1_1layer__customize.html", null ],
+    [ "async_mqtt::layer_customize< as::basic_stream_socket< Protocol, Executor > >", "structasync__mqtt_1_1layer__customize_3_01as_1_1basic__stream__socket_3_01Protocol_00_01Executor_01_4_01_4.html", null ],
+    [ "async_mqtt::layer_customize< as::ssl::stream< NextLayer > >", "structasync__mqtt_1_1layer__customize_3_01as_1_1ssl_1_1stream_3_01NextLayer_01_4_01_4.html", null ],
+    [ "async_mqtt::layer_customize< bs::websocket::stream< NextLayer > >", "structasync__mqtt_1_1layer__customize_3_01bs_1_1websocket_1_1stream_3_01NextLayer_01_4_01_4.html", null ],
     [ "async_mqtt::property::detail::n_bytes_property< N >", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html", null ],
     [ "async_mqtt::property::detail::n_bytes_property< 1 >", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html", [
       [ "async_mqtt::property::maximum_qos", "classasync__mqtt_1_1property_1_1maximum__qos.html", null ],
@@ -73,7 +77,7 @@ var hierarchy =
     [ "async_mqtt::v3_1_1::pingresp_packet", "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html", null ],
     [ "async_mqtt::v5::pingresp_packet", "classasync__mqtt_1_1v5_1_1pingresp__packet.html", null ],
     [ "async_mqtt::property_variant", "classasync__mqtt_1_1property__variant.html", null ],
-    [ "async_mqtt::basic_client< Version, Strand, NextLayer >::pubres_t", "structasync__mqtt_1_1basic__client_1_1pubres__t.html", null ],
+    [ "async_mqtt::client< Version, NextLayer >::pubres_t", "structasync__mqtt_1_1client_1_1pubres__t.html", null ],
     [ "async_mqtt::system_error", "structasync__mqtt_1_1system__error.html", null ],
     [ "async_mqtt::topic_sharename", "classasync__mqtt_1_1topic__sharename.html", null ],
     [ "async_mqtt::topic_subopts", "classasync__mqtt_1_1topic__subopts.html", null ],

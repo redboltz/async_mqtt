@@ -95,38 +95,75 @@ $(function(){initNavTree('classasync__mqtt_1_1buffer.html',''); initResizable();
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1buffer-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference</div></div>
+  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__detail.html">Packet_detail</a> &raquo; <a class="el" href="group__buffer.html">Buffer</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>buffer that has string_view interface This class provides string_view interface. This class hold string_view target's lifetime optionally.  
+<p>buffer that has string_view interface and shared ownership This class is only for advanced usecase such as developping high performance MQTT broker. Typical MQTT client developpers don't need to care about the buffer. This class provides string_view interface. This class holds string_view pointee's lifetime optionally.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="buffer_8hpp_source.html">buffer.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a780ef979588f850ef6c18a07b53c7a87" id="r_a780ef979588f850ef6c18a07b53c7a87"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a780ef979588f850ef6c18a07b53c7a87">buffer</a> (string_view <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">sv</a>)</td></tr>
-<tr class="memdesc:a780ef979588f850ef6c18a07b53c7a87"><td class="mdescLeft">&#160;</td><td class="mdescRight">string_view constructor  <br /></td></tr>
-<tr class="separator:a780ef979588f850ef6c18a07b53c7a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98e82df41b753fac853332478e12b57b" id="r_a98e82df41b753fac853332478e12b57b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98e82df41b753fac853332478e12b57b">buffer</a> (std::string)=<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">delete</a></td></tr>
-<tr class="memdesc:a98e82df41b753fac853332478e12b57b"><td class="mdescLeft">&#160;</td><td class="mdescRight">string constructor (deleted)  <br /></td></tr>
-<tr class="separator:a98e82df41b753fac853332478e12b57b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeec7a30a6c57eed3dfd4347b968ad09" id="r_adeec7a30a6c57eed3dfd4347b968ad09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adeec7a30a6c57eed3dfd4347b968ad09">buffer</a> (string_view <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">sv</a>, any <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">life</a>)</td></tr>
-<tr class="memdesc:adeec7a30a6c57eed3dfd4347b968ad09"><td class="mdescLeft">&#160;</td><td class="mdescRight">string_view and lifetime constructor  <br /></td></tr>
-<tr class="separator:adeec7a30a6c57eed3dfd4347b968ad09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7895963705a5671147e3cfb366f48756" id="r_a7895963705a5671147e3cfb366f48756"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7895963705a5671147e3cfb366f48756">substr</a> (size_type <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">pos</a>=0, size_type <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">count</a>=npos) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a> &amp;</td></tr>
-<tr class="memdesc:a7895963705a5671147e3cfb366f48756"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer.  <br /></td></tr>
+<tr class="memitem:a322bad7e07196362bf2fa26d9c2b4f4f" id="r_a322bad7e07196362bf2fa26d9c2b4f4f"><td class="memItemLeft" align="right" valign="top"><a id="a322bad7e07196362bf2fa26d9c2b4f4f" name="a322bad7e07196362bf2fa26d9c2b4f4f"></a>
+constexpr&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> () noexcept=default</td></tr>
+<tr class="memdesc:a322bad7e07196362bf2fa26d9c2b4f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor <br /></td></tr>
+<tr class="separator:a322bad7e07196362bf2fa26d9c2b4f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a088947de7fb4d32454075ca12a8cd6c5" id="r_a088947de7fb4d32454075ca12a8cd6c5"><td class="memItemLeft" align="right" valign="top"><a id="a088947de7fb4d32454075ca12a8cd6c5" name="a088947de7fb4d32454075ca12a8cd6c5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;other)=default</td></tr>
+<tr class="memdesc:a088947de7fb4d32454075ca12a8cd6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor <br /></td></tr>
+<tr class="separator:a088947de7fb4d32454075ca12a8cd6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5fcfee9e7ed812e29ac77e991fcf24" id="r_a1b5fcfee9e7ed812e29ac77e991fcf24"><td class="memItemLeft" align="right" valign="top"><a id="a1b5fcfee9e7ed812e29ac77e991fcf24" name="a1b5fcfee9e7ed812e29ac77e991fcf24"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;&amp;other)=default</td></tr>
+<tr class="memdesc:a1b5fcfee9e7ed812e29ac77e991fcf24"><td class="mdescLeft">&#160;</td><td class="mdescRight">move constructor <br /></td></tr>
+<tr class="separator:a1b5fcfee9e7ed812e29ac77e991fcf24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0373b7226007473603184e423d20c0c3" id="r_a0373b7226007473603184e423d20c0c3"><td class="memItemLeft" align="right" valign="top"><a id="a0373b7226007473603184e423d20c0c3" name="a0373b7226007473603184e423d20c0c3"></a>
+<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;other)=default</td></tr>
+<tr class="memdesc:a0373b7226007473603184e423d20c0c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy assign operator <br /></td></tr>
+<tr class="separator:a0373b7226007473603184e423d20c0c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9346d850d596a68325d70f5534c93694" id="r_a9346d850d596a68325d70f5534c93694"><td class="memItemLeft" align="right" valign="top"><a id="a9346d850d596a68325d70f5534c93694" name="a9346d850d596a68325d70f5534c93694"></a>
+<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;&amp;other)=default</td></tr>
+<tr class="memdesc:a9346d850d596a68325d70f5534c93694"><td class="mdescLeft">&#160;</td><td class="mdescRight">move assign operator <br /></td></tr>
+<tr class="separator:a9346d850d596a68325d70f5534c93694"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89dadefc440669338abeff8e8f282d45" id="r_a89dadefc440669338abeff8e8f282d45"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89dadefc440669338abeff8e8f282d45">buffer</a> (char const *s, std::size_t count)</td></tr>
+<tr class="memdesc:a89dadefc440669338abeff8e8f282d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor The buffer doesn't manage the lifetime  <br /></td></tr>
+<tr class="separator:a89dadefc440669338abeff8e8f282d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92d4036fb9070e0be851fa133b20c9b9" id="r_a92d4036fb9070e0be851fa133b20c9b9"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92d4036fb9070e0be851fa133b20c9b9">buffer</a> (char const *s)</td></tr>
+<tr class="memdesc:a92d4036fb9070e0be851fa133b20c9b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor The buffer doesn't manage the lifetime  <br /></td></tr>
+<tr class="separator:a92d4036fb9070e0be851fa133b20c9b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6354f235a64c4441d85d5874f341e2fe" id="r_a6354f235a64c4441d85d5874f341e2fe"><td class="memTemplParams" colspan="2">template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_iterator&lt; It &gt;::value &amp;&amp;is_input_iterator&lt; End &gt;::value &gt; *  = nullptr&gt; </td></tr>
+<tr class="memitem:a6354f235a64c4441d85d5874f341e2fe"><td class="memTemplItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6354f235a64c4441d85d5874f341e2fe">buffer</a> (It first, End last)</td></tr>
+<tr class="memdesc:a6354f235a64c4441d85d5874f341e2fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">move assign operator The buffer doesn't manage the lifetime. The memory between first and last must be continuous.  <br /></td></tr>
+<tr class="separator:a6354f235a64c4441d85d5874f341e2fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8ec6154fe9b524a5722848ea21fa7e0" id="r_ac8ec6154fe9b524a5722848ea21fa7e0"><td class="memItemLeft" align="right" valign="top">constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8ec6154fe9b524a5722848ea21fa7e0">buffer</a> (std::string_view sv)</td></tr>
+<tr class="memdesc:ac8ec6154fe9b524a5722848ea21fa7e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">std::string_view constructor  <br /></td></tr>
+<tr class="separator:ac8ec6154fe9b524a5722848ea21fa7e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24b4b37514e88ef089ef7b52b8293d0d" id="r_a24b4b37514e88ef089ef7b52b8293d0d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24b4b37514e88ef089ef7b52b8293d0d">buffer</a> (std::string s)</td></tr>
+<tr class="memdesc:a24b4b37514e88ef089ef7b52b8293d0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">string constructor  <br /></td></tr>
+<tr class="separator:a24b4b37514e88ef089ef7b52b8293d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55fb8cd69efe05757c164e8c87d0b76c" id="r_a55fb8cd69efe05757c164e8c87d0b76c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55fb8cd69efe05757c164e8c87d0b76c">buffer</a> (std::string_view sv, std::shared_ptr&lt; void &gt; life)</td></tr>
+<tr class="memdesc:a55fb8cd69efe05757c164e8c87d0b76c"><td class="mdescLeft">&#160;</td><td class="mdescRight">std::string_view and lifetime constructor  <br /></td></tr>
+<tr class="separator:a55fb8cd69efe05757c164e8c87d0b76c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55447262777041aa99c4c260382670fc" id="r_a55447262777041aa99c4c260382670fc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55447262777041aa99c4c260382670fc">buffer</a> (char const *s, std::size_t count, std::shared_ptr&lt; void &gt; life)</td></tr>
+<tr class="memdesc:a55447262777041aa99c4c260382670fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">pointer, size, and lifetime constructor  <br /></td></tr>
+<tr class="separator:a55447262777041aa99c4c260382670fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceb1698f2803378a97b415e53b9f6a1c" id="r_aceb1698f2803378a97b415e53b9f6a1c"><td class="memTemplParams" colspan="2">template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_iterator&lt; It &gt;::value &amp;&amp;is_input_iterator&lt; End &gt;::value &gt; *  = nullptr&gt; </td></tr>
+<tr class="memitem:aceb1698f2803378a97b415e53b9f6a1c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aceb1698f2803378a97b415e53b9f6a1c">buffer</a> (It first, End last, std::shared_ptr&lt; void &gt; life)</td></tr>
+<tr class="memdesc:aceb1698f2803378a97b415e53b9f6a1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">range and lifetime constructor  <br /></td></tr>
+<tr class="separator:aceb1698f2803378a97b415e53b9f6a1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7895963705a5671147e3cfb366f48756" id="r_a7895963705a5671147e3cfb366f48756"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7895963705a5671147e3cfb366f48756">substr</a> (size_type pos=0, size_type count=npos) const &amp;</td></tr>
+<tr class="memdesc:a7895963705a5671147e3cfb366f48756"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer.  <br /></td></tr>
 <tr class="separator:a7895963705a5671147e3cfb366f48756"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3d64b3893dfec271b87d8f2e3dd6b65" id="r_ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3d64b3893dfec271b87d8f2e3dd6b65">substr</a> (size_type <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">pos</a>=0, size_type <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">count</a>=npos) &amp;&amp;</td></tr>
-<tr class="memdesc:ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as string_view::substr(). In addition the lifetime is moved to returned buffer.  <br /></td></tr>
+<tr class="memitem:ad3d64b3893dfec271b87d8f2e3dd6b65" id="r_ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3d64b3893dfec271b87d8f2e3dd6b65">substr</a> (size_type pos=0, size_type count=npos) &amp;&amp;</td></tr>
+<tr class="memdesc:ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is moved to returned buffer.  <br /></td></tr>
 <tr class="separator:ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>buffer that has string_view interface This class provides string_view interface. This class hold string_view target's lifetime optionally. </p>
+<div class="textblock"><p>buffer that has string_view interface and shared ownership This class is only for advanced usecase such as developping high performance MQTT broker. Typical MQTT client developpers don't need to care about the buffer. This class provides string_view interface. This class holds string_view pointee's lifetime optionally. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a780ef979588f850ef6c18a07b53c7a87" name="a780ef979588f850ef6c18a07b53c7a87"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a780ef979588f850ef6c18a07b53c7a87">&#9670;&#160;</a></span>buffer() <span class="overload">[1/3]</span></h2>
+<a id="a89dadefc440669338abeff8e8f282d45" name="a89dadefc440669338abeff8e8f282d45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89dadefc440669338abeff8e8f282d45">&#9670;&#160;</a></span>buffer() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -135,9 +172,120 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a> async_mqtt::buffer::buffer </td>
+          <td class="memname">constexpr async_mqtt::buffer::buffer </td>
           <td>(</td>
-          <td class="paramtype">string_view</td>          <td class="paramname"><span class="paramname"><em>sv</em></span></td><td>)</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>constructor The buffer doesn't manage the lifetime </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>the begin pointer of continuous memory that contains characters </td></tr>
+    <tr><td class="paramname">count</td><td>the length of the continuours memory </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a92d4036fb9070e0be851fa133b20c9b9" name="a92d4036fb9070e0be851fa133b20c9b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92d4036fb9070e0be851fa133b20c9b9">&#9670;&#160;</a></span>buffer() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr async_mqtt::buffer::buffer </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>constructor The buffer doesn't manage the lifetime </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>the begin pointer of continuous memory that contains characters. The characters must be null terminated. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6354f235a64c4441d85d5874f341e2fe" name="a6354f235a64c4441d85d5874f341e2fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6354f235a64c4441d85d5874f341e2fe">&#9670;&#160;</a></span>buffer() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_iterator&lt; It &gt;::value &amp;&amp;is_input_iterator&lt; End &gt;::value &gt; *  = nullptr&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr async_mqtt::buffer::buffer </td>
+          <td>(</td>
+          <td class="paramtype">It</td>          <td class="paramname"><span class="paramname"><em>first</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">End</td>          <td class="paramname"><span class="paramname"><em>last</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>move assign operator The buffer doesn't manage the lifetime. The memory between first and last must be continuous. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">first</td><td>the begin pointer of continuous memory that contains characters </td></tr>
+    <tr><td class="paramname">last</td><td>the end pointer of continuous memory that contains characters </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac8ec6154fe9b524a5722848ea21fa7e0" name="ac8ec6154fe9b524a5722848ea21fa7e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8ec6154fe9b524a5722848ea21fa7e0">&#9670;&#160;</a></span>buffer() <span class="overload">[4/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr async_mqtt::buffer::buffer </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>sv</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -148,18 +296,18 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>string_view constructor </p>
+<p>std::string_view constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sv</td><td>string_view This constructor doesn't hold the sv target's lifetime. It behaves as string_view. Caller needs to manage the target lifetime. </td></tr>
+    <tr><td class="paramname">sv</td><td>std::string_view This constructor doesn't hold the sv target's lifetime. It behaves as std::string_view. Caller needs to manage the target lifetime. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a98e82df41b753fac853332478e12b57b" name="a98e82df41b753fac853332478e12b57b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98e82df41b753fac853332478e12b57b">&#9670;&#160;</a></span>buffer() <span class="overload">[2/3]</span></h2>
+<a id="a24b4b37514e88ef089ef7b52b8293d0d" name="a24b4b37514e88ef089ef7b52b8293d0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24b4b37514e88ef089ef7b52b8293d0d">&#9670;&#160;</a></span>buffer() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,29 +318,29 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">async_mqtt::buffer::buffer </td>
           <td>(</td>
-          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">explicit</span><span class="mlabel">delete</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>string constructor (deleted) </p>
+<p>string constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">string</td><td>This constructor is intentionally deleted. Consider <code>buffer(std::string("ABC"))</code>, the buffer points to dangling reference. </td></tr>
+    <tr><td class="paramname">string</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="adeec7a30a6c57eed3dfd4347b968ad09" name="adeec7a30a6c57eed3dfd4347b968ad09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adeec7a30a6c57eed3dfd4347b968ad09">&#9670;&#160;</a></span>buffer() <span class="overload">[3/3]</span></h2>
+<a id="a55fb8cd69efe05757c164e8c87d0b76c" name="a55fb8cd69efe05757c164e8c87d0b76c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55fb8cd69efe05757c164e8c87d0b76c">&#9670;&#160;</a></span>buffer() <span class="overload">[6/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,12 +351,12 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">async_mqtt::buffer::buffer </td>
           <td>(</td>
-          <td class="paramtype">string_view</td>          <td class="paramname"><span class="paramname"><em>sv</em>, </span></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>sv</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">any</td>          <td class="paramname"><span class="paramname"><em>life</em></span>&#160;)</td>
+          <td class="paramtype">std::shared_ptr&lt; void &gt;</td>          <td class="paramname"><span class="paramname"><em>life</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -218,11 +366,101 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>string_view and lifetime constructor </p>
+<p>std::string_view and lifetime constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">sv</td><td>string_view </td></tr>
-    <tr><td class="paramname">sp</td><td>shared_ptr_array that holds sv target's lifetime If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
+    <tr><td class="paramname">sv</td><td>std::string_view </td></tr>
+    <tr><td class="paramname">life</td><td>sv target's lifetime keeping object by shared ownership If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a55447262777041aa99c4c260382670fc" name="a55447262777041aa99c4c260382670fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55447262777041aa99c4c260382670fc">&#9670;&#160;</a></span>buffer() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">async_mqtt::buffer::buffer </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>count</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; void &gt;</td>          <td class="paramname"><span class="paramname"><em>life</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>pointer, size, and lifetime constructor </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>pointer to the beginning of the view </td></tr>
+    <tr><td class="paramname">count</td><td>size of the view </td></tr>
+    <tr><td class="paramname">life</td><td>sv target's lifetime keeping object by shared ownership If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aceb1698f2803378a97b415e53b9f6a1c" name="aceb1698f2803378a97b415e53b9f6a1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceb1698f2803378a97b415e53b9f6a1c">&#9670;&#160;</a></span>buffer() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_iterator&lt; It &gt;::value &amp;&amp;is_input_iterator&lt; End &gt;::value &gt; *  = nullptr&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">async_mqtt::buffer::buffer </td>
+          <td>(</td>
+          <td class="paramtype">It</td>          <td class="paramname"><span class="paramname"><em>first</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">End</td>          <td class="paramname"><span class="paramname"><em>last</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; void &gt;</td>          <td class="paramname"><span class="paramname"><em>life</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>range and lifetime constructor </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">first</td><td>iterator to the beginning of the view </td></tr>
+    <tr><td class="paramname">last</td><td>iterator to the end of the view </td></tr>
+    <tr><td class="paramname">life</td><td>sv target's lifetime keeping object by shared ownership If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
   </table>
   </dd>
 </dl>
@@ -257,11 +495,11 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>get substring The returned buffer ragnge is the same as string_view::substr(). In addition the lifetime is moved to returned buffer. </p>
+<p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is moved to returned buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
   </table>
   </dd>
 </dl>
@@ -295,11 +533,11 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>get substring The returned buffer ragnge is the same as string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer. </p>
+<p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
   </table>
   </dd>
 </dl>

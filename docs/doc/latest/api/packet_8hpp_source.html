@@ -124,7 +124,7 @@ $(function(){initNavTree('packet_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {}</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    std::vector&lt;as::const_buffer&gt; const_buffer_sequence()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordflow">return</span> { as::buffer(packet_.data(), packet_.size()) };</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordflow">return</span> { <a class="code hl_function" href="group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f">as::buffer</a>(packet_.data(), packet_.size()) };</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::size_t size()<span class="keyword"> const </span>{</div>
@@ -147,6 +147,7 @@ $(function(){initNavTree('packet_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_HPP</span></div>
+<div class="ttc" id="agroup__buffer_html_gafccb94aa6be5a8e224e1b900e9522b4f"><div class="ttname"><a href="group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f">boost::asio::buffer</a></div><div class="ttdeci">const_buffer buffer(async_mqtt::buffer const &amp;data)</div><div class="ttdoc">create boost::asio::const_buffer from the async_mqtt::buffer boost::asio::const_buffer is a kind of v...</div><div class="ttdef"><b>Definition</b> buffer.hpp:587</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

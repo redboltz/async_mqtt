@@ -1,23 +1,23 @@
 <map id="async_mqtt::property::detail::binary_property" name="async_mqtt::property::detail::binary_property">
 <area shape="rect" id="Node000001" title="binary_property" alt="" coords="5,144,183,189"/>
-<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1property_1_1authentication__data.html" title=" " alt="" coords="237,75,398,119"/>
+<area shape="rect" id="Node000002" href="$classasync__mqtt_1_1property_1_1authentication__data.html" title="authentication_data property" alt="" coords="237,75,398,119"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,136,242,117,244,123,183,141"/>
-<area shape="rect" id="Node000003" href="$classasync__mqtt_1_1property_1_1correlation__data.html" title=" " alt="" coords="237,144,398,189"/>
+<area shape="rect" id="Node000003" href="$classasync__mqtt_1_1property_1_1correlation__data.html" title="correlation_data property" alt="" coords="237,144,398,189"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="198,164,237,164,237,169,198,169"/>
 <area shape="rect" id="Node000004" href="$structasync__mqtt_1_1property_1_1detail_1_1string__property.html" title="string_property" alt="" coords="231,213,404,258"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="183,191,244,210,242,215,182,196"/>
-<area shape="rect" id="Node000005" href="$classasync__mqtt_1_1property_1_1assigned__client__identifier.html" title=" " alt="" coords="452,5,647,50"/>
+<area shape="rect" id="Node000005" href="$classasync__mqtt_1_1property_1_1assigned__client__identifier.html" title="assigned_client_identifier property" alt="" coords="452,5,647,50"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="400,202,402,199,415,182,421,165,425,131,429,96,436,78,450,60,465,48,469,52,454,64,441,81,434,98,430,132,427,167,419,185,406,203,403,205"/>
-<area shape="rect" id="Node000006" href="$classasync__mqtt_1_1property_1_1authentication__method.html" title=" " alt="" coords="460,75,640,119"/>
+<area shape="rect" id="Node000006" href="$classasync__mqtt_1_1property_1_1authentication__method.html" title="authentication_method property" alt="" coords="460,75,640,119"/>
 <area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="397,203,402,199,417,182,425,165,434,147,450,130,469,118,472,122,454,134,438,150,430,167,422,185,406,203,400,207"/>
-<area shape="rect" id="Node000007" href="$classasync__mqtt_1_1property_1_1content__type.html" title=" " alt="" coords="470,144,630,189"/>
+<area shape="rect" id="Node000007" href="$classasync__mqtt_1_1property_1_1content__type.html" title="content_type property" alt="" coords="470,144,630,189"/>
 <area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="408,206,471,187,473,192,410,211"/>
-<area shape="rect" id="Node000008" href="$classasync__mqtt_1_1property_1_1reason__string.html" title=" " alt="" coords="470,213,630,258"/>
+<area shape="rect" id="Node000008" href="$classasync__mqtt_1_1property_1_1reason__string.html" title="reason_string property" alt="" coords="470,213,630,258"/>
 <area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="419,233,469,233,469,238,419,238"/>
-<area shape="rect" id="Node000009" href="$classasync__mqtt_1_1property_1_1response__information.html" title=" " alt="" coords="464,283,635,327"/>
+<area shape="rect" id="Node000009" href="$classasync__mqtt_1_1property_1_1response__information.html" title="response_information property" alt="" coords="464,283,635,327"/>
 <area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="410,260,473,279,471,285,408,265"/>
-<area shape="rect" id="Node000010" href="$classasync__mqtt_1_1property_1_1response__topic.html" title=" " alt="" coords="470,352,630,397"/>
+<area shape="rect" id="Node000010" href="$classasync__mqtt_1_1property_1_1response__topic.html" title="response_topic property" alt="" coords="470,352,630,397"/>
 <area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="356,267,401,303,453,337,478,349,476,354,451,342,398,307,353,271"/>
-<area shape="rect" id="Node000011" href="$classasync__mqtt_1_1property_1_1server__reference.html" title=" " alt="" coords="470,421,630,466"/>
+<area shape="rect" id="Node000011" href="$classasync__mqtt_1_1property_1_1server__reference.html" title="server_reference property" alt="" coords="470,421,630,466"/>
 <area shape="poly" id="edge10_Node000004_Node000011" title=" " alt="" coords="340,270,386,339,418,375,454,407,473,418,470,423,450,411,414,379,382,342,336,273"/>
 </map>

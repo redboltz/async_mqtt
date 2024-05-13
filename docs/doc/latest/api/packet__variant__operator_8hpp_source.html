@@ -123,7 +123,7 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>) {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">auto</span> lhs_cbs = lhs.<a class="code hl_function" href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a>();</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">auto</span> lhs_cbs = lhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">auto</span> [lhs_b, lhs_e] = make_packet_range(lhs_cbs);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">auto</span> rhs_cbs = rhs.const_buffer_sequence();</div>
@@ -159,7 +159,7 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>) {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">auto</span> lhs_cbs = lhs.<a class="code hl_function" href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a>();</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">auto</span> lhs_cbs = lhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keyword">auto</span> [lhs_b, lhs_e] = make_packet_range(lhs_cbs);</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keyword">auto</span> rhs_cbs = rhs.const_buffer_sequence();</div>
@@ -193,7 +193,6 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_PACKET_VARIANT_OPERATOR_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1basic__packet__variant_html_afad06fb4c9dfdb90a0c83db0a35fad80"><div class="ttname"><a href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">async_mqtt::basic_packet_variant::const_buffer_sequence</a></div><div class="ttdeci">std::vector&lt; as::const_buffer &gt; const_buffer_sequence() const</div><div class="ttdoc">Create const buffer sequence it is for boost asio APIs.</div><div class="ttdef"><b>Definition</b> packet_variant.hpp:166</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

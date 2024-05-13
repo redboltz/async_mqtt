@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['strand_5ftype_0',['strand_type',['../classasync__mqtt_1_1basic__endpoint.html#af9e9d540dac0d5efa243c5f6f7c17e42',1,'async_mqtt::basic_endpoint']]],
-  ['suback_5fpacket_1',['suback_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#afc473899d1e3780edad734c763201c00',1,'async_mqtt::v3_1_1::basic_suback_packet']]],
-  ['subscribe_5fpacket_2',['subscribe_packet',['../classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html#a7fe480a091fca0ed9c07257d2da2a609',1,'async_mqtt::v3_1_1::basic_subscribe_packet']]]
+  ['store_5fpacket_5fvariant_0',['store_packet_variant',['../group__store__packet__variant.html#ga7c993d305725cbf51fcd124edd92a0ed',1,'async_mqtt']]],
+  ['suback_5fpacket_1',['suback_packet',['../group__suback__v3__1__1.html#gafc473899d1e3780edad734c763201c00',1,'async_mqtt::v3_1_1::basic_suback_packet::suback_packet'],['../group__suback__v5.html#gafc473899d1e3780edad734c763201c00',1,'async_mqtt::v5::basic_suback_packet::suback_packet']]],
+  ['subscribe_5fpacket_2',['subscribe_packet',['../group__subscribe__v3__1__1.html#ga7fe480a091fca0ed9c07257d2da2a609',1,'async_mqtt::v3_1_1::basic_subscribe_packet::subscribe_packet'],['../group__subscribe__v5.html#ga7fe480a091fca0ed9c07257d2da2a609',1,'async_mqtt::v5::basic_subscribe_packet::subscribe_packet']]]
 ];
