@@ -128,7 +128,7 @@ namespace tls = as::ssl;
 
 == Layer access
 
-You usually need to access only `next_layer()` to pass underlying_handshake() argument. But if you want to some configuration for each layers, you can access all underlying layers.
+You usually need to access only `next_layer()` to pass `underlying_handshake()` argument. But if you want to some configuration for each layers, you can access all underlying layers.
 
 |===
 |Layer access | mqtt | mqtts | ws | wss
