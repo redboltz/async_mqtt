@@ -23,52 +23,64 @@ stackless coroutine can avoid deeply nested callbacks. The code becomes easy to 
 Here is a application class prototype:
 
 ```cpp
-=include <boost/asio/yield.hpp>
+#include <boost/asio/yield.hpp>
 
+template <typename Executor>
 struct app {
-    // forwarding callbacks
-    void operator()() {
-        proc({}, {}, {});
-    }
-    void operator()(boost::system::error_code const& ec) {
-        proc(ec, {}, {});
-    }
-    void operator()(am::system_error const& se) {
-        proc({}, se, {});
-    }
-    void operator()(am::packet_variant pv) {
-        proc({}, {}, am::force_move(pv));
-    }
 
 private:
-    void proc(
-        boost::system::error_code const& ec,
-        am::system_error const& se,
-        am::packet_variant pv
-    ) {
-        reenter (coro) {
+    struct impl {
+        impl(app& a):app_{a}
+        {
         }
-    }
+        // forwarding callbacks
+        void operator()() const {
+            proc({}, {}, {});
+        }
+        void operator()(boost::system::error_code const& ec) const {
+            proc(ec, {}, {});
+        }
+        void operator()(am::system_error const& se) const {
+            proc({}, se, {});
+        }
+        void operator()(am::packet_variant pv) const {
+            proc({}, {}, am::force_move(pv));
+        }
+    private:
+        void proc(
+            boost::system::error_code const& ec,
+            am::system_error const& se,
+            am::packet_variant pv
+        ) const {
 
-    as::coroutine coro;
+            reenter (coro_) {
+                std::cout << "start" << std::endl;
+            }
+        }
+
+    private:
+        app& app_;
+        mutable as::coroutine coro_;
+    };
+
+    impl impl_{*this};
 };
-
 #include <boost/asio/unyield.hpp>
 ```
 
-Then, add copyable member variables to access from `proc()` and initialize them by the constructor.
+Then, add the app's constructor as follows. endpoint is created here. In the body of the constructor, `impl_()` is called. Then the coroutine is started.
+Then,Declare the app's member variables.
 
 ```cpp
-
-struct app {
-    app(std::string host,
-        std::string port,
-        am::endpoint<am::role::client, am::protocol::mqtt>& amep
-    ):host{std::move(host)},
-      port{std::move(port)},
-      amep{amep}
-    {}
-
+    app(Executor exe,
+        std::string_view host,
+        std::string_view port
+    ):host_{std::move(host)},
+      port_{std::move(port)},
+      amep_{am::endpoint<am::role::client, am::protocol::mqtt>::create(am::protocol_version::v3_1_1, exe)}
+    {
+        impl_();
+    }
     // ...
 
 private:
@@ -81,42 +93,50 @@ private:
         }
     }
 
-    std::string host;
-    std::string port;
-    am::endpoint<am::role::client, am::protocol::mqtt>& amep;
-    std::size_t count = 0;    as::coroutine coro;
+    std::string_view host_;
+    std::string_view port_;
+    std::shared_ptr<am::endpoint<am::role::client, am::protocol::mqtt>> amep_;
+    std::size_t count_ = 0;
+    impl impl_{*this};
+    // prepare will message if you need.
+    am::will will{
+        "WillTopic1",
+        "WillMessage1",
+        am::qos::at_most_once,
+        { // properties
+            am::property::user_property{"key1", "val1"},
+            am::property::content_type{"text"},
+        }
+    };
 };
 ```
 
-Then, create your application class instance and call the function call operator.
+Then, implement `int main()` as follows:
 
 ```cpp
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " host port" << std::endl;
+        return -1;
+    }
+    am::setup_log(am::severity_level::trace);
     as::io_context ioc;
-
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
-        am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
-        ioc.get_executor() // args for underlying layer (mqtt)
-        // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
-    );
-
-    // Added these code
-    app a{argv[1], argv[2], *amep};
-    a();
+    app a{ioc.get_executor(), argv[1], argv[2]};
     ioc.run();
+}
 ```
 
-When `a()` is called then "start" is output.
+When you execute the program, you can see `start` output message. This indicates that the coroutine is started well.
 
 ```cpp
-    void proc(
-        boost::system::error_code const& ec,
-        am::system_error const& se,
-        am::packet_variant pv
-    ) {
-        reenter (coro) {
-            std::cout << "start" << std::endl;
-        }
-    }
+        void proc(
+            boost::system::error_code const& ec,
+            am::system_error const& se,
+            am::packet_variant pv
+        ) const {
+
+            reenter (coro_) {
+                std::cout << "start" << std::endl;
 ```
 
 This is the basic of stackless coroutine approach.
@@ -125,52 +145,75 @@ Now, adding more meaningful sequence.
 == Handshake underlying layers (mqtt, mqtts, ws, wss)
 
 ```cpp
-    void proc(
-        boost::system::error_code const& ec,
-        am::system_error const& se,
-        am::packet_variant pv
-    ) {
-        reenter (coro) {
-            std::cout << "start" << std::endl;
+        void proc(
+            boost::system::error_code const& ec,
+            am::system_error const& se,
+            am::packet_variant pv
+        ) const {
 
-            // handshake underlying layers
-            yield am::underlying_handshake(amep->next_layer(), host, port, *this);
-            // The function finish here, and when underlying_handshake is finished
-            // resume at the next line.
-            std::cout << "underlying_handshake:" << ec.message() << std::endl;
-            if (ec) return;
+            reenter (coro_) {
+                std::cout << "start" << std::endl;
+
+                // Handshake undlerying layer (Name resolution and TCP handshaking)
+                yield am::underlying_handshake(
+                    app_.amep_->next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );
+
+                std::cout
+                    << "Underlying layer connected ec:"
+                    << ec.message()
+                    << std::endl;
+
+                if (ec) return;
 ```
 
 The important point is
 
 ```cpp
-            yield am::underlying_handshake(amep->next_layer(), host, port, *this);
+                yield am::underlying_handshake(
+                    app_.amep_->next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );
 ```
 
 The fourth argument of underlying_handshake is CompletionToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and underlying_handshake starts processing.
 When async process is finished, then the following operator() is called:
 
 ```cpp
-    void operator()(boost::system::error_code ec) {
-        proc(ec, {}, {});
-    }
+        void operator()(boost::system::error_code const& ec) const {
+            proc(ec, {}, {});
+        }
 ```
 
 Then, proc is called. You can distinguish which async process is finished by proc()'s parameter.
 You can check `ec` as follows:
 
 ```cpp
-            std::cout << "underlying_handshake:" << ec.message() << std::endl;
-            if (ec) return;
+                std::cout
+                    << "Underlying layer connected ec:"
+                    << ec.message()
+                    << std::endl;
+
+                if (ec) return;
 ```
 
 Even if proc() is called again, the following part of the code is skipped:
 
 ```cpp
-            std::cout << "start" << std::endl;
+                std::cout << "start" << std::endl;
 
-            // handshake underlying layers
-            yield am::underlying_handshake(amep->next_layer(), host, port, *this);
+                // Handshake undlerying layer (Name resolution and TCP handshaking)
+                yield am::underlying_handshake(
+                    app_.amep_->next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );
 ```
 
 This is switch-case based Boost.Asio stackless coroutine mechanism.
@@ -181,27 +224,27 @@ See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.htm
 Create MQTT CONNECT packet and send it as follows:
 
 ```cpp
-            // Send MQTT CONNECT
-            yield amep.send(
-                am::v3_1_1::connect_packet{
-                    true,   // clean_session
-                    0x1234, // keep_alive
-                    am::allocate_buffer("cid1"),
-                    am::nullopt, // will
-                    am::nullopt, // username set like am::allocate_buffer("user1"),
-                    am::nullopt  // password set like am::allocate_buffer("pass1")
-                },
-                *this
-            );
+                // Send MQTT CONNECT
+                yield app_.amep_->send(
+                    am::v3_1_1::connect_packet{
+                        true,   // clean_session
+                        0x1234, // keep_alive
+                        "ClientIdentifier1",
+                        app_.will,   // you can pass std::nullopt if you don't want to set the will message
+                        "UserName1",
+                        "Password1"
+                    },
+                    *this
+                );
 ```
 
 When async process is finished the function resumes at the following line:
 
 ```cpp
-            if (se) {
-                std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
-                return;
-            }
+                if (se) {
+                    std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+                    return;
+                }
 ```
 
 The parameter of the completion token is `system_error const& se`.
@@ -212,33 +255,33 @@ See {api-base}/++classasync__mqtt_1_1basic__endpoint.html++[API reference].
 Receive MQTT packet as follows:
 
 ```cpp
-            // Recv MQTT CONNACK
-            yield amep.recv(*this);
+                // Recv MQTT CONNACK
+                yield app_.amep_->recv(*this);
 ```
 
 When a packet is received then the function resumes at the following line:
 
 ```cpp
-            if (pv) {
-                pv.visit(
-                    am::overload {
-                        [&](am::v3_1_1::connack_packet const& p) {
-                            std::cout
-                                << "MQTT CONNACK recv"
-                                << " sp:" << p.session_present()
-                                << std::endl;
-                        },
-                        [](auto const&) {}
-                    }
-                );
-            }
-            else {
-                std::cout
-                    << "MQTT CONNACK recv error:"
-                    << pv.get<am::system_error>().what()
-                    << std::endl;
-                return;
-            }
+                if (pv) {
+                    pv.visit(
+                        am::overload {
+                            [&](am::v3_1_1::connack_packet const& p) {
+                                std::cout
+                                    << "MQTT CONNACK recv"
+                                    << " sp:" << p.session_present()
+                                    << std::endl;
+                            },
+                            [](auto const&) {}
+                        }
+                    );
+                }
+                else {
+                    std::cout
+                        << "MQTT CONNACK recv error:"
+                        << pv.get<am::system_error>().what()
+                        << std::endl;
+                    return;
+                }
 ```
 
 The parameter of the completion token is `packet_variant pv`. You can access the `pv` using visit function and overloaded lamnda expressions. Each lambda expression is corresponding to the actual packet type.
