@@ -310,6 +310,9 @@ pre.rouge .ss {
 <div class="sect1">
 <h2 id="_layer_access">Layer access</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>You usually need to access only <code>next_layer()</code> to pass <code>underlying_handshake()</code> argument. But if you want to some configuration for each layers, you can access all underlying layers.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -358,28 +361,6 @@ pre.rouge .ss {
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_handshaking_underlying_layer">Handshaking underlying layer</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can use underlying handshaking functions as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// Underlying TCP connect</span>
-<span class="k">co_await</span> <span class="n">as</span><span class="o">::</span><span class="n">async_connect</span><span class="p">(</span>
-    <span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
-    <span class="n">eps</span><span class="p">,</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
-<span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"TCP connected"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Similarly, handshake TLS, WebSocket layers if needed.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
