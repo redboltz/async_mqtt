@@ -23,6 +23,27 @@ using mqtts = as::ssl::stream<mqtt>;
 
 } // namespace protocol
 
+template <
+    typename NextLayer,
+    typename CompletionToken = as::default_completion_token_t<
+        typename as::ssl::stream<NextLayer>::executor_type
+    >
+>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code)
+)
+underlying_handshake(
+    as::ssl::stream<NextLayer>& layer,
+    std::string_view host,
+    std::string_view port,
+    CompletionToken&& token = as::default_completion_token_t<
+        typename as::ssl::stream<NextLayer>::executor_type
+    >{}
+);
+
 } // namespace async_mqtt
+
+#include <async_mqtt/predefined_layer/impl/mqtts_handshake.hpp>
 
 #endif // ASYNC_MQTT_PREDEFINED_LAYER_MQTTS_HPP

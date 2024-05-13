@@ -22,49 +22,43 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(cb) {
     broker_runner br;
     as::io_context ioc;
-    as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
-    as::ip::tcp::endpoint endpoint{address, 10080};
+
     using ep_t = am::endpoint<am::role::client, am::protocol::ws>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         am::protocol::ws{ioc.get_executor()}
     );
 
-    amep->lowest_layer().async_connect(
-        endpoint,
+    am::underlying_handshake(
+        amep->next_layer(),
+        "127.0.0.1",
+        "10080",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amep->next_layer().async_handshake(
-                "127.0.0.1",
-                "/",
-                [&](am::error_code const& ec) {
-                    BOOST_TEST(ec == am::error_code{});
-                    amep->send(
-                        am::v3_1_1::connect_packet{
-                            true,   // clean_session
-                            0x1234, // keep_alive
-                            "cid1",
-                            std::nullopt, // will
-                            "u1",
-                            "passforu1"
-                        },
-                        [&](am::system_error const& se) {
-                            BOOST_TEST(!se);
-                            amep->recv(
-                                [&](am::packet_variant pv) {
-                                    pv.visit(
-                                        am::overload {
-                                            [&](am::v3_1_1::connack_packet const& p) {
-                                                BOOST_TEST(!p.session_present());
-                                            },
-                                            [](auto const&) {
-                                                BOOST_TEST(false);
-                                            }
-                                        }
-                                    );
-                                    amep->close([]{});
+            amep->send(
+                am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1",
+                    std::nullopt, // will
+                    "u1",
+                    "passforu1"
+                },
+                [&](am::system_error const& se) {
+                    BOOST_TEST(!se);
+                    amep->recv(
+                        [&](am::packet_variant pv) {
+                            pv.visit(
+                                am::overload {
+                                    [&](am::v3_1_1::connack_packet const& p) {
+                                        BOOST_TEST(!p.session_present());
+                                    },
+                                    [](auto const&) {
+                                        BOOST_TEST(false);
+                                    }
                                 }
                             );
+                            amep->close([]{});
                         }
                     );
                 }

@@ -22,26 +22,18 @@ BOOST_AUTO_TEST_CASE(v311) {
     broker_runner br;
     as::io_context ioc;
     auto exe = ioc.get_executor();
-    as::ip::tcp::resolver res{exe};
     auto amcl = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt>(exe);
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
-            // resolve
-            auto [ec_res, eps] = co_await res.async_resolve(
+            // Handshake undlerying layer (Name resolution and TCP handshaking)
+            auto [ec_und] = co_await am::underlying_handshake(
+                amcl.next_layer(),
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::use_awaitable)
             );
-            BOOST_TEST(!ec_res);
-
-            // TCP connect
-            auto [ec_tcpcon, _] = co_await as::async_connect(
-                amcl.next_layer(),
-                eps,
-                as::as_tuple(as::use_awaitable)
-            );
-            BOOST_TEST(!ec_tcpcon);
+            BOOST_TEST(!ec_und);
 
             // MQTT connect and receive loop start
             auto [ec_con, connack_opt] = co_await amcl.start(
@@ -190,26 +182,18 @@ BOOST_AUTO_TEST_CASE(v5) {
     broker_runner br;
     as::io_context ioc;
     auto exe = ioc.get_executor();
-    as::ip::tcp::resolver res{exe};
     auto amcl = am::client<am::protocol_version::v5, am::protocol::mqtt>(exe);
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
-            // resolve
-            auto [ec_res, eps] = co_await res.async_resolve(
+            // Handshake undlerying layer (Name resolution and TCP handshaking)
+            auto [ec_und] = co_await am::underlying_handshake(
+                amcl.next_layer(),
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::use_awaitable)
             );
-            BOOST_TEST(!ec_res);
-
-            // TCP connect
-            auto [ec_tcpcon, _] = co_await as::async_connect(
-                amcl.next_layer(),
-                eps,
-                as::as_tuple(as::use_awaitable)
-            );
-            BOOST_TEST(!ec_tcpcon);
+            BOOST_TEST(!ec_und);
 
             // MQTT connect and receive loop start
             auto [ec_con, connack_opt] = co_await amcl.start(

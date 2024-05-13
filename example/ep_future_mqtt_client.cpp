@@ -23,8 +23,6 @@ int main(int argc, char* argv[]) {
     am::setup_log(am::severity_level::trace);
 
     as::io_context ioc;
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
     auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
@@ -50,19 +48,11 @@ int main(int argc, char* argv[]) {
         // first parameter and it is not success then exception would
         // be thrown.
 
-        // Resolve hostname
         std::string host{argv[1]};
         std::string port{argv[2]};
-        auto f_res = res.async_resolve(host, port, as::use_future);
-        auto eps = f_res.get();
-
-        auto f_con = as::async_connect(
-            amep->next_layer(),
-            eps,
-            as::use_future
-        );
-        f_con.get();
-        std::cout << "TCP connected" << std::endl;
+        // Handshake undlerying layer (Name resolution and TCP handshaking)
+        am::underlying_handshake(amep->next_layer(), host, port, as::use_future).get();
+        std::cout << "Underlying layer handshaked" << std::endl;
 
         // Send MQTT CONNECT
         {

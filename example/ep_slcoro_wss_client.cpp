@@ -22,8 +22,7 @@ struct app {
     app(Executor exe,
         std::string_view host,
         std::string_view port
-    ):res_{exe},
-      host_{std::move(host)},
+    ):host_{std::move(host)},
       port_{std::move(port)},
       amep_{am::endpoint<am::role::client, am::protocol::wss>::create(am::protocol_version::v3_1_1, exe, ctx_)}
     {
@@ -38,75 +37,41 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, {}, {}, {});
+            proc({}, {}, {});
         }
         void operator()(boost::system::error_code const& ec) const {
-            proc(ec, {}, {}, {});
-        }
-        void operator()(boost::system::error_code ec, as::ip::tcp::resolver::results_type eps) const {
-            proc(ec, {}, {}, std::move(eps));
-        }
-        void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/) const {
-            proc(ec, {}, {}, {});
+            proc(ec, {}, {});
         }
         void operator()(am::system_error const& se) const {
-            proc({}, se, {}, {});
+            proc({}, se, {});
         }
         void operator()(am::packet_variant pv) const {
-            proc({}, {}, am::force_move(pv), {});
+            proc({}, {}, am::force_move(pv));
         }
     private:
         void proc(
             boost::system::error_code const& ec,
             am::system_error const& se,
-            am::packet_variant pv,
-            std::optional<as::ip::tcp::resolver::results_type> eps
+            am::packet_variant pv
         ) const {
 
             reenter (coro_) {
                 std::cout << "start" << std::endl;
 
-                // Resolve hostname
-                yield app_.res_.async_resolve(app_.host_, app_.port_, *this);
-                std::cout << "async_resolve:" << ec.message() << std::endl;
-                if (ec) return;
-
-                // Layer
-                // am::stream -> TCP
-
-                // Underlying TCP connect
-                yield as::async_connect(
-                    app_.amep_->lowest_layer(),
-                    *eps,
-                    *this
-                );
-                std::cout
-                    << "TCP connected ec:"
-                    << ec.message()
-                    << std::endl;
-
-                if (ec) return;
-
-                // Underlying TLS handshake
-                yield app_.amep_->next_layer().next_layer().async_handshake(
-                    as::ssl::stream_base::client,
-                    *this
-                );
-                std::cout
-                    << "TLS handshaked ec:"
-                    << ec.message()
-                    << std::endl;
-
-                // Underlying WS handshake
-                yield app_.amep_->next_layer().async_handshake(
+                // Handshake undlerying layer (Name resolution and TCP, TLS, Websocket handshaking)
+                yield am::underlying_handshake(
+                    app_.amep_->next_layer(),
                     app_.host_,
-                    "/",
+                    app_.port_,
                     *this
                 );
+
                 std::cout
-                    << "WS handshaked ec:"
+                    << "Underlying layer connected ec:"
                     << ec.message()
                     << std::endl;
+
+                if (ec) return;
 
                 // Send MQTT CONNECT
                 yield app_.amep_->send(
@@ -245,7 +210,6 @@ private:
         mutable as::coroutine coro_;
     };
 
-    as::ip::tcp::resolver res_;
     std::string_view host_;
     std::string_view port_;
     as::ssl::context ctx_{as::ssl::context::tlsv12};

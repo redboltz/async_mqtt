@@ -10,6 +10,7 @@
 #include <boost/beast/ssl/ssl_stream.hpp>
 
 #include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/predefined_layer/ws.hpp>
 #include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
 /// @file

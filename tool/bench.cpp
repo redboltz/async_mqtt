@@ -55,7 +55,6 @@ using packet_id_t = am::packet_id_type<2>::type;
 #include <boost/asio/yield.hpp>
 struct bench_context {
     bench_context(
-        as::ip::tcp::resolver& res,
         std::optional<std::string> const& ws_path,
         am::protocol_version version,
         std::uint32_t sei,
@@ -107,8 +106,7 @@ struct bench_context {
         std::optional<std::size_t> send_buf_size_opt,
         std::optional<std::size_t> recv_buf_size_opt
     )
-    :res{res},
-     ws_path{ws_path},
+    :ws_path{ws_path},
      version{version},
      sei{sei},
      clean_start{clean_start},
@@ -157,7 +155,6 @@ struct bench_context {
     {
     }
 
-    as::ip::tcp::resolver& res;
     std::optional<std::string> const& ws_path;
     am::protocol_version version;
     std::uint32_t sei;
@@ -225,22 +222,19 @@ struct bench {
 
     // forwarding callbacks
     void operator()(ClientInfo* pci = nullptr) {
-        proc({}, {}, {}, {}, pci);
+        proc({}, {}, {}, pci);
     }
-    void operator()(boost::system::error_code const& ec, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, {}, pci);
-    }
-    void operator()(boost::system::error_code ec, as::ip::tcp::resolver::results_type eps, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, std::move(eps), pci);
+    void operator()(boost::system::error_code ec, ClientInfo* pci = nullptr) {
+        proc(ec, {}, {}, pci);
     }
     void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, {}, pci);
+        proc(ec, {}, {}, pci);
     }
     void operator()(am::system_error const& se, ClientInfo* pci = nullptr) {
-        proc({}, se, {}, {}, pci);
+        proc({}, se, {}, pci);
     }
     void operator()(am::packet_variant pv, ClientInfo* pci = nullptr) {
-        proc({}, {}, am::force_move(pv), {}, pci);
+        proc({}, {}, am::force_move(pv), pci);
     }
 
 private:
@@ -248,7 +242,6 @@ private:
         std::optional<boost::system::error_code> ec,
         std::optional<am::system_error> se,
         am::packet_variant pv,
-        std::optional<as::ip::tcp::resolver::results_type> eps,
         ClientInfo* pci
     ) {
         reenter (coro_) {
@@ -277,8 +270,9 @@ private:
                 exit(-1);
             }
 
-            // Resolve hostname
-            yield bc_.res.async_resolve(
+            // Handshake underlying layer
+            yield am::underlying_handshake(
+                pci->c->next_layer(),
                 pci->host,
                 pci->port,
                 as::append(
@@ -287,24 +281,10 @@ private:
                 )
             );
             if (*ec) {
-                locked_cout() << "async_resolve error:" << ec->message() << std::endl;
+                locked_cout() << "underlying handshake error:" << ec->message() << std::endl;
                 exit(-1);
             }
-            eps_ = am::force_move(*eps);
 
-            // TCP connect
-            yield as::async_connect(
-                pci->c->lowest_layer(),
-                eps_,
-                as::append(
-                    *this,
-                    pci
-                )
-            );
-            if (*ec) {
-                locked_cout() << "async_connect error:" << ec->message() << std::endl;
-                exit(-1);
-            }
             if (bc_.tcp_no_delay_opt) {
                 pci->c->lowest_layer().set_option(as::ip::tcp::no_delay(*bc_.tcp_no_delay_opt));
             }
@@ -322,96 +302,6 @@ private:
                     )
                 );
             }
-
-            // TLS handshake
-
-#if defined(ASYNC_MQTT_USE_TLS)
-            yield {
-                if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::mqtts>>) {
-                    pci->c->next_layer().async_handshake(
-                        as::ssl::stream_base::client,
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                    return;
-                }
-#if defined(ASYNC_MQTT_USE_WS)
-                if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
-                    pci->c->next_layer().next_layer().async_handshake(
-                        as::ssl::stream_base::client,
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                    return;
-                }
-#endif // defined(ASYNC_MQTT_USE_WS)
-                as::dispatch(
-                    pci->c->get_executor(),
-                    as::append(
-                        *this,
-                        am::error_code{},
-                        pci
-                    )
-                );
-            }
-            if (*ec) {
-                locked_cout() << "TLS async_handshake error:" << ec->message() << std::endl;
-                exit(-1);
-            }
-#endif // defined(ASYNC_MQTT_USE_TLS)
-
-            // WS handshake
-
-#if defined(ASYNC_MQTT_USE_WS)
-            yield {
-                if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::ws>>) {
-                    pci->c->next_layer().async_handshake(
-                        pci->host,
-                        [&] () -> std::string{
-                            if (bc_.ws_path) return *bc_.ws_path;
-                            else return "/";
-                        } (),
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                    return;
-                }
-#if defined(ASYNC_MQTT_USE_TLS)
-                if constexpr(std::is_same_v<ep_t, am::endpoint<am::role::client, am::protocol::wss>>) {
-                    pci->c->next_layer().async_handshake(
-                        pci->host,
-                        [&] () -> std::string{
-                            if (bc_.ws_path) return *bc_.ws_path;
-                            else return "/";
-                        } (),
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
-                    return;
-                }
-#endif // defined(ASYNC_MQTT_USE_TLS)
-                as::dispatch(
-                    pci->c->get_executor(),
-                    as::append(
-                        *this,
-                        am::error_code{},
-                        pci
-                    )
-                );
-            }
-            if (*ec) {
-                locked_cout() << "WebSocket async_handshake error:" << ec->message() << std::endl;
-                exit(-1);
-            }
-#endif //defined(ASYNC_MQTT_USE_WS)
 
             // MQTT connect send
             yield {
@@ -1115,7 +1005,6 @@ private:
 private:
     std::vector<ClientInfo>& cis_;
     bench_context& bc_;
-    as::ip::tcp::resolver::results_type eps_;
     std::chrono::time_point<std::chrono::steady_clock> tp_con_;
     std::chrono::time_point<std::chrono::steady_clock> tp_sub_;
     as::coroutine coro_;
@@ -1839,8 +1728,6 @@ int main(int argc, char *argv[]) {
         std::atomic<std::size_t> rest_idle{pub_idle_count * clients};
         std::atomic<std::uint64_t> rest_times{times * clients};
 
-        as::ip::tcp::resolver res{ioc_timer.get_executor()};
-
         std::function <void()> tim_progress_proc =
             [&, wp = std::weak_ptr<as::steady_timer>(tim_progress)] {
                 if (auto sp = wp.lock()) {
@@ -1979,7 +1866,6 @@ int main(int argc, char *argv[]) {
             };
 
         auto bc = bench_context(
-            res,
             ws_path,
             version,
             sei,
