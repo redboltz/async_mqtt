@@ -39,14 +39,17 @@ For Websocket on TLS
 #include <async_mqtt/predefined_layer/wss.hpp>
 ```
 
+The following namespace alias is defined in the all code example:
+
+```cpp
+namespace as = boost::asio;
+namespace tls = as::ssl;
+```
+
 == mqtt
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
     //                     endpoint is client  choose underlying layer
     auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
@@ -54,16 +57,13 @@ For Websocket on TLS
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     );
+
 ```
 
 == mqtts
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
@@ -77,16 +77,10 @@ For Websocket on TLS
     );
 ```
 
-NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
-
 == ws
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
     auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
@@ -99,10 +93,6 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
 
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
