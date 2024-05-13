@@ -44,7 +44,15 @@ First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying l
 ifdef::env-github[image::../img/layer.svg[layer structure]]
 ifndef::env-github[image::layer.svg[layer structure]]
 
+The following namespace alias is defined in the all code example:
+
+```cpp
+namespace as = boost::asio;
+namespace tls = as::ssl;
+```
+
 == mqtt
+
 
 ```cpp
     as::io_context ioc;
