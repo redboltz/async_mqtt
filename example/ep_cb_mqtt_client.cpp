@@ -38,15 +38,25 @@ int main(int argc, char* argv[]) {
         (boost::system::error_code ec) {
             std::cout << "underlying handshake:" << ec.message() << std::endl;
             if (ec) return;
+                // prepare will message if you need.
+                am::will will{
+                    "WillTopic1",
+                    "WillMessage1",
+                    am::qos::at_most_once,
+                    { // properties
+                        am::property::user_property{"key1", "val1"},
+                        am::property::content_type{"text"},
+                    }
+                };
                 // Send MQTT CONNECT
                 amep->send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
-                        "cid1",
-                        std::nullopt, // will
-                        std::nullopt, // username set like "user1",
-                        std::nullopt  // password set like "pass1"
+                       "ClientIdentifier1",
+                        will,   // you can pass std::nullopt if you don't want to set the will message
+                        "UserName1",
+                        "Password1"
                     },
                     [&]
                     (am::system_error const& se) {
