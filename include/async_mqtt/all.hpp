@@ -37,6 +37,7 @@
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/get_protocol_version.hpp>
 #include <async_mqtt/packet/packet.hpp>
+#include <async_mqtt/packet/packet_fwd.hpp>
 #include <async_mqtt/packet/packet_helper.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>

@@ -13,13 +13,19 @@
 
 namespace async_mqtt {
 
+/**
+ * @ingroup connack_v3_1_1
+ * @brief connect return code
+ * See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
+ */
 enum class connect_return_code : std::uint8_t {
-    accepted                      = 0,
-    unacceptable_protocol_version = 1,
-    identifier_rejected           = 2,
-    server_unavailable            = 3,
-    bad_user_name_or_password     = 4,
-    not_authorized                = 5,
+    accepted                      = 0, ///< Connection accepted
+    unacceptable_protocol_version = 1, ///< The Server does not support the level of the
+                                       ///  MQTT protocol requested by the Client
+    identifier_rejected           = 2, ///< The Client identifier is correct UTF-8 but not allowed by the Server
+    server_unavailable            = 3, ///< The Network Connection has been made but the MQTT service is unavailable
+    bad_user_name_or_password     = 4, ///< The data in the user name or password is malformed
+    not_authorized                = 5, ///< The Client is not authorized to connect
 };
 
 constexpr

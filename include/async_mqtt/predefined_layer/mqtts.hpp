@@ -10,7 +10,10 @@
 #include <async_mqtt/predefined_layer/mqtt.hpp>
 #include <async_mqtt/predefined_layer/customized_ssl_stream.hpp>
 
-/// @file
+/**
+ * @defgroup predefined_layer_mqtts
+ * @ingroup predefined_layer
+ */
 
 namespace async_mqtt {
 
@@ -19,20 +22,35 @@ namespace tls = as::ssl; // for backword compatilibity
 
 namespace protocol {
 
+/**
+ * @ingroup predefined_layer_mqtts
+ * @brief Type alias of boost::asio::ssl::stream of mqtt
+ */
 using mqtts = as::ssl::stream<mqtt>;
 
 } // namespace protocol
 
+/**
+ * @ingroup predefined_layer_mqtts
+ * @brief TLS handshake
+ * This function does underlying layers handshaking prior to TLS handshake
+ * @param host   host name or IP address to connect
+ * @param port   port number to connect
+ * @param token  completion token. signature is void(error_code)
+ * @return deduced by token
+ */
 template <
     typename NextLayer,
     typename CompletionToken = as::default_completion_token_t<
         typename as::ssl::stream<NextLayer>::executor_type
     >
 >
+#if !defined(GENERATING_DOCUMENTATION)
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code)
 )
+#endif // !defined(GENERATING_DOCUMENTATION)
 underlying_handshake(
     as::ssl::stream<NextLayer>& layer,
     std::string_view host,

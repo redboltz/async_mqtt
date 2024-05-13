@@ -25,6 +25,7 @@
 
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
+
 namespace async_mqtt {
 
 #if defined(ASYNC_MQTT_USE_LOG)
@@ -39,6 +40,7 @@ static constexpr char const* log_color_table[] {
 };
 
 /**
+ * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level by channel
@@ -124,6 +126,7 @@ void setup_log(std::map<std::string, severity_level> threshold) {
 }
 
 /**
+ * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level for all channels

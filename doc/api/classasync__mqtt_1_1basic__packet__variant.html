@@ -96,50 +96,53 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__packet__variant.html',''); 
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1basic__packet__variant-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__variant.html">Packet_variant</a> &raquo; <a class="el" href="group__packet__variant__detail.html">Packet_variant_detail</a></div></div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>The varaint type of all packets and <a class="el" href="structasync__mqtt_1_1system__error.html" title="type alias of boost::sytem::errc.">system_error</a>.  
+ <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="packet__variant_8hpp_source.html">packet_variant.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450" id="r_a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt; &gt; &gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8f9c3e84ebae1e4eb0955988ceb11450">basic_packet_variant</a> (<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> &amp;&amp;packet)</td></tr>
+<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450" id="r_a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplParams" colspan="2">template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt; &gt; *  = nullptr&gt; </td></tr>
+<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8f9c3e84ebae1e4eb0955988ceb11450">basic_packet_variant</a> (Packet &amp;&amp;packet)</td></tr>
 <tr class="memdesc:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
 <tr class="separator:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21b5fec4cbbcfcb34cd23d7b85f94bb0" id="r_a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </td></tr>
-<tr class="memitem:a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a21b5fec4cbbcfcb34cd23d7b85f94bb0">visit</a> (<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">func</a>) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a> &amp;</td></tr>
+<tr class="memitem:a21b5fec4cbbcfcb34cd23d7b85f94bb0" id="r_a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a21b5fec4cbbcfcb34cd23d7b85f94bb0">visit</a> (Func &amp;&amp;func) const &amp;</td></tr>
 <tr class="memdesc:a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">visit to variant  <br /></td></tr>
 <tr class="separator:a21b5fec4cbbcfcb34cd23d7b85f94bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac10d54ec16155155a5322d6ded45cf48" id="r_ac10d54ec16155155a5322d6ded45cf48"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </td></tr>
-<tr class="memitem:ac10d54ec16155155a5322d6ded45cf48"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac10d54ec16155155a5322d6ded45cf48">visit</a> (<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">func</a>) &amp;</td></tr>
+<tr class="memitem:ac10d54ec16155155a5322d6ded45cf48" id="r_ac10d54ec16155155a5322d6ded45cf48"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:ac10d54ec16155155a5322d6ded45cf48"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac10d54ec16155155a5322d6ded45cf48">visit</a> (Func &amp;&amp;func) &amp;</td></tr>
 <tr class="memdesc:ac10d54ec16155155a5322d6ded45cf48"><td class="mdescLeft">&#160;</td><td class="mdescRight">visit to variant  <br /></td></tr>
 <tr class="separator:ac10d54ec16155155a5322d6ded45cf48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae697446c3aee2b0ef593bd11a9580107" id="r_ae697446c3aee2b0ef593bd11a9580107"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </td></tr>
-<tr class="memitem:ae697446c3aee2b0ef593bd11a9580107"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae697446c3aee2b0ef593bd11a9580107">visit</a> (<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">func</a>) &amp;&amp;</td></tr>
+<tr class="memitem:ae697446c3aee2b0ef593bd11a9580107" id="r_ae697446c3aee2b0ef593bd11a9580107"><td class="memTemplParams" colspan="2">template&lt;typename Func &gt; </td></tr>
+<tr class="memitem:ae697446c3aee2b0ef593bd11a9580107"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae697446c3aee2b0ef593bd11a9580107">visit</a> (Func &amp;&amp;func) &amp;&amp;</td></tr>
 <tr class="memdesc:ae697446c3aee2b0ef593bd11a9580107"><td class="mdescLeft">&#160;</td><td class="mdescRight">visit to variant  <br /></td></tr>
 <tr class="separator:ae697446c3aee2b0ef593bd11a9580107"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f90cc46b76386824fdcd74732014c94" id="r_a3f90cc46b76386824fdcd74732014c94"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </td></tr>
-<tr class="memitem:a3f90cc46b76386824fdcd74732014c94"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a3f90cc46b76386824fdcd74732014c94">get</a> ()</td></tr>
+<tr class="memitem:a3f90cc46b76386824fdcd74732014c94" id="r_a3f90cc46b76386824fdcd74732014c94"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a3f90cc46b76386824fdcd74732014c94"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a3f90cc46b76386824fdcd74732014c94">get</a> ()</td></tr>
 <tr class="memdesc:a3f90cc46b76386824fdcd74732014c94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type. If not match, then throw std::bad_variant_access exception.  <br /></td></tr>
 <tr class="separator:a3f90cc46b76386824fdcd74732014c94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a88fc79bea790ffb1ab99c9d4ea73af" id="r_a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </td></tr>
-<tr class="memitem:a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1a88fc79bea790ffb1ab99c9d4ea73af">get</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
+<tr class="memitem:a1a88fc79bea790ffb1ab99c9d4ea73af" id="r_a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1a88fc79bea790ffb1ab99c9d4ea73af">get</a> () const</td></tr>
 <tr class="memdesc:a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type. If not match, then throw std::bad_variant_access exception.  <br /></td></tr>
 <tr class="separator:a1a88fc79bea790ffb1ab99c9d4ea73af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49e90a15eb050e18d1c28e1787154d7f" id="r_a49e90a15eb050e18d1c28e1787154d7f"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </td></tr>
-<tr class="memitem:a49e90a15eb050e18d1c28e1787154d7f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a49e90a15eb050e18d1c28e1787154d7f">get_if</a> ()</td></tr>
+<tr class="memitem:a49e90a15eb050e18d1c28e1787154d7f" id="r_a49e90a15eb050e18d1c28e1787154d7f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a49e90a15eb050e18d1c28e1787154d7f"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a49e90a15eb050e18d1c28e1787154d7f">get_if</a> ()</td></tr>
 <tr class="memdesc:a49e90a15eb050e18d1c28e1787154d7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type pointer.  <br /></td></tr>
 <tr class="separator:a49e90a15eb050e18d1c28e1787154d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48155169ae2078aceaeda629a07cd50f" id="r_a48155169ae2078aceaeda629a07cd50f"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </td></tr>
-<tr class="memitem:a48155169ae2078aceaeda629a07cd50f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a48155169ae2078aceaeda629a07cd50f">get_if</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
+<tr class="memitem:a48155169ae2078aceaeda629a07cd50f" id="r_a48155169ae2078aceaeda629a07cd50f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a48155169ae2078aceaeda629a07cd50f"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a48155169ae2078aceaeda629a07cd50f">get_if</a> () const</td></tr>
 <tr class="memdesc:a48155169ae2078aceaeda629a07cd50f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type pointer.  <br /></td></tr>
 <tr class="separator:a48155169ae2078aceaeda629a07cd50f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae235debf24f87990f4f61a70a6d872e8" id="r_ae235debf24f87990f4f61a70a6d872e8"><td class="memItemLeft" align="right" valign="top">optional&lt; control_packet_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae235debf24f87990f4f61a70a6d872e8">type</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
-<tr class="memdesc:ae235debf24f87990f4f61a70a6d872e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get control_packet_type.  <br /></td></tr>
-<tr class="separator:ae235debf24f87990f4f61a70a6d872e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afad06fb4c9dfdb90a0c83db0a35fad80" id="r_afad06fb4c9dfdb90a0c83db0a35fad80"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
+<tr class="memitem:a2de33b13e6a41b200ec153ff90e15aec" id="r_a2de33b13e6a41b200ec153ff90e15aec"><td class="memItemLeft" align="right" valign="top">std::optional&lt; control_packet_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2de33b13e6a41b200ec153ff90e15aec">type</a> () const</td></tr>
+<tr class="memdesc:a2de33b13e6a41b200ec153ff90e15aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get control_packet_type.  <br /></td></tr>
+<tr class="separator:a2de33b13e6a41b200ec153ff90e15aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afad06fb4c9dfdb90a0c83db0a35fad80" id="r_afad06fb4c9dfdb90a0c83db0a35fad80"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a> () const</td></tr>
 <tr class="memdesc:afad06fb4c9dfdb90a0c83db0a35fad80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:afad06fb4c9dfdb90a0c83db0a35fad80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -147,13 +150,14 @@ Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:a56df875fd46e22c7dfc411481a2369c2" id="r_a56df875fd46e22c7dfc411481a2369c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">using</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56df875fd46e22c7dfc411481a2369c2">packet_variant</a> = <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:a56df875fd46e22c7dfc411481a2369c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias of <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a> (PacketIdBytes=2).  <br /></td></tr>
-<tr class="separator:a56df875fd46e22c7dfc411481a2369c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga56df875fd46e22c7dfc411481a2369c2" id="r_ga56df875fd46e22c7dfc411481a2369c2"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><b>packet_variant</b> = <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:ga56df875fd46e22c7dfc411481a2369c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias of <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html" title="The varaint type of all packets and system_error.">basic_packet_variant</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="separator:ga56df875fd46e22c7dfc411481a2369c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
-class async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt;</div><p>@breif The varaint type of all packets and <a class="el" href="structasync__mqtt_1_1system__error.html" title="async_mqtt error class. It is used as CompletionToken parameter and exception.">system_error</a> </p>
+class async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt;</div><p>The varaint type of all packets and <a class="el" href="structasync__mqtt_1_1system__error.html" title="type alias of boost::sytem::errc.">system_error</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8f9c3e84ebae1e4eb0955988ceb11450" name="a8f9c3e84ebae1e4eb0955988ceb11450"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8f9c3e84ebae1e4eb0955988ceb11450">&#9670;&#160;</a></span>basic_packet_variant()</h2>
@@ -163,15 +167,15 @@ class async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt;</div><p>@breif The
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt; &gt; &gt; *  = nullptr&gt; </div>
+template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt; &gt; *  = nullptr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::basic_packet_variant </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::basic_packet_variant </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Packet</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
+          <td class="paramtype">Packet &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -205,7 +209,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; as::const_buffer &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::const_buffer_sequence </td>
+          <td class="memname">std::vector&lt; as::const_buffer &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::const_buffer_sequence </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -231,13 +235,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::get </td>
+          <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -263,13 +267,13 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::get </td>
+          <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -295,13 +299,13 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::get_if </td>
+          <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get_if </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -327,13 +331,13 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> T &gt; </div>
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">decltype</a>(<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a>) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::get_if </td>
+          <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get_if </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -351,8 +355,8 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 
 </div>
 </div>
-<a id="ae235debf24f87990f4f61a70a6d872e8" name="ae235debf24f87990f4f61a70a6d872e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae235debf24f87990f4f61a70a6d872e8">&#9670;&#160;</a></span>type()</h2>
+<a id="a2de33b13e6a41b200ec153ff90e15aec" name="a2de33b13e6a41b200ec153ff90e15aec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de33b13e6a41b200ec153ff90e15aec">&#9670;&#160;</a></span>type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,7 +367,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">optional&lt; control_packet_type &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::type </td>
+          <td class="memname">std::optional&lt; control_packet_type &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::type </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -377,7 +381,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 </div><div class="memdoc">
 
 <p>Get control_packet_type. </p>
-<dl class="section return"><dt>Returns</dt><dd>If packet is stored then return its control_packet_type, If error then return nullopt. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>If packet is stored then return its control_packet_type, If error then return std::nullopt. </dd></dl>
 
 </div>
 </div>
@@ -389,15 +393,15 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </div>
+template&lt;typename Func &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::visit </td>
+          <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
+          <td class="paramtype">Func &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
           <td> &amp;</td>
         </tr>
       </table>
@@ -426,15 +430,15 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </div>
+template&lt;typename Func &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::visit </td>
+          <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
+          <td class="paramtype">Func &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
           <td> &amp;&amp;</td>
         </tr>
       </table>
@@ -463,15 +467,15 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">typename</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &gt; </div>
+template&lt;typename Func &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">auto</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">PacketIdBytes</a> &gt;::visit </td>
+          <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">Func</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
+          <td class="paramtype">Func &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>func</em></span></td><td>)</td>
           <td> const &amp;</td>
         </tr>
       </table>
@@ -492,41 +496,8 @@ template&lt;<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html"
 
 </div>
 </div>
-<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
-<a id="a56df875fd46e22c7dfc411481a2369c2" name="a56df875fd46e22c7dfc411481a2369c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56df875fd46e22c7dfc411481a2369c2">&#9670;&#160;</a></span>packet_variant</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;std::size_t PacketIdBytes&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">using</a> <a class="el" href="#a56df875fd46e22c7dfc411481a2369c2">packet_variant</a> = <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt;2&gt;</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">related</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>type alias of <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a> (PacketIdBytes=2). </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Role</td><td>role for packet sendable checking </td></tr>
-    <tr><td class="paramname">NextLayer</td><td>Just next layer for <a class="el" href="classasync__mqtt_1_1basic__endpoint.html" title="MQTT endpoint corresponding to the connection.">basic_endpoint</a>. mqtt, mqtts, ws, and wss are predefined. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>/home/kondo/work/async_mqtt/include/async_mqtt/<a class="el" href="buffer__to__packet__variant__fwd_8hpp_source.html">buffer_to_packet_variant_fwd.hpp</a></li>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="packet__variant_8hpp_source.html">packet_variant.hpp</a></li>
 </ul>
 </div><!-- contents -->

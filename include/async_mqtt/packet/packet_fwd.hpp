@@ -9,6 +9,29 @@
 
 #include <cstddef>
 
+/**
+ * @defgroup packet
+ * @brief MQTT packets
+ */
+
+/**
+ * @defgroup packet_v3_1_1
+ * @ingroup packet
+ * @brief protocol version 3.1.1
+ */
+
+/**
+ * @defgroup packet_v5
+ * @ingroup packet
+ * @brief protocol version 5.0
+ */
+
+/**
+ * @defgroup packet_detail
+ * @ingroup packet
+ * @brief packet internal details for adcanced user. (e.g. buffer)
+ */
+
 namespace async_mqtt {
 
 namespace v3_1_1 {

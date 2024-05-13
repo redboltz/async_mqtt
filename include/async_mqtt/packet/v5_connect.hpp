@@ -28,11 +28,17 @@
 #include <async_mqtt/packet/will.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
+/**
+ * @defgroup connect_v5
+ * @ingroup packet_v5
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup connect_v5
  * @brief MQTT CONNECT packet (v5)
  *
  * Only MQTT client can send this packet.
@@ -41,7 +47,7 @@ namespace as = boost::asio;
 class connect_packet {
 public:
     /**
-     * @bried constructor
+     * @brief constructor
      * @param clean_start  When the endpoint sends CONNECT packet with clean_start is true,
      *                       then stored packets are erased.
      *                       When the endpoint receives CONNECT packet with clean_start is false,
@@ -85,7 +91,7 @@ public:
     {}
 
     /**
-     * @bried constructor
+     * @brief constructor
      * @param clean_start  When the endpoint sends CONNECT packet with clean_start is true,
      *                       then stored packets are erased.
      *                       When the endpoint receives CONNECT packet with clean_start is false,
@@ -416,7 +422,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -731,7 +737,11 @@ private:
 };
 
 /**
+ * @related connect_packet
  * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
  */
 inline std::ostream& operator<<(std::ostream& o, connect_packet const& v) {
     o <<

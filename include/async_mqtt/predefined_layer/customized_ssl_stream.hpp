@@ -21,6 +21,10 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace tls = as::ssl; // for backword compatilibity
 
+/**
+ * @ingroup predefined_customize
+ * @brief customization class template specialization for boost::asio::ssl::stream
+ */
 template <typename NextLayer>
 struct layer_customize<as::ssl::stream<NextLayer>> {
     template <

@@ -10,11 +10,18 @@
 #include <cstdint>
 #include <ostream>
 
-/// @file
+/**
+ * @defgroup qos
+ * @ingroup subscribe_v3_1_1
+ * @ingroup subscribe_v5
+ * @ingroup publish_v3_1_1
+ * @ingroup publish_v5
+ */
 
 namespace async_mqtt {
 
 /**
+ * @ingroup qos
  * @brief MQTT QoS
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234
@@ -27,7 +34,10 @@ enum class qos : std::uint8_t
 };
 
 /**
+ * @ingroup qos
  * @brief stringize qos
+ * @param v target
+ * @return QoS string
  */
 constexpr char const* qos_to_str(qos v) {
     switch(v) {
@@ -39,12 +49,16 @@ constexpr char const* qos_to_str(qos v) {
 }
 
 /**
+ * @ingroup qos
  * @brief output to the stream qos
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, qos val)
+std::ostream& operator<<(std::ostream& os, qos v)
 {
-    os << qos_to_str(val);
+    os << qos_to_str(v);
     return os;
 }
 

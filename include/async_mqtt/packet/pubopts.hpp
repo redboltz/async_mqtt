@@ -11,13 +11,18 @@
 
 #include <async_mqtt/packet/qos.hpp>
 
-/// @file
+/**
+ * @defgroup publish_options
+ * @ingroup publish_v5
+ * @ingroup publish_v3_1_1
+ */
 
 namespace async_mqtt {
 
 namespace pub {
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief Check fixed header is DUP
  * @param v fixed_header byte
@@ -28,6 +33,7 @@ constexpr bool is_dup(std::uint8_t v) {
 }
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief Get qos from the fixed header
  * @param v fixed_header byte
@@ -38,6 +44,7 @@ constexpr qos get_qos(std::uint8_t v) {
 }
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief Check fixed header is RETAIN
  * @param v fixed_header byte
@@ -48,6 +55,7 @@ constexpr bool is_retain(std::uint8_t v) {
 }
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief Set DUP to the fixed header
  * @param fixed_header fixed_header byte
@@ -59,6 +67,7 @@ constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
 }
 
 /**
+ * @ingroup publish_options
  * @brief MQTT RETAIN
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
@@ -70,6 +79,7 @@ enum class retain : std::uint8_t {
 
 
 /**
+ * @ingroup publish_options
  * @brief MQTT DUP
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
@@ -80,6 +90,7 @@ enum class dup : std::uint8_t {
 };
 
 /**
+ * @ingroup publish_options
  * @brief MQTT PublishOptions
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901101
@@ -121,35 +132,57 @@ struct opts final {
 
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(opts rhs) const { return opts(data_ | rhs.data_); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(retain rhs) const          { return *this | opts(rhs); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(dup rhs) const             { return *this | opts(rhs); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts operator|(qos rhs) const             { return *this | opts(rhs); }
 
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(opts rhs) { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(retain rhs)          { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(dup rhs)             { return (*this = (*this | rhs)); }
+
     /**
      * @brief Combine opts operator
+     * @param rhs combined target
+     * @return conbined opts
      */
     constexpr opts& operator|=(qos rhs)             { return (*this = (*this | rhs)); }
 
@@ -186,11 +219,15 @@ struct opts final {
 
     /**
      * @brief equal operator
+     * @param rhs compare target
+     * @return true if this opts equal to the rhs, otherwise false.
      */
     constexpr bool operator==(opts rhs) const { return data_ == rhs.data_; }
 
     /**
      * @brief less than operator
+     * @param rhs compare target
+     * @return true if this opts less than the rhs, otherwise false.
      */
     constexpr bool operator<(opts rhs) const { return data_ < rhs.data_; }
 
@@ -201,40 +238,64 @@ private:
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(retain lhs, dup rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(retain lhs, qos rhs) { return opts(lhs) | rhs; }
 
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(dup lhs, retain rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(dup lhs, qos rhs)    { return opts(lhs) | rhs; }
 
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(qos lhs, retain rhs) { return opts(lhs) | rhs; }
+
 /**
  * @related opts
  * @brief Combine opts operator
+ * @param lhs combined target
+ * @param rhs combined target
+ * @return conbined opts
  */
 constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
 
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief stringize retain
+ * @param v target
+ * @return retain string
  */
 constexpr char const* retain_to_str(retain v) {
     switch(v) {
@@ -245,19 +306,26 @@ constexpr char const* retain_to_str(retain v) {
 }
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief output to the stream retain
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, retain val)
+std::ostream& operator<<(std::ostream& os, retain v)
 {
-    os << retain_to_str(val);
+    os << retain_to_str(v);
     return os;
 }
 
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief stringize dup
+ * @param v target
+ * @return dup string
  */
 constexpr char const* dup_to_str(dup v) {
     switch(v) {
@@ -267,15 +335,18 @@ constexpr char const* dup_to_str(dup v) {
     }
 }
 
-
 /**
+ * @ingroup publish_options
  * @related opts
  * @brief output to the stream dup
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, dup val)
+std::ostream& operator<<(std::ostream& os, dup v)
 {
-    os << dup_to_str(val);
+    os << dup_to_str(v);
     return os;
 }
 

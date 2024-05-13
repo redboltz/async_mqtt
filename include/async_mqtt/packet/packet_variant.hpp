@@ -47,12 +47,22 @@
 
 #include <async_mqtt/util/overload.hpp>
 
+/**
+ * @defgroup packet_variant
+ * @ingroup packet
+ */
+
+/**
+ * @defgroup packet_variant_detail
+ * @ingroup packet_variant
+ */
+
 namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @breif The varaint type of all packets and system_error
- *
+ * @ingroup packet_variant_detail
+ * @brief The varaint type of all packets and system_error
  */
 template <std::size_t PacketIdBytes>
 class basic_packet_variant {
@@ -242,10 +252,9 @@ inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBy
 }
 
 /**
+ * @ingroup packet_variant
  * @related basic_packet_variant
  * @brief type alias of basic_packet_variant (PacketIdBytes=2).
- * @tparam Role          role for packet sendable checking
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
 using packet_variant = basic_packet_variant<2>;
 

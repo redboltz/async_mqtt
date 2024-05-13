@@ -17,11 +17,21 @@
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/exception.hpp>
 
-/// @file
+
+/**
+ * @defgroup store_packet_variant
+ * @ingroup packet_variant
+ */
+
+/**
+ * @defgroup store_packet_variant_detail
+ * @ingroup store_packet_variant
+ */
 
 namespace async_mqtt {
 
 /**
+ * @ingroup store_packet_variant
  * @brief corresponding response packet
  */
 enum class response_packet {
@@ -34,6 +44,7 @@ enum class response_packet {
 };
 
 /**
+ * @ingroup store_packet_variant_detail
  * @brief MQTT packet variant for store
  * @tparam PacketIdBytes MQTT spec is 2. You can use `store_packet_variant` for that.
  */
@@ -193,7 +204,7 @@ public:
     }
 
     /**
-     * @breif Get MessageExpiryInterval property value
+     * @brief Get MessageExpiryInterval property value
      * @return  message_expiry_interval
      */
     std::uint32_t get_message_expiry_interval() const {
@@ -225,7 +236,7 @@ public:
     }
 
     /**
-     * @breif Update MessageExpiryInterval property
+     * @brief Update MessageExpiryInterval property
      * @param val message_expiry_interval
      */
     void update_message_expiry_interval(std::uint32_t val) const {
@@ -285,6 +296,10 @@ inline std::ostream& operator<<(std::ostream& o, basic_store_packet_variant<Pack
     return o;
 }
 
+/**
+ * @ingroup store_packet_variant
+ * @brief Type alias of basic_store_packet_variant (PacketIdBytes=2).
+ */
 using store_packet_variant = basic_store_packet_variant<2>;
 
 } // namespace async_mqtt

@@ -36,6 +36,7 @@ inline std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v) {
 
 
 /**
+ * @ingroup packet
  * @brief hexdump the packet.
  *        Usage. std::cout << hex_dump(p) << std::endl;
  * @param p packet to dump. p must be valid packet. packet_variant system_error cannot be accepted.

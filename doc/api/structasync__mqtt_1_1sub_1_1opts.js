@@ -22,10 +22,10 @@ var structasync__mqtt_1_1sub_1_1opts =
     [ "operator|=", "structasync__mqtt_1_1sub_1_1opts.html#aaf9bdacf20f6a0dc6b3345078a3bb06a", null ],
     [ "operator|=", "structasync__mqtt_1_1sub_1_1opts.html#a16aa073469baa9038361a7256c97610f", null ],
     [ "operator|=", "structasync__mqtt_1_1sub_1_1opts.html#a3370990a163561b1cf7f39714e790c2a", null ],
-    [ "nl_to_str", "structasync__mqtt_1_1sub_1_1opts.html#a1b6297d93ef314d3e31b1a3c0a3f62ca", null ],
-    [ "operator<<", "structasync__mqtt_1_1sub_1_1opts.html#a3e6da2baa215a37a49d84c2391e89ee0", null ],
-    [ "operator<<", "structasync__mqtt_1_1sub_1_1opts.html#a52c8f3330b40ee0543ba0933ca374275", null ],
-    [ "operator<<", "structasync__mqtt_1_1sub_1_1opts.html#a7a952ad617d7504595a4a7d40df3385f", null ],
+    [ "nl_to_str", "group__subscribe__options.html#ga1b6297d93ef314d3e31b1a3c0a3f62ca", null ],
+    [ "operator<<", "group__subscribe__options.html#ga66d64c73b50dc2b87431503df5f4f023", null ],
+    [ "operator<<", "group__subscribe__options.html#ga766a40fcb0dd8dc24caaeff6ced83c6c", null ],
+    [ "operator<<", "group__subscribe__options.html#ga00670848448aee253898073390988fe1", null ],
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#ad8082e29ed835ef60c85ff57f28d8589", null ],
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#ad4c8df25433a0c9aca30d133f991afa3", null ],
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#a3befd48db2f7e9628fa524829bb098dc", null ],
@@ -38,6 +38,6 @@ var structasync__mqtt_1_1sub_1_1opts =
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#a3fd23609a54100a6782a725013a613b3", null ],
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#aa07986c6f3dc3612568ca48eb99adae1", null ],
     [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#aa54838b475c7c6bd774987fe7237e16c", null ],
-    [ "rap_to_str", "structasync__mqtt_1_1sub_1_1opts.html#ab1d185ccae3b8beecb35d89a7207a132", null ],
-    [ "retain_handling_to_str", "structasync__mqtt_1_1sub_1_1opts.html#a1b9762c54284f8e6f6a28c5b7604b9d7", null ]
+    [ "rap_to_str", "group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132", null ],
+    [ "retain_handling_to_str", "group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7", null ]
 ];

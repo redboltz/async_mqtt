@@ -32,7 +32,15 @@
 #include <async_mqtt/variable_bytes.hpp>
 #include <async_mqtt/buffer.hpp>
 
-/// @file
+/**
+ * @defgroup property
+ * @ingroup packet_v5
+ */
+
+/**
+ * @defgroup property_internal
+ * @ingroup property
+ */
 
 namespace async_mqtt {
 
@@ -44,7 +52,8 @@ enum class property_location;
 property_variant make_property_variant(buffer& buf, property_location loc);
 
 /**
- * @breif payload_format
+ * @ingroup property
+ * @brief payload_format
  */
 enum class payload_format {
     binary, ///< binary
@@ -65,6 +74,7 @@ enum class ostream_format {
 };
 
 /**
+ * @ingroup property_internal
  * @brief N bytes_property
  *
  * N is 1,2, or 4 in property usecases
@@ -138,6 +148,7 @@ struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
 };
 
 /**
+ * @ingroup property_internal
  * @brief binary_property
  */
 struct binary_property : private boost::totally_ordered<binary_property> {
@@ -215,6 +226,7 @@ struct binary_property : private boost::totally_ordered<binary_property> {
 };
 
 /**
+ * @ingroup property_internal
  * @brief string_property
  */
 struct string_property : binary_property {
@@ -230,6 +242,7 @@ struct string_property : binary_property {
 };
 
 /**
+ * @ingroup property_internal
  * @brief variable property
  *
  * The length is 1 to 4.
@@ -308,7 +321,8 @@ struct variable_property : private boost::totally_ordered<variable_property> {
 
 
 /**
- * @breif payload_format_indicator property
+ * @ingroup property
+ * @brief payload_format_indicator property
  */
 class payload_format_indicator : public detail::n_bytes_property<1> {
 public:
@@ -355,7 +369,8 @@ private:
 
 
 /**
- * @breif message_expiry_interval property
+ * @ingroup property
+ * @brief message_expiry_interval property
  */
 class message_expiry_interval : public detail::n_bytes_property<4> {
 public:
@@ -384,7 +399,8 @@ private:
 };
 
 /**
- * @breif content_type property
+ * @ingroup property
+ * @brief content_type property
  */
 class content_type : public detail::string_property {
 public:
@@ -408,7 +424,8 @@ private:
 };
 
 /**
- * @breif response_topic property
+ * @ingroup property
+ * @brief response_topic property
  */
 class response_topic : public detail::string_property {
 public:
@@ -431,7 +448,8 @@ private:
 };
 
 /**
- * @breif correlation_data property
+ * @ingroup property
+ * @brief correlation_data property
  */
 class correlation_data : public detail::binary_property {
 public:
@@ -454,7 +472,8 @@ private:
 };
 
 /**
- * @breif subscription_identifier property
+ * @ingroup property
+ * @brief subscription_identifier property
  */
 class subscription_identifier : public detail::variable_property {
 public:
@@ -467,7 +486,8 @@ public:
 };
 
 /**
- * @breif session_expiry_interval property
+ * @ingroup property
+ * @brief session_expiry_interval property
  */
 class session_expiry_interval : public detail::n_bytes_property<4> {
 public:
@@ -497,7 +517,8 @@ private:
 };
 
 /**
- * @breif assigned_client_identifier property
+ * @ingroup property
+ * @brief assigned_client_identifier property
  */
 class assigned_client_identifier : public detail::string_property {
 public:
@@ -521,7 +542,8 @@ private:
 };
 
 /**
- * @breif server_keep_alive property
+ * @ingroup property
+ * @brief server_keep_alive property
  */
 class server_keep_alive : public detail::n_bytes_property<2> {
 public:
@@ -550,7 +572,8 @@ private:
 };
 
 /**
- * @breif authentication_method property
+ * @ingroup property
+ * @brief authentication_method property
  */
 class authentication_method : public detail::string_property {
 public:
@@ -574,7 +597,8 @@ private:
 };
 
 /**
- * @breif authentication_data property
+ * @ingroup property
+ * @brief authentication_data property
  */
 class authentication_data : public detail::binary_property {
 public:
@@ -597,7 +621,8 @@ private:
 };
 
 /**
- * @breif request_problem_information property
+ * @ingroup property
+ * @brief request_problem_information property
  */
 class request_problem_information : public detail::n_bytes_property<1> {
 public:
@@ -635,7 +660,8 @@ private:
 };
 
 /**
- * @breif will_delay_interval property
+ * @ingroup property
+ * @brief will_delay_interval property
  */
 class will_delay_interval : public detail::n_bytes_property<4> {
 public:
@@ -664,7 +690,8 @@ private:
 };
 
 /**
- * @breif request_response_information property
+ * @ingroup property
+ * @brief request_response_information property
  */
 class request_response_information : public detail::n_bytes_property<1> {
 public:
@@ -702,7 +729,8 @@ private:
 };
 
 /**
- * @breif response_information property
+ * @ingroup property
+ * @brief response_information property
  */
 class response_information : public detail::string_property {
 public:
@@ -726,7 +754,8 @@ private:
 };
 
 /**
- * @breif server_reference property
+ * @ingroup property
+ * @brief server_reference property
  */
 class server_reference : public detail::string_property {
 public:
@@ -750,7 +779,8 @@ private:
 };
 
 /**
- * @breif reason_string property
+ * @ingroup property
+ * @brief reason_string property
  */
 class reason_string : public detail::string_property {
 public:
@@ -774,7 +804,8 @@ private:
 };
 
 /**
- * @breif receive_maximum property
+ * @ingroup property
+ * @brief receive_maximum property
  */
 class receive_maximum : public detail::n_bytes_property<2> {
 public:
@@ -818,7 +849,8 @@ private:
 
 
 /**
- * @breif topic_alias_maximum property
+ * @ingroup property
+ * @brief topic_alias_maximum property
  */
 class topic_alias_maximum : public detail::n_bytes_property<2> {
 public:
@@ -848,7 +880,8 @@ private:
 
 
 /**
- * @breif topic_alias property
+ * @ingroup property
+ * @brief topic_alias property
  */
 class topic_alias : public detail::n_bytes_property<2> {
 public:
@@ -877,7 +910,8 @@ private:
 };
 
 /**
- * @breif maximum_qos property
+ * @ingroup property
+ * @brief maximum_qos property
  */
 class maximum_qos : public detail::n_bytes_property<1> {
 public:
@@ -916,7 +950,8 @@ private:
 };
 
 /**
- * @breif retain_available property
+ * @ingroup property
+ * @brief retain_available property
  */
 class retain_available : public detail::n_bytes_property<1> {
 public:
@@ -955,7 +990,8 @@ private:
 
 
 /**
- * @breif user property
+ * @ingroup property
+ * @brief user property
  */
 class user_property : private boost::totally_ordered<user_property> {
 public:
@@ -1088,7 +1124,8 @@ private:
 };
 
 /**
- * @breif maximum_packet_size property
+ * @ingroup property
+ * @brief maximum_packet_size property
  */
 class maximum_packet_size : public detail::n_bytes_property<4> {
 public:
@@ -1132,7 +1169,8 @@ private:
 
 
 /**
- * @breif wildcard_subscription_available property
+ * @ingroup property
+ * @brief wildcard_subscription_available property
  */
 class wildcard_subscription_available : public detail::n_bytes_property<1> {
 public:
@@ -1171,7 +1209,8 @@ private:
 
 
 /**
- * @breif subscription_identifier_available property
+ * @ingroup property
+ * @brief subscription_identifier_available property
  */
 class subscription_identifier_available : public detail::n_bytes_property<1> {
 public:
@@ -1210,7 +1249,8 @@ private:
 
 
 /**
- * @breif shared_subscription_available property
+ * @ingroup property
+ * @brief shared_subscription_available property
  */
 class shared_subscription_available : public detail::n_bytes_property<1> {
 public:

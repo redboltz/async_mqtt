@@ -169,121 +169,126 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend use it
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="o">=</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">asio</span><span class="o">/</span><span class="n">yield</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span>
-
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;boost/asio/yield.hpp&gt;</span><span class="cp">
+</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Executor</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">app</span> <span class="p">{</span>
-    <span class="c1">// forwarding callbacks</span>
-    <span class="kt">void</span> <span class="k">operator</span><span class="p">()()</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{});</span>
-    <span class="p">}</span>
-    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{});</span>
-    <span class="p">}</span>
-    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="n">ec</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span> <span class="n">eps</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">eps</span><span class="p">));</span>
-    <span class="p">}</span>
-    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="n">ec</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">endpoint</span> <span class="cm">/*unused*/</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{});</span>
-    <span class="p">}</span>
-    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">({},</span> <span class="n">se</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{});</span>
-    <span class="p">}</span>
-    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">pv</span><span class="p">),</span> <span class="p">{});</span>
-    <span class="p">}</span>
 
-<span class="k">private</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-        <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span><span class="o">&gt;</span> <span class="n">eps</span>
-    <span class="p">)</span> <span class="p">{</span>
-        <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
+<span class="nl">private:</span>
+    <span class="k">struct</span> <span class="nc">impl</span> <span class="p">{</span>
+        <span class="n">impl</span><span class="p">(</span><span class="n">app</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span><span class="o">:</span><span class="n">app_</span><span class="p">{</span><span class="n">a</span><span class="p">}</span>
+        <span class="p">{</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+        <span class="c1">// forwarding callbacks</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()()</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="p">{});</span>
+        <span class="p">}</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{});</span>
+        <span class="p">}</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">({},</span> <span class="n">se</span><span class="p">,</span> <span class="p">{});</span>
+        <span class="p">}</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">pv</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="k">private</span><span class="o">:</span>
+        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
-    <span class="n">as</span><span class="o">::</span><span class="n">coroutine</span> <span class="n">coro</span><span class="p">;</span>
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">private</span><span class="o">:</span>
+        <span class="n">app</span><span class="o">&amp;</span> <span class="n">app_</span><span class="p">;</span>
+        <span class="k">mutable</span> <span class="n">as</span><span class="o">::</span><span class="n">coroutine</span> <span class="n">coro_</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="n">impl</span> <span class="n">impl_</span><span class="p">{</span><span class="o">*</span><span class="k">this</span><span class="p">};</span>
 <span class="p">};</span>
-
 <span class="cp">#include</span> <span class="cpf">&lt;boost/asio/unyield.hpp&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then, add copyable member variables to access from <code>proc()</code> and initialize them by the constructor.</p>
+<p>Then, add the app&#8217;s constructor as follows. endpoint is created here. In the body of the constructor, <code>impl_()</code> is called. Then the coroutine is started.
+Then,Declare the app&#8217;s member variables.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">struct</span> <span class="nc">app</span> <span class="p">{</span>
-    <span class="n">app</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">host</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">port</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;&amp;</span> <span class="n">amep</span>
-    <span class="p">)</span><span class="o">:</span><span class="n">res</span><span class="p">{</span><span class="n">res</span><span class="p">},</span>
-      <span class="n">host</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">host</span><span class="p">)},</span>
-      <span class="n">port</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">port</span><span class="p">)},</span>
-      <span class="n">amep</span><span class="p">{</span><span class="n">amep</span><span class="p">}</span>
-    <span class="p">{}</span>
-
+<pre class="rouge highlight"><code data-lang="cpp">    <span class="n">app</span><span class="p">(</span><span class="n">Executor</span> <span class="n">exe</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port</span>
+    <span class="p">)</span><span class="o">:</span><span class="n">host_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">host</span><span class="p">)},</span>
+      <span class="n">port_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">port</span><span class="p">)},</span>
+      <span class="n">amep_</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">exe</span><span class="p">)}</span>
+    <span class="p">{</span>
+        <span class="n">impl_</span><span class="p">();</span>
+    <span class="p">}</span>
     <span class="c1">// ...</span>
 
 <span class="k">private</span><span class="o">:</span>
     <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
         <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
         <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span><span class="o">&gt;</span> <span class="n">eps</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
     <span class="p">)</span> <span class="p">{</span>
         <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">host</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">port</span><span class="p">;</span>
-    <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;&amp;</span> <span class="n">amep</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    <span class="n">as</span><span class="o">::</span><span class="n">coroutine</span> <span class="n">coro</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host_</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port_</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;&gt;</span> <span class="n">amep_</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">impl</span> <span class="n">impl_</span><span class="p">{</span><span class="o">*</span><span class="k">this</span><span class="p">};</span>
+    <span class="c1">// prepare will message if you need.</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">will</span> <span class="n">will</span><span class="p">{</span>
+        <span class="s">"WillTopic1"</span><span class="p">,</span>
+        <span class="s">"WillMessage1"</span><span class="p">,</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">,</span>
+        <span class="p">{</span> <span class="c1">// properties</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">user_property</span><span class="p">{</span><span class="s">"key1"</span><span class="p">,</span> <span class="s">"val1"</span><span class="p">},</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">content_type</span><span class="p">{</span><span class="s">"text"</span><span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 <span class="p">};</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then, create your application class instance and call the function call operator.</p>
+<p>Then, implement <code>int main()</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
-        <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span> <span class="c1">// args for underlying layer (mqtt)</span>
-        <span class="c1">// mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;</span>
-    <span class="p">);</span>
-
-    <span class="c1">// Added these code</span>
-    <span class="n">app</span> <span class="n">a</span><span class="p">{</span><span class="n">res</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">*</span><span class="n">amep</span><span class="p">};</span>
-    <span class="n">a</span><span class="p">();</span>
-    <span class="n">ioc</span><span class="p">.</span><span class="n">run</span><span class="p">();</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Usage: "</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" host port"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">trace</span><span class="p">);</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
+    <span class="n">app</span> <span class="n">a</span><span class="p">{</span><span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]};</span>
+    <span class="n">ioc</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>When <code>a()</code> is called then "start" is output.</p>
+<p>When you execute the program, you can see <code>start</code> output message. This indicates that the coroutine is started well.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">    <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-        <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span><span class="o">&gt;</span> <span class="n">eps</span>
-    <span class="p">)</span> <span class="p">{</span>
-        <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -293,28 +298,33 @@ Now, adding more meaningful sequence.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_resolve_hostname_mqtt_mqtts_ws_wss">Resolve hostname (mqtt, mqtts, ws, wss)</h2>
+<h2 id="_handshake_underlying_layers_mqtt_mqtts_ws_wss">Handshake underlying layers (mqtt, mqtts, ws, wss)</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>If you use IP Address directly, you can skip resolve phase.</p>
-</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">    <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-        <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span><span class="o">&gt;</span> <span class="n">eps</span>
-    <span class="p">)</span> <span class="p">{</span>
-        <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
-            <span class="c1">// Resolve hostname</span>
-            <span class="n">yield</span> <span class="n">res</span><span class="p">.</span><span class="n">async_resolve</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">*</span><span class="k">this</span><span class="p">);</span>
-            <span class="c1">// The function finish here, and when async_resolve is finished</span>
-            <span class="c1">// resume at the next line.</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"async_resolve:"</span> <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
+                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span>
+
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">"Underlying layer connected ec:"</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -322,18 +332,23 @@ Now, adding more meaningful sequence.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="n">yield</span> <span class="n">res</span><span class="p">.</span><span class="n">async_resolve</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The third argument of <a href="https://www.boost.org/doc/html/boost_asio/reference/ip__basic_resolver/async_resolve/overload2.html">async_resolve</a> is CompletionToken. In this case, asio document said it ResolveToken. When we use stackless coroutine, we pass <code>*this</code> as the CompletionToken. The function proc() is implicitly returned and async_resolve starts processing.
-When async process (resolving hostname) is finished, then the following operator() is called:</p>
+<p>The fourth argument of underlying_handshake is CompletionToken. When we use stackless coroutine, we pass <code>*this</code> as the CompletionToken. The function proc() is implicitly returned and underlying_handshake starts processing.
+When async process is finished, then the following operator() is called:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="n">ec</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span><span class="o">::</span><span class="n">results_type</span> <span class="n">eps</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{},</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">eps</span><span class="p">));</span>
-    <span class="p">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{});</span>
+        <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -342,8 +357,12 @@ You can check <code>ec</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"async_resolve:"</span> <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">"Underlying layer connected ec:"</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -351,47 +370,20 @@ You can check <code>ec</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
-            <span class="c1">// Resolve hostname</span>
-            <span class="n">yield</span> <span class="n">res</span><span class="p">.</span><span class="n">async_resolve</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+                <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
+                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>This is switch-case based Boost.Asio stackless coroutine mechanism.
 See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_tcp_connect_mqtt_mqtts_ws_wss">TCP connect (mqtt, mqtts, ws, wss)</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Now, hostname is resolved. The next step is making TCP connection.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="c1">// Underlying TCP connect</span>
-            <span class="n">yield</span> <span class="n">as</span><span class="o">::</span><span class="n">async_connect</span><span class="p">(</span>
-                <span class="n">amep</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="c1">// or amep.lowest_layer()</span>
-                <span class="o">*</span><span class="n">eps</span><span class="p">,</span>
-                <span class="o">*</span><span class="k">this</span>
-            <span class="p">);</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                <span class="o">&lt;&lt;</span> <span class="s">"TCP connected ec:"</span>
-                <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
-                <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_tls_handshake_and_ws_handshake">TLS handshake and WS handshake</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>See #Examples[Examples]</p>
 </div>
 </div>
 </div>
@@ -403,18 +395,18 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="c1">// Send MQTT CONNECT</span>
-            <span class="n">yield</span> <span class="n">amep</span><span class="p">.</span><span class="n">send</span><span class="p">(</span>
-                <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
-                    <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
-                    <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"cid1"</span><span class="p">),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// will</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// username set like am::allocate_buffer("user1"),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span>  <span class="c1">// password set like am::allocate_buffer("pass1")</span>
-                <span class="p">},</span>
-                <span class="o">*</span><span class="k">this</span>
-            <span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Send MQTT CONNECT</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">send</span><span class="p">(</span>
+                    <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
+                        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+                        <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
+                        <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+                        <span class="n">app_</span><span class="p">.</span><span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+                        <span class="s">"UserName1"</span><span class="p">,</span>
+                        <span class="s">"Password1"</span>
+                    <span class="p">},</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -422,10 +414,10 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="k">if</span> <span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-                <span class="k">return</span><span class="p">;</span>
-            <span class="p">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -442,8 +434,8 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="c1">// Recv MQTT CONNACK</span>
-            <span class="n">yield</span> <span class="n">amep</span><span class="p">.</span><span class="n">recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Recv MQTT CONNACK</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -451,26 +443,26 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">            <span class="k">if</span> <span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
-                        <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                                <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
-                                <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
-                                <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-                        <span class="p">},</span>
-                        <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
-                    <span class="p">}</span>
-                <span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                    <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
-                    <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
-                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-                <span class="k">return</span><span class="p">;</span>
-            <span class="p">}</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+                        <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+                            <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                                    <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
+                                    <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                            <span class="p">},</span>
+                            <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
+                        <span class="p">}</span>
+                    <span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                        <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

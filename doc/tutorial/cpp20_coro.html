@@ -204,13 +204,11 @@ pre.rouge .ss {
 <h3 id="_define_endpoint">define endpoint</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">exe</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">exe</span><span class="p">};</span>
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span>
-        <span class="n">exe</span>
-    <span class="p">);</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span>
+    <span class="n">exe</span>
+<span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -221,59 +219,59 @@ pre.rouge .ss {
 <h3 id="_chain_async_calls">chain async calls</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">        <span class="c1">// Resolve hostname</span>
-        <span class="k">auto</span> <span class="n">eps</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">res</span><span class="p">.</span><span class="n">async_resolve</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"async_resolved"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// prepare will message if you need.</span>
+<span class="n">am</span><span class="o">::</span><span class="n">will</span> <span class="n">will</span><span class="p">{</span>
+    <span class="s">"WillTopic1"</span><span class="p">,</span>
+    <span class="s">"WillMessage1"</span><span class="p">,</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">,</span>
+    <span class="p">{</span> <span class="c1">// properties</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">user_property</span><span class="p">{</span><span class="s">"key1"</span><span class="p">,</span> <span class="s">"val1"</span><span class="p">},</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">content_type</span><span class="p">{</span><span class="s">"text"</span><span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-        <span class="c1">// Layer</span>
-        <span class="c1">// am::stream -&gt; TCP</span>
+<span class="c1">// handshake underlying layers</span>
+<span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amep</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"underlying_handshaked"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
-        <span class="c1">// Underlying TCP connect</span>
-        <span class="k">co_await</span> <span class="n">as</span><span class="o">::</span><span class="n">async_connect</span><span class="p">(</span>
-            <span class="n">amep</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
-            <span class="n">eps</span><span class="p">,</span>
-            <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
-        <span class="p">);</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"TCP connected"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="c1">// Send MQTT CONNECT</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">se</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">send</span><span class="p">(</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
+            <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+            <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
+            <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+            <span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+            <span class="s">"UserName1"</span><span class="p">,</span>
+            <span class="s">"Password1"</span>
+        <span class="p">},</span>
+        <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
+    <span class="p">)</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">co_return</span><span class="p">;</span>
+<span class="p">}</span>
 
-        <span class="c1">// Send MQTT CONNECT</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">se</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">send</span><span class="p">(</span>
-                <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
-                    <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
-                    <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"cid1"</span><span class="p">),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// will</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// username set like am::allocate_buffer("user1"),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span>  <span class="c1">// password set like am::allocate_buffer("pass1")</span>
-                <span class="p">},</span>
-                <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
-            <span class="p">)</span>
-        <span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-            <span class="k">co_return</span><span class="p">;</span>
+<span class="c1">// Recv MQTT CONNACK</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+            <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="p">},</span>
+            <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
         <span class="p">}</span>
-
-        <span class="c1">// Recv MQTT CONNACK</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">))</span> <span class="p">{</span>
-            <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
-                <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
-                    <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                            <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
-                            <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
-                            <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-                    <span class="p">},</span>
-                    <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
-                <span class="p">}</span>
-            <span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
-                <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
-                <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-            <span class="k">co_return</span><span class="p">;</span>
-        <span class="p">}</span></code></pre>
+    <span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+        <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
+        <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
+        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">co_return</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -282,26 +280,6 @@ pre.rouge .ss {
 <div class="paragraph">
 <p>For example, sending CONNECT packet as follows. When send() is called, async send procedure is triggered. When the procedure is finished, then the context is returned. You can access return value se.
 If se is evalueted as true, that means some error happened. So the code printss error message and <code>co_return</code>. When you want to return from the function that has <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">        <span class="c1">// Send MQTT CONNECT</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">se</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">send</span><span class="p">(</span>
-                <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
-                    <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
-                    <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"cid1"</span><span class="p">),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// will</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// username set like am::allocate_buffer("user1"),</span>
-                    <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span>  <span class="c1">// password set like am::allocate_buffer("pass1")</span>
-                <span class="p">},</span>
-                <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
-            <span class="p">)</span>
-        <span class="p">)</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-            <span class="k">co_return</span><span class="p">;</span>
-        <span class="p">}</span></code></pre>
-</div>
 </div>
 </div>
 </div>

@@ -33,6 +33,7 @@ proc(
 
         std::cout << "mqtt undlerlying handshaked" << std::endl;
 
+        // prepare will message if you need.
         am::will will{
             "WillTopic1",
             "WillMessage1",
@@ -46,10 +47,10 @@ proc(
         // MQTT connect and receive loop start
         auto connack_opt = co_await amcl.start(
             am::v5::connect_packet{
-                true,   // clean_session
+                true,   // clean_start
                 0x1234, // keep_alive
                 "ClientIdentifier1",
-                will,
+                will,   // you can pass std::nullopt if you don't want to set the will message
                 "UserName1",
                 "Password1"
             },
@@ -156,9 +157,9 @@ proc(
 
         // MQTT send unsubscribe and wait unsuback
         std::vector<am::topic_sharename> unsub_entry{
-            {"topic1"},
-            {"topic2"},
-            {"topic3"},
+            "topic1",
+            "topic2",
+            "topic3",
         };
 
         auto unsuback_opt = co_await amcl.unsubscribe(

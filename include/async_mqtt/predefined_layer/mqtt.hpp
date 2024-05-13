@@ -11,7 +11,21 @@
 
 #include <async_mqtt/predefined_layer/customized_basic_stream.hpp>
 
-/// @file
+/**
+ * @defgroup underlying_layer
+ * @ingroup connection
+ * @brief predefined underlying layers and how to adapt your own layer
+ */
+
+/**
+ * @defgroup predefined_layer
+ * @ingroup underlying_layer
+ */
+
+/**
+ * @defgroup predefined_layer_mqtt
+ * @ingroup predefined_layer
+ */
 
 namespace async_mqtt {
 
@@ -20,12 +34,21 @@ namespace as = boost::asio;
 namespace protocol {
 
 /**
- * @breif Type alias of Boost.Asio TCP socket
+ * @ingroup predefined_layer_mqtt
+ * @brief Type alias of Boost.Asio TCP socket
  */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 
 } // namespace protocol
 
+/**
+ * @ingroup predefined_layer_mqtt
+ * @brief resovling name and connect TCP layer
+ * @param host   host name or IP address to connect
+ * @param port   port number to connect
+ * @param token  completion token. signature is void(error_code)
+ * @return deduced by token
+ */
 template <
     typename Socket,
     typename Executor,
@@ -33,10 +56,12 @@ template <
         Executor
     >
 >
+#if !defined(GENERATING_DOCUMENTATION)
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code)
 )
+#endif // !defined(GENERATING_DOCUMENTATION)
 underlying_handshake(
     as::basic_stream_socket<Socket, Executor>& layer,
     std::string_view host,

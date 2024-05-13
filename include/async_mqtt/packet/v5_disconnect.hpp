@@ -27,11 +27,17 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 
+/**
+ * @defgroup disconnect_v5
+ * @ingroup packet_v5
+ */
+
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
+ * @ingroup disconnect_v5
  * @brief MQTT DISCONNECT packet (v5)
  *
  * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
@@ -153,7 +159,7 @@ public:
     }
 
     /**
-     * @breif Get reason code
+     * @brief Get reason code
      * @return reason_code
      */
     disconnect_reason_code code() const {
@@ -162,7 +168,7 @@ public:
     }
 
     /**
-     * @breif Get properties
+     * @brief Get properties
      * @return properties
      */
     properties const& props() const {
@@ -171,6 +177,9 @@ public:
 
     /**
      * @brief stream output operator
+     * @param o output stream
+     * @param v target
+     * @return  output stream
      */
     friend
     inline std::ostream& operator<<(std::ostream& o, disconnect_packet const& v) {
