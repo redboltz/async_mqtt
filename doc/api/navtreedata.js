@@ -25,6 +25,7 @@
 var NAVTREE =
 [
   [ "async_mqtt", "index.html", [
+    [ "Topics", "topics.html", "topics" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
@@ -46,8 +47,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "all_8hpp_source.html",
-"classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html",
-"functions_v.html"
+"classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html#aad008c240c640426cedaf453dde96a2c",
+"classes.html",
+"group__qos.html#gad858b3dc3d6733e6ec7b1ff497f90583",
+"v3__1__1__disconnect_8hpp_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -95,8 +95,9 @@ $(function(){initNavTree('classasync__mqtt_1_1v5_1_1pingresp__packet.html',''); 
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1v5_1_1pingresp__packet-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::v5::pingresp_packet Class Reference</div></div>
+  <div class="headertitle"><div class="title">async_mqtt::v5::pingresp_packet Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__pingresp__v5.html">Pingresp_v5</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -111,22 +112,33 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>pingresp_packet</b> ()</td></tr>
 <tr class="memdesc:a84e9bee6217c92ad82917300fadfd6aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
 <tr class="separator:a84e9bee6217c92ad82917300fadfd6aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af189d099e9cba22e4f28ad9346acfa9c" id="r_af189d099e9cba22e4f28ad9346acfa9c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af189d099e9cba22e4f28ad9346acfa9c">const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
+<tr class="memitem:a99feda0ac57ec4f707ffefbd16d2bf04" id="r_a99feda0ac57ec4f707ffefbd16d2bf04"><td class="memItemLeft" align="right" valign="top">constexpr control_packet_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99feda0ac57ec4f707ffefbd16d2bf04">type</a> () const</td></tr>
+<tr class="memdesc:a99feda0ac57ec4f707ffefbd16d2bf04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get MQTT control packet type.  <br /></td></tr>
+<tr class="separator:a99feda0ac57ec4f707ffefbd16d2bf04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af189d099e9cba22e4f28ad9346acfa9c" id="r_af189d099e9cba22e4f28ad9346acfa9c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af189d099e9cba22e4f28ad9346acfa9c">const_buffer_sequence</a> () const</td></tr>
 <tr class="memdesc:af189d099e9cba22e4f28ad9346acfa9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:af189d099e9cba22e4f28ad9346acfa9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30898ee1237b9f32232e2b722d401755" id="r_a30898ee1237b9f32232e2b722d401755"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30898ee1237b9f32232e2b722d401755">size</a> () <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a></td></tr>
+<tr class="memitem:a30898ee1237b9f32232e2b722d401755" id="r_a30898ee1237b9f32232e2b722d401755"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30898ee1237b9f32232e2b722d401755">size</a> () const</td></tr>
 <tr class="memdesc:a30898ee1237b9f32232e2b722d401755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet size.  <br /></td></tr>
 <tr class="separator:a30898ee1237b9f32232e2b722d401755"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a92f60858954a637d306c4cce1f277262" id="r_a92f60858954a637d306c4cce1f277262"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">static</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a> std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f60858954a637d306c4cce1f277262">num_of_const_buffer_sequence</a> ()</td></tr>
+<tr class="memitem:a92f60858954a637d306c4cce1f277262" id="r_a92f60858954a637d306c4cce1f277262"><td class="memItemLeft" align="right" valign="top">static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92f60858954a637d306c4cce1f277262">num_of_const_buffer_sequence</a> ()</td></tr>
 <tr class="memdesc:a92f60858954a637d306c4cce1f277262"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of element of const_buffer_sequence.  <br /></td></tr>
 <tr class="separator:a92f60858954a637d306c4cce1f277262"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="related" name="related"></a>
+Related Symbols</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
+</td></tr>
+<tr class="memitem:ab8b47870d486af93440f26159bf419c5" id="r_ab8b47870d486af93440f26159bf419c5"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8b47870d486af93440f26159bf419c5">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1v5_1_1pingresp__packet.html">pingresp_packet</a> const &amp;v)</td></tr>
+<tr class="memdesc:ab8b47870d486af93440f26159bf419c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
+<tr class="separator:ab8b47870d486af93440f26159bf419c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT PINGRESP packet (v5) </p>
-<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a8a7f4f653920a8139c907caefc764193" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v5_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v5)">v5::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a33de735f6ac4f8aa9fbca3f120c38ac0" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout_ms()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then send DISCONNECT packet with the reason code disconnect_reason_code::keep_alive_timeout automatically then close underlying layer automatically. <br  />
+<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e77ec0b180801e25279d35d225a7771" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v5_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v5)">v5::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout_ms()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then send DISCONNECT packet with the reason code disconnect_reason_code::keep_alive_timeout automatically then close underlying layer automatically. <br  />
  See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901200">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901200</a> </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="af189d099e9cba22e4f28ad9346acfa9c" name="af189d099e9cba22e4f28ad9346acfa9c"></a>
@@ -167,7 +179,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">static</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a> std::size_t async_mqtt::v5::pingresp_packet::num_of_const_buffer_sequence </td>
+          <td class="memname">static constexpr std::size_t async_mqtt::v5::pingresp_packet::num_of_const_buffer_sequence </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -210,6 +222,74 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Get packet size. </p>
 <dl class="section return"><dt>Returns</dt><dd>packet size </dd></dl>
+
+</div>
+</div>
+<a id="a99feda0ac57ec4f707ffefbd16d2bf04" name="a99feda0ac57ec4f707ffefbd16d2bf04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99feda0ac57ec4f707ffefbd16d2bf04">&#9670;&#160;</a></span>type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr control_packet_type async_mqtt::v5::pingresp_packet::type </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get MQTT control packet type. </p>
+<dl class="section return"><dt>Returns</dt><dd>control packet type </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="ab8b47870d486af93440f26159bf419c5" name="ab8b47870d486af93440f26159bf419c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8b47870d486af93440f26159bf419c5">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1pingresp__packet.html">pingresp_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stream output operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
 
 </div>
 </div>

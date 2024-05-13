@@ -170,7 +170,7 @@ $(function(){initNavTree('packet__helper_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Lhs, <span class="keyword">typename</span> Rhs&gt;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>std::enable_if_t&lt;is_packet&lt;Lhs&gt;() &amp;&amp; is_packet&lt;Rhs&gt;(), <span class="keywordtype">bool</span>&gt;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>operator==(Lhs <span class="keyword">const</span>&amp; lhs, Rhs <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">auto</span> lcbs = lhs.<a class="code hl_function" href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a>();</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">auto</span> lcbs = lhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">auto</span> [lb, le] = make_packet_range(lcbs);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keyword">auto</span> rcbs = rhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">auto</span> [rb, re] = make_packet_range(rcbs);</div>
@@ -181,7 +181,7 @@ $(function(){initNavTree('packet__helper_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Lhs, <span class="keyword">typename</span> Rhs&gt;</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>std::enable_if_t&lt;is_packet&lt;Lhs&gt;() &amp;&amp; is_packet&lt;Rhs&gt;(), <span class="keywordtype">bool</span>&gt;</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>operator&lt;(Lhs <span class="keyword">const</span>&amp; lhs, Rhs <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">auto</span> lcbs = lhs.<a class="code hl_function" href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a>();</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">auto</span> lcbs = lhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">auto</span> [lb, le] = make_packet_range(lcbs);</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keyword">auto</span> rcbs = rhs.const_buffer_sequence();</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">auto</span> [rb, re] = make_packet_range(rcbs);</div>
@@ -194,7 +194,6 @@ $(function(){initNavTree('packet__helper_8hpp_source.html',''); initResizable();
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_PACKET_HELPER_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1basic__packet__variant_html_afad06fb4c9dfdb90a0c83db0a35fad80"><div class="ttname"><a href="classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80">async_mqtt::basic_packet_variant::const_buffer_sequence</a></div><div class="ttdeci">std::vector&lt; as::const_buffer &gt; const_buffer_sequence() const</div><div class="ttdoc">Create const buffer sequence it is for boost asio APIs.</div><div class="ttdef"><b>Definition</b> packet_variant.hpp:166</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

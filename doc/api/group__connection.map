@@ -1,0 +1,8 @@
+<map id="Connection" name="Connection">
+<area shape="rect" id="Node000002" href="$group__client.html" title="High level MQTT connection layer that can be used client. Receiving MQTT response packet is automated..." alt="" coords="184,5,244,33"/>
+<area shape="rect" id="Node000001" title="MQTT and underlying layer connection related topics." alt="" coords="5,109,100,137"/>
+<area shape="rect" id="Node000003" href="$group__endpoint.html" title="MQTT connection layer that can be used not only a client but also a server (broker)." alt="" coords="175,57,253,85"/>
+<area shape="rect" id="Node000005" href="$group__mqtt.html" title="MQTT protocol related topics." alt="" coords="188,109,240,137"/>
+<area shape="rect" id="Node000006" href="$group__role.html" title="MQTT connection role (client, server or both)." alt="" coords="189,161,239,189"/>
+<area shape="rect" id="Node000004" href="$group__underlying__layer.html" title="predefined underlying layers and how to adapt your own layer" alt="" coords="148,213,280,241"/>
+</map>

@@ -6,5 +6,7 @@ var classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet =
     [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#a43c9ed28f484437c379ad9ccb38417fc", null ],
     [ "packet_id", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#a172d7821a86d6db462c95eaa03f7ab26", null ],
     [ "size", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#a6fa63c24d7c04448c452af1d6f0c20b5", null ],
-    [ "suback_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#afc473899d1e3780edad734c763201c00", null ]
+    [ "type", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#a6f539e07613be39b58f0abdd0c9f1b8c", null ],
+    [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html#aae58d5ae7d00a9e8904720da7ee15020", null ],
+    [ "suback_packet", "group__suback__v3__1__1.html#gafc473899d1e3780edad734c763201c00", null ]
 ];

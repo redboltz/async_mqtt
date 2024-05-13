@@ -112,7 +112,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;ostream&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;<a class="code" href="subopts_8hpp.html">async_mqtt/packet/subopts.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;async_mqtt/packet/subopts.hpp&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
@@ -124,9 +124,9 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    implementation_specific_error = 0x83,</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    unsupported_protocol_version  = 0x84,</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    client_identifier_not_valid   = 0x85,</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    bad_user_name_or_password     = 0x86,</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    not_authorized                = 0x87,</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    server_unavailable            = 0x88,</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109abe32e8f8c93b3707303fb6cf9eb1a8b8">bad_user_name_or_password</a>     = 0x86,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                = 0x87,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109aeb0efb9a7b59231e85e53bfba6b60ec4">server_unavailable</a>            = 0x88,</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    server_busy                   = 0x89,</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    banned                        = 0x8a,</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    server_shutting_down          = 0x8b,</div>
@@ -187,7 +187,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    malformed_packet                       = 0x81,</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    protocol_error                         = 0x82,</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    implementation_specific_error          = 0x83,</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    not_authorized                         = 0x87,</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                         = 0x87,</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    server_busy                            = 0x89,</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    server_shutting_down                   = 0x8b,</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    keep_alive_timeout                     = 0x8d,</div>
@@ -263,7 +263,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    granted_qos_2                          = 0x02,</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    unspecified_error                      = 0x80,</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    implementation_specific_error          = 0x83,</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    not_authorized                         = 0x87,</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                         = 0x87,</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    topic_filter_invalid                   = 0x8f,</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    packet_identifier_in_use               = 0x91,</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    quota_exceeded                         = 0x97,</div>
@@ -299,7 +299,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="keywordflow">return</span> os;</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>}</div>
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">constexpr</span> suback_reason_code qos_to_suback_reason_code(qos q) {</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keyword">constexpr</span> suback_reason_code qos_to_suback_reason_code(<a class="code hl_enumeration" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> q) {</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>suback_reason_code<span class="keyword">&gt;</span>(q);</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>}</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
@@ -308,7 +308,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    no_subscription_existed       = 0x11,</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    unspecified_error             = 0x80,</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    implementation_specific_error = 0x83,</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    not_authorized                = 0x87,</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                = 0x87,</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    topic_filter_invalid          = 0x8f,</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    packet_identifier_in_use      = 0x91,</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>};</div>
@@ -340,7 +340,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    no_matching_subscribers       = 0x10,</div>
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    unspecified_error             = 0x80,</div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    implementation_specific_error = 0x83,</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    not_authorized                = 0x87,</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                = 0x87,</div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    topic_name_invalid            = 0x90,</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    packet_identifier_in_use      = 0x91,</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    quota_exceeded                = 0x97,</div>
@@ -381,7 +381,7 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    no_matching_subscribers       = 0x10,</div>
 <div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    unspecified_error             = 0x80,</div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    implementation_specific_error = 0x83,</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    not_authorized                = 0x87,</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <a class="code hl_enumvalue" href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">not_authorized</a>                = 0x87,</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    topic_name_invalid            = 0x90,</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    packet_identifier_in_use      = 0x91,</div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    quota_exceeded                = 0x97,</div>
@@ -488,7 +488,10 @@ $(function(){initNavTree('reason__code_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span> </div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_REASON_CODE_HPP</span></div>
-<div class="ttc" id="asubopts_8hpp_html"><div class="ttname"><a href="subopts_8hpp.html">subopts.hpp</a></div></div>
+<div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">async_mqtt::connect_return_code::not_authorized</a></div><div class="ttdeci">@ not_authorized</div><div class="ttdoc">The Client is not authorized to connect.</div></div>
+<div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109abe32e8f8c93b3707303fb6cf9eb1a8b8"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109abe32e8f8c93b3707303fb6cf9eb1a8b8">async_mqtt::connect_return_code::bad_user_name_or_password</a></div><div class="ttdeci">@ bad_user_name_or_password</div><div class="ttdoc">The data in the user name or password is malformed.</div></div>
+<div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109aeb0efb9a7b59231e85e53bfba6b60ec4"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109aeb0efb9a7b59231e85e53bfba6b60ec4">async_mqtt::connect_return_code::server_unavailable</a></div><div class="ttdeci">@ server_unavailable</div><div class="ttdoc">The Network Connection has been made but the MQTT service is unavailable.</div></div>
+<div class="ttc" id="agroup__qos_html_ga38e773082414bb272ab22275c56eb4df"><div class="ttname"><a href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">async_mqtt::qos</a></div><div class="ttdeci">qos</div><div class="ttdoc">MQTT QoS.</div><div class="ttdef"><b>Definition</b> qos.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -157,6 +157,46 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="sect1">
+<h2 id="_include_header_files">Include header files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to use async_mqtt, include the following header file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/all.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in <code>all.hpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>For TLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/mqtts.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/ws.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket on TLS</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/wss.hpp&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_create_client">Create client</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -167,6 +207,15 @@ pre.rouge .ss {
 <img src="../images/layer.svg" alt="layer structure">
 </div>
 </div>
+<div class="paragraph">
+<p>The following namespace alias is defined in the all code example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">namespace</span> <span class="n">as</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">asio</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="n">tls</span> <span class="o">=</span> <span class="n">as</span><span class="o">::</span><span class="n">ssl</span><span class="p">;</span></code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -175,15 +224,12 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
     <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span> <span class="n">amcl</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span> <span class="c1">// args for underlying layer (mqtt)</span>
         <span class="c1">// mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">);</span>
+    <span class="c1">// handshake underlying layers</span>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -194,33 +240,26 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
     <span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span> <span class="n">ctx</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span><span class="o">::</span><span class="n">tlsv12</span><span class="p">};</span>
     <span class="n">ctx</span><span class="p">.</span><span class="n">set_verify_mode</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">verify_none</span><span class="p">);</span>
+
     <span class="c1">// If you want to check server certificate, set cacert as follows.</span>
     <span class="c1">// ctx.load_verify_file(cacert);</span>
+
+    <span class="c1">// You the broker requires additional TLS layer information,</span>
+    <span class="c1">// you can use OpenSSL directly.</span>
+    <span class="c1">//</span>
+    <span class="c1">// static const unsigned char protos[5] = {4, 'm','q','t','t'};</span>
+    <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
+    <span class="c1">// // (check res)</span>
 
     <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v5</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtts</span><span class="o">&gt;</span> <span class="n">amcl</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer (as::ssl::stream&lt;mqtt&gt;)</span>
         <span class="n">ctx</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">);</span>
+    <span class="c1">// handshake underlying layers</span>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>tls</code> is namespace alias of <code>boost::asio::ssl</code> by default.
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -230,15 +269,12 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
     <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;</span> <span class="n">amcl</span><span class="p">{</span>
     <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span>  <span class="c1">// args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">);</span>
+    <span class="c1">// handshake underlying layers</span>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -249,20 +285,24 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
     <span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span> <span class="n">ctx</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span><span class="o">::</span><span class="n">tlsv12</span><span class="p">};</span>
     <span class="n">ctx</span><span class="p">.</span><span class="n">set_verify_mode</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">verify_none</span><span class="p">);</span>
     <span class="c1">// If you want to check server certificate, set cacert as follows.</span>
     <span class="c1">// ctx.load_verify_file(cacert);</span>
 
+    <span class="c1">// You the broker requires additional TLS layer information,</span>
+    <span class="c1">// you can use OpenSSL directly.</span>
+    <span class="c1">//</span>
+    <span class="c1">// static const unsigned char protos[5] = {4, 'm','q','t','t'};</span>
+    <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
+    <span class="c1">// // (check res)</span>
+
     <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">wss</span><span class="o">&gt;</span> <span class="n">amcl</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer ( bs::websocket::stream&lt;mqtts&gt;)</span>
         <span class="n">ctx</span>                  <span class="c1">// mqtts is as::ssl::stream&lt;mqtt&gt;</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">);</span>
+    <span class="c1">// handshake underlying layers</span>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -270,6 +310,9 @@ pre.rouge .ss {
 <div class="sect1">
 <h2 id="_layer_access">Layer access</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>You usually need to access only <code>next_layer()</code> to pass <code>underlying_handshake()</code> argument. But if you want to some configuration for each layers, you can access all underlying layers.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -321,28 +364,6 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_handshaking_underlying_layer">Handshaking underlying layer</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can use underlying handshaking functions as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// Underlying TCP connect</span>
-<span class="k">co_await</span> <span class="n">as</span><span class="o">::</span><span class="n">async_connect</span><span class="p">(</span>
-    <span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
-    <span class="n">eps</span><span class="p">,</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
-<span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"TCP connected"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Similarly, handshake TLS, WebSocket layers if needed.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_send_mqtt_connect_packet_and_start_receive_loop">Send MQTT CONNECT packet and start receive loop</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -352,15 +373,26 @@ pre.rouge .ss {
 <h3 id="_start_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80">start()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT connect and receive loop start</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// prepare will message if you need.</span>
+<span class="n">am</span><span class="o">::</span><span class="n">will</span> <span class="n">will</span><span class="p">{</span>
+    <span class="s">"WillTopic1"</span><span class="p">,</span>
+    <span class="s">"WillMessage1"</span><span class="p">,</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">,</span>
+    <span class="p">{</span> <span class="c1">// properties</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">user_property</span><span class="p">{</span><span class="s">"key1"</span><span class="p">,</span> <span class="s">"val1"</span><span class="p">},</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">content_type</span><span class="p">{</span><span class="s">"text"</span><span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// MQTT connect and receive loop start</span>
 <span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">start</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
-        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"cid1"</span><span class="p">),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// will</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// username set like allocate_buffer("user1"),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span>  <span class="c1">// password set like allocate_buffer("pass1")</span>
+        <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+        <span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+        <span class="s">"UserName1"</span><span class="p">,</span>
+        <span class="s">"Password1"</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
 <span class="p">);</span>
@@ -377,12 +409,12 @@ pre.rouge .ss {
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT connect and receive loop start</span>
 <span class="k">auto</span> <span class="p">[</span><span class="n">ec</span><span class="p">,</span> <span class="n">connack_opt</span><span class="p">]</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">start</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
-        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"cid1"</span><span class="p">),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// will</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span><span class="p">,</span> <span class="c1">// username set like allocate_buffer("user1"),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">nullopt</span>  <span class="c1">// password set like allocate_buffer("pass1")</span>
+        <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+        <span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+        <span class="s">"UserName1"</span><span class="p">,</span>
+        <span class="s">"Password1"</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">as_tuple</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">)</span>
 <span class="p">);</span>
@@ -405,9 +437,9 @@ pre.rouge .ss {
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// subscribe</span>
 <span class="c1">// MQTT send subscribe and wait suback</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">topic_subopts</span><span class="o">&gt;</span> <span class="n">sub_entry</span><span class="p">{</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic1"</span><span class="p">),</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">},</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic2"</span><span class="p">),</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_least_once</span><span class="p">},</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic3"</span><span class="p">),</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">exactly_once</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">"topic1"</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">"topic2"</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_least_once</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">"topic3"</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">exactly_once</span><span class="p">},</span>
 <span class="p">};</span>
 <span class="k">auto</span> <span class="n">suback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">subscribe</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">subscribe_packet</span><span class="p">{</span>
@@ -431,9 +463,9 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT send unsubscribe and wait unsuback</span>
 <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">topic_sharename</span><span class="o">&gt;</span> <span class="n">unsub_entry</span><span class="p">{</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic1"</span><span class="p">)},</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic2"</span><span class="p">)},</span>
-    <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic3"</span><span class="p">)},</span>
+    <span class="s">"topic1"</span><span class="p">,</span>
+    <span class="s">"topic2"</span><span class="p">,</span>
+    <span class="s">"topic3"</span><span class="p">,</span>
 <span class="p">};</span>
 
 <span class="k">auto</span> <span class="n">unsuback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">unsubscribe</span><span class="p">(</span>
@@ -467,8 +499,8 @@ pre.rouge .ss {
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS0 and wait response (socket write complete)</span>
 <span class="k">auto</span> <span class="n">pubres0</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic1"</span><span class="p">),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"payload1"</span><span class="p">),</span>
+        <span class="s">"topic1"</span><span class="p">,</span>
+        <span class="s">"payload1"</span><span class="p">,</span>
         <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -490,8 +522,8 @@ All the members of pubres_t are nullopt.</p>
 <span class="k">auto</span> <span class="n">pubres1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="o">*</span><span class="n">pid_pub1_opt</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic2"</span><span class="p">),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"payload2"</span><span class="p">),</span>
+        <span class="s">"topic2"</span><span class="p">,</span>
+        <span class="s">"payload2"</span><span class="p">,</span>
         <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_least_once</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -514,8 +546,8 @@ All the members of pubres_t are nullopt.</p>
 <span class="k">auto</span> <span class="n">pubres2</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="n">pid_pub2</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"topic3"</span><span class="p">),</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">allocate_buffer</span><span class="p">(</span><span class="s">"payload3"</span><span class="p">),</span>
+        <span class="s">"topic3"</span><span class="p">,</span>
+        <span class="s">"payload3"</span><span class="p">,</span>
         <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">exactly_once</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>

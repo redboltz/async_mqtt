@@ -100,102 +100,30 @@ $(function(){initNavTree('suback__return__code_8hpp.html',''); initResizable(); 
 <div class="contents">
 <div class="textblock"><code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;ostream&gt;</code><br />
-<code>#include &lt;<a class="el" href="qos_8hpp_source.html">async_mqtt/packet/qos.hpp</a>&gt;</code><br />
+<code>#include &lt;async_mqtt/packet/qos.hpp&gt;</code><br />
 </div>
 <p><a href="suback__return__code_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ad3470deb20130512c7ad76c4314f1816" id="r_ad3470deb20130512c7ad76c4314f1816"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3470deb20130512c7ad76c4314f1816">async_mqtt::suback_return_code</a> : std::uint8_t { <a class="el" href="#ad3470deb20130512c7ad76c4314f1816aeb33a386d4dcaf9cc6c50c679d0a0b0f">success_maximum_qos_0</a> = 0x00
-, <a class="el" href="#ad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc">success_maximum_qos_1</a> = 0x01
-, <a class="el" href="#ad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52">success_maximum_qos_2</a> = 0x02
-, <a class="el" href="#ad3470deb20130512c7ad76c4314f1816a3ee28fe1a60c95b89d29317f122c7021">failure</a> = 0x80
+<tr class="memitem:gad3470deb20130512c7ad76c4314f1816" id="r_gad3470deb20130512c7ad76c4314f1816"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__packet.html#gad3470deb20130512c7ad76c4314f1816">async_mqtt::suback_return_code</a> : std::uint8_t { <a class="el" href="group__packet.html#ggad3470deb20130512c7ad76c4314f1816aeb33a386d4dcaf9cc6c50c679d0a0b0f">suback_return_code::success_maximum_qos_0</a> = 0x00
+, <a class="el" href="group__packet.html#ggad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc">suback_return_code::success_maximum_qos_1</a> = 0x01
+, <a class="el" href="group__packet.html#ggad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52">suback_return_code::success_maximum_qos_2</a> = 0x02
+, <a class="el" href="group__packet.html#ggad3470deb20130512c7ad76c4314f1816a3ee28fe1a60c95b89d29317f122c7021">suback_return_code::failure</a> = 0x80
  }</td></tr>
-<tr class="memdesc:ad3470deb20130512c7ad76c4314f1816"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT suback_return_code.  <a href="#ad3470deb20130512c7ad76c4314f1816">More...</a><br /></td></tr>
-<tr class="separator:ad3470deb20130512c7ad76c4314f1816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:gad3470deb20130512c7ad76c4314f1816"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT suback_return_code.  <a href="group__packet.html#gad3470deb20130512c7ad76c4314f1816">More...</a><br /></td></tr>
+<tr class="separator:gad3470deb20130512c7ad76c4314f1816"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa3cb1ed0a1c8c886609f91852cd72f48" id="r_aa3cb1ed0a1c8c886609f91852cd72f48"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a> <a class="el" href="#ad3470deb20130512c7ad76c4314f1816">suback_return_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3cb1ed0a1c8c886609f91852cd72f48">async_mqtt::qos_to_suback_return_code</a> (<a class="el" href="qos_8hpp.html#a38e773082414bb272ab22275c56eb4df">qos</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">q</a>)</td></tr>
-<tr class="memdesc:aa3cb1ed0a1c8c886609f91852cd72f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">create suback_return_code from qos  <br /></td></tr>
-<tr class="separator:aa3cb1ed0a1c8c886609f91852cd72f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a661223c247984054b2c92a4ec4f4b406" id="r_a661223c247984054b2c92a4ec4f4b406"><td class="memItemLeft" align="right" valign="top"><a id="a661223c247984054b2c92a4ec4f4b406" name="a661223c247984054b2c92a4ec4f4b406"></a>
-<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">constexpr</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">char</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">const</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>async_mqtt::suback_return_code_to_str</b> (<a class="el" href="#ad3470deb20130512c7ad76c4314f1816">suback_return_code</a> <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">v</a>)</td></tr>
-<tr class="memdesc:a661223c247984054b2c92a4ec4f4b406"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize suback_return_code <br /></td></tr>
-<tr class="separator:a661223c247984054b2c92a4ec4f4b406"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa3cb1ed0a1c8c886609f91852cd72f48" id="r_gaa3cb1ed0a1c8c886609f91852cd72f48"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__packet.html#gad3470deb20130512c7ad76c4314f1816">suback_return_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__packet.html#gaa3cb1ed0a1c8c886609f91852cd72f48">async_mqtt::qos_to_suback_return_code</a> (<a class="el" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> q)</td></tr>
+<tr class="memdesc:gaa3cb1ed0a1c8c886609f91852cd72f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">create suback_return_code from qos  <br /></td></tr>
+<tr class="separator:gaa3cb1ed0a1c8c886609f91852cd72f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga661223c247984054b2c92a4ec4f4b406" id="r_ga661223c247984054b2c92a4ec4f4b406"><td class="memItemLeft" align="right" valign="top">
+constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><b>async_mqtt::suback_return_code_to_str</b> (<a class="el" href="group__packet.html#gad3470deb20130512c7ad76c4314f1816">suback_return_code</a> v)</td></tr>
+<tr class="memdesc:ga661223c247984054b2c92a4ec4f4b406"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize suback_return_code <br /></td></tr>
+<tr class="separator:ga661223c247984054b2c92a4ec4f4b406"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ad3470deb20130512c7ad76c4314f1816" name="ad3470deb20130512c7ad76c4314f1816"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3470deb20130512c7ad76c4314f1816">&#9670;&#160;</a></span>suback_return_code</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#ad3470deb20130512c7ad76c4314f1816">async_mqtt::suback_return_code</a> : std::uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>MQTT suback_return_code. </p>
-<p><br  />
- See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071</a> </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad3470deb20130512c7ad76c4314f1816aeb33a386d4dcaf9cc6c50c679d0a0b0f" name="ad3470deb20130512c7ad76c4314f1816aeb33a386d4dcaf9cc6c50c679d0a0b0f"></a>success_maximum_qos_0&#160;</td><td class="fielddoc"><p>Success with QoS0. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc" name="ad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc"></a>success_maximum_qos_1&#160;</td><td class="fielddoc"><p>Success with QoS1. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52" name="ad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52"></a>success_maximum_qos_2&#160;</td><td class="fielddoc"><p>Success with QoS2. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ad3470deb20130512c7ad76c4314f1816a3ee28fe1a60c95b89d29317f122c7021" name="ad3470deb20130512c7ad76c4314f1816a3ee28fe1a60c95b89d29317f122c7021"></a>failure&#160;</td><td class="fielddoc"><p>Fail. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="aa3cb1ed0a1c8c886609f91852cd72f48" name="aa3cb1ed0a1c8c886609f91852cd72f48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3cb1ed0a1c8c886609f91852cd72f48">&#9670;&#160;</a></span>qos_to_suback_return_code()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr suback_return_code async_mqtt::qos_to_suback_return_code </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="qos_8hpp.html#a38e773082414bb272ab22275c56eb4df">qos</a></td>          <td class="paramname"><span class="paramname"><em>q</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>create suback_return_code from qos </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">q</td><td>qos </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>suback_retun_code </dd></dl>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

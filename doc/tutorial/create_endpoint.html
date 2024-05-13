@@ -159,15 +159,60 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="sect1">
+<h2 id="_include_header_files">Include header files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to use async_mqtt, include the following header file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/all.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in <code>all.hpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>For TLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/mqtts.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/ws.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket on TLS</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/wss.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following namespace alias is defined in the all code example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">namespace</span> <span class="n">as</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">asio</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="n">tls</span> <span class="o">=</span> <span class="n">as</span><span class="o">::</span><span class="n">ssl</span><span class="p">;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_mqtt">mqtt</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
 
     <span class="c1">//                     endpoint is client  choose underlying layer</span>
     <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
@@ -186,10 +231,6 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
 
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
-
     <span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span> <span class="n">ctx</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span><span class="o">::</span><span class="n">tlsv12</span><span class="p">};</span>
     <span class="n">ctx</span><span class="p">.</span><span class="n">set_verify_mode</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">verify_none</span><span class="p">);</span>
     <span class="c1">// If you want to check server certificate, set cacert as follows.</span>
@@ -202,18 +243,6 @@ pre.rouge .ss {
     <span class="p">);</span></code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<code>tls</code> is namespace alias of <code>boost::asio::ssl</code> by default.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -222,10 +251,6 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
 
     <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
         <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
@@ -241,10 +266,6 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-
-    <span class="c1">// To get IP address from hostname</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">socket</span> <span class="n">resolve_sock</span><span class="p">{</span><span class="n">ioc</span><span class="p">};</span>
-    <span class="n">as</span><span class="o">::</span><span class="n">ip</span><span class="o">::</span><span class="n">tcp</span><span class="o">::</span><span class="n">resolver</span> <span class="n">res</span><span class="p">{</span><span class="n">resolve_sock</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()};</span>
 
     <span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span> <span class="n">ctx</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">context</span><span class="o">::</span><span class="n">tlsv12</span><span class="p">};</span>
     <span class="n">ctx</span><span class="p">.</span><span class="n">set_verify_mode</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">tls</span><span class="o">::</span><span class="n">verify_none</span><span class="p">);</span>

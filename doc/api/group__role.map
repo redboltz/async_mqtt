@@ -1,0 +1,4 @@
+<map id="Role" name="Role">
+<area shape="rect" id="Node000002" href="$group__connection.html" title="MQTT and underlying layer connection related topics." alt="" coords="5,5,100,33"/>
+<area shape="rect" id="Node000001" title="MQTT connection role (client, server or both)." alt="" coords="148,5,198,33"/>
+</map>
