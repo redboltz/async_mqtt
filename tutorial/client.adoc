@@ -48,35 +48,37 @@ ifndef::env-github[image::layer.svg[layer structure]]
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
-
     am::client<am::protocol_version::v3_1_1, am::protocol::mqtt> amcl{
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     );
+    // handshake underlying layers
+    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 == mqtts
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
-
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
+    
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
+
+    // You the broker requires additional TLS layer information,
+    // you can use OpenSSL directly.
+    // 
+    // static const unsigned char protos[5] = {4, 'm','q','t','t'};
+    // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
+    // // (check res)
 
     am::client<am::protocol_version::v5, am::protocol::mqtts> amcl{
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
         ctx
     );
+    // handshake underlying layers
+    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
@@ -85,15 +87,12 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
-
     am::client<am::protocol_version::v3_1_1, am::protocol::ws> amcl{
     auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     );
+    // handshake underlying layers
+    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 
@@ -101,20 +100,24 @@ NOTE: `tls` is namespace alias of `boost::asio::ssl` by default.
 
 ```cpp
     as::io_context ioc;
-
-    // To get IP address from hostname
-    as::ip::tcp::socket resolve_sock{ioc};
-    as::ip::tcp::resolver res{resolve_sock.get_executor()};
-
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
 
+    // You the broker requires additional TLS layer information,
+    // you can use OpenSSL directly.
+    // 
+    // static const unsigned char protos[5] = {4, 'm','q','t','t'};
+    // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
+    // // (check res)
+
     am::client<am::protocol_version::v3_1_1, am::protocol::wss> amcl{
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
         ctx                  // mqtts is as::ssl::stream<mqtt>
     );
+    // handshake underlying layers
+    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 == Layer access
@@ -151,15 +154,26 @@ After underlying layers' handshaking is completed, then start MQTT layer connect
 === {api-base}/++classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80++[start()] funtion
 
 ```cpp
+// prepare will message if you need.
+am::will will{
+    "WillTopic1",
+    "WillMessage1",
+    am::qos::at_most_once,
+    { // properties
+        am::property::user_property{"key1", "val1"},
+        am::property::content_type{"text"},
+    }
+};
+
 // MQTT connect and receive loop start
 auto connack_opt = co_await amcl.start(
     am::v5::connect_packet{
-        true,   // clean_session
+        true,   // clean_start
         0x1234, // keep_alive
-        am::allocate_buffer("cid1"),
-        am::nullopt, // will
-        am::nullopt, // username set like allocate_buffer("user1"),
-        am::nullopt  // password set like allocate_buffer("pass1")
+        "ClientIdentifier1",
+        will,   // you can pass std::nullopt if you don't want to set the will message
+        "UserName1",
+        "Password1"
     },
     as::use_awaitable
 );
@@ -174,12 +188,12 @@ CompletionToken parameters are error_code and connack_packet (optional). connack
 // MQTT connect and receive loop start
 auto [ec, connack_opt] = co_await amcl.start(
     am::v5::connect_packet{
-        true,   // clean_session
+        true,   // clean_start
         0x1234, // keep_alive
-        am::allocate_buffer("cid1"),
-        am::nullopt, // will
-        am::nullopt, // username set like allocate_buffer("user1"),
-        am::nullopt  // password set like allocate_buffer("pass1")
+        "ClientIdentifier1",
+        will,   // you can pass std::nullopt if you don't want to set the will message
+        "UserName1",
+        "Password1"
     },
     as::as_tuple(as::use_awaitable)
 );
@@ -197,9 +211,9 @@ if (connack_opt) {
 // subscribe
 // MQTT send subscribe and wait suback
 std::vector<am::topic_subopts> sub_entry{
-    {am::allocate_buffer("topic1"), am::qos::at_most_once},
-    {am::allocate_buffer("topic2"), am::qos::at_least_once},
-    {am::allocate_buffer("topic3"), am::qos::exactly_once},
+    {"topic1", am::qos::at_most_once},
+    {"topic2", am::qos::at_least_once},
+    {"topic3", am::qos::exactly_once},
 };
 auto suback_opt = co_await amcl.subscribe(
     am::v5::subscribe_packet{
@@ -220,9 +234,9 @@ CompletionToken parameters are error_code and suback_packet (optional). suback_p
 ```cpp
 // MQTT send unsubscribe and wait unsuback
 std::vector<am::topic_sharename> unsub_entry{
-    {am::allocate_buffer("topic1")},
-    {am::allocate_buffer("topic2")},
-    {am::allocate_buffer("topic3")},
+    "topic1",
+    "topic2",
+    "topic3",
 };
 
 auto unsuback_opt = co_await amcl.unsubscribe(
@@ -249,8 +263,8 @@ Here is a code example that sending QoS0 PUBLISH packet.
 // MQTT publish QoS0 and wait response (socket write complete)
 auto pubres0 = co_await amcl.publish(
     am::v5::publish_packet{
-        am::allocate_buffer("topic1"),
-        am::allocate_buffer("payload1"),
+        "topic1",
+        "payload1",
         am::qos::at_most_once
     },
     as::use_awaitable
@@ -269,8 +283,8 @@ auto pid_pub1_opt = co_await amcl.acquire_unique_packet_id(as::use_awaitable); /
 auto pubres1 = co_await amcl.publish(
     am::v5::publish_packet{
         *pid_pub1_opt,
-        am::allocate_buffer("topic2"),
-        am::allocate_buffer("payload2"),
+        "topic2",
+        "payload2",
         am::qos::at_least_once
     },
     as::use_awaitable
@@ -289,8 +303,8 @@ auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaita
 auto pubres2 = co_await amcl.publish(
     am::v5::publish_packet{
         pid_pub2,
-        am::allocate_buffer("topic3"),
-        am::allocate_buffer("payload3"),
+        "topic3",
+        "payload3",
         am::qos::exactly_once
     },
     as::use_awaitable
