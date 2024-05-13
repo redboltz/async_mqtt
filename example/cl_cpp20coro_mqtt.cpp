@@ -23,25 +23,15 @@ proc(
     std::string_view port) {
 
     auto exe = co_await as::this_coro::executor;
-    as::ip::tcp::socket resolve_sock{exe};
-    as::ip::tcp::resolver res{exe};
+
     std::cout << "start" << std::endl;
 
     try {
-        // Resolve hostname
-        auto eps = co_await res.async_resolve(host, port, as::use_awaitable);
-        std::cout << "async_resolved" << std::endl;
+        // all underlying layer handshaking
+        // (Resolve hostname, TCP handshake)
+        co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 
-        // Layer
-        // am::stream -> TCP
-
-        // Underlying TCP connect
-        co_await as::async_connect(
-            amcl.next_layer(),
-            eps,
-            as::use_awaitable
-        );
-        std::cout << "TCP connected" << std::endl;
+        std::cout << "mqtt undlerlying handshaked" << std::endl;
 
         am::will will{
             "WillTopic1",

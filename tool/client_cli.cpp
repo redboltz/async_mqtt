@@ -758,12 +758,10 @@ class network_manager {
 public:
     network_manager(
         Endpoint& ep,
-        as::ip::tcp::resolver& res,
         po::variables_map& vm,
         am::protocol_version version
     )
         :ep_{ep},
-         res_{res},
          vm_{vm},
          version_{version}
     {
@@ -772,25 +770,22 @@ public:
 
     // forwarding callbacks
     void operator()() {
-        proc({}, {}, {}, {}, {});
+        proc({}, {}, {}, {});
     }
-    void operator()(boost::system::error_code const& ec) {
-        proc(ec, {}, {}, {}, {});
-    }
-    void operator()(boost::system::error_code ec, as::ip::tcp::resolver::results_type eps) {
-        proc(ec, {}, {}, {}, std::move(eps));
+    void operator()(boost::system::error_code ec) {
+        proc(ec, {}, {}, {});
     }
     void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/) {
-        proc(ec, {}, {}, {}, {});
+        proc(ec, {}, {}, {});
     }
     void operator()(am::system_error const& se) {
-        proc({}, se, {}, {}, {});
+        proc({}, se, {}, {});
     }
     void operator()(std::optional<packet_id_t> pid_opt) {
-        proc({}, {}, pid_opt, {}, {});
+        proc({}, {}, pid_opt, {});
     }
     void operator()(am::packet_variant pv) {
-        proc({}, {}, {}, am::force_move(pv), {});
+        proc({}, {}, {}, am::force_move(pv));
     }
 
 private:
@@ -798,8 +793,7 @@ private:
         am::error_code const& ec,
         am::system_error const& se,
         std::optional<packet_id_t> /*pid_opt*/,
-        am::packet_variant pv,
-        std::optional<as::ip::tcp::resolver::results_type> eps
+        am::packet_variant pv
     ) {
         reenter (coro_) {
             yield {
@@ -832,100 +826,16 @@ private:
                 clean_start_ = vm_["clean_start"].template as<bool>();
                 sei_ = vm_["sei"].template as<std::uint32_t>();
 
-                // Resolve hostname
-                res_.async_resolve(host_, boost::lexical_cast<std::string>(port), *this);
-                std::cout << color_red << "\n";
-                std::cout << "async_resolve:" << ec.message() << std::endl;
-                if (ec) return;
+                // Handshake underlying layer
+                am::underlying_handshake(
+                    ep_.next_layer(),
+                    host_,
+                    boost::lexical_cast<std::string>(port),
+                    *this
+                );
             }
-
-            // Underlying TCP connect
-            yield as::async_connect(
-                ep_.lowest_layer(),
-                *eps,
-                *this
-            );
-            std::cout
-                << "TCP connected ec:"
-                << ec.message()
-                << std::endl;
+            std::cout << "underlying handshake:" << ec.message() << std::endl;
             if (ec) return;
-
-#if defined(ASYNC_MQTT_USE_TLS)
-            // Underlying TLS handshake
-            yield {
-                if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::mqtts>>) {
-                    ep_.next_layer().async_handshake(
-                        as::ssl::stream_base::client,
-                        *this
-                    );
-                }
-#if defined(ASYNC_MQTT_USE_WS)
-                else if constexpr (std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>) {
-                    ep_.next_layer().next_layer().async_handshake(
-                        as::ssl::stream_base::client,
-                        *this
-                    );
-                }
-#endif // defined(ASYNC_MQTT_USE_WS)
-                else {
-                    as::dispatch(
-                        ep_.get_executor(),
-                        *this
-                    );
-                }
-            }
-            if constexpr (
-                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::mqtts>>
-#if defined(ASYNC_MQTT_USE_WS)
-                ||
-                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
-#endif // defined(ASYNC_MQTT_USE_WS)
-            ) {
-                std::cout
-                    << "TLS handshaked ec:"
-                    << ec.message()
-                    << std::endl;
-                if (ec) return;
-            }
-#endif // defined(ASYNC_MQTT_USE_TLS)
-
-#if defined(ASYNC_MQTT_USE_WS)
-            // Underlying WS handshake
-            yield {
-                if constexpr (
-                    std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::ws>>
-#if defined(ASYNC_MQTT_USE_TLS)
-                    ||
-                    std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
-#endif // defined(ASYNC_MQTT_USE_TLS)
-                ) {
-                    ep_.next_layer().async_handshake(
-                        host_,
-                        ws_path_,
-                        *this
-                    );
-                }
-                else {
-                    as::dispatch(
-                        ep_.get_executor(),
-                        *this
-                    );
-                }
-            }
-            if constexpr (
-                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::ws>>
-#if defined(ASYNC_MQTT_USE_TLS)
-                ||
-                std::is_same_v<Endpoint, am::endpoint<am::role::client, am::protocol::wss>>
-#endif // defined(ASYNC_MQTT_USE_TLS)
-            ) {
-                std::cout
-                    << "WS handshaked ec:"
-                    << ec.message()
-                    << std::endl;
-            }
-#endif // defined(ASYNC_MQTT_USE_WS)
 
             // Send MQTT CONNECT
             yield {
@@ -1016,7 +926,6 @@ private:
 
 private:
     Endpoint& ep_;
-    as::ip::tcp::resolver& res_;
     po::variables_map& vm_;
     am::protocol_version version_;
     std::string client_id_;
@@ -1246,22 +1155,18 @@ int main(int argc, char* argv[]) {
 
         auto protocol = vm["protocol"].as<std::string>();
         if (protocol == "mqtt") {
-            as::ip::tcp::socket resolve_sock{ioc};
-            as::ip::tcp::resolver res{resolve_sock.get_executor()};
             auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
                 version,
                 ioc.get_executor()
             );
             auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, res, vm, version};
+            auto nm = network_manager{*amep, vm, version};
             nm();
             ioc.run();
             return 0;
         }
 #if defined(ASYNC_MQTT_USE_TLS)
         else if (protocol == "mqtts") {
-            as::ip::tcp::socket resolve_sock{ioc};
-            as::ip::tcp::resolver res{resolve_sock.get_executor()};
             as::ssl::context ctx{as::ssl::context::tlsv12};
             if (vm.count("verify_file")) {
                 ctx.load_verify_file(vm["verify_file"].as<std::string>());
@@ -1288,7 +1193,7 @@ int main(int argc, char* argv[]) {
                 ctx
             );
             auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, res, vm, version};
+            auto nm = network_manager{*amep, vm, version};
             nm();
             ioc.run();
             return 0;
@@ -1296,14 +1201,12 @@ int main(int argc, char* argv[]) {
 #endif // defined(ASYNC_MQTT_USE_TLS)
 #if defined(ASYNC_MQTT_USE_WS)
         else if (protocol == "ws") {
-            as::ip::tcp::socket resolve_sock{ioc};
-            as::ip::tcp::resolver res{resolve_sock.get_executor()};
             auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
                 version,
                 ioc.get_executor()
             );
             auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, res, vm, version};
+            auto nm = network_manager{*amep, vm, version};
             nm();
             ioc.run();
             return 0;
@@ -1311,8 +1214,6 @@ int main(int argc, char* argv[]) {
 #endif // defined(ASYNC_MQTT_USE_WS)
 #if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
         else if (protocol == "wss") {
-            as::ip::tcp::socket resolve_sock{ioc};
-            as::ip::tcp::resolver res{resolve_sock.get_executor()};
             as::ssl::context ctx{as::ssl::context::tlsv12};
             if (vm.count("verify_file")) {
                 ctx.load_verify_file(vm["verify_file"].as<std::string>());
@@ -1339,7 +1240,7 @@ int main(int argc, char* argv[]) {
                 ctx
             );
             auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, res, vm, version};
+            auto nm = network_manager{*amep, vm, version};
             nm();
             ioc.run();
             return 0;

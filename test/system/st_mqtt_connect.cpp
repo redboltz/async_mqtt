@@ -20,16 +20,16 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(cb) {
     broker_runner br;
     as::io_context ioc;
-    as::ip::address address = boost::asio::ip::make_address("127.0.0.1");
-    as::ip::tcp::endpoint endpoint{address, 1883};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
         ioc.get_executor()
     );
 
-    amep->next_layer().async_connect(
-        endpoint,
+    am::underlying_handshake(
+        amep->next_layer(),
+        "127.0.0.1",
+        "1883",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
             amep->send(
