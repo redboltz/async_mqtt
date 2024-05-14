@@ -29,7 +29,6 @@
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/variable_bytes.hpp>
-#include <async_mqtt/detail/client_packet_type_getter.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
