@@ -162,7 +162,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                 // remaining_length end
                 rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
 
-                spa = make_shared_ptr_array(received + rl);
+                spa = std::make_shared<char[]>(received + rl);
                 std::copy(
                     strm.header_remaining_length_buf_.data(),
                     strm.header_remaining_length_buf_.data() + received, spa.get()
