@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP
 
 #include <async_mqtt/stream.hpp>
+#include <async_mqtt/util/shared_ptr_array.hpp>
 
 namespace async_mqtt {
 
@@ -21,7 +22,7 @@ struct stream<NextLayer>::stream_read_packet_op {
     std::size_t received = 0;
     std::uint32_t mul = 1;
     std::uint32_t rl = 0;
-    shared_ptr_array spa = nullptr;
+    std::shared_ptr<char[]> spca = nullptr;
     stream_type_sp life_keeper = strm.shared_from_this();
     enum { dispatch, header, remaining_length, complete } state = dispatch;
 
@@ -162,20 +163,30 @@ struct stream<NextLayer>::stream_read_packet_op {
                 // remaining_length end
                 rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
 
-                spa = make_shared_ptr_array(received + rl);
+                BOOST_ASIO_REBIND_ALLOC(
+                    typename as::associated_allocator<Self>::type,
+                    char
+                )
+                alloc{
+                    as::get_associated_allocator(self)
+                };
+                spca = allocate_shared_ptr_char_array(
+                    alloc,
+                    received + rl
+                );
                 std::copy(
                     strm.header_remaining_length_buf_.data(),
-                    strm.header_remaining_length_buf_.data() + received, spa.get()
+                    strm.header_remaining_length_buf_.data() + received, spca.get()
                 );
 
                 if (rl == 0) {
-                    auto ptr = spa.get();
-                    self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+                    auto ptr = spca.get();
+                    self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spca)});
                     return;
                 }
                 else {
                     state = complete;
-                    auto address = &spa[std::ptrdiff_t(received)];
+                    auto address = &spca[std::ptrdiff_t(received)];
                     auto& a_strm{strm};
                     if constexpr (
                         has_async_read<next_layer_type>::value) {
@@ -202,8 +213,8 @@ struct stream<NextLayer>::stream_read_packet_op {
             }
             break;
         case complete: {
-            auto ptr = spa.get();
-            self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spa)});
+            auto ptr = spca.get();
+            self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spca)});
         } break;
         default:
             BOOST_ASSERT(false);

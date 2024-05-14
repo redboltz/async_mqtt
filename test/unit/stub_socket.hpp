@@ -51,8 +51,12 @@ struct basic_stub_socket {
         close_checker_ = force_move(c);
     }
 
-    void set_associated_cheker(std::size_t num) {
-        associated_allocator_num_ = num;
+    void set_associated_cheker_for_read(std::size_t num) {
+        associated_allocator_num_for_read_ = num;
+    }
+
+    void set_associated_cheker_for_write(std::size_t num) {
+        associated_allocator_num_for_write_ = num;
     }
 
     auto get_executor() const {
@@ -72,7 +76,7 @@ struct basic_stub_socket {
         ConstBufferSequence const& buffers,
         CompletionToken&& token
     ) {
-        if (associated_allocator_num_ != 0) {
+        if (associated_allocator_num_for_write_ != 0) {
             BOOST_ASIO_REBIND_ALLOC(
                 typename as::associated_allocator<CompletionToken>::type,
                 char
@@ -80,8 +84,8 @@ struct basic_stub_socket {
                 as::get_associated_allocator(token)
             );
             alloc1.deallocate(
-                alloc1.allocate(associated_allocator_num_),
-                associated_allocator_num_
+                alloc1.allocate(associated_allocator_num_for_write_),
+                associated_allocator_num_for_write_
             );
         }
 
@@ -162,6 +166,20 @@ struct basic_stub_socket {
                 self.complete(ec->code(), 0);
                 return;
             }
+
+            if (socket.associated_allocator_num_for_read_ != 0) {
+                BOOST_ASIO_REBIND_ALLOC(
+                    typename as::associated_allocator<Self>::type,
+                    char
+                ) alloc1(
+                    as::get_associated_allocator(self)
+                );
+                alloc1.deallocate(
+                    alloc1.allocate(socket.associated_allocator_num_for_read_),
+                    socket.associated_allocator_num_for_read_
+                );
+            }
+
             if (!socket.pv_r_) {
                 socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
                 socket.pv_r_ = make_packet_range(socket.cbs_);
@@ -198,6 +216,8 @@ struct basic_stub_socket {
 
 private:
 
+    template <typename MutableBufferSequence>
+    friend struct async_read_some_impl;
     protocol_version version_;
     as::any_io_executor exe_;
     pv_queue_t recv_pvs_;
@@ -207,7 +227,8 @@ private:
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
-    std::size_t associated_allocator_num_ = 0;
+    std::size_t associated_allocator_num_for_read_ = 0;
+    std::size_t associated_allocator_num_for_write_ = 0;
 };
 
 using stub_socket = basic_stub_socket<2>;
