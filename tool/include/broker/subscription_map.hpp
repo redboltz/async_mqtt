@@ -16,7 +16,7 @@
 
 #include <async_mqtt/buffer.hpp>
 
-#include <async_mqtt/broker/topic_filter.hpp>
+#include <broker/topic_filter.hpp>
 
 namespace async_mqtt {
 

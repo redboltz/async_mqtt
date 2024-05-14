@@ -16,10 +16,10 @@
 
 #include <async_mqtt/time_point_t.hpp>
 
-#include <async_mqtt/broker/session_state_fwd.hpp>
-#include <async_mqtt/broker/tags.hpp>
-#include <async_mqtt/broker/mutex.hpp>
-#include <async_mqtt/broker/subscription.hpp>
+#include <broker/session_state_fwd.hpp>
+#include <broker/tags.hpp>
+#include <broker/mutex.hpp>
+#include <broker/subscription.hpp>
 
 namespace async_mqtt {
 

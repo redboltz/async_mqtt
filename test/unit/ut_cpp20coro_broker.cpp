@@ -14,8 +14,8 @@
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/util/packet_variant_operator.hpp>
 #include <async_mqtt/util/hex_dump.hpp>
-#include <async_mqtt/broker/endpoint_variant.hpp>
-#include <async_mqtt/broker/broker.hpp>
+#include <broker/endpoint_variant.hpp>
+#include <broker/broker.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 

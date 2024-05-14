@@ -8,7 +8,7 @@
 
 #include <set>
 
-#include <async_mqtt/broker/retained_topic_map.hpp>
+#include <broker/retained_topic_map.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_retained_topic_map_broker)

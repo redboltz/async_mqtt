@@ -22,6 +22,7 @@ FetchContent_MakeAvailable(cli)
 foreach(source_file ${exec_PROGRAMS})
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
+    target_include_directories(${source_file_we} PRIVATE include)
     target_link_libraries(${source_file_we} async_mqtt_iface)
 
     if(WIN32 AND ASYNC_MQTT_USE_STATIC_OPENSSL)

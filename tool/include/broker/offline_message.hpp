@@ -25,8 +25,8 @@
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 
-#include <async_mqtt/broker/common_type.hpp>
-#include <async_mqtt/broker/tags.hpp>
+#include <broker/common_type.hpp>
+#include <broker/tags.hpp>
 
 namespace async_mqtt {
 

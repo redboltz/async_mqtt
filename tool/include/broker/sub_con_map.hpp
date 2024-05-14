@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_BROKER_SUB_CON_MAP_HPP)
 #define ASYNC_MQTT_BROKER_SUB_CON_MAP_HPP
 
-#include <async_mqtt/broker/subscription_map.hpp>
-#include <async_mqtt/broker/subscription.hpp>
+#include <broker/subscription_map.hpp>
+#include <broker/subscription.hpp>
 
 namespace async_mqtt {
 

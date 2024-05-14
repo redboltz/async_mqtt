@@ -27,7 +27,7 @@
 
 // from https://github.com/okdshin/PicoSHA2
 // MIT license
-#include <async_mqtt/external/picosha2.h>
+#include <broker/external/picosha2.h>
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
@@ -37,7 +37,7 @@
 #include <openssl/evp.h>
 #endif
 
-#include <async_mqtt/broker/subscription_map.hpp>
+#include <broker/subscription_map.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/util/string_view_helper.hpp>
 

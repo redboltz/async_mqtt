@@ -8,19 +8,19 @@
 #define ASYNC_MQTT_BROKER_BROKER_HPP
 
 #include <async_mqtt/util/scope_guard.hpp>
-#include <async_mqtt/broker/endpoint_variant.hpp>
-#include <async_mqtt/broker/security.hpp>
-#include <async_mqtt/broker/mutex.hpp>
-#include <async_mqtt/broker/session_state.hpp>
-#include <async_mqtt/broker/sub_con_map.hpp>
-#include <async_mqtt/broker/retained_messages.hpp>
-#include <async_mqtt/broker/retained_topic_map.hpp>
-#include <async_mqtt/broker/shared_target_impl.hpp>
-#include <async_mqtt/broker/mutex.hpp>
-#include <async_mqtt/broker/uuid.hpp>
+#include <broker/endpoint_variant.hpp>
+#include <broker/security.hpp>
+#include <broker/mutex.hpp>
+#include <broker/session_state.hpp>
+#include <broker/sub_con_map.hpp>
+#include <broker/retained_messages.hpp>
+#include <broker/retained_topic_map.hpp>
+#include <broker/shared_target_impl.hpp>
+#include <broker/mutex.hpp>
+#include <broker/uuid.hpp>
 
-#include <async_mqtt/broker/constant.hpp>
-#include <async_mqtt/broker/security.hpp>
+#include <broker/constant.hpp>
+#include <broker/security.hpp>
 
 namespace async_mqtt {
 

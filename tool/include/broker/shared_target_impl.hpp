@@ -9,8 +9,8 @@
 
 #include <optional>
 
-#include <async_mqtt/broker/shared_target.hpp>
-#include <async_mqtt/broker/session_state.hpp>
+#include <broker/shared_target.hpp>
+#include <broker/session_state.hpp>
 
 namespace async_mqtt {
 
