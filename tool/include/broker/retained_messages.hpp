@@ -9,8 +9,8 @@
 
 #include <functional> // reference_wrapper
 
-#include <async_mqtt/broker/retain_t.hpp>
-#include <async_mqtt/broker/retained_topic_map.hpp>
+#include <broker/retain_t.hpp>
+#include <broker/retained_topic_map.hpp>
 
 namespace async_mqtt {
 

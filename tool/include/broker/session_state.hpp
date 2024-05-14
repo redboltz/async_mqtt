@@ -18,13 +18,13 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/packet/will.hpp>
 
-#include <async_mqtt/broker/common_type.hpp>
-#include <async_mqtt/broker/sub_con_map.hpp>
-#include <async_mqtt/broker/shared_target.hpp>
-#include <async_mqtt/broker/tags.hpp>
-#include <async_mqtt/broker/inflight_message.hpp>
-#include <async_mqtt/broker/offline_message.hpp>
-#include <async_mqtt/broker/mutex.hpp>
+#include <broker/common_type.hpp>
+#include <broker/sub_con_map.hpp>
+#include <broker/shared_target.hpp>
+#include <broker/tags.hpp>
+#include <broker/inflight_message.hpp>
+#include <broker/offline_message.hpp>
+#include <broker/mutex.hpp>
 
 namespace async_mqtt {
 

@@ -11,7 +11,7 @@
 #include <string>
 
 #include <async_mqtt/packet/subopts.hpp>
-#include <async_mqtt/broker/session_state_fwd.hpp>
+#include <broker/session_state_fwd.hpp>
 #include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt {

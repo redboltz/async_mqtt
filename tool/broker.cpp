@@ -29,10 +29,10 @@
 #include <async_mqtt/predefined_layer/wss.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/broker/endpoint_variant.hpp>
-#include <async_mqtt/broker/broker.hpp>
-#include <async_mqtt/broker/constant.hpp>
-#include <async_mqtt/broker/fixed_core_map.hpp>
+#include <broker/endpoint_variant.hpp>
+#include <broker/broker.hpp>
+#include <broker/constant.hpp>
+#include <broker/fixed_core_map.hpp>
 
 namespace am = async_mqtt;
 namespace as = boost::asio;

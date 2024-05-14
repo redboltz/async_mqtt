@@ -22,8 +22,8 @@
 #include <async_mqtt/packet/store_packet_variant.hpp>
 #include <async_mqtt/log.hpp>
 
-#include <async_mqtt/broker/common_type.hpp>
-#include <async_mqtt/broker/tags.hpp>
+#include <broker/common_type.hpp>
+#include <broker/tags.hpp>
 
 namespace async_mqtt {
 

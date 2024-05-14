@@ -13,7 +13,7 @@
 
 #include <boost/format.hpp>
 
-#include <async_mqtt/broker/retained_topic_map.hpp>
+#include <broker/retained_topic_map.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_retained_map)
 

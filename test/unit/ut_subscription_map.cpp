@@ -6,7 +6,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/broker/subscription_map.hpp>
+#include <broker/subscription_map.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_subscription_map)
 

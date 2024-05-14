@@ -7,7 +7,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/broker/security.hpp>
+#include <broker/security.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_broker_security)
 

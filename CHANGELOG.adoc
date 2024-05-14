@@ -4,6 +4,8 @@
 
 == 6.0.0
 === breaking changes
+* Moved include/async_mqtt/broker/*.hpp to tool/include/broker/*.hpp #224
+** Those are for broker allication that is used for system testing.
 * Re-organized directory strucure respect to boost libraries.
 ** It affects the users only if include the specific header file directly.
 * Re-desined strand handling. #206
@@ -19,6 +21,7 @@
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
 
 === other updates
+* Removed the inclusion of the Boost.Beast detail directory. #223
 * Used bound allocator to allocate buffer for packet on receive. #222
 * Added convenient handshaking function for underlying layers. #216
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.

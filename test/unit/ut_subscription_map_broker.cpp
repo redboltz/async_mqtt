@@ -15,7 +15,7 @@
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/multi_index/identity.hpp>
 
-#include <async_mqtt/broker/subscription_map.hpp>
+#include <broker/subscription_map.hpp>
 #include <async_mqtt/packet/subopts.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_subscription_map_broker)
