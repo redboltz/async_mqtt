@@ -4,11 +4,26 @@
 
 == 6.0.0
 === breaking changes
+* Re-organized directory strucure respect to boost libraries.
+** It affects the users only if include the specific header file directly.
+* Re-desined strand handling. #206
+** template parameter Strand is removed. Users can pass strand wrapped executor for multi threading.
+** associated properties of the completion handler are correctly propagated.
+* Removed buffer from packet interface except the infterface for adcanced user. #195
+** For example, create PUBLISH packet using "topic1", and get the filed as string by `topic()`.
+*** No `allocate_buffer("topic1")` is required.
 * Organized predefined headers. #194
 ** For mqtt, include `async_mqtt/all.hpp`. In addition,
 ** For mqtts, include `async_mqtt/predefined_layer/mqtts.hpp`
 ** For ws, include `async_mqtt/predefined_layer/ws.hpp`
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
+
+=== other updates
+* Used bound allocator to allocate buffer for packet on receive. #222
+* Added convenient handshaking function for underlying layers. #216
+** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
+* Refined documents. #220, #222
+* Refined examples. #214, #220
 
 == 5.1.2
 * Refined custom underlying layer support. #190, #191, #193

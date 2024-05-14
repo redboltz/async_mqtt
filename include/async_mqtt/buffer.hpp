@@ -15,7 +15,6 @@
 #include <boost/container_hash/hash.hpp>
 
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/is_iterator.hpp>
 
 /**

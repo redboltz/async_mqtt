@@ -17,5 +17,7 @@ var group__buffer =
       [ "substr", "classasync__mqtt_1_1buffer.html#ad3d64b3893dfec271b87d8f2e3dd6b65", null ],
       [ "substr", "classasync__mqtt_1_1buffer.html#a7895963705a5671147e3cfb366f48756", null ]
     ] ],
-    [ "boost::asio::buffer", "group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f", null ]
+    [ "async_mqtt::allocate_shared_ptr_char_array", "group__buffer.html#ga3fd86cf55e3842b607702b72c0617159", null ],
+    [ "boost::asio::buffer", "group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f", null ],
+    [ "async_mqtt::make_shared_ptr_char_array", "group__buffer.html#ga4c78376365b748051fe7385678fb6f68", null ]
 ];
