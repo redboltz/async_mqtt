@@ -11,7 +11,7 @@
 ** associated properties of the completion handler are correctly propagated.
 * Removed buffer from packet interface except the infterface for adcanced user. #195
 ** For example, create PUBLISH packet using "topic1", and get the filed as string by `topic()`.
-*** No `allocate_buffer("topic1") is required.
+*** No `allocate_buffer("topic1")` is required.
 * Organized predefined headers. #194
 ** For mqtt, include `async_mqtt/all.hpp`. In addition,
 ** For mqtts, include `async_mqtt/predefined_layer/mqtts.hpp`

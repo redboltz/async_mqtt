@@ -26,6 +26,5 @@ var dir_4a30554fdbbe434876011b5ec6e3c25e =
     [ "endpoint_send.hpp", "endpoint__send_8hpp_source.html", null ],
     [ "stream_close.hpp", "stream__close_8hpp_source.html", null ],
     [ "stream_read_packet.hpp", "stream__read__packet_8hpp_source.html", null ],
-    [ "stream_write_packet.hpp", "stream__write__packet_8hpp_source.html", null ],
-    [ "underlying_connect_impl.hpp", "underlying__connect__impl_8hpp_source.html", null ]
+    [ "stream_write_packet.hpp", "stream__write__packet_8hpp_source.html", null ]
 ];
