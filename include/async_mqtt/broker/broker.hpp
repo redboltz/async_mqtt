@@ -52,205 +52,208 @@ public:
 private:
     void async_read_packet(epsp_t epsp) {
         epsp.recv(
-            [this, epsp]
-            (packet_variant pv) mutable {
-                pv.visit(
-                    overload {
-                        [&](v3_1_1::connect_packet& p) {
-                            connect_handler(
-                                force_move(epsp),
-                                p.client_id(),
-                                p.user_name(),
-                                p.password(),
-                                p.get_will(),
-                                p.clean_session(),
-                                p.keep_alive(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::connect_packet& p) {
-                            connect_handler(
-                                force_move(epsp),
-                                p.client_id(),
-                                p.user_name(),
-                                p.password(),
-                                p.get_will(),
-                                p.clean_start(),
-                                p.keep_alive(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload_as_buffer(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload_as_buffer(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::puback_packet& p) {
-                            puback_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                puback_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::puback_packet& p) {
-                            puback_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubrec_packet& p) {
-                            pubrec_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubrec_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubrec_packet& p) {
-                            pubrec_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubrel_packet& p) {
-                            pubrel_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubrel_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubrel_packet& p) {
-                            pubrel_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pubcomp_packet& p) {
-                            pubcomp_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                pubcomp_reason_code::success,
-                                properties{}
-                            );
-                        },
-                        [&](v5::pubcomp_packet& p) {
-                            pubcomp_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::subscribe_packet& p) {
-                            subscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::subscribe_packet& p) {
-                            subscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::suback_packet&) {
-                            // TBD receive invalid packet
-                        },
-                        [&](v5::suback_packet&) {
-                            // TBD receive invalid packet
-                        },
-                        [&](v3_1_1::unsubscribe_packet& p) {
-                            unsubscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                properties{}
-                            );
-                        },
-                        [&](v5::unsubscribe_packet& p) {
-                            unsubscribe_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.entries(),
-                                p.props()
-                            );
-                        },
-                        [&](v3_1_1::pingreq_packet&) {
-                            pingreq_handler(
-                                force_move(epsp)
-                            );
-                        },
-                        [&](v5::pingreq_packet&) {
-                            pingreq_handler(
-                                force_move(epsp)
-                            );
-                        },
-                        [&](v3_1_1::disconnect_packet&) {
-                            disconnect_handler(
-                                force_move(epsp),
-                                disconnect_reason_code::normal_disconnection,
-                                properties{}
-                            );
-                        },
-                        [&](v5::disconnect_packet& p) {
-                            disconnect_handler(
-                                force_move(epsp),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](v5::auth_packet& p) {
-                            auth_handler(
-                                force_move(epsp),
-                                p.code(),
-                                p.props()
-                            );
-                        },
-                        [&](system_error const& se) {
-                            // TBD connack or disconnect send on error
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << se.what();
-                            close_proc(
-                                force_move(epsp),
-                                true // send_will
-                            );
-                        },
-                        [&](auto const&) {
-                            ASYNC_MQTT_LOG("mqtt_broker", fatal)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << "invalid variant";
+            as::bind_allocator(
+                as::recycling_allocator<void>(),
+                [this, epsp]
+                (packet_variant pv) mutable {
+                    pv.visit(
+                        overload {
+                            [&](v3_1_1::connect_packet& p) {
+                                connect_handler(
+                                    force_move(epsp),
+                                    p.client_id(),
+                                    p.user_name(),
+                                    p.password(),
+                                    p.get_will(),
+                                    p.clean_session(),
+                                    p.keep_alive(),
+                                    properties{}
+                                );
+                            },
+                            [&](v5::connect_packet& p) {
+                                connect_handler(
+                                    force_move(epsp),
+                                    p.client_id(),
+                                    p.user_name(),
+                                    p.password(),
+                                    p.get_will(),
+                                    p.clean_start(),
+                                    p.keep_alive(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::publish_packet& p) {
+                                publish_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.opts(),
+                                    p.topic(),
+                                    p.payload_as_buffer(),
+                                    properties{}
+                                );
+                            },
+                            [&](v5::publish_packet& p) {
+                                publish_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.opts(),
+                                    p.topic(),
+                                    p.payload_as_buffer(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::puback_packet& p) {
+                                puback_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    puback_reason_code::success,
+                                    properties{}
+                                );
+                            },
+                            [&](v5::puback_packet& p) {
+                                puback_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::pubrec_packet& p) {
+                                pubrec_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    pubrec_reason_code::success,
+                                    properties{}
+                                );
+                            },
+                            [&](v5::pubrec_packet& p) {
+                                pubrec_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::pubrel_packet& p) {
+                                pubrel_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    pubrel_reason_code::success,
+                                    properties{}
+                                );
+                            },
+                            [&](v5::pubrel_packet& p) {
+                                pubrel_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::pubcomp_packet& p) {
+                                pubcomp_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    pubcomp_reason_code::success,
+                                    properties{}
+                                );
+                            },
+                            [&](v5::pubcomp_packet& p) {
+                                pubcomp_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::subscribe_packet& p) {
+                                subscribe_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.entries(),
+                                    properties{}
+                                );
+                            },
+                            [&](v5::subscribe_packet& p) {
+                                subscribe_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.entries(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::suback_packet&) {
+                                // TBD receive invalid packet
+                            },
+                            [&](v5::suback_packet&) {
+                                // TBD receive invalid packet
+                            },
+                            [&](v3_1_1::unsubscribe_packet& p) {
+                                unsubscribe_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.entries(),
+                                    properties{}
+                                );
+                            },
+                            [&](v5::unsubscribe_packet& p) {
+                                unsubscribe_handler(
+                                    force_move(epsp),
+                                    p.packet_id(),
+                                    p.entries(),
+                                    p.props()
+                                );
+                            },
+                            [&](v3_1_1::pingreq_packet&) {
+                                pingreq_handler(
+                                    force_move(epsp)
+                                );
+                            },
+                            [&](v5::pingreq_packet&) {
+                                pingreq_handler(
+                                    force_move(epsp)
+                                );
+                            },
+                            [&](v3_1_1::disconnect_packet&) {
+                                disconnect_handler(
+                                    force_move(epsp),
+                                    disconnect_reason_code::normal_disconnection,
+                                    properties{}
+                                );
+                            },
+                            [&](v5::disconnect_packet& p) {
+                                disconnect_handler(
+                                    force_move(epsp),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](v5::auth_packet& p) {
+                                auth_handler(
+                                    force_move(epsp),
+                                    p.code(),
+                                    p.props()
+                                );
+                            },
+                            [&](system_error const& se) {
+                                // TBD connack or disconnect send on error
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << se.what();
+                                close_proc(
+                                    force_move(epsp),
+                                    true // send_will
+                                );
+                            },
+                            [&](auto const&) {
+                                ASYNC_MQTT_LOG("mqtt_broker", fatal)
+                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                    << "invalid variant";
+                            }
                         }
-                    }
-                );
-            }
+                    );
+                }
+            )
         );
     }
 
