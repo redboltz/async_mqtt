@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_FWD_HPP
 
 #include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {
 

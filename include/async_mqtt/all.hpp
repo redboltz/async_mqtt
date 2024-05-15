@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_ALL_HPP)
 #define ASYNC_MQTT_ALL_HPP
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/client.hpp>

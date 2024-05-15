@@ -8,7 +8,7 @@
 #include "../common/global_fixture.hpp"
 
 #include <vector>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 

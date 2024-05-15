@@ -30,7 +30,7 @@
 #include <async_mqtt/packet/qos.hpp>
 #include <async_mqtt/packet/property_id.hpp>
 #include <async_mqtt/variable_bytes.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 /**
  * @defgroup property

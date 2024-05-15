@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_GET_PROTOCOL_VERSION_HPP)
 #define ASYNC_MQTT_PACKET_GET_PROTOCOL_VERSION_HPP
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>
 

@@ -9,7 +9,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 

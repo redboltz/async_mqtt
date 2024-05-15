@@ -15,7 +15,7 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/log.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/packet/property_variant.hpp>

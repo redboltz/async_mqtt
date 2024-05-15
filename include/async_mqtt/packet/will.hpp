@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_WILL_HPP)
 #define ASYNC_MQTT_PACKET_WILL_HPP
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/util/json_like_out.hpp>

@@ -14,7 +14,7 @@
 
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
 
 #include <async_mqtt/util/move.hpp>

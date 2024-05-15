@@ -10,7 +10,7 @@
 #include <ostream>
 #include <iomanip>
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {
 
