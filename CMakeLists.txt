@@ -83,8 +83,6 @@ if(ASYNC_MQTT_USE_TLS)
 endif()
 
 
-#include_directories(include)
-
 set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include)
 
@@ -106,6 +104,27 @@ if(ASYNC_MQTT_BUILD_UNIT_TESTS OR ASYNC_MQTT_BUILD_SYSTEM_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()
+
+# Heder dependency checking
+add_custom_target("check_deps")
+if(MSVC)
+    set(OPTION_SYNTAX_ONLY "/Zs")
+    set(OPTION_INCLUDE "/I")
+else()
+    set(OPTION_SYNTAX_ONLY "-fsyntax-only")
+    set(OPTION_INCLUDE "-I")
+    set(OPTION_STANDARD "-std=c++17")
+endif()
+file(GLOB_RECURSE ALL_HDR RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "include/*.hpp" "tool/broker/*.hpp")
+foreach(HDR ${ALL_HDR})
+    string(REPLACE "/" "_" REPLACED ${HDR})
+    set(TARGET "check_deps_${REPLACED}")
+    add_custom_target(
+      ${TARGET}
+      COMMAND ${CMAKE_CXX_COMPILER} "${OPTION_STANDARD}" "${OPTION_INCLUDE}${Boost_INCLUDE_DIRS}" "${OPTION_INCLUDE}${CMAKE_CURRENT_SOURCE_DIR}/include" "${OPTION_SYNTAX_ONLY}" "${CMAKE_CURRENT_SOURCE_DIR}/${HDR}"
+    )
+    add_dependencies("check_deps" ${TARGET})
+endforeach()
 
 # Doxygen
 find_package(Doxygen)
