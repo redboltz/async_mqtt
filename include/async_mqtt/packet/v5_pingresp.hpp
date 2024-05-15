@@ -62,7 +62,7 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    constexpr control_packet_type type() const {
+    static constexpr control_packet_type type() {
         return control_packet_type::pingresp;
     }
 
