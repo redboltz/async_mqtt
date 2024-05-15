@@ -35,6 +35,7 @@ jobs:
         NS_CXXFLAGS:   -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
         PROF_CXXFLAGS: -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -fprofile-arcs -ftest-coverage
         NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
+
       run: |
         [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \
         export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
@@ -42,16 +43,17 @@ jobs:
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS=${NS_CXXFLAGS} && export LDFLAGS=${NS_LDFLAGS}
         [ ${{ matrix.pattern }} == 3 ] && \
         export CFLAGS=${NS_CFLAGS} && export CXXFLAGS="${PROF_CXXFLAGS} "&& export LDFLAGS=${NS_LDFLAGS}
-        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON  -DASYNC_MQTT_PRINT_PAYLOAD=ON "
-        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=OFF "
-        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
-        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
+        [ ${{ matrix.pattern }} == 0 ] && FLAGS="-DCMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=ON  -DASYNC_MQTT_PRINT_PAYLOAD=ON "
+        [ ${{ matrix.pattern }} == 1 ] && FLAGS="-DCMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=OFF "
+        [ ${{ matrix.pattern }} == 2 ] && FLAGS="-DCMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
+        [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=$(brew --prefix llvm)/bin/clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
         FLAGS="{$FLAGS} -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
         cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
     - name: Compile
       env:
         CXXFLAGS: -Werror -pedantic -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
       run: |
+        VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
         VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(sysctl -n hw.ncpu) --clean-first
     - name: Test
       working-directory: ${{ runner.temp }}
