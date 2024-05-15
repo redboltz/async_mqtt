@@ -53,7 +53,7 @@ jobs:
         cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
         ls -l /opt/homebrew/opt/llvm/bin
         which clang++
-        clang++ --versiosn
+        clang++ --version
     - name: Compile
       env:
         CXXFLAGS: -Werror -pedantic -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
