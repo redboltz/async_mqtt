@@ -51,7 +51,7 @@ jobs:
         [ ${{ matrix.pattern }} == 3 ] && FLAGS="-DCMAKE_CXX_COMPILER=clang++ -DASYNC_MQTT_USE_TLS=ON  -DASYNC_MQTT_USE_WS=ON  -DASYNC_MQTT_USE_STR_CHECK=ON  -DASYNC_MQTT_USE_LOG=OFF -DASYNC_MQTT_PRINT_PAYLOAD=ON "
         FLAGS="{$FLAGS} -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
         cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
-        ls -l /opt/homebrew/opt/llmv/bin
+        ls -l /opt/homebrew/opt/llvm/bin
         which clang++
         clang++ --versiosn
     - name: Compile
