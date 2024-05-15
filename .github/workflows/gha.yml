@@ -24,7 +24,8 @@ jobs:
         rm -f /usr/local/bin/idle3*
         rm -f /usr/local/bin/pydoc3*
         rm -f /usr/local/bin/python3*
-        brew install --force boost lcov llvm
+        brew install --with-toolchain llvm
+        brew install --force boost lcov
     - name: Configure
       env:
         OPENSSL_ROOT_DIR: /usr/local/opt/openssl
