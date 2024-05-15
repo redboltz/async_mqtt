@@ -28,7 +28,6 @@ jobs:
         brew install --force boost lcov llvm
     - name: Configure
       env:
-        PATH:          "/opt/homebrew/opt/llvm/bin:$PATH"
         OPENSSL_ROOT_DIR: /usr/local/opt/openssl
         S_CFLAGS:      -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address
         S_CXXFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion -fno-omit-frame-pointer -fsanitize=address -pedantic -Wno-noexcept-type -DBOOST_ASIO_NO_DEPRECATED -DBOOST_MULTI_INDEX_ENABLE_SAFE_MODE -DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION -DBOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING -ftemplate-backtrace-limit=0
@@ -39,6 +38,7 @@ jobs:
         NS_LDFLAGS:    -Werror -g -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
 
       run: |
+        export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         [ ${{ matrix.pattern }} == 0 ] || [ ${{ matrix.pattern }} == 1 ] && \
         export CFLAGS=${S_CFLAGS} && export CXXFLAGS=${S_CXXFLAGS} && export LDFLAGS=${S_LDFLAGS}
         [ ${{ matrix.pattern }} == 2 ] && \
