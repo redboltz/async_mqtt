@@ -58,6 +58,7 @@ jobs:
       env:
         CXXFLAGS: -Werror -pedantic -Wall -Wextra -Wno-ignored-qualifiers -Wconversion
       run: |
+        export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(nproc) --clean-first --target check_deps
         VERBOSE=1 cmake --build ${{ runner.temp }} --parallel $(sysctl -n hw.ncpu) --clean-first
     - name: Test
