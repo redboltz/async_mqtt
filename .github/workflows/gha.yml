@@ -51,6 +51,7 @@ jobs:
         FLAGS="{$FLAGS} -DASYNC_MQTT_BUILD_TOOLS=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON -DASYNC_MQTT_BUILD_UNIT_TESTS=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS=ON"
         cmake -S ${{ github.workspace }} -B ${{ runner.temp }} ${FLAGS} -DCMAKE_C_FLAGS="${CFLAGS}" -DCMAKE_CXX_FLAGS="${CXXFLAGS}" -DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
         ls -l /opt/homebrew/bin/
+        which clang++
 
     - name: Compile
       env:
