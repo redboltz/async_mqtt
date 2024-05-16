@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Config</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Config</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_cmake">cmake</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Flag</th>
+<th class="tableblock halign-left valign-top">Effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_TLS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables TLS for tools (broker, bench, client_cli, &#8230;&#8203;)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_WS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websocket for tools (broker, bench, client_cli, &#8230;&#8203;) (compilation time becomes longer)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_LOG</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable logging via Boost.Log</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_PRINT_PAYLOAD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output payload when publish packet is output</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_BUILD_UNIT_TESTS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build unit tests</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_BUILD_SYSTEM_TESTS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build system tests. The system tests requires broker.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_BUILD_TOOLS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build tools (broker, bench, etc)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_BUILD_EXAMPLES</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build examples</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If you want to use TLS, Websocket, and Websocket on TLS, you don&#8217;t need to define ASYNC_MQTT_USE_TLS and/or ASYNC_MQTT_USE_WS. Simply include the following files that are not included in <code>async_mqtt/all.hpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>For TLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/mqtts.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/ws.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket on TLS</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/predefined_layer/wss.hpp&gt;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_c_preprocessor_macro">C++ preprocessor macro</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Flag</th>
+<th class="tableblock halign-left valign-top">Effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_TLS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables TLS</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_WS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websockets (compilation time becomes longer)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_LOG</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable logging via Boost.Log</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_PRINT_PAYLOAD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output payload when publish packet is output</p></td>
+</tr>
+</tbody>
+</table>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="performance.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="index.html">Up</a><br>
+<a href="index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="customize.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
