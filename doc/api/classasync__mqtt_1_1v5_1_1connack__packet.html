@@ -94,6 +94,7 @@ $(function(){initNavTree('classasync__mqtt_1_1v5_1_1connack__packet.html',''); i
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1v5_1_1connack__packet-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">async_mqtt::v5::connack_packet Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__connack__v5.html">Connack_v5</a></div></div></div>
@@ -107,33 +108,42 @@ $(function(){initNavTree('classasync__mqtt_1_1v5_1_1connack__packet.html',''); i
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a75eaa94278141e5828a3d9ccb80febf5" id="r_a75eaa94278141e5828a3d9ccb80febf5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75eaa94278141e5828a3d9ccb80febf5">connack_packet</a> (bool session_present, connect_reason_code reason_code, properties <a class="el" href="#a1e30d317bfe82b1805470d663d42bafd">props</a>={})</td></tr>
+<tr class="memitem:a75eaa94278141e5828a3d9ccb80febf5" id="r_a75eaa94278141e5828a3d9ccb80febf5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75eaa94278141e5828a3d9ccb80febf5">connack_packet</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">bool</a> <a class="el" href="#a45dea42f1b8cec4864034dc1f9d2dea7">session_present</a>, connect_reason_code <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">reason_code</a>, properties <a class="el" href="#a1e30d317bfe82b1805470d663d42bafd">props</a>={})</td></tr>
 <tr class="memdesc:a75eaa94278141e5828a3d9ccb80febf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
 <tr class="separator:a75eaa94278141e5828a3d9ccb80febf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97281950549aa14a8c8f9c9c4ae76ba6" id="r_a97281950549aa14a8c8f9c9c4ae76ba6"><td class="memItemLeft" align="right" valign="top">constexpr control_packet_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97281950549aa14a8c8f9c9c4ae76ba6">type</a> () const</td></tr>
-<tr class="memdesc:a97281950549aa14a8c8f9c9c4ae76ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get MQTT control packet type.  <br /></td></tr>
-<tr class="separator:a97281950549aa14a8c8f9c9c4ae76ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf9cc373c1b30493e23d6a7d3c93a8f5" id="r_acf9cc373c1b30493e23d6a7d3c93a8f5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf9cc373c1b30493e23d6a7d3c93a8f5">const_buffer_sequence</a> () const</td></tr>
+<tr class="memitem:acf9cc373c1b30493e23d6a7d3c93a8f5" id="r_acf9cc373c1b30493e23d6a7d3c93a8f5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf9cc373c1b30493e23d6a7d3c93a8f5">const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:acf9cc373c1b30493e23d6a7d3c93a8f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:acf9cc373c1b30493e23d6a7d3c93a8f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19306b5ff86ccd3fe3fb9669b3145ac3" id="r_a19306b5ff86ccd3fe3fb9669b3145ac3"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19306b5ff86ccd3fe3fb9669b3145ac3">size</a> () const</td></tr>
+<tr class="memitem:a19306b5ff86ccd3fe3fb9669b3145ac3" id="r_a19306b5ff86ccd3fe3fb9669b3145ac3"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19306b5ff86ccd3fe3fb9669b3145ac3">size</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a19306b5ff86ccd3fe3fb9669b3145ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet size.  <br /></td></tr>
 <tr class="separator:a19306b5ff86ccd3fe3fb9669b3145ac3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a375cdeb635a69a14b0bbf85e80976aca" id="r_a375cdeb635a69a14b0bbf85e80976aca"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a375cdeb635a69a14b0bbf85e80976aca">num_of_const_buffer_sequence</a> () const</td></tr>
+<tr class="memitem:a375cdeb635a69a14b0bbf85e80976aca" id="r_a375cdeb635a69a14b0bbf85e80976aca"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a375cdeb635a69a14b0bbf85e80976aca">num_of_const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a375cdeb635a69a14b0bbf85e80976aca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of element of const_buffer_sequence.  <br /></td></tr>
 <tr class="separator:a375cdeb635a69a14b0bbf85e80976aca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fc18769b638a100d65300ae84022330" id="r_a7fc18769b638a100d65300ae84022330"><td class="memItemLeft" align="right" valign="top">connect_reason_code&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fc18769b638a100d65300ae84022330">code</a> () const</td></tr>
+<tr class="memitem:a45dea42f1b8cec4864034dc1f9d2dea7" id="r_a45dea42f1b8cec4864034dc1f9d2dea7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45dea42f1b8cec4864034dc1f9d2dea7">session_present</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
+<tr class="memdesc:a45dea42f1b8cec4864034dc1f9d2dea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get session present.  <br /></td></tr>
+<tr class="separator:a45dea42f1b8cec4864034dc1f9d2dea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fc18769b638a100d65300ae84022330" id="r_a7fc18769b638a100d65300ae84022330"><td class="memItemLeft" align="right" valign="top">connect_reason_code&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fc18769b638a100d65300ae84022330">code</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a7fc18769b638a100d65300ae84022330"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get reason code.  <br /></td></tr>
 <tr class="separator:a7fc18769b638a100d65300ae84022330"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e30d317bfe82b1805470d663d42bafd" id="r_a1e30d317bfe82b1805470d663d42bafd"><td class="memItemLeft" align="right" valign="top">properties const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e30d317bfe82b1805470d663d42bafd">props</a> () const</td></tr>
+<tr class="memitem:a1e30d317bfe82b1805470d663d42bafd" id="r_a1e30d317bfe82b1805470d663d42bafd"><td class="memItemLeft" align="right" valign="top">properties <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e30d317bfe82b1805470d663d42bafd">props</a> () <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a1e30d317bfe82b1805470d663d42bafd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get properties.  <br /></td></tr>
 <tr class="separator:a1e30d317bfe82b1805470d663d42bafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:af15b2d001530047b83e41151f6bab12d" id="r_af15b2d001530047b83e41151f6bab12d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">static</a> <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">constexpr</a> control_packet_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af15b2d001530047b83e41151f6bab12d">type</a> ()</td></tr>
+<tr class="memdesc:af15b2d001530047b83e41151f6bab12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get MQTT control packet type.  <br /></td></tr>
+<tr class="separator:af15b2d001530047b83e41151f6bab12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="related" name="related"></a>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:ae25c99c7067f346b64f652b880959f12" id="r_ae25c99c7067f346b64f652b880959f12"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae25c99c7067f346b64f652b880959f12">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;v)</td></tr>
+<tr class="memitem:ae25c99c7067f346b64f652b880959f12" id="r_ae25c99c7067f346b64f652b880959f12"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae25c99c7067f346b64f652b880959f12">operator&lt;&lt;</a> (std::ostream &amp;<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">o</a>, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a> &amp;<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v</a>)</td></tr>
+<tr class="memdesc:ae25c99c7067f346b64f652b880959f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
+<tr class="separator:ae25c99c7067f346b64f652b880959f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae25c99c7067f346b64f652b880959f12" id="r_ae25c99c7067f346b64f652b880959f12"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae25c99c7067f346b64f652b880959f12">operator&lt;&lt;</a> (std::ostream &amp;<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">o</a>, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a> &amp;<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v</a>)</td></tr>
 <tr class="memdesc:ae25c99c7067f346b64f652b880959f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
 <tr class="separator:ae25c99c7067f346b64f652b880959f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -154,7 +164,7 @@ Related Symbols</h2></td></tr>
         <tr>
           <td class="memname">async_mqtt::v5::connack_packet::connack_packet </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>session_present</em>, </span></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">bool</a></td>          <td class="paramname"><span class="paramname"><em>session_present</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -283,7 +293,7 @@ Related Symbols</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">properties const  &amp; async_mqtt::v5::connack_packet::props </td>
+          <td class="memname">properties <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a>  &amp; async_mqtt::v5::connack_packet::props </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -298,6 +308,34 @@ Related Symbols</h2></td></tr>
 
 <p>Get properties. </p>
 <dl class="section return"><dt>Returns</dt><dd>properties </dd></dl>
+
+</div>
+</div>
+<a id="a45dea42f1b8cec4864034dc1f9d2dea7" name="a45dea42f1b8cec4864034dc1f9d2dea7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45dea42f1b8cec4864034dc1f9d2dea7">&#9670;&#160;</a></span>session_present()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">bool</a> async_mqtt::v5::connack_packet::session_present </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get session present. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the session is present, otherwise false </dd></dl>
 
 </div>
 </div>
@@ -329,8 +367,8 @@ Related Symbols</h2></td></tr>
 
 </div>
 </div>
-<a id="a97281950549aa14a8c8f9c9c4ae76ba6" name="a97281950549aa14a8c8f9c9c4ae76ba6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97281950549aa14a8c8f9c9c4ae76ba6">&#9670;&#160;</a></span>type()</h2>
+<a id="af15b2d001530047b83e41151f6bab12d" name="af15b2d001530047b83e41151f6bab12d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af15b2d001530047b83e41151f6bab12d">&#9670;&#160;</a></span>type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -339,15 +377,15 @@ Related Symbols</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr control_packet_type async_mqtt::v5::connack_packet::type </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">constexpr</a> control_packet_type async_mqtt::v5::connack_packet::type </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -359,7 +397,7 @@ Related Symbols</h2></td></tr>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
 <a id="ae25c99c7067f346b64f652b880959f12" name="ae25c99c7067f346b64f652b880959f12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae25c99c7067f346b64f652b880959f12">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae25c99c7067f346b64f652b880959f12">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -368,14 +406,14 @@ Related Symbols</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td class="memname">std::ostream &amp; <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">operator</a>&lt;&lt; </td>
           <td>(</td>
           <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -397,8 +435,48 @@ Related Symbols</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a id="ae25c99c7067f346b64f652b880959f12" name="ae25c99c7067f346b64f652b880959f12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae25c99c7067f346b64f652b880959f12">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">operator</a>&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">const</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stream output operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="v5__connack_8hpp_source.html">v5_connack.hpp</a></li>
+<li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/impl/<a class="el" href="impl_2v5__connack_8hpp_source.html">v5_connack.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

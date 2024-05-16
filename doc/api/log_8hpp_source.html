@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: /home/kondo/work/async_mqtt/include/async_mqtt/log.hpp Source File</title>
+<title>async_mqtt: /home/kondo/work/async_mqtt/include/async_mqtt/util/log.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -106,8 +106,8 @@ $(function(){initNavTree('log_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">// (See accompanying file LICENSE_1_0.txt or copy at</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// http://www.boost.org/LICENSE_1_0.txt)</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#if !defined(ASYNC_MQTT_LOG_HPP)</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_LOG_HPP</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#if !defined(ASYNC_MQTT_UTIL_LOG_HPP)</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define ASYNC_MQTT_UTIL_LOG_HPP</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;ostream&gt;</span></div>
@@ -178,9 +178,9 @@ $(function(){initNavTree('log_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="comment">// template arguments are defined in async_mqtt</span></div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="comment">// filter and formatter can distinguish mqtt_cpp&#39;s channel and severity by their types</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">using </span>global_logger_t = boost::log::sources::severity_channel_logger&lt;severity_level, channel&gt;;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">inline</span> global_logger_t&amp; logger() {</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">thread_local</span> global_logger_t l;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">using </span>global_logger_type = boost::log::sources::severity_channel_logger&lt;severity_level, channel&gt;;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">inline</span> global_logger_type&amp; logger() {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">thread_local</span> global_logger_type l;</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> l;</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
@@ -254,7 +254,7 @@ $(function(){initNavTree('log_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_LOG_HPP</span></div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_LOG_HPP</span></div>
 <div class="ttc" id="agroup__log_html_ga3abd0c0ebf71c7d01def2a00423d1abf"><div class="ttname"><a href="group__log.html#ga3abd0c0ebf71c7d01def2a00423d1abf">async_mqtt::severity_level</a></div><div class="ttdeci">severity_level</div><div class="ttdef"><b>Definition</b> log.hpp:49</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182">async_mqtt::severity_level::trace</a></div><div class="ttdeci">@ trace</div><div class="ttdoc">trace level for detaied behavior and reporting issue</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfa7b83d3f08fa392b79e3f553b585971cd"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfa7b83d3f08fa392b79e3f553b585971cd">async_mqtt::severity_level::warning</a></div><div class="ttdeci">@ warning</div><div class="ttdoc">warning level such as timeout</div></div>
@@ -267,7 +267,7 @@ $(function(){initNavTree('log_8hpp_source.html',''); initResizable(); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_f8efeb8e1feb6bbd3b8b0bf040091d61.html">async_mqtt</a></li><li class="navelem"><b>log.hpp</b></li>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_f8efeb8e1feb6bbd3b8b0bf040091d61.html">async_mqtt</a></li><li class="navelem"><a class="el" href="dir_df0bffcb61356486763cc61cf65485e2.html">util</a></li><li class="navelem"><b>log.hpp</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>

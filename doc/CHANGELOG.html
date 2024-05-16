@@ -71,7 +71,23 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
-<p>Re-organized directory strucure respect to boost libraries.</p>
+<p>Unified naming rule of types to <code>*_type</code>. #232</p>
+</li>
+<li>
+<p>Refined type of PacketIdentifier. Now <code>packet_id_type</code> is the type. #231</p>
+</li>
+<li>
+<p>Moved include/async_mqtt/broker/<strong>.hpp to tool/include/broker/</strong>.hpp #224</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Those are for broker allication that is used for system testing.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Re-organized directory strucure respect to boost libraries. #211, #229, #230</p>
 <div class="ulist">
 <ul>
 <li>
@@ -136,6 +152,15 @@ div#navigation table {
 <h3 id="_other_updates">other updates</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>Refined CI. #228</p>
+</li>
+<li>
+<p>Refined header dependency checking. #225</p>
+</li>
+<li>
+<p>Removed the inclusion of the Boost.Beast detail directory. #223</p>
+</li>
 <li>
 <p>Used bound allocator to allocate buffer for packet on receive. #222</p>
 </li>

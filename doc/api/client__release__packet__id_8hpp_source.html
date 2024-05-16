@@ -120,7 +120,7 @@ $(function(){initNavTree('client__release__packet__id_8hpp_source.html',''); ini
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">void</span>()</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>)</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>&lt;Version, NextLayer&gt;::release_packet_id(</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    packet_id_t pid,</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    packet_id_type pid,</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    CompletionToken&amp;&amp; token</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>) {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> ep_-&gt;release_packet_id(pid, std::forward&lt;CompletionToken&gt;(token));</div>
@@ -132,7 +132,7 @@ $(function(){initNavTree('client__release__packet__id_8hpp_source.html',''); ini
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">inline</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a3957bef88e065ba503e8ef871229b5fb">   32</a></span><a class="code hl_function" href="classasync__mqtt_1_1client.html#a1ddcd35e1313cd9291fca6557e21ef80">client&lt;Version, NextLayer&gt;::release_packet_id</a>(packet_id_t pid) {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a2e730db1d3d411563b62e39b931a006e">   32</a></span><a class="code hl_function" href="classasync__mqtt_1_1client.html#a740f67a41f152cba301c705784cd5353">client&lt;Version, NextLayer&gt;::release_packet_id</a>(packet_id_type pid) {</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    ep_-&gt;release_packet_id(pid);</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
 </div>
@@ -140,7 +140,7 @@ $(function(){initNavTree('client__release__packet__id_8hpp_source.html',''); ini
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_IMPL_CLIENT_RELEASE_PACKET_ID_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1client_html_a1ddcd35e1313cd9291fca6557e21ef80"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a1ddcd35e1313cd9291fca6557e21ef80">async_mqtt::client::release_packet_id</a></div><div class="ttdeci">release_packet_id(packet_id_t pid, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</div><div class="ttdoc">register packet_id.</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1client_html_a740f67a41f152cba301c705784cd5353"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a740f67a41f152cba301c705784cd5353">async_mqtt::client::release_packet_id</a></div><div class="ttdeci">release_packet_id(packet_id_type pid, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</div><div class="ttdoc">register packet_id.</div></div>
 <div class="ttc" id="agroup__role_html_gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125"><div class="ttname"><a href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">async_mqtt::role::client</a></div><div class="ttdeci">@ client</div><div class="ttdoc">as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

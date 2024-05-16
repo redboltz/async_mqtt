@@ -8,7 +8,7 @@ var searchData=
   ['get_5fnl_5',['get_nl',['../structasync__mqtt_1_1sub_1_1opts.html#ae479ef6eeaad32f8a101e756e18ce8a6',1,'async_mqtt::sub::opts']]],
   ['get_5fprotocol_5fversion_6',['get_protocol_version',['../classasync__mqtt_1_1basic__endpoint.html#a9cbabd5f427b1cb18d61ac49c7bbf83b',1,'async_mqtt::basic_endpoint']]],
   ['get_5fqos_7',['get_qos',['../structasync__mqtt_1_1pub_1_1opts.html#a8c58455c58558a08e66e89febfd41ae5',1,'async_mqtt::pub::opts::get_qos()'],['../structasync__mqtt_1_1sub_1_1opts.html#ad779f5d9f69676c4117e53738b06647c',1,'async_mqtt::sub::opts::get_qos()'],['../group__publish__options.html#ga406b2f851035de6200437191cff85141',1,'async_mqtt::pub::opts::get_qos()']]],
-  ['get_5fqos2_5fpublish_5fhandled_5fpids_8',['get_qos2_publish_handled_pids',['../classasync__mqtt_1_1basic__endpoint.html#aabe49cda117a53cd5cd2a392b26e2ada',1,'async_mqtt::basic_endpoint']]],
+  ['get_5fqos2_5fpublish_5fhandled_5fpids_8',['get_qos2_publish_handled_pids',['../classasync__mqtt_1_1basic__endpoint.html#a5c54a4deadb8706eafe3f56fc59eca07',1,'async_mqtt::basic_endpoint']]],
   ['get_5frap_9',['get_rap',['../structasync__mqtt_1_1sub_1_1opts.html#ae26c902d56bd99e9780c45f844ce3715',1,'async_mqtt::sub::opts']]],
   ['get_5fretain_10',['get_retain',['../structasync__mqtt_1_1pub_1_1opts.html#a6c9a3ff52f84311f298c82398a9beb41',1,'async_mqtt::pub::opts']]],
   ['get_5fretain_5fhandling_11',['get_retain_handling',['../structasync__mqtt_1_1sub_1_1opts.html#ad2fb65aeb5ae286c6bbe30f7a63a92b9',1,'async_mqtt::sub::opts']]],

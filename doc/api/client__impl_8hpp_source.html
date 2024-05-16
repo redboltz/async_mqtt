@@ -125,7 +125,7 @@ $(function(){initNavTree('client__impl_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">struct </span><a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>&lt;Version, NextLayer&gt;::pid_tim_pv_res_col {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">struct </span>elem_type {</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        elem_type(</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            packet_id_t pid,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            packet_id_type pid,</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            std::shared_ptr&lt;as::steady_timer&gt; tim</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        ): pid{pid},</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>           tim{force_move(tim)}</div>
@@ -137,7 +137,7 @@ $(function(){initNavTree('client__impl_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        {</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        }</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        packet_id_t pid = 0;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        packet_id_type pid = 0;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        std::shared_ptr&lt;as::steady_timer&gt; tim;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        std::optional&lt;packet_variant&gt; pv;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        pubres_t res;</div>
@@ -384,8 +384,8 @@ $(function(){initNavTree('client__impl_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_CLIENT_IMPL_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a></div><div class="ttdoc">MQTT endpoint corresponding to the connection.</div><div class="ttdef"><b>Definition</b> endpoint.hpp:58</div></div>
-<div class="ttc" id="aclassasync__mqtt_1_1client_html"><div class="ttname"><a href="classasync__mqtt_1_1client.html">async_mqtt::client</a></div><div class="ttdoc">MQTT client for casual usecases.</div><div class="ttdef"><b>Definition</b> client.hpp:38</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a></div><div class="ttdoc">MQTT endpoint corresponding to the connection.</div><div class="ttdef"><b>Definition</b> endpoint.hpp:57</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1client_html"><div class="ttname"><a href="classasync__mqtt_1_1client.html">async_mqtt::client</a></div><div class="ttdoc">MQTT client for casual usecases.</div><div class="ttdef"><b>Definition</b> client.hpp:39</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a09f09518ac6e775b09519080a96af3a2"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2">async_mqtt::client::set_auto_replace_topic_alias_send</a></div><div class="ttdeci">void set_auto_replace_topic_alias_send(bool val)</div><div class="ttdoc">auto replace topic with corresponding topic alias on send PUBLISH packet. Registering topic alias nee...</div><div class="ttdef"><b>Definition</b> client_impl.hpp:147</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a3f9ba18339a5788f7d4386845eabfbe7"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">async_mqtt::client::set_pingresp_recv_timeout_ms</a></div><div class="ttdeci">void set_pingresp_recv_timeout_ms(std::size_t ms)</div><div class="ttdoc">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...</div><div class="ttdef"><b>Definition</b> client_impl.hpp:154</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a42659c192a0e8764306c2dcbe97b3d82"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a42659c192a0e8764306c2dcbe97b3d82">async_mqtt::client::next_layer</a></div><div class="ttdeci">next_layer_type const &amp; next_layer() const</div><div class="ttdoc">next_layer getter</div><div class="ttdef"><b>Definition</b> client_impl.hpp:112</div></div>

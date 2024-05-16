@@ -104,6 +104,9 @@ var group__property =
       [ "shared_subscription_available", "classasync__mqtt_1_1property_1_1shared__subscription__available.html#aa449b3f9e4d3530ae9af47d5f5477f84", null ],
       [ "val", "classasync__mqtt_1_1property_1_1shared__subscription__available.html#a25b1c87140e83aed2899f9e738b47077", null ]
     ] ],
+    [ "async_mqtt::receive_maximum_type", "group__property.html#ga22bc9d291b6a5341d91566207de3503c", null ],
+    [ "async_mqtt::session_expiry_interval_type", "group__property.html#ga41092762c41573496243917973e65790", null ],
+    [ "async_mqtt::topic_alias_type", "group__property.html#ga5fe22439446e72837355d835aaa7a1e6", null ],
     [ "async_mqtt::payload_format", "group__property.html#ga47c42be3d9afd2d518fad85c5480b1f9", [
       [ "async_mqtt::payload_format::binary", "group__property.html#gga47c42be3d9afd2d518fad85c5480b1f9a9d7183f16acce70658f686ae7f1a4d20", null ],
       [ "async_mqtt::payload_format::string", "group__property.html#gga47c42be3d9afd2d518fad85c5480b1f9ab45cffe084dd3d20d928bee85e7b0f21", null ]

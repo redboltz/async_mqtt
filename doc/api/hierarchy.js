@@ -82,6 +82,7 @@ var hierarchy =
     [ "async_mqtt::topic_sharename", "classasync__mqtt_1_1topic__sharename.html", null ],
     [ "async_mqtt::topic_subopts", "classasync__mqtt_1_1topic__subopts.html", null ],
     [ "async_mqtt::property::user_property", "classasync__mqtt_1_1property_1_1user__property.html", null ],
+    [ "async_mqtt::detail::utf8_checker", "classasync__mqtt_1_1detail_1_1utf8__checker.html", null ],
     [ "async_mqtt::property::detail::variable_property", "structasync__mqtt_1_1property_1_1detail_1_1variable__property.html", [
       [ "async_mqtt::property::subscription_identifier", "classasync__mqtt_1_1property_1_1subscription__identifier.html", null ]
     ] ]

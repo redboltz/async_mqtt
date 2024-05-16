@@ -117,9 +117,9 @@ $(function(){initNavTree('client__acquire__unique__packet__id_8hpp_source.html',
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> CompletionToken&gt;</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    CompletionToken,</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">void</span>(std::optional&lt;packet_id_t&gt;)</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">void</span>(std::optional&lt;packet_id_type&gt;)</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>)</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><a class="code hl_function" href="classasync__mqtt_1_1client.html#a86a0111e1b6f8bccc09180046717487a">client&lt;Version, NextLayer&gt;::acquire_unique_packet_id</a>(</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><a class="code hl_function" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">client&lt;Version, NextLayer&gt;::acquire_unique_packet_id</a>(</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    CompletionToken&amp;&amp; token</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>) {</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">return</span> ep_-&gt;acquire_unique_packet_id(std::forward&lt;CompletionToken&gt;(token));</div>
@@ -129,9 +129,9 @@ $(function(){initNavTree('client__acquire__unique__packet__id_8hpp_source.html',
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;protocol_version Version, <span class="keyword">typename</span> NextLayer&gt;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">inline</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>std::optional&lt;typename client&lt;Version, NextLayer&gt;::packet_id_t&gt;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>std::optional&lt;packet_id_type&gt;</div>
 <div class="foldopen" id="foldopen00031" data-start="{" data-end="}">
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a86a0111e1b6f8bccc09180046717487a">   31</a></span><a class="code hl_function" href="classasync__mqtt_1_1client.html#a86a0111e1b6f8bccc09180046717487a">client&lt;Version, NextLayer&gt;::acquire_unique_packet_id</a>() {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">   31</a></span><a class="code hl_function" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">client&lt;Version, NextLayer&gt;::acquire_unique_packet_id</a>() {</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> ep_-&gt;acquire_unique_packet_id();</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
 </div>
@@ -139,7 +139,7 @@ $(function(){initNavTree('client__acquire__unique__packet__id_8hpp_source.html',
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_IMPL_CLIENT_ACQUIRE_UNIQUE_PACKET_ID_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1client_html_a86a0111e1b6f8bccc09180046717487a"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a86a0111e1b6f8bccc09180046717487a">async_mqtt::client::acquire_unique_packet_id</a></div><div class="ttdeci">std::optional&lt; packet_id_t &gt; acquire_unique_packet_id()</div><div class="ttdoc">acuire unique packet_id.</div><div class="ttdef"><b>Definition</b> client_acquire_unique_packet_id.hpp:31</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1client_html_ab160ebb19bd7e51f8460e59a88deff86"><div class="ttname"><a href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">async_mqtt::client::acquire_unique_packet_id</a></div><div class="ttdeci">std::optional&lt; packet_id_type &gt; acquire_unique_packet_id()</div><div class="ttdoc">acuire unique packet_id.</div><div class="ttdef"><b>Definition</b> client_acquire_unique_packet_id.hpp:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

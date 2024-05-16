@@ -1,7 +1,7 @@
 var group__packet__v5 =
 [
-    [ "Property", "group__property.html", "group__property" ],
     [ "Auth_v5", "group__auth__v5.html", "group__auth__v5" ],
+    [ "Property", "group__property.html", "group__property" ],
     [ "Connack_v5", "group__connack__v5.html", "group__connack__v5" ],
     [ "Connect_v5", "group__connect__v5.html", "group__connect__v5" ],
     [ "Disconnect_v5", "group__disconnect__v5.html", "group__disconnect__v5" ],
