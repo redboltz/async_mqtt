@@ -9,12 +9,12 @@
 
 #include <map>
 #include <optional>
+#include <chrono>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/time_point_t.hpp>
 
 #include <broker/session_state_fwd.hpp>
 #include <broker/tags.hpp>
@@ -36,12 +36,12 @@ public:
 
 private:
     struct entry {
-        entry(std::string share_name, session_state<Sp>& ss, time_point_t tp);
+        entry(std::string share_name, session_state<Sp>& ss, std::chrono::time_point<std::chrono::steady_clock> tp);
 
         std::string const& client_id() const;
         std::string share_name;
         session_state_ref<Sp> ssr;
-        time_point_t tp;
+        std::chrono::time_point<std::chrono::steady_clock> tp;
         std::map<std::string, subscription<Sp>> tf_subs;
     };
 
