@@ -12,7 +12,6 @@
 
 #include <async_mqtt/util/stream_traits.hpp>
 #include <async_mqtt/util/log.hpp>
-#include <async_mqtt/constant.hpp>
 
 /// @file
 
@@ -20,6 +19,8 @@ namespace async_mqtt {
 
 namespace as = boost::asio;
 namespace tls = as::ssl; // for backword compatilibity
+
+static constexpr auto shutdown_timeout = std::chrono::seconds(3);
 
 /**
  * @ingroup predefined_customize

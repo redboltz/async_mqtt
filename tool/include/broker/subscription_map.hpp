@@ -167,37 +167,37 @@ private:
 template<typename Value>
 class subscription_map_base {
 public:
-    using node_id_t = std::size_t;
-    using path_entry_key = std::pair<node_id_t, std::string>;
+    using node_id_type = std::size_t;
+    using path_entry_key = std::pair<node_id_type, std::string>;
     using handle = path_entry_key;
 
 private:
 
     // Generate a node id for a new node
-    node_id_t generate_node_id() {
-        if(next_node_id == std::numeric_limits<node_id_t>::max())
+    node_id_type generate_node_id() {
+        if(next_node_id == std::numeric_limits<node_id_type>::max())
             throw_max_stored_topics();
          return ++next_node_id;
     }
 
-    using count_storage_t = count_storage<sizeof(void *)>;
+    using count_storage_type = count_storage<sizeof(void *)>;
 
     struct path_entry {
-        node_id_t id;
+        node_id_type id;
         path_entry_key parent;
 
-        count_storage_t count;
+        count_storage_type count;
 
         Value value;
 
-        path_entry(node_id_t id, path_entry_key parent)
+        path_entry(node_id_type id, path_entry_key parent)
             : id(id), parent(parent)
         {}
     };
 
     // Increase the subscription count for a specific node
-    static void increase_count_storage(count_storage_t &count) {
-        if(count.value() == count_storage_t::max()) {
+    static void increase_count_storage(count_storage_type &count) {
+        if(count.value() == count_storage_type::max()) {
             throw_max_stored_topics();
         }
 
@@ -205,7 +205,7 @@ private:
     }
 
     // Decrease the subscription count for a specific node
-    static void decrease_count_storage(count_storage_t& count) {
+    static void decrease_count_storage(count_storage_type& count) {
         BOOST_ASSERT(count.value() > 0);
         count.decrement_value();
     }
@@ -219,12 +219,12 @@ private:
     using map_type_iterator = typename map_type::iterator;
     using map_type_const_iterator = typename map_type::const_iterator;
 
-    node_id_t next_node_id = 0;
+    node_id_type next_node_id = 0;
 
 protected:
     // Key and id of the root key
     path_entry_key root_key;
-    node_id_t root_node_id;
+    node_id_type root_node_id;
 
     // Return the iterator of the root
     map_type_iterator get_root() { return map.find(root_key); };

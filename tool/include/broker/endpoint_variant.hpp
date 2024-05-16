@@ -67,13 +67,13 @@ using endpoint_variant = basic_endpoint_variant<Role, 2, NextLayer...>;
 template <typename Epsp>
 class epsp_wrap {
 public:
-    using epsp_t = Epsp;
+    using epsp_type = Epsp;
     using this_type = epsp_wrap<Epsp>;
-    static constexpr std::size_t packet_id_bytes = epsp_t::packet_id_bytes;
+    static constexpr std::size_t packet_id_bytes = epsp_type::packet_id_bytes;
     using packet_variant_type = basic_packet_variant<packet_id_bytes>;
-    using weak_type = typename epsp_t::weak_type;
+    using weak_type = typename epsp_type::weak_type;
 
-    epsp_wrap(epsp_t epsp)
+    epsp_wrap(epsp_type epsp)
         : epsp_{force_move(epsp)}
     {
     }
@@ -386,12 +386,12 @@ public:
         );
     }
 
-    epsp_t get_epvsp() {
+    epsp_type get_epvsp() {
         return epsp_;
     }
 
 private:
-    epsp_t epsp_;
+    epsp_type epsp_;
     std::string client_id_;
     std::optional<std::string> preauthed_user_name_;
     mutable std::optional<protocol_version> protocol_version_;

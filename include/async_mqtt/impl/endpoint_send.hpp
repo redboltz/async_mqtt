@@ -554,7 +554,7 @@ send_op {
     }
 
     template <typename Self>
-    bool validate_topic_alias_range(Self& self, topic_alias_t ta) {
+    bool validate_topic_alias_range(Self& self, topic_alias_type ta) {
         if (!ep.topic_alias_send_) {
             self.complete(
                 make_error(
@@ -577,7 +577,7 @@ send_op {
     }
 
     template <typename Self>
-    std::optional<std::string> validate_topic_alias(Self& self, std::optional<topic_alias_t> ta_opt) {
+    std::optional<std::string> validate_topic_alias(Self& self, std::optional<topic_alias_type> ta_opt) {
         if (!ta_opt) {
             self.complete(
                 make_error(

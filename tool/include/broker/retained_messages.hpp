@@ -9,12 +9,12 @@
 
 #include <functional> // reference_wrapper
 
-#include <broker/retain_t.hpp>
+#include <broker/retain_type.hpp>
 #include <broker/retained_topic_map.hpp>
 
 namespace async_mqtt {
 
-using retained_messages = retained_topic_map<retain_t>;
+using retained_messages = retained_topic_map<retain_type>;
 
 } // namespace async_mqtt
 

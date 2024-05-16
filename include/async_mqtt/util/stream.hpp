@@ -19,7 +19,6 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/constant.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/log.hpp>
 

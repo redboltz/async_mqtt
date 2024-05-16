@@ -27,7 +27,7 @@ namespace async_mqtt {
 
 template <typename Epsp>
 class broker {
-    using epsp_t = epsp_wrap<Epsp>;
+    using epsp_type = epsp_wrap<Epsp>;
 public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
@@ -36,7 +36,7 @@ public:
         security_.default_config();
     }
 
-    void handle_accept(epsp_t epsp, std::optional<std::string> preauthed_user_name = {}) {
+    void handle_accept(epsp_type epsp, std::optional<std::string> preauthed_user_name = {}) {
         epsp.set_preauthed_user_name(force_move(preauthed_user_name));
         async_read_packet(force_move(epsp));
     }
@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    void async_read_packet(epsp_t epsp) {
+    void async_read_packet(epsp_type epsp) {
         epsp.recv(
             [this, epsp]
             (packet_variant pv) mutable {
@@ -255,7 +255,7 @@ private:
     }
 
     void connect_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         std::string client_id,
         std::optional<std::string> noauth_username,
         std::optional<std::string> password,
@@ -381,7 +381,7 @@ private:
                 << " new connection inserted.";
             it = idx.emplace_hint(
                 it,
-                session_state<epsp_t>::create(
+                session_state<epsp_type>::create(
                     timer_ioc_,
                     mtx_subs_map_,
                     subs_map_,
@@ -401,7 +401,7 @@ private:
             );
             if (response_topic_requested) {
                 // set_response_topic never modify key part
-                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
+                set_response_topic(const_cast<session_state<epsp_type>&>(**it), connack_props, *username);
             }
 
             send_connack(
@@ -414,7 +414,7 @@ private:
                 }
             );
         }
-        else if (auto old_epsp = const_cast<session_state<epsp_t>&>(**it).lock()) {
+        else if (auto old_epsp = const_cast<session_state<epsp_type>&>(**it).lock()) {
             // online overwrite
             ASYNC_MQTT_LOG("mqtt_broker", trace)
                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -462,7 +462,7 @@ private:
                             << "online connection exists, discard old one due to session_expiry and renew";
                         bool inserted;
                         std::tie(it, inserted) = idx.emplace(
-                            session_state<epsp_t>::create(
+                            session_state<epsp_type>::create(
                                 timer_ioc_,
                                 mtx_subs_map_,
                                 subs_map_,
@@ -483,7 +483,7 @@ private:
                         BOOST_ASSERT(inserted);
                         if (response_topic_requested) {
                             // set_response_topic never modify key part
-                            set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, *username);
+                            set_response_topic(const_cast<session_state<epsp_type>&>(**it), connack_props, *username);
                         }
                         send_connack(
                             epsp,
@@ -517,7 +517,7 @@ private:
 
     template <typename Idx, typename It>
     void offline_to_online(
-        epsp_t epsp,
+        epsp_type epsp,
         std::optional<will> will,
         std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
         std::optional<std::chrono::steady_clock::duration> session_expiry_interval,
@@ -549,7 +549,7 @@ private:
             );
             if (response_topic_requested) {
                 // set_response_topic never modify key part
-                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, username);
+                set_response_topic(const_cast<session_state<epsp_type>&>(**it), connack_props, username);
             }
             send_connack(
                 epsp,
@@ -572,7 +572,7 @@ private:
                 << "offline connection exists, and inherit it";
             if (response_topic_requested) {
                 // set_response_topic never modify key part
-                set_response_topic(const_cast<session_state<epsp_t>&>(**it), connack_props, username);
+                set_response_topic(const_cast<session_state<epsp_type>&>(**it), connack_props, username);
             }
 
             epsp.dispatch(
@@ -635,7 +635,7 @@ private:
     }
 
     void set_response_topic(
-        session_state<epsp_t>& s,
+        session_state<epsp_type>& s,
         properties& connack_props,
         std::string const &username
     ) {
@@ -676,7 +676,7 @@ private:
     }
 
     bool handle_empty_client_id(
-        epsp_t& epsp,
+        epsp_type& epsp,
         std::string const& client_id,
         bool clean_start,
         properties& connack_props
@@ -749,7 +749,7 @@ private:
 
     template <typename CompletionToken>
     auto send_connack(
-        epsp_t& epsp,
+        epsp_type& epsp,
         bool session_present,
         bool authenticated,
         properties props,
@@ -759,7 +759,7 @@ private:
             [this]
             (
                 auto completion_handler,
-                epsp_t epsp,
+                epsp_type epsp,
                 bool session_present,
                 bool authenticated,
                 properties props
@@ -838,7 +838,7 @@ private:
         is_buffer_sequence<std::decay_t<BufferSequence>>::value
     >
     publish_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         pub::opts opts,
         std::string topic,
@@ -1094,7 +1094,7 @@ private:
         bool
     >
     do_publish(
-        session_state<epsp_t> const& source_ss,
+        session_state<epsp_type> const& source_ss,
         std::string topic,
         BufferSequence&& payload,
         pub::opts opts,
@@ -1114,7 +1114,7 @@ private:
         // retain is delivered as the original only if rap_value is rap::retain.
         // On MQTT v3.1.1, rap_value is always rap::dont.
         auto deliver =
-            [&] (session_state<epsp_t>& ss, subscription<epsp_t>& sub, auto const& auth_users) {
+            [&] (session_state<epsp_type>& ss, subscription<epsp_type>& sub, auto const& auth_users) {
 
                 // See if this session is authorized to subscribe this topic
                 {
@@ -1157,7 +1157,7 @@ private:
             std::shared_lock<mutex> g{mtx_subs_map_};
             subs_map_.modify(
                 topic,
-                [&](std::string const& /*key*/, subscription<epsp_t>& sub) {
+                [&](std::string const& /*key*/, subscription<epsp_type>& sub) {
                     if (sub.sharename.empty()) {
                         // Non shared subscriptions
 
@@ -1241,7 +1241,7 @@ private:
                 std::lock_guard<mutex> g(mtx_retains_);
                 retains_.insert_or_assign(
                     topic,
-                    retain_t {
+                    retain_type {
                         topic,
                         std::forward<BufferSequence>(payload),
                         force_move(props),
@@ -1255,7 +1255,7 @@ private:
     }
 
     void puback_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         puback_reason_code /*reason_code*/,
         properties /*props*/
@@ -1279,13 +1279,13 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_t>&>(**it);
+        auto& ss = const_cast<session_state<epsp_type>&>(**it);
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
 
     void pubrec_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         pubrec_reason_code reason_code,
         properties /*props*/
@@ -1309,7 +1309,7 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_t>&>(**it);
+        auto& ss = const_cast<session_state<epsp_type>&>(**it);
 
         if (is_error(reason_code)) return;
         auto rc =
@@ -1391,7 +1391,7 @@ private:
     }
 
     void pubrel_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         pubrel_reason_code reason_code,
         properties /*props*/
@@ -1479,7 +1479,7 @@ private:
     }
 
     void pubcomp_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         pubcomp_reason_code /*reason_code*/,
         properties /*props*/
@@ -1503,13 +1503,13 @@ private:
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_t>&>(**it);
+        auto& ss = const_cast<session_state<epsp_type>&>(**it);
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
 
     void subscribe_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         std::vector<topic_subopts> const& entries,
         properties props
@@ -1533,18 +1533,18 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        std::optional<session_state_ref<epsp_t>> ssr_opt;
+        std::optional<session_state_ref<epsp_type>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_t>&>(**it);
+        auto& ss = const_cast<session_state<epsp_type>&>(**it);
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
-        session_state_ref<epsp_t> ssr {*ssr_opt};
+        session_state_ref<epsp_type> ssr {*ssr_opt};
 
         auto publish_proc =
-            [this, &ssr, &epsp](retain_t const& r, qos qos_value, std::optional<std::size_t> sid) {
+            [this, &ssr, &epsp](retain_type const& r, qos qos_value, std::optional<std::size_t> sid) {
                 auto props = r.props;
                 if (sid) {
                     props.push_back(property::subscription_identifier(std::uint32_t(*sid)));
@@ -1606,7 +1606,7 @@ private:
                             std::shared_lock<mutex> g(mtx_retains_);
                             retains_.find(
                                 e.topic(),
-                                [&](retain_t const& r) {
+                                [&](retain_type const& r) {
                                     retain_deliver.emplace_back(
                                         [&publish_proc, &r, qos_value = e.opts().get_qos(), sid] {
                                             publish_proc(r, qos_value, sid);
@@ -1673,7 +1673,7 @@ private:
                                 std::shared_lock<mutex> g(mtx_retains_);
                                 retains_.find(
                                     e.topic(),
-                                    [&](retain_t const& r) {
+                                    [&](retain_type const& r) {
                                         retain_deliver.emplace_back(
                                             [&publish_proc, &r, qos_value = e.opts().get_qos(), sid] {
                                                 publish_proc(r, qos_value, sid);
@@ -1723,7 +1723,7 @@ private:
     }
 
     void unsubscribe_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         packet_id_type packet_id,
         std::vector<topic_sharename> entries,
         properties props
@@ -1749,15 +1749,15 @@ private:
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
-        std::optional<session_state_ref<epsp_t>> ssr_opt;
+        std::optional<session_state_ref<epsp_type>> ssr_opt;
 
         // const_cast is appropriate here
         // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_t>&>(**it);
+        auto& ss = const_cast<session_state<epsp_type>&>(**it);
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
-        session_state_ref<epsp_t> ssr {*ssr_opt};
+        session_state_ref<epsp_type> ssr {*ssr_opt};
 
         // For each subscription that this connection has
         // Compare against the list of topic filters, and remove
@@ -1810,7 +1810,7 @@ private:
     }
 
     void pingreq_handler(
-        epsp_t epsp
+        epsp_type epsp
     ) {
         auto usg = unique_scope_guard(
             [&] {
@@ -1854,7 +1854,7 @@ private:
     }
 
     void disconnect_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         disconnect_reason_code rc,
         properties /*props*/
     ) {
@@ -1882,7 +1882,7 @@ private:
     // TODO: Maybe change the name of this function.
     template <typename CompletionToken>
     auto close_proc_no_lock(
-        epsp_t epsp,
+        epsp_type epsp,
         bool send_will,
         std::optional<disconnect_reason_code> rc_opt,
         CompletionToken&& token) {
@@ -1891,7 +1891,7 @@ private:
             [this]
             (
                 auto completion_handler,
-                epsp_t epsp,
+                epsp_type epsp,
                 bool send_will,
                 std::optional<disconnect_reason_code> rc_opt
             ) {
@@ -1912,7 +1912,7 @@ private:
                 }
 
                 auto do_send_will =
-                    [&](session_state<epsp_t>& ss) {
+                    [&](session_state<epsp_type>& ss) {
                         if (send_will) {
                             ss.send_will();
                         }
@@ -1924,7 +1924,7 @@ private:
                 if ((*it)->remain_after_close()) {
                     idx.modify(
                         it,
-                        [&](std::shared_ptr<session_state<epsp_t>>& sssp) {
+                        [&](std::shared_ptr<session_state<epsp_type>>& sssp) {
                             do_send_will(*sssp);
                             if (rc_opt) {
                                 ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -2037,7 +2037,7 @@ private:
      */
     // TODO: Maybe change the name of this function.
     void close_proc(
-        epsp_t epsp,
+        epsp_type epsp,
         bool send_will,
         std::optional<disconnect_reason_code> rc_opt = std::nullopt
     ) {
@@ -2049,7 +2049,7 @@ private:
     }
 
     void auth_handler(
-        epsp_t epsp,
+        epsp_type epsp,
         auth_reason_code /*rc*/,
         properties props
     ) {
@@ -2064,7 +2064,7 @@ private:
 
     template <typename CompletionToken>
     static auto disconnect_and_close(
-        epsp_t epsp,
+        epsp_type epsp,
         protocol_version version,
         disconnect_reason_code rc,
         CompletionToken&& token
@@ -2073,7 +2073,7 @@ private:
             []
             (
                 auto completion_handler,
-                epsp_t epsp,
+                epsp_type epsp,
                 protocol_version version,
                 disconnect_reason_code rc
             ) {
@@ -2141,14 +2141,14 @@ private:
     security security_;
 
     mutable mutex mtx_subs_map_;
-    sub_con_map<epsp_t> subs_map_;   ///< subscription information
-    shared_target<epsp_t> shared_targets_; ///< shared subscription targets
+    sub_con_map<epsp_type> subs_map_;   ///< subscription information
+    shared_target<epsp_type> shared_targets_; ///< shared subscription targets
 
     ///< Map of active client id and connections
     /// session_state has references of subs_map_ and shared_targets_.
     /// because session_state (member of sessions_) has references of subs_map_ and shared_targets_.
     mutable mutex mtx_sessions_;
-    session_states<epsp_t> sessions_;
+    session_states<epsp_type> sessions_;
 
     mutable mutex mtx_retains_;
     retained_messages retains_; ///< A list of messages retained so they can be sent to newly subscribed clients.
