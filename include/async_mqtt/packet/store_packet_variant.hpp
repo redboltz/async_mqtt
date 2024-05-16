@@ -51,7 +51,6 @@ enum class response_packet {
 template <std::size_t PacketIdBytes>
 class basic_store_packet_variant {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -179,7 +178,7 @@ public:
      * @brief Get packet id
      * @return packet_id
      */
-    packet_id_t packet_id() const {
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const {
         return visit(
             overload {
                 [] (auto const& p) {

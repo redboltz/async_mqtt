@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                 yield set_finish();
             }
         }
-        ep_t::packet_id_t pid;
+        am::packet_id_type pid;
     };
 
     tc t{*amep, "127.0.0.1", 1883};
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                 yield set_finish();
             }
         }
-        ep_t::packet_id_t pid;
+        am::packet_id_type pid;
     };
 
     tc t{*amep, "127.0.0.1", 1883};

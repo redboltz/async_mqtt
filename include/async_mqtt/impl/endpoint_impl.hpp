@@ -29,7 +29,7 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::tim_cancelled {
 // public
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
-std::set<typename basic_endpoint<Role, PacketIdBytes, NextLayer>::packet_id_t>
+std::set<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_endpoint<Role, PacketIdBytes, NextLayer>::get_qos2_publish_handled_pids() const {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
@@ -41,7 +41,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::get_qos2_publish_handled_pids() 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::restore_qos2_publish_handled_pids(
+    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pids
+) {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "restore_qos2_publish_handled_pids";
@@ -63,7 +65,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::get_protocol_version() const {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::is_publish_processing(packet_id_t pid) const {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "is_publish_processing:" << pid;
@@ -409,7 +411,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::clear_pid_man() {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::release_pid(packet_id_t pid) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid) {
     pid_man_.release_id(pid);
     notify_retry_one();
 }

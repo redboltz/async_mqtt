@@ -50,8 +50,6 @@ enum class mode {
     recv
 };
 
-using packet_id_t = am::packet_id_type<2>::type;
-
 #include <boost/asio/yield.hpp>
 struct bench_context {
     bench_context(
@@ -628,7 +626,7 @@ private:
 
             for (;;) yield {
                 auto send_publish =
-                    [this, &pci] (packet_id_t pid, am::pub::opts opts) {
+                    [this, &pci] (am::packet_id_type pid, am::pub::opts opts) {
                         switch (bc_.version) {
                         case am::protocol_version::v5: {
                             pci->c->send(
@@ -671,7 +669,7 @@ private:
                     if (bc_.md == mode::single || bc_.md == mode::send) {
                         auto trigger_pub =
                             [&] {
-                                packet_id_t pid = 0;
+                                am::packet_id_type pid = 0;
                                 if (bc_.qos == am::qos::at_least_once ||
                                     bc_.qos == am::qos::exactly_once) {
                                     // sync version can be called because the previous timer handler is on the strand
@@ -920,7 +918,7 @@ private:
 
     pub_recv recv_publish(
         ClientInfo& ci,
-        packet_id_t /*packet_id*/,
+        am::packet_id_type /*packet_id*/,
         am::pub::opts pubopts,
         std::string topic_name,
         std::string const& payload,

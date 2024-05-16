@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(

@@ -50,8 +50,6 @@ constexpr auto color_none = "\033[0m";
 
 #include <boost/asio/yield.hpp>
 
-using packet_id_t = typename am::packet_id_type<2>::type;
-
 template <typename Endpoint>
 class client_cli {
 public:
@@ -506,7 +504,7 @@ private:
     }
 
     void publish(
-        packet_id_t pid,
+        am::packet_id_type pid,
         std::string topic,
         std::string payload,
         am::pub::opts opts
@@ -592,7 +590,7 @@ private:
                     payload = am::force_move(payload),
                     opts
                 ]
-                (std::optional<packet_id_t> pid_opt) mutable {
+                (std::optional<am::packet_id_type> pid_opt) mutable {
                     if (pid_opt) {
                         publish(
                             *pid_opt,
@@ -629,7 +627,7 @@ private:
                 topic = am::force_move(topic),
                 opts
             ]
-            (std::optional<packet_id_t> pid_opt) mutable {
+            (std::optional<am::packet_id_type> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.send(
@@ -685,7 +683,7 @@ private:
                 this,
                 topic = am::force_move(topic)
             ]
-            (std::optional<packet_id_t> pid_opt) mutable {
+            (std::optional<am::packet_id_type> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.send(
@@ -781,7 +779,7 @@ public:
     void operator()(am::system_error const& se) {
         proc({}, se, {}, {});
     }
-    void operator()(std::optional<packet_id_t> pid_opt) {
+    void operator()(std::optional<am::packet_id_type> pid_opt) {
         proc({}, {}, pid_opt, {});
     }
     void operator()(am::packet_variant pv) {
@@ -792,7 +790,7 @@ private:
     void proc(
         am::error_code const& ec,
         am::system_error const& se,
-        std::optional<packet_id_t> /*pid_opt*/,
+        std::optional<am::packet_id_type> /*pid_opt*/,
         am::packet_variant pv
     ) {
         reenter (coro_) {

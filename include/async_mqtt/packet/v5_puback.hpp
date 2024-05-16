@@ -47,7 +47,6 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_puback_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -59,7 +58,7 @@ public:
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901125
      */
     basic_puback_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         puback_reason_code reason_code,
         properties props
     );
@@ -70,7 +69,7 @@ public:
      * @param packet_id   MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS1) packet
      */
     basic_puback_packet(
-        packet_id_t packet_id
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
     /**
@@ -81,7 +80,7 @@ public:
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901124
      */
     basic_puback_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         puback_reason_code reason_code
     );
 
@@ -114,7 +113,7 @@ public:
      * @brief Get packet_id.
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
     /**
      * @brief Get reason code
@@ -165,7 +164,7 @@ private:
 
     // private constructor for internal use
     basic_puback_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::optional<puback_reason_code> reason_code,
         properties props
     );

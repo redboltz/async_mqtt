@@ -23,7 +23,7 @@ template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::pid_tim_pv_res_col {
     struct elem_type {
         elem_type(
-            packet_id_t pid,
+            packet_id_type pid,
             std::shared_ptr<as::steady_timer> tim
         ): pid{pid},
            tim{force_move(tim)}
@@ -35,7 +35,7 @@ struct client<Version, NextLayer>::pid_tim_pv_res_col {
         {
         }
 
-        packet_id_t pid = 0;
+        packet_id_type pid = 0;
         std::shared_ptr<as::steady_timer> tim;
         std::optional<packet_variant> pv;
         pubres_t res;

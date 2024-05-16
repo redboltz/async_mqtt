@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(success_digest) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(send_auth) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(

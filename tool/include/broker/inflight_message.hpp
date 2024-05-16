@@ -22,7 +22,6 @@
 #include <async_mqtt/packet/store_packet_variant.hpp>
 #include <async_mqtt/util/log.hpp>
 
-#include <broker/common_type.hpp>
 #include <broker/tags.hpp>
 
 namespace async_mqtt {
@@ -40,7 +39,7 @@ public:
          tim_message_expiry_ { force_move(tim_message_expiry) }
     {}
 
-    packet_id_t packet_id() const {
+    packet_id_type packet_id() const {
         return packet_.packet_id();
     }
 
@@ -50,7 +49,7 @@ public:
         if (tim_message_expiry_) {
             packet_.visit(
                 overload {
-                    [&](v5::basic_publish_packet<sizeof(packet_id_t)> const& m) {
+                    [&](v5::basic_publish_packet<sizeof(packet_id_type)> const& m) {
                         auto updated_packet = m;
                         auto d =
                             std::chrono::duration_cast<std::chrono::seconds>(
@@ -131,7 +130,7 @@ private:
             >,
             mi::ordered_unique<
                 mi::tag<tag_pid>,
-                BOOST_MULTI_INDEX_CONST_MEM_FUN(inflight_message, packet_id_t, packet_id)
+                BOOST_MULTI_INDEX_CONST_MEM_FUN(inflight_message, packet_id_type, packet_id)
             >,
             mi::ordered_non_unique<
                 mi::tag<tag_tim>,

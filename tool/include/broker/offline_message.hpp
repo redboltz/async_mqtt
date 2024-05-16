@@ -25,7 +25,6 @@
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 
-#include <broker/common_type.hpp>
 #include <broker/tags.hpp>
 
 namespace async_mqtt {
@@ -68,7 +67,7 @@ public:
     template <typename Epsp>
     bool send(Epsp epsp, protocol_version ver) {
         auto publish =
-            [&] (packet_id_t pid) {
+            [&] (packet_id_type pid) {
                 switch (ver) {
                 case protocol_version::v3_1_1:
                     epsp.send(

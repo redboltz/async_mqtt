@@ -44,7 +44,6 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_suback_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -52,7 +51,7 @@ public:
      * @param params    suback entries.
      */
     basic_suback_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::vector<suback_return_code> params
     );
 
@@ -85,7 +84,7 @@ public:
      * @brief Get packet_id.
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
     /**
      * @brief Get entries

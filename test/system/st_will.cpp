@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -406,7 +406,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -536,7 +536,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -678,7 +678,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub

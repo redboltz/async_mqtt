@@ -23,7 +23,6 @@ struct basic_endpoint_variant :
 
     static constexpr role role_value = Role;
     static constexpr std::size_t packet_id_bytes = PacketIdBytes;
-    using packet_id_t = typename packet_id_type<packet_id_bytes>::type;
 
     template <typename ActualNextLayer>
     basic_endpoint<Role, PacketIdBytes, ActualNextLayer> const& as() const {
@@ -70,7 +69,6 @@ class epsp_wrap {
 public:
     using epsp_t = Epsp;
     using this_type = epsp_wrap<Epsp>;
-    using packet_id_t = typename epsp_t::packet_id_t;
     static constexpr std::size_t packet_id_bytes = epsp_t::packet_id_bytes;
     using packet_variant_type = basic_packet_variant<packet_id_bytes>;
     using weak_type = typename epsp_t::weak_type;
@@ -147,7 +145,7 @@ public:
     template <typename CompletionToken>
     auto
     register_packet_id(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<packet_id_bytes>::type packet_id,
         CompletionToken&& token
     ) {
         return visit(
@@ -163,7 +161,7 @@ public:
     template <typename CompletionToken>
     auto
     release_packet_id(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<packet_id_bytes>::type packet_id,
         CompletionToken&& token
     ) {
         return visit(
@@ -252,7 +250,7 @@ public:
 
     // sync APIs (Thread unsafe without strand)
 
-    std::optional<packet_id_t> acquire_unique_packet_id() {
+    std::optional<typename basic_packet_id_type<packet_id_bytes>::type> acquire_unique_packet_id() {
         return visit(
             [&](auto& ep) {
                 return ep.acquire_unique_packet_id();
@@ -260,7 +258,7 @@ public:
         );
     }
 
-    bool register_packet_id(packet_id_t pid) {
+    bool register_packet_id(typename basic_packet_id_type<packet_id_bytes>::type pid) {
         return visit(
             [&](auto& ep) {
                 return ep.register_packet_id(pid);
@@ -268,7 +266,7 @@ public:
         );
     }
 
-    void release_packet_id(packet_id_t pid) {
+    void release_packet_id(typename basic_packet_id_type<packet_id_bytes>::type pid) {
         visit(
             [&](auto& ep) {
                 return ep.release_packet_id(pid);
@@ -281,7 +279,7 @@ public:
      *        This function should be called after disconnection
      * @return set of packet_ids
      */
-    std::set<packet_id_t> get_qos2_publish_handled_pids() const {
+    std::set<typename basic_packet_id_type<packet_id_bytes>::type> get_qos2_publish_handled_pids() const {
         return visit(
             [&](auto& ep) {
                 return ep.get_qos2_publish_handled_pids();
@@ -294,7 +292,7 @@ public:
      *        This function should be called before receive the first publish
      * @param pids packet ids
      */
-    void restore_qos2_publish_handled_pids(std::set<packet_id_t> pids) {
+    void restore_qos2_publish_handled_pids(std::set<typename basic_packet_id_type<packet_id_bytes>::type> pids) {
         visit(
             [&](auto& ep) {
                 return ep.restore_qos2_publish_handled_pids(pids);
@@ -345,7 +343,7 @@ public:
         return *protocol_version_;
     }
 
-    bool is_publish_processing(packet_id_t pid) const {
+    bool is_publish_processing(typename basic_packet_id_type<packet_id_bytes>::type pid) const {
         return visit(
             [&](auto& ep) {
                 return ep.is_publish_processing(pid);

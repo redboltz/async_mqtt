@@ -44,7 +44,6 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_subscribe_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -53,7 +52,7 @@ public:
      * @param params    subscribe entries.
      */
     basic_subscribe_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::vector<topic_subopts> params
     );
 
@@ -86,7 +85,7 @@ public:
      * @brief Get packet_id.
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
     /**
      * @brief Get entries

@@ -39,7 +39,7 @@ unsubscribe_op {
     void operator()(
         Self& self,
         system_error const& se,
-        packet_id_t pid
+        packet_id_type pid
     ) {
         if (se) {
             self.complete(se.code(), std::nullopt);

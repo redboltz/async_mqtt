@@ -30,7 +30,7 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 inline
 basic_pubcomp_packet<PacketIdBytes>::basic_pubcomp_packet(
-    packet_id_t packet_id
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id
 )
     : all_(all_.capacity())
 {
@@ -68,8 +68,8 @@ constexpr std::size_t basic_pubcomp_packet<PacketIdBytes>::num_of_const_buffer_s
 
 template <std::size_t PacketIdBytes>
 inline
-typename basic_pubcomp_packet<PacketIdBytes>::packet_id_t basic_pubcomp_packet<PacketIdBytes>::packet_id() const {
-    return endian_load<packet_id_t>(&all_[2]);
+typename basic_packet_id_type<PacketIdBytes>::type basic_pubcomp_packet<PacketIdBytes>::packet_id() const {
+    return endian_load<typename basic_packet_id_type<PacketIdBytes>::type>(&all_[2]);
 }
 
 template <std::size_t PacketIdBytes>

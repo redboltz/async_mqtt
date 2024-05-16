@@ -51,7 +51,6 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_publish_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -84,7 +83,7 @@ public:
         > = nullptr
     >
     basic_publish_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         StringViewLike&& topic_name,
         BufferSequence&& payloads,
         pub::opts pubopts
@@ -150,7 +149,7 @@ public:
      * @brief Get packet id
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
     /**
      * @brief Get publish_options
