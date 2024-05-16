@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_PINGREQ_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_PINGREQ_HPP
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>

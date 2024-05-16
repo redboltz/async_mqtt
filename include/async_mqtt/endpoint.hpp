@@ -22,7 +22,6 @@
 #include <async_mqtt/topic_alias_recv.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
 /**

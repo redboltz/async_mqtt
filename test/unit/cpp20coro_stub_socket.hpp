@@ -12,7 +12,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/experimental/channel.hpp>
 
-#include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant.hpp>
 
 #include "test_allocate_buffer.hpp"
 

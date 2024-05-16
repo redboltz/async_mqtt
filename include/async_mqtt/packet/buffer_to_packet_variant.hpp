@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>

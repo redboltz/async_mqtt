@@ -236,6 +236,13 @@ private:
     variant_t var_;
 };
 
+/**
+ * @related basic_packet_variant
+ * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
+ */
 template <std::size_t PacketIdBytes>
 inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> const& v) {
     v.visit(

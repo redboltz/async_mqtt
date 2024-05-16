@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_PUBLISH_HPP)
 #define ASYNC_MQTT_PACKET_V5_PUBLISH_HPP
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/variable_bytes.hpp>
