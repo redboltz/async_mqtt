@@ -34,7 +34,7 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 inline
 basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     pubrel_reason_code reason_code,
     properties props
 ) : basic_pubrel_packet{
@@ -47,7 +47,7 @@ basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
 template <std::size_t PacketIdBytes>
 inline
 basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
-    packet_id_t packet_id
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) : basic_pubrel_packet{
         packet_id,
         std::nullopt,
@@ -58,7 +58,7 @@ basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
 template <std::size_t PacketIdBytes>
 inline
 basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     pubrel_reason_code reason_code
 ) : basic_pubrel_packet{
         packet_id,
@@ -125,8 +125,8 @@ constexpr std::size_t basic_pubrel_packet<PacketIdBytes>::num_of_const_buffer_se
 
 template <std::size_t PacketIdBytes>
 inline
-typename basic_pubrel_packet<PacketIdBytes>::packet_id_t basic_pubrel_packet<PacketIdBytes>::packet_id() const {
-    return endian_load<packet_id_t>(packet_id_.data());
+typename basic_packet_id_type<PacketIdBytes>::type basic_pubrel_packet<PacketIdBytes>::packet_id() const {
+    return endian_load<typename basic_packet_id_type<PacketIdBytes>::type>(packet_id_.data());
 }
 
 template <std::size_t PacketIdBytes>
@@ -145,7 +145,7 @@ properties const& basic_pubrel_packet<PacketIdBytes>::props() const {
 template <std::size_t PacketIdBytes>
 inline
 basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     std::optional<pubrel_reason_code> reason_code,
     properties props
 )

@@ -31,7 +31,7 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 inline
 basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     std::vector<topic_sharename> params
 )
     : fixed_header_{make_fixed_header(control_packet_type::unsubscribe, 0b0010)},
@@ -123,8 +123,8 @@ std::size_t basic_unsubscribe_packet<PacketIdBytes>::num_of_const_buffer_sequenc
 
 template <std::size_t PacketIdBytes>
 inline
-typename basic_unsubscribe_packet<PacketIdBytes>::packet_id_t basic_unsubscribe_packet<PacketIdBytes>::packet_id() const {
-    return endian_load<packet_id_t>(packet_id_.data());
+typename basic_packet_id_type<PacketIdBytes>::type basic_unsubscribe_packet<PacketIdBytes>::packet_id() const {
+    return endian_load<typename basic_packet_id_type<PacketIdBytes>::type>(packet_id_.data());
 }
 
 template <std::size_t PacketIdBytes>

@@ -4,15 +4,15 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_V3_1_1_PINGRESP_HPP)
-#define ASYNC_MQTT_PACKET_IMPL_V3_1_1_PINGRESP_HPP
+#if !defined(ASYNC_MQTT_PACKET_IMPL_V5_PINGRESP_HPP)
+#define ASYNC_MQTT_PACKET_IMPL_V5_PINGRESP_HPP
 
 #include <utility>
 #include <numeric>
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/packet/v3_1_1_pingresp.hpp>
+#include <async_mqtt/packet/v5_pingresp.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
@@ -22,7 +22,7 @@
 
 #include <async_mqtt/packet/fixed_header.hpp>
 
-namespace async_mqtt::v3_1_1 {
+namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
@@ -63,7 +63,7 @@ pingresp_packet::pingresp_packet(buffer buf) {
     if (buf.empty()) {
         throw make_error(
             errc::bad_message,
-            "v3_1_1::pingresp_packet fixed_header doesn't exist"
+            "v5::pingresp_packet fixed_header doesn't exist"
         );
     }
     all_.push_back(buf.front());
@@ -72,7 +72,7 @@ pingresp_packet::pingresp_packet(buffer buf) {
     if (!cpt_opt || *cpt_opt != control_packet_type::pingresp) {
         throw make_error(
             errc::bad_message,
-            "v3_1_1::pingresp_packet fixed_header is invalid"
+            "v5::pingresp_packet fixed_header is invalid"
         );
     }
 
@@ -80,7 +80,7 @@ pingresp_packet::pingresp_packet(buffer buf) {
     if (buf.empty()) {
         throw make_error(
             errc::bad_message,
-            "v3_1_1::pingresp_packet remaining_length doesn't exist"
+            "v5::pingresp_packet remaining_length doesn't exist"
         );
     }
     all_.push_back(buf.front());
@@ -88,19 +88,18 @@ pingresp_packet::pingresp_packet(buffer buf) {
     if (static_cast<std::uint8_t>(all_.back()) != 0) {
         throw make_error(
             errc::bad_message,
-            "v3_1_1::pingresp_packet remaining_length is invalid"
+            "v5::pingresp_packet remaining_length is invalid"
         );
     }
 }
-
 inline
 std::ostream& operator<<(std::ostream& o, pingresp_packet const& v) {
     (void)v;
     o <<
-        "v3_1_1::pingresp{}";
+        "v5::pingresp{}";
     return o;
 }
 
-} // namespace async_mqtt::v3_1_1
+} // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_IMPL_V3_1_1_PINGRESP_HPP
+#endif // ASYNC_MQTT_PACKET_IMPL_V5_PINGRESP_HPP

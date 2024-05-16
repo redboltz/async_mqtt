@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // publish QoS0
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // publish QoS0
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 yield ep().next_layer().async_connect(
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub
@@ -621,7 +621,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
             std::optional<am::error_code> ec,
             std::optional<am::system_error> se,
             std::optional<am::packet_variant> pv,
-            std::optional<packet_id_t> /*pid*/
+            std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
                 // connect sub

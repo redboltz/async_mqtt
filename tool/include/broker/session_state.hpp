@@ -18,7 +18,6 @@
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/packet/will.hpp>
 
-#include <broker/common_type.hpp>
 #include <broker/sub_con_map.hpp>
 #include <broker/shared_target.hpp>
 #include <broker/tags.hpp>
@@ -247,7 +246,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
         auto send_publish =
             [this, epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this()]
-            (packet_id_t pid) mutable {
+            (packet_id_type pid) mutable {
                 if (auto sp = wp.lock()) {
                     switch (version_) {
                     case protocol_version::v3_1_1:
@@ -561,7 +560,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         }
     }
 
-    std::size_t erase_inflight_message_by_packet_id(packet_id_t packet_id) {
+    std::size_t erase_inflight_message_by_packet_id(packet_id_type packet_id) {
         std::lock_guard<mutex> g(mtx_inflight_messages_);
         auto& idx = inflight_messages_.get<tag_pid>();
         return idx.erase(packet_id);
@@ -778,7 +777,7 @@ private:
     will_sender_t will_sender_;
     bool remain_after_close_;
 
-    std::set<packet_id_t> qos2_publish_handled_;
+    std::set<packet_id_type> qos2_publish_handled_;
 
     std::optional<std::string> response_topic_;
     std::function<void()> clean_handler_;

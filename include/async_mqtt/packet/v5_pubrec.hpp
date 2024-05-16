@@ -47,7 +47,6 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_pubrec_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
@@ -58,7 +57,7 @@ public:
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901135
      */
     basic_pubrec_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         pubrec_reason_code reason_code,
         properties props
     );
@@ -68,7 +67,7 @@ public:
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS2) packet
      */
     basic_pubrec_packet(
-        packet_id_t packet_id
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
     /**
@@ -78,7 +77,7 @@ public:
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134
      */
     basic_pubrec_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         pubrec_reason_code reason_code
     );
 
@@ -111,7 +110,7 @@ public:
      * @brief Get packet_id.
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
     /**
      * @brief Get reason code
@@ -148,7 +147,7 @@ public:
 
 private:
     basic_pubrec_packet(
-        packet_id_t packet_id,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::optional<pubrec_reason_code> reason_code,
         properties props
     );

@@ -22,7 +22,6 @@
 #include <async_mqtt/util/scope_guard.hpp>
 
 #include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/copy_to_static_vector.hpp>

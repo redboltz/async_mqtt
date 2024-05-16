@@ -42,14 +42,13 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_unsuback_packet {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
 
     /**
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the UNSUBSCRIBE packet
      */
     basic_unsuback_packet(
-        packet_id_t packet_id
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
     /**
@@ -81,7 +80,7 @@ public:
      * @brief Get packet_id.
      * @return packet_id
      */
-    packet_id_t packet_id() const;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id() const;
 
 private:
 

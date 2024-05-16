@@ -16,7 +16,7 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 acquire_unique_packet_id_wait_until_op {
     this_type& ep;
     this_type_wp retry_wp = ep.weak_from_this();
-    std::optional<packet_id_t> pid_opt = std::nullopt;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type> pid_opt = std::nullopt;
     enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
@@ -95,7 +95,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id_wait_un
     return
         as::async_compose<
             CompletionToken,
-            void(packet_id_t)
+            void(typename basic_packet_id_type<PacketIdBytes>::type)
         >(
             acquire_unique_packet_id_wait_until_op{
                 *this

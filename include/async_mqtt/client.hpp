@@ -14,6 +14,7 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/steady_timer.hpp>
 
+#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
 
@@ -59,7 +60,6 @@ class client {
     ASYNC_MQTT_PACKET_TYPE(Version, disconnect)
 
 public:
-    using packet_id_t = typename ep_type::packet_id_t;
     /**
      * @brief publish completion handler parameter class
      */
@@ -293,7 +293,7 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token the param is std::optional<packet_id_t>
+     * @param token the param is std::optional<packet_id_type>
      * @return deduced by token
      */
     template <
@@ -302,7 +302,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(std::optional<packet_id_t>)
+        void(std::optional<packet_id_type>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     acquire_unique_packet_id(
@@ -312,7 +312,7 @@ public:
     /**
      * @brief acuire unique packet_id.
      * If packet_id is fully acquired, then wait until released.
-     * @param token the param is packet_id_t
+     * @param token the param is packet_id_type
      * @return deduced by token
      */
     template <
@@ -321,7 +321,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_id_t)
+        void(packet_id_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     acquire_unique_packet_id_wait_until(
@@ -331,7 +331,7 @@ public:
     /**
      * @brief acuire unique packet_id.
      * If packet_id is fully acquired, then wait until released.
-     * @param token the param is packet_id_t
+     * @param token the param is packet_id_type
      * @return deduced by token
      */
     template <
@@ -344,7 +344,7 @@ public:
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     register_packet_id(
-        packet_id_t pid,
+        packet_id_type pid,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -364,16 +364,16 @@ public:
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     release_packet_id(
-        packet_id_t pid,
+        packet_id_type pid,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
     /**
      * @brief acuire unique packet_id.
-     * @return std::optional<packet_id_t> if acquired return acquired packet id, otherwise std::nullopt
+     * @return std::optional<packet_id_type> if acquired return acquired packet id, otherwise std::nullopt
      * @note This function is SYNC function that thread unsafe without strand.
      */
-    std::optional<packet_id_t> acquire_unique_packet_id();
+    std::optional<packet_id_type> acquire_unique_packet_id();
 
     /**
      * @brief register packet_id.
@@ -381,14 +381,14 @@ public:
      * @return If true, success, otherwise the packet_id has already been used.
      * @note This function is SYNC function that thread unsafe without strand.
      */
-    bool register_packet_id(packet_id_t pid);
+    bool register_packet_id(packet_id_type pid);
 
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
      * @note This function is SYNC function that thread unsafe without strand.
      */
-    void release_packet_id(packet_id_t pid);
+    void release_packet_id(packet_id_type pid);
 
 private:
     void recv_loop();

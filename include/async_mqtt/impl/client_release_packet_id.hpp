@@ -18,7 +18,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void()
 )
 client<Version, NextLayer>::release_packet_id(
-    packet_id_t pid,
+    packet_id_type pid,
     CompletionToken&& token
 ) {
     return ep_->release_packet_id(pid, std::forward<CompletionToken>(token));
@@ -29,7 +29,7 @@ client<Version, NextLayer>::release_packet_id(
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client<Version, NextLayer>::release_packet_id(packet_id_t pid) {
+client<Version, NextLayer>::release_packet_id(packet_id_type pid) {
     ep_->release_packet_id(pid);
 }
 

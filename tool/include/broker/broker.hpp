@@ -839,7 +839,7 @@ private:
     >
     publish_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         pub::opts opts,
         std::string topic,
         BufferSequence&& payload,
@@ -1256,7 +1256,7 @@ private:
 
     void puback_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         puback_reason_code /*reason_code*/,
         properties /*props*/
     ) {
@@ -1286,7 +1286,7 @@ private:
 
     void pubrec_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         pubrec_reason_code reason_code,
         properties /*props*/
     ) {
@@ -1392,7 +1392,7 @@ private:
 
     void pubrel_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         pubrel_reason_code reason_code,
         properties /*props*/
     ) {
@@ -1480,7 +1480,7 @@ private:
 
     void pubcomp_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         pubcomp_reason_code /*reason_code*/,
         properties /*props*/
     ){
@@ -1510,7 +1510,7 @@ private:
 
     void subscribe_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         std::vector<topic_subopts> const& entries,
         properties props
     ) {
@@ -1724,7 +1724,7 @@ private:
 
     void unsubscribe_handler(
         epsp_t epsp,
-        packet_id_t packet_id,
+        packet_id_type packet_id,
         std::vector<topic_sharename> entries,
         properties props
     ) {

@@ -15,7 +15,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 acquire_unique_packet_id_op {
     this_type& ep;
-    std::optional<packet_id_t> pid_opt = std::nullopt;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type> pid_opt = std::nullopt;
     enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
@@ -57,7 +57,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id(
     return
         as::async_compose<
             CompletionToken,
-            void(std::optional<packet_id_t>)
+            void(std::optional<typename basic_packet_id_type<PacketIdBytes>::type>)
         >(
             acquire_unique_packet_id_op{
                 *this
@@ -70,7 +70,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
-std::optional<typename basic_endpoint<Role, PacketIdBytes, NextLayer>::packet_id_t>
+std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id() {
     auto pid = pid_man_.acquire_unique_id();
     if (pid) {

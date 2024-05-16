@@ -15,7 +15,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(std::optional<packet_id_t>)
+    void(std::optional<packet_id_type>)
 )
 client<Version, NextLayer>::acquire_unique_packet_id(
     CompletionToken&& token
@@ -27,7 +27,7 @@ client<Version, NextLayer>::acquire_unique_packet_id(
 
 template <protocol_version Version, typename NextLayer>
 inline
-std::optional<typename client<Version, NextLayer>::packet_id_t>
+std::optional<packet_id_type>
 client<Version, NextLayer>::acquire_unique_packet_id() {
     return ep_->acquire_unique_packet_id();
 }

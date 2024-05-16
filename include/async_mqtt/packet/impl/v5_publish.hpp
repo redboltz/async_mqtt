@@ -52,7 +52,7 @@ template <
 >
 inline
 basic_publish_packet<PacketIdBytes>::basic_publish_packet(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     StringViewLike&& topic_name,
     BufferSequence&& payloads,
     pub::opts pubopts,
@@ -142,7 +142,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
                 "v5::publish_packet qos0 but non 0 packet_id"
             );
         }
-        endian_store(0, packet_id_.data());
+        endian_store(typename basic_packet_id_type<PacketIdBytes>::type{0}, packet_id_.data());
     }
 }
 
@@ -229,8 +229,8 @@ std::size_t basic_publish_packet<PacketIdBytes>::num_of_const_buffer_sequence() 
 
 template <std::size_t PacketIdBytes>
 inline
-typename basic_publish_packet<PacketIdBytes>::packet_id_t basic_publish_packet<PacketIdBytes>::packet_id() const {
-    return endian_load<packet_id_t>(packet_id_.data());
+typename basic_packet_id_type<PacketIdBytes>::type basic_publish_packet<PacketIdBytes>::packet_id() const {
+    return endian_load<typename basic_packet_id_type<PacketIdBytes>::type>(packet_id_.data());
 }
 
 template <std::size_t PacketIdBytes>
@@ -496,7 +496,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf)
     // packet_id
     switch (pub::get_qos(fixed_header_)) {
     case qos::at_most_once:
-        endian_store(packet_id_t{0}, packet_id_.data());
+        endian_store(typename basic_packet_id_type<PacketIdBytes>::type{0}, packet_id_.data());
         break;
     case qos::at_least_once:
     case qos::exactly_once:

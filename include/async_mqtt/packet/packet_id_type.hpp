@@ -12,17 +12,20 @@
 
 namespace async_mqtt {
 
-template <std::size_t Bytes>
-struct packet_id_type;
+template <std::size_t PacketIdBytes>
+struct basic_packet_id_type;
 
 template <>
-struct packet_id_type<2> {
+struct basic_packet_id_type<2> {
     using type = std::uint16_t;
 };
+
 template <>
-struct packet_id_type<4> {
+struct basic_packet_id_type<4> {
     using type = std::uint32_t;
 };
+
+using packet_id_type = typename basic_packet_id_type<2>::type;
 
 } // namespace async_mqtt
 

@@ -27,7 +27,6 @@ namespace mi = boost::multi_index;
 template <std::size_t PacketIdBytes>
 class store {
 public:
-    using packet_id_t = typename packet_id_type<PacketIdBytes>::type;
     using store_packet_t = basic_store_packet_variant<PacketIdBytes>;
 
     store(as::any_io_executor exe):exe_{exe}{}
@@ -85,7 +84,7 @@ public:
         return false;
     }
 
-    bool erase(response_packet r, packet_id_t packet_id) {
+    bool erase(response_packet r, typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
         ASYNC_MQTT_LOG("mqtt_impl", info)
             << "[store] erase pid:" << packet_id;
         auto& idx = elems_.template get<tag_res_id>();
@@ -141,7 +140,7 @@ private:
             std::shared_ptr<as::steady_timer> tim = nullptr
         ): packet{force_move(packet)}, tim{force_move(tim)} {}
 
-        packet_id_t packet_id() const {
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id() const {
             return packet.packet_id();
         }
 

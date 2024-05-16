@@ -759,7 +759,7 @@ recv_op {
     bool process_qos2_publish(
         Self& self,
         protocol_version ver,
-        packet_id_t packet_id
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id
     ) {
         bool already_handled = false;
         if (ep.qos2_publish_handled_.find(packet_id) == ep.qos2_publish_handled_.end()) {

@@ -19,7 +19,7 @@ namespace am = async_mqtt;
 
 template <typename Ep, std::size_t PidBytes = 2>
 struct coro_base : as::coroutine {
-    using packet_id_t = typename am::packet_id_type<PidBytes>::type;
+    using packet_id_t = typename am::basic_packet_id_type<PidBytes>::type;
     coro_base(Ep& ep, std::string_view host, std::uint16_t port)
         :eps_{ep}, dest_{boost::asio::ip::make_address(host), port}
     {}

@@ -15,7 +15,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 register_packet_id_op {
     this_type& ep;
-    packet_id_t packet_id;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id;
     bool result = false;
     enum { dispatch, complete } state = dispatch;
 
@@ -49,7 +49,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(bool)
 )
 basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(
-    packet_id_t packet_id,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     CompletionToken&& token
 ) {
     ASYNC_MQTT_LOG("mqtt_api", info)
@@ -73,7 +73,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(packet_id_t pid) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type pid) {
     auto ret = pid_man_.register_id(pid);
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)

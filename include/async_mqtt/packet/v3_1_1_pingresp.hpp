@@ -13,7 +13,6 @@
 
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 
 /**
