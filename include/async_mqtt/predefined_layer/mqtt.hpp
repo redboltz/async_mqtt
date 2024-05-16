@@ -20,11 +20,13 @@
 /**
  * @defgroup predefined_layer
  * @ingroup underlying_layer
+ * @brief predefined underlying layers
  */
 
 /**
  * @defgroup predefined_layer_mqtt
  * @ingroup predefined_layer
+ * @brief predefined underlying layer (TCP)
  */
 
 namespace async_mqtt {

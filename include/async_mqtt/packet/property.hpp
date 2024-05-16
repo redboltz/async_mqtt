@@ -35,11 +35,13 @@
 /**
  * @defgroup property
  * @ingroup packet_v5
+ * @brief Property for MQTT v5.0 packets
  */
 
 /**
  * @defgroup property_internal
  * @ingroup property
+ * @brief Property internal implementation classes
  */
 
 namespace async_mqtt {

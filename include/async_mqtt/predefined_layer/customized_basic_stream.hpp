@@ -19,6 +19,7 @@ namespace as = boost::asio;
 /**
  * @defgroup predefined_customize
  * @ingroup underlying_customize
+ * @brief predefined underlying customize
  */
 
 /**

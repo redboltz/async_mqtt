@@ -73,11 +73,12 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type pid) {
-    auto ret = pid_man_.register_id(pid);
+basic_endpoint<Role, PacketIdBytes, NextLayer>::
+register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
+    auto ret = pid_man_.register_id(packet_id);
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "register_packet_id:" << pid << " result:" << ret;
+        << "register_packet_id:" << packet_id << " result:" << ret;
     return ret;
 }
 

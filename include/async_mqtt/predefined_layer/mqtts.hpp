@@ -25,6 +25,7 @@ namespace protocol {
 /**
  * @ingroup predefined_layer_mqtts
  * @brief Type alias of boost::asio::ssl::stream of mqtt
+ * @brief predefined underlying layer (TLS)
  */
 using mqtts = as::ssl::stream<mqtt>;
 

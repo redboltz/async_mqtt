@@ -29,8 +29,8 @@ client<Version, NextLayer>::register_packet_id(
 template <protocol_version Version, typename NextLayer>
 inline
 bool
-client<Version, NextLayer>::register_packet_id(packet_id_type pid) {
-    return ep_->register_packet_id(pid);
+client<Version, NextLayer>::register_packet_id(packet_id_type packet_id) {
+    return ep_->register_packet_id(packet_id);
 }
 
 } // namespace async_mqtt

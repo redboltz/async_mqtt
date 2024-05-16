@@ -17,6 +17,7 @@
 /**
  * @defgroup pingreq_v3_1_1
  * @ingroup packet_v3_1_1
+ * @brief PINGREQ packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {

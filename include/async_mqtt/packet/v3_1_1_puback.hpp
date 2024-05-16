@@ -19,12 +19,13 @@
 /**
  * @defgroup puback_v3_1_1
  * @ingroup packet_v3_1_1
+ * @brief PUBACK packet (v3.1.1)
  */
 
 /**
  * @defgroup puback_v3_1_1_detail
  * @ingroup puback_v3_1_1
- * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v3_1_1 {

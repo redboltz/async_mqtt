@@ -21,12 +21,13 @@
 /**
  * @defgroup pubcomp_v5
  * @ingroup packet_v5
+ * @brief PUBCOMP packet (v5.0)
  */
 
 /**
  * @defgroup pubcomp_v5_detail
  * @ingroup pubcomp_v5
- * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 

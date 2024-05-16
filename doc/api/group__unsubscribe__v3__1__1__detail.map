@@ -1,4 +1,4 @@
 <map id="Unsubscribe_v3_1_1_detail" name="Unsubscribe_v3_1_1_detail">
-<area shape="rect" id="Node000002" href="$group__unsubscribe__v3__1__1.html" title=" " alt="" coords="5,14,160,42"/>
-<area shape="rect" id="Node000001" title="packet internal detailes (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="208,5,362,50"/>
+<area shape="rect" id="Node000002" href="$group__unsubscribe__v3__1__1.html" title="UNSUBSCRIBE packet (v3.1.1)" alt="" coords="5,14,160,42"/>
+<area shape="rect" id="Node000001" title="packet internal details (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="208,5,362,50"/>
 </map>

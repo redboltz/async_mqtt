@@ -16,6 +16,7 @@
  * @ingroup subscribe_v5
  * @ingroup publish_v3_1_1
  * @ingroup publish_v5
+ * @brief QoS
  */
 
 namespace async_mqtt {

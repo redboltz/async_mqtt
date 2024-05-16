@@ -19,6 +19,7 @@ namespace async_mqtt {
 /**
  * @defgroup property_variant
  * @ingroup property
+ * @brief variant class for all properties
  */
 
 /**

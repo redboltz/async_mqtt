@@ -50,11 +50,13 @@
 /**
  * @defgroup packet_variant
  * @ingroup packet
+ * @brief variant class for all packets
  */
 
 /**
  * @defgroup packet_variant_detail
  * @ingroup packet_variant
+ * @brief packet_variant internal details
  */
 
 namespace async_mqtt {

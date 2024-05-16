@@ -15,6 +15,7 @@
 /**
  * @defgroup subscribe_options
  * @ingroup subscribe_v5
+ * @brief SUBSCRIBE packet flags
  */
 
 namespace async_mqtt {

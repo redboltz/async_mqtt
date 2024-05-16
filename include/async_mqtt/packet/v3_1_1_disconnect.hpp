@@ -25,6 +25,7 @@
 /**
  * @defgroup disconnect_v3_1_1
  * @ingroup packet_v3_1_1
+ * @brief DISCONNECT packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {

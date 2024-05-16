@@ -20,6 +20,7 @@
 /**
  * @defgroup buffer
  * @ingroup packet_detail
+ * @brief Reference counting immutable buffer
  */
 
 namespace async_mqtt {
@@ -180,76 +181,175 @@ public:
 
     {}
 
+    /**
+     * @brief get an iterator to the beginning
+     * @return iterator
+     */
     constexpr const_iterator begin() const noexcept {
         return view_.begin();
     }
+
+    /**
+     * @brief get an iterator to the beginning
+     * @return iterator
+     */
     constexpr const_iterator cbegin() const noexcept {
         return view_.cbegin();
     }
+
+    /**
+     * @brief get an iterator to the end
+     * @return iterator
+     */
     constexpr const_iterator end() const noexcept {
         return view_.end();
     }
+
+    /**
+     * @brief get an iterator to the end
+     * @return iterator
+     */
     constexpr const_iterator cend() const noexcept {
         return view_.cend();
     }
+
+    /**
+     * @brief get a reverse terator to the beginning
+     * @return iterator
+     */
     constexpr const_reverse_iterator rbegin() const noexcept {
         return view_.rbegin();
     }
+
+    /**
+     * @brief get a reverse terator to the beginning
+     * @return iterator
+     */
     constexpr const_reverse_iterator crbegin() const noexcept {
         return view_.crbegin();
     }
+
+    /**
+     * @brief get a reverse terator to the end
+     * @return iterator
+     */
     constexpr const_reverse_iterator rend() const noexcept {
         return view_.rend();
     }
+
+    /**
+     * @brief get a reverse terator to the end
+     * @return iterator
+     */
     constexpr const_reverse_iterator crend() const noexcept {
         return view_.crend();
     }
 
+    /**
+     * @brief get a reference of the specific character
+     * @param pos the position of the character
+     * @return reference of the character
+     */
     constexpr const_reference operator[](size_type pos) const {
         return view_[pos];
     }
+
+    /**
+     * @brief get a reference of the specific character with bounds checking
+     * @param pos the position of the character
+     * @return reference of the character
+     */
     constexpr const_reference at(size_type pos) const {
         return view_.at(pos);
     }
 
+    /**
+     * @brief get a reference of the first character
+     * @return reference of the character
+     */
     constexpr const_reference front() const {
         return view_.front();
     }
+
+    /**
+     * @brief get a reference of the last character
+     * @return reference of the character
+     */
     constexpr const_reference back() const {
         return view_.back();
     }
 
+    /**
+     * @brief get a pointer of the first character of the buffer
+     * @return pointer
+     */
     constexpr const_pointer data() const noexcept {
         return view_.data();
     }
 
+    /**
+     * @brief get the number of characters
+     * @return the number of characters
+     */
     constexpr size_type size() const noexcept {
         return view_.size();
     }
+
+    /**
+     * @brief get the number of characters
+     * @return the number of characters
+     */
     constexpr size_type length() const noexcept {
         return view_.length();
     }
+
+    /**
+     * @brief get the largeset possible number of the buffer
+     * @return the number of characters
+     */
     constexpr size_type max_size() const noexcept {
         return view_.max_size();
     }
 
+    /**
+     * @brief checking the buffer is empty
+     * @return true if the buffer is empty, otherwise false
+     */
     constexpr bool empty() const noexcept {
         return view_.empty();
     }
 
+    /**
+     * @brief remove the first n characters from the buffer
+     * @param n remove length
+     */
     constexpr void remove_prefix(size_type n) {
         view_.remove_prefix(n);
     }
 
+    /**
+     * @brief remove the last n characters from the buffer
+     * @param n remove length
+     */
     constexpr void remove_suffix(size_type n) {
         view_.remove_suffix(n);
     }
 
+    /**
+     * @brief swap the buffer
+     * @param buf target
+     */
     void swap(buffer& buf) noexcept {
         view_.swap(buf.view_);
         life_.swap(buf.life_);
     }
 
+    /**
+     * @brief copy  the buffer characters
+     * @param dest  destination
+     * @param count copy length
+     * @param pos   copy start position
+     */
     size_type copy(char* dest, size_type count, size_type pos = 0 ) const {
         return view_.copy(dest, count, pos);
     }
@@ -280,18 +380,70 @@ public:
         return buffer(view_.substr(pos, count), force_move(life_));
     }
 
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param buf target
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(buffer const& buf) const noexcept {
         return view_.compare(buf.view_);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param v target
+     * @return negative value if if this view is less that the v's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the v's view.
+     */
     constexpr int compare(std::string_view const& v) const noexcept {
         return view_.compare(v);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param buf     target
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(size_type pos1, size_type count1, buffer const& buf) const noexcept {
         return view_.compare(pos1, count1, buf.view_);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param v      target
+     * @return negative value if if this view is less that the v's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the v's view.
+     */
     constexpr int compare(size_type pos1, size_type count1, std::string_view const& v) const noexcept {
         return view_.compare(pos1, count1, v);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param buf     target
+     * @param pos2   start position of the buf's view
+     * @param count2 length of the buf's view
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(
         size_type pos1,
         size_type count1,
@@ -301,6 +453,19 @@ public:
     ) const noexcept {
         return view_.compare(pos1, count1, buf.view_, pos2, count2);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param v      target
+     * @param pos2   start position of the buf's view
+     * @param count2 length of the buf's view
+     * @return negative value if if this view is less that the v's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the v's view.
+     */
     constexpr int compare(
         size_type pos1,
         size_type count1,
@@ -310,12 +475,45 @@ public:
     ) const noexcept {
         return view_.compare(pos1, count1, v, pos2, count2);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param s      target
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(char const* s) const noexcept {
         return view_.compare(s);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param s      target
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(size_type pos1, size_type count1, char const* s) const noexcept {
         return view_.compare(pos1, count1, s);
     }
+
+    /**
+     * @brief compare buffer
+     * Compare only the view.
+     * @param pos1   start position of the this view
+     * @param count1 length of the this view
+     * @param s      target
+     * @param pos2   start position of the s
+     * @param count2 length of the s
+     * @return negative value if if this view is less that the buf's view.
+     *         zero the both view has the same sequences of the characters.
+     *         posiative value if if this view is greater that the buf's view.
+     */
     constexpr int compare(
         size_type pos1,
         size_type count1,
@@ -326,34 +524,94 @@ public:
         return view_.compare(pos1, count1, s, pos2, count2);
     }
 
+    /**
+     * @brief find the first substring equal to the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type find(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find(buf.view_, pos);
     }
+
+    /**
+     * @brief find the first substring equal to the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type find(std::string_view v, size_type pos = 0) const noexcept {
         return view_.find(v, pos);
     }
+
+    /**
+     * @brief find the first substring equal to the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type find(char ch, size_type pos = 0) const noexcept {
         return view_.find(ch, pos);
     }
+
+    /**
+     * @brief find the first substring equal to the given view
+     * @param s     view to search for
+     * @param pos   position at which to start the search
+     * @param count search length
+     */
     constexpr size_type find(char const* s, size_type pos, size_type count) const {
         return view_.find(s, pos, count);
     }
+
+    /**
+     * @brief find the first substring equal to the given view
+     * @param s     view to search for
+     * @param pos   position at which to start the search
+     */
     constexpr size_type find(char const* s, size_type pos = 0) const {
         return view_.find(s, pos);
     }
 
+    /**
+     * @brief find the last substring equal to the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type rfind(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.rfind(buf.view_, pos);
     }
+
+    /**
+     * @brief find the last substring equal to the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type rfind( std::string_view v, size_type pos = npos) const noexcept {
         return view_.rfind(v, pos);
     }
+
+    /**
+     * @brief find the last substring equal to the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     */
     constexpr size_type rfind(char ch, size_type pos = npos) const noexcept {
         return view_.rfind(ch, pos);
     }
+
+    /**
+     * @brief find the last substring equal to the given view
+     * @param s     view to search for
+     * @param pos   position at which to start the search
+     * @param count search length
+     */
     constexpr size_type rfind(char const* s, size_type pos, size_type count) const {
         return view_.rfind(s, pos, count);
     }
+
+    /**
+     * @brief find the last substring equal to the given view
+     * @param s     view to search for
+     * @param pos   position at which to start the search
+     */
     constexpr size_type rfind(char const* s, size_type pos = npos) const {
         return view_.rfind(s, pos);
     }

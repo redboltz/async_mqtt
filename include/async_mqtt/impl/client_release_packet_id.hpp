@@ -29,8 +29,8 @@ client<Version, NextLayer>::release_packet_id(
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client<Version, NextLayer>::release_packet_id(packet_id_type pid) {
-    ep_->release_packet_id(pid);
+client<Version, NextLayer>::release_packet_id(packet_id_type packet_id) {
+    ep_->release_packet_id(packet_id);
 }
 
 } // namespace async_mqtt

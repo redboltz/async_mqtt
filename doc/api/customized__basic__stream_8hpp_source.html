@@ -118,46 +118,46 @@ $(function(){initNavTree('customized__basic__stream_8hpp_source.html',''); initR
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>as = boost::asio;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Protocol, <span class="keyword">typename</span> Executor&gt;</div>
-<div class="foldopen" id="foldopen00029" data-start="{" data-end="};">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1layer__customize_3_01as_1_1basic__stream__socket_3_01Protocol_00_01Executor_01_4_01_4.html">   29</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1layer__customize.html">layer_customize</a>&lt;as::basic_stream_socket&lt;Protocol, Executor&gt;&gt; {</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keyword">typename</span> CompletionToken</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    &gt;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">static</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    async_close(</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        as::basic_stream_socket&lt;Protocol, Executor&gt;&amp; stream,</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        CompletionToken&amp;&amp; token</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    ) {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">return</span> as::async_compose&lt;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            CompletionToken,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            void(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> <span class="keyword">const</span>&amp; ec)</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        &gt; (</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            [&amp;stream](<span class="keyword">auto</span>&amp; self) {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <span class="keywordflow">if</span> (stream.is_open()) {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                    ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                        &lt;&lt; <span class="stringliteral">&quot;TCP close&quot;</span>;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                    stream.close(ec);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                }</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                    ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                        &lt;&lt; <span class="stringliteral">&quot;TCP already closed&quot;</span>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                self.complete(ec);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            },</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            token</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        );</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>};</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Protocol, <span class="keyword">typename</span> Executor&gt;</div>
+<div class="foldopen" id="foldopen00030" data-start="{" data-end="};">
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1layer__customize_3_01as_1_1basic__stream__socket_3_01Protocol_00_01Executor_01_4_01_4.html">   30</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1layer__customize.html">layer_customize</a>&lt;as::basic_stream_socket&lt;Protocol, Executor&gt;&gt; {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keyword">typename</span> CompletionToken</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    &gt;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">static</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    async_close(</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        as::basic_stream_socket&lt;Protocol, Executor&gt;&amp; stream,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        CompletionToken&amp;&amp; token</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    ) {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">return</span> as::async_compose&lt;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            CompletionToken,</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            void(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> <span class="keyword">const</span>&amp; ec)</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        &gt; (</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            [&amp;stream](<span class="keyword">auto</span>&amp; self) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="keywordflow">if</span> (stream.is_open()) {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                    ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                        &lt;&lt; <span class="stringliteral">&quot;TCP close&quot;</span>;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                    stream.close(ec);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                    ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                        &lt;&lt; <span class="stringliteral">&quot;TCP already closed&quot;</span>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                self.complete(ec);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            },</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            token</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        );</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>};</div>
 </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP</span></div>
 <div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:36</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">async_mqtt::severity_level::info</a></div><div class="ttdeci">@ info</div><div class="ttdoc">info level api call is output</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1layer__customize_html"><div class="ttname"><a href="structasync__mqtt_1_1layer__customize.html">async_mqtt::layer_customize</a></div><div class="ttdoc">customization class template for underlying layer In order to adapt your layer to async_mqtt,...</div><div class="ttdef"><b>Definition</b> stream_traits.hpp:102</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1layer__customize_html"><div class="ttname"><a href="structasync__mqtt_1_1layer__customize.html">async_mqtt::layer_customize</a></div><div class="ttdoc">customization class template for underlying layer In order to adapt your layer to async_mqtt,...</div><div class="ttdef"><b>Definition</b> stream_traits.hpp:103</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

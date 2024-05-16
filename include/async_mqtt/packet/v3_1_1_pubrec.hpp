@@ -19,12 +19,13 @@
 /**
  * @defgroup pubrec_v3_1_1
  * @ingroup packet_v3_1_1
+ * @brief PUBREC packet (v3.1.1)
  */
 
 /**
  * @defgroup pubrec_v3_1_1_detail
  * @ingroup pubrec_v3_1_1
- * @brief packet internal detailes (e.g. type-aliased API's actual type information)
+ * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v3_1_1 {

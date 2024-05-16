@@ -229,9 +229,14 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
 <div class="paragraph">
 <p>Only if you want to customize some of the four points, then define the member function as follows:</p>
 </div>
+<div class="paragraph">
+<p>customized_your_own_stream.hpp</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// Partial or full specialization here</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/util/stream_traits.hpp&gt;</span><span class="cp">
+</span>
+<span class="c1">// Partial or full specialization here</span>
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">NextLayer</span><span class="p">&gt;</span>
 <span class="k">struct</span> <span class="nc">layer_customize</span><span class="o">&lt;</span><span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
 
@@ -247,37 +252,19 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
     <span class="p">&gt;</span>
     <span class="k">static</span> <span class="k">auto</span>
     <span class="nf">async_read</span><span class="p">(</span>
-        <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
         <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
         <span class="n">MutableBufferSequence</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">mbs</span><span class="p">,</span>
         <span class="n">CompletionToken</span><span class="o">&amp;&amp;</span> <span class="n">token</span>
     <span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_initiate</span><span class="o">&lt;</span>
+        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_compose</span><span class="o">&lt;</span>
             <span class="n">CompletionToken</span><span class="p">,</span>
-            <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">)</span>
+            <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
         <span class="o">&gt;</span> <span class="p">(</span>
-            <span class="p">[]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">completion_handler</span><span class="p">,</span>
-                <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
-                <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
-                <span class="n">MutableBufferSequence</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">mbs</span>
-            <span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">stream</span><span class="p">.</span><span class="n">your_async_read_function</span><span class="p">(</span>
-                    <span class="n">mbs</span><span class="p">,</span>
-                    <span class="c1">// You must bind exe to the handler if you use underlying async_function</span>
-                    <span class="c1">// using the completion handler that you defined.</span>
-                    <span class="n">as</span><span class="o">::</span><span class="n">bind_executor</span><span class="p">(</span>
-                        <span class="n">exe</span><span class="p">,</span>
-                        <span class="p">[</span><span class="n">completion_handler</span> <span class="o">=</span> <span class="n">force_move</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)]</span>
-                        <span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span> <span class="k">mutable</span> <span class="p">{</span>
-                            <span class="n">force_move</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)(</span><span class="n">ec</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
-                        <span class="p">}</span>
-                    <span class="p">)</span>
-                <span class="p">);</span>
+            <span class="n">async_read_impl</span><span class="o">&lt;</span><span class="n">MutableBufferSequence</span><span class="o">&gt;</span><span class="p">{</span>
+                <span class="n">stream</span><span class="p">,</span>
+                <span class="n">mbs</span>
             <span class="p">},</span>
-            <span class="n">token</span><span class="p">,</span>
-            <span class="n">exe</span><span class="p">,</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">stream</span><span class="p">),</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">mbs</span><span class="p">)</span>
+            <span class="n">token</span>
         <span class="p">);</span>
     <span class="p">}</span>
 
@@ -288,39 +275,22 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
     <span class="p">&gt;</span>
     <span class="k">static</span> <span class="k">auto</span>
     <span class="nf">async_write</span><span class="p">(</span>
-        <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
         <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
         <span class="n">ConstBufferSequence</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">cbs</span><span class="p">,</span>
         <span class="n">CompletionToken</span><span class="o">&amp;&amp;</span> <span class="n">token</span>
     <span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_initiate</span><span class="o">&lt;</span>
+        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_compose</span><span class="o">&lt;</span>
             <span class="n">CompletionToken</span><span class="p">,</span>
-            <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">)</span>
+            <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
         <span class="o">&gt;</span> <span class="p">(</span>
-            <span class="p">[]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">completion_handler</span><span class="p">,</span>
-                <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
-                <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
-                <span class="n">ConstBufferSequence</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">cbs</span>
-            <span class="p">)</span> <span class="p">{</span>
-                <span class="n">stream</span><span class="p">.</span><span class="n">your_async_write_function</span><span class="p">(</span>
-                    <span class="n">cbs</span><span class="p">,</span>
-                    <span class="c1">// You must bind exe to the handler if you use underlying async_function</span>
-                    <span class="c1">// using the completion handler that you defined.</span>
-                    <span class="n">as</span><span class="o">::</span><span class="n">bind_executor</span><span class="p">(</span>
-                        <span class="n">exe</span><span class="p">,</span>
-                        <span class="p">[</span><span class="n">completion_handler</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">CompletionToken</span><span class="o">&gt;</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)]</span>
-                        <span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec_write</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span> <span class="k">mutable</span> <span class="p">{</span>
-                            <span class="n">force_move</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)(</span><span class="n">ec_write</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
-                        <span class="p">}</span>
-                    <span class="p">)</span>
-                <span class="p">);</span>
+            <span class="n">async_write_impl</span><span class="o">&lt;</span><span class="n">ConstBufferSequence</span><span class="o">&gt;</span><span class="p">{</span>
+                <span class="n">stream</span><span class="p">,</span>
+                <span class="n">cbs</span>
             <span class="p">},</span>
-            <span class="n">token</span><span class="p">,</span>
-            <span class="n">exe</span><span class="p">,</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">stream</span><span class="p">),</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">cbs</span><span class="p">)</span>
+            <span class="n">token</span>
         <span class="p">);</span>
     <span class="p">}</span>
+
 
     <span class="c1">// define if you want to customize async_close process</span>
     <span class="k">template</span> <span class="o">&lt;</span>
@@ -328,36 +298,22 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
     <span class="p">&gt;</span>
     <span class="k">static</span> <span class="k">auto</span>
     <span class="nf">async_close</span><span class="p">(</span>
-        <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
-        <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
+        <span class="n">bs</span><span class="o">::</span><span class="n">websocket</span><span class="o">::</span><span class="n">stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
         <span class="n">CompletionToken</span><span class="o">&amp;&amp;</span> <span class="n">token</span>
     <span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_initiate</span><span class="o">&lt;</span>
+        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_compose</span><span class="o">&lt;</span>
             <span class="n">CompletionToken</span><span class="p">,</span>
             <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span>
         <span class="o">&gt;</span> <span class="p">(</span>
-            <span class="p">[]</span> <span class="p">(</span><span class="k">auto</span> <span class="n">completion_handler</span><span class="p">,</span>
-                <span class="n">as</span><span class="o">::</span><span class="n">any_io_executor</span> <span class="n">exe</span><span class="p">,</span>
-                <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span>
-            <span class="p">)</span> <span class="p">{</span>
-                <span class="n">stream</span><span class="p">.</span><span class="n">your_async_close_function</span><span class="p">(</span>
-                    <span class="c1">// You must bind exe to the handler if you use underlying async_function</span>
-                    <span class="c1">// using the completion handler that you defined.</span>
-                    <span class="n">as</span><span class="o">::</span><span class="n">bind_executor</span><span class="p">(</span>
-                        <span class="n">exe</span><span class="p">,</span>
-                        <span class="p">[</span><span class="n">completion_handler</span> <span class="o">=</span> <span class="n">force_move</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)]</span>
-                        <span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec_stream</span><span class="p">)</span> <span class="k">mutable</span> <span class="p">{</span>
-                            <span class="n">force_move</span><span class="p">(</span><span class="n">completion_handler</span><span class="p">)(</span><span class="n">ec_stream</span><span class="p">);</span>
-                        <span class="p">}</span>
-                    <span class="p">)</span>
-                <span class="p">);</span>
+            <span class="n">async_close_impl</span><span class="p">{</span>
+                <span class="n">stream</span>
             <span class="p">},</span>
-            <span class="n">token</span><span class="p">,</span>
-            <span class="n">exe</span><span class="p">,</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+            <span class="n">token</span>
         <span class="p">);</span>
     <span class="p">}</span>
-<span class="p">};</span></code></pre>
+<span class="p">};</span>
+
+<span class="c1">// define async_read_impl, async_write_impl, and async_close_impl for your own layer here</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -367,7 +323,7 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
 <p>See <a href="https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/" class="bare">https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/</a></p>
 </div>
 <div class="paragraph">
-<p>It helps defining your own underlaying layer.</p>
+<p><code>customized_*_stream.hpp</code> help defining your own underlaying layer.</p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">

@@ -13,6 +13,7 @@
 /**
  * @defgroup predefined_layer_ws
  * @ingroup predefined_layer
+ * @brief predefined underlying layer (Websocket)
  */
 
 namespace async_mqtt {

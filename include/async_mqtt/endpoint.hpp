@@ -243,7 +243,7 @@ public:
      * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
      * \n This function should be called before send() call.
      * @note By default timeout is not set.
-     * @param val if 0, timer is not set, otherwise set val milliseconds.
+     * @param ms if 0, timer is not set, otherwise set val milliseconds.
      */
     void set_pingresp_recv_timeout_ms(std::size_t ms) {
         if (ms == 0) {
@@ -416,7 +416,7 @@ public:
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
-     * @params fil  if `match` then matched types are targets. if `except` then not matched types are targets.
+     * @param fil  if `match` then matched types are targets. if `except` then not matched types are targets.
      * @param types target control_packet_types
      * @param token the param is packet_variant_type
      * @return deduced by token
@@ -533,14 +533,14 @@ public:
      * @return If true, success, otherwise the packet_id has already been used.
      * @note This function is SYNC function that thread unsafe without strand.
      */
-    bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type pid);
+    bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
      * @note This function is SYNC function that thread unsafe without strand.
      */
-    void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type pid);
+    void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
      * @brief Get processed but not released QoS2 packet ids

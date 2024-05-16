@@ -25,6 +25,7 @@
 /**
  * @defgroup pingresp_v5
  * @ingroup packet_v5
+ * @brief PINGRESP packet (v5.0)
  */
 
 namespace async_mqtt::v5 {
