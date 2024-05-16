@@ -15,7 +15,7 @@
 #include <async_mqtt/packet/v5_connect.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>

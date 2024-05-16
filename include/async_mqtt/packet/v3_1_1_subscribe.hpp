@@ -16,7 +16,7 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
-#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
 
 /**
  * @defgroup subscribe_v3_1_1

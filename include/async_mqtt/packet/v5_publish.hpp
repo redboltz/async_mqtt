@@ -10,7 +10,7 @@
 #include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/variable_bytes.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
 #include <async_mqtt/type.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>

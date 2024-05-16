@@ -21,7 +21,6 @@
 #include <async_mqtt/topic_alias_recv.hpp>
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
-#include <async_mqtt/variable_bytes.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>
@@ -100,5 +99,6 @@
 #include <async_mqtt/util/string_view_helper.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
 
 #endif // ASYNC_MQTT_ALL_HPP
