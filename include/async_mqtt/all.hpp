@@ -15,7 +15,7 @@
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/setup_log.hpp>
-#include <async_mqtt/store.hpp>
+#include <async_mqtt/util/store.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/stream_traits.hpp>
 #include <async_mqtt/topic_alias_recv.hpp>
