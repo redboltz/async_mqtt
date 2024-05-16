@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_ID_MANAGER_HPP)
-#define ASYNC_MQTT_PACKET_ID_MANAGER_HPP
+#if !defined(ASYNC_MQTT_UTIL_PACKET_ID_MANAGER_HPP)
+#define ASYNC_MQTT_UTIL_PACKET_ID_MANAGER_HPP
 
 #include <optional>
 
@@ -73,4 +73,4 @@ private:
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_ID_MANAGER_HPP
+#endif // ASYNC_MQTT_UTIL_PACKET_ID_MANAGER_HPP

@@ -20,7 +20,7 @@
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/topic_alias_recv.hpp>
-#include <async_mqtt/packet_id_manager.hpp>
+#include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
