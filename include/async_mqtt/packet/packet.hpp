@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_HPP)
 #define ASYNC_MQTT_PACKET_HPP
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/packet/fixed_header.hpp>
 

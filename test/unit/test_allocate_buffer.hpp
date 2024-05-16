@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_TEST_UNI_ALLOCATE_BUFFER_HPP)
 #define ASYNC_MQTT_TEST_UNI_ALLOCATE_BUFFER_HPP
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 
 namespace async_mqtt {

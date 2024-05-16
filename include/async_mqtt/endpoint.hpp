@@ -14,15 +14,14 @@
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
-#include <async_mqtt/stream.hpp>
-#include <async_mqtt/store.hpp>
+#include <async_mqtt/util/stream.hpp>
+#include <async_mqtt/util/store.hpp>
 #include <async_mqtt/role.hpp>
-#include <async_mqtt/log.hpp>
-#include <async_mqtt/topic_alias_send.hpp>
-#include <async_mqtt/topic_alias_recv.hpp>
-#include <async_mqtt/packet_id_manager.hpp>
+#include <async_mqtt/util/log.hpp>
+#include <async_mqtt/util/topic_alias_send.hpp>
+#include <async_mqtt/util/topic_alias_recv.hpp>
+#include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
 /**

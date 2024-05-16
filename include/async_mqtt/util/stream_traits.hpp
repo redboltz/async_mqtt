@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_STREAM_TRAITS_HPP)
-#define ASYNC_MQTT_STREAM_TRAITS_HPP
+#if !defined(ASYNC_MQTT_UTIL_STREAM_TRAITS_HPP)
+#define ASYNC_MQTT_UTIL_STREAM_TRAITS_HPP
 
 #include <type_traits>
 #include <vector>
@@ -172,4 +172,4 @@ struct has_async_close<
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_STREAM_TRAITS_HPP
+#endif // ASYNC_MQTT_UTIL_STREAM_TRAITS_HPP

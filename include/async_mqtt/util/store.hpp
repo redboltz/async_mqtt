@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_STORE_HPP)
-#define ASYNC_MQTT_STORE_HPP
+#if !defined(ASYNC_MQTT_UTIL_STORE_HPP)
+#define ASYNC_MQTT_UTIL_STORE_HPP
 
 #include <boost/asio/steady_timer.hpp>
 #include <boost/multi_index_container.hpp>
@@ -14,7 +14,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/packet/store_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
@@ -187,4 +187,4 @@ private:
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_STORE_HPP
+#endif // ASYNC_MQTT_UTIL_STORE_HPP

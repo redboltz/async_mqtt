@@ -7,9 +7,9 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_SUBACK_HPP)
 #define ASYNC_MQTT_PACKET_V5_SUBACK_HPP
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 

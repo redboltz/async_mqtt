@@ -17,7 +17,7 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 #include <broker/topic_filter.hpp>
 

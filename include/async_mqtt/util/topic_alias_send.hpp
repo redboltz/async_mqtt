@@ -4,13 +4,14 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_TOPIC_ALIAS_SEND_HPP)
-#define ASYNC_MQTT_TOPIC_ALIAS_SEND_HPP
+#if !defined(ASYNC_MQTT_UTIL_TOPIC_ALIAS_SEND_HPP)
+#define ASYNC_MQTT_UTIL_TOPIC_ALIAS_SEND_HPP
 
 #include <string>
 #include <string_view>
 #include <unordered_map>
 #include <array>
+#include <chrono>
 
 #include <boost/assert.hpp>
 #include <boost/multi_index_container.hpp>
@@ -18,11 +19,10 @@
 #include <boost/multi_index/key.hpp>
 
 #include <async_mqtt/constant.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <optional>
 #include <async_mqtt/util/value_allocator.hpp>
-#include <async_mqtt/util/time_point.hpp>
 
 namespace async_mqtt {
 
@@ -129,7 +129,7 @@ private:
     topic_alias_t max_;
 
     struct entry {
-        entry(std::string topic, topic_alias_t alias, time_point_t tp)
+        entry(std::string topic, topic_alias_t alias, std::chrono::time_point<std::chrono::steady_clock> tp)
             : topic{force_move(topic)}, alias{alias}, tp{force_move(tp)} {}
 
         std::string_view get_topic_as_view() const {
@@ -138,7 +138,7 @@ private:
 
         std::string topic;
         topic_alias_t alias;
-        time_point_t tp;
+        std::chrono::time_point<std::chrono::steady_clock> tp;
     };
     struct tag_tp {};
     struct tag_alias {};
@@ -167,4 +167,4 @@ private:
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_TOPIC_ALIAS_SEND_HPP
+#endif // ASYNC_MQTT_UTIL_TOPIC_ALIAS_SEND_HPP

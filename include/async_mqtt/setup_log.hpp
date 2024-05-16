@@ -14,7 +14,7 @@
 // then you can write your own logging setup code.
 // setup_log() could be  a good reference for your own logging setup code.
 
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 #if defined(ASYNC_MQTT_USE_LOG)
 

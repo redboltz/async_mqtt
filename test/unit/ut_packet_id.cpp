@@ -9,7 +9,7 @@
 
 #include <limits>
 
-#include <async_mqtt/packet_id_manager.hpp>
+#include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet_id)

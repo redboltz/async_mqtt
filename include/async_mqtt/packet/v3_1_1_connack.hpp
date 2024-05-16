@@ -8,8 +8,8 @@
 #define ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
 
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 

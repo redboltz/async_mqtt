@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP)
 #define ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP
 
-#include <async_mqtt/stream.hpp>
+#include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 
 namespace async_mqtt {

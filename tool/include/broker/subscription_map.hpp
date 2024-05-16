@@ -14,7 +14,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 #include <broker/topic_filter.hpp>
 

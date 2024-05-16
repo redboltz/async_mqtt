@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP)
 #define ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP
 
-#include <async_mqtt/stream.hpp>
+#include <async_mqtt/util/stream.hpp>
 
 namespace async_mqtt {
 

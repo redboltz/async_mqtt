@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_TOPIC_ALIAS_RECV_HPP)
-#define ASYNC_MQTT_TOPIC_ALIAS_RECV_HPP
+#if !defined(ASYNC_MQTT_UTIL_TOPIC_ALIAS_RECV_HPP)
+#define ASYNC_MQTT_UTIL_TOPIC_ALIAS_RECV_HPP
 
 #include <string>
 #include <string_view>
@@ -19,7 +19,7 @@
 
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/type.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt {
@@ -103,4 +103,4 @@ private:
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_TOPIC_ALIAS_RECV_HPP
+#endif // ASYNC_MQTT_UTIL_TOPIC_ALIAS_RECV_HPP

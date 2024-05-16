@@ -38,7 +38,7 @@
 #endif
 
 #include <broker/subscription_map.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/string_view_helper.hpp>
 
 

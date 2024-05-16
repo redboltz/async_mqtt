@@ -14,7 +14,7 @@
 
 #include <async_mqtt/packet/v3_1_1_pubcomp.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/buffer.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>

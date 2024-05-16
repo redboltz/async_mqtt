@@ -4,10 +4,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP)
-#define ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP
+#if !defined(ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP)
+#define ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP
 
-#include <async_mqtt/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
@@ -224,4 +224,4 @@ packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP
+#endif // ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_HOST_PORT_HPP)
-#define ASYNC_MQTT_HOST_PORT_HPP
+#if !defined(ASYNC_MQTT_UTIL_HOST_PORT_HPP)
+#define ASYNC_MQTT_UTIL_HOST_PORT_HPP
 
 #include <string>
 
@@ -14,7 +14,7 @@
 
 #include <async_mqtt/util/move.hpp>
 #include <optional>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
 
@@ -79,4 +79,4 @@ inline std::optional<host_port> host_port_from_string(std::string_view str) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_HOST_PORT_HPP
+#endif // ASYNC_MQTT_UTIL_HOST_PORT_HPP

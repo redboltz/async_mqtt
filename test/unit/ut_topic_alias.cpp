@@ -7,8 +7,8 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/topic_alias_send.hpp>
-#include <async_mqtt/topic_alias_recv.hpp>
+#include <async_mqtt/util/topic_alias_send.hpp>
+#include <async_mqtt/util/topic_alias_recv.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_topic_alias)
 

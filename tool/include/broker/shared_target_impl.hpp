@@ -111,7 +111,7 @@ template <typename Sp>
 inline shared_target<Sp>::entry::entry(
     std::string share_name,
     session_state<Sp>& ss,
-    time_point_t tp)
+    std::chrono::time_point<std::chrono::steady_clock> tp)
     : share_name { force_move(share_name) },
       ssr { ss },
       tp { force_move(tp) }
