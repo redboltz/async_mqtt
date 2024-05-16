@@ -207,8 +207,8 @@ struct bench_context {
 
 template <typename ClientInfo>
 struct bench {
-    using ep_t = typename ClientInfo::client_type;
-    using next_layer_t = typename ep_t::next_layer_type;
+    using ep_type = typename ClientInfo::client_type;
+    using next_layer_type = typename ep_type::next_layer_type;
     bench(
         std::vector<ClientInfo>& cis,
         bench_context& bc
@@ -1913,11 +1913,10 @@ int main(int argc, char *argv[]) {
         );
 
         if (protocol == "mqtt") {
-            using client_t = am::endpoint<am::role::client, am::protocol::mqtt>;
             struct client_info : client_info_base {
-                using client_type = client_t;
+                using client_type = am::endpoint<am::role::client, am::protocol::mqtt>;
                 client_info(
-                    std::shared_ptr<client_t> c,
+                    std::shared_ptr<client_type> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -1938,7 +1937,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                std::shared_ptr<client_t> c;
+                std::shared_ptr<client_type> c;
             };
 
             std::vector<client_info> cis;
@@ -1946,7 +1945,7 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    client_t::create(
+                    client_info::client_type::create(
                         version,
                         as::make_strand(iocs.at(i % num_of_iocs).get_executor())
                     ),
@@ -1971,11 +1970,10 @@ int main(int argc, char *argv[]) {
         }
         else if (protocol == "mqtts") {
 #if defined(ASYNC_MQTT_USE_TLS)
-            using client_t = am::endpoint<am::role::client, am::protocol::mqtts>;
             struct client_info : client_info_base {
-                using client_type = client_t;
+                using client_type = am::endpoint<am::role::client, am::protocol::mqtts>;
                 client_info(
-                    std::shared_ptr<client_t> c,
+                    std::shared_ptr<client_type> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -1996,7 +1994,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                std::shared_ptr<client_t> c;
+                std::shared_ptr<client_type> c;
             };
 
             std::vector<client_info> cis;
@@ -2012,7 +2010,7 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(as::ssl::verify_none);
                 }
                 cis.emplace_back(
-                    client_t::create(
+                    client_info::client_type::create(
                         version,
                         as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
                         ctx
@@ -2043,11 +2041,10 @@ int main(int argc, char *argv[]) {
         }
         else if (protocol == "ws") {
 #if defined(ASYNC_MQTT_USE_WS)
-            using client_t = am::endpoint<am::role::client, am::protocol::ws>;
             struct client_info : client_info_base {
-                using client_type = client_t;
+                using client_type = am::endpoint<am::role::client, am::protocol::ws>;
                 client_info(
-                    std::shared_ptr<client_t> c,
+                    std::shared_ptr<client_type> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -2068,7 +2065,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                std::shared_ptr<client_t> c;
+                std::shared_ptr<client_type> c;
             };
 
             std::vector<client_info> cis;
@@ -2076,7 +2073,7 @@ int main(int argc, char *argv[]) {
             std::size_t hps_index = target_index;
             for (std::size_t i = 0; i != clients; ++i) {
                 cis.emplace_back(
-                    client_t::create(
+                    client_info::client_type::create(
                         version,
                         as::make_strand(iocs.at(i % num_of_iocs).get_executor())
                     ),
@@ -2106,11 +2103,10 @@ int main(int argc, char *argv[]) {
         }
         else if (protocol == "wss") {
 #if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
-            using client_t = am::endpoint<am::role::client, am::protocol::wss>;
             struct client_info : client_info_base {
-                using client_type = client_t;
+                using client_type = am::endpoint<am::role::client, am::protocol::wss>;
                 client_info(
-                    std::shared_ptr<client_t> c,
+                    std::shared_ptr<client_type> c,
                     std::string cid_prefix,
                     std::size_t index,
                     std::size_t payload_size,
@@ -2131,7 +2127,7 @@ int main(int argc, char *argv[]) {
                      c{am::force_move(c)}
                 {
                 }
-                std::shared_ptr<client_t> c;
+                std::shared_ptr<client_type> c;
             };
 
             std::vector<client_info> cis;
@@ -2147,7 +2143,7 @@ int main(int argc, char *argv[]) {
                     ctx.set_verify_mode(as::ssl::verify_none);
                 }
                 cis.emplace_back(
-                    client_t::create(
+                    client_info::client_type::create(
                         version,
                         as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
                         ctx

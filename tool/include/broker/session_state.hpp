@@ -15,7 +15,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/constant.hpp>
 #include <async_mqtt/packet/will.hpp>
 
 #include <broker/sub_con_map.hpp>
@@ -52,11 +51,11 @@ class session_states;
  */
 template <typename Sp>
 struct session_state : std::enable_shared_from_this<session_state<Sp>> {
-    using epsp_t = Sp;
-    using epwp_t = typename epsp_t::weak_type;
-    using will_sender_t = std::function<
+    using epsp_type = Sp;
+    using epwp_type = typename epsp_type::weak_type;
+    using will_sender_type = std::function<
         void(
-            session_state<epsp_t> const& source_ss,
+            session_state<epsp_type> const& source_ss,
             std::string topic,
             buffer payload,
             pub::opts pubopts,
@@ -67,13 +66,13 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     static std::shared_ptr<session_state<Sp>> create(
         as::io_context& timer_ioc,
         mutex& mtx_subs_map,
-        sub_con_map<epsp_t>& subs_map,
-        shared_target<epsp_t>& shared_targets,
-        epsp_t epsp,
+        sub_con_map<epsp_type>& subs_map,
+        shared_target<epsp_type>& shared_targets,
+        epsp_type epsp,
         std::string client_id,
         std::string const& username,
         std::optional<will> will,
-        will_sender_t will_sender,
+        will_sender_type will_sender,
         bool clean_start,
         std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
         std::optional<std::chrono::steady_clock::duration> session_expiry_interval
@@ -82,12 +81,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             impl(
                 as::io_context& timer_ioc,
                 mutex& mtx_subs_map,
-                sub_con_map<epsp_t>& subs_map,
-                shared_target<epsp_t>& shared_targets,
-                epsp_t epsp,
+                sub_con_map<epsp_type>& subs_map,
+                shared_target<epsp_type>& shared_targets,
+                epsp_type epsp,
                 std::string client_id,
                 std::string const& username,
-                will_sender_t will_sender,
+                will_sender_type will_sender,
                 bool clean_start,
                 std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
                 :
@@ -131,7 +130,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
     template <typename SessionExpireHandler>
     void become_offline(
-        epsp_t epsp,
+        epsp_type epsp,
         SessionExpireHandler&& session_expire_handler
     ) {
         ASYNC_MQTT_LOG("mqtt_broker", trace)
@@ -210,7 +209,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     }
 
     void renew(
-        epsp_t epsp,
+        epsp_type epsp,
         std::optional<will> will,
         bool clean_start,
         std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
@@ -237,7 +236,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         is_buffer_sequence<std::decay_t<BufferSequence>>::value
     >
     publish(
-        epsp_t& epsp,
+        epsp_type& epsp,
         as::io_context& timer_ioc,
         std::string pub_topic,
         BufferSequence&& payload,
@@ -395,7 +394,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         PublishRetainHandler&& h,
         std::optional<std::size_t> sid = std::nullopt
     ) {
-        subscription<epsp_t> sub {*this, share_name, topic_filter, subopts, sid };
+        subscription<epsp_type> sub {*this, share_name, topic_filter, subopts, sid };
         if (!share_name.empty()) {
             shared_targets_.insert(share_name, topic_filter, sub, *this);
         }
@@ -593,7 +592,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     }
 
     void inherit(
-        epsp_t epsp,
+        epsp_type epsp,
         std::optional<will> will,
         std::optional<std::chrono::steady_clock::duration> will_expiry_interval,
         std::optional<std::chrono::steady_clock::duration> session_expiry_interval
@@ -623,7 +622,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         epsp.restore_qos2_publish_handled_pids(qos2_publish_handled_);
     }
 
-    epsp_t lock() {
+    epsp_type lock() {
         return epwp_.lock();
     }
 
@@ -648,12 +647,12 @@ private:
     session_state(
         as::io_context& timer_ioc,
         mutex& mtx_subs_map,
-        sub_con_map<epsp_t>& subs_map,
-        shared_target<epsp_t>& shared_targets,
-        epsp_t epsp,
+        sub_con_map<epsp_type>& subs_map,
+        shared_target<epsp_type>& shared_targets,
+        epsp_type epsp,
         std::string client_id,
         std::string const& username,
-        will_sender_t will_sender,
+        will_sender_type will_sender,
         bool clean_start,
         std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
         :timer_ioc_(timer_ioc),
@@ -746,16 +745,16 @@ private:
     }
 
 private:
-    friend class session_states<epsp_t>;
+    friend class session_states<epsp_type>;
 
     as::io_context& timer_ioc_;
     std::shared_ptr<as::steady_timer> tim_will_expiry_;
     std::optional<async_mqtt::will> will_value_;
 
     mutex& mtx_subs_map_;
-    sub_con_map<epsp_t>& subs_map_;
-    shared_target<epsp_t>& shared_targets_;
-    epwp_t epwp_;
+    sub_con_map<epsp_type>& subs_map_;
+    shared_target<epsp_type>& shared_targets_;
+    epwp_type epwp_;
     protocol_version version_;
     std::string client_id_;
 
@@ -770,11 +769,11 @@ private:
     mutable mutex mtx_offline_messages_;
     offline_messages offline_messages_;
 
-    using elem_t = typename sub_con_map<epsp_t>::handle;
-    std::set<elem_t> handles_; // to efficient remove
+    using elem_type = typename sub_con_map<epsp_type>::handle;
+    std::set<elem_type> handles_; // to efficient remove
 
     as::steady_timer tim_will_delay_;
-    will_sender_t will_sender_;
+    will_sender_type will_sender_;
     bool remain_after_close_;
 
     std::set<packet_id_type> qos2_publish_handled_;
@@ -785,8 +784,8 @@ private:
 
 template <typename Sp>
 class session_states {
-    using epsp_t = Sp;
-    using epwp_t = typename epsp_t::weak_type;
+    using epsp_type = Sp;
+    using epwp_type = typename epsp_type::weak_type;
 public:
     template <typename Tag>
     decltype(auto) get() {
@@ -805,26 +804,26 @@ public:
 private:
     // The mi_session_online container holds the relevant data about an active connection with the broker.
     // It can be queried either with the clientid, or with the shared pointer to the mqtt endpoint object
-    using ss_t = session_state<epsp_t>;
-    using elem_t = std::shared_ptr<ss_t>;
+    using ss_type = session_state<epsp_type>;
+    using elem_type = std::shared_ptr<ss_type>;
     using mi_session_state = mi::multi_index_container<
-        elem_t,
+        elem_type,
         mi::indexed_by<
             // non is nullable
             mi::ordered_non_unique<
                 mi::tag<tag_con>,
-                mi::key<&ss_t::epwp_>
+                mi::key<&ss_type::epwp_>
             >,
             mi::ordered_unique<
                 mi::tag<tag_cid>,
                 mi::key<
-                    &ss_t::username_,
-                    &ss_t::client_id_
+                    &ss_type::username_,
+                    &ss_type::client_id_
                 >
             >,
             mi::ordered_non_unique<
                 mi::tag<tag_tim>,
-                mi::key<&ss_t::tim_session_expiry_>
+                mi::key<&ss_type::tim_session_expiry_>
             >
         >
     >;

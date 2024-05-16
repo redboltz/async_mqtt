@@ -60,6 +60,50 @@ enum class payload_format {
     string  ///< string
 };
 
+/**
+ * @ingroup property
+ * @brief type of the session expiry interval (seconds)
+ */
+using session_expiry_interval_type = std::uint32_t;
+
+/**
+ * @ingroup property
+ * @brief type of the topic alias value
+ */
+using topic_alias_type = std::uint16_t;
+
+/**
+ * @ingroup property
+ * @brief type of the receive maximum value
+ */
+using receive_maximum_type = std::uint16_t;
+
+/**
+ * @ingroup property
+ * @brief the special session_expiry_interval value that session is never expire.
+ */
+static constexpr session_expiry_interval_type session_never_expire = 0xffffffffUL;
+
+/**
+ * @ingroup property
+ * @brief the maximum topic_alias value
+ */
+static constexpr topic_alias_type topic_alias_max = 0xffff;
+
+/**
+ * @ingroup property
+ * @brief the maximum receive_maximum value
+ */
+static constexpr receive_maximum_type receive_maximum_max = 0xffff;
+
+/**
+ * @ingroup property
+ * @brief the maximum maximum_packet_size value
+ */
+static constexpr std::uint32_t packet_size_no_limit =
+    1 + // fixed header
+    4 + // remaining length
+    128 * 128 * 128 * 128; // maximum value of remainin length
 
 namespace property {
 

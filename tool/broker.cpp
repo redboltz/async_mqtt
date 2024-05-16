@@ -120,7 +120,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
     try {
         as::io_context timer_ioc;
 
-        using epv_t = am::basic_endpoint_variant<
+        using epv_type = am::basic_endpoint_variant<
             am::role::server,
             2,
             am::protocol::mqtt
@@ -139,7 +139,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         >;
 
         am::broker<
-            epv_t
+            epv_type
         > brk{timer_ioc};
 
         auto num_of_iocs =
@@ -288,7 +288,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 apply_socket_opts(lowest_layer);
-                                brk.handle_accept(epv_t{force_move(epsp)});
+                                brk.handle_accept(epv_type{force_move(epsp)});
                             }
                             mqtt_async_accept();
                         }
@@ -338,7 +338,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "WS accept error:" << ec.message();
                                         }
                                         else {
-                                            brk.handle_accept(epv_t{force_move(epsp)});
+                                            brk.handle_accept(epv_type{force_move(epsp)});
                                         }
                                     }
                                 );
@@ -433,7 +433,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "TLS handshake error:" << ec.message();
                                         }
                                         else {
-                                            brk.handle_accept(epv_t{force_move(epsp)}, *username);
+                                            brk.handle_accept(epv_type{force_move(epsp)}, *username);
                                         }
                                     }
                                 );
@@ -536,7 +536,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                             << "WS accept error:" << ec.message();
                                                     }
                                                     else {
-                                                        brk.handle_accept(epv_t{force_move(epsp)}, *username);
+                                                        brk.handle_accept(epv_type{force_move(epsp)}, *username);
                                                     }
                                                 }
                                             );

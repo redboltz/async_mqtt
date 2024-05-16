@@ -11,7 +11,6 @@
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
-#include <async_mqtt/type.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 
@@ -208,7 +207,7 @@ public:
      * This is for applying topic_alias.
      * @param val topic_alias
      */
-    void remove_topic_add_topic_alias(topic_alias_t val);
+    void remove_topic_add_topic_alias(topic_alias_type val);
 
     /**
      * @brief Add topic_alias
@@ -216,7 +215,7 @@ public:
      * This is for registering topic_alias.
      * @param val topic_alias
      */
-    void add_topic_alias(topic_alias_t val);
+    void add_topic_alias(topic_alias_type val);
 
     /**
      * @brief Remove topic and add topic_alias

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_BROKER_RETAIN_T_HPP)
-#define ASYNC_MQTT_BROKER_RETAIN_T_HPP
+#if !defined(ASYNC_MQTT_BROKER_RETAIN_TYPE_HPP)
+#define ASYNC_MQTT_BROKER_RETAIN_TYPE_HPP
 
 #include <boost/asio/steady_timer.hpp>
 
@@ -17,7 +17,7 @@ namespace async_mqtt {
 
 // A collection of messages that have been retained in
 // case clients add a new subscription to the associated topics.
-struct retain_t {
+struct retain_type {
     template <
         typename BufferSequence,
         typename std::enable_if_t<
@@ -25,7 +25,7 @@ struct retain_t {
             std::nullptr_t
         > = nullptr
     >
-    retain_t(
+    retain_type(
         std::string topic,
         BufferSequence&& payload,
         properties props,
@@ -52,4 +52,4 @@ struct retain_t {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_BROKER_RETAIN_T_HPP
+#endif // ASYNC_MQTT_BROKER_RETAIN_TYPE_HPP

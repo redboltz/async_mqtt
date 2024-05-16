@@ -71,8 +71,8 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
         return static_cast<int>(r) & static_cast<int>(role::server);
     }
 
-    static inline std::optional<topic_alias_t> get_topic_alias(properties const& props) {
-        std::optional<topic_alias_t> ta_opt;
+    static inline std::optional<topic_alias_type> get_topic_alias(properties const& props) {
+        std::optional<topic_alias_type> ta_opt;
         for (auto const& prop : props) {
             prop.visit(
                 overload {
@@ -704,9 +704,9 @@ private:
     std::optional<topic_alias_send> topic_alias_send_;
     std::optional<topic_alias_recv> topic_alias_recv_;
 
-    receive_maximum_t publish_send_max_{receive_maximum_max};
-    receive_maximum_t publish_recv_max_{receive_maximum_max};
-    receive_maximum_t publish_send_count_{0};
+    receive_maximum_type publish_send_max_{receive_maximum_max};
+    receive_maximum_type publish_recv_max_{receive_maximum_max};
+    receive_maximum_type publish_send_count_{0};
 
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;

@@ -16,7 +16,6 @@
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
-#include <async_mqtt/type.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -283,7 +282,7 @@ properties const& basic_publish_packet<PacketIdBytes>::props() const {
 
 template <std::size_t PacketIdBytes>
 inline
-void basic_publish_packet<PacketIdBytes>::remove_topic_add_topic_alias(topic_alias_t val) {
+void basic_publish_packet<PacketIdBytes>::remove_topic_add_topic_alias(topic_alias_type val) {
     // add topic_alias property
     auto prop{property::topic_alias{val}};
     auto prop_size = prop.size();
@@ -312,7 +311,7 @@ void basic_publish_packet<PacketIdBytes>::remove_topic_add_topic_alias(topic_ali
 
 template <std::size_t PacketIdBytes>
 inline
-void basic_publish_packet<PacketIdBytes>::add_topic_alias(topic_alias_t val) {
+void basic_publish_packet<PacketIdBytes>::add_topic_alias(topic_alias_type val) {
     // add topic_alias property
     auto prop{property::topic_alias{val}};
     auto prop_size = prop.size();

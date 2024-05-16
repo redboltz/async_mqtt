@@ -32,11 +32,11 @@ class retained_topic_map {
     static void throw_max_stored_topics() { throw std::overflow_error("Retained map maximum number of topics reached"); }
     static void throw_no_wildcards_allowed() { throw std::runtime_error("Retained map no wildcards allowed in retained topic name"); }
 
-    using node_id_t = std::size_t;
+    using node_id_type = std::size_t;
 
-    static constexpr node_id_t root_parent_id = 0;
-    static constexpr node_id_t root_node_id = 1;
-    static constexpr node_id_t max_node_id = std::numeric_limits<node_id_t>::max();
+    static constexpr node_id_type root_parent_id = 0;
+    static constexpr node_id_type root_node_id = 1;
+    static constexpr node_id_type max_node_id = std::numeric_limits<node_id_type>::max();
 
     struct path_entry {
         // Increase the count for this node
@@ -56,7 +56,7 @@ class retained_topic_map {
 
         std::optional<Value> value;
 
-        path_entry(node_id_t parent_id, std::string_view name, node_id_t id)
+        path_entry(node_id_type parent_id, std::string_view name, node_id_type id)
             : parent_id{parent_id}, name{name}, id{id}
         { }
 
@@ -64,10 +64,10 @@ class retained_topic_map {
             return name;
         }
 
-        node_id_t parent_id;
+        node_id_type parent_id;
         std::string name;
 
-        node_id_t id;
+        node_id_type id;
 
         std::size_t count = 1;
         static constexpr std::size_t max_count = std::numeric_limits<std::size_t>::max();
@@ -101,7 +101,7 @@ class retained_topic_map {
 
     path_entry_set map;
     size_t map_size;
-    node_id_t next_node_id;
+    node_id_type next_node_id;
 
     direct_const_iterator root;
 
@@ -115,7 +115,7 @@ class retained_topic_map {
                     throw_no_wildcards_allowed();
                 }
 
-                node_id_t parent_id = parent->id;
+                node_id_type parent_id = parent->id;
 
                 auto& direct_index = map.template get<direct_index_tag>();
                 direct_const_iterator entry = direct_index.find(std::make_tuple(parent_id, t));
@@ -165,10 +165,10 @@ class retained_topic_map {
     // Match all underlying topics when a hash entry is matched
     // perform a breadth-first iteration over all items in the tree below
     template<typename Output>
-    void match_hash_entries(node_id_t parent, Output&& callback, bool ignore_system) const {
-        std::deque<node_id_t> entries;
+    void match_hash_entries(node_id_type parent, Output&& callback, bool ignore_system) const {
+        std::deque<node_id_type> entries;
         entries.push_back(parent);
-        std::deque<node_id_t> new_entries;
+        std::deque<node_id_type> new_entries;
 
         auto const& wildcard_index = map.template get<wildcard_index_tag>();
 
@@ -212,7 +212,7 @@ class retained_topic_map {
                 new_entries.resize(0);
 
                 for (auto const& entry : entries) {
-                    node_id_t parent = entry->id;
+                    node_id_type parent = entry->id;
 
                     if (t == std::string_view("+")) {
                         for (auto i = wildcard_index.lower_bound(parent); i != wildcard_index.end() && i->parent_id == parent; ++i) {

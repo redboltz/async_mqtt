@@ -27,7 +27,7 @@ namespace mi = boost::multi_index;
 template <std::size_t PacketIdBytes>
 class store {
 public:
-    using store_packet_t = basic_store_packet_variant<PacketIdBytes>;
+    using store_packet_type = basic_store_packet_variant<PacketIdBytes>;
 
     store(as::any_io_executor exe):exe_{exe}{}
 
@@ -114,10 +114,10 @@ public:
         }
     }
 
-    std::vector<store_packet_t> get_stored() const {
+    std::vector<store_packet_type> get_stored() const {
         ASYNC_MQTT_LOG("mqtt_impl", info)
             << "[store] get_stored";
-        std::vector<store_packet_t> ret;
+        std::vector<store_packet_type> ret;
         ret.reserve(elems_.size());
         for (auto elem : elems_) {
             if (elem.tim) {
@@ -136,7 +136,7 @@ public:
 private:
     struct elem_t {
         elem_t(
-            store_packet_t packet,
+            store_packet_type packet,
             std::shared_ptr<as::steady_timer> tim = nullptr
         ): packet{force_move(packet)}, tim{force_move(tim)} {}
 
@@ -152,7 +152,7 @@ private:
             return tim.get();
         }
 
-        store_packet_t packet;
+        store_packet_type packet;
         std::shared_ptr<as::steady_timer> tim = nullptr;
     };
     struct tag_seq{};

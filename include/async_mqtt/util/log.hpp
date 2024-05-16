@@ -84,9 +84,9 @@ inline constexpr null_log const& operator<<(null_log const& o, T const&) { retur
 
 // template arguments are defined in async_mqtt
 // filter and formatter can distinguish mqtt_cpp's channel and severity by their types
-using global_logger_t = boost::log::sources::severity_channel_logger<severity_level, channel>;
-inline global_logger_t& logger() {
-    thread_local global_logger_t l;
+using global_logger_type = boost::log::sources::severity_channel_logger<severity_level, channel>;
+inline global_logger_type& logger() {
+    thread_local global_logger_type l;
     return l;
 }
 

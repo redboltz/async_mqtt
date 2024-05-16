@@ -8,14 +8,12 @@
 #define ASYNC_MQTT_ALL_HPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/constant.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/setup_log.hpp>
-#include <async_mqtt/type.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
 #include <async_mqtt/packet/connect_flags.hpp>

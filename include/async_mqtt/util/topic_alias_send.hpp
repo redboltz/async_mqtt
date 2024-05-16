@@ -12,17 +12,17 @@
 #include <unordered_map>
 #include <array>
 #include <chrono>
+#include <optional>
 
 #include <boost/assert.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/constant.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
-#include <optional>
 #include <async_mqtt/util/value_allocator.hpp>
+#include <async_mqtt/packet/property.hpp>
 
 namespace async_mqtt {
 
@@ -30,10 +30,10 @@ namespace mi = boost::multi_index;
 
 class topic_alias_send {
 public:
-    topic_alias_send(topic_alias_t max)
+    topic_alias_send(topic_alias_type max)
         :max_{max}, va_{min_, max_} {}
 
-    void insert_or_update(std::string_view topic, topic_alias_t alias) {
+    void insert_or_update(std::string_view topic, topic_alias_type alias) {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "topic_alias_send insert"
@@ -59,7 +59,7 @@ public:
         }
     }
 
-    std::string find(topic_alias_t alias) {
+    std::string find(topic_alias_type alias) {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "find_topic_by_alias"
@@ -80,7 +80,7 @@ public:
         return it->topic;
     }
 
-    std::string find_without_touch(topic_alias_t alias) const {
+    std::string find_without_touch(topic_alias_type alias) const {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "find_topic_by_alias"
@@ -93,7 +93,7 @@ public:
         return it->topic;
     }
 
-    std::optional<topic_alias_t> find(std::string_view topic) const {
+    std::optional<topic_alias_type> find(std::string_view topic) const {
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "find_alias_by_topic"
@@ -113,7 +113,7 @@ public:
         va_.clear();
     }
 
-    topic_alias_t get_lru_alias() const {
+    topic_alias_type get_lru_alias() const {
         BOOST_ASSERT(max_ > 0);
         if (auto alias_opt = va_.first_vacant()) {
             return *alias_opt;
@@ -122,14 +122,14 @@ public:
         return idx.begin()->alias;
     }
 
-    topic_alias_t max() const { return max_; }
+    topic_alias_type max() const { return max_; }
 
 private:
-    static constexpr topic_alias_t min_ = 1;
-    topic_alias_t max_;
+    static constexpr topic_alias_type min_ = 1;
+    topic_alias_type max_;
 
     struct entry {
-        entry(std::string topic, topic_alias_t alias, std::chrono::time_point<std::chrono::steady_clock> tp)
+        entry(std::string topic, topic_alias_type alias, std::chrono::time_point<std::chrono::steady_clock> tp)
             : topic{force_move(topic)}, alias{alias}, tp{force_move(tp)} {}
 
         std::string_view get_topic_as_view() const {
@@ -137,7 +137,7 @@ private:
         }
 
         std::string topic;
-        topic_alias_t alias;
+        topic_alias_type alias;
         std::chrono::time_point<std::chrono::steady_clock> tp;
     };
     struct tag_tp {};
@@ -162,7 +162,7 @@ private:
     >;
 
     mi_topic_alias aliases_;
-    value_allocator<topic_alias_t> va_;
+    value_allocator<topic_alias_type> va_;
 };
 
 } // namespace async_mqtt
