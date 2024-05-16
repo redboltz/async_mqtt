@@ -1,6 +1,9 @@
 var annotated_dup =
 [
     [ "async_mqtt", null, [
+      [ "detail", null, [
+        [ "utf8_checker", "classasync__mqtt_1_1detail_1_1utf8__checker.html", "classasync__mqtt_1_1detail_1_1utf8__checker" ]
+      ] ],
       [ "property", null, [
         [ "detail", null, [
           [ "binary_property", "structasync__mqtt_1_1property_1_1detail_1_1binary__property.html", "structasync__mqtt_1_1property_1_1detail_1_1binary__property" ],

@@ -11,7 +11,6 @@ var group__connect__v3__1__1 =
       [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ac576a72255430e528c8f87f62a4ca9f7", null ],
       [ "password", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a0b2fc596c4da3265296628bb379d3246", null ],
       [ "size", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a2d37a0b8e09a6ef1897f76f44c0cbb06", null ],
-      [ "type", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#aece19e70a2c1a04be8ac6e50348b166b", null ],
       [ "user_name", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ab3d1f7068ff84c3a1e7f07a125c89538", null ],
       [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ace621bafbe046cc352dbc355202408a0", null ]
     ] ]

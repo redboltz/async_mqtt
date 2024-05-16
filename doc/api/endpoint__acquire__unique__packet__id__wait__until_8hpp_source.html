@@ -118,7 +118,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id__wait__until_8hp
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>acquire_unique_packet_id_wait_until_op {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    this_type&amp; ep;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    this_type_wp retry_wp = ep.weak_from_this();</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    std::optional&lt;packet_id_t&gt; pid_opt = std::nullopt;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    std::optional&lt;typename basic_packet_id_type&lt;PacketIdBytes&gt;::type&gt; pid_opt = std::nullopt;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keyword">enum</span> { dispatch, complete } state = dispatch;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Self&gt;</div>
@@ -197,7 +197,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id__wait__until_8hp
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">return</span></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        as::async_compose&lt;</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            CompletionToken,</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            void(packet_id_t)</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            void(<span class="keyword">typename</span> basic_packet_id_type&lt;PacketIdBytes&gt;::type)</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        &gt;(</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>            acquire_unique_packet_id_wait_until_op{</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                *<span class="keyword">this</span></div>

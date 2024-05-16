@@ -7,7 +7,7 @@ var group__store__packet__variant__detail =
       [ "basic_store_packet_variant", "classasync__mqtt_1_1basic__store__packet__variant.html#a8958d2a2fc5076793ba624947ac42369", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1basic__store__packet__variant.html#a665b38309dc465a4901843fdb835dc08", null ],
       [ "get_message_expiry_interval", "classasync__mqtt_1_1basic__store__packet__variant.html#af958bcb91ebe894d25fe96f2091ce945", null ],
-      [ "packet_id", "classasync__mqtt_1_1basic__store__packet__variant.html#a9ccfea685288e6076dc20915117a1194", null ],
+      [ "packet_id", "classasync__mqtt_1_1basic__store__packet__variant.html#ab8dc004b44b2f4d1e3410b681127d67f", null ],
       [ "response_packet_type", "classasync__mqtt_1_1basic__store__packet__variant.html#a04cbc8228004323463fe97826a5447d0", null ],
       [ "size", "classasync__mqtt_1_1basic__store__packet__variant.html#a7e8b102c72819ef78e8b2f55e7f2599e", null ],
       [ "update_message_expiry_interval", "classasync__mqtt_1_1basic__store__packet__variant.html#ad3c1233d469d2a05b12e6863dec9ce92", null ],

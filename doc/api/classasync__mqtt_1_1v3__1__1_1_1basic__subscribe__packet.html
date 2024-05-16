@@ -94,6 +94,7 @@ $(function(){initNavTree('classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__pack
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">async_mqtt::v3_1_1::basic_subscribe_packet&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">Packet_v3_1_1</a> &raquo; <a class="el" href="group__subscribe__v3__1__1.html">Subscribe_v3_1_1</a> &raquo; <a class="el" href="group__subscribe__v3__1__1__detail.html">Subscribe_v3_1_1_detail</a></div></div></div>
@@ -107,38 +108,41 @@ $(function(){initNavTree('classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__pack
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a11ba51614e617ffd93b0c40da24272c4" id="r_a11ba51614e617ffd93b0c40da24272c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11ba51614e617ffd93b0c40da24272c4">basic_subscribe_packet</a> (packet_id_t <a class="el" href="#a169510ad1625b07d158899270194217f">packet_id</a>, std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; params)</td></tr>
-<tr class="memdesc:a11ba51614e617ffd93b0c40da24272c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
-<tr class="separator:a11ba51614e617ffd93b0c40da24272c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d1c473c64d33a05a9db495d385be64c" id="r_a4d1c473c64d33a05a9db495d385be64c"><td class="memItemLeft" align="right" valign="top">constexpr control_packet_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d1c473c64d33a05a9db495d385be64c">type</a> () const</td></tr>
-<tr class="memdesc:a4d1c473c64d33a05a9db495d385be64c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get MQTT control packet type.  <br /></td></tr>
-<tr class="separator:a4d1c473c64d33a05a9db495d385be64c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7bcbcd72844ea7b6afd21b1d0c1aac0" id="r_af7bcbcd72844ea7b6afd21b1d0c1aac0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7bcbcd72844ea7b6afd21b1d0c1aac0">const_buffer_sequence</a> () const</td></tr>
+<tr class="memitem:a2280c278ed70ec103667e01b0ceab99a" id="r_a2280c278ed70ec103667e01b0ceab99a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2280c278ed70ec103667e01b0ceab99a">basic_subscribe_packet</a> (<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> basic_packet_id_type&lt; PacketIdBytes &gt;<a class="el" href="#adce317e1b631472f8cf21d34abf9f0c3">::type</a> <a class="el" href="#af1eee17d2fa49f8cb7a7b0e680b7161a">packet_id</a>, std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">params</a>)</td></tr>
+<tr class="memdesc:a2280c278ed70ec103667e01b0ceab99a"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
+<tr class="separator:a2280c278ed70ec103667e01b0ceab99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7bcbcd72844ea7b6afd21b1d0c1aac0" id="r_af7bcbcd72844ea7b6afd21b1d0c1aac0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7bcbcd72844ea7b6afd21b1d0c1aac0">const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:af7bcbcd72844ea7b6afd21b1d0c1aac0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:af7bcbcd72844ea7b6afd21b1d0c1aac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9128a74a35ec84e62bdd606120723884" id="r_a9128a74a35ec84e62bdd606120723884"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9128a74a35ec84e62bdd606120723884">size</a> () const</td></tr>
+<tr class="memitem:a9128a74a35ec84e62bdd606120723884" id="r_a9128a74a35ec84e62bdd606120723884"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9128a74a35ec84e62bdd606120723884">size</a> () <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a9128a74a35ec84e62bdd606120723884"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet size.  <br /></td></tr>
 <tr class="separator:a9128a74a35ec84e62bdd606120723884"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ae627c7b72866c2279fc1d877b562c4" id="r_a7ae627c7b72866c2279fc1d877b562c4"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ae627c7b72866c2279fc1d877b562c4">num_of_const_buffer_sequence</a> () const</td></tr>
+<tr class="memitem:a7ae627c7b72866c2279fc1d877b562c4" id="r_a7ae627c7b72866c2279fc1d877b562c4"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ae627c7b72866c2279fc1d877b562c4">num_of_const_buffer_sequence</a> () <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:a7ae627c7b72866c2279fc1d877b562c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of element of const_buffer_sequence.  <br /></td></tr>
 <tr class="separator:a7ae627c7b72866c2279fc1d877b562c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a169510ad1625b07d158899270194217f" id="r_a169510ad1625b07d158899270194217f"><td class="memItemLeft" align="right" valign="top">packet_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a169510ad1625b07d158899270194217f">packet_id</a> () const</td></tr>
-<tr class="memdesc:a169510ad1625b07d158899270194217f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet_id.  <br /></td></tr>
-<tr class="separator:a169510ad1625b07d158899270194217f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd042c2ea694ca14fa3625e60170f9e0" id="r_acd042c2ea694ca14fa3625e60170f9e0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd042c2ea694ca14fa3625e60170f9e0">entries</a> () const</td></tr>
+<tr class="memitem:af1eee17d2fa49f8cb7a7b0e680b7161a" id="r_af1eee17d2fa49f8cb7a7b0e680b7161a"><td class="memItemLeft" align="right" valign="top">basic_packet_id_type&lt; PacketIdBytes &gt;<a class="el" href="#adce317e1b631472f8cf21d34abf9f0c3">::type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1eee17d2fa49f8cb7a7b0e680b7161a">packet_id</a> () <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a></td></tr>
+<tr class="memdesc:af1eee17d2fa49f8cb7a7b0e680b7161a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet_id.  <br /></td></tr>
+<tr class="separator:af1eee17d2fa49f8cb7a7b0e680b7161a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd042c2ea694ca14fa3625e60170f9e0" id="r_acd042c2ea694ca14fa3625e60170f9e0"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd042c2ea694ca14fa3625e60170f9e0">entries</a> () <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a></td></tr>
 <tr class="memdesc:acd042c2ea694ca14fa3625e60170f9e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get entries.  <br /></td></tr>
 <tr class="separator:acd042c2ea694ca14fa3625e60170f9e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:adce317e1b631472f8cf21d34abf9f0c3" id="r_adce317e1b631472f8cf21d34abf9f0c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">static</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">constexpr</a> control_packet_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adce317e1b631472f8cf21d34abf9f0c3">type</a> ()</td></tr>
+<tr class="memdesc:adce317e1b631472f8cf21d34abf9f0c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get MQTT control packet type.  <br /></td></tr>
+<tr class="separator:adce317e1b631472f8cf21d34abf9f0c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="related" name="related"></a>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
 <tr class="memitem:ga7fe480a091fca0ed9c07257d2da2a609" id="r_ga7fe480a091fca0ed9c07257d2da2a609"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subscribe_packet</b> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt;2&gt;</td></tr>
+<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">using</a>&#160;</td><td class="memItemRight" valign="bottom"><b>subscribe_packet</b> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt;2&gt;</td></tr>
 <tr class="memdesc:ga7fe480a091fca0ed9c07257d2da2a609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v3.1.1)">basic_subscribe_packet</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:ga7fe480a091fca0ed9c07257d2da2a609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7583886835333898df6ec083c5cafe69" id="r_a7583886835333898df6ec083c5cafe69"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
-<tr class="memitem:a7583886835333898df6ec083c5cafe69"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7583886835333898df6ec083c5cafe69">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;v)</td></tr>
+<tr class="memitem:a7583886835333898df6ec083c5cafe69"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7583886835333898df6ec083c5cafe69">operator&lt;&lt;</a> (std::ostream &amp;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">o</a>, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a> &amp;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v</a>)</td></tr>
 <tr class="memdesc:a7583886835333898df6ec083c5cafe69"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
 <tr class="separator:a7583886835333898df6ec083c5cafe69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -154,8 +158,8 @@ class async_mqtt::v3_1_1::basic_subscribe_packet&lt; PacketIdBytes &gt;</div><p>
 <p>MQTT SUBSCRIBE packet. <br  />
  See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718063">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718063</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a11ba51614e617ffd93b0c40da24272c4" name="a11ba51614e617ffd93b0c40da24272c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11ba51614e617ffd93b0c40da24272c4">&#9670;&#160;</a></span>basic_subscribe_packet()</h2>
+<a id="a2280c278ed70ec103667e01b0ceab99a" name="a2280c278ed70ec103667e01b0ceab99a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2280c278ed70ec103667e01b0ceab99a">&#9670;&#160;</a></span>basic_subscribe_packet()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +172,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::basic_subscribe_packet </td>
           <td>(</td>
-          <td class="paramtype">packet_id_t</td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> basic_packet_id_type&lt; PacketIdBytes &gt;<a class="el" href="#adce317e1b631472f8cf21d34abf9f0c3">::type</a></td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -186,7 +190,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 <p>constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">packet_id</td><td>MQTT PacketIdentifier.the packet_id must be acquired by <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#ae5bfe01853be53cf3342cf195ee66d91" title="acuire unique packet_id.">basic_endpoint::acquire_unique_packet_id()</a>. </td></tr>
+    <tr><td class="paramname">packet_id</td><td>MQTT PacketIdentifier.the packet_id must be acquired by <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0" title="acuire unique packet_id.">basic_endpoint::acquire_unique_packet_id()</a>. </td></tr>
     <tr><td class="paramname">params</td><td>subscribe entries. </td></tr>
   </table>
   </dd>
@@ -237,7 +241,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; const  &amp; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::entries </td>
+          <td class="memname">std::vector&lt; <a class="el" href="classasync__mqtt_1_1topic__subopts.html">topic_subopts</a> &gt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a>  &amp; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::entries </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -285,8 +289,8 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 
 </div>
 </div>
-<a id="a169510ad1625b07d158899270194217f" name="a169510ad1625b07d158899270194217f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a169510ad1625b07d158899270194217f">&#9670;&#160;</a></span>packet_id()</h2>
+<a id="af1eee17d2fa49f8cb7a7b0e680b7161a" name="af1eee17d2fa49f8cb7a7b0e680b7161a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1eee17d2fa49f8cb7a7b0e680b7161a">&#9670;&#160;</a></span>packet_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,7 +301,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">packet_id_t <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::packet_id </td>
+          <td class="memname">basic_packet_id_type&lt; PacketIdBytes &gt;<a class="el" href="#adce317e1b631472f8cf21d34abf9f0c3">::type</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::packet_id </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -345,8 +349,8 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 
 </div>
 </div>
-<a id="a4d1c473c64d33a05a9db495d385be64c" name="a4d1c473c64d33a05a9db495d385be64c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d1c473c64d33a05a9db495d385be64c">&#9670;&#160;</a></span>type()</h2>
+<a id="adce317e1b631472f8cf21d34abf9f0c3" name="adce317e1b631472f8cf21d34abf9f0c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adce317e1b631472f8cf21d34abf9f0c3">&#9670;&#160;</a></span>type()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,15 +361,15 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr control_packet_type <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::type </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">constexpr</a> control_packet_type <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">async_mqtt::v3_1_1::basic_subscribe_packet</a>&lt; PacketIdBytes &gt;::type </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -388,14 +392,14 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td class="memname">std::ostream &amp; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">operator</a>&lt;&lt; </td>
           <td>(</td>
           <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">const</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -420,6 +424,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="packet__fwd_8hpp_source.html">packet_fwd.hpp</a></li>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="v3__1__1__subscribe_8hpp_source.html">v3_1_1_subscribe.hpp</a></li>
+<li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/impl/<a class="el" href="impl_2v3__1__1__subscribe_8hpp_source.html">v3_1_1_subscribe.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

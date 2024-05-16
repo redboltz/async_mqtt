@@ -6,7 +6,6 @@ var group__connack__v3__1__1 =
       [ "const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html#aedf275b2c38240b7afe5b46493cd53c9", null ],
       [ "session_present", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html#aa49b5a45630310a8da2045b1b34c741d", null ],
       [ "size", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html#aba7bcd19668ee600c7d804d43c004d9f", null ],
-      [ "type", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html#a3605cbcab241002f7ad3f053292b6701", null ],
       [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1connack__packet.html#ae25c99c7067f346b64f652b880959f12", null ]
     ] ],
     [ "async_mqtt::connect_return_code", "group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109", [

@@ -111,7 +111,7 @@ $(function(){initNavTree('client__publish_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_impl.hpp&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;async_mqtt/exception.hpp&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;async_mqtt/log.hpp&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;async_mqtt/util/log.hpp&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -126,7 +126,7 @@ $(function(){initNavTree('client__publish_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        Self&amp; self</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    ) {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keyword">auto</span>&amp; a_cl{cl};</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keyword">auto</span> pid = packet.packet_id();</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keyword">auto</span> pid = packet.<a class="code hl_function" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a10030d5811dae285ae7768792940b685">packet_id</a>();</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keyword">auto</span> a_packet{packet};</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        a_cl.ep_-&gt;send(</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>            force_move(a_packet),</div>
@@ -141,7 +141,7 @@ $(function(){initNavTree('client__publish_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">void</span> operator()(</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        Self&amp; self,</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        system_error <span class="keyword">const</span>&amp; se,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        packet_id_t pid</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        packet_id_type pid</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    ) {</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">if</span> (se) {</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            self.complete(se.code(), pubres_t{});</div>
@@ -219,6 +219,7 @@ $(function(){initNavTree('client__publish_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_IMPL_CLIENT_PUBLISH_HPP</span></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a2736d44167509c9cdcf90c09a161b0b2"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a2736d44167509c9cdcf90c09a161b0b2">async_mqtt::client::publish</a></div><div class="ttdeci">publish(publish_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</div><div class="ttdoc">send PUBLISH packet</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1v3__1__1_1_1basic__publish__packet_html_a10030d5811dae285ae7768792940b685"><div class="ttname"><a href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a10030d5811dae285ae7768792940b685">async_mqtt::v3_1_1::basic_publish_packet::packet_id</a></div><div class="ttdeci">basic_packet_id_type&lt; PacketIdBytes &gt;::type packet_id() const</div><div class="ttdoc">Get packet id.</div><div class="ttdef"><b>Definition</b> v3_1_1_publish.hpp:212</div></div>
 <div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:36</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">async_mqtt::severity_level::info</a></div><div class="ttdeci">@ info</div><div class="ttdoc">info level api call is output</div></div>
 <div class="ttc" id="agroup__role_html_gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125"><div class="ttname"><a href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">async_mqtt::role::client</a></div><div class="ttdeci">@ client</div><div class="ttdoc">as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.</div></div>

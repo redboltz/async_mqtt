@@ -117,7 +117,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id_8hpp_source.html
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">struct </span>basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>acquire_unique_packet_id_op {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    this_type&amp; ep;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    std::optional&lt;packet_id_t&gt; pid_opt = std::nullopt;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    std::optional&lt;typename basic_packet_id_type&lt;PacketIdBytes&gt;::type&gt; pid_opt = std::nullopt;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">enum</span> { dispatch, complete } state = dispatch;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Self&gt;</div>
@@ -150,7 +150,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id_8hpp_source.html
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    CompletionToken,</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span>(std::optional&lt;packet_id_t&gt;)</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>)</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><a class="code hl_function" href="classasync__mqtt_1_1basic__endpoint.html#ae5bfe01853be53cf3342cf195ee66d91">basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::acquire_unique_packet_id</a>(</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><a class="code hl_function" href="classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::acquire_unique_packet_id</a>(</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    CompletionToken&amp;&amp; token</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>) {</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_api&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
@@ -159,7 +159,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id_8hpp_source.html
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span></div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        as::async_compose&lt;</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            CompletionToken,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            void(std::optional&lt;packet_id_t&gt;)</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            void(std::optional&lt;<span class="keyword">typename</span> basic_packet_id_type&lt;PacketIdBytes&gt;::type&gt;)</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        &gt;(</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            acquire_unique_packet_id_op{</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                *<span class="keyword">this</span></div>
@@ -172,9 +172,9 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id_8hpp_source.html
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">template</span> &lt;role Role, std::<span class="keywordtype">size_t</span> PacketIdBytes, <span class="keyword">typename</span> NextLayer&gt;</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">inline</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>std::optional&lt;typename basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::packet_id_t&gt;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>std::optional&lt;typename basic_packet_id_type&lt;PacketIdBytes&gt;::type&gt;</div>
 <div class="foldopen" id="foldopen00074" data-start="{" data-end="}">
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1basic__endpoint.html#ae5bfe01853be53cf3342cf195ee66d91">   74</a></span><a class="code hl_function" href="classasync__mqtt_1_1basic__endpoint.html#ae5bfe01853be53cf3342cf195ee66d91">basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::acquire_unique_packet_id</a>() {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">   74</a></span><a class="code hl_function" href="classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">basic_endpoint&lt;Role, PacketIdBytes, NextLayer&gt;::acquire_unique_packet_id</a>() {</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keyword">auto</span> pid = pid_man_.acquire_unique_id();</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordflow">if</span> (pid) {</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_api&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
@@ -193,7 +193,7 @@ $(function(){initNavTree('endpoint__acquire__unique__packet__id_8hpp_source.html
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_HPP</span></div>
-<div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html_ae5bfe01853be53cf3342cf195ee66d91"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html#ae5bfe01853be53cf3342cf195ee66d91">async_mqtt::basic_endpoint::acquire_unique_packet_id</a></div><div class="ttdeci">std::optional&lt; packet_id_t &gt; acquire_unique_packet_id()</div><div class="ttdoc">acuire unique packet_id.</div><div class="ttdef"><b>Definition</b> endpoint_acquire_unique_packet_id.hpp:74</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html_a9864c9c46f655e82a8cbb93d2725f0e0"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">async_mqtt::basic_endpoint::acquire_unique_packet_id</a></div><div class="ttdeci">std::optional&lt; typename basic_packet_id_type&lt; PacketIdBytes &gt;::type &gt; acquire_unique_packet_id()</div><div class="ttdoc">acuire unique packet_id.</div><div class="ttdef"><b>Definition</b> endpoint_acquire_unique_packet_id.hpp:74</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">async_mqtt::severity_level::info</a></div><div class="ttdeci">@ info</div><div class="ttdoc">info level api call is output</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
