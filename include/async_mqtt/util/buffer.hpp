@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_BUFFER_HPP)
-#define ASYNC_MQTT_BUFFER_HPP
+#if !defined(ASYNC_MQTT_UTIL_BUFFER_HPP)
+#define ASYNC_MQTT_UTIL_BUFFER_HPP
 
 #include <string_view>
 #include <memory>
@@ -602,4 +602,4 @@ public:
 
 } // namespace std
 
-#endif // ASYNC_MQTT_BUFFER_HPP
+#endif // ASYNC_MQTT_UTIL_BUFFER_HPP

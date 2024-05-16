@@ -16,7 +16,7 @@
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/host_port.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/packet_id_manager.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>

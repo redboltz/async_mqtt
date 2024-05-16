@@ -19,7 +19,7 @@
 
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/type.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt {

@@ -18,7 +18,7 @@
 #include <boost/multi_index/key.hpp>
 
 #include <async_mqtt/constant.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <optional>
 #include <async_mqtt/util/value_allocator.hpp>

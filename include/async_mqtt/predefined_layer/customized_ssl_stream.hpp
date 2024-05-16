@@ -11,7 +11,7 @@
 #include <boost/asio/ssl.hpp>
 
 #include <async_mqtt/stream_traits.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/constant.hpp>
 
 /// @file

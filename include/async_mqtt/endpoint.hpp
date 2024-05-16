@@ -17,7 +17,7 @@
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/store.hpp>
 #include <async_mqtt/role.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/topic_alias_send.hpp>
 #include <async_mqtt/topic_alias_recv.hpp>
 #include <async_mqtt/packet_id_manager.hpp>

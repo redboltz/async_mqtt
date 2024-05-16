@@ -21,7 +21,7 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/constant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
 namespace as = boost::asio;

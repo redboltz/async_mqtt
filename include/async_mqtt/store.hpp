@@ -14,7 +14,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 #include <async_mqtt/packet/store_packet_variant.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 

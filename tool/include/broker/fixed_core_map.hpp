@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_BROKER_FIXED_CORE_MAP_HPP)
 #define ASYNC_MQTT_BROKER_FIXED_CORE_MAP_HPP
 
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 #if defined(_GNU_SOURCE)
 

@@ -9,7 +9,7 @@
 
 #include <async_mqtt/client.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
 

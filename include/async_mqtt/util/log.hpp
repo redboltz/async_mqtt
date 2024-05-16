@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_LOG_HPP)
-#define ASYNC_MQTT_LOG_HPP
+#if !defined(ASYNC_MQTT_UTIL_LOG_HPP)
+#define ASYNC_MQTT_UTIL_LOG_HPP
 
 #include <cstddef>
 #include <ostream>
@@ -160,4 +160,4 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(address, "MqttAddress", void const*)
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_LOG_HPP
+#endif // ASYNC_MQTT_UTIL_LOG_HPP

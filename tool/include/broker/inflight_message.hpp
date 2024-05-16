@@ -20,7 +20,7 @@
 
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/packet/store_packet_variant.hpp>
-#include <async_mqtt/log.hpp>
+#include <async_mqtt/util/log.hpp>
 
 #include <broker/common_type.hpp>
 #include <broker/tags.hpp>
