@@ -40,7 +40,11 @@ If you need some custom processes for `your_own_stream` at least one of the foll
 
 Only if you want to customize some of the four points, then define the member function as follows:
 
+customized_your_own_stream.hpp
+
 ```cpp
+#include <async_mqtt/util/stream_traits.hpp>
+
 // Partial or full specialization here
 template <typename NextLayer>
 struct layer_customize<your_own_stream<NextLayer>> {
@@ -57,37 +61,19 @@ struct layer_customize<your_own_stream<NextLayer>> {
     >
     static auto
     async_read(
-        as::any_io_executor exe,
         your_own_stream<NextLayer>& stream,
         MutableBufferSequence const& mbs,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
-            void(error_code const& ec, std::size_t)
+            void(error_code const& ec, std::size_t size)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                your_own_stream<NextLayer>& stream,
-                MutableBufferSequence const& mbs
-            ) {
-                return stream.your_async_read_function(
-                    mbs,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = force_move(completion_handler)]
-                        (error_code const& ec, std::size_t size) mutable {
-                            force_move(completion_handler)(ec, size);
-                        }
-                    )
-                );
+            async_read_impl<MutableBufferSequence>{
+                stream,
+                mbs
             },
-            token,
-            exe,
-            std::ref(stream),
-            std::ref(mbs)
+            token
         );
     }
 
@@ -98,39 +84,22 @@ struct layer_customize<your_own_stream<NextLayer>> {
     >
     static auto
     async_write(
-        as::any_io_executor exe,
         your_own_stream<NextLayer>& stream,
         ConstBufferSequence const& cbs,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
-            void(error_code const& ec, std::size_t)
+            void(error_code const& ec, std::size_t size)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                your_own_stream<NextLayer>& stream,
-                ConstBufferSequence const& cbs
-            ) {
-                stream.your_async_write_function(
-                    cbs,
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = std::forward<CompletionToken>(completion_handler)]
-                        (error_code const& ec_write, std::size_t size) mutable {
-                            force_move(completion_handler)(ec_write, size);
-                        }
-                    )
-                );
+            async_write_impl<ConstBufferSequence>{
+                stream,
+                cbs
             },
-            token,
-            exe,
-            std::ref(stream),
-            std::ref(cbs)
+            token
         );
     }
+
 
     // define if you want to customize async_close process
     template <
@@ -138,40 +107,27 @@ struct layer_customize<your_own_stream<NextLayer>> {
     >
     static auto
     async_close(
-        as::any_io_executor exe,
-        your_own_stream<NextLayer>& stream,
+        bs::websocket::stream<NextLayer>& stream,
         CompletionToken&& token
     ) {
-        return as::async_initiate<
+        return as::async_compose<
             CompletionToken,
             void(error_code const& ec)
         > (
-            [] (auto completion_handler,
-                as::any_io_executor exe,
-                your_own_stream<NextLayer>& stream
-            ) {
-                stream.your_async_close_function(
-                    // You must bind exe to the handler if you use underlying async_function
-                    // using the completion handler that you defined.
-                    as::bind_executor(
-                        exe,
-                        [completion_handler = force_move(completion_handler)]
-                        (error_code const& ec_stream) mutable {
-                            force_move(completion_handler)(ec_stream);
-                        }
-                    )
-                );
+            async_close_impl{
+                stream
             },
-            token,
-            exe,
-            std::ref(stream)
+            token
         );
     }
 };
+
+// define async_read_impl, async_write_impl, and async_close_impl for your own layer here
+
 ```
 
 You can replace `your_***_function()`. async_mqtt has some of predefined `struct layer_customize` specializations.
 
 See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/
 
-It helps defining your own underlaying layer.
+`customized_*_stream.hpp` help defining your own underlaying layer.
