@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/stream.hpp>
+#include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/packet/v3_1_1_pingreq.hpp>
 
 #include "stub_socket.hpp"

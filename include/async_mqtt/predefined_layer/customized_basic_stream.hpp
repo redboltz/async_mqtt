@@ -9,7 +9,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/stream_traits.hpp>
+#include <async_mqtt/util/stream_traits.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {

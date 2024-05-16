@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_STREAM_HPP)
-#define ASYNC_MQTT_STREAM_HPP
+#if !defined(ASYNC_MQTT_UTIL_STREAM_HPP)
+#define ASYNC_MQTT_UTIL_STREAM_HPP
 
 #include <iostream>
 
@@ -14,7 +14,7 @@
 
 #include <boost/asio/async_result.hpp>
 
-#include <async_mqtt/stream_traits.hpp>
+#include <async_mqtt/util/stream_traits.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
@@ -161,8 +161,8 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/stream_read_packet.hpp>
-#include <async_mqtt/impl/stream_write_packet.hpp>
-#include <async_mqtt/impl/stream_close.hpp>
+#include <async_mqtt/util/impl/stream_read_packet.hpp>
+#include <async_mqtt/util/impl/stream_write_packet.hpp>
+#include <async_mqtt/util/impl/stream_close.hpp>
 
-#endif // ASYNC_MQTT_STREAM_HPP
+#endif // ASYNC_MQTT_UTIL_STREAM_HPP

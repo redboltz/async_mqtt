@@ -10,7 +10,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 
-#include <async_mqtt/stream_traits.hpp>
+#include <async_mqtt/util/stream_traits.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/constant.hpp>
 

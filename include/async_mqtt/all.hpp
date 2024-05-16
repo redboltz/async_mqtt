@@ -15,11 +15,6 @@
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/setup_log.hpp>
-#include <async_mqtt/util/store.hpp>
-#include <async_mqtt/stream.hpp>
-#include <async_mqtt/stream_traits.hpp>
-#include <async_mqtt/util/topic_alias_recv.hpp>
-#include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
@@ -96,7 +91,12 @@
 #include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/static_vector.hpp>
+#include <async_mqtt/util/store.hpp>
+#include <async_mqtt/util/stream.hpp>
+#include <async_mqtt/util/stream_traits.hpp>
 #include <async_mqtt/util/string_view_helper.hpp>
+#include <async_mqtt/util/topic_alias_recv.hpp>
+#include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>

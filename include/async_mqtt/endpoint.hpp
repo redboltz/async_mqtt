@@ -14,7 +14,7 @@
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
-#include <async_mqtt/stream.hpp>
+#include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/store.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/util/log.hpp>
