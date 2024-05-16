@@ -8,7 +8,7 @@
 #include "../common/global_fixture.hpp"
 
 #include <vector>
-#include <async_mqtt/host_port.hpp>
+#include <async_mqtt/util/host_port.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_host_port)
 
