@@ -1,4 +1,4 @@
 <map id="Subscribe_options" name="Subscribe_options">
-<area shape="rect" id="Node000001" title=" " alt="" coords="161,5,300,33"/>
-<area shape="rect" id="Node000002" href="$group__subscribe__v5.html" title=" " alt="" coords="5,5,113,33"/>
+<area shape="rect" id="Node000001" title="SUBSCRIBE packet flags." alt="" coords="161,5,300,33"/>
+<area shape="rect" id="Node000002" href="$group__subscribe__v5.html" title="SUBSCRIBE packet (v5.0)" alt="" coords="5,5,113,33"/>
 </map>

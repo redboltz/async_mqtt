@@ -1,4 +1,4 @@
 <map id="Connack_v5" name="Connack_v5">
-<area shape="rect" id="Node000001" title=" " alt="" coords="140,5,240,33"/>
+<area shape="rect" id="Node000001" title="CONNACK packet (v5.0)" alt="" coords="140,5,240,33"/>
 <area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
 </map>

@@ -15,6 +15,7 @@
  * @defgroup publish_options
  * @ingroup publish_v5
  * @ingroup publish_v3_1_1
+ * @brief PUBLISH packet flags
  */
 
 namespace async_mqtt {

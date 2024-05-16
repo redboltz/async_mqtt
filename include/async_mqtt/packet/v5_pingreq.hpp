@@ -19,6 +19,7 @@
 /**
  * @defgroup pingreq_v5
  * @ingroup packet_v5
+ * @brief PINGREQ packet (v5.0)
  */
 
 namespace async_mqtt::v5 {

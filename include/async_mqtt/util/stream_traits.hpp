@@ -90,6 +90,7 @@ lowest_layer_type<T>& get_lowest_layer(T& t) noexcept {
 /**
  * @defgroup underlying_customize
  * @ingroup underlying_layer
+ * @brief underlying layer customization
  */
 
 /**

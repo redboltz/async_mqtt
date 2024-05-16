@@ -1,4 +1,4 @@
 <map id="Property_variant" name="Property_variant">
-<area shape="rect" id="Node000002" href="$group__property.html" title=" " alt="" coords="5,5,82,33"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="130,5,259,33"/>
+<area shape="rect" id="Node000002" href="$group__property.html" title="Property for MQTT v5.0 packets." alt="" coords="5,5,82,33"/>
+<area shape="rect" id="Node000001" title="variant class for all properties" alt="" coords="130,5,259,33"/>
 </map>

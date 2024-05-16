@@ -73,11 +73,12 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::release_packet_id(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type pid) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::
+release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "release_packet_id:" << pid;
-    release_pid(pid);
+        << "release_packet_id:" << packet_id;
+    release_pid(packet_id);
 }
 
 } // namespace async_mqtt

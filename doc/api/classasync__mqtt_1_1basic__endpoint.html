@@ -198,7 +198,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af7bb124c4a3d8ca4e4c7a0f4664452ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ed8b0c36ca01246649780fa45323bb8" id="r_a9ed8b0c36ca01246649780fa45323bb8"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a9ed8b0c36ca01246649780fa45323bb8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9ed8b0c36ca01246649780fa45323bb8">recv</a> (<a class="el" href="group__endpoint.html#gaed6ebca93cac28c67f2b4fb8641e775a">filter</a> fil, std::set&lt; control_packet_type &gt; types, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
-<tr class="memdesc:a9ed8b0c36ca01246649780fa45323bb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet users CANNOT call <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> before the previous <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a>'s CompletionToken is invoked if packet is not filterd, then next <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> starts automatically. if receive error happenes, then token would be invoked. @params fil if <code>match</code> then matched types are targets. if <code>except</code> then not matched types are targets.  <br /></td></tr>
+<tr class="memdesc:a9ed8b0c36ca01246649780fa45323bb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet users CANNOT call <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> before the previous <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a>'s CompletionToken is invoked if packet is not filterd, then next <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> starts automatically. if receive error happenes, then token would be invoked.  <br /></td></tr>
 <tr class="separator:a9ed8b0c36ca01246649780fa45323bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abeddeaf9929c8fcec4f42aa4884e38f6" id="r_abeddeaf9929c8fcec4f42aa4884e38f6"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:abeddeaf9929c8fcec4f42aa4884e38f6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abeddeaf9929c8fcec4f42aa4884e38f6">close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
@@ -219,12 +219,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9864c9c46f655e82a8cbb93d2725f0e0" id="r_a9864c9c46f655e82a8cbb93d2725f0e0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; typename basic_packet_id_type&lt; PacketIdBytes &gt;::type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9864c9c46f655e82a8cbb93d2725f0e0">acquire_unique_packet_id</a> ()</td></tr>
 <tr class="memdesc:a9864c9c46f655e82a8cbb93d2725f0e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
 <tr class="separator:a9864c9c46f655e82a8cbb93d2725f0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af777ccf0d5925890cf877deef759a7e6" id="r_af777ccf0d5925890cf877deef759a7e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af777ccf0d5925890cf877deef759a7e6">register_packet_id</a> (typename basic_packet_id_type&lt; PacketIdBytes &gt;::type pid)</td></tr>
-<tr class="memdesc:af777ccf0d5925890cf877deef759a7e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">register packet_id.  <br /></td></tr>
-<tr class="separator:af777ccf0d5925890cf877deef759a7e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f8a3f286128727b00fae0559c0f4457" id="r_a0f8a3f286128727b00fae0559c0f4457"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f8a3f286128727b00fae0559c0f4457">release_packet_id</a> (typename basic_packet_id_type&lt; PacketIdBytes &gt;::type pid)</td></tr>
-<tr class="memdesc:a0f8a3f286128727b00fae0559c0f4457"><td class="mdescLeft">&#160;</td><td class="mdescRight">release packet_id.  <br /></td></tr>
-<tr class="separator:a0f8a3f286128727b00fae0559c0f4457"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaff45fdd6e9bc61001b1ac936040c01" id="r_adaff45fdd6e9bc61001b1ac936040c01"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adaff45fdd6e9bc61001b1ac936040c01">register_packet_id</a> (typename basic_packet_id_type&lt; PacketIdBytes &gt;::type packet_id)</td></tr>
+<tr class="memdesc:adaff45fdd6e9bc61001b1ac936040c01"><td class="mdescLeft">&#160;</td><td class="mdescRight">register packet_id.  <br /></td></tr>
+<tr class="separator:adaff45fdd6e9bc61001b1ac936040c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae72fa838272da0e140e5ad1acf24463b" id="r_ae72fa838272da0e140e5ad1acf24463b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae72fa838272da0e140e5ad1acf24463b">release_packet_id</a> (typename basic_packet_id_type&lt; PacketIdBytes &gt;::type packet_id)</td></tr>
+<tr class="memdesc:ae72fa838272da0e140e5ad1acf24463b"><td class="mdescLeft">&#160;</td><td class="mdescRight">release packet_id.  <br /></td></tr>
+<tr class="separator:ae72fa838272da0e140e5ad1acf24463b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c54a4deadb8706eafe3f56fc59eca07" id="r_a5c54a4deadb8706eafe3f56fc59eca07"><td class="memItemLeft" align="right" valign="top">std::set&lt; typename basic_packet_id_type&lt; PacketIdBytes &gt;::type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c54a4deadb8706eafe3f56fc59eca07">get_qos2_publish_handled_pids</a> () const</td></tr>
 <tr class="memdesc:a5c54a4deadb8706eafe3f56fc59eca07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get processed but not released QoS2 packet ids This function should be called after disconnection.  <br /></td></tr>
 <tr class="separator:a5c54a4deadb8706eafe3f56fc59eca07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -831,9 +831,10 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
       </table>
 </div><div class="memdoc">
 
-<p>receive packet users CANNOT call <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> before the previous <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a>'s CompletionToken is invoked if packet is not filterd, then next <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> starts automatically. if receive error happenes, then token would be invoked. @params fil if <code>match</code> then matched types are targets. if <code>except</code> then not matched types are targets. </p>
+<p>receive packet users CANNOT call <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> before the previous <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a>'s CompletionToken is invoked if packet is not filterd, then next <a class="el" href="#a30eb38c816f1003c04ead18fdb5040da" title="receive packet users CANNOT call recv() before the previous recv()&#39;s CompletionToken is invoked">recv()</a> starts automatically. if receive error happenes, then token would be invoked. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">fil</td><td>if <code>match</code> then matched types are targets. if <code>except</code> then not matched types are targets. </td></tr>
     <tr><td class="paramname">types</td><td>target control_packet_types </td></tr>
     <tr><td class="paramname">token</td><td>the param is packet_variant_type </td></tr>
   </table>
@@ -878,8 +879,45 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 
 </div>
 </div>
+<a id="adaff45fdd6e9bc61001b1ac936040c01" name="adaff45fdd6e9bc61001b1ac936040c01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaff45fdd6e9bc61001b1ac936040c01">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::register_packet_id </td>
+          <td>(</td>
+          <td class="paramtype">typename basic_packet_id_type&lt; PacketIdBytes &gt;::type</td>          <td class="paramname"><span class="paramname"><em>packet_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>register packet_id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>If true, success, otherwise the packet_id has already been used. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
+
+</div>
+</div>
 <a id="a2a4939f6f0be76b3408f53513dabaff1" name="a2a4939f6f0be76b3408f53513dabaff1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a4939f6f0be76b3408f53513dabaff1">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a4939f6f0be76b3408f53513dabaff1">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -910,43 +948,6 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
-<a id="af777ccf0d5925890cf877deef759a7e6" name="af777ccf0d5925890cf877deef759a7e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af777ccf0d5925890cf877deef759a7e6">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::register_packet_id </td>
-          <td>(</td>
-          <td class="paramtype">typename basic_packet_id_type&lt; PacketIdBytes &gt;::type</td>          <td class="paramname"><span class="paramname"><em>pid</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>register packet_id. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>If true, success, otherwise the packet_id has already been used. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1020,8 +1021,44 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 
 </div>
 </div>
+<a id="ae72fa838272da0e140e5ad1acf24463b" name="ae72fa838272da0e140e5ad1acf24463b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae72fa838272da0e140e5ad1acf24463b">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::release_packet_id </td>
+          <td>(</td>
+          <td class="paramtype">typename basic_packet_id_type&lt; PacketIdBytes &gt;::type</td>          <td class="paramname"><span class="paramname"><em>packet_id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>release packet_id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
+
+</div>
+</div>
 <a id="acbe8163f2c8ed524bf1297412c11ea58" name="acbe8163f2c8ed524bf1297412c11ea58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbe8163f2c8ed524bf1297412c11ea58">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acbe8163f2c8ed524bf1297412c11ea58">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1052,42 +1089,6 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
-<a id="a0f8a3f286128727b00fae0559c0f4457" name="a0f8a3f286128727b00fae0559c0f4457"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f8a3f286128727b00fae0559c0f4457">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::release_packet_id </td>
-          <td>(</td>
-          <td class="paramtype">typename basic_packet_id_type&lt; PacketIdBytes &gt;::type</td>          <td class="paramname"><span class="paramname"><em>pid</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>release packet_id. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1446,7 +1447,7 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 <dl class="section note"><dt>Note</dt><dd>By default timeout is not set. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">val</td><td>if 0, timer is not set, otherwise set val milliseconds. </td></tr>
+    <tr><td class="paramname">ms</td><td>if 0, timer is not set, otherwise set val milliseconds. </td></tr>
   </table>
   </dd>
 </dl>

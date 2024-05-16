@@ -21,11 +21,13 @@
 /**
  * @defgroup store_packet_variant
  * @ingroup packet_variant
+ * @brief variant class for stored packets (PUBLISH, PUBREL)
  */
 
 /**
  * @defgroup store_packet_variant_detail
  * @ingroup store_packet_variant
+ * @brief stored_packet_variant internal details
  */
 
 namespace async_mqtt {

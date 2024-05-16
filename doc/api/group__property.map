@@ -1,6 +1,6 @@
 <map id="Property" name="Property">
 <area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,32,92,60"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="140,32,216,60"/>
-<area shape="rect" id="Node000003" href="$group__property__internal.html" title=" " alt="" coords="264,5,397,33"/>
-<area shape="rect" id="Node000004" href="$group__property__variant.html" title=" " alt="" coords="266,57,395,85"/>
+<area shape="rect" id="Node000001" title="Property for MQTT v5.0 packets." alt="" coords="140,32,216,60"/>
+<area shape="rect" id="Node000003" href="$group__property__internal.html" title="Property internal implementation classes." alt="" coords="264,5,397,33"/>
+<area shape="rect" id="Node000004" href="$group__property__variant.html" title="variant class for all properties" alt="" coords="266,57,395,85"/>
 </map>

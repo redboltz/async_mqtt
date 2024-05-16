@@ -21,6 +21,7 @@
 /**
  * @defgroup connack_v5
  * @ingroup packet_v5
+ * @brief CONNACK packet (v5.0)
  */
 
 namespace async_mqtt::v5 {
