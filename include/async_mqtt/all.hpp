@@ -18,8 +18,8 @@
 #include <async_mqtt/util/store.hpp>
 #include <async_mqtt/stream.hpp>
 #include <async_mqtt/stream_traits.hpp>
-#include <async_mqtt/topic_alias_recv.hpp>
-#include <async_mqtt/topic_alias_send.hpp>
+#include <async_mqtt/util/topic_alias_recv.hpp>
+#include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/type.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
