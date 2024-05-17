@@ -7,27 +7,25 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_SUBSCRIBE_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
-#include <async_mqtt/util/static_vector.hpp>
-
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
+
+#include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
 /**
- * @defgroup subscribe_v3_1_1
+ * @defgroup subscribe_v3_1_1 SUBSCRIBE packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief SUBSCRIBE packet (v3.1.1)
  */
 
 /**
- * @defgroup subscribe_v3_1_1_detail
+ * @defgroup subscribe_v3_1_1_detail implementation class
  * @ingroup subscribe_v3_1_1
- * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v3_1_1 {

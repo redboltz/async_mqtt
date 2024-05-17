@@ -7,17 +7,17 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_PINGREQ_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_PINGREQ_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
-#include <async_mqtt/util/buffer.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
 
 /**
- * @defgroup pingreq_v3_1_1
+ * @defgroup pingreq_v3_1_1 PINGREQ packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief PINGREQ packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {

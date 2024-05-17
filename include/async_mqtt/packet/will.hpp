@@ -14,6 +14,11 @@
 
 namespace async_mqtt {
 
+/**
+ * @ingroup connect_v3_1_1
+ * @ingroup connect_v5
+ * @brief MQTT will message
+ */
 class will {
 public:
     /**
@@ -24,8 +29,8 @@ public:
      *        The contents to publish as a will
      * @param pubopts
      *        Qos and retain flag
-     * @param qos
-     *        qos
+     * @param props
+     *        will properties
      */
     template <
         typename StringViewLikeTopic,
@@ -129,7 +134,10 @@ public:
     }
 
     /**
-     * @brief equality comparison operator
+     * @brief equal operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs equal to the rhs, otherwise false.
      */
     friend
     bool operator==(will const& lhs, will const& rhs) {
@@ -139,7 +147,10 @@ public:
     }
 
     /**
-     * @brief less than comparison operator
+     * @brief less than operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than the rhs, otherwise false.
      */
     friend
     bool operator<(will const& lhs, will const& rhs) {
@@ -155,18 +166,22 @@ private:
     properties props_;
 };
 
-/**
- * @ingroup packet
- * @brief stream output operator
+/*
+ * @ingroup connect_v3_1_1
+ * @ingroup connect_v5
+ * @brief output to the stream
+ * @param os output stream
+ * @param v  target
+ * @return output stream
  */
-inline std::ostream& operator<<(std::ostream& o, will const& val) {
+inline std::ostream& operator<<(std::ostream& o, will const& v) {
     o << "{" <<
-        "topic:" << val.topic_as_buffer() << "," <<
-        "message:" << json_like_out(val.message_as_buffer()) << "," <<
-        "qos:" << val.get_qos() << "," <<
-        "retain:" << val.get_retain();
-    if (!val.props().empty()) {
-        o << ",ps:" << val.props();
+        "topic:" << v.topic_as_buffer() << "," <<
+        "message:" << json_like_out(v.message_as_buffer()) << "," <<
+        "qos:" << v.get_qos() << "," <<
+        "retain:" << v.get_retain();
+    if (!v.props().empty()) {
+        o << ",ps:" << v.props();
     }
     o << "}";
     return o;

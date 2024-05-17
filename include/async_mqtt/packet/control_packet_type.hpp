@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_CONTROL_PACKET_TYPE_HPP)
-#define ASYNC_MQTT_CONTROL_PACKET_TYPE_HPP
+#if !defined(ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP)
+#define ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP
 
 #include <cstdint>
 #include <ostream>
@@ -14,31 +14,37 @@
 
 namespace async_mqtt {
 
+/**
+ * @ingroup packet
+ * @brief MQTT control packet type
+ */
 enum class control_packet_type : std::uint8_t {
 
     // reserved    =  0b0000000,
-    connect     = 0b00010000, // 1
-    connack     = 0b00100000, // 2
-    publish     = 0b00110000, // 3
-    puback      = 0b01000000, // 4
-    pubrec      = 0b01010000, // 5
-    pubrel      = 0b01100000, // 6
-    pubcomp     = 0b01110000, // 7
-    subscribe   = 0b10000000, // 8
-    suback      = 0b10010000, // 9
-    unsubscribe = 0b10100000, // 10
-    unsuback    = 0b10110000, // 11
-    pingreq     = 0b11000000, // 12
-    pingresp    = 0b11010000, // 13、
-    disconnect  = 0b11100000, // 14
-    auth        = 0b11110000, // 15
+    connect     = 0b00010000, ///< CONNECT(1)
+    connack     = 0b00100000, ///< CONNACK(2)
+    publish     = 0b00110000, ///< PUBLISH(3)
+    puback      = 0b01000000, ///< PUBACK(4)
+    pubrec      = 0b01010000, ///< PUBREC(5)
+    pubrel      = 0b01100000, ///< PUBREL(6)
+    pubcomp     = 0b01110000, ///< PUBCOMP(7)
+    subscribe   = 0b10000000, ///< SUBSCRIBE(8)
+    suback      = 0b10010000, ///< SUBACK(9)
+    unsubscribe = 0b10100000, ///< UNSUBSCRIBE(10)
+    unsuback    = 0b10110000, ///< UNSUBACK(11)
+    pingreq     = 0b11000000, ///< PINGREQ(12)
+    pingresp    = 0b11010000, ///< PINGRESP(13)
+    disconnect  = 0b11100000, ///< DISCONNECT(14)
+    auth        = 0b11110000, ///< AUTH(15)
 
 };
 
-constexpr control_packet_type get_control_packet_type(std::uint8_t v) {
-    return static_cast<control_packet_type>(v & 0b11110000);
-}
-
+/**
+ * @ingroup packet
+ * @brief stringize control_packet_type
+ * @param v target
+ * @return control_packet_type
+ */
 constexpr
 char const* control_packet_type_to_str(control_packet_type v) {
     switch(v)
@@ -63,11 +69,22 @@ char const* control_packet_type_to_str(control_packet_type v) {
     }
 }
 
+/**
+ * @ingroup packet
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, control_packet_type val)
+std::ostream& operator<<(std::ostream& o, control_packet_type v)
 {
-    os << control_packet_type_to_str(val);
-    return os;
+    o << control_packet_type_to_str(v);
+    return o;
+}
+
+constexpr control_packet_type get_control_packet_type(std::uint8_t v) {
+    return static_cast<control_packet_type>(v & 0b11110000);
 }
 
 enum class control_packet_reserved_bits : std::uint8_t {
@@ -134,4 +151,4 @@ inline std::optional<control_packet_type> get_control_packet_type_with_check(std
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_CONTROL_PACKET_TYPE_HPP
+#endif // ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP

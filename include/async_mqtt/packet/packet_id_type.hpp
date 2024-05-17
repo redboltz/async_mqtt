@@ -12,6 +12,10 @@
 
 namespace async_mqtt {
 
+/**
+ * @ingroup packet
+ * @brief packet idenfitifer type class template
+ */
 template <std::size_t PacketIdBytes>
 struct basic_packet_id_type;
 
@@ -25,6 +29,10 @@ struct basic_packet_id_type<4> {
     using type = std::uint32_t;
 };
 
+/**
+ * @ingroup packet
+ * @brief packet idenfitifer type
+ */
 using packet_id_type = typename basic_packet_id_type<2>::type;
 
 } // namespace async_mqtt

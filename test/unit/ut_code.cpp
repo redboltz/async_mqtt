@@ -335,12 +335,6 @@ BOOST_AUTO_TEST_CASE( connect_reason_code ) {
         BOOST_TEST(ss.str() == std::string_view("banned"));
     }
     {
-        auto c = am::connect_reason_code::server_shutting_down;
-        std::stringstream ss;
-        ss << c;
-        BOOST_TEST(ss.str() == std::string_view("server_shutting_down"));
-    }
-    {
         auto c = am::connect_reason_code::bad_authentication_method;
         std::stringstream ss;
         ss << c;

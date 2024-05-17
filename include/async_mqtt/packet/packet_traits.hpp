@@ -10,94 +10,11 @@
 #include <cstdint>
 #include <type_traits>
 
+#include <async_mqtt/packet/packet_fwd.hpp>
+#include <async_mqtt/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/packet/store_packet_variant_fwd.hpp>
+
 namespace async_mqtt {
-
-namespace v3_1_1 {
-
-class connect_packet;
-
-class connack_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_publish_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_puback_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubrec_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubrel_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubcomp_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_subscribe_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_suback_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_unsubscribe_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_unsuback_packet;
-
-class pingreq_packet;
-
-class pingresp_packet;
-
-class disconnect_packet;
-
-} // namespace v3_1_1
-
-namespace v5 {
-
-class connect_packet;
-
-class connack_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_publish_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_puback_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubrec_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubrel_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_pubcomp_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_subscribe_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_suback_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_unsubscribe_packet;
-
-template <std::size_t PacketIdBytes>
-class basic_unsuback_packet;
-
-class pingreq_packet;
-
-class pingresp_packet;
-
-class disconnect_packet;
-
-class auth_packet;
-
-} // namespace v5
-
-template <std::size_t PacketIdBytes>
-class basic_store_packet_variant;
 
 template <template <std::size_t> typename, typename>
 struct is_instance_of : std::false_type {};
@@ -197,6 +114,11 @@ constexpr bool is_v3_1_1() {
         is_instance_of<v3_1_1::basic_suback_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_unsubscribe_packet, Packet>::value ||
         is_instance_of<v3_1_1::basic_unsuback_packet, Packet>::value;
+}
+
+template <typename Packet>
+constexpr bool is_packet() {
+    return is_v3_1_1<Packet>() || is_v5<Packet>();
 }
 
 template <typename Packet>

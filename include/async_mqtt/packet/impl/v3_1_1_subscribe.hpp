@@ -19,10 +19,10 @@
 #include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -34,7 +34,7 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     std::vector<topic_subopts> params
 )
-    : fixed_header_{make_fixed_header(control_packet_type::subscribe, 0b0010)},
+    : fixed_header_{detail::make_fixed_header(control_packet_type::subscribe, 0b0010)},
       entries_{force_move(params)},
       remaining_length_{PacketIdBytes}
 {

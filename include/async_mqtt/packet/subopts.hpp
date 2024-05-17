@@ -13,9 +13,8 @@
 #include <async_mqtt/packet/qos.hpp>
 
 /**
- * @defgroup subscribe_options
+ * @defgroup subscribe_options SUBSCRIBE packet flags
  * @ingroup subscribe_v5
- * @brief SUBSCRIBE packet flags
  */
 
 namespace async_mqtt {
@@ -357,16 +356,16 @@ constexpr char const* retain_handling_to_str(retain_handling v) {
 /**
  * @ingroup subscribe_options
  * @related opts
- * @brief output to the stream retain_handling
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, retain_handling v)
+std::ostream& operator<<(std::ostream& o, retain_handling v)
 {
-    os << retain_handling_to_str(v);
-    return os;
+    o << retain_handling_to_str(v);
+    return o;
 }
 
 /**
@@ -387,16 +386,16 @@ constexpr char const* rap_to_str(rap v) {
 /**
  * @ingroup subscribe_options
  * @related opts
- * @brief output to the stream rap(retain as published)
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, rap v)
+std::ostream& operator<<(std::ostream& o, rap v)
 {
-    os << rap_to_str(v);
-    return os;
+    o << rap_to_str(v);
+    return o;
 }
 
 /**
@@ -417,16 +416,16 @@ constexpr char const* nl_to_str(nl v) {
 /**
  * @ingroup subscribe_options
  * @related opts
- * @brief output to the stream nl(no local)
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, nl v)
+std::ostream& operator<<(std::ostream& o, nl v)
 {
-    os << nl_to_str(v);
-    return os;
+    o << nl_to_str(v);
+    return o;
 }
 
 } // namespace sub

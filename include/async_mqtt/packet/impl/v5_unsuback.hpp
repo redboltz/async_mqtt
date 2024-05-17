@@ -17,10 +17,11 @@
 #include <async_mqtt/util/endian_convert.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -33,7 +34,7 @@ basic_unsuback_packet<PacketIdBytes>::basic_unsuback_packet(
     std::vector<unsuback_reason_code> params,
     properties props
 )
-    : fixed_header_{make_fixed_header(control_packet_type::unsuback, 0b0000)},
+    : fixed_header_{detail::make_fixed_header(control_packet_type::unsuback, 0b0000)},
       entries_{force_move(params)},
       remaining_length_{PacketIdBytes + entries_.size()},
       property_length_(async_mqtt::size(props)),

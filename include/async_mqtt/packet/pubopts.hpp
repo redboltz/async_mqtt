@@ -12,10 +12,9 @@
 #include <async_mqtt/packet/qos.hpp>
 
 /**
- * @defgroup publish_options
+ * @defgroup publish_options PUBLISH packet flags
  * @ingroup publish_v5
  * @ingroup publish_v3_1_1
- * @brief PUBLISH packet flags
  */
 
 namespace async_mqtt {
@@ -221,14 +220,14 @@ struct opts final {
     /**
      * @brief equal operator
      * @param rhs compare target
-     * @return true if this opts equal to the rhs, otherwise false.
+     * @return true if this equal to the rhs, otherwise false.
      */
     constexpr bool operator==(opts rhs) const { return data_ == rhs.data_; }
 
     /**
      * @brief less than operator
      * @param rhs compare target
-     * @return true if this opts less than the rhs, otherwise false.
+     * @return true if this less than the rhs, otherwise false.
      */
     constexpr bool operator<(opts rhs) const { return data_ < rhs.data_; }
 
@@ -309,16 +308,16 @@ constexpr char const* retain_to_str(retain v) {
 /**
  * @ingroup publish_options
  * @related opts
- * @brief output to the stream retain
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, retain v)
+std::ostream& operator<<(std::ostream& o, retain v)
 {
-    os << retain_to_str(v);
-    return os;
+    o << retain_to_str(v);
+    return o;
 }
 
 /**
@@ -339,16 +338,16 @@ constexpr char const* dup_to_str(dup v) {
 /**
  * @ingroup publish_options
  * @related opts
- * @brief output to the stream dup
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, dup v)
+std::ostream& operator<<(std::ostream& o, dup v)
 {
-    os << dup_to_str(v);
-    return os;
+    o << dup_to_str(v);
+    return o;
 }
 
 } // namespace pub

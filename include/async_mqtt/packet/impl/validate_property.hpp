@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_VALIDATE_PROPERTY_HPP)
-#define ASYNC_MQTT_PACKET_VALIDATE_PROPERTY_HPP
+#if !defined(ASYNC_MQTT_PACKET_IMPL_VALIDATE_PROPERTY_HPP)
+#define ASYNC_MQTT_PACKET_IMPL_VALIDATE_PROPERTY_HPP
 
 
 #include <async_mqtt/packet/property_id.hpp>
@@ -221,4 +221,4 @@ constexpr bool validate_property(property_location loc, property::id id) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_VALIDATE_PROPERTY_HPP
+#endif // ASYNC_MQTT_PACKET_IMPL_VALIDATE_PROPERTY_HPP

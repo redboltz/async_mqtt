@@ -11,9 +11,8 @@
 #include <ostream>
 
 /**
- * @defgroup mqtt
+ * @defgroup mqtt MQTT protocol
  * @ingroup connection
- * @brief MQTT protocol related topics
  */
 
 namespace async_mqtt {

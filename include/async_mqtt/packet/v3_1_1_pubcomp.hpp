@@ -7,25 +7,24 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBCOMP_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_PUBCOMP_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/packet/packet_id_type.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
 
 /**
- * @defgroup pubcomp_v3_1_1
+ * @defgroup pubcomp_v3_1_1 PUBCOMP packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief PUBCOMP packet (v3.1.1)
  */
 
 /**
- * @defgroup pubcomp_v3_1_1_detail
+ * @defgroup pubcomp_v3_1_1_detail implementation class
  * @ingroup pubcomp_v3_1_1
- * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v3_1_1 {

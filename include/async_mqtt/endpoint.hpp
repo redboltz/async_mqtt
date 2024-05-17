@@ -25,14 +25,12 @@
 #include <async_mqtt/packet/packet_traits.hpp>
 
 /**
- * @defgroup connection
- * @brief MQTT and underlying layer connection related topics
+ * @defgroup connection MQTT connection
  */
 
 /**
- * @defgroup endpoint
+ * @defgroup endpoint Packet level MQTT endpoint for client/server(broker)
  * @ingroup connection
- * @brief MQTT connection layer that can be used not only a client but also a server (broker).
  */
 
 namespace async_mqtt {
@@ -500,6 +498,7 @@ public:
     /**
      * @brief regulate publish packet for store
      *        remove topic alias from the packet and extract the topic name
+     * @param packet target packet to regulate
      * @param token  the param is v5::basic_publish_packet<PacketIdBytes>
      * @return deduced by token
      */

@@ -4,14 +4,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP)
-#define ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP
+#if !defined(ASYNC_MQTT_IMPL_BUFFER_TO_PACKET_VARIANT_HPP)
+#define ASYNC_MQTT_IMPL_BUFFER_TO_PACKET_VARIANT_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/get_protocol_version.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
@@ -42,9 +41,12 @@
 #include <async_mqtt/packet/v5_disconnect.hpp>
 #include <async_mqtt/packet/v5_auth.hpp>
 
+#include <async_mqtt/packet/impl/get_protocol_version.hpp>
+
 namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
+inline
 basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, protocol_version ver) {
     if (buf.size() < 2) {
         return make_error(errc::bad_message, "packet size is too short");
@@ -216,7 +218,6 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
     }
 }
 
-
 inline
 packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver) {
     return buffer_to_basic_packet_variant<2>(force_move(buf), ver);
@@ -224,4 +225,4 @@ packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_BUFFER_TO_PACKET_VARIANT_HPP
+#endif // ASYNC_MQTT_IMPL_BUFFER_TO_PACKET_VARIANT_HPP

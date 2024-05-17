@@ -7,19 +7,17 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/connect_flags.hpp>
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/will.hpp>
 
 /**
- * @defgroup connect_v3_1_1
+ * @defgroup connect_v3_1_1 CONNECT packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief CONNECT packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {
@@ -90,7 +88,7 @@ public:
      * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
      *                       if it is empty string and clean_session is true, If false then protocol error.
      *                       \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349242
-     * @param will           MQTT Will
+     * @param w              MQTT Will
      *                       \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349243
      * @param user_name      MQTT UserName. It is often used for authentication.
      *                       \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349245

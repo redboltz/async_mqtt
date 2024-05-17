@@ -18,9 +18,8 @@
 #include <async_mqtt/util/is_iterator.hpp>
 
 /**
- * @defgroup buffer
+ * @defgroup buffer Reference counting immutable buffer
  * @ingroup packet_detail
- * @brief Reference counting immutable buffer
  */
 
 namespace async_mqtt {
@@ -129,7 +128,7 @@ public:
 
     /**
      * @brief string constructor
-     * @param string
+     * @param s string
      */
     explicit buffer(std::string s) {
         auto str = std::make_shared<std::string>(force_move(s));
@@ -150,7 +149,7 @@ public:
 
     /**
      * @brief pointer, size,  and lifetime constructor
-     * @param p     pointer to the beginning of the view
+     * @param s     pointer to the beginning of the view
      * @param count size of the view
      * @param life sv target's lifetime keeping object by shared ownership
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
@@ -358,9 +357,9 @@ public:
      * @brief get substring
      * The returned buffer ragnge is the same as std::string_view::substr().
      * In addition the lifetime is shared between returned buffer and this buffer.
-     * @param offset offset point of the buffer
-     * @param length length of the buffer, If the length is std::string_view::npos
-     *               then the length is from offset to the end of string.
+     * @param pos    position of the first character
+     * @param count  requested length
+     * @return buffer
      */
     buffer substr(size_type pos = 0, size_type count = npos) const& {
         // range is checked in std::string_view::substr.
@@ -371,9 +370,9 @@ public:
      * @brief get substring
      * The returned buffer ragnge is the same as std::string_view::substr().
      * In addition the lifetime is moved to returned buffer.
-     * @param offset offset point of the buffer
-     * @param length length of the buffer, If the length is std::string_view::npos
-     *               then the length is from offset to the end of string.
+     * @param pos    position of the first character
+     * @param count  requested length
+     * @return buffer
      */
     buffer substr(size_type pos = 0, size_type count = npos) && {
         // range is checked in std::string_view::substr.

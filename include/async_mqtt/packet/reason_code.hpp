@@ -14,32 +14,43 @@
 
 namespace async_mqtt {
 
+/**
+ * @ingroup connack_v5
+ * @brief MQTT connect_reason_code
+ *
+ * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
+ */
 enum class connect_reason_code : std::uint8_t {
-    success                       = 0x00,
-    unspecified_error             = 0x80,
-    malformed_packet              = 0x81,
-    protocol_error                = 0x82,
-    implementation_specific_error = 0x83,
-    unsupported_protocol_version  = 0x84,
-    client_identifier_not_valid   = 0x85,
-    bad_user_name_or_password     = 0x86,
-    not_authorized                = 0x87,
-    server_unavailable            = 0x88,
-    server_busy                   = 0x89,
-    banned                        = 0x8a,
-    server_shutting_down          = 0x8b,
-    bad_authentication_method     = 0x8c,
-    topic_name_invalid            = 0x90,
-    packet_too_large              = 0x95,
-    quota_exceeded                = 0x97,
-    payload_format_invalid        = 0x99,
-    retain_not_supported          = 0x9a,
-    qos_not_supported             = 0x9b,
-    use_another_server            = 0x9c,
-    server_moved                  = 0x9d,
-    connection_rate_exceeded      = 0x9f,
+    success                       = 0x00, ///< Success
+    unspecified_error             = 0x80, ///< Unspecified error
+    malformed_packet              = 0x81, ///< Malformed Packet
+    protocol_error                = 0x82, ///< Protocol Error
+    implementation_specific_error = 0x83, ///< Implementation specific error
+    unsupported_protocol_version  = 0x84, ///< Unsupported Protocol Version
+    client_identifier_not_valid   = 0x85, ///< Client Identifier not valid
+    bad_user_name_or_password     = 0x86, ///< Bad User Name or Password
+    not_authorized                = 0x87, ///< Not authorized
+    server_unavailable            = 0x88, ///< Server unavailable
+    server_busy                   = 0x89, ///< Server busy
+    banned                        = 0x8a, ///< Banned
+    bad_authentication_method     = 0x8c, ///< Bad authentication method
+    topic_name_invalid            = 0x90, ///< Topic Name invalid
+    packet_too_large              = 0x95, ///< Packet too large
+    quota_exceeded                = 0x97, ///< Quota exceeded
+    payload_format_invalid        = 0x99, ///< Payload format invalid
+    retain_not_supported          = 0x9a, ///< Retain not supported
+    qos_not_supported             = 0x9b, ///< QoS not supported
+    use_another_server            = 0x9c, ///< Use another server
+    server_moved                  = 0x9d, ///< Server moved
+    connection_rate_exceeded      = 0x9f, ///< Connection rate exceeded
 };
 
+/**
+ * @ingroup connack_v5
+ * @brief stringize connect_reason_code
+ * @param v target
+ * @return connect_reason_code string
+ */
 constexpr
 char const* connect_reason_code_to_str(connect_reason_code v) {
     switch(v)
@@ -56,7 +67,6 @@ char const* connect_reason_code_to_str(connect_reason_code v) {
         case connect_reason_code::server_unavailable:            return "server_unavailable";
         case connect_reason_code::server_busy:                   return "server_busy";
         case connect_reason_code::banned:                        return "banned";
-        case connect_reason_code::server_shutting_down:          return "server_shutting_down";
         case connect_reason_code::bad_authentication_method:     return "bad_authentication_method";
         case connect_reason_code::topic_name_invalid:            return "topic_name_invalid";
         case connect_reason_code::packet_too_large:              return "packet_too_large";
@@ -71,45 +81,64 @@ char const* connect_reason_code_to_str(connect_reason_code v) {
     }
 }
 
+/**
+ * @ingroup connack_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, connect_reason_code val)
+std::ostream& operator<<(std::ostream& o, connect_reason_code v)
 {
-    os << connect_reason_code_to_str(val);
-    return os;
+    o << connect_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup disconnect_v5
+ * @brief MQTT disconnect_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
+ */
 enum class disconnect_reason_code : std::uint8_t {
-    normal_disconnection                   = 0x00,
-    disconnect_with_will_message           = 0x04,
-    unspecified_error                      = 0x80,
-    malformed_packet                       = 0x81,
-    protocol_error                         = 0x82,
-    implementation_specific_error          = 0x83,
-    not_authorized                         = 0x87,
-    server_busy                            = 0x89,
-    server_shutting_down                   = 0x8b,
-    keep_alive_timeout                     = 0x8d,
-    session_taken_over                     = 0x8e,
-    topic_filter_invalid                   = 0x8f,
-    topic_name_invalid                     = 0x90,
-    receive_maximum_exceeded               = 0x93,
-    topic_alias_invalid                    = 0x94,
-    packet_too_large                       = 0x95,
-    message_rate_too_high                  = 0x96,
-    quota_exceeded                         = 0x97,
-    administrative_action                  = 0x98,
-    payload_format_invalid                 = 0x99,
-    retain_not_supported                   = 0x9a,
-    qos_not_supported                      = 0x9b,
-    use_another_server                     = 0x9c,
-    server_moved                           = 0x9d,
-    shared_subscriptions_not_supported     = 0x9e,
-    connection_rate_exceeded               = 0x9f,
-    maximum_connect_time                   = 0xa0,
-    subscription_identifiers_not_supported = 0xa1,
-    wildcard_subscriptions_not_supported   = 0xa2,
+    normal_disconnection                   = 0x00, ///< Normal disconnection
+    disconnect_with_will_message           = 0x04, ///< Disconnect with Will Message
+    unspecified_error                      = 0x80, ///< Unspecified error
+    malformed_packet                       = 0x81, ///< Malformed Packet
+    protocol_error                         = 0x82, ///< Protocol Error
+    implementation_specific_error          = 0x83, ///< Implementation specific error
+    not_authorized                         = 0x87, ///< Not authorized
+    server_busy                            = 0x89, ///< Server busy
+    server_shutting_down                   = 0x8b, ///< Server shutting down
+    keep_alive_timeout                     = 0x8d, ///< Keep Alive timeout
+    session_taken_over                     = 0x8e, ///< Session taken over
+    topic_filter_invalid                   = 0x8f, ///< Topic Filter invalid
+    topic_name_invalid                     = 0x90, ///< Topic Name invalid
+    receive_maximum_exceeded               = 0x93, ///< Receive Maximum exceeded
+    topic_alias_invalid                    = 0x94, ///< Topic Alias invalid
+    packet_too_large                       = 0x95, ///< Packet too large
+    message_rate_too_high                  = 0x96, ///< Message rate too high
+    quota_exceeded                         = 0x97, ///< Quota exceeded
+    administrative_action                  = 0x98, ///< Administrative action
+    payload_format_invalid                 = 0x99, ///< Payload format invalid
+    retain_not_supported                   = 0x9a, ///< Retain not supported
+    qos_not_supported                      = 0x9b, ///< QoS not supported
+    use_another_server                     = 0x9c, ///< Use another server
+    server_moved                           = 0x9d, ///< Server moved
+    shared_subscriptions_not_supported     = 0x9e, ///< Shared Subscriptions not supported
+    connection_rate_exceeded               = 0x9f, ///< Connection rate exceeded
+    maximum_connect_time                   = 0xa0, ///< Maximum connect time
+    subscription_identifiers_not_supported = 0xa1, ///< Subscription Identifiers not supported
+    wildcard_subscriptions_not_supported   = 0xa2, ///< Wildcard Subscriptions not supported
 };
 
+/**
+ * @ingroup disconnect_v5
+ * @brief stringize disconnect_reason_code
+ * @param v target
+ * @return disconnect_reason_code string
+ */
 constexpr
 char const* disconnect_reason_code_to_str(disconnect_reason_code v) {
     switch(v)
@@ -147,29 +176,48 @@ char const* disconnect_reason_code_to_str(disconnect_reason_code v) {
     }
 }
 
+/**
+ * @ingroup disconnect_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, disconnect_reason_code val)
+std::ostream& operator<<(std::ostream& o, disconnect_reason_code v)
 {
-    os << disconnect_reason_code_to_str(val);
-    return os;
+    o << disconnect_reason_code_to_str(v);
+    return o;
 }
 
 
+/**
+ * @ingroup suback_v5
+ * @brief MQTT suback_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901178
+ */
 enum class suback_reason_code : std::uint8_t {
-    granted_qos_0                          = 0x00,
-    granted_qos_1                          = 0x01,
-    granted_qos_2                          = 0x02,
-    unspecified_error                      = 0x80,
-    implementation_specific_error          = 0x83,
-    not_authorized                         = 0x87,
-    topic_filter_invalid                   = 0x8f,
-    packet_identifier_in_use               = 0x91,
-    quota_exceeded                         = 0x97,
-    shared_subscriptions_not_supported     = 0x9e,
-    subscription_identifiers_not_supported = 0xa1,
-    wildcard_subscriptions_not_supported   = 0xa2,
+    granted_qos_0                          = 0x00, ///< Granted QoS 0
+    granted_qos_1                          = 0x01, ///< Granted QoS 1
+    granted_qos_2                          = 0x02, ///< Granted QoS 2
+    unspecified_error                      = 0x80, ///< Unspecified error
+    implementation_specific_error          = 0x83, ///< Implementation specific error
+    not_authorized                         = 0x87, ///< Not authorized
+    topic_filter_invalid                   = 0x8f, ///< Topic Filter invalid
+    packet_identifier_in_use               = 0x91, ///< Packet Identifier in use
+    quota_exceeded                         = 0x97, ///< Quota exceeded
+    shared_subscriptions_not_supported     = 0x9e, ///< Shared Subscriptions not supported
+    subscription_identifiers_not_supported = 0xa1, ///< Subscription Identifiers not supported
+    wildcard_subscriptions_not_supported   = 0xa2, ///< Wildcard Subscriptions not supported
 };
 
+/**
+ * @ingroup suback_v5
+ * @brief stringize suback_reason_code
+ * @param v target
+ * @return suback_reason_code string
+ */
 constexpr
 char const* suback_reason_code_to_str(suback_reason_code v) {
     switch(v)
@@ -190,27 +238,52 @@ char const* suback_reason_code_to_str(suback_reason_code v) {
     }
 }
 
+/**
+ * @ingroup suback_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, suback_reason_code val)
+std::ostream& operator<<(std::ostream& o, suback_reason_code v)
 {
-    os << suback_reason_code_to_str(val);
-    return os;
+    o << suback_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup suback_v5
+ * @brief create suback_reason_code corresponding to the QoS
+ * @param q QoS
+ * @return suback_reason_code
+ */
 constexpr suback_reason_code qos_to_suback_reason_code(qos q) {
     return static_cast<suback_reason_code>(q);
 }
 
+/**
+ * @ingroup unsuback_v5
+ * @brief MQTT unsuback_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901194
+ */
 enum class unsuback_reason_code : std::uint8_t {
-    success                       = 0x00,
-    no_subscription_existed       = 0x11,
-    unspecified_error             = 0x80,
-    implementation_specific_error = 0x83,
-    not_authorized                = 0x87,
-    topic_filter_invalid          = 0x8f,
-    packet_identifier_in_use      = 0x91,
+    success                       = 0x00, ///< Success
+    no_subscription_existed       = 0x11, ///< No subscription existed
+    unspecified_error             = 0x80, ///< Unspecified error
+    implementation_specific_error = 0x83, ///< Implementation specific error
+    not_authorized                = 0x87, ///< Not authorized
+    topic_filter_invalid          = 0x8f, ///< Topic Filter invalid
+    packet_identifier_in_use      = 0x91, ///< Packet Identifier in use
 };
 
+/**
+ * @ingroup unsuback_v5
+ * @brief stringize unsuback_reason_code
+ * @param v target
+ * @return unsuback_reason_code string
+ */
 constexpr
 char const* unsuback_reason_code_to_str(unsuback_reason_code v) {
     switch(v)
@@ -226,25 +299,44 @@ char const* unsuback_reason_code_to_str(unsuback_reason_code v) {
     }
 }
 
+/**
+ * @ingroup unsuback_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, unsuback_reason_code val)
+std::ostream& operator<<(std::ostream& o, unsuback_reason_code v)
 {
-    os << unsuback_reason_code_to_str(val);
-    return os;
+    o << unsuback_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup puback_v5
+ * @brief MQTT puback_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901124
+ */
 enum class puback_reason_code : std::uint8_t {
-    success                       = 0x00,
-    no_matching_subscribers       = 0x10,
-    unspecified_error             = 0x80,
-    implementation_specific_error = 0x83,
-    not_authorized                = 0x87,
-    topic_name_invalid            = 0x90,
-    packet_identifier_in_use      = 0x91,
-    quota_exceeded                = 0x97,
-    payload_format_invalid        = 0x99,
+    success                       = 0x00, ///< Success
+    no_matching_subscribers       = 0x10, ///< No matching subscribers
+    unspecified_error             = 0x80, ///< Unspecified error
+    implementation_specific_error = 0x83, ///< Implementation specific error
+    not_authorized                = 0x87, ///< Not authorized
+    topic_name_invalid            = 0x90, ///< Topic Name invalid
+    packet_identifier_in_use      = 0x91, ///< Packet identifier in use
+    quota_exceeded                = 0x97, ///< Quota exceeded
+    payload_format_invalid        = 0x99, ///< Payload format invalid
 };
 
+/**
+ * @ingroup puback_v5
+ * @brief stringize puback_reason_code
+ * @param v target
+ * @return puback_reason_code string
+ */
 constexpr
 char const* puback_reason_code_to_str(puback_reason_code v) {
     switch(v)
@@ -262,30 +354,55 @@ char const* puback_reason_code_to_str(puback_reason_code v) {
     }
 }
 
+/**
+ * @ingroup puback_v5
+ * @brief check reason code error
+ * @param v  target
+ * @return true if the reason code is error, otherwise false
+ */
 constexpr
 bool is_error(puback_reason_code v) {
     return static_cast<std::uint8_t>(v) >= 0x80;
 }
 
+/**
+ * @ingroup puback_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, puback_reason_code val)
+std::ostream& operator<<(std::ostream& o, puback_reason_code v)
 {
-    os << puback_reason_code_to_str(val);
-    return os;
+    o << puback_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup pubrec_v5
+ * @brief MQTT pubrec_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134
+ */
 enum class pubrec_reason_code : std::uint8_t {
-    success                       = 0x00,
-    no_matching_subscribers       = 0x10,
-    unspecified_error             = 0x80,
-    implementation_specific_error = 0x83,
-    not_authorized                = 0x87,
-    topic_name_invalid            = 0x90,
-    packet_identifier_in_use      = 0x91,
-    quota_exceeded                = 0x97,
-    payload_format_invalid        = 0x99,
+    success                       = 0x00, ///< Success
+    no_matching_subscribers       = 0x10, ///< No matching subscribers.
+    unspecified_error             = 0x80, ///< Unspecified error
+    implementation_specific_error = 0x83, ///< Implementation specific error
+    not_authorized                = 0x87, ///< Not authorized
+    topic_name_invalid            = 0x90, ///< Topic Name invalid
+    packet_identifier_in_use      = 0x91, ///< Packet Identifier in use
+    quota_exceeded                = 0x97, ///< Quota exceeded
+    payload_format_invalid        = 0x99, ///< Payload format invalid
 };
 
+/**
+ * @ingroup pubrec_v5
+ * @brief stringize pubrec_reason_code
+ * @param v target
+ * @return pubrec_reason_code string
+ */
 constexpr
 char const* pubrec_reason_code_to_str(pubrec_reason_code v) {
     switch(v)
@@ -303,23 +420,48 @@ char const* pubrec_reason_code_to_str(pubrec_reason_code v) {
     }
 }
 
+/**
+ * @ingroup pubrec_v5
+ * @brief check reason code error
+ * @param v  target
+ * @return true if the reason code is error, otherwise false
+ */
 constexpr
 bool is_error(pubrec_reason_code v) {
     return static_cast<std::uint8_t>(v) >= 0x80;
 }
 
+/**
+ * @ingroup pubrec_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, pubrec_reason_code val)
+std::ostream& operator<<(std::ostream& o, pubrec_reason_code v)
 {
-    os << pubrec_reason_code_to_str(val);
-    return os;
+    o << pubrec_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup pubrel_v5
+ * @brief MQTT pubrel_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144
+ */
 enum class pubrel_reason_code : std::uint8_t {
-    success                     = 0x00,
-    packet_identifier_not_found = 0x92,
+    success                     = 0x00, ///< Success
+    packet_identifier_not_found = 0x92, ///< Packet Identifier not found
 };
 
+/**
+ * @ingroup pubrel_v5
+ * @brief stringize pubrel_reason_code
+ * @param v target
+ * @return pubrel_reason_code string
+ */
 constexpr
 char const* pubrel_reason_code_to_str(pubrel_reason_code v) {
     switch(v)
@@ -330,18 +472,37 @@ char const* pubrel_reason_code_to_str(pubrel_reason_code v) {
     }
 }
 
+/**
+ * @ingroup pubrel_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, pubrel_reason_code val)
+std::ostream& operator<<(std::ostream& o, pubrel_reason_code v)
 {
-    os << pubrel_reason_code_to_str(val);
-    return os;
+    o << pubrel_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup pubcomp_v5
+ * @brief MQTT pubcomp_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
+ */
 enum class pubcomp_reason_code : std::uint8_t {
-    success                     = 0x00,
-    packet_identifier_not_found = 0x92,
+    success                     = 0x00, ///< Success
+    packet_identifier_not_found = 0x92, ///< Packet Identifier not found
 };
 
+/**
+ * @ingroup pubcomp_v5
+ * @brief stringize pubcomp_reason_code
+ * @param v target
+ * @return pubcomp_reason_code string
+ */
 constexpr
 char const* pubcomp_reason_code_to_str(pubcomp_reason_code v) {
     switch(v)
@@ -352,19 +513,38 @@ char const* pubcomp_reason_code_to_str(pubcomp_reason_code v) {
     }
 }
 
+/**
+ * @ingroup pubcomp_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, pubcomp_reason_code val)
+std::ostream& operator<<(std::ostream& o, pubcomp_reason_code v)
 {
-    os << pubcomp_reason_code_to_str(val);
-    return os;
+    o << pubcomp_reason_code_to_str(v);
+    return o;
 }
 
+/**
+ * @ingroup auth_v5
+ * @brief MQTT auth_reason_code
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220
+ */
 enum class auth_reason_code : std::uint8_t {
-    success                 = 0x00,
-    continue_authentication = 0x18,
-    re_authenticate         = 0x19,
+    success                 = 0x00, ///< Success
+    continue_authentication = 0x18, ///< Continue authentication
+    re_authenticate         = 0x19, ///< Re-authenticate
 };
 
+/**
+ * @ingroup auth_v5
+ * @brief stringize auth_reason_code
+ * @param v target
+ * @return auth_reason_code string
+ */
 constexpr
 char const* auth_reason_code_to_str(auth_reason_code v) {
     switch(v)
@@ -376,11 +556,18 @@ char const* auth_reason_code_to_str(auth_reason_code v) {
     }
 }
 
+/**
+ * @ingroup auth_v5
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, auth_reason_code val)
+std::ostream& operator<<(std::ostream& o, auth_reason_code v)
 {
-    os << auth_reason_code_to_str(val);
-    return os;
+    o << auth_reason_code_to_str(v);
+    return o;
 }
 
 } // namespace async_mqtt

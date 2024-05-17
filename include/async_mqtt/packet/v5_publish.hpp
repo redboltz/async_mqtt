@@ -7,32 +7,30 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_PUBLISH_HPP)
 #define ASYNC_MQTT_PACKET_V5_PUBLISH_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/util/variable_bytes.hpp>
 
-#include <async_mqtt/util/static_vector.hpp>
-
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
 /**
- * @defgroup publish_v5
+ * @defgroup publish_v5 PUBLISH packet (v5.0)
  * @ingroup packet_v5
- * @brief PUBLISH packet (v5.0)
  */
 
 /**
- * @defgroup publish_v5_detail
+ * @defgroup publish_v5_detail implementation class
  * @ingroup publish_v5
- * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v5 {
@@ -57,7 +55,8 @@ public:
 
     /**
      * @brief constructor
-     * @tparam BufferSequence Type of the payload
+     * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
+     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param packet_id  MQTT PacketIdentifier. If QoS0 then it must be 0. You can use no packet_id version constructor.
      *                   If QoS is 0 or 1 then, the packet_id must be acquired by
      *                   basic_endpoint::acquire_unique_packet_id(), or must be registered by
@@ -72,6 +71,8 @@ public:
      *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
      *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
      *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     * @param props      Publish properties.
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109
      */
     template <
         typename StringViewLike,
@@ -95,6 +96,8 @@ public:
 
     /**
      * @brief constructor for QoS0
+     * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
+     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param topic_name MQTT TopicName
      *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107
      * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
@@ -103,6 +106,8 @@ public:
      *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
      *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
      *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     * @param props      Publish properties.
+     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109
      */
     template <
         typename StringViewLike,
@@ -204,7 +209,6 @@ public:
 
     /**
      * @brief Remove topic and add topic_alias
-     *
      * This is for applying topic_alias.
      * @param val topic_alias
      */
@@ -212,22 +216,29 @@ public:
 
     /**
      * @brief Add topic_alias
-     *
      * This is for registering topic_alias.
      * @param val topic_alias
      */
     void add_topic_alias(topic_alias_type val);
 
     /**
-     * @brief Remove topic and add topic_alias
-     *
-     * This is for extracting topic from the topic_alias.
-     * @param val topic_alias
+     * @brief Add topic
+     * This is for extracting topic_alias.
+     * @param topic to add
      */
     void add_topic(std::string topic);
 
+    /**
+     * @brief Remove topic alias
+     * This is for prepareing to store packet.
+     */
     void remove_topic_alias();
 
+    /**
+     * @brief Remove topic and add topic_alias
+     * This is for extracting topic from the topic_alias.
+     * @param topic topic_alias
+     */
     void remove_topic_alias_add_topic(std::string topic);
 
     /**

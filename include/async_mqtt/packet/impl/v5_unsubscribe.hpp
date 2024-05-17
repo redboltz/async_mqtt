@@ -20,11 +20,12 @@
 #include <async_mqtt/util/utf8validate.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/topic_sharename.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -37,7 +38,7 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
     std::vector<topic_sharename> params,
     properties props
 )
-    : fixed_header_{make_fixed_header(control_packet_type::unsubscribe, 0b0010)},
+    : fixed_header_{detail::make_fixed_header(control_packet_type::unsubscribe, 0b0010)},
       entries_{force_move(params)},
       remaining_length_{PacketIdBytes},
       property_length_(async_mqtt::size(props)),

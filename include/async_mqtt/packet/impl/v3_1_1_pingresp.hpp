@@ -20,7 +20,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -30,7 +30,7 @@ inline
 pingresp_packet::pingresp_packet()
     : all_(all_.capacity())
 {
-    all_[0] = static_cast<char>(make_fixed_header(control_packet_type::pingresp, 0b0000));
+    all_[0] = static_cast<char>(detail::make_fixed_header(control_packet_type::pingresp, 0b0000));
     all_[1] = char(0);
 }
 

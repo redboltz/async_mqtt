@@ -10,8 +10,10 @@
 #include <deque>
 
 #include <boost/asio.hpp>
-
-#include <async_mqtt/packet/buffer_to_packet_variant.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
 
 #include "test_allocate_buffer.hpp"
 

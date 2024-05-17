@@ -31,8 +31,7 @@
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
 /**
- * @defgroup log
- * @brief logging that async_mqtt internally use
+ * @defgroup log logging
  */
 
 namespace async_mqtt {

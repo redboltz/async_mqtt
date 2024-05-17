@@ -13,7 +13,7 @@
 
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/util/packet_variant_operator.hpp>
-#include <async_mqtt/util/hex_dump.hpp>
+#include <async_mqtt/packet/packet_helper.hpp>
 #include <broker/endpoint_variant.hpp>
 #include <broker/broker.hpp>
 

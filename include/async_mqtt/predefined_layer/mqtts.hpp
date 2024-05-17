@@ -11,7 +11,7 @@
 #include <async_mqtt/predefined_layer/customized_ssl_stream.hpp>
 
 /**
- * @defgroup predefined_layer_mqtts
+ * @defgroup predefined_layer_mqtts predefined underlying layer (TLS)
  * @ingroup predefined_layer
  */
 
@@ -35,6 +35,7 @@ using mqtts = as::ssl::stream<mqtt>;
  * @ingroup predefined_layer_mqtts
  * @brief TLS handshake
  * This function does underlying layers handshaking prior to TLS handshake
+ * @param layer  TLS layer
  * @param host   host name or IP address to connect
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)
