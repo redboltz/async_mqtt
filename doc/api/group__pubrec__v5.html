@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Pubrec_v5</title>
+<title>async_mqtt: PUBREC packet (v5.0)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,28 +94,26 @@ $(function(){initNavTree('group__pubrec__v5.html',''); initResizable(); });
 <div class="header">
   <div class="summary">
 <a href="#groups">Topics</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
-  <div class="headertitle"><div class="title">Pubrec_v5<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a></div></div></div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">PUBREC packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>PUBREC packet (v5.0)  
-<a href="#details">More...</a></p>
 <div class="dynheader">
-Collaboration diagram for Pubrec_v5:</div>
+Collaboration diagram for PUBREC packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__pubrec__v5.png" border="0" usemap="#agroup____pubrec____v5" alt=""/></div>
 <map name="agroup____pubrec____v5" id="agroup____pubrec____v5">
-<area shape="rect" href="group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
-<area shape="rect" title="PUBREC packet (v5.0)" alt="" coords="140,5,228,33"/>
-<area shape="rect" href="group__pubrec__v5__detail.html" title="packet internal details (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="276,5,408,33"/>
+<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
+<area shape="rect" title=" " alt="" coords="204,5,367,33"/>
+<area shape="rect" href="group__pubrec__v5__detail.html" title=" " alt="" coords="415,5,577,33"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Topics</h2></td></tr>
-<tr class="memitem:group__pubrec__v5__detail" id="r_group__pubrec__v5__detail"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrec__v5__detail.html">Pubrec_v5_detail</a></td></tr>
-<tr class="memdesc:group__pubrec__v5__detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">packet internal details (e.g. type-aliased API's actual type information) <br /></td></tr>
+<tr class="memitem:group__pubrec__v5__detail" id="r_group__pubrec__v5__detail"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrec__v5__detail.html">implementation class</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -124,9 +122,194 @@ Typedefs</h2></td></tr>
 <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">using</a>&#160;</td><td class="memItemRight" valign="bottom"><b>pubrec_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">basic_pubrec_packet</a>&lt;2&gt;</td></tr>
 <tr class="memdesc:gacd2bd0951db1235ee3c026bcb016329a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">basic_pubrec_packet</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:gacd2bd0951db1235ee3c026bcb016329a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gab5231230a17ac40eda52d85e349b8339" id="r_gab5231230a17ac40eda52d85e349b8339"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab5231230a17ac40eda52d85e349b8339">async_mqtt::pubrec_reason_code</a> : std::uint8_t { <br />
+&#160;&#160;<a class="el" href="#ggab5231230a17ac40eda52d85e349b8339a260ca9dd8a4577fc00b7bd5810298076">pubrec_reason_code::success</a> = 0x00
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339ac0a88a9ad84f91a1953a28189d17c1d0">pubrec_reason_code::no_matching_subscribers</a> = 0x10
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339af600018ed73dbdd02272ae2397394429">pubrec_reason_code::unspecified_error</a> = 0x80
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339a9a520b1f5df6f2b995bd2272184cdfa7">pubrec_reason_code::implementation_specific_error</a> = 0x83
+, <br />
+&#160;&#160;<a class="el" href="#ggab5231230a17ac40eda52d85e349b8339a89a15d5a10ea1b37e1719c52c3507c0a">pubrec_reason_code::not_authorized</a> = 0x87
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339ac5281174b5e556161f2aef0b6c84fa7e">pubrec_reason_code::topic_name_invalid</a> = 0x90
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339ad15ceac1cec853ec096e09728823691e">pubrec_reason_code::packet_identifier_in_use</a> = 0x91
+, <a class="el" href="#ggab5231230a17ac40eda52d85e349b8339a038d1f877daecfdfafd2fc3992f0e8bc">pubrec_reason_code::quota_exceeded</a> = 0x97
+, <br />
+&#160;&#160;<a class="el" href="#ggab5231230a17ac40eda52d85e349b8339af897d0fef94c20148d17243124f7d1ca">pubrec_reason_code::payload_format_invalid</a> = 0x99
+<br />
+ }</td></tr>
+<tr class="memdesc:gab5231230a17ac40eda52d85e349b8339"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT pubrec_reason_code.  <a href="#gab5231230a17ac40eda52d85e349b8339">More...</a><br /></td></tr>
+<tr class="separator:gab5231230a17ac40eda52d85e349b8339"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga9d3ccbe0211922c1c9bcc86e41c86433" id="r_ga9d3ccbe0211922c1c9bcc86e41c86433"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9d3ccbe0211922c1c9bcc86e41c86433">async_mqtt::pubrec_reason_code_to_str</a> (<a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a> v)</td></tr>
+<tr class="memdesc:ga9d3ccbe0211922c1c9bcc86e41c86433"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize pubrec_reason_code  <br /></td></tr>
+<tr class="separator:ga9d3ccbe0211922c1c9bcc86e41c86433"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaaaf8ffbc96522545e80194b29ff100b1" id="r_gaaaf8ffbc96522545e80194b29ff100b1"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaaaf8ffbc96522545e80194b29ff100b1">async_mqtt::is_error</a> (<a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a> v)</td></tr>
+<tr class="memdesc:gaaaf8ffbc96522545e80194b29ff100b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">check reason code error  <br /></td></tr>
+<tr class="separator:gaaaf8ffbc96522545e80194b29ff100b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga81e4fb8ee19d96d5d84967123e361342" id="r_ga81e4fb8ee19d96d5d84967123e361342"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga81e4fb8ee19d96d5d84967123e361342">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a> v)</td></tr>
+<tr class="memdesc:ga81e4fb8ee19d96d5d84967123e361342"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream  <br /></td></tr>
+<tr class="separator:ga81e4fb8ee19d96d5d84967123e361342"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>PUBREC packet (v5.0) </p>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="gab5231230a17ac40eda52d85e349b8339" name="gab5231230a17ac40eda52d85e349b8339"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab5231230a17ac40eda52d85e349b8339">&#9670;&#160;</a></span>pubrec_reason_code</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#gab5231230a17ac40eda52d85e349b8339">async_mqtt::pubrec_reason_code</a> : std::uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>MQTT pubrec_reason_code. </p>
+<p><br  />
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134</a> </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339a260ca9dd8a4577fc00b7bd5810298076" name="ggab5231230a17ac40eda52d85e349b8339a260ca9dd8a4577fc00b7bd5810298076"></a>success&#160;</td><td class="fielddoc"><p>Success. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339ac0a88a9ad84f91a1953a28189d17c1d0" name="ggab5231230a17ac40eda52d85e349b8339ac0a88a9ad84f91a1953a28189d17c1d0"></a>no_matching_subscribers&#160;</td><td class="fielddoc"><p>No matching subscribers. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339af600018ed73dbdd02272ae2397394429" name="ggab5231230a17ac40eda52d85e349b8339af600018ed73dbdd02272ae2397394429"></a>unspecified_error&#160;</td><td class="fielddoc"><p>Unspecified error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339a9a520b1f5df6f2b995bd2272184cdfa7" name="ggab5231230a17ac40eda52d85e349b8339a9a520b1f5df6f2b995bd2272184cdfa7"></a>implementation_specific_error&#160;</td><td class="fielddoc"><p>Implementation specific error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339a89a15d5a10ea1b37e1719c52c3507c0a" name="ggab5231230a17ac40eda52d85e349b8339a89a15d5a10ea1b37e1719c52c3507c0a"></a>not_authorized&#160;</td><td class="fielddoc"><p>Not authorized. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339ac5281174b5e556161f2aef0b6c84fa7e" name="ggab5231230a17ac40eda52d85e349b8339ac5281174b5e556161f2aef0b6c84fa7e"></a>topic_name_invalid&#160;</td><td class="fielddoc"><p>Topic Name invalid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339ad15ceac1cec853ec096e09728823691e" name="ggab5231230a17ac40eda52d85e349b8339ad15ceac1cec853ec096e09728823691e"></a>packet_identifier_in_use&#160;</td><td class="fielddoc"><p>Packet Identifier in use. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339a038d1f877daecfdfafd2fc3992f0e8bc" name="ggab5231230a17ac40eda52d85e349b8339a038d1f877daecfdfafd2fc3992f0e8bc"></a>quota_exceeded&#160;</td><td class="fielddoc"><p>Quota exceeded. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggab5231230a17ac40eda52d85e349b8339af897d0fef94c20148d17243124f7d1ca" name="ggab5231230a17ac40eda52d85e349b8339af897d0fef94c20148d17243124f7d1ca"></a>payload_format_invalid&#160;</td><td class="fielddoc"><p>Payload format invalid. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gaaaf8ffbc96522545e80194b29ff100b1" name="gaaaf8ffbc96522545e80194b29ff100b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaaf8ffbc96522545e80194b29ff100b1">&#9670;&#160;</a></span>is_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool async_mqtt::is_error </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>check reason code error </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the reason code is error, otherwise false </dd></dl>
+
+</div>
+</div>
+<a id="ga81e4fb8ee19d96d5d84967123e361342" name="ga81e4fb8ee19d96d5d84967123e361342"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga81e4fb8ee19d96d5d84967123e361342">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; async_mqtt::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>output to the stream </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="ga9d3ccbe0211922c1c9bcc86e41c86433" name="ga9d3ccbe0211922c1c9bcc86e41c86433"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9d3ccbe0211922c1c9bcc86e41c86433">&#9670;&#160;</a></span>pubrec_reason_code_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char const  * async_mqtt::pubrec_reason_code_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#gab5231230a17ac40eda52d85e349b8339">pubrec_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stringize pubrec_reason_code </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pubrec_reason_code string </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

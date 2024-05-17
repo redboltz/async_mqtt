@@ -1,10 +1,7 @@
 var dir_df0bffcb61356486763cc61cf65485e2 =
 [
-    [ "detail", "dir_734ec5c86ccb83bafe982b058682741c.html", "dir_734ec5c86ccb83bafe982b058682741c" ],
-    [ "impl", "dir_689f5b903a3700d7d0155d334177fddc.html", "dir_689f5b903a3700d7d0155d334177fddc" ],
     [ "buffer.hpp", "buffer_8hpp_source.html", null ],
     [ "endian_convert.hpp", "endian__convert_8hpp_source.html", null ],
-    [ "hex_dump.hpp", "hex__dump_8hpp_source.html", null ],
     [ "host_port.hpp", "host__port_8hpp_source.html", null ],
     [ "ioc_queue.hpp", "ioc__queue_8hpp_source.html", null ],
     [ "is_iterator.hpp", "is__iterator_8hpp_source.html", null ],

@@ -1,7 +1,25 @@
 var searchData=
 [
-  ['qos_0',['qos',['../group__qos.html#ga38e773082414bb272ab22275c56eb4df',1,'async_mqtt']]],
-  ['qos_1',['Qos',['../group__qos.html',1,'']]],
-  ['qos_5fto_5fstr_2',['qos_to_str',['../group__qos.html#gad858b3dc3d6733e6ec7b1ff497f90583',1,'async_mqtt']]],
-  ['qos_5fto_5fsuback_5freturn_5fcode_3',['qos_to_suback_return_code',['../group__packet.html#gaa3cb1ed0a1c8c886609f91852cd72f48',1,'async_mqtt']]]
+  ['make_5ferror_0',['make_error',['../structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294',1,'async_mqtt::system_error']]],
+  ['make_5fpacket_5frange_1',['make_packet_range',['../group__packet.html#ga73b3c0be05e9d700fb02dc5bab135c73',1,'async_mqtt']]],
+  ['make_5fshared_5fptr_5fchar_5farray_2',['make_shared_ptr_char_array',['../group__buffer.html#ga4c78376365b748051fe7385678fb6f68',1,'async_mqtt']]],
+  ['malformed_5fpacket_3',['malformed_packet',['../group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a2aa5596a637d08720add08ff58072e77',1,'malformed_packetasync_mqtt'],['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a2aa5596a637d08720add08ff58072e77',1,'malformed_packetasync_mqtt']]],
+  ['match_4',['match',['../group__endpoint.html#ggaed6ebca93cac28c67f2b4fb8641e775aae3cc92c14a5e6dd1a7d94b6ff634d7fc',1,'async_mqtt']]],
+  ['max_5fsize_5',['max_size',['../classasync__mqtt_1_1buffer.html#aabb5b7e300fc71f9e8b7d78400e9f411',1,'async_mqtt::buffer']]],
+  ['maximum_5fconnect_5ftime_6',['maximum_connect_time',['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a29a53c5d92cc8a480d690d6525d6b3cf',1,'async_mqtt']]],
+  ['maximum_5fpacket_5fsize_7',['maximum_packet_size',['../classasync__mqtt_1_1property_1_1maximum__packet__size.html',1,'async_mqtt::property::maximum_packet_size'],['../classasync__mqtt_1_1property_1_1maximum__packet__size.html#a26611f590d9a5ea6a3914d2aedae2d8f',1,'async_mqtt::property::maximum_packet_size::maximum_packet_size()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ae86c982cdc73638e7f205067bee6b615',1,'maximum_packet_sizeasync_mqtt::property']]],
+  ['maximum_5fqos_8',['maximum_qos',['../classasync__mqtt_1_1property_1_1maximum__qos.html',1,'async_mqtt::property::maximum_qos'],['../classasync__mqtt_1_1property_1_1maximum__qos.html#ac0b48992952a2c87d7b8b9c182725427',1,'async_mqtt::property::maximum_qos::maximum_qos()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a394e6d7ed7fa6cfa41c999989c9fbd38',1,'maximum_qosasync_mqtt::property']]],
+  ['message_9',['message',['../structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0',1,'async_mqtt::system_error::message()'],['../classasync__mqtt_1_1will.html#ac33ed55fe1df35d273f2f80a1d8fe0fe',1,'async_mqtt::will::message() const']]],
+  ['message_5fas_5fbuffer_10',['message_as_buffer',['../classasync__mqtt_1_1will.html#a894efa4845bee9ae2ff5f92703e889c4',1,'async_mqtt::will::message_as_buffer() const'],['../classasync__mqtt_1_1will.html#af339d0584c7d9d3cef8dcb921d106ec7',1,'async_mqtt::will::message_as_buffer()']]],
+  ['message_5fexpiry_5finterval_11',['message_expiry_interval',['../classasync__mqtt_1_1property_1_1message__expiry__interval.html',1,'async_mqtt::property::message_expiry_interval'],['../classasync__mqtt_1_1property_1_1message__expiry__interval.html#a599ad258dabd588cda82ace5d95394ac',1,'async_mqtt::property::message_expiry_interval::message_expiry_interval()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a5691630c289408c3bedf7fdbe58fdd44',1,'message_expiry_intervalasync_mqtt::property']]],
+  ['message_5frate_5ftoo_5fhigh_12',['message_rate_too_high',['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a12a3eec35bdb0f12956e890ccbefc5e0',1,'async_mqtt']]],
+  ['mqtt_13',['mqtt',['../group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983',1,'async_mqtt::protocol']]],
+  ['mqtt_20client_14',['High level MQTT client',['../group__client.html',1,'']]],
+  ['mqtt_20connection_15',['MQTT connection',['../group__connection.html',1,'']]],
+  ['mqtt_20connection_20role_20client_20server_20or_20both_16',['MQTT connection role (client, server or both)',['../group__role.html',1,'']]],
+  ['mqtt_20endpoint_20for_20client_20server_20broker_17',['Packet level MQTT endpoint for client/server(broker)',['../group__endpoint.html',1,'']]],
+  ['mqtt_20packets_18',['MQTT packets',['../group__packet.html',1,'']]],
+  ['mqtt_20protocol_19',['MQTT protocol',['../group__mqtt.html',1,'']]],
+  ['mqtt_20v5_200_20packets_20',['Property for MQTT v5.0 packets',['../group__property.html',1,'']]],
+  ['mqtts_21',['mqtts',['../group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601',1,'async_mqtt::protocol']]]
 ];

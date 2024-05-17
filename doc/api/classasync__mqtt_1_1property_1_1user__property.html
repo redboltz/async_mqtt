@@ -96,7 +96,7 @@ $(function(){initNavTree('classasync__mqtt_1_1property_1_1user__property.html','
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1property_1_1user__property-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::property::user_property Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__property.html">Property</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::property::user_property Class Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a> &raquo; <a class="el" href="group__property.html">Property for MQTT v5.0 packets</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -115,8 +115,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a84c6c0c5cba1cb4720d4daca88494636" id="r_a84c6c0c5cba1cb4720d4daca88494636"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84c6c0c5cba1cb4720d4daca88494636">const_buffer_sequence</a> () const</td></tr>
 <tr class="memdesc:a84c6c0c5cba1cb4720d4daca88494636"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add const buffer sequence into the given buffer.  <br /></td></tr>
 <tr class="separator:a84c6c0c5cba1cb4720d4daca88494636"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeeee8324bb8f80ad7157dbc86e3c9b68" id="r_aeeee8324bb8f80ad7157dbc86e3c9b68"><td class="memItemLeft" align="right" valign="top">property::id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeeee8324bb8f80ad7157dbc86e3c9b68">id</a> () const</td></tr>
-<tr class="memdesc:aeeee8324bb8f80ad7157dbc86e3c9b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get property::id.  <br /></td></tr>
+<tr class="memitem:aeeee8324bb8f80ad7157dbc86e3c9b68" id="r_aeeee8324bb8f80ad7157dbc86e3c9b68"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89">property::id</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeeee8324bb8f80ad7157dbc86e3c9b68">id</a> () const</td></tr>
+<tr class="memdesc:aeeee8324bb8f80ad7157dbc86e3c9b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get <a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89" title="MQTT property identifier.">property::id</a>.  <br /></td></tr>
 <tr class="separator:aeeee8324bb8f80ad7157dbc86e3c9b68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5435b2a2cb86a9f91e3ae5377ccd7ddf" id="r_a5435b2a2cb86a9f91e3ae5377ccd7ddf"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5435b2a2cb86a9f91e3ae5377ccd7ddf">size</a> () const</td></tr>
 <tr class="memdesc:a5435b2a2cb86a9f91e3ae5377ccd7ddf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get property size.  <br /></td></tr>
@@ -167,7 +167,8 @@ Static Public Member Functions</h2></td></tr>
 <p>constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">val</td><td><a class="el" href="classasync__mqtt_1_1property_1_1response__information.html" title="response_information property">response_information</a> string </td></tr>
+    <tr><td class="paramname">key</td><td>key string </td></tr>
+    <tr><td class="paramname">val</td><td>value string </td></tr>
   </table>
   </dd>
 </dl>
@@ -213,7 +214,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">property::id async_mqtt::property::user_property::id </td>
+          <td class="memname"><a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89">property::id</a> async_mqtt::property::user_property::id </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -226,7 +227,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get property::id. </p>
+<p>Get <a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89" title="MQTT property identifier.">property::id</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>id </dd></dl>
 
 </div>

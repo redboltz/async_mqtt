@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['match_0',['match',['../group__endpoint.html#ggaed6ebca93cac28c67f2b4fb8641e775aae3cc92c14a5e6dd1a7d94b6ff634d7fc',1,'async_mqtt']]]
+  ['identifier_5frejected_0',['identifier_rejected',['../group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a7b63a50d02075d9ecfc443b94a3d2272',1,'async_mqtt']]],
+  ['implementation_5fspecific_5ferror_1',['implementation_specific_error',['../group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt'],['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt'],['../group__suback__v5.html#ggac1d8426ede60ae4e6c723a7687542fc6a9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt'],['../group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfea9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt'],['../group__puback__v5.html#gga3129c11af64f00be426b3deae38158eea9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt'],['../group__pubrec__v5.html#ggab5231230a17ac40eda52d85e349b8339a9a520b1f5df6f2b995bd2272184cdfa7',1,'implementation_specific_errorasync_mqtt']]],
+  ['info_2',['info',['../group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c',1,'async_mqtt']]]
 ];

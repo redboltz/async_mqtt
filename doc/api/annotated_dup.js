@@ -1,9 +1,6 @@
 var annotated_dup =
 [
     [ "async_mqtt", null, [
-      [ "detail", null, [
-        [ "utf8_checker", "classasync__mqtt_1_1detail_1_1utf8__checker.html", "classasync__mqtt_1_1detail_1_1utf8__checker" ]
-      ] ],
       [ "property", null, [
         [ "detail", null, [
           [ "binary_property", "structasync__mqtt_1_1property_1_1detail_1_1binary__property.html", "structasync__mqtt_1_1property_1_1detail_1_1binary__property" ],
@@ -79,6 +76,7 @@ var annotated_dup =
         [ "pingresp_packet", "classasync__mqtt_1_1v5_1_1pingresp__packet.html", "classasync__mqtt_1_1v5_1_1pingresp__packet" ]
       ] ],
       [ "basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html", "classasync__mqtt_1_1basic__endpoint" ],
+      [ "basic_packet_id_type", "structasync__mqtt_1_1basic__packet__id__type.html", null ],
       [ "basic_packet_variant", "classasync__mqtt_1_1basic__packet__variant.html", "classasync__mqtt_1_1basic__packet__variant" ],
       [ "basic_store_packet_variant", "classasync__mqtt_1_1basic__store__packet__variant.html", "classasync__mqtt_1_1basic__store__packet__variant" ],
       [ "buffer", "classasync__mqtt_1_1buffer.html", "classasync__mqtt_1_1buffer" ],
@@ -90,6 +88,7 @@ var annotated_dup =
       [ "property_variant", "classasync__mqtt_1_1property__variant.html", "classasync__mqtt_1_1property__variant" ],
       [ "system_error", "structasync__mqtt_1_1system__error.html", "structasync__mqtt_1_1system__error" ],
       [ "topic_sharename", "classasync__mqtt_1_1topic__sharename.html", "classasync__mqtt_1_1topic__sharename" ],
-      [ "topic_subopts", "classasync__mqtt_1_1topic__subopts.html", "classasync__mqtt_1_1topic__subopts" ]
+      [ "topic_subopts", "classasync__mqtt_1_1topic__subopts.html", "classasync__mqtt_1_1topic__subopts" ],
+      [ "will", "classasync__mqtt_1_1will.html", "classasync__mqtt_1_1will" ]
     ] ]
 ];

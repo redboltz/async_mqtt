@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Disconnect_v5</title>
+<title>async_mqtt: DISCONNECT packet (v5.0)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,20 +93,19 @@ $(function(){initNavTree('group__disconnect__v5.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
-  <div class="headertitle"><div class="title">Disconnect_v5<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a></div></div></div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">DISCONNECT packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>DISCONNECT packet (v5.0)  
-<a href="#details">More...</a></p>
 <div class="dynheader">
-Collaboration diagram for Disconnect_v5:</div>
+Collaboration diagram for DISCONNECT packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__disconnect__v5.png" border="0" usemap="#agroup____disconnect____v5" alt=""/></div>
 <map name="agroup____disconnect____v5" id="agroup____disconnect____v5">
-<area shape="rect" title="DISCONNECT packet (v5.0)" alt="" coords="140,5,256,33"/>
-<area shape="rect" href="group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
+<area shape="rect" title=" " alt="" coords="204,5,362,50"/>
+<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,14,156,42"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -115,9 +114,222 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html">async_mqtt::v5::disconnect_packet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT DISCONNECT packet (v5)  <a href="classasync__mqtt_1_1v5_1_1disconnect__packet.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga15697ab1af4bc8686af3e88886db3565" id="r_ga15697ab1af4bc8686af3e88886db3565"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">async_mqtt::disconnect_reason_code</a> : std::uint8_t { <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a31fe45844c214ec5ad8d824be3709a8d">disconnect_reason_code::normal_disconnection</a> = 0x00
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565aae2400bd68561fe196b3c4275015285e">disconnect_reason_code::disconnect_with_will_message</a> = 0x04
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565af600018ed73dbdd02272ae2397394429">disconnect_reason_code::unspecified_error</a> = 0x80
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a2aa5596a637d08720add08ff58072e77">disconnect_reason_code::malformed_packet</a> = 0x81
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a9665c745d0a9132d8da6ed55e89a0564">disconnect_reason_code::protocol_error</a> = 0x82
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a9a520b1f5df6f2b995bd2272184cdfa7">disconnect_reason_code::implementation_specific_error</a> = 0x83
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a89a15d5a10ea1b37e1719c52c3507c0a">disconnect_reason_code::not_authorized</a> = 0x87
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a28305906bb08a2df4e3ef2b0d522dedf">disconnect_reason_code::server_busy</a> = 0x89
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a64d1a1b57abe22cc3605ede34b515c1f">disconnect_reason_code::server_shutting_down</a> = 0x8b
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0">disconnect_reason_code::keep_alive_timeout</a> = 0x8d
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a53a7e8ea5522b7849a94844315319eaf">disconnect_reason_code::session_taken_over</a> = 0x8e
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a4ad1d90f650e6afaedb4e935b67d33d9">disconnect_reason_code::topic_filter_invalid</a> = 0x8f
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565ac5281174b5e556161f2aef0b6c84fa7e">disconnect_reason_code::topic_name_invalid</a> = 0x90
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a6be7cdb5205be4e75d14357e3d55be15">disconnect_reason_code::receive_maximum_exceeded</a> = 0x93
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565ac942b51c875df5f35cf80ef73deb6108">disconnect_reason_code::topic_alias_invalid</a> = 0x94
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565ab0ea4571270a5faae9e13edf8b2a4859">disconnect_reason_code::packet_too_large</a> = 0x95
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a12a3eec35bdb0f12956e890ccbefc5e0">disconnect_reason_code::message_rate_too_high</a> = 0x96
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a038d1f877daecfdfafd2fc3992f0e8bc">disconnect_reason_code::quota_exceeded</a> = 0x97
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a1ef1af8249e4a237e04f6703a11c6a82">disconnect_reason_code::administrative_action</a> = 0x98
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565af897d0fef94c20148d17243124f7d1ca">disconnect_reason_code::payload_format_invalid</a> = 0x99
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a56d405a06363897d4b0b09e1605d6d54">disconnect_reason_code::retain_not_supported</a> = 0x9a
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a9dec14362bd41a43beb8d673756daaad">disconnect_reason_code::qos_not_supported</a> = 0x9b
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a91f5261461d3a38aa7618af58b4f1f90">disconnect_reason_code::use_another_server</a> = 0x9c
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a1cc996700ec51fd0ec81843f6ec50aaf">disconnect_reason_code::server_moved</a> = 0x9d
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a608608c7ce5d694b9d50e94c007d5123">disconnect_reason_code::shared_subscriptions_not_supported</a> = 0x9e
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a13e6bd4b354254f7db3cc8b739940636">disconnect_reason_code::connection_rate_exceeded</a> = 0x9f
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a29a53c5d92cc8a480d690d6525d6b3cf">disconnect_reason_code::maximum_connect_time</a> = 0xa0
+, <a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a1b6c87b6571eaaf58e2c6a5ebd5056ef">disconnect_reason_code::subscription_identifiers_not_supported</a> = 0xa1
+, <br />
+&#160;&#160;<a class="el" href="#gga15697ab1af4bc8686af3e88886db3565a3568f64000f9940631ebc59cf38d2184">disconnect_reason_code::wildcard_subscriptions_not_supported</a> = 0xa2
+<br />
+ }</td></tr>
+<tr class="memdesc:ga15697ab1af4bc8686af3e88886db3565"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT disconnect_reason_code.  <a href="#ga15697ab1af4bc8686af3e88886db3565">More...</a><br /></td></tr>
+<tr class="separator:ga15697ab1af4bc8686af3e88886db3565"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gaea6908a9aa4732db8acb01595dc6f9b0" id="r_gaea6908a9aa4732db8acb01595dc6f9b0"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaea6908a9aa4732db8acb01595dc6f9b0">async_mqtt::disconnect_reason_code_to_str</a> (<a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">disconnect_reason_code</a> v)</td></tr>
+<tr class="memdesc:gaea6908a9aa4732db8acb01595dc6f9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize disconnect_reason_code  <br /></td></tr>
+<tr class="separator:gaea6908a9aa4732db8acb01595dc6f9b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gade17ec215b10bd1187de1340937bf26f" id="r_gade17ec215b10bd1187de1340937bf26f"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gade17ec215b10bd1187de1340937bf26f">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">disconnect_reason_code</a> v)</td></tr>
+<tr class="memdesc:gade17ec215b10bd1187de1340937bf26f"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream  <br /></td></tr>
+<tr class="separator:gade17ec215b10bd1187de1340937bf26f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>DISCONNECT packet (v5.0) </p>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga15697ab1af4bc8686af3e88886db3565" name="ga15697ab1af4bc8686af3e88886db3565"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga15697ab1af4bc8686af3e88886db3565">&#9670;&#160;</a></span>disconnect_reason_code</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">async_mqtt::disconnect_reason_code</a> : std::uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>MQTT disconnect_reason_code. </p>
+<p><br  />
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208</a> </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a31fe45844c214ec5ad8d824be3709a8d" name="gga15697ab1af4bc8686af3e88886db3565a31fe45844c214ec5ad8d824be3709a8d"></a>normal_disconnection&#160;</td><td class="fielddoc"><p>Normal disconnection. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565aae2400bd68561fe196b3c4275015285e" name="gga15697ab1af4bc8686af3e88886db3565aae2400bd68561fe196b3c4275015285e"></a>disconnect_with_will_message&#160;</td><td class="fielddoc"><p>Disconnect with Will Message. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565af600018ed73dbdd02272ae2397394429" name="gga15697ab1af4bc8686af3e88886db3565af600018ed73dbdd02272ae2397394429"></a>unspecified_error&#160;</td><td class="fielddoc"><p>Unspecified error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a2aa5596a637d08720add08ff58072e77" name="gga15697ab1af4bc8686af3e88886db3565a2aa5596a637d08720add08ff58072e77"></a>malformed_packet&#160;</td><td class="fielddoc"><p>Malformed Packet. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a9665c745d0a9132d8da6ed55e89a0564" name="gga15697ab1af4bc8686af3e88886db3565a9665c745d0a9132d8da6ed55e89a0564"></a>protocol_error&#160;</td><td class="fielddoc"><p>Protocol Error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a9a520b1f5df6f2b995bd2272184cdfa7" name="gga15697ab1af4bc8686af3e88886db3565a9a520b1f5df6f2b995bd2272184cdfa7"></a>implementation_specific_error&#160;</td><td class="fielddoc"><p>Implementation specific error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a89a15d5a10ea1b37e1719c52c3507c0a" name="gga15697ab1af4bc8686af3e88886db3565a89a15d5a10ea1b37e1719c52c3507c0a"></a>not_authorized&#160;</td><td class="fielddoc"><p>Not authorized. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a28305906bb08a2df4e3ef2b0d522dedf" name="gga15697ab1af4bc8686af3e88886db3565a28305906bb08a2df4e3ef2b0d522dedf"></a>server_busy&#160;</td><td class="fielddoc"><p>Server busy. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a64d1a1b57abe22cc3605ede34b515c1f" name="gga15697ab1af4bc8686af3e88886db3565a64d1a1b57abe22cc3605ede34b515c1f"></a>server_shutting_down&#160;</td><td class="fielddoc"><p>Server shutting down. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" name="gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0"></a>keep_alive_timeout&#160;</td><td class="fielddoc"><p>Keep Alive timeout. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a53a7e8ea5522b7849a94844315319eaf" name="gga15697ab1af4bc8686af3e88886db3565a53a7e8ea5522b7849a94844315319eaf"></a>session_taken_over&#160;</td><td class="fielddoc"><p>Session taken over. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a4ad1d90f650e6afaedb4e935b67d33d9" name="gga15697ab1af4bc8686af3e88886db3565a4ad1d90f650e6afaedb4e935b67d33d9"></a>topic_filter_invalid&#160;</td><td class="fielddoc"><p>Topic Filter invalid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565ac5281174b5e556161f2aef0b6c84fa7e" name="gga15697ab1af4bc8686af3e88886db3565ac5281174b5e556161f2aef0b6c84fa7e"></a>topic_name_invalid&#160;</td><td class="fielddoc"><p>Topic Name invalid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a6be7cdb5205be4e75d14357e3d55be15" name="gga15697ab1af4bc8686af3e88886db3565a6be7cdb5205be4e75d14357e3d55be15"></a>receive_maximum_exceeded&#160;</td><td class="fielddoc"><p>Receive Maximum exceeded. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565ac942b51c875df5f35cf80ef73deb6108" name="gga15697ab1af4bc8686af3e88886db3565ac942b51c875df5f35cf80ef73deb6108"></a>topic_alias_invalid&#160;</td><td class="fielddoc"><p>Topic Alias invalid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565ab0ea4571270a5faae9e13edf8b2a4859" name="gga15697ab1af4bc8686af3e88886db3565ab0ea4571270a5faae9e13edf8b2a4859"></a>packet_too_large&#160;</td><td class="fielddoc"><p>Packet too large. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a12a3eec35bdb0f12956e890ccbefc5e0" name="gga15697ab1af4bc8686af3e88886db3565a12a3eec35bdb0f12956e890ccbefc5e0"></a>message_rate_too_high&#160;</td><td class="fielddoc"><p>Message rate too high. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a038d1f877daecfdfafd2fc3992f0e8bc" name="gga15697ab1af4bc8686af3e88886db3565a038d1f877daecfdfafd2fc3992f0e8bc"></a>quota_exceeded&#160;</td><td class="fielddoc"><p>Quota exceeded. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a1ef1af8249e4a237e04f6703a11c6a82" name="gga15697ab1af4bc8686af3e88886db3565a1ef1af8249e4a237e04f6703a11c6a82"></a>administrative_action&#160;</td><td class="fielddoc"><p>Administrative action. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565af897d0fef94c20148d17243124f7d1ca" name="gga15697ab1af4bc8686af3e88886db3565af897d0fef94c20148d17243124f7d1ca"></a>payload_format_invalid&#160;</td><td class="fielddoc"><p>Payload format invalid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a56d405a06363897d4b0b09e1605d6d54" name="gga15697ab1af4bc8686af3e88886db3565a56d405a06363897d4b0b09e1605d6d54"></a>retain_not_supported&#160;</td><td class="fielddoc"><p>Retain not supported. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a9dec14362bd41a43beb8d673756daaad" name="gga15697ab1af4bc8686af3e88886db3565a9dec14362bd41a43beb8d673756daaad"></a>qos_not_supported&#160;</td><td class="fielddoc"><p>QoS not supported. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a91f5261461d3a38aa7618af58b4f1f90" name="gga15697ab1af4bc8686af3e88886db3565a91f5261461d3a38aa7618af58b4f1f90"></a>use_another_server&#160;</td><td class="fielddoc"><p>Use another server. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a1cc996700ec51fd0ec81843f6ec50aaf" name="gga15697ab1af4bc8686af3e88886db3565a1cc996700ec51fd0ec81843f6ec50aaf"></a>server_moved&#160;</td><td class="fielddoc"><p>Server moved. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a608608c7ce5d694b9d50e94c007d5123" name="gga15697ab1af4bc8686af3e88886db3565a608608c7ce5d694b9d50e94c007d5123"></a>shared_subscriptions_not_supported&#160;</td><td class="fielddoc"><p>Shared Subscriptions not supported. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a13e6bd4b354254f7db3cc8b739940636" name="gga15697ab1af4bc8686af3e88886db3565a13e6bd4b354254f7db3cc8b739940636"></a>connection_rate_exceeded&#160;</td><td class="fielddoc"><p>Connection rate exceeded. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a29a53c5d92cc8a480d690d6525d6b3cf" name="gga15697ab1af4bc8686af3e88886db3565a29a53c5d92cc8a480d690d6525d6b3cf"></a>maximum_connect_time&#160;</td><td class="fielddoc"><p>Maximum connect time. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a1b6c87b6571eaaf58e2c6a5ebd5056ef" name="gga15697ab1af4bc8686af3e88886db3565a1b6c87b6571eaaf58e2c6a5ebd5056ef"></a>subscription_identifiers_not_supported&#160;</td><td class="fielddoc"><p>Subscription Identifiers not supported. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga15697ab1af4bc8686af3e88886db3565a3568f64000f9940631ebc59cf38d2184" name="gga15697ab1af4bc8686af3e88886db3565a3568f64000f9940631ebc59cf38d2184"></a>wildcard_subscriptions_not_supported&#160;</td><td class="fielddoc"><p>Wildcard Subscriptions not supported. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gaea6908a9aa4732db8acb01595dc6f9b0" name="gaea6908a9aa4732db8acb01595dc6f9b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaea6908a9aa4732db8acb01595dc6f9b0">&#9670;&#160;</a></span>disconnect_reason_code_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char const  * async_mqtt::disconnect_reason_code_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">disconnect_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stringize disconnect_reason_code </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>disconnect_reason_code string </dd></dl>
+
+</div>
+</div>
+<a id="gade17ec215b10bd1187de1340937bf26f" name="gade17ec215b10bd1187de1340937bf26f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade17ec215b10bd1187de1340937bf26f">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; async_mqtt::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ga15697ab1af4bc8686af3e88886db3565">disconnect_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>output to the stream </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

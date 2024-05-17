@@ -1,7 +1,7 @@
-<map id="Publish_v5" name="Publish_v5">
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,57,92,85"/>
-<area shape="rect" id="Node000001" title="PUBLISH packet (v5.0)" alt="" coords="140,57,231,85"/>
-<area shape="rect" id="Node000003" href="$group__publish__options.html" title="PUBLISH packet flags." alt="" coords="285,5,408,33"/>
-<area shape="rect" id="Node000005" href="$group__publish__v5__detail.html" title="packet internal details (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="279,57,414,85"/>
-<area shape="rect" id="Node000004" href="$group__qos.html" title="QoS." alt="" coords="324,109,370,137"/>
+<map id="PUBLISH packet (v5.0)" name="PUBLISH packet (v5.0)">
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,57,156,85"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,57,370,85"/>
+<area shape="rect" id="Node000003" href="$group__publish__options.html" title=" " alt="" coords="420,5,579,33"/>
+<area shape="rect" id="Node000005" href="$group__publish__v5__detail.html" title=" " alt="" coords="418,57,580,85"/>
+<area shape="rect" id="Node000004" href="$group__qos.html" title=" " alt="" coords="476,109,523,137"/>
 </map>

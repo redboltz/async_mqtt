@@ -24,9 +24,9 @@ var group__subscribe__options =
       [ "operator|=", "structasync__mqtt_1_1sub_1_1opts.html#a16aa073469baa9038361a7256c97610f", null ],
       [ "operator|=", "structasync__mqtt_1_1sub_1_1opts.html#a3370990a163561b1cf7f39714e790c2a", null ],
       [ "nl_to_str", "group__subscribe__options.html#ga1b6297d93ef314d3e31b1a3c0a3f62ca", null ],
-      [ "operator<<", "group__subscribe__options.html#ga66d64c73b50dc2b87431503df5f4f023", null ],
-      [ "operator<<", "group__subscribe__options.html#ga766a40fcb0dd8dc24caaeff6ced83c6c", null ],
-      [ "operator<<", "group__subscribe__options.html#ga00670848448aee253898073390988fe1", null ],
+      [ "operator<<", "group__subscribe__options.html#gad063a2b7ffedc317b942ba9a87ad6367", null ],
+      [ "operator<<", "group__subscribe__options.html#ga7886323911d9e1cfece3be763a6a72ce", null ],
+      [ "operator<<", "group__subscribe__options.html#ga27efb1b488ca8b4ba60b4a58ed4de1a4", null ],
       [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#ad8082e29ed835ef60c85ff57f28d8589", null ],
       [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#ad4c8df25433a0c9aca30d133f991afa3", null ],
       [ "operator|", "structasync__mqtt_1_1sub_1_1opts.html#a3befd48db2f7e9628fa524829bb098dc", null ],
@@ -56,9 +56,9 @@ var group__subscribe__options =
       [ "async_mqtt::sub::retain_handling::not_send", "group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa9d5a4d4b722e2df32eff5ecfd18ccc60", null ]
     ] ],
     [ "async_mqtt::sub::opts::nl_to_str", "group__subscribe__options.html#ga1b6297d93ef314d3e31b1a3c0a3f62ca", null ],
-    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#ga66d64c73b50dc2b87431503df5f4f023", null ],
-    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#ga766a40fcb0dd8dc24caaeff6ced83c6c", null ],
-    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#ga00670848448aee253898073390988fe1", null ],
+    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#gad063a2b7ffedc317b942ba9a87ad6367", null ],
+    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#ga7886323911d9e1cfece3be763a6a72ce", null ],
+    [ "async_mqtt::sub::opts::operator<<", "group__subscribe__options.html#ga27efb1b488ca8b4ba60b4a58ed4de1a4", null ],
     [ "async_mqtt::sub::opts::rap_to_str", "group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132", null ],
     [ "async_mqtt::sub::opts::retain_handling_to_str", "group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7", null ]
 ];

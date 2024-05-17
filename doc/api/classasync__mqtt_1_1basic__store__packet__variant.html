@@ -95,14 +95,12 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__store__packet__variant.html
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1basic__store__packet__variant-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::basic_store_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__variant.html">Packet_variant</a> &raquo; <a class="el" href="group__store__packet__variant.html">Store_packet_variant</a> &raquo; <a class="el" href="group__store__packet__variant__detail.html">Store_packet_variant_detail</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::basic_store_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__variant.html">variant class for all packets</a> &raquo; <a class="el" href="group__store__packet__variant.html">variant class for stored packets (PUBLISH, PUBREL)</a> &raquo; <a class="el" href="group__store__packet__variant__detail.html">implementation class</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>MQTT packet variant for store.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="store__packet__variant_8hpp_source.html">store_packet_variant.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -133,7 +131,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a665b38309dc465a4901843fdb835dc08" id="r_a665b38309dc465a4901843fdb835dc08"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a665b38309dc465a4901843fdb835dc08">const_buffer_sequence</a> () const</td></tr>
 <tr class="memdesc:a665b38309dc465a4901843fdb835dc08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:a665b38309dc465a4901843fdb835dc08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8dc004b44b2f4d1e3410b681127d67f" id="r_ab8dc004b44b2f4d1e3410b681127d67f"><td class="memItemLeft" align="right" valign="top">basic_packet_id_type&lt; PacketIdBytes &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8dc004b44b2f4d1e3410b681127d67f">packet_id</a> () const</td></tr>
+<tr class="memitem:ab8dc004b44b2f4d1e3410b681127d67f" id="r_ab8dc004b44b2f4d1e3410b681127d67f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structasync__mqtt_1_1basic__packet__id__type.html">basic_packet_id_type</a>&lt; PacketIdBytes &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8dc004b44b2f4d1e3410b681127d67f">packet_id</a> () const</td></tr>
 <tr class="memdesc:ab8dc004b44b2f4d1e3410b681127d67f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get packet id.  <br /></td></tr>
 <tr class="separator:ab8dc004b44b2f4d1e3410b681127d67f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e8b102c72819ef78e8b2f55e7f2599e" id="r_a7e8b102c72819ef78e8b2f55e7f2599e"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e8b102c72819ef78e8b2f55e7f2599e">size</a> () const</td></tr>
@@ -372,7 +370,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">basic_packet_id_type&lt; PacketIdBytes &gt;::type <a class="el" href="classasync__mqtt_1_1basic__store__packet__variant.html">async_mqtt::basic_store_packet_variant</a>&lt; PacketIdBytes &gt;::packet_id </td>
+          <td class="memname"><a class="el" href="structasync__mqtt_1_1basic__packet__id__type.html">basic_packet_id_type</a>&lt; PacketIdBytes &gt;::type <a class="el" href="classasync__mqtt_1_1basic__store__packet__variant.html">async_mqtt::basic_store_packet_variant</a>&lt; PacketIdBytes &gt;::packet_id </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -596,8 +594,7 @@ template&lt;typename Func &gt; </div>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="packet__traits_8hpp_source.html">packet_traits.hpp</a></li>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="store__packet__variant_8hpp_source.html">store_packet_variant.hpp</a></li>
 </ul>
 </div><!-- contents -->

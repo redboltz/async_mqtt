@@ -9,6 +9,7 @@ var searchData=
   ['assigned_5fclient_5fidentifier_6',['assigned_client_identifier',['../classasync__mqtt_1_1property_1_1assigned__client__identifier.html#ae1e91af57806b36ea10ec494c2f27be5',1,'async_mqtt::property::assigned_client_identifier']]],
   ['at_7',['at',['../classasync__mqtt_1_1buffer.html#ad876c3edb8c22366e1cbc2c0aee9aa03',1,'async_mqtt::buffer']]],
   ['auth_5fpacket_8',['auth_packet',['../classasync__mqtt_1_1v5_1_1auth__packet.html#a85c0fe69aff33ce7bed696c4f067d7fe',1,'async_mqtt::v5::auth_packet::auth_packet(auth_reason_code reason_code, properties props)'],['../classasync__mqtt_1_1v5_1_1auth__packet.html#ae1a1944b429d7cc792f9d8aaddc12e5d',1,'async_mqtt::v5::auth_packet::auth_packet()'],['../classasync__mqtt_1_1v5_1_1auth__packet.html#ac00241d1c5c7a5384c8ede676c05817b',1,'async_mqtt::v5::auth_packet::auth_packet(auth_reason_code reason_code)']]],
-  ['authentication_5fdata_9',['authentication_data',['../classasync__mqtt_1_1property_1_1authentication__data.html#ade2641d61830fdee1544fafb0e45f15d',1,'async_mqtt::property::authentication_data']]],
-  ['authentication_5fmethod_10',['authentication_method',['../classasync__mqtt_1_1property_1_1authentication__method.html#a6245471a227a452b733ec70574c074ed',1,'async_mqtt::property::authentication_method']]]
+  ['auth_5freason_5fcode_5fto_5fstr_9',['auth_reason_code_to_str',['../group__auth__v5.html#ga9f9c6d6351ac424c6d874434ccb6a541',1,'async_mqtt']]],
+  ['authentication_5fdata_10',['authentication_data',['../classasync__mqtt_1_1property_1_1authentication__data.html#ade2641d61830fdee1544fafb0e45f15d',1,'async_mqtt::property::authentication_data']]],
+  ['authentication_5fmethod_11',['authentication_method',['../classasync__mqtt_1_1property_1_1authentication__method.html#a6245471a227a452b733ec70574c074ed',1,'async_mqtt::property::authentication_method']]]
 ];

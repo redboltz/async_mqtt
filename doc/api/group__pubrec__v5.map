@@ -1,5 +1,5 @@
-<map id="Pubrec_v5" name="Pubrec_v5">
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
-<area shape="rect" id="Node000001" title="PUBREC packet (v5.0)" alt="" coords="140,5,228,33"/>
-<area shape="rect" id="Node000003" href="$group__pubrec__v5__detail.html" title="packet internal details (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="276,5,408,33"/>
+<map id="PUBREC packet (v5.0)" name="PUBREC packet (v5.0)">
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,5,367,33"/>
+<area shape="rect" id="Node000003" href="$group__pubrec__v5__detail.html" title=" " alt="" coords="415,5,577,33"/>
 </map>

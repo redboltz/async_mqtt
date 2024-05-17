@@ -1,5 +1,5 @@
-<map id="Publish_options" name="Publish_options">
-<area shape="rect" id="Node000001" title="PUBLISH packet flags." alt="" coords="175,32,298,60"/>
-<area shape="rect" id="Node000003" href="$group__publish__v3__1__1.html" title="PUBLISH packet (v3.1.1)" alt="" coords="5,5,127,33"/>
-<area shape="rect" id="Node000002" href="$group__publish__v5.html" title="PUBLISH packet (v5.0)" alt="" coords="20,57,112,85"/>
+<map id="PUBLISH packet flags" name="PUBLISH packet flags">
+<area shape="rect" id="Node000001" title=" " alt="" coords="232,32,391,60"/>
+<area shape="rect" id="Node000003" href="$group__publish__v3__1__1.html" title=" " alt="" coords="5,5,184,33"/>
+<area shape="rect" id="Node000002" href="$group__publish__v5.html" title=" " alt="" coords="11,57,178,85"/>
 </map>
