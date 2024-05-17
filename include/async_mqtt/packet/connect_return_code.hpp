@@ -28,6 +28,12 @@ enum class connect_return_code : std::uint8_t {
     not_authorized                = 5, ///< The Client is not authorized to connect
 };
 
+/**
+ * @ingroup connack_v3_1_1
+ * @brief stringize connect_return_code
+ * @param v target
+ * @return connect_return_code
+ */
 constexpr
 char const* connect_return_code_to_str(connect_return_code v) {
     char const * const str[] = {
@@ -42,11 +48,18 @@ char const* connect_return_code_to_str(connect_return_code v) {
     return "unknown_connect_return_code";
 }
 
+/**
+ * @ingroup connack_v3_1_1
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, connect_return_code val)
+std::ostream& operator<<(std::ostream& o, connect_return_code v)
 {
-    os << connect_return_code_to_str(val);
-    return os;
+    o << connect_return_code_to_str(v);
+    return o;
 }
 
 } // namespace async_mqtt

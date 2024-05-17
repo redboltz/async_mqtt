@@ -12,20 +12,20 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
 
 /**
- * @defgroup pingresp_v5
+ * @defgroup pingresp_v5 PINGRESP packet (v5.0)
  * @ingroup packet_v5
- * @brief PINGRESP packet (v5.0)
  */
 
 namespace async_mqtt::v5 {

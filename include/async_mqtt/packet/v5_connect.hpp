@@ -10,22 +10,20 @@
 #include <utility>
 #include <numeric>
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/util/variable_bytes.hpp>
 
-#include <async_mqtt/util/static_vector.hpp>
-
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/connect_flags.hpp>
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/will.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
+#include <async_mqtt/util/buffer.hpp>
+#include <async_mqtt/util/variable_bytes.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+
 /**
- * @defgroup connect_v5
+ * @defgroup connect_v5 CONNECT packet (v5.0)
  * @ingroup packet_v5
- * @brief CONNECT packet (v5.0)
  */
 
 namespace async_mqtt::v5 {
@@ -66,6 +64,8 @@ public:
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
      * @param password       MQTT Password. It is often used for authentication.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     * @param props          Connect properties.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
      */
     connect_packet(
         bool clean_start,
@@ -97,12 +97,14 @@ public:
      * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
      *                       if it is empty string.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
-     * @param will           MQTT Will
+     * @param w              MQTT Will
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901060
      * @param user_name      MQTT UserName. It is often used for authentication.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
      * @param password       MQTT Password. It is often used for authentication.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     * @param props          Connect properties.
+     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
      */
     connect_packet(
         bool clean_start,

@@ -77,6 +77,9 @@ public:
 
     /**
      * @brief less than operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than the rhs, otherwise false.
      */
     friend
     bool operator<(topic_subopts const& lhs, topic_subopts const& rhs) {
@@ -87,6 +90,9 @@ public:
 
     /**
      * @brief equal operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs equal to the rhs, otherwise false.
      */
     friend
     bool operator==(topic_subopts const& lhs, topic_subopts const& rhs) {

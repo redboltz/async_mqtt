@@ -15,5 +15,7 @@ var group__connack__v3__1__1 =
       [ "async_mqtt::connect_return_code::server_unavailable", "group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109aeb0efb9a7b59231e85e53bfba6b60ec4", null ],
       [ "async_mqtt::connect_return_code::bad_user_name_or_password", "group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109abe32e8f8c93b3707303fb6cf9eb1a8b8", null ],
       [ "async_mqtt::connect_return_code::not_authorized", "group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a", null ]
-    ] ]
+    ] ],
+    [ "async_mqtt::connect_return_code_to_str", "group__connack__v3__1__1.html#ga9a788a3ebe3f0c3cccea39cc0784a036", null ],
+    [ "async_mqtt::operator<<", "group__connack__v3__1__1.html#gadc863bb73e9b5c4fa1601b61b7b7558b", null ]
 ];

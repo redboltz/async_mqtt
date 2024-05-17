@@ -123,34 +123,34 @@ $(function(){initNavTree('mqtts_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>} <span class="comment">// namespace protocol</span></div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keyword">typename</span> NextLayer,</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keyword">typename</span> as::ssl::stream&lt;NextLayer&gt;::executor_type</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    &gt;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>&gt;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    CompletionToken,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>)</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="group__predefined__layer__mqtts.html#ga40e291e5f3dc8a850d47f12ba34bbf00">   55</a></span><a class="code hl_function" href="group__predefined__layer__mqtt.html#ga100abc0faf59cd94f8e8de2165fa14be">underlying_handshake</a>(</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    as::ssl::stream&lt;NextLayer&gt;&amp; layer,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    std::string_view host,</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    std::string_view port,</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keyword">typename</span> as::ssl::stream&lt;NextLayer&gt;::executor_type</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    &gt;{}</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">#include &lt;async_mqtt/predefined_layer/impl/mqtts_handshake.hpp&gt;</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_MQTTS_HPP</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">typename</span> NextLayer,</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keyword">typename</span> as::ssl::stream&lt;NextLayer&gt;::executor_type</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    &gt;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>&gt;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    CompletionToken,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="group__predefined__layer__mqtts.html#ga40e291e5f3dc8a850d47f12ba34bbf00">   56</a></span><a class="code hl_function" href="group__predefined__layer__mqtt.html#ga100abc0faf59cd94f8e8de2165fa14be">underlying_handshake</a>(</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    as::ssl::stream&lt;NextLayer&gt;&amp; layer,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    std::string_view host,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    std::string_view port,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">typename</span> as::ssl::stream&lt;NextLayer&gt;::executor_type</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    &gt;{}</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#include &lt;async_mqtt/predefined_layer/impl/mqtts_handshake.hpp&gt;</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_MQTTS_HPP</span></div>
 <div class="ttc" id="acustomized__ssl__stream_8hpp_html"><div class="ttname"><a href="customized__ssl__stream_8hpp.html">customized_ssl_stream.hpp</a></div></div>
-<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:36</div></div>
+<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:35</div></div>
 <div class="ttc" id="agroup__predefined__layer__mqtt_html_ga100abc0faf59cd94f8e8de2165fa14be"><div class="ttname"><a href="group__predefined__layer__mqtt.html#ga100abc0faf59cd94f8e8de2165fa14be">async_mqtt::underlying_handshake</a></div><div class="ttdeci">underlying_handshake(as::basic_stream_socket&lt; Socket, Executor &gt; &amp;layer, std::string_view host, std::string_view port, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; Executor &gt;{})</div><div class="ttdoc">resovling name and connect TCP layer</div></div>
 <div class="ttc" id="agroup__predefined__layer__mqtts_html_ga2c89e72af39c22d974e557ad822a5601"><div class="ttname"><a href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601">async_mqtt::protocol::mqtts</a></div><div class="ttdeci">as::ssl::stream&lt; mqtt &gt; mqtts</div><div class="ttdoc">Type alias of boost::asio::ssl::stream of mqtt.</div><div class="ttdef"><b>Definition</b> mqtts.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->

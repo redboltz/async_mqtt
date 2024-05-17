@@ -1,4 +1,4 @@
-<map id="Store_packet_variant_detail" name="Store_packet_variant_detail">
-<area shape="rect" id="Node000002" href="$group__store__packet__variant.html" title="variant class for stored packets (PUBLISH, PUBREL)" alt="" coords="5,14,164,42"/>
-<area shape="rect" id="Node000001" title="stored_packet_variant internal details" alt="" coords="212,5,370,50"/>
+<map id="implementation class" name="implementation class">
+<area shape="rect" id="Node000002" href="$group__store__packet__variant.html" title=" " alt="" coords="5,5,210,50"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="258,14,420,42"/>
 </map>

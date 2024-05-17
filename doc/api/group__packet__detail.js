@@ -1,4 +1,4 @@
 var group__packet__detail =
 [
-    [ "Buffer", "group__buffer.html", "group__buffer" ]
+    [ "Reference counting immutable buffer", "group__buffer.html", "group__buffer" ]
 ];

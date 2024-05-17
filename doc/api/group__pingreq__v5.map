@@ -1,4 +1,4 @@
-<map id="Pingreq_v5" name="Pingreq_v5">
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
-<area shape="rect" id="Node000001" title="PINGREQ packet (v5.0)" alt="" coords="140,5,233,33"/>
+<map id="PINGREQ packet (v5.0)" name="PINGREQ packet (v5.0)">
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,5,373,33"/>
 </map>

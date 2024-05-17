@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Packet_v3_1_1</title>
+<title>async_mqtt: protocol version 3.1.1</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,83 +94,65 @@ $(function(){initNavTree('group__packet__v3__1__1.html',''); initResizable(); })
 <div class="header">
   <div class="summary">
 <a href="#groups">Topics</a>  </div>
-  <div class="headertitle"><div class="title">Packet_v3_1_1<div class="ingroups"><a class="el" href="group__packet.html">Packet</a></div></div></div>
+  <div class="headertitle"><div class="title">protocol version 3.1.1<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>protocol version 3.1.1  
-<a href="#details">More...</a></p>
 <div class="dynheader">
-Collaboration diagram for Packet_v3_1_1:</div>
+Collaboration diagram for protocol version 3.1.1:</div>
 <div class="dyncontent">
 <div class="center"><img src="group__packet__v3__1__1.png" border="0" usemap="#agroup____packet____v3____1____1" alt=""/></div>
 <map name="agroup____packet____v3____1____1" id="agroup____packet____v3____1____1">
-<area shape="rect" href="group__connack__v3__1__1.html" title="CONNACK packet (v3.1.1)" alt="" coords="293,5,423,33"/>
-<area shape="rect" href="group__connect__v3__1__1.html" title="CONNECT packet (v3.1.1)" alt="" coords="295,57,422,85"/>
-<area shape="rect" href="group__disconnect__v3__1__1.html" title="DISCONNECT packet (v3.1.1)" alt="" coords="285,109,431,137"/>
-<area shape="rect" href="group__packet.html" title="MQTT packets." alt="" coords="5,344,69,372"/>
-<area shape="rect" title="protocol version 3.1.1" alt="" coords="117,344,233,372"/>
-<area shape="rect" href="group__pingreq__v3__1__1.html" title="PINGREQ packet (v3.1.1)" alt="" coords="297,161,420,189"/>
-<area shape="rect" href="group__pingresp__v3__1__1.html" title="PINGRESP packet (v3.1.1)" alt="" coords="293,213,423,241"/>
-<area shape="rect" href="group__puback__v3__1__1.html" title="PUBACK packet (v3.1.1)" alt="" coords="298,265,419,293"/>
-<area shape="rect" href="group__pubcomp__v3__1__1.html" title="PUBCOMP packet (v3.1.1)" alt="" coords="291,317,425,345"/>
-<area shape="rect" href="group__publish__v3__1__1.html" title="PUBLISH packet (v3.1.1)" alt="" coords="298,369,419,397"/>
-<area shape="rect" href="group__pubrec__v3__1__1.html" title="PUBREC packet (v3.1.1)" alt="" coords="299,421,417,449"/>
-<area shape="rect" href="group__pubrel__v3__1__1.html" title="PUBREL packet (v3.1.1)" alt="" coords="301,473,416,501"/>
-<area shape="rect" href="group__suback__v3__1__1.html" title="SUBACK packet (v3.1.1)" alt="" coords="298,525,419,553"/>
-<area shape="rect" href="group__subscribe__v3__1__1.html" title="SUBSCRIBE packet (v3.1.1)" alt="" coords="290,577,427,605"/>
-<area shape="rect" href="group__unsuback__v3__1__1.html" title="UNSUBACK packet (v3.1.1)" alt="" coords="289,629,427,657"/>
-<area shape="rect" href="group__unsubscribe__v3__1__1.html" title="UNSUBSCRIBE packet (v3.1.1)" alt="" coords="281,681,435,709"/>
+<area shape="rect" href="group__connack__v3__1__1.html" title=" " alt="" coords="381,5,569,33"/>
+<area shape="rect" href="group__connect__v3__1__1.html" title=" " alt="" coords="382,57,568,85"/>
+<area shape="rect" href="group__disconnect__v3__1__1.html" title=" " alt="" coords="396,109,554,154"/>
+<area shape="rect" href="group__packet.html" title=" " alt="" coords="5,360,119,388"/>
+<area shape="rect" title=" " alt="" coords="167,360,329,388"/>
+<area shape="rect" href="group__pingreq__v3__1__1.html" title=" " alt="" coords="385,177,566,205"/>
+<area shape="rect" href="group__pingresp__v3__1__1.html" title=" " alt="" coords="382,229,569,257"/>
+<area shape="rect" href="group__puback__v3__1__1.html" title=" " alt="" coords="387,281,563,309"/>
+<area shape="rect" href="group__pubcomp__v3__1__1.html" title=" " alt="" coords="381,333,569,361"/>
+<area shape="rect" href="group__publish__v3__1__1.html" title=" " alt="" coords="386,385,564,413"/>
+<area shape="rect" href="group__pubrec__v3__1__1.html" title=" " alt="" coords="388,437,563,465"/>
+<area shape="rect" href="group__pubrel__v3__1__1.html" title=" " alt="" coords="389,489,562,517"/>
+<area shape="rect" href="group__suback__v3__1__1.html" title=" " alt="" coords="387,541,563,569"/>
+<area shape="rect" href="group__subscribe__v3__1__1.html" title=" " alt="" coords="377,593,573,621"/>
+<area shape="rect" href="group__unsuback__v3__1__1.html" title=" " alt="" coords="377,645,573,673"/>
+<area shape="rect" href="group__unsubscribe__v3__1__1.html" title=" " alt="" coords="394,697,556,742"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Topics</h2></td></tr>
-<tr class="memitem:group__connack__v3__1__1" id="r_group__connack__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__connack__v3__1__1.html">Connack_v3_1_1</a></td></tr>
-<tr class="memdesc:group__connack__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">CONNACK packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__connack__v3__1__1" id="r_group__connack__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__connack__v3__1__1.html">CONNACK packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__connect__v3__1__1" id="r_group__connect__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__connect__v3__1__1.html">Connect_v3_1_1</a></td></tr>
-<tr class="memdesc:group__connect__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">CONNECT packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__connect__v3__1__1" id="r_group__connect__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__connect__v3__1__1.html">CONNECT packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__disconnect__v3__1__1" id="r_group__disconnect__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__disconnect__v3__1__1.html">Disconnect_v3_1_1</a></td></tr>
-<tr class="memdesc:group__disconnect__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">DISCONNECT packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__disconnect__v3__1__1" id="r_group__disconnect__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__disconnect__v3__1__1.html">DISCONNECT packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__pingreq__v3__1__1" id="r_group__pingreq__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pingreq__v3__1__1.html">Pingreq_v3_1_1</a></td></tr>
-<tr class="memdesc:group__pingreq__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PINGREQ packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__pingreq__v3__1__1" id="r_group__pingreq__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pingreq__v3__1__1.html">PINGREQ packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__pingresp__v3__1__1" id="r_group__pingresp__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pingresp__v3__1__1.html">Pingresp_v3_1_1</a></td></tr>
-<tr class="memdesc:group__pingresp__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PINGRESP packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__pingresp__v3__1__1" id="r_group__pingresp__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pingresp__v3__1__1.html">PINGRESP packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__puback__v3__1__1" id="r_group__puback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__puback__v3__1__1.html">Puback_v3_1_1</a></td></tr>
-<tr class="memdesc:group__puback__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PUBACK packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__puback__v3__1__1" id="r_group__puback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__puback__v3__1__1.html">PUBACK packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__pubcomp__v3__1__1" id="r_group__pubcomp__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubcomp__v3__1__1.html">Pubcomp_v3_1_1</a></td></tr>
-<tr class="memdesc:group__pubcomp__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PUBCOMP packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__pubcomp__v3__1__1" id="r_group__pubcomp__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubcomp__v3__1__1.html">PUBCOMP packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__publish__v3__1__1" id="r_group__publish__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__publish__v3__1__1.html">Publish_v3_1_1</a></td></tr>
-<tr class="memdesc:group__publish__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PUBLISH packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__publish__v3__1__1" id="r_group__publish__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__publish__v3__1__1.html">PUBLISH packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__pubrec__v3__1__1" id="r_group__pubrec__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrec__v3__1__1.html">Pubrec_v3_1_1</a></td></tr>
-<tr class="memdesc:group__pubrec__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PUBREC packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__pubrec__v3__1__1" id="r_group__pubrec__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrec__v3__1__1.html">PUBREC packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__pubrel__v3__1__1" id="r_group__pubrel__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrel__v3__1__1.html">Pubrel_v3_1_1</a></td></tr>
-<tr class="memdesc:group__pubrel__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">PUBREL packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__pubrel__v3__1__1" id="r_group__pubrel__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrel__v3__1__1.html">PUBREL packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__suback__v3__1__1" id="r_group__suback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__suback__v3__1__1.html">Suback_v3_1_1</a></td></tr>
-<tr class="memdesc:group__suback__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">SUBACK packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__suback__v3__1__1" id="r_group__suback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__suback__v3__1__1.html">SUBACK packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__subscribe__v3__1__1" id="r_group__subscribe__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subscribe__v3__1__1.html">Subscribe_v3_1_1</a></td></tr>
-<tr class="memdesc:group__subscribe__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">SUBSCRIBE packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__subscribe__v3__1__1" id="r_group__subscribe__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subscribe__v3__1__1.html">SUBSCRIBE packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__unsuback__v3__1__1" id="r_group__unsuback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__unsuback__v3__1__1.html">Unsuback_v3_1_1</a></td></tr>
-<tr class="memdesc:group__unsuback__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">UNSUBACK packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__unsuback__v3__1__1" id="r_group__unsuback__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__unsuback__v3__1__1.html">UNSUBACK packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__unsubscribe__v3__1__1" id="r_group__unsubscribe__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__unsubscribe__v3__1__1.html">Unsubscribe_v3_1_1</a></td></tr>
-<tr class="memdesc:group__unsubscribe__v3__1__1"><td class="mdescLeft">&#160;</td><td class="mdescRight">UNSUBSCRIBE packet (v3.1.1) <br /></td></tr>
+<tr class="memitem:group__unsubscribe__v3__1__1" id="r_group__unsubscribe__v3__1__1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__unsubscribe__v3__1__1.html">UNSUBSCRIBE packet (v3.1.1)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>protocol version 3.1.1 </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

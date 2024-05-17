@@ -14,36 +14,48 @@ namespace async_mqtt {
 
 namespace property {
 
+/**
+ * @ingroup property
+ * @brief MQTT property identifier
+ *
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029
+ */
 enum class id {
-    payload_format_indicator          =  1,
-    message_expiry_interval           =  2,
-    content_type                      =  3,
-    response_topic                    =  8,
-    correlation_data                  =  9,
-    subscription_identifier           = 11,
-    session_expiry_interval           = 17,
-    assigned_client_identifier        = 18,
-    server_keep_alive                 = 19,
-    authentication_method             = 21,
-    authentication_data               = 22,
-    request_problem_information       = 23,
-    will_delay_interval               = 24,
-    request_response_information      = 25,
-    response_information              = 26,
-    server_reference                  = 28,
-    reason_string                     = 31,
-    receive_maximum                   = 33,
-    topic_alias_maximum               = 34,
-    topic_alias                       = 35,
-    maximum_qos                       = 36,
-    retain_available                  = 37,
-    user_property                     = 38,
-    maximum_packet_size               = 39,
-    wildcard_subscription_available   = 40,
-    subscription_identifier_available = 41,
-    shared_subscription_available     = 42,
+    payload_format_indicator          =  1, ///< Payload Format Indicator
+    message_expiry_interval           =  2, ///< Message Expiry Interval
+    content_type                      =  3, ///< Content Type
+    response_topic                    =  8, ///< Response Topic
+    correlation_data                  =  9, ///< Correlation Data
+    subscription_identifier           = 11, ///< Subscription Identifier
+    session_expiry_interval           = 17, ///< Session Expiry Interval
+    assigned_client_identifier        = 18, ///< Assigned Client Identifier
+    server_keep_alive                 = 19, ///< Server Keep Alive
+    authentication_method             = 21, ///< Authentication Method
+    authentication_data               = 22, ///< Authentication Data
+    request_problem_information       = 23, ///< Request Problem Information
+    will_delay_interval               = 24, ///< Will Delay Interval
+    request_response_information      = 25, ///< Request Response Information
+    response_information              = 26, ///< Response Information
+    server_reference                  = 28, ///< Server Reference
+    reason_string                     = 31, ///< Reason String
+    receive_maximum                   = 33, ///< Receive Maximum
+    topic_alias_maximum               = 34, ///< Topic Alias Maximum
+    topic_alias                       = 35, ///< Topic Alias
+    maximum_qos                       = 36, ///< Maximum QoS
+    retain_available                  = 37, ///< Retain Available
+    user_property                     = 38, ///< User Property
+    maximum_packet_size               = 39, ///< Maximum Packet Size
+    wildcard_subscription_available   = 40, ///< Wildcard Subscription Available
+    subscription_identifier_available = 41, ///< Subscription Identifier Available
+    shared_subscription_available     = 42, ///< Shared Subscription Available
 };
 
+/**
+ * @ingroup property
+ * @brief stringize packet identifier
+ * @param v target
+ * @return packet identifier
+ */
 constexpr char const* id_to_str(id v) {
     switch (v) {
     case id::payload_format_indicator:           return "payload_format_indicator";
@@ -77,11 +89,18 @@ constexpr char const* id_to_str(id v) {
     }
 }
 
+/**
+ * @ingroup property
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
+ */
 inline
-std::ostream& operator<<(std::ostream& os, id val)
+std::ostream& operator<<(std::ostream& o, id v)
 {
-    os << id_to_str(val);
-    return os;
+    o << id_to_str(v);
+    return o;
 }
 
 } // namespace property

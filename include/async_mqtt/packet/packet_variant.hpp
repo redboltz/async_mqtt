@@ -14,6 +14,7 @@
 #include <async_mqtt/exception.hpp>
 
 #include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/packet/packet_variant_fwd.hpp>
 #include <async_mqtt/packet/packet_fwd.hpp>
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
@@ -47,25 +48,9 @@
 
 #include <async_mqtt/util/overload.hpp>
 
-/**
- * @defgroup packet_variant
- * @ingroup packet
- * @brief variant class for all packets
- */
-
-/**
- * @defgroup packet_variant_detail
- * @ingroup packet_variant
- * @brief packet_variant internal details
- */
-
 namespace async_mqtt {
 namespace as = boost::asio;
 
-/**
- * @ingroup packet_variant_detail
- * @brief The varaint type of all packets and system_error
- */
 template <std::size_t PacketIdBytes>
 class basic_packet_variant {
 public:
@@ -260,13 +245,8 @@ inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBy
     return o;
 }
 
-/**
- * @ingroup packet_variant
- * @related basic_packet_variant
- * @brief type alias of basic_packet_variant (PacketIdBytes=2).
- */
-using packet_variant = basic_packet_variant<2>;
-
 } // namespace async_mqtt
+
+#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
 
 #endif // ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP

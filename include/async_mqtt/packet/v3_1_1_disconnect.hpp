@@ -12,20 +12,20 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
 
 /**
- * @defgroup disconnect_v3_1_1
+ * @defgroup disconnect_v3_1_1 DISCONNECT packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief DISCONNECT packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {
@@ -102,7 +102,7 @@ private:
  * @param v target
  * @return  output stream
  */
-std::ostream& operator<<(std::ostream& o, disconnect_packet const& /*v*/);
+std::ostream& operator<<(std::ostream& o, disconnect_packet const& v);
 
 } // namespace async_mqtt::v3_1_1
 

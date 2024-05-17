@@ -7,20 +7,19 @@
 #if !defined(ASYNC_MQTT_PACKET_V5_DISCONNECT_HPP)
 #define ASYNC_MQTT_PACKET_V5_DISCONNECT_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
-#include <async_mqtt/util/static_vector.hpp>
-
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
+#include <async_mqtt/util/buffer.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+
 /**
- * @defgroup disconnect_v5
+ * @defgroup disconnect_v5 DISCONNECT packet (v5.0)
  * @ingroup packet_v5
- * @brief DISCONNECT packet (v5.0)
  */
 
 namespace async_mqtt::v5 {

@@ -95,7 +95,7 @@ $(function(){initNavTree('classasync__mqtt_1_1buffer.html',''); initResizable();
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1buffer-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__detail.html">Packet_detail</a> &raquo; <a class="el" href="group__buffer.html">Buffer</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__detail.html">implementation class</a> &raquo; <a class="el" href="group__buffer.html">Reference counting immutable buffer</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -452,7 +452,7 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>string constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">string</td><td></td></tr>
+    <tr><td class="paramname">s</td><td>string </td></tr>
   </table>
   </dd>
 </dl>
@@ -532,7 +532,7 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>pointer, size, and lifetime constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>pointer to the beginning of the view </td></tr>
+    <tr><td class="paramname">s</td><td>pointer to the beginning of the view </td></tr>
     <tr><td class="paramname">count</td><td>size of the view </td></tr>
     <tr><td class="paramname">life</td><td>sv target's lifetime keeping object by shared ownership If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
   </table>
@@ -2016,11 +2016,12 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is moved to returned buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">pos</td><td>position of the first character </td></tr>
+    <tr><td class="paramname">count</td><td>requested length </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>buffer </dd></dl>
 
 </div>
 </div>
@@ -2054,11 +2055,12 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">pos</td><td>position of the first character </td></tr>
+    <tr><td class="paramname">count</td><td>requested length </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>buffer </dd></dl>
 
 </div>
 </div>

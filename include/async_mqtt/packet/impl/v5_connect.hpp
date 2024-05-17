@@ -22,11 +22,13 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
-#include <async_mqtt/packet/connect_flags.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/will.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
+
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/connect_flags.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -62,7 +64,7 @@ connect_packet::connect_packet(
     properties props
 )
     : fixed_header_{
-          make_fixed_header(control_packet_type::connect, 0b0000)
+          detail::make_fixed_header(control_packet_type::connect, 0b0000)
       },
       connect_flags_{0},
       // protocol name length, protocol name, protocol level, connect flag, client id length, client id, keep alive

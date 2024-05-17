@@ -11,12 +11,11 @@
 #include <ostream>
 
 /**
- * @defgroup qos
+ * @defgroup qos QoS
  * @ingroup subscribe_v3_1_1
  * @ingroup subscribe_v5
  * @ingroup publish_v3_1_1
  * @ingroup publish_v5
- * @brief QoS
  */
 
 namespace async_mqtt {
@@ -51,16 +50,16 @@ constexpr char const* qos_to_str(qos v) {
 
 /**
  * @ingroup qos
- * @brief output to the stream qos
- * @param os output stream
+ * @brief output to the stream
+ * @param o output stream
  * @param v  target
  * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, qos v)
+std::ostream& operator<<(std::ostream& o, qos v)
 {
-    os << qos_to_str(v);
-    return os;
+    o << qos_to_str(v);
+    return o;
 }
 
 } // namespace async_mqtt

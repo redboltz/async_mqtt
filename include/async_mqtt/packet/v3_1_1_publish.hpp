@@ -7,30 +7,29 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
+#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/packet/packet_id_type.hpp>
+#include <async_mqtt/packet/pubopts.hpp>
+
+#include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
 
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
 /**
- * @defgroup publish_v3_1_1
+ * @defgroup publish_v3_1_1 PUBLISH packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief PUBLISH packet (v3.1.1)
  */
 
 /**
- * @defgroup publish_v3_1_1_detail
+ * @defgroup publish_v3_1_1_detail implementation class
  * @ingroup publish_v3_1_1
- * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v3_1_1 {
@@ -55,7 +54,8 @@ public:
 
     /**
      * @brief constructor
-     * @tparam BufferSequence Type of the payload
+     * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
+     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param packet_id  MQTT PacketIdentifier. If QoS0 then it must be 0. You can use no packet_id version constructor.
      *                   If QoS is 0 or 1 then, the packet_id must be acquired by
      *                   basic_endpoint::acquire_unique_packet_id(), or must be registered by
@@ -93,7 +93,8 @@ public:
     /**
      * @brief constructor for QoS0
      * This constructor doesn't have packet_id parameter. The packet_id is set to 0 internally and not send actually.
-     * @tparam BufferSequence Type of the payload
+     * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
+     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param topic_name MQTT TopicName
      *                   \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349267
      * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.

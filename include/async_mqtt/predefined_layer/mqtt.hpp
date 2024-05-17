@@ -12,21 +12,18 @@
 #include <async_mqtt/predefined_layer/customized_basic_stream.hpp>
 
 /**
- * @defgroup underlying_layer
+ * @defgroup underlying_layer predefined underlying layers and how to adapt your own layer
  * @ingroup connection
- * @brief predefined underlying layers and how to adapt your own layer
  */
 
 /**
- * @defgroup predefined_layer
+ * @defgroup predefined_layer predefined underlying layers
  * @ingroup underlying_layer
- * @brief predefined underlying layers
  */
 
 /**
- * @defgroup predefined_layer_mqtt
+ * @defgroup predefined_layer_mqtt predefined underlying layer (TCP)
  * @ingroup predefined_layer
- * @brief predefined underlying layer (TCP)
  */
 
 namespace async_mqtt {
@@ -46,6 +43,7 @@ using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 /**
  * @ingroup predefined_layer_mqtt
  * @brief resovling name and connect TCP layer
+ * @param layer  TCP layer
  * @param host   host name or IP address to connect
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)

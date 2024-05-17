@@ -12,12 +12,10 @@
 
 #include <async_mqtt/packet/qos.hpp>
 
-/// @file
-
 namespace async_mqtt {
 
 /**
- * @ingroup packet
+ * @ingroup suback_v3_1_1
  * @brief MQTT suback_return_code
  *
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
@@ -30,9 +28,9 @@ enum class suback_return_code : std::uint8_t {
 };
 
 /**
- * @ingroup packet
- * @brief create suback_return_code from qos
- * @param q qos
+ * @ingroup suback_v3_1_1
+ * @brief create suback_return_code corresponding to the QoS
+ * @param q QoS
  * @return suback_retun_code
  */
 constexpr suback_return_code qos_to_suback_return_code(qos q) {
@@ -40,8 +38,10 @@ constexpr suback_return_code qos_to_suback_return_code(qos q) {
 }
 
 /**
- * @ingroup packet
+ * @ingroup suback_v3_1_1
  * @brief stringize suback_return_code
+ * @param v target
+ * @return suback_return_code string
  */
 constexpr
 char const* suback_return_code_to_str(suback_return_code v) {
@@ -56,14 +56,17 @@ char const* suback_return_code_to_str(suback_return_code v) {
 }
 
 /**
- * @related opts
- * @brief output to the stream suback_return_code
+ * @ingroup suback_v3_1_1
+ * @brief output to the stream
+ * @param o output stream
+ * @param v  target
+ * @return output stream
  */
 inline
-std::ostream& operator<<(std::ostream& os, suback_return_code val)
+std::ostream& operator<<(std::ostream& o, suback_return_code v)
 {
-    os << suback_return_code_to_str(val);
-    return os;
+    o << suback_return_code_to_str(v);
+    return o;
 }
 
 } // namespace async_mqtt

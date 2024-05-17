@@ -11,9 +11,8 @@
 #include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
 /**
- * @defgroup predefined_layer_ws
+ * @defgroup predefined_layer_ws predefined underlying layer (Websocket)
  * @ingroup predefined_layer
- * @brief predefined underlying layer (Websocket)
  */
 
 namespace async_mqtt {
@@ -36,6 +35,7 @@ using ws = bs::websocket::stream<mqtt>;
  * @ingroup predefined_layer_ws
  * @brief Websocket handshake
  * This function does underlying layers handshaking prior to Websocket handshake
+ * @param layer  Websocket layer
  * @param host   host name or IP address to connect
  * @param port   port number to connect
  * @param path   websocket path
@@ -69,6 +69,7 @@ underlying_handshake(
  * @brief Websocket handshake
  * This function does underlying layers handshaking prior to Websocket handshake
  * Websocket path is set as "/".
+ * @param layer  Websocket layer
  * @param host   host name or IP address to connect
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)

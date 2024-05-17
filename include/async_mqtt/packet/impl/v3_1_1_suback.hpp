@@ -20,11 +20,11 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
 #include <async_mqtt/packet/suback_return_code.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -34,7 +34,7 @@ basic_suback_packet<PacketIdBytes>::basic_suback_packet(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     std::vector<suback_return_code> params
 )
-    : fixed_header_{make_fixed_header(control_packet_type::suback, 0b0000)},
+    : fixed_header_{detail::make_fixed_header(control_packet_type::suback, 0b0000)},
       entries_{force_move(params)},
       remaining_length_{PacketIdBytes + entries_.size()}
 {

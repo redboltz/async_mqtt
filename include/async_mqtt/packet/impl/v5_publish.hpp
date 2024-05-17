@@ -22,12 +22,15 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 
-#include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/packet/packet_iterator.hpp>
+
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
+
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
@@ -58,7 +61,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     properties props
 )
     : fixed_header_(
-        make_fixed_header(control_packet_type::publish, 0b0000) | std::uint8_t(pubopts)
+        detail::make_fixed_header(control_packet_type::publish, 0b0000) | std::uint8_t(pubopts)
     ),
       topic_name_{std::string{std::forward<StringViewLike>(topic_name)}},
       packet_id_(PacketIdBytes),

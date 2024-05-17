@@ -17,8 +17,7 @@
 #include <boost/operators.hpp>
 
 /**
- * @defgroup error
- * @brief Common error
+ * @defgroup error Common error
  */
 
 namespace async_mqtt {

@@ -1,8 +1,8 @@
-<map id="Predefined_layer" name="Predefined_layer">
-<area shape="rect" id="Node000001" title="predefined underlying layers" alt="" coords="186,84,316,112"/>
-<area shape="rect" id="Node000003" href="$group__predefined__layer__mqtt.html" title="predefined underlying layer (TCP)" alt="" coords="368,5,536,33"/>
-<area shape="rect" id="Node000004" href="$group__predefined__layer__mqtts.html" title=" " alt="" coords="364,57,539,85"/>
-<area shape="rect" id="Node000005" href="$group__predefined__layer__ws.html" title="predefined underlying layer (Websocket)" alt="" coords="374,109,529,137"/>
-<area shape="rect" id="Node000006" href="$group__predefined__layer__wss.html" title="predefined underlying layer (Websocket on TLS)" alt="" coords="371,161,533,189"/>
-<area shape="rect" id="Node000002" href="$group__underlying__layer.html" title="predefined underlying layers and how to adapt your own layer" alt="" coords="5,84,138,112"/>
+<map id="predefined underlying layers" name="predefined underlying layers">
+<area shape="rect" id="Node000001" title=" " alt="" coords="236,109,399,154"/>
+<area shape="rect" id="Node000003" href="$group__predefined__layer__mqtt.html" title=" " alt="" coords="460,5,623,50"/>
+<area shape="rect" id="Node000004" href="$group__predefined__layer__mqtts.html" title=" " alt="" coords="460,75,623,119"/>
+<area shape="rect" id="Node000005" href="$group__predefined__layer__ws.html" title=" " alt="" coords="460,144,623,189"/>
+<area shape="rect" id="Node000006" href="$group__predefined__layer__wss.html" title=" " alt="" coords="447,213,636,258"/>
+<area shape="rect" id="Node000002" href="$group__underlying__layer.html" title=" " alt="" coords="5,101,188,163"/>
 </map>

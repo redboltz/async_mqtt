@@ -8,28 +8,26 @@
 #define ASYNC_MQTT_PACKET_V5_UNSUBSCRIBE_HPP
 
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/exception.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
-#include <async_mqtt/util/static_vector.hpp>
-
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
 #include <async_mqtt/packet/topic_sharename.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
+#include <async_mqtt/util/buffer.hpp>
+#include <async_mqtt/util/static_vector.hpp>
+
 /**
- * @defgroup unsubscribe_v5
+ * @defgroup unsubscribe_v5 UNSUBSCRIBE packet (v5.0)
  * @ingroup packet_v5
- * @brief UNSUBSCRIBE packet (v5.0)
  */
 
 /**
- * @defgroup unsubscribe_v5_detail
+ * @defgroup unsubscribe_v5_detail implementation class
  * @ingroup unsubscribe_v5
- * @brief packet internal details (e.g. type-aliased API's actual type information)
  */
 
 namespace async_mqtt::v5 {

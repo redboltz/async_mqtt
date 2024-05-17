@@ -1,7 +1,7 @@
 var group__property =
 [
-    [ "Property_internal", "group__property__internal.html", "group__property__internal" ],
-    [ "Property_variant", "group__property__variant.html", "group__property__variant" ],
+    [ "implementation class", "group__property__internal.html", "group__property__internal" ],
+    [ "variant class for all properties", "group__property__variant.html", "group__property__variant" ],
     [ "async_mqtt::property::payload_format_indicator", "classasync__mqtt_1_1property_1_1payload__format__indicator.html", [
       [ "payload_format_indicator", "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ae2f1b455c358120b2358e4361b31fda6", null ],
       [ "val", "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ad09953ffd432f1fea04d22d39464398d", null ]
@@ -20,7 +20,7 @@ var group__property =
       [ "correlation_data", "classasync__mqtt_1_1property_1_1correlation__data.html#a3485faa745776197b7c7ec0ba6e3e1e6", null ]
     ] ],
     [ "async_mqtt::property::subscription_identifier", "classasync__mqtt_1_1property_1_1subscription__identifier.html", [
-      [ "subscription_identifier", "classasync__mqtt_1_1property_1_1subscription__identifier.html#ad92d0de950ce94e9448c370aa08f6d73", null ]
+      [ "subscription_identifier", "classasync__mqtt_1_1property_1_1subscription__identifier.html#a3c6e703d84068d8cb7b04b82f15927f0", null ]
     ] ],
     [ "async_mqtt::property::session_expiry_interval", "classasync__mqtt_1_1property_1_1session__expiry__interval.html", [
       [ "session_expiry_interval", "classasync__mqtt_1_1property_1_1session__expiry__interval.html#a78bf67b2a8622c44e9be0233257e4d26", null ],
@@ -104,11 +104,43 @@ var group__property =
       [ "shared_subscription_available", "classasync__mqtt_1_1property_1_1shared__subscription__available.html#aa449b3f9e4d3530ae9af47d5f5477f84", null ],
       [ "val", "classasync__mqtt_1_1property_1_1shared__subscription__available.html#a25b1c87140e83aed2899f9e738b47077", null ]
     ] ],
+    [ "async_mqtt::properties", "group__property.html#gadd579abff7572472a5b0cd91690b6177", null ],
     [ "async_mqtt::receive_maximum_type", "group__property.html#ga22bc9d291b6a5341d91566207de3503c", null ],
     [ "async_mqtt::session_expiry_interval_type", "group__property.html#ga41092762c41573496243917973e65790", null ],
     [ "async_mqtt::topic_alias_type", "group__property.html#ga5fe22439446e72837355d835aaa7a1e6", null ],
+    [ "async_mqtt::property::id", "group__property.html#ga5cb48750d7fa394639fc0dada2c34f89", [
+      [ "async_mqtt::property::id::payload_format_indicator", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ad70abd68354da8b29adc77924ecd8b2b", null ],
+      [ "async_mqtt::property::id::message_expiry_interval", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a5691630c289408c3bedf7fdbe58fdd44", null ],
+      [ "async_mqtt::property::id::content_type", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89aeae05b08fff80e185c849f1314a3dca4", null ],
+      [ "async_mqtt::property::id::response_topic", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a3b144d2924519c1dbdcd111da463041f", null ],
+      [ "async_mqtt::property::id::correlation_data", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89aece98a0ffeaca98ee2601250877fe12f", null ],
+      [ "async_mqtt::property::id::subscription_identifier", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a0303e35c985a5501426a930f578f6e11", null ],
+      [ "async_mqtt::property::id::session_expiry_interval", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a7c1c94c8bbf406c1b4939052d5bdae8e", null ],
+      [ "async_mqtt::property::id::assigned_client_identifier", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a8a4315eb39554da611aeeb1474f76ca1", null ],
+      [ "async_mqtt::property::id::server_keep_alive", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ab679a6a76c34d79fbe6fa98606eef93a", null ],
+      [ "async_mqtt::property::id::authentication_method", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ac8a67f2fc8451d399d13cff9dd0f776b", null ],
+      [ "async_mqtt::property::id::authentication_data", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a59266b4ac7368fa7ed837bac1721834b", null ],
+      [ "async_mqtt::property::id::request_problem_information", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a0bc2ff2d35275482f8eff714c6a501ab", null ],
+      [ "async_mqtt::property::id::will_delay_interval", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ad7ec6b256790ba56f888d8b528b1e354", null ],
+      [ "async_mqtt::property::id::request_response_information", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a59198dabdf3a9b718022475891f409f4", null ],
+      [ "async_mqtt::property::id::response_information", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89af443adb92f9a48f6dbe2feaae9827e5a", null ],
+      [ "async_mqtt::property::id::server_reference", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a1d8c69ac391ef411f60dc55d168f47b0", null ],
+      [ "async_mqtt::property::id::reason_string", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a0dd03024882feda67879d489ac41a6fe", null ],
+      [ "async_mqtt::property::id::receive_maximum", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a7f75c91fc61e79e480ea2b9d7fcb36a5", null ],
+      [ "async_mqtt::property::id::topic_alias_maximum", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ac4876f07338b81da0d6b119a354c27c9", null ],
+      [ "async_mqtt::property::id::topic_alias", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89abb3e84e5ef8c867872e4fefc946b6cf5", null ],
+      [ "async_mqtt::property::id::maximum_qos", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a394e6d7ed7fa6cfa41c999989c9fbd38", null ],
+      [ "async_mqtt::property::id::retain_available", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a4cd4bf5473da35426244172d847a241a", null ],
+      [ "async_mqtt::property::id::user_property", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ad29c39b6198cbb5b1e3ba73fb775e0d2", null ],
+      [ "async_mqtt::property::id::maximum_packet_size", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ae86c982cdc73638e7f205067bee6b615", null ],
+      [ "async_mqtt::property::id::wildcard_subscription_available", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ae07856d92849ad8f913388b958bceeaf", null ],
+      [ "async_mqtt::property::id::subscription_identifier_available", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89acefe31dfe68287829eeb3b1fe20f2f21", null ],
+      [ "async_mqtt::property::id::shared_subscription_available", "group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a570f14f4d526fcea83d5b11db9f9f0e4", null ]
+    ] ],
     [ "async_mqtt::payload_format", "group__property.html#ga47c42be3d9afd2d518fad85c5480b1f9", [
       [ "async_mqtt::payload_format::binary", "group__property.html#gga47c42be3d9afd2d518fad85c5480b1f9a9d7183f16acce70658f686ae7f1a4d20", null ],
       [ "async_mqtt::payload_format::string", "group__property.html#gga47c42be3d9afd2d518fad85c5480b1f9ab45cffe084dd3d20d928bee85e7b0f21", null ]
-    ] ]
+    ] ],
+    [ "async_mqtt::property::id_to_str", "group__property.html#ga268baa3c63f4381f3347199135e1c64c", null ],
+    [ "async_mqtt::property::operator<<", "group__property.html#ga626e41c9b69507e3a67ac170d03d1883", null ]
 ];

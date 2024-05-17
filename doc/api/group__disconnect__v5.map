@@ -1,4 +1,4 @@
-<map id="Disconnect_v5" name="Disconnect_v5">
-<area shape="rect" id="Node000001" title="DISCONNECT packet (v5.0)" alt="" coords="140,5,256,33"/>
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
+<map id="DISCONNECT packet (v5.0)" name="DISCONNECT packet (v5.0)">
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,5,362,50"/>
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,14,156,42"/>
 </map>

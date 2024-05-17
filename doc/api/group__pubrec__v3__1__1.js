@@ -1,6 +1,6 @@
 var group__pubrec__v3__1__1 =
 [
-    [ "Pubrec_v3_1_1_detail", "group__pubrec__v3__1__1__detail.html", null ],
+    [ "implementation class", "group__pubrec__v3__1__1__detail.html", null ],
     [ "async_mqtt::v3_1_1::basic_pubrec_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html", [
       [ "basic_pubrec_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html#ae103d448790d7978e1c0cb62ffb6b498", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html#a307a01ccae85715f7683bb63b2121b66", null ],

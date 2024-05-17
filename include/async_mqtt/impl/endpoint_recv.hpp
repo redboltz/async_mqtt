@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_RECV_HPP
 
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
 
 namespace async_mqtt {
 

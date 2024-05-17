@@ -14,9 +14,8 @@
 #include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
 /**
- * @defgroup predefined_layer_wss
+ * @defgroup predefined_layer_wss predefined underlying layer (Websocket on TLS)
  * @ingroup predefined_layer
- * @brief predefined underlying layer (Websocket on TLS)
  */
 
 namespace async_mqtt {

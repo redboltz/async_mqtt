@@ -19,10 +19,8 @@
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
 
 /**
- * @defgroup client
+ * @defgroup client High level MQTT client
  * @ingroup connection
- * @brief High level MQTT connection layer that can be used client.
- * Receiving MQTT response packet is automated.
  */
 
 namespace async_mqtt {

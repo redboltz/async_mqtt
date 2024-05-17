@@ -7,88 +7,98 @@
 #if !defined(ASYNC_MQTT_PACKET_PACKET_HELPER_HPP)
 #define ASYNC_MQTT_PACKET_PACKET_HELPER_HPP
 
-#include <utility>
-#include <algorithm>
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <iosfwd>
 #include <async_mqtt/packet/packet_traits.hpp>
-#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/packet/packet_fwd.hpp>
+#include <async_mqtt/packet/packet_variant_fwd.hpp>
 
 namespace async_mqtt {
 
+namespace v3_1_1 {
+
+/**
+ * @ingroup packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs packet equal to the rhs packet, otherwise false.
+ */
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+operator==(Lhs const& lhs, Rhs const& rhs);
+
+} // namespace v3_1_1
+
+namespace v5 {
+
+/**
+ * @ingroup packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs packet equal to the rhs packet, otherwise false.
+ */
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+operator==(Lhs const& lhs, Rhs const& rhs);
+
+} // namespace v5
+
+namespace v3_1_1 {
+
+/**
+ * @ingroup packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs packet less than the rhs packet, otherwise false.
+ */
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+operator<(Lhs const& lhs, Rhs const& rhs);
+
+} // namespace v3_1_1
+
+namespace v5 {
+
+/**
+ * @ingroup packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs packet less than the rhs packet, otherwise false.
+ */
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+operator<(Lhs const& lhs, Rhs const& rhs);
+
+} // namespace v5
+
 template <typename Packet>
-constexpr bool is_packet() {
-    return
-        std::is_same_v<v3_1_1::connect_packet, Packet> ||
-        std::is_same_v<v3_1_1::connack_packet, Packet> ||
-        std::is_same_v<v3_1_1::pingreq_packet, Packet> ||
-        std::is_same_v<v3_1_1::pingresp_packet, Packet> ||
-        std::is_same_v<v3_1_1::disconnect_packet, Packet> ||
-        is_instance_of<v3_1_1::basic_publish_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_puback_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_pubrec_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_pubrel_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_pubcomp_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_subscribe_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_suback_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_unsubscribe_packet, Packet>::value ||
-        is_instance_of<v3_1_1::basic_unsuback_packet, Packet>::value ||
-        std::is_same_v<v5::connect_packet, Packet> ||
-        std::is_same_v<v5::connack_packet, Packet> ||
-        std::is_same_v<v5::pingreq_packet, Packet> ||
-        std::is_same_v<v5::pingresp_packet, Packet> ||
-        std::is_same_v<v5::disconnect_packet, Packet> ||
-        is_instance_of<v5::basic_publish_packet, Packet>::value ||
-        is_instance_of<v5::basic_puback_packet, Packet>::value ||
-        is_instance_of<v5::basic_pubrec_packet, Packet>::value ||
-        is_instance_of<v5::basic_pubrel_packet, Packet>::value ||
-        is_instance_of<v5::basic_pubcomp_packet, Packet>::value ||
-        is_instance_of<v5::basic_subscribe_packet, Packet>::value ||
-        is_instance_of<v5::basic_suback_packet, Packet>::value ||
-        is_instance_of<v5::basic_unsubscribe_packet, Packet>::value ||
-        is_instance_of<v5::basic_unsuback_packet, Packet>::value ||
-        std::is_same_v<v5::auth_packet, Packet> ||
-        is_instance_of<basic_packet_variant, Packet>::value
-        ;
-}
+struct hex_dump_t {
+    hex_dump_t(Packet const& p):p{p} {}
 
-template<class InputIt1, class InputIt2>
-bool lexicographical_compare(
-    InputIt1 first1,
-    InputIt1 last1,
-    InputIt2 first2,
-    InputIt2 last2
-) {
-    for (; (first1 != last1) && (first2 != last2); ++first1, ++first2) {
-        if (*first1 < *first2) return true;
-        if (*first2 < *first1) return false;
-    }
-    return (first1 == last1) && (first2 != last2);
-}
+    Packet const& p;
+};
 
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator==(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    if (std::distance(lb, le) != std::distance(rb, re)) return false;
-    return std::equal(lb, le, rb);
-}
+template <typename Packet>
+std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
 
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator<(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    return
-        lexicographical_compare(
-            lb, le, rb, re
-        );
+
+/**
+ * @ingroup packet
+ * @brief hexdump the packet.
+ *        Usage. std::cout << hex_dump(p) << std::endl;
+ * @param p packet to dump. p must be valid packet. packet_variant system_error cannot be accepted.
+ * @return id
+ */
+template <typename Packet>
+hex_dump_t<Packet> hex_dump(Packet const& p) {
+    return hex_dump_t<Packet>{p};
 }
 
 } // namespace async_mqtt
+
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 
 #endif // ASYNC_MQTT_PACKET_PACKET_HELPER_HPP

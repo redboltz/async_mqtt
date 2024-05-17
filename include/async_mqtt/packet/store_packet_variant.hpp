@@ -10,25 +10,13 @@
 #include <variant>
 
 #include <async_mqtt/util/overload.hpp>
+#include <async_mqtt/packet/store_packet_variant_fwd.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/v3_1_1_pubrel.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/packet/v5_pubrel.hpp>
 #include <async_mqtt/exception.hpp>
-
-
-/**
- * @defgroup store_packet_variant
- * @ingroup packet_variant
- * @brief variant class for stored packets (PUBLISH, PUBREL)
- */
-
-/**
- * @defgroup store_packet_variant_detail
- * @ingroup store_packet_variant
- * @brief stored_packet_variant internal details
- */
 
 namespace async_mqtt {
 
@@ -45,11 +33,6 @@ enum class response_packet {
     v5_pubcomp,     ///< stored packet is v5_basic_rel_packet
 };
 
-/**
- * @ingroup store_packet_variant_detail
- * @brief MQTT packet variant for store
- * @tparam PacketIdBytes MQTT spec is 2. You can use `store_packet_variant` for that.
- */
 template <std::size_t PacketIdBytes>
 class basic_store_packet_variant {
 public:
@@ -296,12 +279,6 @@ inline std::ostream& operator<<(std::ostream& o, basic_store_packet_variant<Pack
     );
     return o;
 }
-
-/**
- * @ingroup store_packet_variant
- * @brief Type alias of basic_store_packet_variant (PacketIdBytes=2).
- */
-using store_packet_variant = basic_store_packet_variant<2>;
 
 } // namespace async_mqtt
 

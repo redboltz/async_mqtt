@@ -21,11 +21,12 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -154,7 +155,7 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(
     properties props
 )
     : fixed_header_{
-          make_fixed_header(control_packet_type::pubrec, 0b0000)
+          detail::make_fixed_header(control_packet_type::pubrec, 0b0000)
       },
       remaining_length_{
           PacketIdBytes

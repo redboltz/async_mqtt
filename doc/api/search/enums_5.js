@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['qos_0',['qos',['../group__qos.html#ga38e773082414bb272ab22275c56eb4df',1,'async_mqtt']]]
+  ['nl_0',['nl',['../group__subscribe__options.html#ga6bb5e7fddda960a7d197360ededb6067',1,'async_mqtt::sub']]]
 ];

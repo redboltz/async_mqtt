@@ -8,7 +8,7 @@
 * Refined type of PacketIdentifier. Now `packet_id_type` is the type. #231
 * Moved include/async_mqtt/broker/*.hpp to tool/include/broker/*.hpp #224
 ** Those are for broker allication that is used for system testing.
-* Re-organized directory strucure respect to boost libraries. #211, #229, #230
+* Re-organized directory strucure respect to boost libraries. #211, #229, #230, #234
 ** It affects the users only if include the specific header file directly.
 * Re-desined strand handling. #206
 ** template parameter Strand is removed. Users can pass strand wrapped executor for multi threading.
@@ -29,7 +29,7 @@
 * Used bound allocator to allocate buffer for packet on receive. #222
 * Added convenient handshaking function for underlying layers. #216
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
-* Refined documents. #220, #222
+* Refined documents. #220, #222, #232, #233, #234
 * Refined examples. #214, #220
 
 == 5.1.2

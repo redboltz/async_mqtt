@@ -14,6 +14,8 @@ var group__publish__v5__detail =
       [ "payload_range", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a42d2feb4d8604d78d5b753f40e5c362e", null ],
       [ "props", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#ab756a9f82eca638b5fa1844b9b8b6ec8", null ],
       [ "remove_topic_add_topic_alias", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a97e996504d3ce2f8db36fe745949cc6c", null ],
+      [ "remove_topic_alias", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a89b6ce2d50ca958e91d131baa48fbc81", null ],
+      [ "remove_topic_alias_add_topic", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a7bdf9262052dde53d07d8eb8f9a33332", null ],
       [ "set_dup", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a3e740a0de47d9b13964c5da49458d9e3", null ],
       [ "size", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#af7838e4773ab0ed359251d959cd4a31d", null ],
       [ "topic", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#ae0faf57b5cb3a694e36435e294ad5ed5", null ],

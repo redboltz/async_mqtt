@@ -33,15 +33,13 @@
 #include <async_mqtt/util/buffer.hpp>
 
 /**
- * @defgroup property
+ * @defgroup property Property for MQTT v5.0 packets
  * @ingroup packet_v5
- * @brief Property for MQTT v5.0 packets
  */
 
 /**
- * @defgroup property_internal
+ * @defgroup property_internal implementation class
  * @ingroup property
- * @brief Property internal implementation classes
  */
 
 namespace async_mqtt {
@@ -527,8 +525,8 @@ public:
      * @brief constructor
      * @param val subscription_identifier
      */
-    subscription_identifier(std::uint32_t subscription_id)
-        : detail::variable_property{id::subscription_identifier, subscription_id} {}
+    subscription_identifier(std::uint32_t val)
+        : detail::variable_property{id::subscription_identifier, val} {}
 };
 
 /**
@@ -674,7 +672,7 @@ class request_problem_information : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val request_problem_information
+     * @param value request_problem_information
      */
     request_problem_information(bool value)
         : detail::n_bytes_property<1>{
@@ -743,7 +741,7 @@ class request_response_information : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val request_response_information
+     * @param value request_response_information
      */
     request_response_information(bool value)
         : detail::n_bytes_property<1>{
@@ -963,7 +961,7 @@ class maximum_qos : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val maximum_qos
+     * @param value maximum_qos
      */
     maximum_qos(qos value)
         : detail::n_bytes_property<1>{id::maximum_qos, {static_cast<char>(value)}} {
@@ -1003,7 +1001,7 @@ class retain_available : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val retain_available
+     * @param value retain_available
      */
     retain_available(bool value)
         : detail::n_bytes_property<1>{
@@ -1043,7 +1041,8 @@ class user_property : private boost::totally_ordered<user_property> {
 public:
     /**
      * @brief constructor
-     * @param val response_information string
+     * @param key key string
+     * @param val value string
      */
     user_property(std::string key, std::string val)
         : user_property{buffer{force_move(key)}, buffer{force_move(val)}}
@@ -1222,7 +1221,7 @@ class wildcard_subscription_available : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val shared_subscription_available
+     * @param value shared_subscription_available
      */
     wildcard_subscription_available(bool value)
         : detail::n_bytes_property<1>{
@@ -1262,7 +1261,7 @@ class subscription_identifier_available : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val subscription_identifier_available
+     * @param value subscription_identifier_available
      */
     subscription_identifier_available(bool value)
         : detail::n_bytes_property<1>{
@@ -1302,7 +1301,7 @@ class shared_subscription_available : public detail::n_bytes_property<1> {
 public:
     /**
      * @brief constructor
-     * @param val shared_subscription_available
+     * @param value shared_subscription_available
      */
     shared_subscription_available(bool value)
         : detail::n_bytes_property<1>{

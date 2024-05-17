@@ -17,9 +17,8 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @defgroup predefined_customize
+ * @defgroup predefined_customize predefined underlying customize
  * @ingroup underlying_customize
- * @brief predefined underlying customize
  */
 
 /**

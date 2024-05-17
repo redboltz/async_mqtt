@@ -16,6 +16,9 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
+#include <async_mqtt/packet/detail/fixed_header.hpp>
+#include <async_mqtt/packet/impl/session_present.hpp>
+
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
@@ -26,7 +29,7 @@ connack_packet::connack_packet(
     connect_return_code return_code
 )
     : all_{
-        static_cast<char>(make_fixed_header(control_packet_type::connack, 0b0000)),
+        static_cast<char>(detail::make_fixed_header(control_packet_type::connack, 0b0000)),
         0b0010,
         static_cast<char>(session_present ? 1 : 0),
         static_cast<char>(return_code)

@@ -17,11 +17,12 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/session_present.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/packet/impl/session_present.hpp>
+#include <async_mqtt/packet/impl/validate_property.hpp>
 
 namespace async_mqtt::v5 {
 
@@ -34,7 +35,7 @@ connack_packet::connack_packet(
     properties props
 )
     : fixed_header_{
-          make_fixed_header(control_packet_type::connack, 0b0000)
+          detail::make_fixed_header(control_packet_type::connack, 0b0000)
       },
       remaining_length_(
           1 + // connect acknowledge flags
@@ -187,7 +188,6 @@ connack_packet::connack_packet(buffer buf) {
     case connect_reason_code::server_unavailable:
     case connect_reason_code::server_busy:
     case connect_reason_code::banned:
-    case connect_reason_code::server_shutting_down:
     case connect_reason_code::bad_authentication_method:
     case connect_reason_code::topic_name_invalid:
     case connect_reason_code::packet_too_large:

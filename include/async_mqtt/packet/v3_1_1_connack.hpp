@@ -8,19 +8,17 @@
 #define ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
 
 
-#include <async_mqtt/packet/buffer_to_packet_variant_fwd.hpp>
+#include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/fixed_header.hpp>
-#include <async_mqtt/packet/session_present.hpp>
+#include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/connect_return_code.hpp>
 
 /**
- * @defgroup connack_v3_1_1
+ * @defgroup connack_v3_1_1 CONNACK packet (v3.1.1)
  * @ingroup packet_v3_1_1
- * @brief CONNACK packet (v3.1.1)
  */
 
 namespace async_mqtt::v3_1_1 {

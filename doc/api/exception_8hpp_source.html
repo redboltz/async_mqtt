@@ -118,84 +118,84 @@ $(function(){initNavTree('exception_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;boost/assert.hpp&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;boost/operators.hpp&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">namespace </span>async_mqtt {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>sys = boost::system;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">   36</a></span><span class="keyword">using </span><a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> = sys::error_code;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">namespace </span>errc = sys::errc;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="foldopen" id="foldopen00048" data-start="{" data-end="};">
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html">   48</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> : sys::system_error, <span class="keyword">private</span> boost::totally_ordered&lt;system_error&gt; {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">using </span>base_type = sys::system_error;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">using </span>base_type::base_type;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">   56</a></span>    <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">system_error</a>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> <span class="keyword">const</span>&amp; ec = <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>())</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        : base_type{ec}</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    {}</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span>async_mqtt {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">namespace </span>sys = boost::system;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">   35</a></span><span class="keyword">using </span><a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> = sys::error_code;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="keyword">namespace </span>errc = sys::errc;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="foldopen" id="foldopen00047" data-start="{" data-end="};">
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html">   47</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> : sys::system_error, <span class="keyword">private</span> boost::totally_ordered&lt;system_error&gt; {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keyword">using </span>base_type = sys::system_error;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keyword">using </span>base_type::base_type;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="foldopen" id="foldopen00055" data-start="{" data-end="}">
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">   55</a></span>    <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">system_error</a>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> <span class="keyword">const</span>&amp; ec = <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>())</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        : base_type{ec}</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    {}</div>
 </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">// std::string what() const noexcept; return more detailed message</span></div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="comment">// It is defined in base_type</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="}">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">   69</a></span>    std::string <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">message</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordflow">return</span> code().message();</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    }</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="comment">// std::string what() const noexcept; return more detailed message</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">// It is defined in base_type</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">   68</a></span>    std::string <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">message</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordflow">return</span> code().message();</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    }</div>
 </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="foldopen" id="foldopen00077" data-start="{" data-end="}">
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a483bb35b389524613c62e6e424c2e782">   77</a></span>    <span class="keyword">operator</span> bool()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">return</span> code() != errc::success;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="foldopen" id="foldopen00076" data-start="{" data-end="}">
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a483bb35b389524613c62e6e424c2e782">   76</a></span>    <span class="keyword">operator</span> bool()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordflow">return</span> code() != errc::success;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>};</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>};</div>
 </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> WhatArg&gt;</div>
-<div class="foldopen" id="foldopen00092" data-start="{" data-end="}">
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">   92</a></span><span class="keyword">inline</span> <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">make_error</a>(errc::errc_t ec, WhatArg&amp;&amp; wa) {</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">return</span> <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a>(make_error_code(ec), std::forward&lt;WhatArg&gt;(wa));</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>}</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> WhatArg&gt;</div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">   91</a></span><span class="keyword">inline</span> <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">make_error</a>(errc::errc_t ec, WhatArg&amp;&amp; wa) {</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordflow">return</span> <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a>(make_error_code(ec), std::forward&lt;WhatArg&gt;(wa));</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
 </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="foldopen" id="foldopen00103" data-start="{" data-end="}">
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">  103</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">operator==</a>(<a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">return</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        std::tuple&lt;error_code, std::string_view&gt;(lhs.code(), lhs.what()) ==</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        std::tuple&lt;error_code, std::string_view&gt;(rhs.code(), rhs.what());</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>}</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="foldopen" id="foldopen00102" data-start="{" data-end="}">
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">  102</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">operator==</a>(<a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; rhs) {</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">return</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        std::tuple&lt;error_code, std::string_view&gt;(lhs.code(), lhs.what()) ==</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        std::tuple&lt;error_code, std::string_view&gt;(rhs.code(), rhs.what());</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}</div>
 </div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">  116</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">operator&lt;</a>(<a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">return</span></div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        std::tuple&lt;error_code, std::string_view&gt;(lhs.code(), lhs.what()) &lt;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        std::tuple&lt;error_code, std::string_view&gt;(rhs.code(), rhs.what());</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>}</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="foldopen" id="foldopen00115" data-start="{" data-end="}">
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">  115</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">operator&lt;</a>(<a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; rhs) {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordflow">return</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        std::tuple&lt;error_code, std::string_view&gt;(lhs.code(), lhs.what()) &lt;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        std::tuple&lt;error_code, std::string_view&gt;(rhs.code(), rhs.what());</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}</div>
 </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
-<div class="foldopen" id="foldopen00129" data-start="{" data-end="}">
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">  129</a></span><span class="keyword">inline</span> std::ostream&amp; <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">operator&lt;&lt;</a>(std::ostream&amp; o, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; v) {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    o &lt;&lt; v.what();</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    <span class="keywordflow">return</span> o;</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>}</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="foldopen" id="foldopen00128" data-start="{" data-end="}">
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">  128</a></span><span class="keyword">inline</span> std::ostream&amp; <a class="code hl_function" href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">operator&lt;&lt;</a>(std::ostream&amp; o, <a class="code hl_struct" href="structasync__mqtt_1_1system__error.html">system_error</a> <span class="keyword">const</span>&amp; v) {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    o &lt;&lt; v.what();</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">return</span> o;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>}</div>
 </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_EXCEPTION_HPP</span></div>
-<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:36</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html">async_mqtt::system_error</a></div><div class="ttdoc">type alias of boost::sytem::errc.</div><div class="ttdef"><b>Definition</b> exception.hpp:48</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a2f691933af71ba2765eccf42db1f99be"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">async_mqtt::system_error::system_error</a></div><div class="ttdeci">system_error(error_code const &amp;ec=error_code())</div><div class="ttdoc">constructor</div><div class="ttdef"><b>Definition</b> exception.hpp:56</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a5d1b40582f8c5421ce2e5d49b1614ab0"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">async_mqtt::system_error::message</a></div><div class="ttdeci">std::string message() const</div><div class="ttdoc">get error message If you want to more detaied error message, call what() instead.</div><div class="ttdef"><b>Definition</b> exception.hpp:69</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a7b564d8a8355a3859fe6b2f9503ac6f1"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">async_mqtt::system_error::operator&lt;</a></div><div class="ttdeci">bool operator&lt;(system_error const &amp;lhs, system_error const &amp;rhs)</div><div class="ttdoc">system_error less than comparison operator</div><div class="ttdef"><b>Definition</b> exception.hpp:116</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_ad5e43c204022f752549ce82f8bd46a6c"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">async_mqtt::system_error::operator==</a></div><div class="ttdeci">bool operator==(system_error const &amp;lhs, system_error const &amp;rhs)</div><div class="ttdoc">system_error equality comparison operator</div><div class="ttdef"><b>Definition</b> exception.hpp:103</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_afbe28756a4770b54241eb0d43034d55d"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">async_mqtt::system_error::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;o, system_error const &amp;v)</div><div class="ttdoc">system_error stream output operator</div><div class="ttdef"><b>Definition</b> exception.hpp:129</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1system__error_html_afc3e676213fb4532b32e9c675fce8294"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">async_mqtt::system_error::make_error</a></div><div class="ttdeci">system_error make_error(errc::errc_t ec, WhatArg &amp;&amp;wa)</div><div class="ttdoc">system_error factory function</div><div class="ttdef"><b>Definition</b> exception.hpp:92</div></div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_EXCEPTION_HPP</span></div>
+<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:35</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html">async_mqtt::system_error</a></div><div class="ttdoc">type alias of boost::sytem::errc.</div><div class="ttdef"><b>Definition</b> exception.hpp:47</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a2f691933af71ba2765eccf42db1f99be"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be">async_mqtt::system_error::system_error</a></div><div class="ttdeci">system_error(error_code const &amp;ec=error_code())</div><div class="ttdoc">constructor</div><div class="ttdef"><b>Definition</b> exception.hpp:55</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a5d1b40582f8c5421ce2e5d49b1614ab0"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a5d1b40582f8c5421ce2e5d49b1614ab0">async_mqtt::system_error::message</a></div><div class="ttdeci">std::string message() const</div><div class="ttdoc">get error message If you want to more detaied error message, call what() instead.</div><div class="ttdef"><b>Definition</b> exception.hpp:68</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_a7b564d8a8355a3859fe6b2f9503ac6f1"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#a7b564d8a8355a3859fe6b2f9503ac6f1">async_mqtt::system_error::operator&lt;</a></div><div class="ttdeci">bool operator&lt;(system_error const &amp;lhs, system_error const &amp;rhs)</div><div class="ttdoc">system_error less than comparison operator</div><div class="ttdef"><b>Definition</b> exception.hpp:115</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_ad5e43c204022f752549ce82f8bd46a6c"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#ad5e43c204022f752549ce82f8bd46a6c">async_mqtt::system_error::operator==</a></div><div class="ttdeci">bool operator==(system_error const &amp;lhs, system_error const &amp;rhs)</div><div class="ttdoc">system_error equality comparison operator</div><div class="ttdef"><b>Definition</b> exception.hpp:102</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_afbe28756a4770b54241eb0d43034d55d"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#afbe28756a4770b54241eb0d43034d55d">async_mqtt::system_error::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;o, system_error const &amp;v)</div><div class="ttdoc">system_error stream output operator</div><div class="ttdef"><b>Definition</b> exception.hpp:128</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1system__error_html_afc3e676213fb4532b32e9c675fce8294"><div class="ttname"><a href="structasync__mqtt_1_1system__error.html#afc3e676213fb4532b32e9c675fce8294">async_mqtt::system_error::make_error</a></div><div class="ttdeci">system_error make_error(errc::errc_t ec, WhatArg &amp;&amp;wa)</div><div class="ttdoc">system_error factory function</div><div class="ttdef"><b>Definition</b> exception.hpp:91</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

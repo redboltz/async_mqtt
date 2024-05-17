@@ -21,7 +21,7 @@
 #include <async_mqtt/util/endian_convert.hpp>
 
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/fixed_header.hpp>
+#include <async_mqtt/packet/detail/fixed_header.hpp>
 
 namespace async_mqtt::v3_1_1 {
 
@@ -34,7 +34,7 @@ basic_puback_packet<PacketIdBytes>::basic_puback_packet(
 )
     : all_(all_.capacity())
 {
-    all_[0] = static_cast<char>(make_fixed_header(control_packet_type::puback, 0b0000));
+    all_[0] = static_cast<char>(detail::make_fixed_header(control_packet_type::puback, 0b0000));
     all_[1] = boost::numeric_cast<char>(PacketIdBytes);
     endian_store(packet_id, &all_[2]);
 }
