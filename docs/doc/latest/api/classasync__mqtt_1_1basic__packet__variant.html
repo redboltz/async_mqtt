@@ -96,14 +96,12 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__packet__variant.html',''); 
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1basic__packet__variant-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__variant.html">Packet_variant</a> &raquo; <a class="el" href="group__packet__variant__detail.html">Packet_variant_detail</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__variant.html">variant class for all packets</a> &raquo; <a class="el" href="group__packet__variant__detail.html">implementation class</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>The varaint type of all packets and <a class="el" href="structasync__mqtt_1_1system__error.html" title="type alias of boost::sytem::errc.">system_error</a>.  
  <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="packet__variant_8hpp_source.html">packet_variant.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -139,7 +137,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a48155169ae2078aceaeda629a07cd50f"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a48155169ae2078aceaeda629a07cd50f">get_if</a> () const</td></tr>
 <tr class="memdesc:a48155169ae2078aceaeda629a07cd50f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type pointer.  <br /></td></tr>
 <tr class="separator:a48155169ae2078aceaeda629a07cd50f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2de33b13e6a41b200ec153ff90e15aec" id="r_a2de33b13e6a41b200ec153ff90e15aec"><td class="memItemLeft" align="right" valign="top">std::optional&lt; control_packet_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2de33b13e6a41b200ec153ff90e15aec">type</a> () const</td></tr>
+<tr class="memitem:a2de33b13e6a41b200ec153ff90e15aec" id="r_a2de33b13e6a41b200ec153ff90e15aec"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="group__packet.html#gad751afab4b1771811a82fcc3f34938b4">control_packet_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2de33b13e6a41b200ec153ff90e15aec">type</a> () const</td></tr>
 <tr class="memdesc:a2de33b13e6a41b200ec153ff90e15aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get control_packet_type.  <br /></td></tr>
 <tr class="separator:a2de33b13e6a41b200ec153ff90e15aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afad06fb4c9dfdb90a0c83db0a35fad80" id="r_afad06fb4c9dfdb90a0c83db0a35fad80"><td class="memItemLeft" align="right" valign="top">std::vector&lt; as::const_buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afad06fb4c9dfdb90a0c83db0a35fad80">const_buffer_sequence</a> () const</td></tr>
@@ -154,6 +152,10 @@ Related Symbols</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>packet_variant</b> = <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt;2&gt;</td></tr>
 <tr class="memdesc:ga56df875fd46e22c7dfc411481a2369c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">type alias of <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html" title="The varaint type of all packets and system_error.">basic_packet_variant</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:ga56df875fd46e22c7dfc411481a2369c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a568b174cb52b49a5fbb1f95bbcd7f7f9" id="r_a568b174cb52b49a5fbb1f95bbcd7f7f9"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
+<tr class="memitem:a568b174cb52b49a5fbb1f95bbcd7f7f9"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a568b174cb52b49a5fbb1f95bbcd7f7f9">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;v)</td></tr>
+<tr class="memdesc:a568b174cb52b49a5fbb1f95bbcd7f7f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
+<tr class="separator:a568b174cb52b49a5fbb1f95bbcd7f7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
@@ -367,7 +369,7 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt; control_packet_type &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::type </td>
+          <td class="memname">std::optional&lt; <a class="el" href="group__packet.html#gad751afab4b1771811a82fcc3f34938b4">control_packet_type</a> &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::type </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -496,9 +498,51 @@ template&lt;typename Func &gt; </div>
 
 </div>
 </div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a568b174cb52b49a5fbb1f95bbcd7f7f9" name="a568b174cb52b49a5fbb1f95bbcd7f7f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a568b174cb52b49a5fbb1f95bbcd7f7f9">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t PacketIdBytes&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stream output operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/kondo/work/async_mqtt/include/async_mqtt/<a class="el" href="buffer__to__packet__variant__fwd_8hpp_source.html">buffer_to_packet_variant_fwd.hpp</a></li>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="packet__variant_8hpp_source.html">packet_variant.hpp</a></li>
+<li>/home/kondo/work/async_mqtt/include/async_mqtt/packet/<a class="el" href="packet__variant__fwd_8hpp_source.html">packet_variant_fwd.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

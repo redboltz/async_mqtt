@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Connack_v3_1_1</title>
+<title>async_mqtt: CONNACK packet (v3.1.1)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,17 +94,18 @@ $(function(){initNavTree('group__connack__v3__1__1.html',''); initResizable(); }
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
-  <div class="headertitle"><div class="title">Connack_v3_1_1<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">Packet_v3_1_1</a></div></div></div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">CONNACK packet (v3.1.1)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">protocol version 3.1.1</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Collaboration diagram for Connack_v3_1_1:</div>
+Collaboration diagram for CONNACK packet (v3.1.1):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__connack__v3__1__1.png" border="0" usemap="#agroup____connack____v3____1____1" alt=""/></div>
 <map name="agroup____connack____v3____1____1" id="agroup____connack____v3____1____1">
-<area shape="rect" title=" " alt="" coords="170,5,300,33"/>
-<area shape="rect" href="group__packet__v3__1__1.html" title="protocol version 3.1.1" alt="" coords="5,5,122,33"/>
+<area shape="rect" title=" " alt="" coords="216,5,404,33"/>
+<area shape="rect" href="group__packet__v3__1__1.html" title=" " alt="" coords="5,5,168,33"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -128,6 +129,15 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga8342d3b4108d9bb325b95dbd9c0c6109"><td class="mdescLeft">&#160;</td><td class="mdescRight">connect return code See <a href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256">https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256</a>  <a href="#ga8342d3b4108d9bb325b95dbd9c0c6109">More...</a><br /></td></tr>
 <tr class="separator:ga8342d3b4108d9bb325b95dbd9c0c6109"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga9a788a3ebe3f0c3cccea39cc0784a036" id="r_ga9a788a3ebe3f0c3cccea39cc0784a036"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9a788a3ebe3f0c3cccea39cc0784a036">async_mqtt::connect_return_code_to_str</a> (<a class="el" href="#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> v)</td></tr>
+<tr class="memdesc:ga9a788a3ebe3f0c3cccea39cc0784a036"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize connect_return_code  <br /></td></tr>
+<tr class="separator:ga9a788a3ebe3f0c3cccea39cc0784a036"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadc863bb73e9b5c4fa1601b61b7b7558b" id="r_gadc863bb73e9b5c4fa1601b61b7b7558b"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gadc863bb73e9b5c4fa1601b61b7b7558b">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> v)</td></tr>
+<tr class="memdesc:gadc863bb73e9b5c4fa1601b61b7b7558b"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream  <br /></td></tr>
+<tr class="separator:gadc863bb73e9b5c4fa1601b61b7b7558b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -166,6 +176,80 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a" name="gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a"></a>not_authorized&#160;</td><td class="fielddoc"><p>The Client is not authorized to connect. </p>
 </td></tr>
 </table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga9a788a3ebe3f0c3cccea39cc0784a036" name="ga9a788a3ebe3f0c3cccea39cc0784a036"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9a788a3ebe3f0c3cccea39cc0784a036">&#9670;&#160;</a></span>connect_return_code_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char const  * async_mqtt::connect_return_code_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stringize connect_return_code </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>connect_return_code </dd></dl>
+
+</div>
+</div>
+<a id="gadc863bb73e9b5c4fa1601b61b7b7558b" name="gadc863bb73e9b5c4fa1601b61b7b7558b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadc863bb73e9b5c4fa1601b61b7b7558b">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; async_mqtt::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>output to the stream </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
 
 </div>
 </div>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Qos</title>
+<title>async_mqtt: QoS</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -95,19 +95,19 @@ $(function(){initNavTree('group__qos.html',''); initResizable(); });
   <div class="summary">
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">Qos<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">Packet_v3_1_1</a> &raquo; <a class="el" href="group__subscribe__v3__1__1.html">Subscribe_v3_1_1</a> &#124; <a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__subscribe__v5.html">Subscribe_v5</a> &#124; <a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">Packet_v3_1_1</a> &raquo; <a class="el" href="group__publish__v3__1__1.html">Publish_v3_1_1</a> &#124; <a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__publish__v5.html">Publish_v5</a></div></div></div>
+  <div class="headertitle"><div class="title">QoS<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">protocol version 3.1.1</a> &raquo; <a class="el" href="group__subscribe__v3__1__1.html">SUBSCRIBE packet (v3.1.1)</a> &#124; <a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a> &raquo; <a class="el" href="group__subscribe__v5.html">SUBSCRIBE packet (v5.0)</a> &#124; <a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">protocol version 3.1.1</a> &raquo; <a class="el" href="group__publish__v3__1__1.html">PUBLISH packet (v3.1.1)</a> &#124; <a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a> &raquo; <a class="el" href="group__publish__v5.html">PUBLISH packet (v5.0)</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Collaboration diagram for Qos:</div>
+Collaboration diagram for QoS:</div>
 <div class="dyncontent">
 <div class="center"><img src="group__qos.png" border="0" usemap="#agroup____qos" alt=""/></div>
 <map name="agroup____qos" id="agroup____qos">
-<area shape="rect" href="group__publish__v3__1__1.html" title=" " alt="" coords="13,5,135,33"/>
-<area shape="rect" title=" " alt="" coords="191,84,237,112"/>
-<area shape="rect" href="group__publish__v5.html" title=" " alt="" coords="28,57,120,85"/>
-<area shape="rect" href="group__subscribe__v3__1__1.html" title=" " alt="" coords="5,109,143,137"/>
-<area shape="rect" href="group__subscribe__v5.html" title=" " alt="" coords="20,161,128,189"/>
+<area shape="rect" href="group__publish__v3__1__1.html" title=" " alt="" coords="14,5,193,33"/>
+<area shape="rect" title=" " alt="" coords="250,84,297,112"/>
+<area shape="rect" href="group__publish__v5.html" title=" " alt="" coords="20,57,187,85"/>
+<area shape="rect" href="group__subscribe__v3__1__1.html" title=" " alt="" coords="5,109,202,137"/>
+<area shape="rect" href="group__subscribe__v5.html" title=" " alt="" coords="11,161,196,189"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -125,9 +125,9 @@ Functions</h2></td></tr>
 <tr class="memitem:gad858b3dc3d6733e6ec7b1ff497f90583" id="r_gad858b3dc3d6733e6ec7b1ff497f90583"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad858b3dc3d6733e6ec7b1ff497f90583">async_mqtt::qos_to_str</a> (<a class="el" href="#ga38e773082414bb272ab22275c56eb4df">qos</a> v)</td></tr>
 <tr class="memdesc:gad858b3dc3d6733e6ec7b1ff497f90583"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize qos  <br /></td></tr>
 <tr class="separator:gad858b3dc3d6733e6ec7b1ff497f90583"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga73f26073eb57bd3ff1b64112a13987a2" id="r_ga73f26073eb57bd3ff1b64112a13987a2"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga73f26073eb57bd3ff1b64112a13987a2">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;os, <a class="el" href="#ga38e773082414bb272ab22275c56eb4df">qos</a> v)</td></tr>
-<tr class="memdesc:ga73f26073eb57bd3ff1b64112a13987a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream qos  <br /></td></tr>
-<tr class="separator:ga73f26073eb57bd3ff1b64112a13987a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e7341552a092506c39d7c2554b10423" id="r_ga7e7341552a092506c39d7c2554b10423"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7e7341552a092506c39d7c2554b10423">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="#ga38e773082414bb272ab22275c56eb4df">qos</a> v)</td></tr>
+<tr class="memdesc:ga7e7341552a092506c39d7c2554b10423"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream  <br /></td></tr>
+<tr class="separator:ga7e7341552a092506c39d7c2554b10423"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -166,8 +166,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga73f26073eb57bd3ff1b64112a13987a2" name="ga73f26073eb57bd3ff1b64112a13987a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga73f26073eb57bd3ff1b64112a13987a2">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+<a id="ga7e7341552a092506c39d7c2554b10423" name="ga7e7341552a092506c39d7c2554b10423"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7e7341552a092506c39d7c2554b10423">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +178,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::ostream &amp; async_mqtt::operator&lt;&lt; </td>
           <td>(</td>
-          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>os</em>, </span></td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -193,10 +193,10 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>output to the stream qos </p>
+<p>output to the stream </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">os</td><td>output stream </td></tr>
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
     <tr><td class="paramname">v</td><td>target </td></tr>
   </table>
   </dd>

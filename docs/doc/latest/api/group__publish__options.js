@@ -23,8 +23,8 @@ var group__publish__options =
       [ "get_qos", "group__publish__options.html#ga406b2f851035de6200437191cff85141", null ],
       [ "is_dup", "group__publish__options.html#gaf2232b1c4d2dcd90452b5eaa869c40df", null ],
       [ "is_retain", "group__publish__options.html#ga79ea84d5cef0b9d99ce87160957704ab", null ],
-      [ "operator<<", "group__publish__options.html#ga68e8eb150ce8a27b3ef1c709f6ce0726", null ],
-      [ "operator<<", "group__publish__options.html#ga76577d10d924c0011cceee5fb3d9c000", null ],
+      [ "operator<<", "group__publish__options.html#ga7af2acacf5d4325916b77564819726c4", null ],
+      [ "operator<<", "group__publish__options.html#gac2560b986a31cc75b7706ff07c146a26", null ],
       [ "operator|", "structasync__mqtt_1_1pub_1_1opts.html#a5fd5e62aaf11fde91b9f7dfe6929a20c", null ],
       [ "operator|", "structasync__mqtt_1_1pub_1_1opts.html#a0e034b9ef96c2722428efe699759447b", null ],
       [ "operator|", "structasync__mqtt_1_1pub_1_1opts.html#ad406db591c5f28508143b9f885b12be1", null ],
@@ -46,8 +46,8 @@ var group__publish__options =
     [ "async_mqtt::pub::opts::get_qos", "group__publish__options.html#ga406b2f851035de6200437191cff85141", null ],
     [ "async_mqtt::pub::opts::is_dup", "group__publish__options.html#gaf2232b1c4d2dcd90452b5eaa869c40df", null ],
     [ "async_mqtt::pub::opts::is_retain", "group__publish__options.html#ga79ea84d5cef0b9d99ce87160957704ab", null ],
-    [ "async_mqtt::pub::opts::operator<<", "group__publish__options.html#ga68e8eb150ce8a27b3ef1c709f6ce0726", null ],
-    [ "async_mqtt::pub::opts::operator<<", "group__publish__options.html#ga76577d10d924c0011cceee5fb3d9c000", null ],
+    [ "async_mqtt::pub::opts::operator<<", "group__publish__options.html#ga7af2acacf5d4325916b77564819726c4", null ],
+    [ "async_mqtt::pub::opts::operator<<", "group__publish__options.html#gac2560b986a31cc75b7706ff07c146a26", null ],
     [ "async_mqtt::pub::opts::retain_to_str", "group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0", null ],
     [ "async_mqtt::pub::opts::set_dup", "group__publish__options.html#ga52fa7b3b39f4ce5c0bc770cbfbf2094f", null ]
 ];

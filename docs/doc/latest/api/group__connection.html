@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Connection</title>
+<title>async_mqtt: MQTT connection</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,46 +94,37 @@ $(function(){initNavTree('group__connection.html',''); initResizable(); });
 <div class="header">
   <div class="summary">
 <a href="#groups">Topics</a>  </div>
-  <div class="headertitle"><div class="title">Connection</div></div>
+  <div class="headertitle"><div class="title">MQTT connection</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>MQTT and underlying layer connection related topics.  
-<a href="#details">More...</a></p>
 <div class="dynheader">
-Collaboration diagram for Connection:</div>
+Collaboration diagram for MQTT connection:</div>
 <div class="dyncontent">
 <div class="center"><img src="group__connection.png" border="0" usemap="#agroup____connection" alt=""/></div>
 <map name="agroup____connection" id="agroup____connection">
-<area shape="rect" href="group__client.html" title="High level MQTT connection layer that can be used client. Receiving MQTT response packet is automated..." alt="" coords="184,5,244,33"/>
-<area shape="rect" title="MQTT and underlying layer connection related topics." alt="" coords="5,109,100,137"/>
-<area shape="rect" href="group__endpoint.html" title="MQTT connection layer that can be used not only a client but also a server (broker)." alt="" coords="175,57,253,85"/>
-<area shape="rect" href="group__mqtt.html" title="MQTT protocol related topics." alt="" coords="188,109,240,137"/>
-<area shape="rect" href="group__role.html" title="MQTT connection role (client, server or both)." alt="" coords="189,161,239,189"/>
-<area shape="rect" href="group__underlying__layer.html" title="predefined underlying layers and how to adapt your own layer" alt="" coords="148,213,280,241"/>
+<area shape="rect" href="group__client.html" title=" " alt="" coords="204,5,374,33"/>
+<area shape="rect" title=" " alt="" coords="5,125,140,153"/>
+<area shape="rect" href="group__endpoint.html" title=" " alt="" coords="188,57,390,102"/>
+<area shape="rect" href="group__mqtt.html" title=" " alt="" coords="231,125,347,153"/>
+<area shape="rect" href="group__role.html" title=" " alt="" coords="204,177,374,222"/>
+<area shape="rect" href="group__underlying__layer.html" title=" " alt="" coords="198,246,380,307"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Topics</h2></td></tr>
-<tr class="memitem:group__client" id="r_group__client"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__client.html">Client</a></td></tr>
-<tr class="memdesc:group__client"><td class="mdescLeft">&#160;</td><td class="mdescRight">High level MQTT connection layer that can be used client. Receiving MQTT response packet is automated. <br /></td></tr>
+<tr class="memitem:group__client" id="r_group__client"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__client.html">High level MQTT client</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__endpoint" id="r_group__endpoint"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__endpoint.html">Endpoint</a></td></tr>
-<tr class="memdesc:group__endpoint"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT connection layer that can be used not only a client but also a server (broker). <br /></td></tr>
+<tr class="memitem:group__endpoint" id="r_group__endpoint"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__endpoint.html">Packet level MQTT endpoint for client/server(broker)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__underlying__layer" id="r_group__underlying__layer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__underlying__layer.html">Underlying_layer</a></td></tr>
-<tr class="memdesc:group__underlying__layer"><td class="mdescLeft">&#160;</td><td class="mdescRight">predefined underlying layers and how to adapt your own layer <br /></td></tr>
+<tr class="memitem:group__underlying__layer" id="r_group__underlying__layer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__underlying__layer.html">predefined underlying layers and how to adapt your own layer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__mqtt" id="r_group__mqtt"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mqtt.html">Mqtt</a></td></tr>
-<tr class="memdesc:group__mqtt"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT protocol related topics. <br /></td></tr>
+<tr class="memitem:group__mqtt" id="r_group__mqtt"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mqtt.html">MQTT protocol</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:group__role" id="r_group__role"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__role.html">Role</a></td></tr>
-<tr class="memdesc:group__role"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT connection role (client, server or both). <br /></td></tr>
+<tr class="memitem:group__role" id="r_group__role"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__role.html">MQTT connection role (client, server or both)</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>MQTT and underlying layer connection related topics. </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

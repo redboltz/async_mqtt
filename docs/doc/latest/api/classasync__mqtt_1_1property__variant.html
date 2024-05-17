@@ -94,8 +94,9 @@ $(function(){initNavTree('classasync__mqtt_1_1property__variant.html',''); initR
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classasync__mqtt_1_1property__variant-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::property_variant Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a> &raquo; <a class="el" href="group__property.html">Property</a> &raquo; <a class="el" href="group__property__variant.html">Property_variant</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::property_variant Class Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a> &raquo; <a class="el" href="group__property.html">Property for MQTT v5.0 packets</a> &raquo; <a class="el" href="group__property__variant.html">variant class for all properties</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -122,7 +123,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:affe7d42f17c04cde94fb577786db828a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#affe7d42f17c04cde94fb577786db828a">visit</a> (Func &amp;&amp;func) &amp;&amp;</td></tr>
 <tr class="memdesc:affe7d42f17c04cde94fb577786db828a"><td class="mdescLeft">&#160;</td><td class="mdescRight">visit to variant  <br /></td></tr>
 <tr class="separator:affe7d42f17c04cde94fb577786db828a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab35cbdd80d44eba98e3f2cbe0b33967b" id="r_ab35cbdd80d44eba98e3f2cbe0b33967b"><td class="memItemLeft" align="right" valign="top">property::id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab35cbdd80d44eba98e3f2cbe0b33967b">id</a> () const</td></tr>
+<tr class="memitem:ab35cbdd80d44eba98e3f2cbe0b33967b" id="r_ab35cbdd80d44eba98e3f2cbe0b33967b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89">property::id</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab35cbdd80d44eba98e3f2cbe0b33967b">id</a> () const</td></tr>
 <tr class="memdesc:ab35cbdd80d44eba98e3f2cbe0b33967b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get property_id.  <br /></td></tr>
 <tr class="separator:ab35cbdd80d44eba98e3f2cbe0b33967b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae392639bdd2fd8dbceec12975b488863" id="r_ae392639bdd2fd8dbceec12975b488863"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae392639bdd2fd8dbceec12975b488863">num_of_const_buffer_sequence</a> () const</td></tr>
@@ -150,6 +151,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abb9835868c9b29d9b2ad963a9c92dc2d"><td class="memTemplItemLeft" align="right" valign="top">decltype(auto)&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abb9835868c9b29d9b2ad963a9c92dc2d">get_if</a> () const</td></tr>
 <tr class="memdesc:abb9835868c9b29d9b2ad963a9c92dc2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get by type pointer.  <br /></td></tr>
 <tr class="separator:abb9835868c9b29d9b2ad963a9c92dc2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85d0ab986a7adb6fe324a3f01939ee36" id="r_a85d0ab986a7adb6fe324a3f01939ee36"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85d0ab986a7adb6fe324a3f01939ee36">operator bool</a> ()</td></tr>
+<tr class="memdesc:a85d0ab986a7adb6fe324a3f01939ee36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check the property is valid.  <br /></td></tr>
+<tr class="separator:a85d0ab986a7adb6fe324a3f01939ee36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a982c555e393598a51ae77acb1993ef36" id="r_a982c555e393598a51ae77acb1993ef36"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a982c555e393598a51ae77acb1993ef36">operator==</a> (<a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:a982c555e393598a51ae77acb1993ef36"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <br /></td></tr>
+<tr class="separator:a982c555e393598a51ae77acb1993ef36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebf6c6155b2bdaf01227df1bfc9b5892" id="r_aebf6c6155b2bdaf01227df1bfc9b5892"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebf6c6155b2bdaf01227df1bfc9b5892">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:aebf6c6155b2bdaf01227df1bfc9b5892"><td class="mdescLeft">&#160;</td><td class="mdescRight">less than operator  <br /></td></tr>
+<tr class="separator:aebf6c6155b2bdaf01227df1bfc9b5892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>property variant </p>
@@ -161,9 +174,6 @@ Public Member Functions</h2></td></tr>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Property , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Property &gt;, <a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> &gt;, std::nullptr_t &gt; *  = nullptr&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">async_mqtt::property_variant::property_variant </td>
@@ -172,11 +182,6 @@ template&lt;typename Property , std::enable_if_t&lt; !std::is_same_v&lt; std::de
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>constructor </p>
@@ -195,9 +200,6 @@ template&lt;typename Property , std::enable_if_t&lt; !std::is_same_v&lt; std::de
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt; as::const_buffer &gt; async_mqtt::property_variant::const_buffer_sequence </td>
@@ -206,11 +208,6 @@ template&lt;typename Property , std::enable_if_t&lt; !std::is_same_v&lt; std::de
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Create const buffer sequence. it is for boost asio APIs. </p>
@@ -225,9 +222,6 @@ template&lt;typename Property , std::enable_if_t&lt; !std::is_same_v&lt; std::de
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) async_mqtt::property_variant::get </td>
@@ -236,11 +230,6 @@ template&lt;typename T &gt; </div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type. If not match, then throw std::bad_variant_access exception. </p>
@@ -255,9 +244,6 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) async_mqtt::property_variant::get </td>
@@ -266,11 +252,6 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type. If not match, then throw std::bad_variant_access exception. </p>
@@ -285,9 +266,6 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) async_mqtt::property_variant::get_if </td>
@@ -296,11 +274,6 @@ template&lt;typename T &gt; </div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type pointer. </p>
@@ -315,9 +288,6 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) async_mqtt::property_variant::get_if </td>
@@ -326,11 +296,6 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type pointer. </p>
@@ -343,22 +308,14 @@ template&lt;typename T &gt; </div>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">property::id async_mqtt::property_variant::id </td>
+          <td class="memname"><a class="el" href="group__property.html#ga5cb48750d7fa394639fc0dada2c34f89">property::id</a> async_mqtt::property_variant::id </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get property_id. </p>
@@ -371,9 +328,6 @@ template&lt;typename T &gt; </div>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::size_t async_mqtt::property_variant::num_of_const_buffer_sequence </td>
@@ -382,15 +336,30 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get number of element of const_buffer_sequence. </p>
 <dl class="section return"><dt>Returns</dt><dd>number of element of const_buffer_sequence </dd></dl>
+
+</div>
+</div>
+<a id="a85d0ab986a7adb6fe324a3f01939ee36" name="a85d0ab986a7adb6fe324a3f01939ee36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85d0ab986a7adb6fe324a3f01939ee36">&#9670;&#160;</a></span>operator bool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">async_mqtt::property_variant::operator bool </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check the property is valid. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the property is valid, other </dd></dl>
 
 </div>
 </div>
@@ -399,9 +368,6 @@ template&lt;typename T &gt; </div>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::size_t async_mqtt::property_variant::size </td>
@@ -410,11 +376,6 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get packet size. </p>
@@ -429,9 +390,6 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto async_mqtt::property_variant::visit </td>
@@ -440,11 +398,6 @@ template&lt;typename Func &gt; </div>
           <td> &amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -464,9 +417,6 @@ template&lt;typename Func &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto async_mqtt::property_variant::visit </td>
@@ -475,11 +425,6 @@ template&lt;typename Func &gt; </div>
           <td> &amp;&amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -499,9 +444,6 @@ template&lt;typename Func &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto async_mqtt::property_variant::visit </td>
@@ -510,11 +452,6 @@ template&lt;typename Func &gt; </div>
           <td> const &amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -524,6 +461,85 @@ template&lt;typename Func &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="aebf6c6155b2bdaf01227df1bfc9b5892" name="aebf6c6155b2bdaf01227df1bfc9b5892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebf6c6155b2bdaf01227df1bfc9b5892">&#9670;&#160;</a></span>operator&lt;</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>less than operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+
+</div>
+</div>
+<a id="a982c555e393598a51ae77acb1993ef36" name="a982c555e393598a51ae77acb1993ef36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a982c555e393598a51ae77acb1993ef36">&#9670;&#160;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1property__variant.html">property_variant</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>equal operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
 
 </div>
 </div>

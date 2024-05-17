@@ -2,6 +2,7 @@ var hierarchy =
 [
     [ "async_mqtt::v5::auth_packet", "classasync__mqtt_1_1v5_1_1auth__packet.html", null ],
     [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", null ],
+    [ "async_mqtt::basic_packet_id_type< PacketIdBytes >", "structasync__mqtt_1_1basic__packet__id__type.html", null ],
     [ "async_mqtt::basic_packet_variant< PacketIdBytes >", "classasync__mqtt_1_1basic__packet__variant.html", null ],
     [ "async_mqtt::v3_1_1::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html", null ],
     [ "async_mqtt::v5::basic_puback_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__puback__packet.html", null ],
@@ -84,5 +85,6 @@ var hierarchy =
     [ "async_mqtt::property::user_property", "classasync__mqtt_1_1property_1_1user__property.html", null ],
     [ "async_mqtt::property::detail::variable_property", "structasync__mqtt_1_1property_1_1detail_1_1variable__property.html", [
       [ "async_mqtt::property::subscription_identifier", "classasync__mqtt_1_1property_1_1subscription__identifier.html", null ]
-    ] ]
+    ] ],
+    [ "async_mqtt::will", "classasync__mqtt_1_1will.html", null ]
 ];

@@ -1,11 +1,9 @@
 var searchData=
 [
-  ['send_0',['send',['../group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa2541d938b0a58946090d7abdde0d3890',1,'async_mqtt::sub']]],
-  ['send_5fonly_5fnew_5fsubscription_1',['send_only_new_subscription',['../group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa192b8c04969ab388ce5264194247e9b0',1,'async_mqtt::sub']]],
-  ['server_2',['server',['../group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aacf1e8c14e54505f60aa10ceb8d5d8ab3',1,'async_mqtt']]],
-  ['server_5funavailable_3',['server_unavailable',['../group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109aeb0efb9a7b59231e85e53bfba6b60ec4',1,'async_mqtt']]],
-  ['string_4',['string',['../group__property.html#gga47c42be3d9afd2d518fad85c5480b1f9ab45cffe084dd3d20d928bee85e7b0f21',1,'async_mqtt']]],
-  ['success_5fmaximum_5fqos_5f0_5',['success_maximum_qos_0',['../group__packet.html#ggad3470deb20130512c7ad76c4314f1816aeb33a386d4dcaf9cc6c50c679d0a0b0f',1,'async_mqtt']]],
-  ['success_5fmaximum_5fqos_5f1_6',['success_maximum_qos_1',['../group__packet.html#ggad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc',1,'async_mqtt']]],
-  ['success_5fmaximum_5fqos_5f2_7',['success_maximum_qos_2',['../group__packet.html#ggad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52',1,'async_mqtt']]]
+  ['no_0',['no',['../group__publish__options.html#gga89fabc81d8448fa347b2146349ae4737a7fa3b767c460b54a2be4d49030b349c7',1,'noasync_mqtt::pub'],['../group__publish__options.html#ggacb20c099f1b6d25577268f35b192a3cda7fa3b767c460b54a2be4d49030b349c7',1,'noasync_mqtt::pub'],['../group__subscribe__options.html#gga6bb5e7fddda960a7d197360ededb6067a7fa3b767c460b54a2be4d49030b349c7',1,'noasync_mqtt::sub']]],
+  ['no_5fmatching_5fsubscribers_1',['no_matching_subscribers',['../group__puback__v5.html#gga3129c11af64f00be426b3deae38158eeac0a88a9ad84f91a1953a28189d17c1d0',1,'no_matching_subscribersasync_mqtt'],['../group__pubrec__v5.html#ggab5231230a17ac40eda52d85e349b8339ac0a88a9ad84f91a1953a28189d17c1d0',1,'no_matching_subscribersasync_mqtt']]],
+  ['no_5fsubscription_5fexisted_2',['no_subscription_existed',['../group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfea74bf95f0f8c63231b79e89a473d9da3a',1,'async_mqtt']]],
+  ['normal_5fdisconnection_3',['normal_disconnection',['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a31fe45844c214ec5ad8d824be3709a8d',1,'async_mqtt']]],
+  ['not_5fauthorized_4',['not_authorized',['../group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__suback__v5.html#ggac1d8426ede60ae4e6c723a7687542fc6a89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfea89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__puback__v5.html#gga3129c11af64f00be426b3deae38158eea89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt'],['../group__pubrec__v5.html#ggab5231230a17ac40eda52d85e349b8339a89a15d5a10ea1b37e1719c52c3507c0a',1,'not_authorizedasync_mqtt']]],
+  ['not_5fsend_5',['not_send',['../group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa9d5a4d4b722e2df32eff5ecfd18ccc60',1,'async_mqtt::sub']]]
 ];

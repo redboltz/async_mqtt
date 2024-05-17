@@ -1,8 +1,0 @@
-<map id="Predefined_layer" name="Predefined_layer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="186,84,316,112"/>
-<area shape="rect" id="Node000003" href="$group__predefined__layer__mqtt.html" title=" " alt="" coords="368,5,536,33"/>
-<area shape="rect" id="Node000004" href="$group__predefined__layer__mqtts.html" title=" " alt="" coords="364,57,539,85"/>
-<area shape="rect" id="Node000005" href="$group__predefined__layer__ws.html" title=" " alt="" coords="374,109,529,137"/>
-<area shape="rect" id="Node000006" href="$group__predefined__layer__wss.html" title=" " alt="" coords="371,161,533,189"/>
-<area shape="rect" id="Node000002" href="$group__underlying__layer.html" title="predefined underlying layers and how to adapt your own layer" alt="" coords="5,84,138,112"/>
-</map>

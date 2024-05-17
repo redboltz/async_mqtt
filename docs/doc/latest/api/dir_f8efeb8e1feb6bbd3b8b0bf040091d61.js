@@ -1,31 +1,15 @@
 var dir_f8efeb8e1feb6bbd3b8b0bf040091d61 =
 [
-    [ "detail", "dir_c138f4ea93e84d935b04f019896acf87.html", "dir_c138f4ea93e84d935b04f019896acf87" ],
-    [ "impl", "dir_4a30554fdbbe434876011b5ec6e3c25e.html", "dir_4a30554fdbbe434876011b5ec6e3c25e" ],
     [ "packet", "dir_cce41e6148f04805f4e76e6a36ba88d6.html", "dir_cce41e6148f04805f4e76e6a36ba88d6" ],
     [ "predefined_layer", "dir_ce1a31e6a52137e313c4ed05ef460346.html", "dir_ce1a31e6a52137e313c4ed05ef460346" ],
     [ "util", "dir_df0bffcb61356486763cc61cf65485e2.html", "dir_df0bffcb61356486763cc61cf65485e2" ],
     [ "all.hpp", "all_8hpp_source.html", null ],
-    [ "buffer.hpp", "buffer_8hpp_source.html", null ],
     [ "buffer_to_packet_variant.hpp", "buffer__to__packet__variant_8hpp_source.html", null ],
-    [ "buffer_to_packet_variant_fwd.hpp", "buffer__to__packet__variant__fwd_8hpp_source.html", null ],
     [ "client.hpp", "client_8hpp_source.html", null ],
-    [ "constant.hpp", "constant_8hpp_source.html", null ],
     [ "endpoint.hpp", "endpoint_8hpp_source.html", null ],
     [ "endpoint_fwd.hpp", "endpoint__fwd_8hpp_source.html", null ],
     [ "exception.hpp", "exception_8hpp_source.html", null ],
-    [ "host_port.hpp", "host__port_8hpp_source.html", null ],
-    [ "log.hpp", "log_8hpp_source.html", null ],
-    [ "packet_id_manager.hpp", "packet__id__manager_8hpp_source.html", null ],
     [ "protocol_version.hpp", "protocol__version_8hpp_source.html", null ],
     [ "role.hpp", "role_8hpp_source.html", null ],
-    [ "setup_log.hpp", "setup__log_8hpp_source.html", null ],
-    [ "store.hpp", "store_8hpp_source.html", null ],
-    [ "stream.hpp", "stream_8hpp_source.html", null ],
-    [ "stream_traits.hpp", "stream__traits_8hpp_source.html", null ],
-    [ "time_point_t.hpp", "time__point__t_8hpp_source.html", null ],
-    [ "topic_alias_recv.hpp", "topic__alias__recv_8hpp_source.html", null ],
-    [ "topic_alias_send.hpp", "topic__alias__send_8hpp_source.html", null ],
-    [ "type.hpp", "type_8hpp_source.html", null ],
-    [ "variable_bytes.hpp", "variable__bytes_8hpp_source.html", null ]
+    [ "setup_log.hpp", "setup__log_8hpp_source.html", null ]
 ];

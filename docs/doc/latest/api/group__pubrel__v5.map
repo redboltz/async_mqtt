@@ -1,5 +1,5 @@
-<map id="Pubrel_v5" name="Pubrel_v5">
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="140,5,225,33"/>
-<area shape="rect" id="Node000003" href="$group__pubrel__v5__detail.html" title="packet internal detailes (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="273,5,402,33"/>
+<map id="PUBREL packet (v5.0)" name="PUBREL packet (v5.0)">
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,5,365,33"/>
+<area shape="rect" id="Node000003" href="$group__pubrel__v5__detail.html" title=" " alt="" coords="413,5,575,33"/>
 </map>

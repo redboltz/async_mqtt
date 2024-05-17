@@ -71,6 +71,62 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
+<p>Unified naming rule of types to <code>*_type</code>. #232</p>
+</li>
+<li>
+<p>Refined type of PacketIdentifier. Now <code>packet_id_type</code> is the type. #231</p>
+</li>
+<li>
+<p>Moved include/async_mqtt/broker/<strong>.hpp to tool/include/broker/</strong>.hpp #224</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Those are for broker allication that is used for system testing.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Re-organized directory strucure respect to boost libraries. #211, #229, #230, #234</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It affects the users only if include the specific header file directly.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Re-desined strand handling. #206</p>
+<div class="ulist">
+<ul>
+<li>
+<p>template parameter Strand is removed. Users can pass strand wrapped executor for multi threading.</p>
+</li>
+<li>
+<p>associated properties of the completion handler are correctly propagated.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Removed buffer from packet interface except the infterface for adcanced user. #195</p>
+<div class="ulist">
+<ul>
+<li>
+<p>For example, create PUBLISH packet using "topic1", and get the filed as string by <code>topic()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No <code>allocate_buffer("topic1")</code> is required.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Organized predefined headers. #194</p>
 <div class="ulist">
 <ul>
@@ -88,6 +144,41 @@ div#navigation table {
 </li>
 </ul>
 </div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_other_updates">other updates</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Refined CI. #228</p>
+</li>
+<li>
+<p>Refined header dependency checking. #225</p>
+</li>
+<li>
+<p>Removed the inclusion of the Boost.Beast detail directory. #223</p>
+</li>
+<li>
+<p>Used bound allocator to allocate buffer for packet on receive. #222</p>
+</li>
+<li>
+<p>Added convenient handshaking function for underlying layers. #216</p>
+<div class="ulist">
+<ul>
+<li>
+<p>TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Refined documents. #220, #222, #232, #233, #234</p>
+</li>
+<li>
+<p>Refined examples. #214, #220</p>
 </li>
 </ul>
 </div>
@@ -170,7 +261,7 @@ div#navigation table {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_other_updates">other updates</h3>
+<h3 id="_other_updates_2">other updates</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -295,7 +386,7 @@ div#navigation table {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_other_updates_2">other updates</h3>
+<h3 id="_other_updates_3">other updates</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -333,7 +424,7 @@ div#navigation table {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_other_updates_3">other updates</h3>
+<h3 id="_other_updates_4">other updates</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -386,7 +477,7 @@ Hence I categolize the fix to breaking changes.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_other_updates_4">other updates</h3>
+<h3 id="_other_updates_5">other updates</h3>
 <div class="ulist">
 <ul>
 <li>

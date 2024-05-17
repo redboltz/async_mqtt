@@ -1,5 +1,0 @@
-<map id="async_mqtt::property::session_expiry_interval" name="async_mqtt::property::session_expiry_interval">
-<area shape="rect" id="Node000001" title="session_expiry_interval property" alt="" coords="26,98,210,143"/>
-<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html" title=" " alt="" coords="5,5,231,50"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,66,121,98,115,98,115,66"/>
-</map>

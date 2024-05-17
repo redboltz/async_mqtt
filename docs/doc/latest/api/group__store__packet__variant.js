@@ -1,6 +1,6 @@
 var group__store__packet__variant =
 [
-    [ "Store_packet_variant_detail", "group__store__packet__variant__detail.html", "group__store__packet__variant__detail" ],
+    [ "implementation class", "group__store__packet__variant__detail.html", "group__store__packet__variant__detail" ],
     [ "async_mqtt::store_packet_variant", "group__store__packet__variant.html#ga7c993d305725cbf51fcd124edd92a0ed", null ],
     [ "async_mqtt::response_packet", "group__store__packet__variant.html#gaf0e6b290e5249e4932225488b27b8faa", [
       [ "async_mqtt::response_packet::v3_1_1_puback", "group__store__packet__variant.html#ggaf0e6b290e5249e4932225488b27b8faaaca560138583134164e3f19c7e7a9de61", null ],

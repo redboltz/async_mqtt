@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['connect_5freturn_5fcode_0',['connect_return_code',['../group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109',1,'async_mqtt']]]
+  ['auth_5freason_5fcode_0',['auth_reason_code',['../group__auth__v5.html#ga90f5a0229709aaa4257d01db383f9763',1,'async_mqtt']]]
 ];

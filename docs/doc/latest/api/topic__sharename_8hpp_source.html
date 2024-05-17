@@ -111,7 +111,7 @@ $(function(){initNavTree('topic__sharename_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;boost/assert.hpp&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;async_mqtt/buffer.hpp&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;async_mqtt/util/buffer.hpp&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -172,40 +172,40 @@ $(function(){initNavTree('topic__sharename_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    }</div>
 </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">friend</span></div>
-<div class="foldopen" id="foldopen00093" data-start="{" data-end="};">
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">   93</a></span>    <span class="keywordtype">bool</span> <a class="code hl_friend" href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">operator&lt;</a>(<a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keywordflow">return</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            std::tie(lhs.topic_, lhs.sharename_) &lt;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            std::tie(rhs.topic_, rhs.sharename_);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    }</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">friend</span></div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="};">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">   96</a></span>    <span class="keywordtype">bool</span> <a class="code hl_friend" href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">operator&lt;</a>(<a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; rhs) {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="keywordflow">return</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            std::tie(lhs.topic_, lhs.sharename_) &lt;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            std::tie(rhs.topic_, rhs.sharename_);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
 </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keyword">friend</span></div>
-<div class="foldopen" id="foldopen00103" data-start="{" data-end="};">
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">  103</a></span>    <span class="keywordtype">bool</span> <a class="code hl_friend" href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">operator==</a>(<a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; rhs) {</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <span class="keywordflow">return</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            std::tie(lhs.topic_, lhs.sharename_) ==</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            std::tie(rhs.topic_, rhs.sharename_);</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    }</div>
-</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    std::string all_topic_;</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    std::string topic_;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    std::string sharename_;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>};</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">friend</span></div>
+<div class="foldopen" id="foldopen00109" data-start="{" data-end="};">
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">  109</a></span>    <span class="keywordtype">bool</span> <a class="code hl_friend" href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">operator==</a>(<a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; lhs, <a class="code hl_class" href="classasync__mqtt_1_1topic__sharename.html">topic_sharename</a> <span class="keyword">const</span>&amp; rhs) {</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <span class="keywordflow">return</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            std::tie(lhs.topic_, lhs.sharename_) ==</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            std::tie(rhs.topic_, rhs.sharename_);</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    }</div>
 </div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_TOPIC_SHARENAME_HPP</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    std::string all_topic_;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    std::string topic_;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    std::string sharename_;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>};</div>
+</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_TOPIC_SHARENAME_HPP</span></div>
 <div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html">async_mqtt::topic_sharename</a></div><div class="ttdoc">topic and sharename</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:20</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a00a0a1e46153675cd9516f3548ca2c8a"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a00a0a1e46153675cd9516f3548ca2c8a">async_mqtt::topic_sharename::topic</a></div><div class="ttdeci">std::string const &amp; topic() const</div><div class="ttdoc">Get topic.</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:58</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a031032535be5a2d425f1905f250499bb"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a031032535be5a2d425f1905f250499bb">async_mqtt::topic_sharename::sharename</a></div><div class="ttdeci">std::string const &amp; sharename() const</div><div class="ttdoc">Get sharename.</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:66</div></div>
-<div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a6b42bfeb0fe9b34e95d4d04b548bd39a"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">async_mqtt::topic_sharename::operator==</a></div><div class="ttdeci">friend bool operator==(topic_sharename const &amp;lhs, topic_sharename const &amp;rhs)</div><div class="ttdoc">equal operator</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:103</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a6b42bfeb0fe9b34e95d4d04b548bd39a"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a6b42bfeb0fe9b34e95d4d04b548bd39a">async_mqtt::topic_sharename::operator==</a></div><div class="ttdeci">friend bool operator==(topic_sharename const &amp;lhs, topic_sharename const &amp;rhs)</div><div class="ttdoc">equal operator</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:109</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a78deef6c02dc4a6d0fd6c4eb43ee15af"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a78deef6c02dc4a6d0fd6c4eb43ee15af">async_mqtt::topic_sharename::topic_sharename</a></div><div class="ttdeci">topic_sharename(AllTopic &amp;&amp;all_topic)</div><div class="ttdoc">constructor</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:34</div></div>
-<div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a8b9d5367e435bb2f86883903ae26d238"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">async_mqtt::topic_sharename::operator&lt;</a></div><div class="ttdeci">friend bool operator&lt;(topic_sharename const &amp;lhs, topic_sharename const &amp;rhs)</div><div class="ttdoc">less than operator</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:93</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_a8b9d5367e435bb2f86883903ae26d238"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#a8b9d5367e435bb2f86883903ae26d238">async_mqtt::topic_sharename::operator&lt;</a></div><div class="ttdeci">friend bool operator&lt;(topic_sharename const &amp;lhs, topic_sharename const &amp;rhs)</div><div class="ttdoc">less than operator</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:96</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1topic__sharename_html_adf38956c1d8eff2ff98abc84b1c0bbf1"><div class="ttname"><a href="classasync__mqtt_1_1topic__sharename.html#adf38956c1d8eff2ff98abc84b1c0bbf1">async_mqtt::topic_sharename::all_topic</a></div><div class="ttdeci">std::string const &amp; all_topic() const</div><div class="ttdoc">Get all_topic.</div><div class="ttdef"><b>Definition</b> topic_sharename.hpp:76</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

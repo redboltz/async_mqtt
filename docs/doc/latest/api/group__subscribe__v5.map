@@ -1,7 +1,7 @@
-<map id="Subscribe_v5" name="Subscribe_v5">
-<area shape="rect" id="Node000002" href="$group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,57,92,85"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="140,57,247,85"/>
-<area shape="rect" id="Node000003" href="$group__qos.html" title=" " alt="" coords="348,5,394,33"/>
-<area shape="rect" id="Node000004" href="$group__subscribe__options.html" title=" " alt="" coords="301,57,440,85"/>
-<area shape="rect" id="Node000005" href="$group__subscribe__v5__detail.html" title="packet internal detailes (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="295,109,446,137"/>
+<map id="SUBSCRIBE packet (v5.0)" name="SUBSCRIBE packet (v5.0)">
+<area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,57,156,85"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="204,57,388,85"/>
+<area shape="rect" id="Node000003" href="$group__qos.html" title=" " alt="" coords="501,5,548,33"/>
+<area shape="rect" id="Node000004" href="$group__subscribe__options.html" title=" " alt="" coords="436,57,613,85"/>
+<area shape="rect" id="Node000005" href="$group__subscribe__v5__detail.html" title=" " alt="" coords="444,109,606,137"/>
 </map>

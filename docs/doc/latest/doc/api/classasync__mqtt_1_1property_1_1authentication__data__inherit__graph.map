@@ -1,5 +1,0 @@
-<map id="async_mqtt::property::authentication_data" name="async_mqtt::property::authentication_data">
-<area shape="rect" id="Node000001" title="authentication_data property" alt="" coords="14,98,174,143"/>
-<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1binary__property.html" title="binary_property" alt="" coords="5,5,183,50"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,66,97,98,91,98,91,66"/>
-</map>

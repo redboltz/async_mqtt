@@ -1,7 +1,7 @@
-<map id="Qos" name="Qos">
-<area shape="rect" id="Node000004" href="$group__publish__v3__1__1.html" title=" " alt="" coords="13,5,135,33"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="191,84,237,112"/>
-<area shape="rect" id="Node000005" href="$group__publish__v5.html" title=" " alt="" coords="28,57,120,85"/>
-<area shape="rect" id="Node000002" href="$group__subscribe__v3__1__1.html" title=" " alt="" coords="5,109,143,137"/>
-<area shape="rect" id="Node000003" href="$group__subscribe__v5.html" title=" " alt="" coords="20,161,128,189"/>
+<map id="QoS" name="QoS">
+<area shape="rect" id="Node000004" href="$group__publish__v3__1__1.html" title=" " alt="" coords="14,5,193,33"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="250,84,297,112"/>
+<area shape="rect" id="Node000005" href="$group__publish__v5.html" title=" " alt="" coords="20,57,187,85"/>
+<area shape="rect" id="Node000002" href="$group__subscribe__v3__1__1.html" title=" " alt="" coords="5,109,202,137"/>
+<area shape="rect" id="Node000003" href="$group__subscribe__v5.html" title=" " alt="" coords="11,161,196,189"/>
 </map>

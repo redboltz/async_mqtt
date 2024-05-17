@@ -8,8 +8,11 @@ var classasync__mqtt_1_1property__variant =
     [ "get_if", "classasync__mqtt_1_1property__variant.html#abb9835868c9b29d9b2ad963a9c92dc2d", null ],
     [ "id", "classasync__mqtt_1_1property__variant.html#ab35cbdd80d44eba98e3f2cbe0b33967b", null ],
     [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1property__variant.html#ae392639bdd2fd8dbceec12975b488863", null ],
+    [ "operator bool", "classasync__mqtt_1_1property__variant.html#a85d0ab986a7adb6fe324a3f01939ee36", null ],
     [ "size", "classasync__mqtt_1_1property__variant.html#a5ad7efea2e2ee2ce25d094f4f991870d", null ],
     [ "visit", "classasync__mqtt_1_1property__variant.html#ad0e26ceea31653b95c78e76e5352cde1", null ],
     [ "visit", "classasync__mqtt_1_1property__variant.html#affe7d42f17c04cde94fb577786db828a", null ],
-    [ "visit", "classasync__mqtt_1_1property__variant.html#ae7e6dd3e939f2dd9b229b600bd26008c", null ]
+    [ "visit", "classasync__mqtt_1_1property__variant.html#ae7e6dd3e939f2dd9b229b600bd26008c", null ],
+    [ "operator<", "classasync__mqtt_1_1property__variant.html#aebf6c6155b2bdaf01227df1bfc9b5892", null ],
+    [ "operator==", "classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36", null ]
 ];

@@ -147,10 +147,10 @@ pre.rouge .ss {
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#aec0ad1e5c8b1a748160b3445583845c1">recv()</a> funtion</h2>
+<h2 id="_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a30eb38c816f1003c04ead18fdb5040da">recv()</a> funtion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need to call <a href="../api/classasync__mqtt_1_1basic__endpoint.html#aec0ad1e5c8b1a748160b3445583845c1">recv()</a> function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
+<p>You need to call <a href="../api/classasync__mqtt_1_1basic__endpoint.html#a30eb38c816f1003c04ead18fdb5040da">recv()</a> function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
 You can control packet receiving timing. async_mqtt doesn&#8217;t use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using recv().
 recv() function is more flexible than handler registering APIs. In addition, it works well with <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a>.</p>
 </div>
@@ -244,7 +244,7 @@ If error is happened, completion_token is invoked with packet_variant that conta
 </div>
 </div>
 <div class="sect1">
-<h2 id="_send_function"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a472d7f318e9c576c364d148c817d6598">send()</a> function</h2>
+<h2 id="_send_function"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a85371d8868757f5760d0edd3bdef9ad9">send()</a> function</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>MQTT has various packet types for example CONNECT, PUBLISH, SUBSCRIBE and so on. In order to send the packet, first create the packet and then pass it as send() parameter. If you send timing is a protocol error then the send() CompletionToken is invoked with system_error.

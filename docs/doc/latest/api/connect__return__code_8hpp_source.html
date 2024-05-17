@@ -126,31 +126,37 @@ $(function(){initNavTree('connect__return__code_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
 </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">constexpr</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keywordtype">char</span> <span class="keyword">const</span>* connect_return_code_to_str(<a class="code hl_enumeration" href="group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> v) {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">char</span> <span class="keyword">const</span> * <span class="keyword">const</span> str[] = {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="stringliteral">&quot;accepted&quot;</span>,</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="stringliteral">&quot;unacceptable_protocol_version&quot;</span>,</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="stringliteral">&quot;identifier_rejected&quot;</span>,</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="stringliteral">&quot;server_unavailable&quot;</span>,</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="stringliteral">&quot;bad_user_name_or_password&quot;</span>,</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="stringliteral">&quot;not_authorized&quot;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    };</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span>std::uint8_t<span class="keyword">&gt;</span>(v) &lt; <span class="keyword">sizeof</span>(str)) <span class="keywordflow">return</span> str[<span class="keyword">static_cast&lt;</span>std::uint8_t<span class="keyword">&gt;</span>(v)];</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;unknown_connect_return_code&quot;</span>;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>}</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">inline</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <a class="code hl_enumeration" href="group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> val)</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    os &lt;&lt; connect_return_code_to_str(val);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">return</span> os;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_CONNECT_RETURN_CODE_HPP</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">constexpr</span></div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="group__connack__v3__1__1.html#ga9a788a3ebe3f0c3cccea39cc0784a036">   38</a></span><span class="keywordtype">char</span> <span class="keyword">const</span>* <a class="code hl_function" href="group__connack__v3__1__1.html#ga9a788a3ebe3f0c3cccea39cc0784a036">connect_return_code_to_str</a>(<a class="code hl_enumeration" href="group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> v) {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">char</span> <span class="keyword">const</span> * <span class="keyword">const</span> str[] = {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="stringliteral">&quot;accepted&quot;</span>,</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="stringliteral">&quot;unacceptable_protocol_version&quot;</span>,</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="stringliteral">&quot;identifier_rejected&quot;</span>,</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="stringliteral">&quot;server_unavailable&quot;</span>,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="stringliteral">&quot;bad_user_name_or_password&quot;</span>,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="stringliteral">&quot;not_authorized&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    };</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordflow">if</span> (<span class="keyword">static_cast&lt;</span>std::uint8_t<span class="keyword">&gt;</span>(v) &lt; <span class="keyword">sizeof</span>(str)) <span class="keywordflow">return</span> str[<span class="keyword">static_cast&lt;</span>std::uint8_t<span class="keyword">&gt;</span>(v)];</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;unknown_connect_return_code&quot;</span>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">inline</span></div>
+<div class="foldopen" id="foldopen00059" data-start="{" data-end="}">
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="group__connack__v3__1__1.html#gadc863bb73e9b5c4fa1601b61b7b7558b">   59</a></span>std::ostream&amp; <a class="code hl_function" href="group__connack__v3__1__1.html#gadc863bb73e9b5c4fa1601b61b7b7558b">operator&lt;&lt;</a>(std::ostream&amp; o, <a class="code hl_enumeration" href="group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109">connect_return_code</a> v)</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    o &lt;&lt; <a class="code hl_function" href="group__connack__v3__1__1.html#ga9a788a3ebe3f0c3cccea39cc0784a036">connect_return_code_to_str</a>(v);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">return</span> o;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
+</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_CONNECT_RETURN_CODE_HPP</span></div>
 <div class="ttc" id="agroup__connack__v3__1__1_html_ga8342d3b4108d9bb325b95dbd9c0c6109"><div class="ttname"><a href="group__connack__v3__1__1.html#ga8342d3b4108d9bb325b95dbd9c0c6109">async_mqtt::connect_return_code</a></div><div class="ttdeci">connect_return_code</div><div class="ttdoc">connect return code See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1....</div><div class="ttdef"><b>Definition</b> connect_return_code.hpp:21</div></div>
+<div class="ttc" id="agroup__connack__v3__1__1_html_ga9a788a3ebe3f0c3cccea39cc0784a036"><div class="ttname"><a href="group__connack__v3__1__1.html#ga9a788a3ebe3f0c3cccea39cc0784a036">async_mqtt::connect_return_code_to_str</a></div><div class="ttdeci">constexpr char const * connect_return_code_to_str(connect_return_code v)</div><div class="ttdoc">stringize connect_return_code</div><div class="ttdef"><b>Definition</b> connect_return_code.hpp:38</div></div>
+<div class="ttc" id="agroup__connack__v3__1__1_html_gadc863bb73e9b5c4fa1601b61b7b7558b"><div class="ttname"><a href="group__connack__v3__1__1.html#gadc863bb73e9b5c4fa1601b61b7b7558b">async_mqtt::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;o, connect_return_code v)</div><div class="ttdoc">output to the stream</div><div class="ttdef"><b>Definition</b> connect_return_code.hpp:59</div></div>
 <div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470">async_mqtt::connect_return_code::accepted</a></div><div class="ttdeci">@ accepted</div><div class="ttdoc">Connection accepted.</div></div>
 <div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109a7b63a50d02075d9ecfc443b94a3d2272"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a7b63a50d02075d9ecfc443b94a3d2272">async_mqtt::connect_return_code::identifier_rejected</a></div><div class="ttdeci">@ identifier_rejected</div><div class="ttdoc">The Client identifier is correct UTF-8 but not allowed by the Server.</div></div>
 <div class="ttc" id="agroup__connack__v3__1__1_html_gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a"><div class="ttname"><a href="group__connack__v3__1__1.html#gga8342d3b4108d9bb325b95dbd9c0c6109a89a15d5a10ea1b37e1719c52c3507c0a">async_mqtt::connect_return_code::not_authorized</a></div><div class="ttdeci">@ not_authorized</div><div class="ttdoc">The Client is not authorized to connect.</div></div>

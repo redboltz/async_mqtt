@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Auth_v5</title>
+<title>async_mqtt: AUTH packet (v5.0)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,17 +93,19 @@ $(function(){initNavTree('group__auth__v5.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
-  <div class="headertitle"><div class="title">Auth_v5<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__v5.html">Packet_v5</a></div></div></div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle"><div class="title">AUTH packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Collaboration diagram for Auth_v5:</div>
+Collaboration diagram for AUTH packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__auth__v5.png" border="0" usemap="#agroup____auth____v5" alt=""/></div>
 <map name="agroup____auth____v5" id="agroup____auth____v5">
-<area shape="rect" title=" " alt="" coords="140,5,214,33"/>
-<area shape="rect" href="group__packet__v5.html" title="protocol version 5.0" alt="" coords="5,5,92,33"/>
+<area shape="rect" title=" " alt="" coords="204,5,351,33"/>
+<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -112,8 +114,135 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1v5_1_1auth__packet.html">async_mqtt::v5::auth_packet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT AUTH packet (v35)  <a href="classasync__mqtt_1_1v5_1_1auth__packet.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga90f5a0229709aaa4257d01db383f9763" id="r_ga90f5a0229709aaa4257d01db383f9763"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">async_mqtt::auth_reason_code</a> : std::uint8_t { <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076">auth_reason_code::success</a> = 0x00
+, <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e">auth_reason_code::continue_authentication</a> = 0x18
+, <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2">auth_reason_code::re_authenticate</a> = 0x19
+ }</td></tr>
+<tr class="memdesc:ga90f5a0229709aaa4257d01db383f9763"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT auth_reason_code.  <a href="#ga90f5a0229709aaa4257d01db383f9763">More...</a><br /></td></tr>
+<tr class="separator:ga90f5a0229709aaa4257d01db383f9763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga9f9c6d6351ac424c6d874434ccb6a541" id="r_ga9f9c6d6351ac424c6d874434ccb6a541"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga9f9c6d6351ac424c6d874434ccb6a541">async_mqtt::auth_reason_code_to_str</a> (<a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">auth_reason_code</a> v)</td></tr>
+<tr class="memdesc:ga9f9c6d6351ac424c6d874434ccb6a541"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize auth_reason_code  <br /></td></tr>
+<tr class="separator:ga9f9c6d6351ac424c6d874434ccb6a541"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga51a2eb1c3bb5919794d2c81096bc7b9f" id="r_ga51a2eb1c3bb5919794d2c81096bc7b9f"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga51a2eb1c3bb5919794d2c81096bc7b9f">async_mqtt::operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">auth_reason_code</a> v)</td></tr>
+<tr class="memdesc:ga51a2eb1c3bb5919794d2c81096bc7b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">output to the stream  <br /></td></tr>
+<tr class="separator:ga51a2eb1c3bb5919794d2c81096bc7b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga90f5a0229709aaa4257d01db383f9763" name="ga90f5a0229709aaa4257d01db383f9763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga90f5a0229709aaa4257d01db383f9763">&#9670;&#160;</a></span>auth_reason_code</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">async_mqtt::auth_reason_code</a> : std::uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>MQTT auth_reason_code. </p>
+<p><br  />
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220</a> </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076" name="gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076"></a>success&#160;</td><td class="fielddoc"><p>Success. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e" name="gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e"></a>continue_authentication&#160;</td><td class="fielddoc"><p>Continue authentication. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2" name="gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2"></a>re_authenticate&#160;</td><td class="fielddoc"><p>Re-authenticate. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga9f9c6d6351ac424c6d874434ccb6a541" name="ga9f9c6d6351ac424c6d874434ccb6a541"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9f9c6d6351ac424c6d874434ccb6a541">&#9670;&#160;</a></span>auth_reason_code_to_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr char const  * async_mqtt::auth_reason_code_to_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">auth_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>stringize auth_reason_code </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>auth_reason_code string </dd></dl>
+
+</div>
+</div>
+<a id="ga51a2eb1c3bb5919794d2c81096bc7b9f" name="ga51a2eb1c3bb5919794d2c81096bc7b9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga51a2eb1c3bb5919794d2c81096bc7b9f">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; async_mqtt::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">auth_reason_code</a></td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>output to the stream </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,4 +1,4 @@
-<map id="Buffer" name="Buffer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="161,5,221,33"/>
-<area shape="rect" id="Node000002" href="$group__packet__detail.html" title="packet internal details for adcanced user. (e.g. buffer)" alt="" coords="5,5,113,33"/>
+<map id="Reference counting immutable buffer" name="Reference counting immutable buffer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="216,5,363,50"/>
+<area shape="rect" id="Node000002" href="$group__packet__detail.html" title=" " alt="" coords="5,14,168,42"/>
 </map>

@@ -95,7 +95,7 @@ $(function(){initNavTree('classasync__mqtt_1_1buffer.html',''); initResizable();
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1buffer-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference<div class="ingroups"><a class="el" href="group__packet.html">Packet</a> &raquo; <a class="el" href="group__packet__detail.html">Packet_detail</a> &raquo; <a class="el" href="group__buffer.html">Buffer</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::buffer Class Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__detail.html">implementation class</a> &raquo; <a class="el" href="group__buffer.html">Reference counting immutable buffer</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -152,12 +152,132 @@ constexpr&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> () no
 <tr class="memitem:aceb1698f2803378a97b415e53b9f6a1c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aceb1698f2803378a97b415e53b9f6a1c">buffer</a> (It first, End last, std::shared_ptr&lt; void &gt; life)</td></tr>
 <tr class="memdesc:aceb1698f2803378a97b415e53b9f6a1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">range and lifetime constructor  <br /></td></tr>
 <tr class="separator:aceb1698f2803378a97b415e53b9f6a1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8da7f19412f5299b994d39fba3b7fc52" id="r_a8da7f19412f5299b994d39fba3b7fc52"><td class="memItemLeft" align="right" valign="top">constexpr const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8da7f19412f5299b994d39fba3b7fc52">begin</a> () const noexcept</td></tr>
+<tr class="memdesc:a8da7f19412f5299b994d39fba3b7fc52"><td class="mdescLeft">&#160;</td><td class="mdescRight">get an iterator to the beginning  <br /></td></tr>
+<tr class="separator:a8da7f19412f5299b994d39fba3b7fc52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f235c10fb94b0cab026d59908f8285d" id="r_a8f235c10fb94b0cab026d59908f8285d"><td class="memItemLeft" align="right" valign="top">constexpr const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f235c10fb94b0cab026d59908f8285d">cbegin</a> () const noexcept</td></tr>
+<tr class="memdesc:a8f235c10fb94b0cab026d59908f8285d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get an iterator to the beginning  <br /></td></tr>
+<tr class="separator:a8f235c10fb94b0cab026d59908f8285d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c5813d17def864882cac42d1f453308" id="r_a6c5813d17def864882cac42d1f453308"><td class="memItemLeft" align="right" valign="top">constexpr const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c5813d17def864882cac42d1f453308">end</a> () const noexcept</td></tr>
+<tr class="memdesc:a6c5813d17def864882cac42d1f453308"><td class="mdescLeft">&#160;</td><td class="mdescRight">get an iterator to the end  <br /></td></tr>
+<tr class="separator:a6c5813d17def864882cac42d1f453308"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c0fddafd68f9a02bf999e13b46dce50" id="r_a6c0fddafd68f9a02bf999e13b46dce50"><td class="memItemLeft" align="right" valign="top">constexpr const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c0fddafd68f9a02bf999e13b46dce50">cend</a> () const noexcept</td></tr>
+<tr class="memdesc:a6c0fddafd68f9a02bf999e13b46dce50"><td class="mdescLeft">&#160;</td><td class="mdescRight">get an iterator to the end  <br /></td></tr>
+<tr class="separator:a6c0fddafd68f9a02bf999e13b46dce50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a114d7ad7bdf186c19ead1682e8a29ab6" id="r_a114d7ad7bdf186c19ead1682e8a29ab6"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a114d7ad7bdf186c19ead1682e8a29ab6">rbegin</a> () const noexcept</td></tr>
+<tr class="memdesc:a114d7ad7bdf186c19ead1682e8a29ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reverse terator to the beginning  <br /></td></tr>
+<tr class="separator:a114d7ad7bdf186c19ead1682e8a29ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92ed7db78da4b1cd5f8de8acab7a7bbe" id="r_a92ed7db78da4b1cd5f8de8acab7a7bbe"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92ed7db78da4b1cd5f8de8acab7a7bbe">crbegin</a> () const noexcept</td></tr>
+<tr class="memdesc:a92ed7db78da4b1cd5f8de8acab7a7bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reverse terator to the beginning  <br /></td></tr>
+<tr class="separator:a92ed7db78da4b1cd5f8de8acab7a7bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae474cca6eba0e784c1985bf0e61940e4" id="r_ae474cca6eba0e784c1985bf0e61940e4"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae474cca6eba0e784c1985bf0e61940e4">rend</a> () const noexcept</td></tr>
+<tr class="memdesc:ae474cca6eba0e784c1985bf0e61940e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reverse terator to the end  <br /></td></tr>
+<tr class="separator:ae474cca6eba0e784c1985bf0e61940e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affa80c740527fd62f738cc271bc9c702" id="r_affa80c740527fd62f738cc271bc9c702"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#affa80c740527fd62f738cc271bc9c702">crend</a> () const noexcept</td></tr>
+<tr class="memdesc:affa80c740527fd62f738cc271bc9c702"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reverse terator to the end  <br /></td></tr>
+<tr class="separator:affa80c740527fd62f738cc271bc9c702"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1856703f5cd06e90f23a52281b92b700" id="r_a1856703f5cd06e90f23a52281b92b700"><td class="memItemLeft" align="right" valign="top">constexpr const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1856703f5cd06e90f23a52281b92b700">operator[]</a> (size_type pos) const</td></tr>
+<tr class="memdesc:a1856703f5cd06e90f23a52281b92b700"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reference of the specific character  <br /></td></tr>
+<tr class="separator:a1856703f5cd06e90f23a52281b92b700"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad876c3edb8c22366e1cbc2c0aee9aa03" id="r_ad876c3edb8c22366e1cbc2c0aee9aa03"><td class="memItemLeft" align="right" valign="top">constexpr const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad876c3edb8c22366e1cbc2c0aee9aa03">at</a> (size_type pos) const</td></tr>
+<tr class="memdesc:ad876c3edb8c22366e1cbc2c0aee9aa03"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reference of the specific character with bounds checking  <br /></td></tr>
+<tr class="separator:ad876c3edb8c22366e1cbc2c0aee9aa03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acac343b34db354481dc49050166c399f" id="r_acac343b34db354481dc49050166c399f"><td class="memItemLeft" align="right" valign="top">constexpr const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acac343b34db354481dc49050166c399f">front</a> () const</td></tr>
+<tr class="memdesc:acac343b34db354481dc49050166c399f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reference of the first character  <br /></td></tr>
+<tr class="separator:acac343b34db354481dc49050166c399f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83cd74134e40075e57dc00cd9e08c703" id="r_a83cd74134e40075e57dc00cd9e08c703"><td class="memItemLeft" align="right" valign="top">constexpr const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83cd74134e40075e57dc00cd9e08c703">back</a> () const</td></tr>
+<tr class="memdesc:a83cd74134e40075e57dc00cd9e08c703"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a reference of the last character  <br /></td></tr>
+<tr class="separator:a83cd74134e40075e57dc00cd9e08c703"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacbd3a5eefbf1dd4e572fdf1fe9d6a86" id="r_aacbd3a5eefbf1dd4e572fdf1fe9d6a86"><td class="memItemLeft" align="right" valign="top">constexpr const_pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacbd3a5eefbf1dd4e572fdf1fe9d6a86">data</a> () const noexcept</td></tr>
+<tr class="memdesc:aacbd3a5eefbf1dd4e572fdf1fe9d6a86"><td class="mdescLeft">&#160;</td><td class="mdescRight">get a pointer of the first character of the buffer  <br /></td></tr>
+<tr class="separator:aacbd3a5eefbf1dd4e572fdf1fe9d6a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e30bb89d7851e7a5568b22ef7912838" id="r_a6e30bb89d7851e7a5568b22ef7912838"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e30bb89d7851e7a5568b22ef7912838">size</a> () const noexcept</td></tr>
+<tr class="memdesc:a6e30bb89d7851e7a5568b22ef7912838"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of characters  <br /></td></tr>
+<tr class="separator:a6e30bb89d7851e7a5568b22ef7912838"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a848e929b62ec91b0a8c3cd902692d944" id="r_a848e929b62ec91b0a8c3cd902692d944"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a848e929b62ec91b0a8c3cd902692d944">length</a> () const noexcept</td></tr>
+<tr class="memdesc:a848e929b62ec91b0a8c3cd902692d944"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the number of characters  <br /></td></tr>
+<tr class="separator:a848e929b62ec91b0a8c3cd902692d944"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabb5b7e300fc71f9e8b7d78400e9f411" id="r_aabb5b7e300fc71f9e8b7d78400e9f411"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabb5b7e300fc71f9e8b7d78400e9f411">max_size</a> () const noexcept</td></tr>
+<tr class="memdesc:aabb5b7e300fc71f9e8b7d78400e9f411"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the largeset possible number of the buffer  <br /></td></tr>
+<tr class="separator:aabb5b7e300fc71f9e8b7d78400e9f411"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a6ec08901878976a702825394f24540" id="r_a5a6ec08901878976a702825394f24540"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a6ec08901878976a702825394f24540">empty</a> () const noexcept</td></tr>
+<tr class="memdesc:a5a6ec08901878976a702825394f24540"><td class="mdescLeft">&#160;</td><td class="mdescRight">checking the buffer is empty  <br /></td></tr>
+<tr class="separator:a5a6ec08901878976a702825394f24540"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32b4cc2dd0ffb3edcf65361f8e12a62d" id="r_a32b4cc2dd0ffb3edcf65361f8e12a62d"><td class="memItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32b4cc2dd0ffb3edcf65361f8e12a62d">remove_prefix</a> (size_type n)</td></tr>
+<tr class="memdesc:a32b4cc2dd0ffb3edcf65361f8e12a62d"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove the first n characters from the buffer  <br /></td></tr>
+<tr class="separator:a32b4cc2dd0ffb3edcf65361f8e12a62d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a423e1a01c90d85823a943dab3aa364f9" id="r_a423e1a01c90d85823a943dab3aa364f9"><td class="memItemLeft" align="right" valign="top">constexpr void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a423e1a01c90d85823a943dab3aa364f9">remove_suffix</a> (size_type n)</td></tr>
+<tr class="memdesc:a423e1a01c90d85823a943dab3aa364f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove the last n characters from the buffer  <br /></td></tr>
+<tr class="separator:a423e1a01c90d85823a943dab3aa364f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d5d131740b5cb75e29f174db8c08218" id="r_a5d5d131740b5cb75e29f174db8c08218"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d5d131740b5cb75e29f174db8c08218">swap</a> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;buf) noexcept</td></tr>
+<tr class="memdesc:a5d5d131740b5cb75e29f174db8c08218"><td class="mdescLeft">&#160;</td><td class="mdescRight">swap the buffer  <br /></td></tr>
+<tr class="separator:a5d5d131740b5cb75e29f174db8c08218"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9554ca7b3e648e0d6a07b3a5c37c95a6" id="r_a9554ca7b3e648e0d6a07b3a5c37c95a6"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9554ca7b3e648e0d6a07b3a5c37c95a6">copy</a> (char *dest, size_type count, size_type pos=0) const</td></tr>
+<tr class="memdesc:a9554ca7b3e648e0d6a07b3a5c37c95a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy the buffer characters  <br /></td></tr>
+<tr class="separator:a9554ca7b3e648e0d6a07b3a5c37c95a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7895963705a5671147e3cfb366f48756" id="r_a7895963705a5671147e3cfb366f48756"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7895963705a5671147e3cfb366f48756">substr</a> (size_type pos=0, size_type count=npos) const &amp;</td></tr>
 <tr class="memdesc:a7895963705a5671147e3cfb366f48756"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer.  <br /></td></tr>
 <tr class="separator:a7895963705a5671147e3cfb366f48756"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3d64b3893dfec271b87d8f2e3dd6b65" id="r_ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3d64b3893dfec271b87d8f2e3dd6b65">substr</a> (size_type pos=0, size_type count=npos) &amp;&amp;</td></tr>
 <tr class="memdesc:ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is moved to returned buffer.  <br /></td></tr>
 <tr class="separator:ad3d64b3893dfec271b87d8f2e3dd6b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b3127002e0a9f2f0641ecad4daea24" id="r_aa7b3127002e0a9f2f0641ecad4daea24"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7b3127002e0a9f2f0641ecad4daea24">compare</a> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;buf) const noexcept</td></tr>
+<tr class="memdesc:aa7b3127002e0a9f2f0641ecad4daea24"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:aa7b3127002e0a9f2f0641ecad4daea24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3256c4c867f85ebbe95ac1f83381a2a" id="r_ae3256c4c867f85ebbe95ac1f83381a2a"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3256c4c867f85ebbe95ac1f83381a2a">compare</a> (std::string_view const &amp;v) const noexcept</td></tr>
+<tr class="memdesc:ae3256c4c867f85ebbe95ac1f83381a2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:ae3256c4c867f85ebbe95ac1f83381a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa87697e3a25d39f5cf79f86c0ceed63a" id="r_aa87697e3a25d39f5cf79f86c0ceed63a"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa87697e3a25d39f5cf79f86c0ceed63a">compare</a> (size_type pos1, size_type count1, <a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;buf) const noexcept</td></tr>
+<tr class="memdesc:aa87697e3a25d39f5cf79f86c0ceed63a"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:aa87697e3a25d39f5cf79f86c0ceed63a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeea408cf2d0d3c90d1b36b7cdd3bc60" id="r_afeea408cf2d0d3c90d1b36b7cdd3bc60"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afeea408cf2d0d3c90d1b36b7cdd3bc60">compare</a> (size_type pos1, size_type count1, std::string_view const &amp;v) const noexcept</td></tr>
+<tr class="memdesc:afeea408cf2d0d3c90d1b36b7cdd3bc60"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:afeea408cf2d0d3c90d1b36b7cdd3bc60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54f450efa2f2cd9b99b9eeb734fae6ce" id="r_a54f450efa2f2cd9b99b9eeb734fae6ce"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54f450efa2f2cd9b99b9eeb734fae6ce">compare</a> (size_type pos1, size_type count1, <a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;buf, size_type pos2, size_type count2) const noexcept</td></tr>
+<tr class="memdesc:a54f450efa2f2cd9b99b9eeb734fae6ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:a54f450efa2f2cd9b99b9eeb734fae6ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b0285c947c7bbbffa30f1fb308647a7" id="r_a5b0285c947c7bbbffa30f1fb308647a7"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b0285c947c7bbbffa30f1fb308647a7">compare</a> (size_type pos1, size_type count1, std::string_view const &amp;v, size_type pos2, size_type count2) const noexcept</td></tr>
+<tr class="memdesc:a5b0285c947c7bbbffa30f1fb308647a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:a5b0285c947c7bbbffa30f1fb308647a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdc5067111459a6bd4877bf1259a4d5b" id="r_afdc5067111459a6bd4877bf1259a4d5b"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdc5067111459a6bd4877bf1259a4d5b">compare</a> (char const *s) const noexcept</td></tr>
+<tr class="memdesc:afdc5067111459a6bd4877bf1259a4d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:afdc5067111459a6bd4877bf1259a4d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33e5f60628b2fd9845e849f4c694f40a" id="r_a33e5f60628b2fd9845e849f4c694f40a"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33e5f60628b2fd9845e849f4c694f40a">compare</a> (size_type pos1, size_type count1, char const *s) const noexcept</td></tr>
+<tr class="memdesc:a33e5f60628b2fd9845e849f4c694f40a"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:a33e5f60628b2fd9845e849f4c694f40a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88206280e6d162885e24543f3149537c" id="r_a88206280e6d162885e24543f3149537c"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88206280e6d162885e24543f3149537c">compare</a> (size_type pos1, size_type count1, char const *s, size_type pos2, size_type count2) const noexcept</td></tr>
+<tr class="memdesc:a88206280e6d162885e24543f3149537c"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare buffer Compare only the view.  <br /></td></tr>
+<tr class="separator:a88206280e6d162885e24543f3149537c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a269bf3927431f407bf18859cf5d4ea16" id="r_a269bf3927431f407bf18859cf5d4ea16"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a269bf3927431f407bf18859cf5d4ea16">find</a> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;buf, size_type pos=0) const noexcept</td></tr>
+<tr class="memdesc:a269bf3927431f407bf18859cf5d4ea16"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first substring equal to the given view  <br /></td></tr>
+<tr class="separator:a269bf3927431f407bf18859cf5d4ea16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85319fe0ea175220596437df5e8ab4b" id="r_ab85319fe0ea175220596437df5e8ab4b"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab85319fe0ea175220596437df5e8ab4b">find</a> (std::string_view v, size_type pos=0) const noexcept</td></tr>
+<tr class="memdesc:ab85319fe0ea175220596437df5e8ab4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first substring equal to the given view  <br /></td></tr>
+<tr class="separator:ab85319fe0ea175220596437df5e8ab4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfdcf270dd250f87a467c0a9e68525dc" id="r_abfdcf270dd250f87a467c0a9e68525dc"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfdcf270dd250f87a467c0a9e68525dc">find</a> (char ch, size_type pos=0) const noexcept</td></tr>
+<tr class="memdesc:abfdcf270dd250f87a467c0a9e68525dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first substring equal to the given view  <br /></td></tr>
+<tr class="separator:abfdcf270dd250f87a467c0a9e68525dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5421e369b822908736fd3a1f4d77fe5e" id="r_a5421e369b822908736fd3a1f4d77fe5e"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5421e369b822908736fd3a1f4d77fe5e">find</a> (char const *s, size_type pos, size_type count) const</td></tr>
+<tr class="memdesc:a5421e369b822908736fd3a1f4d77fe5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first substring equal to the given view  <br /></td></tr>
+<tr class="separator:a5421e369b822908736fd3a1f4d77fe5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1837a1661fa939b84149c8a9588cc2e0" id="r_a1837a1661fa939b84149c8a9588cc2e0"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1837a1661fa939b84149c8a9588cc2e0">find</a> (char const *s, size_type pos=0) const</td></tr>
+<tr class="memdesc:a1837a1661fa939b84149c8a9588cc2e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the first substring equal to the given view  <br /></td></tr>
+<tr class="separator:a1837a1661fa939b84149c8a9588cc2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10863870aa464f6a509b5039404e1aa6" id="r_a10863870aa464f6a509b5039404e1aa6"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10863870aa464f6a509b5039404e1aa6">rfind</a> (<a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;buf, size_type pos=npos) const noexcept</td></tr>
+<tr class="memdesc:a10863870aa464f6a509b5039404e1aa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the last substring equal to the given view  <br /></td></tr>
+<tr class="separator:a10863870aa464f6a509b5039404e1aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9afd4a601f932e7f09013dd9c3a4d211" id="r_a9afd4a601f932e7f09013dd9c3a4d211"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9afd4a601f932e7f09013dd9c3a4d211">rfind</a> (std::string_view v, size_type pos=npos) const noexcept</td></tr>
+<tr class="memdesc:a9afd4a601f932e7f09013dd9c3a4d211"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the last substring equal to the given view  <br /></td></tr>
+<tr class="separator:a9afd4a601f932e7f09013dd9c3a4d211"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2379c0aa302383e2b8711b1fed57701" id="r_ae2379c0aa302383e2b8711b1fed57701"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2379c0aa302383e2b8711b1fed57701">rfind</a> (char ch, size_type pos=npos) const noexcept</td></tr>
+<tr class="memdesc:ae2379c0aa302383e2b8711b1fed57701"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the last substring equal to the given view  <br /></td></tr>
+<tr class="separator:ae2379c0aa302383e2b8711b1fed57701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88bdf0c7d13724a34e5e5d87b98b08e0" id="r_a88bdf0c7d13724a34e5e5d87b98b08e0"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88bdf0c7d13724a34e5e5d87b98b08e0">rfind</a> (char const *s, size_type pos, size_type count) const</td></tr>
+<tr class="memdesc:a88bdf0c7d13724a34e5e5d87b98b08e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the last substring equal to the given view  <br /></td></tr>
+<tr class="separator:a88bdf0c7d13724a34e5e5d87b98b08e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71f24316808f123dfc1b1fb82136f553" id="r_a71f24316808f123dfc1b1fb82136f553"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71f24316808f123dfc1b1fb82136f553">rfind</a> (char const *s, size_type pos=npos) const</td></tr>
+<tr class="memdesc:a71f24316808f123dfc1b1fb82136f553"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the last substring equal to the given view  <br /></td></tr>
+<tr class="separator:a71f24316808f123dfc1b1fb82136f553"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>buffer that has string_view interface and shared ownership This class is only for advanced usecase such as developping high performance MQTT broker. Typical MQTT client developpers don't need to care about the buffer. This class provides string_view interface. This class holds string_view pointee's lifetime optionally. </p>
@@ -332,7 +452,7 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>string constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">string</td><td></td></tr>
+    <tr><td class="paramname">s</td><td>string </td></tr>
   </table>
   </dd>
 </dl>
@@ -412,7 +532,7 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>pointer, size, and lifetime constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>pointer to the beginning of the view </td></tr>
+    <tr><td class="paramname">s</td><td>pointer to the beginning of the view </td></tr>
     <tr><td class="paramname">count</td><td>size of the view </td></tr>
     <tr><td class="paramname">life</td><td>sv target's lifetime keeping object by shared ownership If user creates buffer via this constructor, sp's lifetime is held by the buffer. </td></tr>
   </table>
@@ -468,6 +588,1404 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad876c3edb8c22366e1cbc2c0aee9aa03" name="ad876c3edb8c22366e1cbc2c0aee9aa03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad876c3edb8c22366e1cbc2c0aee9aa03">&#9670;&#160;</a></span>at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reference async_mqtt::buffer::at </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reference of the specific character with bounds checking </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>the position of the character </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>reference of the character </dd></dl>
+
+</div>
+</div>
+<a id="a83cd74134e40075e57dc00cd9e08c703" name="a83cd74134e40075e57dc00cd9e08c703"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83cd74134e40075e57dc00cd9e08c703">&#9670;&#160;</a></span>back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reference async_mqtt::buffer::back </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reference of the last character </p>
+<dl class="section return"><dt>Returns</dt><dd>reference of the character </dd></dl>
+
+</div>
+</div>
+<a id="a8da7f19412f5299b994d39fba3b7fc52" name="a8da7f19412f5299b994d39fba3b7fc52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8da7f19412f5299b994d39fba3b7fc52">&#9670;&#160;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_iterator async_mqtt::buffer::begin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get an iterator to the beginning </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="a8f235c10fb94b0cab026d59908f8285d" name="a8f235c10fb94b0cab026d59908f8285d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f235c10fb94b0cab026d59908f8285d">&#9670;&#160;</a></span>cbegin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_iterator async_mqtt::buffer::cbegin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get an iterator to the beginning </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="a6c0fddafd68f9a02bf999e13b46dce50" name="a6c0fddafd68f9a02bf999e13b46dce50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c0fddafd68f9a02bf999e13b46dce50">&#9670;&#160;</a></span>cend()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_iterator async_mqtt::buffer::cend </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get an iterator to the end </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="aa7b3127002e0a9f2f0641ecad4daea24" name="aa7b3127002e0a9f2f0641ecad4daea24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7b3127002e0a9f2f0641ecad4daea24">&#9670;&#160;</a></span>compare() <span class="overload">[1/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="afdc5067111459a6bd4877bf1259a4d5b" name="afdc5067111459a6bd4877bf1259a4d5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdc5067111459a6bd4877bf1259a4d5b">&#9670;&#160;</a></span>compare() <span class="overload">[2/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="aa87697e3a25d39f5cf79f86c0ceed63a" name="aa87697e3a25d39f5cf79f86c0ceed63a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa87697e3a25d39f5cf79f86c0ceed63a">&#9670;&#160;</a></span>compare() <span class="overload">[3/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">buf</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="a54f450efa2f2cd9b99b9eeb734fae6ce" name="a54f450efa2f2cd9b99b9eeb734fae6ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54f450efa2f2cd9b99b9eeb734fae6ce">&#9670;&#160;</a></span>compare() <span class="overload">[4/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos2</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count2</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">buf</td><td>target </td></tr>
+    <tr><td class="paramname">pos2</td><td>start position of the buf's view </td></tr>
+    <tr><td class="paramname">count2</td><td>length of the buf's view </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="a33e5f60628b2fd9845e849f4c694f40a" name="a33e5f60628b2fd9845e849f4c694f40a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33e5f60628b2fd9845e849f4c694f40a">&#9670;&#160;</a></span>compare() <span class="overload">[5/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">s</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="a88206280e6d162885e24543f3149537c" name="a88206280e6d162885e24543f3149537c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88206280e6d162885e24543f3149537c">&#9670;&#160;</a></span>compare() <span class="overload">[6/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos2</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count2</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">s</td><td>target </td></tr>
+    <tr><td class="paramname">pos2</td><td>start position of the s </td></tr>
+    <tr><td class="paramname">count2</td><td>length of the s </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the buf's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the buf's view. </dd></dl>
+
+</div>
+</div>
+<a id="afeea408cf2d0d3c90d1b36b7cdd3bc60" name="afeea408cf2d0d3c90d1b36b7cdd3bc60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afeea408cf2d0d3c90d1b36b7cdd3bc60">&#9670;&#160;</a></span>compare() <span class="overload">[7/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the v's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the v's view. </dd></dl>
+
+</div>
+</div>
+<a id="a5b0285c947c7bbbffa30f1fb308647a7" name="a5b0285c947c7bbbffa30f1fb308647a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b0285c947c7bbbffa30f1fb308647a7">&#9670;&#160;</a></span>compare() <span class="overload">[8/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count1</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos2</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count2</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos1</td><td>start position of the this view </td></tr>
+    <tr><td class="paramname">count1</td><td>length of the this view </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+    <tr><td class="paramname">pos2</td><td>start position of the buf's view </td></tr>
+    <tr><td class="paramname">count2</td><td>length of the buf's view </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the v's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the v's view. </dd></dl>
+
+</div>
+</div>
+<a id="ae3256c4c867f85ebbe95ac1f83381a2a" name="ae3256c4c867f85ebbe95ac1f83381a2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3256c4c867f85ebbe95ac1f83381a2a">&#9670;&#160;</a></span>compare() <span class="overload">[9/9]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int async_mqtt::buffer::compare </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view const &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>compare buffer Compare only the view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>negative value if if this view is less that the v's view. zero the both view has the same sequences of the characters. posiative value if if this view is greater that the v's view. </dd></dl>
+
+</div>
+</div>
+<a id="a9554ca7b3e648e0d6a07b3a5c37c95a6" name="a9554ca7b3e648e0d6a07b3a5c37c95a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9554ca7b3e648e0d6a07b3a5c37c95a6">&#9670;&#160;</a></span>copy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_type async_mqtt::buffer::copy </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>dest</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>copy the buffer characters </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dest</td><td>destination </td></tr>
+    <tr><td class="paramname">count</td><td>copy length </td></tr>
+    <tr><td class="paramname">pos</td><td>copy start position </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a92ed7db78da4b1cd5f8de8acab7a7bbe" name="a92ed7db78da4b1cd5f8de8acab7a7bbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92ed7db78da4b1cd5f8de8acab7a7bbe">&#9670;&#160;</a></span>crbegin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reverse_iterator async_mqtt::buffer::crbegin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reverse terator to the beginning </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="affa80c740527fd62f738cc271bc9c702" name="affa80c740527fd62f738cc271bc9c702"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affa80c740527fd62f738cc271bc9c702">&#9670;&#160;</a></span>crend()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reverse_iterator async_mqtt::buffer::crend </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reverse terator to the end </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="aacbd3a5eefbf1dd4e572fdf1fe9d6a86" name="aacbd3a5eefbf1dd4e572fdf1fe9d6a86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacbd3a5eefbf1dd4e572fdf1fe9d6a86">&#9670;&#160;</a></span>data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_pointer async_mqtt::buffer::data </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a pointer of the first character of the buffer </p>
+<dl class="section return"><dt>Returns</dt><dd>pointer </dd></dl>
+
+</div>
+</div>
+<a id="a5a6ec08901878976a702825394f24540" name="a5a6ec08901878976a702825394f24540"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a6ec08901878976a702825394f24540">&#9670;&#160;</a></span>empty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool async_mqtt::buffer::empty </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>checking the buffer is empty </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the buffer is empty, otherwise false </dd></dl>
+
+</div>
+</div>
+<a id="a6c5813d17def864882cac42d1f453308" name="a6c5813d17def864882cac42d1f453308"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c5813d17def864882cac42d1f453308">&#9670;&#160;</a></span>end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_iterator async_mqtt::buffer::end </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get an iterator to the end </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="a269bf3927431f407bf18859cf5d4ea16" name="a269bf3927431f407bf18859cf5d4ea16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a269bf3927431f407bf18859cf5d4ea16">&#9670;&#160;</a></span>find() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::find </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the first substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abfdcf270dd250f87a467c0a9e68525dc" name="abfdcf270dd250f87a467c0a9e68525dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfdcf270dd250f87a467c0a9e68525dc">&#9670;&#160;</a></span>find() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::find </td>
+          <td>(</td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>ch</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the first substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>character to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5421e369b822908736fd3a1f4d77fe5e" name="a5421e369b822908736fd3a1f4d77fe5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5421e369b822908736fd3a1f4d77fe5e">&#9670;&#160;</a></span>find() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::find </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the first substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+    <tr><td class="paramname">count</td><td>search length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1837a1661fa939b84149c8a9588cc2e0" name="a1837a1661fa939b84149c8a9588cc2e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1837a1661fa939b84149c8a9588cc2e0">&#9670;&#160;</a></span>find() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::find </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the first substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab85319fe0ea175220596437df5e8ab4b" name="ab85319fe0ea175220596437df5e8ab4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab85319fe0ea175220596437df5e8ab4b">&#9670;&#160;</a></span>find() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::find </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>v</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the first substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acac343b34db354481dc49050166c399f" name="acac343b34db354481dc49050166c399f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acac343b34db354481dc49050166c399f">&#9670;&#160;</a></span>front()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reference async_mqtt::buffer::front </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reference of the first character </p>
+<dl class="section return"><dt>Returns</dt><dd>reference of the character </dd></dl>
+
+</div>
+</div>
+<a id="a848e929b62ec91b0a8c3cd902692d944" name="a848e929b62ec91b0a8c3cd902692d944"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a848e929b62ec91b0a8c3cd902692d944">&#9670;&#160;</a></span>length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::length </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get the number of characters </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of characters </dd></dl>
+
+</div>
+</div>
+<a id="aabb5b7e300fc71f9e8b7d78400e9f411" name="aabb5b7e300fc71f9e8b7d78400e9f411"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabb5b7e300fc71f9e8b7d78400e9f411">&#9670;&#160;</a></span>max_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::max_size </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get the largeset possible number of the buffer </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of characters </dd></dl>
+
+</div>
+</div>
+<a id="a1856703f5cd06e90f23a52281b92b700" name="a1856703f5cd06e90f23a52281b92b700"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1856703f5cd06e90f23a52281b92b700">&#9670;&#160;</a></span>operator[]()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reference async_mqtt::buffer::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reference of the specific character </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>the position of the character </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>reference of the character </dd></dl>
+
+</div>
+</div>
+<a id="a114d7ad7bdf186c19ead1682e8a29ab6" name="a114d7ad7bdf186c19ead1682e8a29ab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a114d7ad7bdf186c19ead1682e8a29ab6">&#9670;&#160;</a></span>rbegin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reverse_iterator async_mqtt::buffer::rbegin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reverse terator to the beginning </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="a32b4cc2dd0ffb3edcf65361f8e12a62d" name="a32b4cc2dd0ffb3edcf65361f8e12a62d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32b4cc2dd0ffb3edcf65361f8e12a62d">&#9670;&#160;</a></span>remove_prefix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr void async_mqtt::buffer::remove_prefix </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>remove the first n characters from the buffer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>remove length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a423e1a01c90d85823a943dab3aa364f9" name="a423e1a01c90d85823a943dab3aa364f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a423e1a01c90d85823a943dab3aa364f9">&#9670;&#160;</a></span>remove_suffix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr void async_mqtt::buffer::remove_suffix </td>
+          <td>(</td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>n</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>remove the last n characters from the buffer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>remove length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae474cca6eba0e784c1985bf0e61940e4" name="ae474cca6eba0e784c1985bf0e61940e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae474cca6eba0e784c1985bf0e61940e4">&#9670;&#160;</a></span>rend()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const_reverse_iterator async_mqtt::buffer::rend </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get a reverse terator to the end </p>
+<dl class="section return"><dt>Returns</dt><dd>iterator </dd></dl>
+
+</div>
+</div>
+<a id="a10863870aa464f6a509b5039404e1aa6" name="a10863870aa464f6a509b5039404e1aa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10863870aa464f6a509b5039404e1aa6">&#9670;&#160;</a></span>rfind() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::rfind </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">npos</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the last substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae2379c0aa302383e2b8711b1fed57701" name="ae2379c0aa302383e2b8711b1fed57701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2379c0aa302383e2b8711b1fed57701">&#9670;&#160;</a></span>rfind() <span class="overload">[2/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::rfind </td>
+          <td>(</td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>ch</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">npos</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the last substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ch</td><td>character to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a88bdf0c7d13724a34e5e5d87b98b08e0" name="a88bdf0c7d13724a34e5e5d87b98b08e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88bdf0c7d13724a34e5e5d87b98b08e0">&#9670;&#160;</a></span>rfind() <span class="overload">[3/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::rfind </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the last substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+    <tr><td class="paramname">count</td><td>search length </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a71f24316808f123dfc1b1fb82136f553" name="a71f24316808f123dfc1b1fb82136f553"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71f24316808f123dfc1b1fb82136f553">&#9670;&#160;</a></span>rfind() <span class="overload">[4/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::rfind </td>
+          <td>(</td>
+          <td class="paramtype">char const *</td>          <td class="paramname"><span class="paramname"><em>s</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">npos</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the last substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9afd4a601f932e7f09013dd9c3a4d211" name="a9afd4a601f932e7f09013dd9c3a4d211"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9afd4a601f932e7f09013dd9c3a4d211">&#9670;&#160;</a></span>rfind() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::rfind </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>v</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type</td>          <td class="paramname"><span class="paramname"><em>pos</em><span class="paramdefsep"> = </span><span class="paramdefval">npos</span></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>find the last substring equal to the given view </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>view to search for </td></tr>
+    <tr><td class="paramname">pos</td><td>position at which to start the search </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6e30bb89d7851e7a5568b22ef7912838" name="a6e30bb89d7851e7a5568b22ef7912838"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e30bb89d7851e7a5568b22ef7912838">&#9670;&#160;</a></span>size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_type async_mqtt::buffer::size </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get the number of characters </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of characters </dd></dl>
+
+</div>
+</div>
 <a id="ad3d64b3893dfec271b87d8f2e3dd6b65" name="ad3d64b3893dfec271b87d8f2e3dd6b65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad3d64b3893dfec271b87d8f2e3dd6b65">&#9670;&#160;</a></span>substr() <span class="overload">[1/2]</span></h2>
 
@@ -498,11 +2016,12 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is moved to returned buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">pos</td><td>position of the first character </td></tr>
+    <tr><td class="paramname">count</td><td>requested length </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>buffer </dd></dl>
 
 </div>
 </div>
@@ -536,8 +2055,42 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 <p>get substring The returned buffer ragnge is the same as std::string_view::substr(). In addition the lifetime is shared between returned buffer and this buffer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">offset</td><td>offset point of the buffer </td></tr>
-    <tr><td class="paramname">length</td><td>length of the buffer, If the length is std::string_view::npos then the length is from offset to the end of string. </td></tr>
+    <tr><td class="paramname">pos</td><td>position of the first character </td></tr>
+    <tr><td class="paramname">count</td><td>requested length </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>buffer </dd></dl>
+
+</div>
+</div>
+<a id="a5d5d131740b5cb75e29f174db8c08218" name="a5d5d131740b5cb75e29f174db8c08218"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d5d131740b5cb75e29f174db8c08218">&#9670;&#160;</a></span>swap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void async_mqtt::buffer::swap </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1buffer.html">buffer</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>buf</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>swap the buffer </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>target </td></tr>
   </table>
   </dd>
 </dl>
@@ -545,7 +2098,7 @@ template&lt;typename It , typename End , typename std::enable_if_t&lt; is_input_
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/kondo/work/async_mqtt/include/async_mqtt/<a class="el" href="buffer_8hpp_source.html">buffer.hpp</a></li>
+<li>/home/kondo/work/async_mqtt/include/async_mqtt/util/<a class="el" href="buffer_8hpp_source.html">buffer.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

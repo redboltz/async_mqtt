@@ -1,5 +1,5 @@
-<map id="Unsuback_v3_1_1" name="Unsuback_v3_1_1">
-<area shape="rect" id="Node000002" href="$group__packet__v3__1__1.html" title="protocol version 3.1.1" alt="" coords="5,5,122,33"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="170,5,308,33"/>
-<area shape="rect" id="Node000003" href="$group__unsuback__v3__1__1__detail.html" title="packet internal detailes (e.g. type&#45;aliased API&#39;s actual type information)" alt="" coords="356,5,538,33"/>
+<map id="UNSUBACK packet (v3.1.1)" name="UNSUBACK packet (v3.1.1)">
+<area shape="rect" id="Node000002" href="$group__packet__v3__1__1.html" title=" " alt="" coords="5,5,168,33"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="216,5,412,33"/>
+<area shape="rect" id="Node000003" href="$group__unsuback__v3__1__1__detail.html" title=" " alt="" coords="460,5,622,33"/>
 </map>

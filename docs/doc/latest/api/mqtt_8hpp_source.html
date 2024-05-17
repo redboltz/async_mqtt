@@ -113,16 +113,16 @@ $(function(){initNavTree('mqtt_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;async_mqtt/predefined_layer/customized_basic_stream.hpp&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>async_mqtt {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">namespace </span>as = boost::asio;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">namespace </span>protocol {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">   40</a></span><span class="keyword">using </span><a class="code hl_typedef" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">mqtt</a> = as::basic_stream_socket&lt;as::ip::tcp, as::any_io_executor&gt;;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>} <span class="comment">// namespace protocol</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">namespace </span>async_mqtt {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">namespace </span>as = boost::asio;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">namespace </span>protocol {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">   39</a></span><span class="keyword">using </span><a class="code hl_typedef" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">mqtt</a> = as::basic_stream_socket&lt;as::ip::tcp, as::any_io_executor&gt;;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>} <span class="comment">// namespace protocol</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">template</span> &lt;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">typename</span> Socket,</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">typename</span> Executor,</div>
@@ -148,9 +148,9 @@ $(function(){initNavTree('mqtt_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="preprocessor">#include &lt;async_mqtt/predefined_layer/impl/mqtt_handshake.hpp&gt;</span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PREDEFINED_LAYER_MQTT_HPP</span></div>
-<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:36</div></div>
+<div class="ttc" id="agroup__error_html_gaa100a3fca173f12e33f3b5711710033d"><div class="ttname"><a href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">async_mqtt::error_code</a></div><div class="ttdeci">sys::error_code error_code</div><div class="ttdoc">type alias of boost::sytem.</div><div class="ttdef"><b>Definition</b> exception.hpp:35</div></div>
 <div class="ttc" id="agroup__predefined__layer__mqtt_html_ga100abc0faf59cd94f8e8de2165fa14be"><div class="ttname"><a href="group__predefined__layer__mqtt.html#ga100abc0faf59cd94f8e8de2165fa14be">async_mqtt::underlying_handshake</a></div><div class="ttdeci">underlying_handshake(as::basic_stream_socket&lt; Socket, Executor &gt; &amp;layer, std::string_view host, std::string_view port, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; Executor &gt;{})</div><div class="ttdoc">resovling name and connect TCP layer</div></div>
-<div class="ttc" id="agroup__predefined__layer__mqtt_html_gaf0fedc2324340e8a97a85d091e912983"><div class="ttname"><a href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">async_mqtt::protocol::mqtt</a></div><div class="ttdeci">as::basic_stream_socket&lt; as::ip::tcp, as::any_io_executor &gt; mqtt</div><div class="ttdoc">Type alias of Boost.Asio TCP socket.</div><div class="ttdef"><b>Definition</b> mqtt.hpp:40</div></div>
+<div class="ttc" id="agroup__predefined__layer__mqtt_html_gaf0fedc2324340e8a97a85d091e912983"><div class="ttname"><a href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">async_mqtt::protocol::mqtt</a></div><div class="ttdeci">as::basic_stream_socket&lt; as::ip::tcp, as::any_io_executor &gt; mqtt</div><div class="ttdoc">Type alias of Boost.Asio TCP socket.</div><div class="ttdef"><b>Definition</b> mqtt.hpp:39</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

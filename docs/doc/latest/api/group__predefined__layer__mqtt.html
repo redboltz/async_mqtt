@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>async_mqtt: Predefined_layer_mqtt</title>
+<title>async_mqtt: predefined underlying layer (TCP)</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -95,16 +95,16 @@ $(function(){initNavTree('group__predefined__layer__mqtt.html',''); initResizabl
   <div class="summary">
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">Predefined_layer_mqtt<div class="ingroups"><a class="el" href="group__connection.html">Connection</a> &raquo; <a class="el" href="group__underlying__layer.html">Underlying_layer</a> &raquo; <a class="el" href="group__predefined__layer.html">Predefined_layer</a></div></div></div>
+  <div class="headertitle"><div class="title">predefined underlying layer (TCP)<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__underlying__layer.html">predefined underlying layers and how to adapt your own layer</a> &raquo; <a class="el" href="group__predefined__layer.html">predefined underlying layers</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
-Collaboration diagram for Predefined_layer_mqtt:</div>
+Collaboration diagram for predefined underlying layer (TCP):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__predefined__layer__mqtt.png" border="0" usemap="#agroup____predefined____layer____mqtt" alt=""/></div>
 <map name="agroup____predefined____layer____mqtt" id="agroup____predefined____layer____mqtt">
-<area shape="rect" href="group__predefined__layer.html" title=" " alt="" coords="5,5,136,33"/>
-<area shape="rect" title=" " alt="" coords="184,5,352,33"/>
+<area shape="rect" href="group__predefined__layer.html" title=" " alt="" coords="5,5,169,50"/>
+<area shape="rect" title=" " alt="" coords="217,5,380,50"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -158,6 +158,7 @@ template&lt;typename Socket , typename Executor , typename CompletionToken  = as
 <p>resovling name and connect TCP layer </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">layer</td><td>TCP layer </td></tr>
     <tr><td class="paramname">host</td><td>host name or IP address to connect </td></tr>
     <tr><td class="paramname">port</td><td>port number to connect </td></tr>
     <tr><td class="paramname">token</td><td>completion token. signature is void(error_code) </td></tr>
