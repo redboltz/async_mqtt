@@ -54,7 +54,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(error_code)
 )
 #endif // !defined(GENERATING_DOCUMENTATION)
-underlying_handshake(
+async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,
     std::string_view port,
@@ -87,7 +87,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(error_code)
 )
 #endif // !defined(GENERATING_DOCUMENTATION)
-underlying_handshake(
+async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,
     std::string_view port,

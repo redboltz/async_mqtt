@@ -825,7 +825,7 @@ private:
                 sei_ = vm_["sei"].template as<std::uint32_t>();
 
                 // Handshake underlying layer
-                am::underlying_handshake(
+                am::async_underlying_handshake(
                     ep_.next_layer(),
                     host_,
                     boost::lexical_cast<std::string>(port),

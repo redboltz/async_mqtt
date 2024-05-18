@@ -28,10 +28,10 @@ namespace protocol {
 /**
  * @ingroup predefined_layer_wss
  * @brief Type alias of boost::beast::websocket::stream of mqtts
- * underlying_handshake function can be called with wss.
+ * async_underlying_handshake function can be called with wss.
  * You can call the following functions to handshake.
  *
- * underlying_handshake(
+ * async_underlying_handshake(
  *     bs::websocket::stream<NextLayer>& layer,
  *     std::string_view host,
  *     std::string_view port,
@@ -39,7 +39,7 @@ namespace protocol {
  *     CompletionToken&& token
  * )
  *
- * underlying_handshake(
+ * async_underlying_handshake(
  *     bs::websocket::stream<NextLayer>& layer,
  *     std::string_view host,
  *     std::string_view port,

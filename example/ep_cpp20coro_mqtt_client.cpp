@@ -25,7 +25,7 @@ proc(
 
     try {
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        co_await am::underlying_handshake(amep->next_layer(), host, port, as::use_awaitable);
+        co_await am::async_underlying_handshake(amep->next_layer(), host, port, as::use_awaitable);
         std::cout << "Underlying layer handshaked" << std::endl;
 
         // prepare will message if you need.

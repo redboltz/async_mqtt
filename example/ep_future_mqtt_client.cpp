@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
         std::string host{argv[1]};
         std::string port{argv[2]};
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        am::underlying_handshake(amep->next_layer(), host, port, as::use_future).get();
+        am::async_underlying_handshake(amep->next_layer(), host, port, as::use_future).get();
         std::cout << "Underlying layer handshaked" << std::endl;
 
         // prepare will message if you need.

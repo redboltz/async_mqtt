@@ -36,7 +36,7 @@ struct ws_handshake_op {
         Self& self
     ) {
         auto& a_layer{layer};
-        underlying_handshake(
+        async_underlying_handshake(
             a_layer.next_layer(),
             host,
             port,
@@ -85,7 +85,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code)
 )
-underlying_handshake(
+async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,
     std::string_view port,
@@ -115,7 +115,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code)
 )
-underlying_handshake(
+async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,
     std::string_view port,

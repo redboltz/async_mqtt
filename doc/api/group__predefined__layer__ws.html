@@ -117,19 +117,19 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>async_mqtt::protocol
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga5b4d9505b919d29eae931ad73952cd95" id="r_ga5b4d9505b919d29eae931ad73952cd95"><td class="memTemplParams" colspan="2">template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </td></tr>
-<tr class="memitem:ga5b4d9505b919d29eae931ad73952cd95"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga5b4d9505b919d29eae931ad73952cd95">async_mqtt::underlying_handshake</a> (bs::websocket::stream&lt; NextLayer &gt; &amp;layer, std::string_view host, std::string_view port, std::string_view path, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; typename bs::websocket::stream&lt; NextLayer &gt;::executor_type &gt;{})</td></tr>
-<tr class="memdesc:ga5b4d9505b919d29eae931ad73952cd95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Websocket handshake This function does underlying layers handshaking prior to Websocket handshake.  <br /></td></tr>
-<tr class="separator:ga5b4d9505b919d29eae931ad73952cd95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2e9378dc2e23d0dd06b4f970db49025a" id="r_ga2e9378dc2e23d0dd06b4f970db49025a"><td class="memTemplParams" colspan="2">template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </td></tr>
-<tr class="memitem:ga2e9378dc2e23d0dd06b4f970db49025a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga2e9378dc2e23d0dd06b4f970db49025a">async_mqtt::underlying_handshake</a> (bs::websocket::stream&lt; NextLayer &gt; &amp;layer, std::string_view host, std::string_view port, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; typename bs::websocket::stream&lt; NextLayer &gt;::executor_type &gt;{})</td></tr>
-<tr class="memdesc:ga2e9378dc2e23d0dd06b4f970db49025a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Websocket handshake This function does underlying layers handshaking prior to Websocket handshake Websocket path is set as "/".  <br /></td></tr>
-<tr class="separator:ga2e9378dc2e23d0dd06b4f970db49025a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga24f02ea51005c77468c7f02df4b84d89" id="r_ga24f02ea51005c77468c7f02df4b84d89"><td class="memTemplParams" colspan="2">template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </td></tr>
+<tr class="memitem:ga24f02ea51005c77468c7f02df4b84d89"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga24f02ea51005c77468c7f02df4b84d89">async_mqtt::async_underlying_handshake</a> (bs::websocket::stream&lt; NextLayer &gt; &amp;layer, std::string_view host, std::string_view port, std::string_view path, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; typename bs::websocket::stream&lt; NextLayer &gt;::executor_type &gt;{})</td></tr>
+<tr class="memdesc:ga24f02ea51005c77468c7f02df4b84d89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Websocket handshake This function does underlying layers handshaking prior to Websocket handshake.  <br /></td></tr>
+<tr class="separator:ga24f02ea51005c77468c7f02df4b84d89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa852d19bb02f77d8603eeddf89ba18df" id="r_gaa852d19bb02f77d8603eeddf89ba18df"><td class="memTemplParams" colspan="2">template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </td></tr>
+<tr class="memitem:gaa852d19bb02f77d8603eeddf89ba18df"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#gaa852d19bb02f77d8603eeddf89ba18df">async_mqtt::async_underlying_handshake</a> (bs::websocket::stream&lt; NextLayer &gt; &amp;layer, std::string_view host, std::string_view port, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; typename bs::websocket::stream&lt; NextLayer &gt;::executor_type &gt;{})</td></tr>
+<tr class="memdesc:gaa852d19bb02f77d8603eeddf89ba18df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Websocket handshake This function does underlying layers handshaking prior to Websocket handshake Websocket path is set as "/".  <br /></td></tr>
+<tr class="separator:gaa852d19bb02f77d8603eeddf89ba18df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga2e9378dc2e23d0dd06b4f970db49025a" name="ga2e9378dc2e23d0dd06b4f970db49025a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2e9378dc2e23d0dd06b4f970db49025a">&#9670;&#160;</a></span>underlying_handshake() <span class="overload">[1/2]</span></h2>
+<a id="gaa852d19bb02f77d8603eeddf89ba18df" name="gaa852d19bb02f77d8603eeddf89ba18df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa852d19bb02f77d8603eeddf89ba18df">&#9670;&#160;</a></span>async_underlying_handshake() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +137,7 @@ Functions</h2></td></tr>
 template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">async_mqtt::underlying_handshake </td>
+          <td class="memname">async_mqtt::async_underlying_handshake </td>
           <td>(</td>
           <td class="paramtype">bs::websocket::stream&lt; NextLayer &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>layer</em>, </span></td>
         </tr>
@@ -173,8 +173,8 @@ template&lt;typename NextLayer , typename CompletionToken  = as::default_complet
 
 </div>
 </div>
-<a id="ga5b4d9505b919d29eae931ad73952cd95" name="ga5b4d9505b919d29eae931ad73952cd95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5b4d9505b919d29eae931ad73952cd95">&#9670;&#160;</a></span>underlying_handshake() <span class="overload">[2/2]</span></h2>
+<a id="ga24f02ea51005c77468c7f02df4b84d89" name="ga24f02ea51005c77468c7f02df4b84d89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga24f02ea51005c77468c7f02df4b84d89">&#9670;&#160;</a></span>async_underlying_handshake() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -182,7 +182,7 @@ template&lt;typename NextLayer , typename CompletionToken  = as::default_complet
 template&lt;typename NextLayer , typename CompletionToken  = as::default_completion_token_t&lt;        typename bs::websocket::stream&lt;NextLayer&gt;::executor_type    &gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">async_mqtt::underlying_handshake </td>
+          <td class="memname">async_mqtt::async_underlying_handshake </td>
           <td>(</td>
           <td class="paramtype">bs::websocket::stream&lt; NextLayer &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>layer</em>, </span></td>
         </tr>

@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     std::size_t count = 0;
 
     // Handshake undlerying layer (Name resolution and TCP handshaking)
-    am::underlying_handshake(
+    am::async_underlying_handshake(
         amep->next_layer(),
         argv[1],
         argv[2],
