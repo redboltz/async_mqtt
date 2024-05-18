@@ -88,11 +88,11 @@ BOOST_AUTO_TEST_CASE(custom_read) {
     my_alloc_read<int> ma;
     BOOST_CHECK(!allocate_called_read);
     BOOST_CHECK(!deallocate_called_read);
-    ep->send(
+    ep->async_send(
         connect,
         [&](auto se) {
             BOOST_CHECK(!se);
-            ep->recv(
+            ep->async_recv(
                 as::bind_allocator(
                     ma,
                     [&](auto pv) {
@@ -170,13 +170,13 @@ BOOST_AUTO_TEST_CASE(custom_write) {
     my_alloc_write<int> ma;
     BOOST_CHECK(!allocate_called_write);
     BOOST_CHECK(!deallocate_called_write);
-    ep->send(
+    ep->async_send(
         connect,
         as::bind_allocator(
             ma,
             [&](auto se) {
                 BOOST_CHECK(!se);
-                ep->recv(
+                ep->async_recv(
                     [&](auto pv) {
                         BOOST_TEST(pv == connack);
                     }

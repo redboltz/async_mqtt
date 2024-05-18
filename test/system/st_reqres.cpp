@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
 
                 // reconnect inherit
                 yield ep().next_layer().async_connect(
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         false,   // clean_start
                         0, // keep_alive
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
 
                 // reconnect no inherit (clean_start)
                 yield ep().next_layer().async_connect(
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }

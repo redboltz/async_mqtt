@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                     0x1234, // keep_alive
                     "cid1"
                 };
-                auto se = co_await ep->send(connect, as::deferred);
+                auto se = co_await ep->async_send(connect, as::deferred);
                 BOOST_TEST(!se);
                 co_await ep->next_layer().wait_response(as::deferred);
 
@@ -52,11 +52,11 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                     am::connect_return_code::accepted
                 };
                 co_await ep->next_layer().emulate_recv(connack, as::deferred);
-                co_await ep->recv(as::deferred);
+                co_await ep->async_recv(as::deferred);
             }
             // test scenario
             {
-                auto se = co_await ep->send(am::v3_1_1::pingreq_packet{}, as::deferred);
+                auto se = co_await ep->async_send(am::v3_1_1::pingreq_packet{}, as::deferred);
                 BOOST_TEST(!se);
                 co_await ep->next_layer().wait_response(as::deferred);
 
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                     0x1234, // keep_alive
                     "cid1"
                 };
-                auto se = co_await ep->send(connect, as::deferred);
+                auto se = co_await ep->async_send(connect, as::deferred);
                 BOOST_TEST(!se);
                 co_await ep->next_layer().wait_response(as::deferred);
 
@@ -103,11 +103,11 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                     am::connect_reason_code::success
                 };
                 co_await ep->next_layer().emulate_recv(connack, as::deferred);
-                co_await ep->recv(as::deferred);
+                co_await ep->async_recv(as::deferred);
             }
             // test scenario
             {
-                auto se = co_await ep->send(am::v5::pingreq_packet{}, as::deferred);
+                auto se = co_await ep->async_send(am::v5::pingreq_packet{}, as::deferred);
                 BOOST_TEST(!se);
                 co_await ep->next_layer().wait_response(as::deferred);
 

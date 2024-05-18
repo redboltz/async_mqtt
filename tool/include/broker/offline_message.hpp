@@ -70,7 +70,7 @@ public:
             [&] (packet_id_type pid) {
                 switch (ver) {
                 case protocol_version::v3_1_1:
-                    epsp.send(
+                    epsp.async_send(
                         v3_1_1::publish_packet{
                             pid,
                             topic_,
@@ -103,7 +103,7 @@ public:
                         if (d < 0) d = 0;
                         packet.update_message_expiry_interval(static_cast<uint32_t>(d));
                     }
-                    epsp.send(
+                    epsp.async_send(
                         force_move(packet),
                         [epsp](system_error const& ec) {
                             if (ec) {

@@ -65,7 +65,7 @@ public:
             );
         }
         epsp.register_packet_id(packet_id());
-        epsp.send(
+        epsp.async_send(
             packet_opt ? *packet_opt : packet_,
             [epsp](system_error const& ec) {
                 if (ec) {

@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classasync__mqtt_1_1topic__subopts.html#a0338f53fa77add5ab971cd9f8caf7069":[0,2,6,4],
 "classasync__mqtt_1_1topic__subopts.html#a222847665bfaa5eb7d9193009ef311d3":[0,2,6,6],
 "classasync__mqtt_1_1topic__subopts.html#a6a95bae7c14266502f0138137faf14d7":[0,2,6,2],
 "classasync__mqtt_1_1topic__subopts.html#a7922576c148f49a4c686e39f7dd56307":[0,2,6,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1v5_1_1disconnect__packet.html":[0,2,1,4,0],
 "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a0094fc80ca62d4c3bdfc4563cfb76978":[0,2,1,4,0,6],
 "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a266b66b6c83ae212720cb9c6d3230273":[0,2,1,4,0,3],
-"classasync__mqtt_1_1v5_1_1disconnect__packet.html#a3f23c165387d5273fe4a029a77a7b092":[0,2,1,4,0,7],
-"classasync__mqtt_1_1v5_1_1disconnect__packet.html#a65ee27ddcf0d22a8b3fb5b6df4a627cb":[0,2,1,4,0,0]
+"classasync__mqtt_1_1v5_1_1disconnect__packet.html#a3f23c165387d5273fe4a029a77a7b092":[0,2,1,4,0,7]
 };

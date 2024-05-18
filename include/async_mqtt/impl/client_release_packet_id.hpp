@@ -17,11 +17,11 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-client<Version, NextLayer>::release_packet_id(
+client<Version, NextLayer>::async_release_packet_id(
     packet_id_type pid,
     CompletionToken&& token
 ) {
-    return ep_->release_packet_id(pid, std::forward<CompletionToken>(token));
+    return ep_->async_release_packet_id(pid, std::forward<CompletionToken>(token));
 }
 
 // sync version

@@ -49,7 +49,7 @@ acquire_unique_packet_id_wait_until_op {
                             << "packet_id is fully allocated. waiting release";
                         // infinity timer. cancel is retry trigger.
                         auto& a_ep{ep};
-                        a_ep.add_retry(
+                        a_ep.async_add_retry(
                             as::bind_executor(
                                 a_ep.get_executor(),
                                 force_move(self)
@@ -68,7 +68,7 @@ acquire_unique_packet_id_wait_until_op {
                     << "packet_id waiter exists. add the end of waiter queue";
                 // infinity timer. cancel is retry trigger.
                 auto& a_ep{ep};
-                a_ep.add_retry(
+                a_ep.async_add_retry(
                     as::bind_executor(
                         a_ep.get_executor(),
                         force_move(self)
@@ -86,7 +86,7 @@ acquire_unique_packet_id_wait_until_op {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 auto
-basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id_wait_until(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id_wait_until(
     CompletionToken&& token
 ) {
     ASYNC_MQTT_LOG("mqtt_api", info)

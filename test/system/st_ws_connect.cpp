@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         "10080",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amep->send(
+            amep->async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                 },
                 [&](am::system_error const& se) {
                     BOOST_TEST(!se);
-                    amep->recv(
+                    amep->async_recv(
                         [&](am::packet_variant pv) {
                             pv.visit(
                                 am::overload {
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                                     }
                                 }
                             );
-                            amep->close([]{});
+                            amep->async_close([]{});
                         }
                     );
                 }
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep->send(
+            amep->async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     }
     {
         auto fut =
-            amep->recv(as::use_future);
+            amep->async_recv(as::use_future);
         auto pv = fut.get();
         pv.visit(
             am::overload {
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(fut) {
         );
     }
     {
-        auto fut = amep->close(as::use_future);
+        auto fut = amep->async_close(as::use_future);
         fut.get();
     }
 }
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }

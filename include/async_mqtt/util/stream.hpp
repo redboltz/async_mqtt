@@ -82,7 +82,7 @@ public:
         CompletionToken,
         void(error_code, buffer)
     )
-    read_packet(
+    async_read_packet(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -94,7 +94,7 @@ public:
         CompletionToken,
         void(system_error)
     )
-    write_packet(
+    async_write_packet(
         Packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -110,13 +110,20 @@ public:
         CompletionToken,
         void()
     )
-    close(
+    async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
     void set_bulk_write(bool val) {
         bulk_write_ = val;
     }
+
+    template <typename Executor1>
+    struct rebind_executor {
+        using other = stream<
+            typename NextLayer::template rebind_executor<Executor1>::other
+        >;
+    };
 
 private:
 
@@ -129,6 +136,16 @@ private:
     explicit
     stream(T&& t, Args&&... args)
         :nl_{std::forward<T>(t), std::forward<Args>(args)...}
+    {
+        initialize(nl_);
+    }
+
+    template <typename Other>
+    explicit
+    stream(
+        stream<Other>&& other
+    )
+        :nl_{force_move(other.nl_)}
     {
         initialize(nl_);
     }

@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub1).send(
+                yield ep(sub1).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -77,9 +77,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub1).send(
+                yield ep(sub1).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub1).acquire_unique_packet_id(),
                         {
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect sub2
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub2).send(
+                yield ep(sub2).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -110,9 +110,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub2).send(
+                yield ep(sub2).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub2).acquire_unique_packet_id(),
                         {
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect sub3
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub3).send(
+                yield ep(sub3).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -143,9 +143,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub3).send(
+                yield ep(sub3).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub3).acquire_unique_packet_id(),
                         {
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect pub
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -176,11 +176,11 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this);
+                yield ep(pub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
 
                 // publish 1
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         "topic1",
                         "payload1",
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 2
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -201,10 +201,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 3
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -214,10 +214,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv pubrec
+                yield ep(pub).async_recv(*this); // recv pubrec
 
                 // publish 4
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         "topic1",
                         "payload4",
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 5
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -238,10 +238,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 6
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -251,9 +251,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv pubrec
+                yield ep(pub).async_recv(*this); // recv pubrec
 
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         am::qos::at_most_once
                     })
                 );
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         am::qos::at_least_once
                     })
                 );
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     })
                 );
 
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         am::qos::at_most_once
                     })
                 );
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         am::qos::at_least_once
                     })
                 );
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -320,10 +320,10 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 );
 
 
-                yield ep(pub).close(*this);
-                yield ep(sub1).close(*this);
-                yield ep(sub2).close(*this);
-                yield ep(sub3).close(*this);
+                yield ep(pub).async_close(*this);
+                yield ep(sub1).async_close(*this);
+                yield ep(sub2).async_close(*this);
+                yield ep(sub3).async_close(*this);
                 yield set_finish();
             }
         }
@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub1).send(
+                yield ep(sub1).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -395,9 +395,9 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub1).send(
+                yield ep(sub1).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub1).acquire_unique_packet_id(),
                         {
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect sub2
@@ -417,7 +417,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub2).send(
+                yield ep(sub2).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -429,9 +429,9 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub2).send(
+                yield ep(sub2).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub2).acquire_unique_packet_id(),
                         {
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect sub3
@@ -451,7 +451,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(sub3).send(
+                yield ep(sub3).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -463,9 +463,9 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                yield ep(sub3).send(
+                yield ep(sub3).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub3).acquire_unique_packet_id(),
                         {
@@ -476,7 +476,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect pub
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -497,11 +497,11 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this);
+                yield ep(pub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
 
                 // publish 1
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         "topic1",
                         "payload1",
@@ -512,7 +512,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 2
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -522,10 +522,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 3
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -535,10 +535,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv pubrec
+                yield ep(pub).async_recv(*this); // recv pubrec
 
 
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -561,7 +561,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -575,8 +575,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
                 // unsub
-                yield ep(sub1).acquire_unique_packet_id(*this);
-                yield ep(sub1).send(
+                yield ep(sub1).async_acquire_unique_packet_id(*this);
+                yield ep(sub1).async_send(
                     am::v5::unsubscribe_packet{
                         *pid,
                         {
@@ -586,11 +586,11 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(sub1).recv(*this);
+                yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::unsuback_packet>());
 
                 // publish 4
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         "topic1",
                         "payload4",
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 5
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -611,10 +611,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv puback
+                yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 6
-                yield ep(pub).send(
+                yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
                         "topic1",
@@ -624,9 +624,9 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep(pub).recv(*this); // recv pubrec
+                yield ep(pub).async_recv(*this); // recv pubrec
 
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -637,8 +637,8 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
-                yield ep(sub3).recv(*this); // recv pubrel
-                yield ep(sub3).recv(*this);
+                yield ep(sub3).async_recv(*this); // recv pubrel
+                yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -650,7 +650,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{10}}
                     })
                 );
-                yield ep(sub2).recv(*this);
+                yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
                     ==
@@ -664,10 +664,10 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
 
-                yield ep(pub).close(*this);
-                yield ep(sub1).close(*this);
-                yield ep(sub2).close(*this);
-                yield ep(sub3).close(*this);
+                yield ep(pub).async_close(*this);
+                yield ep(sub1).async_close(*this);
+                yield ep(sub2).async_close(*this);
+                yield ep(sub3).async_close(*this);
                 yield set_finish();
             }
         }

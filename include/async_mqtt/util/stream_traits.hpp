@@ -74,7 +74,6 @@ get_lowest_layer_impl(T& t, std::true_type) noexcept {
 } // namespace detail
 
 
-
 template<typename T>
 using executor_type = decltype(std::declval<T>().get_executor());
 

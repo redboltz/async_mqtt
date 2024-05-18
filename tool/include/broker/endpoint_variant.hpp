@@ -116,12 +116,12 @@ public:
 
     template <typename CompletionToken>
     auto
-    acquire_unique_packet_id(
+    async_acquire_unique_packet_id(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.acquire_unique_packet_id(
+                return ep.async_acquire_unique_packet_id(
                     std::forward<CompletionToken>(token)
                 );
             }
@@ -130,12 +130,12 @@ public:
 
     template <typename CompletionToken>
     auto
-    acquire_unique_packet_id_wait_until(
+    async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.acquire_unique_packet_id_wait_until(
+                return ep.async_acquire_unique_packet_id_wait_until(
                     std::forward<CompletionToken>(token)
                 );
             }
@@ -144,13 +144,13 @@ public:
 
     template <typename CompletionToken>
     auto
-    register_packet_id(
+    async_register_packet_id(
         typename basic_packet_id_type<packet_id_bytes>::type packet_id,
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.register_packet_id(
+                return ep.async_register_packet_id(
                     packet_id,
                     std::forward<CompletionToken>(token)
                 );
@@ -160,13 +160,13 @@ public:
 
     template <typename CompletionToken>
     auto
-    release_packet_id(
+    async_release_packet_id(
         typename basic_packet_id_type<packet_id_bytes>::type packet_id,
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.release_packet_id(
+                return ep.async_release_packet_id(
                     packet_id,
                     std::forward<CompletionToken>(token)
                 );
@@ -176,13 +176,13 @@ public:
 
     template <typename Packet, typename CompletionToken>
     auto
-    send(
+    async_send(
         Packet&& packet,
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.send(
+                return ep.async_send(
                     std::forward<Packet>(packet),
                     std::forward<CompletionToken>(token)
                 );
@@ -192,12 +192,12 @@ public:
 
     template <typename CompletionToken>
     auto
-    recv(
+    async_recv(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.recv(
+                return ep.async_recv(
                     std::forward<CompletionToken>(token)
                 );
             }
@@ -206,12 +206,12 @@ public:
 
     template <typename CompletionToken>
     auto
-    close(
+    async_close(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.close(
+                return ep.async_close(
                     std::forward<CompletionToken>(token)
                 );
             }
@@ -220,13 +220,13 @@ public:
 
     template <typename CompletionToken>
     auto
-    restore_packets(
+    async_restore_packets(
         std::vector<basic_store_packet_variant<packet_id_bytes>> pvs,
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.restore_packets(
+                return ep.async_restore_packets(
                     force_move(pvs),
                     std::forward<CompletionToken>(token)
                 );
@@ -236,12 +236,12 @@ public:
 
     template <typename CompletionToken>
     auto
-    get_stored_packets(
+    async_get_stored_packets(
         CompletionToken&& token
     ) {
         return visit(
             [&](auto& ep) {
-                return ep.get_stored_packets(
+                return ep.async_get_stored_packets(
                     std::forward<CompletionToken>(token)
                 );
             }

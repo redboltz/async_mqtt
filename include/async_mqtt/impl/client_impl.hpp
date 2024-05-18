@@ -100,6 +100,17 @@ client<Version, NextLayer>::client(
 }
 
 template <protocol_version Version, typename NextLayer>
+template <typename Other>
+client<Version, NextLayer>::client(
+    client<Version, Other>&& other
+): ep_{ep_type::create(Version, force_move(other.next_layer()))},
+   tim_notify_publish_recv_{ep_->get_executor()}
+{
+    ep_->set_auto_pub_response(true);
+    ep_->set_auto_ping_response(true);
+}
+
+template <protocol_version Version, typename NextLayer>
 inline
 as::any_io_executor
 client<Version, NextLayer>::get_executor() const {
@@ -166,7 +177,7 @@ template <protocol_version Version, typename NextLayer>
 inline
 void
 client<Version, NextLayer>::recv_loop() {
-    ep_->recv(
+    ep_->async_recv(
         as::bind_executor(
             get_executor(),
             [this]

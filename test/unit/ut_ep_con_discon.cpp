@@ -120,18 +120,18 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // send valid packets
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -221,13 +221,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(disconnect, as::use_future).get();
+        auto ec = ep->async_send(disconnect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -238,13 +238,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -255,13 +255,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(disconnect, as::use_future).get();
+        auto ec = ep->async_send(disconnect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connack, as::use_future).get();
+        auto ec = ep->async_send(connack, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -406,7 +406,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(connack), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(connack), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(suback), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(suback), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -439,7 +439,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(unsuback), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(unsuback), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -449,12 +449,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(pingresp), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(pingresp), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -462,7 +462,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -473,7 +473,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -483,7 +483,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -493,7 +493,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -523,7 +523,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -533,7 +533,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -544,12 +544,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -557,7 +557,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -568,7 +568,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -598,7 +598,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -608,7 +608,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -618,7 +618,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -628,13 +628,13 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -645,7 +645,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -666,7 +666,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -676,7 +676,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -686,7 +686,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -696,7 +696,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -716,10 +716,10 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -810,7 +810,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     // recv connect
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -821,12 +821,12 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(connack, as::use_future).get();
+        auto ec = ep1->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep1->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep1->async_register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
     ep1->next_layer().set_write_packet_checker(
@@ -835,7 +835,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(publish, as::use_future).get();
+        auto ec = ep1->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -845,7 +845,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(puback, as::use_future).get();
+        auto ec = ep1->async_send(puback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -855,7 +855,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(pubrec, as::use_future).get();
+        auto ec = ep1->async_send(pubrec, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -865,7 +865,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(pubrel, as::use_future).get();
+        auto ec = ep1->async_send(pubrel, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -875,7 +875,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(pubcomp, as::use_future).get();
+        auto ec = ep1->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -885,7 +885,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(suback, as::use_future).get();
+        auto ec = ep1->async_send(suback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -895,7 +895,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(unsuback, as::use_future).get();
+        auto ec = ep1->async_send(unsuback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -905,14 +905,14 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep1->send(pingresp, as::use_future).get();
+        auto ec = ep1->async_send(pingresp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
 
     // recv close
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -926,7 +926,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
 
     // recv connect
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -937,12 +937,12 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep2->send(connack, as::use_future).get();
+        auto ec = ep2->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep2->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep2->async_register_packet_id(0x1, as::use_future).get());
 
     // send publish behalf of valid packets
     ep2->next_layer().set_write_packet_checker(
@@ -951,13 +951,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep2->send(publish, as::use_future).get();
+        auto ec = ep2->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -1072,7 +1072,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1082,7 +1082,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1092,7 +1092,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1102,7 +1102,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1115,7 +1115,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(connect), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(connect), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1125,7 +1125,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(subscribe), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(subscribe), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1135,7 +1135,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(unsubscribe), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(unsubscribe), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1145,12 +1145,12 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(pingreq), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(pingreq), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -1158,7 +1158,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -1169,7 +1169,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1179,7 +1179,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1189,7 +1189,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1199,7 +1199,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1209,7 +1209,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1219,7 +1219,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1229,13 +1229,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // recv connect
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -1246,7 +1246,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -1257,7 +1257,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1267,7 +1267,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1277,7 +1277,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1287,7 +1287,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1297,7 +1297,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1307,7 +1307,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1317,7 +1317,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1328,7 +1328,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(connack, as::use_future).get();
+        auto ec = ep->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1339,7 +1339,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -1350,7 +1350,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1360,7 +1360,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1370,7 +1370,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1380,7 +1380,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1390,7 +1390,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1400,7 +1400,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1410,10 +1410,10 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -1534,7 +1534,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1545,13 +1545,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(auth, as::use_future).get();
+        auto ec = ep->async_send(auth, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -1562,19 +1562,19 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(auth, as::use_future).get();
+        auto ec = ep->async_send(auth, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(publish == wp);
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1584,7 +1584,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1594,7 +1594,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1604,7 +1604,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1614,7 +1614,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1624,7 +1624,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1634,7 +1634,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1644,7 +1644,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -1656,13 +1656,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(disconnect, as::use_future).get();
+        auto ec = ep->async_send(disconnect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -1673,13 +1673,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -1690,13 +1690,13 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(disconnect, as::use_future).get();
+        auto ec = ep->async_send(disconnect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -1839,7 +1839,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(connack, as::use_future).get();
+        auto ec = ep->async_send(connack, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1849,7 +1849,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1859,7 +1859,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1869,7 +1869,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1882,7 +1882,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(connack), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(connack), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1892,7 +1892,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(suback), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(suback), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1902,7 +1902,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(unsuback), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(unsuback), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1912,12 +1912,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(pingresp), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(pingresp), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -1925,7 +1925,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -1936,7 +1936,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1946,7 +1946,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1956,7 +1956,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1966,7 +1966,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1976,7 +1976,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1986,7 +1986,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -1996,7 +1996,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2006,7 +2006,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(auth, as::use_future).get();
+        auto ec = ep->async_send(auth, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2017,12 +2017,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -2030,7 +2030,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -2041,7 +2041,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2051,7 +2051,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2061,7 +2061,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2071,7 +2071,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2081,7 +2081,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2091,7 +2091,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2101,13 +2101,13 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -2118,7 +2118,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -2129,7 +2129,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2139,7 +2139,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2149,7 +2149,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2159,7 +2159,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2169,7 +2169,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2179,7 +2179,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2189,10 +2189,10 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -2311,7 +2311,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     // recv connect
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -2322,7 +2322,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(auth, as::use_future).get();
+        auto ec = ep1->async_send(auth, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2333,12 +2333,12 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(connack, as::use_future).get();
+        auto ec = ep1->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep1->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep1->async_register_packet_id(0x1, as::use_future).get());
 
     // send valid packets
     ep1->next_layer().set_write_packet_checker(
@@ -2347,7 +2347,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(auth, as::use_future).get();
+        auto ec = ep1->async_send(auth, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2357,7 +2357,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(publish, as::use_future).get();
+        auto ec = ep1->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2367,7 +2367,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(puback, as::use_future).get();
+        auto ec = ep1->async_send(puback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2377,7 +2377,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(pubrec, as::use_future).get();
+        auto ec = ep1->async_send(pubrec, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2387,7 +2387,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(pubrel, as::use_future).get();
+        auto ec = ep1->async_send(pubrel, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2397,7 +2397,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(pubcomp, as::use_future).get();
+        auto ec = ep1->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2407,7 +2407,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(suback, as::use_future).get();
+        auto ec = ep1->async_send(suback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2417,7 +2417,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(unsuback, as::use_future).get();
+        auto ec = ep1->async_send(unsuback, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2427,14 +2427,14 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep1->send(pingresp, as::use_future).get();
+        auto ec = ep1->async_send(pingresp, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
 
     // recv close
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -2448,7 +2448,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
 
     // recv connect
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -2459,12 +2459,12 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep2->send(connack, as::use_future).get();
+        auto ec = ep2->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep2->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep2->async_register_packet_id(0x1, as::use_future).get());
 
     // send publish behalf of valid packets
     ep2->next_layer().set_write_packet_checker(
@@ -2473,13 +2473,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
     {
-        auto ec = ep2->send(publish, as::use_future).get();
+        auto ec = ep2->async_send(publish, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -2622,7 +2622,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2632,7 +2632,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(subscribe, as::use_future).get();
+        auto ec = ep->async_send(subscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2642,7 +2642,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(unsubscribe, as::use_future).get();
+        auto ec = ep->async_send(unsubscribe, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2652,7 +2652,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pingreq, as::use_future).get();
+        auto ec = ep->async_send(pingreq, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2665,7 +2665,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(connect), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(connect), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2675,7 +2675,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(subscribe), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(subscribe), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2685,7 +2685,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(unsubscribe), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(unsubscribe), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2695,12 +2695,12 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(am::packet_variant(pingreq), as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant(pingreq), as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // register packet_id for testing
-    BOOST_TEST(ep->register_packet_id(0x1, as::use_future).get());
+    BOOST_TEST(ep->async_register_packet_id(0x1, as::use_future).get());
     // offline publish success
     ep->next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -2708,7 +2708,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -2719,7 +2719,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(auth, as::use_future).get();
+        auto ec = ep->async_send(auth, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2729,7 +2729,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2739,7 +2739,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2749,7 +2749,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2759,7 +2759,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2769,7 +2769,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2779,7 +2779,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2789,13 +2789,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
     // recv connect
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -2806,7 +2806,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -2817,7 +2817,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2827,7 +2827,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2837,7 +2837,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2847,7 +2847,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2857,7 +2857,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2867,7 +2867,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2877,7 +2877,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2888,7 +2888,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(connack, as::use_future).get();
+        auto ec = ep->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -2899,7 +2899,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(publish, as::use_future).get();
+        auto ec = ep->async_send(publish, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::success);
     }
 
@@ -2910,7 +2910,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(puback, as::use_future).get();
+        auto ec = ep->async_send(puback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2920,7 +2920,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrec, as::use_future).get();
+        auto ec = ep->async_send(pubrec, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2930,7 +2930,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubrel, as::use_future).get();
+        auto ec = ep->async_send(pubrel, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2940,7 +2940,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pubcomp, as::use_future).get();
+        auto ec = ep->async_send(pubcomp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2950,7 +2950,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(suback, as::use_future).get();
+        auto ec = ep->async_send(suback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2960,7 +2960,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(unsuback, as::use_future).get();
+        auto ec = ep->async_send(unsuback, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
 
@@ -2970,10 +2970,10 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
-        auto ec = ep->send(pingresp, as::use_future).get();
+        auto ec = ep->async_send(pingresp, as::use_future).get();
         BOOST_TEST(ec.code() == am::errc::protocol_error);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }

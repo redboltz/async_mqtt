@@ -33,6 +33,6 @@ BOOST_AUTO_TEST_CASE(tc) {
         "pass1"
     };
     // static_assert fail as expected
-    auto ec = ep->send(p, as::use_future).get();
+    auto ec = ep->async_send(p, as::use_future).get();
     BOOST_TEST(!ec);
 }

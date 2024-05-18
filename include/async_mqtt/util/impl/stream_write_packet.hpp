@@ -217,7 +217,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(system_error)
 )
-stream<NextLayer>::write_packet(
+stream<NextLayer>::async_write_packet(
     Packet packet,
     CompletionToken&& token
 ) {

@@ -40,7 +40,7 @@ proc(
         };
 
         // Send MQTT CONNECT
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep->async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -57,7 +57,7 @@ proc(
         }
 
         // Recv MQTT CONNACK
-        if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
@@ -82,7 +82,7 @@ proc(
         std::vector<am::topic_subopts> sub_entry{
             {"topic1", am::qos::at_most_once}
         };
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep->async_send(
                 am::v3_1_1::subscribe_packet{
                     *amep->acquire_unique_packet_id(),
                     am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
@@ -94,7 +94,7 @@ proc(
             co_return;
         }
         // Recv MQTT SUBACK
-        if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
@@ -119,7 +119,7 @@ proc(
             co_return;
         }
         // Send MQTT PUBLISH
-        if (auto se = co_await amep->send(
+        if (auto se = co_await amep->async_send(
                 am::v3_1_1::publish_packet{
                     *amep->acquire_unique_packet_id(),
                     "topic1",
@@ -134,7 +134,7 @@ proc(
         }
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         for (std::size_t count = 0; count != 2; ++count) {
-            if (am::packet_variant pv = co_await amep->recv(as::use_awaitable)) {
+            if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
                 pv.visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
@@ -167,7 +167,7 @@ proc(
             }
         }
         std::cout << "close" << std::endl;
-        co_await amep->close(as::use_awaitable);
+        co_await amep->async_close(as::use_awaitable);
     }
     catch (boost::system::system_error const& se) {
         std::cout << se.what() << std::endl;

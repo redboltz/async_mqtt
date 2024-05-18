@@ -315,7 +315,7 @@ private:
                             am::property::session_expiry_interval(bc_.sei)
                         );
                     }
-                    pci->c->send(
+                    pci->c->async_send(
                         am::v5::connect_packet{
                             bc_.clean_start,
                             bc_.keep_alive,
@@ -332,7 +332,7 @@ private:
                     );
                 } break;
                 case am::protocol_version::v3_1_1: {
-                    pci->c->send(
+                    pci->c->async_send(
                         am::v3_1_1::connect_packet{
                             bc_.clean_start,
                             bc_.keep_alive,
@@ -358,7 +358,7 @@ private:
                 exit(-1);
             }
             // MQTT connack recv
-            yield pci->c->recv(
+            yield pci->c->async_recv(
                 as::append(
                     *this,
                     pci
@@ -428,7 +428,7 @@ private:
                 yield {
                     switch (bc_.version) {
                     case am::protocol_version::v5: {
-                        pci->c->send(
+                        pci->c->async_send(
                             am::v5::subscribe_packet{
                                 // sync version can be called because the previous timer handler is on the strand
                                 *pci->c->acquire_unique_packet_id(),
@@ -444,7 +444,7 @@ private:
                         );
                     } break;
                     case am::protocol_version::v3_1_1: {
-                        pci->c->send(
+                        pci->c->async_send(
                             am::v3_1_1::subscribe_packet{
                                 // sync version can be called because the previous timer handler is on the strand
                                 *pci->c->acquire_unique_packet_id(),
@@ -469,7 +469,7 @@ private:
                     exit(-1);
                 }
                 // MQTT suback recv
-                yield pci->c->recv(
+                yield pci->c->async_recv(
                     as::append(
                         *this,
                         pci
@@ -615,7 +615,7 @@ private:
                         );
                     }
                     // pub recv
-                    ci.c->recv(
+                    ci.c->async_recv(
                         as::append(
                             *this,
                             &ci
@@ -629,7 +629,7 @@ private:
                     [this, &pci] (am::packet_id_type pid, am::pub::opts opts) {
                         switch (bc_.version) {
                         case am::protocol_version::v5: {
-                            pci->c->send(
+                            pci->c->async_send(
                                 am::v5::publish_packet{
                                     pid,
                                     bc_.topic_prefix + pci->index_str,
@@ -645,7 +645,7 @@ private:
                             return;
                         } break;
                         case am::protocol_version::v3_1_1: {
-                            pci->c->send(
+                            pci->c->async_send(
                                 am::v3_1_1::publish_packet{
                                     pid,
                                     bc_.topic_prefix + pci->index_str,
@@ -889,7 +889,7 @@ private:
                         bc_.tim_progress->cancel();
                         if (bc_.close_after_report) {
                             for (auto& ci : cis_) {
-                                ci.c->close([]{});
+                                ci.c->async_close([]{});
                             }
                             for (auto& guard_ioc : bc_.guard_iocs) guard_ioc.reset();
                             bc_.guard_ioc_timer.reset();
@@ -897,7 +897,7 @@ private:
                         return;
                     } break;
                     }
-                    pci->c->recv(
+                    pci->c->async_recv(
                         as::append(
                             *this,
                             pci

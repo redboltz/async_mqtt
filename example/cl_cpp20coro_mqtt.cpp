@@ -45,7 +45,7 @@ proc(
         };
 
         // MQTT connect and receive loop start
-        auto connack_opt = co_await amcl.start(
+        auto connack_opt = co_await amcl.async_start(
             am::v5::connect_packet{
                 true,   // clean_start
                 0x1234, // keep_alive
@@ -67,7 +67,7 @@ proc(
             {"topic2", am::qos::at_least_once},
             {"topic3", am::qos::exactly_once},
         };
-        auto suback_opt = co_await amcl.subscribe(
+        auto suback_opt = co_await amcl.async_subscribe(
             am::v5::subscribe_packet{
                 *amcl.acquire_unique_packet_id(), // sync version only works single threaded or in strand
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
@@ -92,7 +92,7 @@ proc(
 
         // publish
         // MQTT publish QoS0 and wait response (socket write complete)
-        auto pubres0 = co_await amcl.publish(
+        auto pubres0 = co_await amcl.async_publish(
             am::v5::publish_packet{
                 "topic1",
                 "payload1",
@@ -103,8 +103,8 @@ proc(
         print_pubres(pubres0);
 
         // MQTT publish QoS1 and wait response (puback receive)
-        auto pid_pub1_opt = co_await amcl.acquire_unique_packet_id(as::use_awaitable); // async version
-        auto pubres1 = co_await amcl.publish(
+        auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+        auto pubres1 = co_await amcl.async_publish(
             am::v5::publish_packet{
                 *pid_pub1_opt,
                 "topic2",
@@ -117,7 +117,7 @@ proc(
 
         // recv (coroutine)
         for (int i = 0; i != 2; ++i) {
-            auto [publish_opt, disconnect_opt] = co_await amcl.recv(as::use_awaitable);
+            auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
             if (publish_opt) {
                 std::cout << *publish_opt << std::endl;
                 std::cout << "topic   : " << publish_opt->topic() << std::endl;
@@ -128,7 +128,7 @@ proc(
             }
         }
         // recv (callback) before sending
-        amcl.recv(
+        amcl.async_recv(
             [] (auto ec, auto publish_opt, auto disconnect_opt) {
                 std::cout << ec.message() << std::endl;
                 if (publish_opt) {
@@ -143,8 +143,8 @@ proc(
         );
 
         // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
-        auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
-        auto pubres2 = co_await amcl.publish(
+        auto pid_pub2 = co_await amcl.async_acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
+        auto pubres2 = co_await amcl.async_publish(
             am::v5::publish_packet{
                 pid_pub2,
                 "topic3",
@@ -162,7 +162,7 @@ proc(
             "topic3",
         };
 
-        auto unsuback_opt = co_await amcl.unsubscribe(
+        auto unsuback_opt = co_await amcl.async_unsubscribe(
             am::v5::unsubscribe_packet{
                 *amcl.acquire_unique_packet_id(), // sync version only works single threaded or in strand
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
@@ -174,7 +174,7 @@ proc(
         }
 
         // disconnect
-        co_await amcl.disconnect(
+        co_await amcl.async_disconnect(
             am::v5::disconnect_packet{
                 am::disconnect_reason_code::disconnect_with_will_message
             },

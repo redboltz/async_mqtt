@@ -61,7 +61,7 @@ var searchData=
   ['pubcomp_5fpacket_58',['pubcomp_packet',['../group__pubcomp__v3__1__1.html#gad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v3_1_1::basic_pubcomp_packet::pubcomp_packet'],['../group__pubcomp__v5.html#gad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v5::basic_pubcomp_packet::pubcomp_packet']]],
   ['pubcomp_5freason_5fcode_59',['pubcomp_reason_code',['../group__pubcomp__v5.html#gabbdb3369a5f24b1df9d2a5f868210083',1,'async_mqtt']]],
   ['pubcomp_5freason_5fcode_5fto_5fstr_60',['pubcomp_reason_code_to_str',['../group__pubcomp__v5.html#gab8f36cf959ba535fe12ba162c5cb6071',1,'async_mqtt']]],
-  ['publish_61',['publish',['../classasync__mqtt_1_1client.html#a2736d44167509c9cdcf90c09a161b0b2',1,'async_mqtt::client::publish()'],['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a9b6d0bb3102b87fae57bc4a39149518e',1,'publishasync_mqtt']]],
+  ['publish_61',['publish',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a9b6d0bb3102b87fae57bc4a39149518e',1,'async_mqtt']]],
   ['publish_20packet_20flags_62',['PUBLISH packet flags',['../group__publish__options.html',1,'']]],
   ['publish_20packet_20v3_201_201_63',['PUBLISH packet (v3.1.1)',['../group__publish__v3__1__1.html',1,'']]],
   ['publish_20packet_20v5_200_64',['PUBLISH packet (v5.0)',['../group__publish__v5.html',1,'']]],

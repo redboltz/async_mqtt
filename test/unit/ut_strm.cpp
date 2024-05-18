@@ -40,14 +40,14 @@ BOOST_AUTO_TEST_CASE(write_cont) {
     );
 
     auto p = am::v3_1_1::pingreq_packet();
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
-    s->write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
     ioc.run();
 }
 

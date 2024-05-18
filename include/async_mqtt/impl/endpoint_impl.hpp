@@ -109,6 +109,20 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename Other>
+basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
+    basic_endpoint<Role, PacketIdBytes, Other>&& other
+): protocol_version_{other.ver},
+   stream_{force_move(other.stream_)},
+   store_{stream_->get_executor()},
+   tim_pingreq_send_{std::make_shared<as::steady_timer>(stream_->get_executor())},
+   tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())},
+   tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())}
+{
+}
+
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 bool
 basic_endpoint<Role, PacketIdBytes, NextLayer>::enqueue_publish(
@@ -147,26 +161,26 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::send_stored() {
                 // until receiving puback/pubrec/pubcomp
                 overload {
                     [&](v3_1_1::basic_publish_packet<PacketIdBytes> p) {
-                        send(
+                        async_send(
                             p,
                             [](system_error const&){}
                         );
                     },
                     [&](v5::basic_publish_packet<PacketIdBytes> p) {
                         if (enqueue_publish(p)) return;
-                        send(
+                        async_send(
                             p,
                             [](system_error const&){}
                         );
                     },
                     [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> p) {
-                        send(
+                        async_send(
                             p,
                             [](system_error const&){}
                         );
                     },
                     [&](v5::basic_pubrel_packet<PacketIdBytes> p) {
-                        send(
+                        async_send(
                             p,
                             [](system_error const&){}
                         );
@@ -216,13 +230,13 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer() {
                         if (auto sp = wp.lock()) {
                             switch (protocol_version_) {
                             case protocol_version::v3_1_1:
-                                send(
+                                async_send(
                                     v3_1_1::pingreq_packet(),
                                     [](system_error const&){}
                                 );
                                 break;
                             case protocol_version::v5:
-                                send(
+                                async_send(
                                     v5::pingreq_packet(),
                                     [](system_error const&){}
                                 );
@@ -262,7 +276,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
                                 ASYNC_MQTT_LOG("mqtt_impl", error)
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
                                     << "pingreq recv timeout. close.";
-                                close(
+                                async_close(
                                     []{}
                                 );
                                 break;
@@ -270,7 +284,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
                                 ASYNC_MQTT_LOG("mqtt_impl", error)
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
                                     << "pingreq recv timeout. close.";
-                                send(
+                                async_send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::keep_alive_timeout,
                                         properties{}
@@ -278,7 +292,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
                                     as::bind_executor(
                                         get_executor(),
                                         [this](system_error const&){
-                                            close(
+                                            async_close(
                                                 []{}
                                             );
                                         }
@@ -320,7 +334,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                 ASYNC_MQTT_LOG("mqtt_impl", error)
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
                                     << "pingresp recv timeout. close.";
-                                close(
+                                async_close(
                                     []{}
                                 );
                                 break;
@@ -329,7 +343,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
                                     << "pingresp recv timeout. close.";
                                 if (status_ == connection_status::connected) {
-                                    send(
+                                    async_send(
                                         v5::disconnect_packet{
                                             disconnect_reason_code::keep_alive_timeout,
                                             properties{}
@@ -337,7 +351,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                         as::bind_executor(
                                             get_executor(),
                                             [this](system_error const&){
-                                                close(
+                                                async_close(
                                                     []{}
                                                 );
                                             }
@@ -345,7 +359,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                     );
                                 }
                                 else {
-                                    close(
+                                    async_close(
                                         []{}
                                     );
                                 }

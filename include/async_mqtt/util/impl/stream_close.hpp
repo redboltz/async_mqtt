@@ -116,7 +116,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-stream<NextLayer>::close(
+stream<NextLayer>::async_close(
     CompletionToken&& token
 ) {
     return

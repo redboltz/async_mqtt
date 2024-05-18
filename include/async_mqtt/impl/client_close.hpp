@@ -17,10 +17,10 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-client<Version, NextLayer>::close(
+client<Version, NextLayer>::async_close(
     CompletionToken&& token
 ) {
-    return ep_->close(std::forward<CompletionToken>(token));
+    return ep_->async_close(std::forward<CompletionToken>(token));
 }
 
 } // namespace async_mqtt

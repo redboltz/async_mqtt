@@ -51,7 +51,7 @@ public:
 
 private:
     void async_read_packet(epsp_type epsp) {
-        epsp.recv(
+        epsp.async_recv(
             [this, epsp]
             (packet_variant pv) mutable {
                 pv.visit(
@@ -695,7 +695,7 @@ private:
                     // we would have no way to map this connection's session to a new connection later.
                     // So the connection must be rejected.
                     if (connack_) {
-                        epsp.send(
+                        epsp.async_send(
                             v3_1_1::connack_packet{
                                 false,
                                 connect_return_code::identifier_rejected
@@ -707,7 +707,7 @@ private:
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                         << ec.what();
                                 }
-                                epsp.close(
+                                epsp.async_close(
                                     [epsp] {
                                         ASYNC_MQTT_LOG("mqtt_broker", info)
                                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -771,7 +771,7 @@ private:
                 switch (epsp.get_protocol_version()) {
                 case protocol_version::v3_1_1:
                     if (connack_) {
-                        epsp.send(
+                        epsp.async_send(
                             v3_1_1::connack_packet{
                                 session_present,
                                 authenticated ? connect_return_code::accepted
@@ -788,7 +788,7 @@ private:
                         props.emplace_back(property::topic_alias_maximum{topic_alias_max});
                         props.emplace_back(property::receive_maximum{receive_maximum_max});
                         if (connack_) {
-                            epsp.send(
+                            epsp.async_send(
                                 v5::connack_packet{
                                     session_present,
                                     authenticated ? connect_reason_code::success
@@ -802,7 +802,7 @@ private:
                     else {
                         // use connack_props_ for testing
                         if (connack_) {
-                            epsp.send(
+                            epsp.async_send(
                                 v5::connack_packet{
                                     session_present,
                                     authenticated ? connect_reason_code::success
@@ -868,7 +868,7 @@ private:
                 case qos::at_least_once:
                     switch (epsp.get_protocol_version()) {
                     case protocol_version::v3_1_1:
-                        epsp.send(
+                        epsp.async_send(
                             v3_1_1::puback_packet{
                                 packet_id
                             },
@@ -930,7 +930,7 @@ private:
                                     }
                                 }
                             } ();
-                        epsp.send(
+                        epsp.async_send(
                             force_move(packet),
                             [epsp]
                             (system_error const& ec) {
@@ -950,7 +950,7 @@ private:
                 case qos::exactly_once:
                     switch (epsp.get_protocol_version()) {
                     case protocol_version::v3_1_1:
-                        epsp.send(
+                        epsp.async_send(
                             v3_1_1::pubrec_packet{
                                 packet_id
                             },
@@ -1012,7 +1012,7 @@ private:
                                     }
                                 }
                             } ();
-                        epsp.send(
+                        epsp.async_send(
                             force_move(packet),
                             [epsp]
                             (system_error const& ec) {
@@ -1325,7 +1325,7 @@ private:
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
-            epsp.send(
+            epsp.async_send(
                 v3_1_1::pubrel_packet{
                     packet_id
                 },
@@ -1372,7 +1372,7 @@ private:
                         }
                     }
                 } ();
-            epsp.send(
+            epsp.async_send(
                 force_move(packet),
                 [epsp]
                 (system_error const& ec) {
@@ -1415,7 +1415,7 @@ private:
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
-            epsp.send(
+            epsp.async_send(
                 v3_1_1::pubcomp_packet{
                     packet_id
                 },
@@ -1460,7 +1460,7 @@ private:
                         }
                     }
                 } ();
-            epsp.send(
+            epsp.async_send(
                 force_move(packet),
                 [epsp]
                 (system_error const& ec) {
@@ -1623,7 +1623,7 @@ private:
                 }
             }
             // Acknowledge the subscriptions, and the registered QOS settings
-            epsp.send(
+            epsp.async_send(
                 v3_1_1::suback_packet{
                     packet_id,
                     force_move(res)
@@ -1696,7 +1696,7 @@ private:
             }
             if (h_subscribe_props_) h_subscribe_props_(props);
             // Acknowledge the subscriptions, and the registered QOS settings
-            epsp.send(
+            epsp.async_send(
                 v5::suback_packet{
                     packet_id,
                     force_move(res),
@@ -1768,7 +1768,7 @@ private:
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
-            epsp.send(
+            epsp.async_send(
                 v3_1_1::unsuback_packet{
                     packet_id
                 },
@@ -1784,7 +1784,7 @@ private:
             break;
         case protocol_version::v5:
             if (h_unsubscribe_props_) h_unsubscribe_props_(props);
-            epsp.send(
+            epsp.async_send(
                 v5::unsuback_packet{
                     packet_id,
                     std::vector<unsuback_reason_code>(
@@ -1822,7 +1822,7 @@ private:
 
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
-            epsp.send(
+            epsp.async_send(
                 v3_1_1::pingresp_packet{},
                 [epsp]
                 (system_error const& ec) {
@@ -1835,7 +1835,7 @@ private:
             );
             break;
         case protocol_version::v5:
-            epsp.send(
+            epsp.async_send(
                 v5::pingresp_packet{},
                 [epsp]
                 (system_error const& ec) {
@@ -1954,7 +1954,7 @@ private:
                                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                     << "close cid:" << sssp->client_id();
-                                epsp.close(
+                                epsp.async_close(
                                     [this, epsp, sssp, completion_handler = force_move(completion_handler)]
                                     () mutable {
                                         ASYNC_MQTT_LOG("mqtt_broker", info)
@@ -2002,7 +2002,7 @@ private:
                         ASYNC_MQTT_LOG("mqtt_broker", trace)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                             << "close cid:" << sssp->client_id();
-                        epsp.close(
+                        epsp.async_close(
                             [sssp, epsp, completion_handler = force_move(completion_handler)]
                             () mutable {
                                 ASYNC_MQTT_LOG("mqtt_broker", info)
@@ -2079,7 +2079,7 @@ private:
             ) {
                 switch (version) {
                 case protocol_version::v3_1_1:
-                    epsp.close(
+                    epsp.async_close(
                         [epsp, completion_handler = force_move(completion_handler)]
                         () mutable {
                             ASYNC_MQTT_LOG("mqtt_broker", info)
@@ -2090,7 +2090,7 @@ private:
                     );
                     break;
                 case protocol_version::v5:
-                    epsp.send(
+                    epsp.async_send(
                         v5::disconnect_packet{
                             rc,
                                 properties{}
@@ -2100,7 +2100,7 @@ private:
                             ASYNC_MQTT_LOG("mqtt_broker", info)
                                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                                 << ec.what();
-                            epsp.close(
+                            epsp.async_close(
                                 [epsp, completion_handler = force_move(completion_handler)]
                                 () mutable {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)

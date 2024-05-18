@@ -47,7 +47,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code)
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::add_retry(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_add_retry(
     CompletionToken&& token
 ) {
     return
