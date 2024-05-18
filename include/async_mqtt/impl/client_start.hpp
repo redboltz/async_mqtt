@@ -11,11 +11,18 @@
 #include <boost/asio/append.hpp>
 #include <boost/asio/compose.hpp>
 
+#include <boost/hana/tuple.hpp>
+#include <boost/hana/back.hpp>
+#include <boost/hana/drop_back.hpp>
+#include <boost/hana/unpack.hpp>
+
 #include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
+
+namespace hana = boost::hana;
 
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
@@ -98,7 +105,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, std::optional<connack_packet>)
 )
-client<Version, NextLayer>::async_start(
+client<Version, NextLayer>::async_start_impl(
     connect_packet packet,
     CompletionToken&& token
 ) {
@@ -116,6 +123,43 @@ client<Version, NextLayer>::async_start(
             },
             token
         );
+}
+
+template <protocol_version Version, typename NextLayer>
+template <typename... Args>
+auto
+client<Version, NextLayer>::async_start(Args&&... args) {
+    if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
+        return async_start_impl(std::forward<Args>(args)...);
+    }
+    else {
+        auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
+        auto rest = hana::drop_back(std::move(t), hana::size_c<1>);
+        auto&& back = hana::back(t);
+        return hana::unpack(
+            std::move(rest),
+            [&](auto&&... rest_args) {
+                if constexpr(
+                    std::is_constructible_v<
+                        connect_packet,
+                        decltype(rest_args)...
+                    >
+                ) {
+                    return async_start_impl(
+                        connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+                else {
+                    static_assert(false, "connect_packet is not constructible");
+                    return async_start_impl(
+                        connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+            }
+        );
+    }
 }
 
 } // namespace async_mqtt

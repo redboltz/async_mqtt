@@ -7,11 +7,18 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_PUBLISH_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_PUBLISH_HPP
 
+#include <boost/hana/tuple.hpp>
+#include <boost/hana/back.hpp>
+#include <boost/hana/drop_back.hpp>
+#include <boost/hana/unpack.hpp>
+
 #include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
+
+namespace hana = boost::hana;
 
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
@@ -93,7 +100,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, pubres_t)
 )
-client<Version, NextLayer>::async_publish(
+client<Version, NextLayer>::async_publish_impl(
     publish_packet packet,
     CompletionToken&& token
 ) {
@@ -113,6 +120,42 @@ client<Version, NextLayer>::async_publish(
         );
 }
 
+template <protocol_version Version, typename NextLayer>
+template <typename... Args>
+auto
+client<Version, NextLayer>::async_publish(Args&&... args) {
+    if constexpr (std::is_constructible_v<publish_packet, decltype(std::forward<Args>(args))...>) {
+        return async_publish_impl(std::forward<Args>(args)...);
+    }
+    else {
+        auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
+        auto rest = hana::drop_back(std::move(t), hana::size_c<1>);
+        auto&& back = hana::back(t);
+        return hana::unpack(
+            std::move(rest),
+            [&](auto&&... rest_args) {
+                if constexpr(
+                    std::is_constructible_v<
+                        publish_packet,
+                        decltype(rest_args)...
+                    >
+                ) {
+                    return async_publish_impl(
+                        publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+                else {
+                    static_assert(false, "publish_packet is not constructible");
+                    return async_publish_impl(
+                        publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+            }
+        );
+    }
+}
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_PUBLISH_HPP
