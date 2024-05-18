@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         ctx
     );
 
-    am::underlying_handshake(
+    am::async_underlying_handshake(
         amep->next_layer(),
         "127.0.0.1",
         "8883",

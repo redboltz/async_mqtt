@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         am::protocol::ws{ioc.get_executor()}
     );
 
-    am::underlying_handshake(
+    am::async_underlying_handshake(
         amep->next_layer(),
         "127.0.0.1",
         "10080",

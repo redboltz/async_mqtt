@@ -53,7 +53,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(error_code)
 )
 #endif // !defined(GENERATING_DOCUMENTATION)
-underlying_handshake(
+async_underlying_handshake(
     as::ssl::stream<NextLayer>& layer,
     std::string_view host,
     std::string_view port,
