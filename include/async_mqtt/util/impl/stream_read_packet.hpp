@@ -60,6 +60,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                 async_read(
                     a_strm.nl_,
                     as::buffer(address, 1),
+                    as::transfer_all(),
                     as::bind_executor(
                         a_strm.get_executor(),
                         force_move(self)
@@ -110,6 +111,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
+                        as::transfer_all(),
                         as::bind_executor(
                             a_strm.get_executor(),
                             force_move(self)
@@ -152,6 +154,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                     async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
+                        as::transfer_all(),
                         as::bind_executor(
                             a_strm.get_executor(),
                             force_move(self)
@@ -203,6 +206,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         async_read(
                             a_strm.nl_,
                             as::buffer(address, rl),
+                            as::transfer_all(),
                             as::bind_executor(
                                 a_strm.get_executor(),
                                 force_move(self)

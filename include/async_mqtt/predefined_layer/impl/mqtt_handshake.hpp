@@ -49,6 +49,13 @@ struct mqtt_handshake_op {
         );
     }
 
+    struct default_connect_condition {
+        template <typename Endpoint>
+        bool operator()(error_code const&, Endpoint const&) {
+            return true;
+        }
+    };
+
     template <typename Self>
     void operator()(
         Self& self,
@@ -63,6 +70,7 @@ struct mqtt_handshake_op {
         as::async_connect(
             a_layer,
             eps,
+            default_connect_condition(),
             as::bind_executor(
                 a_layer.get_executor(),
                 force_move(self)
