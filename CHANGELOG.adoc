@@ -25,6 +25,7 @@
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
 
 === other updates
+* Supported default completion token. #238, #240
 * Refined CI. #228
 * Refined header dependency checking. #225
 * Removed the inclusion of the Boost.Beast detail directory. #223
