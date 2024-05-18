@@ -143,7 +143,7 @@ You usually need to access only `next_layer()` to pass `underlying_handshake()` 
 
 After underlying layers' handshaking is completed, then start MQTT layer connection.
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#a64c2b201c643fabc568865933b681f80++[start()] funtion
+=== async_start() funtion
 
 ```cpp
 // prepare will message if you need.
@@ -158,7 +158,7 @@ am::will will{
 };
 
 // MQTT connect and receive loop start
-auto connack_opt = co_await amcl.start(
+auto connack_opt = co_await amcl.async_start(
     am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -178,7 +178,7 @@ CompletionToken parameters are error_code and connack_packet (optional). connack
 
 ```cpp
 // MQTT connect and receive loop start
-auto [ec, connack_opt] = co_await amcl.start(
+auto [ec, connack_opt] = co_await amcl.async_start(
     am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -197,7 +197,7 @@ if (connack_opt) {
 
 == Send SUBSCRIBE/UNSUBSCRIBE and wait SUBACK/UNSUBACK
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#ae74159d835dca15f87b760b53acb4d51++[subscribe()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#ae74159d835dca15f87b760b53acb4d51++[async_subscribe()] funtion
 
 ```cpp
 // subscribe
@@ -207,7 +207,7 @@ std::vector<am::topic_subopts> sub_entry{
     {"topic2", am::qos::at_least_once},
     {"topic3", am::qos::exactly_once},
 };
-auto suback_opt = co_await amcl.subscribe(
+auto suback_opt = co_await amcl.async_subscribe(
     am::v5::subscribe_packet{
         *amcl.acquire_unique_packet_id(), // sync version only in strand
         am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
@@ -221,7 +221,7 @@ if (suback_opt) {
 
 CompletionToken parameters are error_code and suback_packet (optional). suback_packet has a value only if error_code is success.
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#a0ff1b5b724340a3df4c9ce9fab7a4b90++[unsubscribe()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#a0ff1b5b724340a3df4c9ce9fab7a4b90++[async_unsubscribe()] funtion
 
 ```cpp
 // MQTT send unsubscribe and wait unsuback
@@ -231,7 +231,7 @@ std::vector<am::topic_sharename> unsub_entry{
     "topic3",
 };
 
-auto unsuback_opt = co_await amcl.unsubscribe(
+auto unsuback_opt = co_await amcl.async_unsubscribe(
     am::v5::unsubscribe_packet{
         *amcl.acquire_unique_packet_id(), // sync version only in strand
         am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
@@ -247,13 +247,13 @@ CompletionToken parameters are error_code and unsuback_packet (optional). unsuba
 
 == Send PUBLISH packet and wait response
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c++[publish()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c++[async_publish()] funtion
 
 Here is a code example that sending QoS0 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS0 and wait response (socket write complete)
-auto pubres0 = co_await amcl.publish(
+auto pubres0 = co_await amcl.async_publish(
     am::v5::publish_packet{
         "topic1",
         "payload1",
@@ -272,7 +272,7 @@ Here is a code example that sending QoS1 PUBLISH packet.
 ```cpp
 // MQTT publish QoS1 and wait response (puback receive)
 auto pid_pub1_opt = co_await amcl.acquire_unique_packet_id(as::use_awaitable); // async version
-auto pubres1 = co_await amcl.publish(
+auto pubres1 = co_await amcl.async_publish(
     am::v5::publish_packet{
         *pid_pub1_opt,
         "topic2",
@@ -285,14 +285,14 @@ auto pubres1 = co_await amcl.publish(
 
 In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1basic__client.html#aa5a37f75664bb4dd8b883e464f2016e5++[acquire_unique_packet_id()]. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version {api-base}/++classasync__mqtt_1_1basic__client.html#acaea92142dca0924af36e5acef91d8bb++[acquire_unique_packet_id()] exists. When you use callback function approach, it could help keep the code simple. Sync version must be called in the client's strand. For example, anywhare in the callback function that is registered to client member functions as a CompletionToken(CompletionHandler).
 
-After publish() is completer, puback_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] is set. You can get puback packet.
+After async_publish() is completer, puback_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] is set. You can get puback packet.
 
 Here is a code example that sending QoS1 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
 auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
-auto pubres2 = co_await amcl.publish(
+auto pubres2 = co_await amcl.async_publish(
     am::v5::publish_packet{
         pid_pub2,
         "topic3",
@@ -305,14 +305,14 @@ auto pubres2 = co_await amcl.publish(
 
 In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, {api-base}/++classasync__mqtt_1_1basic__client.html#afbc77b4e603db0c1141d3235c8fa8b35++[acquire_unique_packet_id_wait_until()] is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.
 
-After publish() is completer, pubrec_opt and pubcomp_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] are set. You can get pubrec and pubcomp packet.
+After async_publish() is completer, pubrec_opt and pubcomp_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] are set. You can get pubrec and pubcomp packet.
 
 == Receive PUBLISH packet from the broker
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#aad1963132aa1d0c6458bd6f38d9b7e48++[recv()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#aad1963132aa1d0c6458bd6f38d9b7e48++[async_recv()] funtion
 
 ```cpp
-auto [publish_opt, disconnect_opt] = co_await amcl.recv(as::use_awaitable);
+auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
 if (publish_opt) {
     std::cout << *publish_opt << std::endl;
 }
@@ -321,16 +321,16 @@ else if (disconnect_opt) {
 }
 ```
 
-After you called start() function, the received PUBLISH packets are stored in the clinet. You can get it using recv() function. If the no packets are stored, recv() waits until PUBLISH packet would be received.
+After you called async_start() function, the received PUBLISH packets are stored in the clinet. You can get it using async_recv() function. If the no packets are stored, async_recv() waits until PUBLISH packet would be received.
 
 CompletionToken parameters are error_code and publish_packet (optional), and disconnect_packet(optional). publish_packet or disconnect_packet has a value only if error_code is success.
 
 == Send DISCONNECT packet
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#a13400c20164b4e0d2ed4d295cd6413d0++[disconnect()] funtion
+=== {api-base}/++classasync__mqtt_1_1basic__client.html#a13400c20164b4e0d2ed4d295cd6413d0++[async_disconnect()] funtion
 
 ```cpp
-co_await amcl.disconnect(
+co_await amcl.async_disconnect(
     am::v5::disconnect_packet{},
     as::use_awaitable
 );
@@ -341,14 +341,14 @@ Sending DISCONNECT packet to the broker starts a glaceful disconnect sequence. T
 
 == Close
 
-==== {api-base}/++classasync__mqtt_1_1basic__client.html#a4758d075939de30c77f3f4bdf0f7a4e1++[close()] funtion
+==== {api-base}/++classasync__mqtt_1_1basic__client.html#a4758d075939de30c77f3f4bdf0f7a4e1++[async_close()] funtion
 
 ```cpp
-co_await amcl.close(as::use_awaitable);
+co_await amcl.async_close(as::use_awaitable);
 ```
 
 CompletionToken parameters is nothing.
-If you want to close the socket forcibly, you can call close() function. For example, no packets are received from the broker unexpectedly, but the client side doesn't detect disconnection.
+If you want to close the socket forcibly, you can call async_close() function. For example, no packets are received from the broker unexpectedly, but the client side doesn't detect disconnection.
 
 == Whole code
 
