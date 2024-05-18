@@ -45,7 +45,7 @@ close_op {
                 state = complete;
                 ep.status_ = connection_status::closing;
                 auto& a_ep{ep};
-                a_ep.stream_->close(
+                a_ep.stream_->async_close(
                     as::bind_executor(
                         a_ep.get_executor(),
                         force_move(self)
@@ -95,7 +95,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::close(CompletionToken&& token) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_close(CompletionToken&& token) {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "close";

@@ -249,7 +249,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 if (auto sp = wp.lock()) {
                     switch (version_) {
                     case protocol_version::v3_1_1:
-                        epsp.send(
+                        epsp.async_send(
                             v3_1_1::publish_packet{
                                 pid,
                                 force_move(pub_topic),
@@ -267,7 +267,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                         );
                         break;
                     case protocol_version::v5:
-                        epsp.send(
+                        epsp.async_send(
                             v5::publish_packet{
                                 pid,
                                 force_move(pub_topic),
@@ -297,7 +297,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             auto qos_value = pubopts.get_qos();
             if (qos_value == qos::at_least_once ||
                 qos_value == qos::exactly_once) {
-                epsp.acquire_unique_packet_id(
+                epsp.async_acquire_unique_packet_id(
                     [send_publish = force_move(send_publish)]
                     (auto pid_opt) mutable {
                         if (pid_opt) {

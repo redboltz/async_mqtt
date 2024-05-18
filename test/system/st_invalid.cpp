@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
                     *this
                 );
                 BOOST_TEST(!*ec);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(!*pv); // auto close if receive error
                 yield set_finish();
             }

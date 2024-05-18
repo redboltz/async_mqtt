@@ -26,7 +26,7 @@ publish_op {
         auto& a_cl{cl};
         auto pid = packet.packet_id();
         auto a_packet{packet};
-        a_cl.ep_->send(
+        a_cl.ep_->async_send(
             force_move(a_packet),
             as::append(
                 force_move(self),
@@ -93,7 +93,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, pubres_t)
 )
-client<Version, NextLayer>::publish(
+client<Version, NextLayer>::async_publish(
     publish_packet packet,
     CompletionToken&& token
 ) {

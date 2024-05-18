@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
@@ -53,12 +53,12 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
 
                 // subscribe
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == (am::v3_1_1::suback_packet{
                         pid,
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
 
                 // subscribe overwrite
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::subscribe_packet{
                         pid,
                         {
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == (am::v3_1_1::suback_packet{
                         pid,
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
 
                 // unsubscribe
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::unsubscribe_packet{
                         pid,
                         {
@@ -122,13 +122,13 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == am::v3_1_1::unsuback_packet{
                         pid
                     }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_session
                         0,      // keep_alive none
@@ -178,12 +178,12 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
 
                 // subscribe
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::subscribe_packet{
                         pid,
                         {
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == (am::v5::suback_packet{
                         pid,
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
 
                 // subscribe overwrite
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::subscribe_packet{
                         pid,
                         {
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == (am::v5::suback_packet{
                         pid,
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
 
                 // unsubscribe
                 pid = *ep().acquire_unique_packet_id();
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::unsubscribe_packet{
                         pid,
                         {
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 BOOST_TEST(
                     *pv == (am::v5::unsuback_packet{
                         pid,
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                         am::properties{}
                     })
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }

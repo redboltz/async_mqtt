@@ -47,7 +47,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(v5::basic_publish_packet<PacketIdBytes>)
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
     v5::basic_publish_packet<PacketIdBytes> packet,
     CompletionToken&& token
 ) const {

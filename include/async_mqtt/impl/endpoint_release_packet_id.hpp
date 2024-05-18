@@ -48,7 +48,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::release_packet_id(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     CompletionToken&& token
 ) {

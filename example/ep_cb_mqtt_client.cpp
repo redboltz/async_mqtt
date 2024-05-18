@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
                     }
                 };
                 // Send MQTT CONNECT
-                amep->send(
+                amep->async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
                             return;
                         }
                         // Recv MQTT CONNACK
-                        amep->recv(
+                        amep->async_recv(
                             [&]
                             (am::packet_variant pv) {
                                 if (pv) {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
                                                     << " sp:" << p.session_present()
                                                     << std::endl;
                                                 // Send MQTT SUBSCRIBE
-                                                amep->send(
+                                                amep->async_send(
                                                     am::v3_1_1::subscribe_packet{
                                                         *amep->acquire_unique_packet_id(),
                                                         { {"topic1", am::qos::at_most_once} }
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
                                                             return;
                                                         }
                                                         // Recv MQTT SUBACK
-                                                        amep->recv(
+                                                        amep->async_recv(
                                                             [&]
                                                             (am::packet_variant pv) {
                                                                 if (pv) {
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
                                                                                 }
                                                                                 std::cout << std::endl;
                                                                                 // Send MQTT PUBLISH
-                                                                                amep->send(
+                                                                                amep->async_send(
                                                                                     am::v3_1_1::publish_packet{
                                                                                         *amep->acquire_unique_packet_id(),
                                                                                         "topic1",
@@ -147,11 +147,11 @@ int main(int argc, char* argv[]) {
                                                                                                         }
                                                                                                     );
                                                                                                     if (++count < 2) {
-                                                                                                        amep->recv(*recv_handler);
+                                                                                                        amep->async_recv(*recv_handler);
                                                                                                     }
                                                                                                     else {
                                                                                                         std::cout << "close" << std::endl;
-                                                                                                        amep->close([]{});
+                                                                                                        amep->async_close([]{});
                                                                                                     }
                                                                                                 }
                                                                                                 else {
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
                                                                                                     return;
                                                                                                 }
                                                                                             };
-                                                                                        amep->recv(*recv_handler);
+                                                                                        amep->async_recv(*recv_handler);
                                                                                     }
                                                                                 );
                                                                             },

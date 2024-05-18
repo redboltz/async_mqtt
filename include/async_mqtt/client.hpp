@@ -38,9 +38,6 @@ class client {
     using this_type = client<Version, NextLayer>;
     using ep_type = basic_endpoint<role::client, 2, NextLayer>;
     using ep_type_sp = std::shared_ptr<ep_type>;
-    using executor_type = typename ep_type::executor_type;
-    using next_layer_type = typename ep_type::next_layer_type;
-    using lowest_layer_type = typename ep_type::lowest_layer_type;
 
     ASYNC_MQTT_PACKET_TYPE(Version, connect)
     ASYNC_MQTT_PACKET_TYPE(Version, connack)
@@ -58,6 +55,10 @@ class client {
     ASYNC_MQTT_PACKET_TYPE(Version, disconnect)
 
 public:
+    using executor_type = typename ep_type::executor_type;
+    using next_layer_type = typename ep_type::next_layer_type;
+    using lowest_layer_type = typename ep_type::lowest_layer_type;
+
     /**
      * @brief publish completion handler parameter class
      */
@@ -75,8 +76,20 @@ public:
      *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
      */
     template <typename... Args>
+    explicit
     client(
         Args&&... args
+    );
+
+    /**
+     *  @brief Rebinding constructor
+     *         This constructor creates a client from the client with a different executor.
+     *  @param other The other client to construct from.
+     */
+    template <typename Other>
+    explicit
+    client(
+        client<Version, Other>&& other
     );
 
     /**
@@ -94,7 +107,7 @@ public:
         void(error_code, std::optional<connack_packet>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    start(
+    async_start(
         connect_packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -114,7 +127,7 @@ public:
         void(error_code, std::optional<suback_packet>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    subscribe(
+    async_subscribe(
         subscribe_packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -134,7 +147,7 @@ public:
         void(error_code, std::optional<suback_packet>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    unsubscribe(
+    async_unsubscribe(
         unsubscribe_packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -157,7 +170,7 @@ public:
         void(error_code, pubres_t)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    publish(
+    async_publish(
         publish_packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -177,7 +190,7 @@ public:
         void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    disconnect(
+    async_disconnect(
         disconnect_packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -196,7 +209,7 @@ public:
         void()
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    close(
+    async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -215,7 +228,7 @@ public:
         void(error_code, std::optional<publish_packet>, std::optional<disconnect_packet>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    recv(
+    async_recv(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -303,7 +316,7 @@ public:
         void(std::optional<packet_id_type>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    acquire_unique_packet_id(
+    async_acquire_unique_packet_id(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -322,7 +335,7 @@ public:
         void(packet_id_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    acquire_unique_packet_id_wait_until(
+    async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -341,7 +354,7 @@ public:
         void(bool)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    register_packet_id(
+    async_register_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -361,7 +374,7 @@ public:
         void()
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    release_packet_id(
+    async_release_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -388,8 +401,17 @@ public:
      */
     void release_packet_id(packet_id_type packet_id);
 
+    template <typename Executor1>
+    struct rebind_executor {
+        using other = client<
+            Version,
+            typename NextLayer::template rebind_executor<Executor1>::other
+        >;
+    };
+
 private:
     void recv_loop();
+
 
     // async operations
     struct start_op;

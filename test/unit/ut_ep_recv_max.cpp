@@ -70,17 +70,17 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
-    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         am::properties{}
     );
 
-    auto pid_opt2 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         am::properties{}
     );
 
-    auto pid_opt3 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
     auto publish_3_q2 = am::v5::publish_packet(
         *pid_opt3,
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(publish_1_q1, as::use_future).get();
+        auto ec = ep->async_send(publish_1_q1, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(publish_2_q1, as::use_future).get();
+        auto ec = ep->async_send(publish_2_q1, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(publish_3_q2, as::use_future).get();
+        auto ec = ep->async_send(publish_3_q2, as::use_future).get();
         BOOST_TEST(!ec);
         BOOST_TEST(!pub3_send);
     }
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(publish_4_q0, as::use_future).get();
+        auto ec = ep->async_send(publish_4_q0, as::use_future).get();
         BOOST_TEST(!ec);
         BOOST_TEST(pub4_send);
     }
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
 
     // recv puback2
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(puback2 == pv);
     }
 
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
 
     // recv pubrec3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pubrec3 == pv);
     }
 
@@ -226,16 +226,16 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
     {
-        auto ec = ep->send(pubrel3, as::use_future).get();
+        auto ec = ep->async_send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv pubcomp3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pubcomp3 == pv);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
 
     // recv connect
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -295,11 +295,11 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(connack, as::use_future).get();
+        auto ec = ep->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
-    auto pid_opt1 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt1.has_value());
     auto publish_1_q1 = am::v5::publish_packet(
         *pid_opt1,
@@ -309,7 +309,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         am::properties{}
     );
 
-    auto pid_opt2 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt2.has_value());
     auto publish_2_q1 = am::v5::publish_packet(
         *pid_opt2,
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         am::properties{}
     );
 
-    auto pid_opt3 = ep->acquire_unique_packet_id(as::use_future).get();
+    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
     BOOST_TEST(pid_opt3.has_value());
     auto publish_3_q2 = am::v5::publish_packet(
         *pid_opt3,
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(publish_1_q1, as::use_future).get();
+        auto ec = ep->async_send(publish_1_q1, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -380,7 +380,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(publish_2_q1, as::use_future).get();
+        auto ec = ep->async_send(publish_2_q1, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(publish_3_q2, as::use_future).get();
+        auto ec = ep->async_send(publish_3_q2, as::use_future).get();
         BOOST_TEST(!ec);
         BOOST_TEST(!pub3_send);
     }
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(publish_4_q0, as::use_future).get();
+        auto ec = ep->async_send(publish_4_q0, as::use_future).get();
         BOOST_TEST(!ec);
         BOOST_TEST(pub4_send);
     }
@@ -426,7 +426,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
 
     // recv puback2
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(puback2 == pv);
     }
 
@@ -434,7 +434,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
 
     // recv pubrec3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pubrec3 == pv);
     }
 
@@ -445,16 +445,16 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
     {
-        auto ec = ep->send(pubrel3, as::use_future).get();
+        auto ec = ep->async_send(pubrel3, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv pubcomp3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pubcomp3 == pv);
     }
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -515,13 +515,13 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -602,17 +602,17 @@ BOOST_AUTO_TEST_CASE(client_recv) {
 
     // recv publish1
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_1_q1 == pv);
     }
     // recv publish2
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_2_q1 == pv);
     }
     // recv publish3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_3_q0 == pv);
     }
 
@@ -629,14 +629,14 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
     // recv publish4
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
     BOOST_TEST(close_called);
     // recv close
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -655,13 +655,13 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
     {
-        auto ec = ep->send(connect, as::use_future).get();
+        auto ec = ep->async_send(connect, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(connack == pv);
     }
 
@@ -681,12 +681,12 @@ BOOST_AUTO_TEST_CASE(client_recv) {
 
     // recv publish1
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_1_q1 == pv);
     }
     // recv publish4
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_4_q2 == pv);
     }
     // send puback2
@@ -696,7 +696,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
     {
-        auto ec = ep->send(puback2, as::use_future).get();
+        auto ec = ep->async_send(puback2, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // send pubrec3
@@ -706,12 +706,12 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
     {
-        auto ec = ep->send(pubrec3, as::use_future).get();
+        auto ec = ep->async_send(pubrec3, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // recv pubrel3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pubrel3 == pv);
     }
     // send pubcomp3
@@ -721,22 +721,22 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
     {
-        auto ec = ep->send(pubcomp3, as::use_future).get();
+        auto ec = ep->async_send(pubcomp3, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // recv publish2
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_2_q1 == pv);
     }
     // recv publish3
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_3_q0 == pv);
     }
     // recv publish5
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(publish_5_q1 == pv);
     }
 
@@ -753,12 +753,12 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     );
     // recv publish6
     {
-        auto pv = ep->recv(as::use_future).get();
+        auto pv = ep->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
     BOOST_TEST(close_called);
-    ep->close(as::use_future).get();
+    ep->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }
@@ -820,7 +820,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv connect
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -831,7 +831,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
     {
-        auto ec = ep1->send(connack, as::use_future).get();
+        auto ec = ep1->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -912,17 +912,17 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv publish1
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(publish_1_q1 == pv);
     }
     // recv publish2
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(publish_2_q1 == pv);
     }
     // recv publish3
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(publish_3_q0 == pv);
     }
 
@@ -939,14 +939,14 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     );
     // recv publish4
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
     BOOST_TEST(close_called);
     // recv close
     {
-        auto pv = ep1->recv(as::use_future).get();
+        auto pv = ep1->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
     }
 
@@ -960,7 +960,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv connect
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(connect == pv);
     }
 
@@ -971,7 +971,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
     {
-        auto ec = ep2->send(connack, as::use_future).get();
+        auto ec = ep2->async_send(connack, as::use_future).get();
         BOOST_TEST(!ec);
     }
 
@@ -991,12 +991,12 @@ BOOST_AUTO_TEST_CASE(server_recv) {
 
     // recv publish1
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(publish_1_q1 == pv);
     }
     // recv publish4
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(publish_4_q2 == pv);
     }
     // send puback2
@@ -1006,7 +1006,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
     {
-        auto ec = ep2->send(puback2, as::use_future).get();
+        auto ec = ep2->async_send(puback2, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // send pubrec3
@@ -1016,12 +1016,12 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
     {
-        auto ec = ep2->send(pubrec3, as::use_future).get();
+        auto ec = ep2->async_send(pubrec3, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // recv pubrel3
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(pubrel3 == pv);
     }
     // send pubcomp3
@@ -1031,22 +1031,22 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
     {
-        auto ec = ep2->send(pubcomp3, as::use_future).get();
+        auto ec = ep2->async_send(pubcomp3, as::use_future).get();
         BOOST_TEST(!ec);
     }
     // recv publish2
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(publish_2_q1 == pv);
     }
     // recv publish3
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(publish_3_q0 == pv);
     }
     // recv publish5
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(publish_5_q1 == pv);
     }
 
@@ -1063,13 +1063,13 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     );
     // recv publish6
     {
-        auto pv = ep2->recv(as::use_future).get();
+        auto pv = ep2->async_recv(as::use_future).get();
         BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
         BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
     }
     BOOST_TEST(close_called);
-    ep1->close(as::use_future).get();
-    ep2->close(as::use_future).get();
+    ep1->async_close(as::use_future).get();
+    ep2->async_close(as::use_future).get();
     guard.reset();
     th.join();
 }

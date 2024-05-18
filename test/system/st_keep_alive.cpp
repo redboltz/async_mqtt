@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         1,  // 1sec
@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv({am::control_packet_type::connack}, *this);
+                yield ep().async_recv({am::control_packet_type::connack}, *this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
                 ep().set_pingreq_send_interval_ms_for_test(10000);
-                yield ep().recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
+                yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(!*pv); // error as expected
                 set_finish();
             }
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_session
                         1,  // 1sec
@@ -106,12 +106,12 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv({am::control_packet_type::connack}, *this);
+                yield ep().async_recv({am::control_packet_type::connack}, *this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
                 ep().set_pingreq_send_interval_ms_for_test(10000);
-                yield ep().recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
+                yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(pv->get_if<am::v5::disconnect_packet>());
-                yield ep().recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
+                yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(!*pv); // error as expected
                 set_finish();
             }

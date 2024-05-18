@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT CONNECT
         {
-            auto fut = amep->send(
+            auto fut = amep->async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT CONNACK
         {
-            auto fut = amep->recv(as::use_future);
+            auto fut = amep->async_recv(as::use_future);
             auto pv = fut.get(); // get am::packet_variant
             if (pv) {
                 pv.visit(
@@ -114,9 +114,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT SUBSCRIBE
         {
-            auto fut_id = amep->acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get();
-            auto fut = amep->send(
+            auto fut = amep->async_send(
                 am::v3_1_1::subscribe_packet{
                     *pid,
                     { {"topic1", am::qos::at_most_once} }
@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT SUBACK
         {
-            auto fut = amep->recv(as::use_future);
+            auto fut = amep->async_recv(as::use_future);
             auto pv = fut.get();
             if (pv) {
                 pv.visit(
@@ -162,9 +162,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT PUBLISH
         {
-            auto fut_id = amep->acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get();
-            auto fut = amep->send(
+            auto fut = amep->async_send(
                 am::v3_1_1::publish_packet{
                     *pid,
                     "topic1",
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         {
             for (std::size_t count = 0; count != 2; ++count) {
-                auto fut =  amep->recv(as::use_future);
+                auto fut =  amep->async_recv(as::use_future);
                 auto pv = fut.get();
                 if (pv) {
                     pv.visit(
@@ -220,7 +220,7 @@ int main(int argc, char* argv[]) {
         }
         {
             std::cout << "close" << std::endl;
-            auto fut = amep->close(as::use_future);
+            auto fut = amep->async_close(as::use_future);
             fut.get();
         }
     }

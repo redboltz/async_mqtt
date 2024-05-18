@@ -26,7 +26,7 @@ subscribe_op {
         auto& a_cl{cl};
         auto pid = packet.packet_id();
         auto a_packet{packet};
-        a_cl.ep_->send(
+        a_cl.ep_->async_send(
             force_move(a_packet),
             as::append(
                 force_move(self),
@@ -97,7 +97,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, std::optional<suback_packet>)
 )
-client<Version, NextLayer>::subscribe(
+client<Version, NextLayer>::async_subscribe(
     subscribe_packet packet,
     CompletionToken&& token
 ) {

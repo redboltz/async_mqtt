@@ -510,7 +510,7 @@ private:
         am::pub::opts opts
     ) {
         if (version_ == am::protocol_version::v3_1_1) {
-            ep_.send(
+            ep_.async_send(
                 am::v3_1_1::publish_packet{
                     pid,
                     am::force_move(topic),
@@ -559,7 +559,7 @@ private:
             for (auto& p : pub_ups_) {
                 props.emplace_back(p);
             }
-            ep_.send(
+            ep_.async_send(
                 am::v5::publish_packet{
                     pid,
                     am::force_move(topic),
@@ -583,7 +583,7 @@ private:
     ) {
         if (opts.get_qos() == am::qos::at_least_once ||
             opts.get_qos() == am::qos::exactly_once) {
-            ep_.acquire_unique_packet_id(
+            ep_.async_acquire_unique_packet_id(
                 [
                     this,
                     topic = am::force_move(topic),
@@ -621,7 +621,7 @@ private:
         std::string topic,
         am::sub::opts opts
     ) {
-        ep_.acquire_unique_packet_id(
+        ep_.async_acquire_unique_packet_id(
             [
                 this,
                 topic = am::force_move(topic),
@@ -630,7 +630,7 @@ private:
             (std::optional<am::packet_id_type> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
-                        ep_.send(
+                        ep_.async_send(
                             am::v3_1_1::subscribe_packet{
                                 *pid_opt,
                                 { {am::force_move(topic), opts} }
@@ -652,7 +652,7 @@ private:
                         for (auto& p : sub_ups_) {
                             props.emplace_back(p);
                         }
-                        ep_.send(
+                        ep_.async_send(
                             am::v5::subscribe_packet{
                                 *pid_opt,
                                 { {am::force_move(topic), opts} },
@@ -678,7 +678,7 @@ private:
     void unsubscribe(
         std::string topic
     ) {
-        ep_.acquire_unique_packet_id(
+        ep_.async_acquire_unique_packet_id(
             [
                 this,
                 topic = am::force_move(topic)
@@ -686,7 +686,7 @@ private:
             (std::optional<am::packet_id_type> pid_opt) mutable {
                 if (pid_opt) {
                     if (version_ == am::protocol_version::v3_1_1) {
-                        ep_.send(
+                        ep_.async_send(
                             am::v3_1_1::unsubscribe_packet{
                                 *pid_opt,
                                 { am::force_move(topic) }
@@ -699,7 +699,7 @@ private:
                         );
                     }
                     else {
-                        ep_.send(
+                        ep_.async_send(
                             am::v5::unsubscribe_packet{
                                 *pid_opt,
                                 { am::force_move(topic) }
@@ -838,7 +838,7 @@ private:
             // Send MQTT CONNECT
             yield {
                 if (version_ == am::protocol_version::v3_1_1) {
-                    ep_.send(
+                    ep_.async_send(
                         am::v3_1_1::connect_packet{
                             clean_start_,
                             keep_alive_,
@@ -860,7 +860,7 @@ private:
                                 return am::properties{am::property::session_expiry_interval{sei_}};
                             }
                         } ();
-                    ep_.send(
+                    ep_.async_send(
                         am::v5::connect_packet{
                             clean_start_,
                             keep_alive_,
@@ -881,7 +881,7 @@ private:
 
             // Recv loop
             while (true) {
-                yield ep_.recv(*this);
+                yield ep_.async_recv(*this);
                 if (pv) {
                     pv.visit(
                         am::overload {

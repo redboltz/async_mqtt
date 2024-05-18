@@ -29,7 +29,7 @@ start_op {
     ) {
         auto& a_cl{cl};
         auto a_packet{packet};
-        a_cl.ep_->send(
+        a_cl.ep_->async_send(
             force_move(a_packet),
             force_move(self)
         );
@@ -98,7 +98,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, std::optional<connack_packet>)
 )
-client<Version, NextLayer>::start(
+client<Version, NextLayer>::async_start(
     connect_packet packet,
     CompletionToken&& token
 ) {

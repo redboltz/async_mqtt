@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(different) {
                 am::connect_return_code::accepted
             };
 
-            auto se = co_await ep->send(connect, as::deferred);
+            auto se = co_await ep->async_send(connect, as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
@@ -77,22 +77,22 @@ BOOST_AUTO_TEST_CASE(different) {
                 }
             );
 
-            auto pv = co_await ep->recv(as::deferred);
+            auto pv = co_await ep->async_recv(as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto pid_opt = co_await ep->acquire_unique_packet_id(as::deferred);
+            auto pid_opt = co_await ep->async_acquire_unique_packet_id(as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->register_packet_id(*pid_opt, as::deferred);
+            co_await ep->async_register_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->release_packet_id(*pid_opt, as::deferred);
+            co_await ep->async_release_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto packets = co_await ep->get_stored_packets(as::deferred);
+            auto packets = co_await ep->async_get_stored_packets(as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->restore_packets(packets, as::deferred);
+            co_await ep->async_restore_packets(packets, as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
@@ -101,10 +101,10 @@ BOOST_AUTO_TEST_CASE(different) {
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 
-            co_await ep->regulate_for_store(pub, as::deferred);
+            co_await ep->async_regulate_for_store(pub, as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->close(as::deferred);
+            co_await ep->async_close(as::deferred);
             BOOST_TEST(str_ep.running_in_this_thread());
 
             guard_coro.reset();
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(bind) {
                 am::connect_return_code::accepted
             };
 
-            auto se = co_await ep->send(connect, as::bind_executor(str_ep, as::deferred));
+            auto se = co_await ep->async_send(connect, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
@@ -175,22 +175,22 @@ BOOST_AUTO_TEST_CASE(bind) {
                 }
             );
 
-            auto pv = co_await ep->recv(as::bind_executor(str_ep, as::deferred));
+            auto pv = co_await ep->async_recv(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto pid_opt = co_await ep->acquire_unique_packet_id(as::bind_executor(str_ep, as::deferred));
+            auto pid_opt = co_await ep->async_acquire_unique_packet_id(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->register_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_register_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->release_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_release_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto packets = co_await ep->get_stored_packets(as::bind_executor(str_ep, as::deferred));
+            auto packets = co_await ep->async_get_stored_packets(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->restore_packets(packets, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_restore_packets(packets, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
@@ -199,10 +199,10 @@ BOOST_AUTO_TEST_CASE(bind) {
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 
-            co_await ep->regulate_for_store(pub, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_regulate_for_store(pub, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->close(as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_close(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
             guard_coro.reset();
@@ -258,7 +258,7 @@ BOOST_AUTO_TEST_CASE(same) {
                 am::connect_return_code::accepted
             };
 
-            auto se = co_await ep->send(connect, as::deferred);
+            auto se = co_await ep->async_send(connect, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
@@ -267,22 +267,22 @@ BOOST_AUTO_TEST_CASE(same) {
                 }
             );
 
-            auto pv = co_await ep->recv(as::deferred);
+            auto pv = co_await ep->async_recv(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            auto pid_opt = co_await ep->acquire_unique_packet_id(as::deferred);
+            auto pid_opt = co_await ep->async_acquire_unique_packet_id(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            co_await ep->register_packet_id(*pid_opt, as::deferred);
+            co_await ep->async_register_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            co_await ep->release_packet_id(*pid_opt, as::deferred);
+            co_await ep->async_release_packet_id(*pid_opt, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            auto packets = co_await ep->get_stored_packets(as::deferred);
+            auto packets = co_await ep->async_get_stored_packets(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            co_await ep->restore_packets(packets, as::deferred);
+            co_await ep->async_restore_packets(packets, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
             auto pub = am::v5::publish_packet{
@@ -291,10 +291,10 @@ BOOST_AUTO_TEST_CASE(same) {
                 am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
             };
 
-            co_await ep->regulate_for_store(pub, as::deferred);
+            co_await ep->async_regulate_for_store(pub, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            co_await ep->close(as::deferred);
+            co_await ep->async_close(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
             guard.reset();

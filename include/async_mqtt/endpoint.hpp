@@ -282,7 +282,7 @@ public:
         void(std::optional<packet_id_t>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    acquire_unique_packet_id(
+    async_acquire_unique_packet_id(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -301,7 +301,7 @@ public:
         void(packet_id_t)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    acquire_unique_packet_id_wait_until(
+        async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -320,7 +320,7 @@ public:
         void(bool)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    register_packet_id(
+    async_register_packet_id(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -340,7 +340,7 @@ public:
         void()
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    release_packet_id(
+    async_release_packet_id(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -362,7 +362,7 @@ public:
         void(system_error)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    send(
+    async_send(
         Packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -382,7 +382,7 @@ public:
         void(packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    recv(
+    async_recv(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -404,7 +404,7 @@ public:
         void(packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    recv(
+    async_recv(
         std::set<control_packet_type> types,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -428,7 +428,7 @@ public:
         void(packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    recv(
+    async_recv(
         filter fil,
         std::set<control_packet_type> types,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -448,7 +448,7 @@ public:
         void()
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    close(
+    async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -468,7 +468,7 @@ public:
         void()
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    restore_packets(
+    async_restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -491,7 +491,7 @@ public:
         void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    get_stored_packets(
+    async_get_stored_packets(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     ) const;
 
@@ -511,7 +511,7 @@ public:
         void(v5::basic_publish_packet<PacketIdBytes>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    regulate_for_store(
+    async_regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     ) const;
@@ -606,6 +606,15 @@ public:
 
     void set_pingreq_send_interval_ms_for_test(std::size_t ms);
 
+    template <typename Executor1>
+    struct rebind_executor {
+        using other = basic_endpoint<
+            Role,
+            PacketIdBytes,
+            typename NextLayer::template rebind_executor<Executor1>::other
+        >;
+    };
+
 private: // compose operation impl
 
     /**
@@ -618,9 +627,21 @@ private: // compose operation impl
      *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
      */
     template <typename... Args>
+    explicit
     basic_endpoint(
         protocol_version ver,
         Args&&... args
+    );
+
+    /**
+     *  @brief Rebinding constructor
+     *         This constructor creates a basic_endpoint from the basic_endpoint with a different executor.
+     *  @param other The other basic_endpoint to construct from.
+     */
+    template <typename Other>
+    explicit
+    basic_endpoint(
+        basic_endpoint<Role, PacketIdBytes, Other>&& other
     );
 
     struct acquire_unique_packet_id_op;
@@ -647,7 +668,7 @@ private:
         void(system_error)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    send(
+    async_send(
         Packet packet,
         bool from_queue,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -662,7 +683,7 @@ private:
         void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-    add_retry(
+    async_add_retry(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 

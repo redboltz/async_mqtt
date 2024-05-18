@@ -96,7 +96,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, std::optional<publish_packet>, std::optional<disconnect_packet>)
 )
-client<Version, NextLayer>::recv(
+client<Version, NextLayer>::async_recv(
     CompletionToken&& token
 ) {
     ASYNC_MQTT_LOG("mqtt_api", info)

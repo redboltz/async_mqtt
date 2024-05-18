@@ -117,34 +117,38 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9b17702ad539982547fa5dc3de34f8df"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9b17702ad539982547fa5dc3de34f8df">client</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a9b17702ad539982547fa5dc3de34f8df"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
 <tr class="separator:a9b17702ad539982547fa5dc3de34f8df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3d1cd54e59f61ba642475fd4b5029f9" id="r_ad3d1cd54e59f61ba642475fd4b5029f9"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ad3d1cd54e59f61ba642475fd4b5029f9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3d1cd54e59f61ba642475fd4b5029f9">start</a> (connect_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:ad3d1cd54e59f61ba642475fd4b5029f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">send CONNECT packet and start packet receive loop  <br /></td></tr>
-<tr class="separator:ad3d1cd54e59f61ba642475fd4b5029f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8b2cf189e5ab5f4539271ba843c2061" id="r_ab8b2cf189e5ab5f4539271ba843c2061"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ab8b2cf189e5ab5f4539271ba843c2061"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab8b2cf189e5ab5f4539271ba843c2061">subscribe</a> (subscribe_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:ab8b2cf189e5ab5f4539271ba843c2061"><td class="mdescLeft">&#160;</td><td class="mdescRight">send SUBSCRIBE packet  <br /></td></tr>
-<tr class="separator:ab8b2cf189e5ab5f4539271ba843c2061"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb292b6ef3875a8239b50968b3896999" id="r_acb292b6ef3875a8239b50968b3896999"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:acb292b6ef3875a8239b50968b3896999"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acb292b6ef3875a8239b50968b3896999">unsubscribe</a> (unsubscribe_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:acb292b6ef3875a8239b50968b3896999"><td class="mdescLeft">&#160;</td><td class="mdescRight">send UNSUBSCRIBE packet  <br /></td></tr>
-<tr class="separator:acb292b6ef3875a8239b50968b3896999"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2736d44167509c9cdcf90c09a161b0b2" id="r_a2736d44167509c9cdcf90c09a161b0b2"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a2736d44167509c9cdcf90c09a161b0b2"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2736d44167509c9cdcf90c09a161b0b2">publish</a> (publish_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:a2736d44167509c9cdcf90c09a161b0b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">send PUBLISH packet  <br /></td></tr>
-<tr class="separator:a2736d44167509c9cdcf90c09a161b0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2155bdd0c9fb25a62fab3e2277b0fd0" id="r_ac2155bdd0c9fb25a62fab3e2277b0fd0"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ac2155bdd0c9fb25a62fab3e2277b0fd0"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac2155bdd0c9fb25a62fab3e2277b0fd0">disconnect</a> (disconnect_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:ac2155bdd0c9fb25a62fab3e2277b0fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">send DISCONNECT packet  <br /></td></tr>
-<tr class="separator:ac2155bdd0c9fb25a62fab3e2277b0fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad881f2cf6d62ac4cea9a9ed9d4d9a371" id="r_ad881f2cf6d62ac4cea9a9ed9d4d9a371"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ad881f2cf6d62ac4cea9a9ed9d4d9a371"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad881f2cf6d62ac4cea9a9ed9d4d9a371">close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:ad881f2cf6d62ac4cea9a9ed9d4d9a371"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the underlying connection  <br /></td></tr>
-<tr class="separator:ad881f2cf6d62ac4cea9a9ed9d4d9a371"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83546d888863ccc0b170453280b95689" id="r_a83546d888863ccc0b170453280b95689"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a83546d888863ccc0b170453280b95689"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a83546d888863ccc0b170453280b95689">recv</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:a83546d888863ccc0b170453280b95689"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive PUBLISH or DISCONNECT packet users CANNOT call <a class="el" href="#a83546d888863ccc0b170453280b95689" title="receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()&#39;s Completion...">recv()</a> before the previous <a class="el" href="#a83546d888863ccc0b170453280b95689" title="receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()&#39;s Completion...">recv()</a>'s CompletionToken is invoked  <br /></td></tr>
-<tr class="separator:a83546d888863ccc0b170453280b95689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae422a3de6052d79df44db7f73994c54f" id="r_ae422a3de6052d79df44db7f73994c54f"><td class="memTemplParams" colspan="2">template&lt;typename Other &gt; </td></tr>
+<tr class="memitem:ae422a3de6052d79df44db7f73994c54f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae422a3de6052d79df44db7f73994c54f">client</a> (<a class="el" href="classasync__mqtt_1_1client.html">client</a>&lt; Version, Other &gt; &amp;&amp;other)</td></tr>
+<tr class="memdesc:ae422a3de6052d79df44db7f73994c54f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebinding constructor This constructor creates a client from the client with a different executor.  <br /></td></tr>
+<tr class="separator:ae422a3de6052d79df44db7f73994c54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab802b5a3e020264d823e944e2dccf655" id="r_ab802b5a3e020264d823e944e2dccf655"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:ab802b5a3e020264d823e944e2dccf655"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab802b5a3e020264d823e944e2dccf655">async_start</a> (connect_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:ab802b5a3e020264d823e944e2dccf655"><td class="mdescLeft">&#160;</td><td class="mdescRight">send CONNECT packet and start packet receive loop  <br /></td></tr>
+<tr class="separator:ab802b5a3e020264d823e944e2dccf655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7582e8a40060d2e29ebb062f7b7952a" id="r_af7582e8a40060d2e29ebb062f7b7952a"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:af7582e8a40060d2e29ebb062f7b7952a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af7582e8a40060d2e29ebb062f7b7952a">async_subscribe</a> (subscribe_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:af7582e8a40060d2e29ebb062f7b7952a"><td class="mdescLeft">&#160;</td><td class="mdescRight">send SUBSCRIBE packet  <br /></td></tr>
+<tr class="separator:af7582e8a40060d2e29ebb062f7b7952a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c1cc8b0ca651363e46495f5df544e30" id="r_a6c1cc8b0ca651363e46495f5df544e30"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a6c1cc8b0ca651363e46495f5df544e30"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6c1cc8b0ca651363e46495f5df544e30">async_unsubscribe</a> (unsubscribe_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a6c1cc8b0ca651363e46495f5df544e30"><td class="mdescLeft">&#160;</td><td class="mdescRight">send UNSUBSCRIBE packet  <br /></td></tr>
+<tr class="separator:a6c1cc8b0ca651363e46495f5df544e30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa01fbbe9e545687abb44ebacad64da09" id="r_aa01fbbe9e545687abb44ebacad64da09"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:aa01fbbe9e545687abb44ebacad64da09"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa01fbbe9e545687abb44ebacad64da09">async_publish</a> (publish_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:aa01fbbe9e545687abb44ebacad64da09"><td class="mdescLeft">&#160;</td><td class="mdescRight">send PUBLISH packet  <br /></td></tr>
+<tr class="separator:aa01fbbe9e545687abb44ebacad64da09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6abf999b6133396b34974ff79fe65235" id="r_a6abf999b6133396b34974ff79fe65235"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a6abf999b6133396b34974ff79fe65235"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6abf999b6133396b34974ff79fe65235">async_disconnect</a> (disconnect_packet packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a6abf999b6133396b34974ff79fe65235"><td class="mdescLeft">&#160;</td><td class="mdescRight">send DISCONNECT packet  <br /></td></tr>
+<tr class="separator:a6abf999b6133396b34974ff79fe65235"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dda4bdcebd220beb5392adb5da86110" id="r_a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9dda4bdcebd220beb5392adb5da86110">async_close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a9dda4bdcebd220beb5392adb5da86110"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the underlying connection  <br /></td></tr>
+<tr class="separator:a9dda4bdcebd220beb5392adb5da86110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a825c14790ca009436f20c1b2c7952204" id="r_a825c14790ca009436f20c1b2c7952204"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a825c14790ca009436f20c1b2c7952204"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a825c14790ca009436f20c1b2c7952204">async_recv</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a825c14790ca009436f20c1b2c7952204"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked  <br /></td></tr>
+<tr class="separator:a825c14790ca009436f20c1b2c7952204"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac717d23602387557b4652841050f2825" id="r_ac717d23602387557b4652841050f2825"><td class="memItemLeft" align="right" valign="top">as::any_io_executor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac717d23602387557b4652841050f2825">get_executor</a> () const</td></tr>
 <tr class="memdesc:ac717d23602387557b4652841050f2825"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor getter  <br /></td></tr>
 <tr class="separator:ac717d23602387557b4652841050f2825"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,22 +180,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa56df38927dcfa249981a336cd14c649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one. <br  />
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:aa56df38927dcfa249981a336cd14c649"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2d72ada1dbc995da40b09ab79a722a3" id="r_aa2d72ada1dbc995da40b09ab79a722a3"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:aa2d72ada1dbc995da40b09ab79a722a3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa2d72ada1dbc995da40b09ab79a722a3">acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:aa2d72ada1dbc995da40b09ab79a722a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
-<tr class="separator:aa2d72ada1dbc995da40b09ab79a722a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcea80b850adc0515fd0b63e85e95aff" id="r_afcea80b850adc0515fd0b63e85e95aff"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:afcea80b850adc0515fd0b63e85e95aff"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afcea80b850adc0515fd0b63e85e95aff">acquire_unique_packet_id_wait_until</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:afcea80b850adc0515fd0b63e85e95aff"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id. If packet_id is fully acquired, then wait until released.  <br /></td></tr>
-<tr class="separator:afcea80b850adc0515fd0b63e85e95aff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a658eb1b5cc4f0889545361eb9761b584" id="r_a658eb1b5cc4f0889545361eb9761b584"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a658eb1b5cc4f0889545361eb9761b584"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a658eb1b5cc4f0889545361eb9761b584">register_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:a658eb1b5cc4f0889545361eb9761b584"><td class="mdescLeft">&#160;</td><td class="mdescRight">register packet_id.  <br /></td></tr>
-<tr class="separator:a658eb1b5cc4f0889545361eb9761b584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3807fac7498d41ff313bb81691a8984" id="r_ab3807fac7498d41ff313bb81691a8984"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ab3807fac7498d41ff313bb81691a8984"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab3807fac7498d41ff313bb81691a8984">release_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
-<tr class="memdesc:ab3807fac7498d41ff313bb81691a8984"><td class="mdescLeft">&#160;</td><td class="mdescRight">release packet_id.  <br /></td></tr>
-<tr class="separator:ab3807fac7498d41ff313bb81691a8984"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae866b887888316e02f14487ec2892a23" id="r_ae866b887888316e02f14487ec2892a23"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:ae866b887888316e02f14487ec2892a23"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:ae866b887888316e02f14487ec2892a23"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
+<tr class="separator:ae866b887888316e02f14487ec2892a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a107f857b734a01cfeb6f8fc7894e60f1" id="r_a107f857b734a01cfeb6f8fc7894e60f1"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a107f857b734a01cfeb6f8fc7894e60f1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a107f857b734a01cfeb6f8fc7894e60f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id. If packet_id is fully acquired, then wait until released.  <br /></td></tr>
+<tr class="separator:a107f857b734a01cfeb6f8fc7894e60f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbe876628df6963609eb6e9aa4a0729e" id="r_acbe876628df6963609eb6e9aa4a0729e"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:acbe876628df6963609eb6e9aa4a0729e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:acbe876628df6963609eb6e9aa4a0729e"><td class="mdescLeft">&#160;</td><td class="mdescRight">register packet_id.  <br /></td></tr>
+<tr class="separator:acbe876628df6963609eb6e9aa4a0729e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2574049a028672d01dcb4a49d80dec27" id="r_a2574049a028672d01dcb4a49d80dec27"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
+<tr class="memitem:a2574049a028672d01dcb4a49d80dec27"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memdesc:a2574049a028672d01dcb4a49d80dec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">release packet_id.  <br /></td></tr>
+<tr class="separator:a2574049a028672d01dcb4a49d80dec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab160ebb19bd7e51f8460e59a88deff86" id="r_ab160ebb19bd7e51f8460e59a88deff86"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a> ()</td></tr>
 <tr class="memdesc:ab160ebb19bd7e51f8460e59a88deff86"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
 <tr class="separator:ab160ebb19bd7e51f8460e59a88deff86"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,7 +218,7 @@ class async_mqtt::client&lt; Version, NextLayer &gt;</div><p>MQTT client for cas
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9b17702ad539982547fa5dc3de34f8df" name="a9b17702ad539982547fa5dc3de34f8df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b17702ad539982547fa5dc3de34f8df">&#9670;&#160;</a></span>client()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b17702ad539982547fa5dc3de34f8df">&#9670;&#160;</a></span>client() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,6 +226,9 @@ class async_mqtt::client&lt; Version, NextLayer &gt;</div><p>MQTT client for cas
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
 <div class="memtemplate">
 template&lt;typename... Args&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::client </td>
@@ -230,6 +237,11 @@ template&lt;typename... Args&gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>constructor </p>
@@ -249,9 +261,46 @@ template&lt;typename... Args&gt; </div>
 
 </div>
 </div>
+<a id="ae422a3de6052d79df44db7f73994c54f" name="ae422a3de6052d79df44db7f73994c54f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae422a3de6052d79df44db7f73994c54f">&#9670;&#160;</a></span>client() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename Other &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::client </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1client.html">client</a>&lt; Version, Other &gt; &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Rebinding constructor This constructor creates a client from the client with a different executor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The other client to construct from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab160ebb19bd7e51f8460e59a88deff86" name="ab160ebb19bd7e51f8460e59a88deff86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab160ebb19bd7e51f8460e59a88deff86">&#9670;&#160;</a></span>acquire_unique_packet_id() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab160ebb19bd7e51f8460e59a88deff86">&#9670;&#160;</a></span>acquire_unique_packet_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,8 +322,8 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 
 </div>
 </div>
-<a id="aa2d72ada1dbc995da40b09ab79a722a3" name="aa2d72ada1dbc995da40b09ab79a722a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2d72ada1dbc995da40b09ab79a722a3">&#9670;&#160;</a></span>acquire_unique_packet_id() <span class="overload">[2/2]</span></h2>
+<a id="ae866b887888316e02f14487ec2892a23" name="ae866b887888316e02f14487ec2892a23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae866b887888316e02f14487ec2892a23">&#9670;&#160;</a></span>async_acquire_unique_packet_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -284,7 +333,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::acquire_unique_packet_id </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_acquire_unique_packet_id </td>
           <td>(</td>
           <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
@@ -303,8 +352,8 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 
 </div>
 </div>
-<a id="afcea80b850adc0515fd0b63e85e95aff" name="afcea80b850adc0515fd0b63e85e95aff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcea80b850adc0515fd0b63e85e95aff">&#9670;&#160;</a></span>acquire_unique_packet_id_wait_until()</h2>
+<a id="a107f857b734a01cfeb6f8fc7894e60f1" name="a107f857b734a01cfeb6f8fc7894e60f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a107f857b734a01cfeb6f8fc7894e60f1">&#9670;&#160;</a></span>async_acquire_unique_packet_id_wait_until()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,7 +363,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::acquire_unique_packet_id_wait_until </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_acquire_unique_packet_id_wait_until </td>
           <td>(</td>
           <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
@@ -333,8 +382,8 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 
 </div>
 </div>
-<a id="ad881f2cf6d62ac4cea9a9ed9d4d9a371" name="ad881f2cf6d62ac4cea9a9ed9d4d9a371"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad881f2cf6d62ac4cea9a9ed9d4d9a371">&#9670;&#160;</a></span>close()</h2>
+<a id="a9dda4bdcebd220beb5392adb5da86110" name="a9dda4bdcebd220beb5392adb5da86110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9dda4bdcebd220beb5392adb5da86110">&#9670;&#160;</a></span>async_close()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -344,7 +393,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::close </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_close </td>
           <td>(</td>
           <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
@@ -363,8 +412,8 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 
 </div>
 </div>
-<a id="ac2155bdd0c9fb25a62fab3e2277b0fd0" name="ac2155bdd0c9fb25a62fab3e2277b0fd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2155bdd0c9fb25a62fab3e2277b0fd0">&#9670;&#160;</a></span>disconnect()</h2>
+<a id="a6abf999b6133396b34974ff79fe65235" name="a6abf999b6133396b34974ff79fe65235"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6abf999b6133396b34974ff79fe65235">&#9670;&#160;</a></span>async_disconnect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -374,7 +423,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::disconnect </td>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_disconnect </td>
           <td>(</td>
           <td class="paramtype">disconnect_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
         </tr>
@@ -391,6 +440,246 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">packet</td><td>DISCONNECT packet </td></tr>
     <tr><td class="paramname">token</td><td>the params is error_code </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="aa01fbbe9e545687abb44ebacad64da09" name="aa01fbbe9e545687abb44ebacad64da09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa01fbbe9e545687abb44ebacad64da09">&#9670;&#160;</a></span>async_publish()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_publish </td>
+          <td>(</td>
+          <td class="paramtype">publish_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>send PUBLISH packet </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet</td><td>PUBLISH packet </td></tr>
+    <tr><td class="paramname">token</td><td>the params are error_code, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> is std::nullopt. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a" title="puback_packet as the response when you send QoS1 publish">pubres_t::puback_opt</a> is set. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440" title="pubrec_packet as the response when you send QoS2 publish">pubres_t::pubrec_opt</a> pubres_t::pubcomp are set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="a825c14790ca009436f20c1b2c7952204" name="a825c14790ca009436f20c1b2c7952204"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a825c14790ca009436f20c1b2c7952204">&#9670;&#160;</a></span>async_recv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_recv </td>
+          <td>(</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;publish_packet&gt;, and std::optional&lt;disconnect_packet&gt; </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="acbe876628df6963609eb6e9aa4a0729e" name="acbe876628df6963609eb6e9aa4a0729e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbe876628df6963609eb6e9aa4a0729e">&#9670;&#160;</a></span>async_register_packet_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_register_packet_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a></td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>register packet_id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
+    <tr><td class="paramname">token</td><td>the param is bool. If true, success, otherwise the packet_id has already been used. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="a2574049a028672d01dcb4a49d80dec27" name="a2574049a028672d01dcb4a49d80dec27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2574049a028672d01dcb4a49d80dec27">&#9670;&#160;</a></span>async_release_packet_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_release_packet_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a></td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>release packet_id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
+    <tr><td class="paramname">token</td><td>the param is void </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="ab802b5a3e020264d823e944e2dccf655" name="ab802b5a3e020264d823e944e2dccf655"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab802b5a3e020264d823e944e2dccf655">&#9670;&#160;</a></span>async_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_start </td>
+          <td>(</td>
+          <td class="paramtype">connect_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>send CONNECT packet and start packet receive loop </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet</td><td>CONNECT packet </td></tr>
+    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;connack_packet&gt; </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="af7582e8a40060d2e29ebb062f7b7952a" name="af7582e8a40060d2e29ebb062f7b7952a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7582e8a40060d2e29ebb062f7b7952a">&#9670;&#160;</a></span>async_subscribe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_subscribe </td>
+          <td>(</td>
+          <td class="paramtype">subscribe_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>send SUBSCRIBE packet </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet</td><td>SUBSCRIBE packet </td></tr>
+    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;suback_packet&gt; </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+
+</div>
+</div>
+<a id="a6c1cc8b0ca651363e46495f5df544e30" name="a6c1cc8b0ca651363e46495f5df544e30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c1cc8b0ca651363e46495f5df544e30">&#9670;&#160;</a></span>async_unsubscribe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_unsubscribe </td>
+          <td>(</td>
+          <td class="paramtype">unsubscribe_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>send UNSUBSCRIBE packet </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">packet</td><td>UNSUBSCRIBE packet </td></tr>
+    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;unsuback_packet&gt; </td></tr>
   </table>
   </dd>
 </dl>
@@ -508,73 +797,8 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 
 </div>
 </div>
-<a id="a2736d44167509c9cdcf90c09a161b0b2" name="a2736d44167509c9cdcf90c09a161b0b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2736d44167509c9cdcf90c09a161b0b2">&#9670;&#160;</a></span>publish()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::publish </td>
-          <td>(</td>
-          <td class="paramtype">publish_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>send PUBLISH packet </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet</td><td>PUBLISH packet </td></tr>
-    <tr><td class="paramname">token</td><td>the params are error_code, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> is std::nullopt. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a" title="puback_packet as the response when you send QoS1 publish">pubres_t::puback_opt</a> is set. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440" title="pubrec_packet as the response when you send QoS2 publish">pubres_t::pubrec_opt</a> pubres_t::pubcomp are set. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
-<a id="a83546d888863ccc0b170453280b95689" name="a83546d888863ccc0b170453280b95689"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83546d888863ccc0b170453280b95689">&#9670;&#160;</a></span>recv()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::recv </td>
-          <td>(</td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>receive PUBLISH or DISCONNECT packet users CANNOT call <a class="el" href="#a83546d888863ccc0b170453280b95689" title="receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()&#39;s Completion...">recv()</a> before the previous <a class="el" href="#a83546d888863ccc0b170453280b95689" title="receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()&#39;s Completion...">recv()</a>'s CompletionToken is invoked </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;publish_packet&gt;, and std::optional&lt;disconnect_packet&gt; </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
 <a id="a2a7414f348afda7a9059135338ddaadc" name="a2a7414f348afda7a9059135338ddaadc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a7414f348afda7a9059135338ddaadc">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a7414f348afda7a9059135338ddaadc">&#9670;&#160;</a></span>register_packet_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -602,43 +826,8 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 
 </div>
 </div>
-<a id="a658eb1b5cc4f0889545361eb9761b584" name="a658eb1b5cc4f0889545361eb9761b584"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a658eb1b5cc4f0889545361eb9761b584">&#9670;&#160;</a></span>register_packet_id() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::register_packet_id </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a></td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>register packet_id. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
-    <tr><td class="paramname">token</td><td>the param is bool. If true, success, otherwise the packet_id has already been used. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
 <a id="a5e091785f9ed21afc1aeaf9a09ccebb2" name="a5e091785f9ed21afc1aeaf9a09ccebb2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e091785f9ed21afc1aeaf9a09ccebb2">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e091785f9ed21afc1aeaf9a09ccebb2">&#9670;&#160;</a></span>release_packet_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -662,41 +851,6 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
-
-</div>
-</div>
-<a id="ab3807fac7498d41ff313bb81691a8984" name="ab3807fac7498d41ff313bb81691a8984"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3807fac7498d41ff313bb81691a8984">&#9670;&#160;</a></span>release_packet_id() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::release_packet_id </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a></td>          <td class="paramname"><span class="paramname"><em>packet_id</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>release packet_id. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
-    <tr><td class="paramname">token</td><td>the param is void </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
 
 </div>
 </div>
@@ -813,111 +967,6 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="ad3d1cd54e59f61ba642475fd4b5029f9" name="ad3d1cd54e59f61ba642475fd4b5029f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3d1cd54e59f61ba642475fd4b5029f9">&#9670;&#160;</a></span>start()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::start </td>
-          <td>(</td>
-          <td class="paramtype">connect_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>send CONNECT packet and start packet receive loop </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet</td><td>CONNECT packet </td></tr>
-    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;connack_packet&gt; </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
-<a id="ab8b2cf189e5ab5f4539271ba843c2061" name="ab8b2cf189e5ab5f4539271ba843c2061"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8b2cf189e5ab5f4539271ba843c2061">&#9670;&#160;</a></span>subscribe()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::subscribe </td>
-          <td>(</td>
-          <td class="paramtype">subscribe_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>send SUBSCRIBE packet </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet</td><td>SUBSCRIBE packet </td></tr>
-    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;suback_packet&gt; </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-
-</div>
-</div>
-<a id="acb292b6ef3875a8239b50968b3896999" name="acb292b6ef3875a8239b50968b3896999"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb292b6ef3875a8239b50968b3896999">&#9670;&#160;</a></span>unsubscribe()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
-<div class="memtemplate">
-template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::unsubscribe </td>
-          <td>(</td>
-          <td class="paramtype">unsubscribe_packet</td>          <td class="paramname"><span class="paramname"><em>packet</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>send UNSUBSCRIBE packet </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">packet</td><td>UNSUBSCRIBE packet </td></tr>
-    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;unsuback_packet&gt; </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
 
 </div>
 </div>

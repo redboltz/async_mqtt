@@ -48,7 +48,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(std::optional<packet_id_t>)
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id(
     CompletionToken&& token
 ) {
     ASYNC_MQTT_LOG("mqtt_api", info)

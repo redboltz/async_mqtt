@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
     );
 
     for (std::size_t i = 0; i != 0xffff; ++i) {
-        ep->acquire_unique_packet_id_wait_until(as::use_future).get();
+        ep->async_acquire_unique_packet_id_wait_until(as::use_future).get();
     }
 
     as::dispatch(
@@ -54,12 +54,12 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         )
     );
 
-    auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
-    auto fut2 = ep->acquire_unique_packet_id_wait_until(as::use_future);
-    auto fut3 = ep->acquire_unique_packet_id_wait_until(as::use_future);
-    ep->release_packet_id(10001, as::use_future).get();
-    ep->release_packet_id(10002, as::use_future).get();
-    ep->release_packet_id(10003, as::use_future).get();
+    auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut2 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut3 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+    ep->async_release_packet_id(10001, as::use_future).get();
+    ep->async_release_packet_id(10002, as::use_future).get();
+    ep->async_release_packet_id(10003, as::use_future).get();
     auto pid2 = fut2.get();
     BOOST_TEST(pid2 == 10002);
     auto pid1 = fut1.get();

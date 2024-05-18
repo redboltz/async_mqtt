@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(epst) {
         version,
         ioc.get_executor()
     );
-    auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
     BOOST_TEST(pid1 == 1);
 
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(bep) {
         version,
         ioc.get_executor()
     );
-    auto fut1 = ep->acquire_unique_packet_id_wait_until(as::use_future);
+    auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
     BOOST_TEST(pid1 == 1);
 

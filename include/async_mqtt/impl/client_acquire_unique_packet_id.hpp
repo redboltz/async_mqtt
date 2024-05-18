@@ -17,10 +17,10 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(std::optional<packet_id_type>)
 )
-client<Version, NextLayer>::acquire_unique_packet_id(
+client<Version, NextLayer>::async_acquire_unique_packet_id(
     CompletionToken&& token
 ) {
-    return ep_->acquire_unique_packet_id(std::forward<CompletionToken>(token));
+    return ep_->async_acquire_unique_packet_id(std::forward<CompletionToken>(token));
 }
 
 // sync version

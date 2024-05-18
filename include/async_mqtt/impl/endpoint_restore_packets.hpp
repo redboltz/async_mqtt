@@ -47,7 +47,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::restore_packets(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_restore_packets(
     std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
     CompletionToken&& token
 ) {

@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             "pass1",
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "protocol version mismatch"));
     }
     {
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             "user1",
             "pass1"
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             true,   // session_present
             am::connect_return_code::not_authorized
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -84,35 +84,35 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::puback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrec_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrel_packet(
             0x1234 // packet_id
         );
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubcomp_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -149,29 +149,29 @@ BOOST_AUTO_TEST_CASE(v311_client) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::unsuback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::disconnect_packet();
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             "user1",
             "pass1"
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             true,   // session_present
             am::connect_return_code::not_authorized
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -221,35 +221,35 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::puback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrec_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrel_packet(
             0x1234 // packet_id
         );
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubcomp_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -286,29 +286,29 @@ BOOST_AUTO_TEST_CASE(v311_server) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::unsuback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::disconnect_packet();
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 
@@ -342,7 +342,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             "user1",
             "pass1"
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             true,   // session_present
             am::connect_return_code::not_authorized
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -359,35 +359,35 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             "payload1",
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::puback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrec_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubrel_packet(
             0x1234 // packet_id
         );
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pubcomp_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -399,7 +399,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -424,29 +424,29 @@ BOOST_AUTO_TEST_CASE(v311_any) {
             0x1234,         // packet_id
             args
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::unsuback_packet{
             0x1234 // packet_id
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v3_1_1::disconnect_packet();
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 
@@ -479,7 +479,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             "user1",
             "pass1"
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "protocol version mismatch"));
     }
     {
@@ -492,7 +492,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             "pass1",
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::connect_reason_code::not_authorized,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         // packet type checking is prior to version checking
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
@@ -512,7 +512,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -521,7 +521,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::puback_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -530,7 +530,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::pubrec_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -539,7 +539,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::pubrel_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -548,7 +548,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::pubcomp_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -561,7 +561,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -574,7 +574,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -600,17 +600,17 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -618,7 +618,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::auth_reason_code::continue_authentication,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             am::disconnect_reason_code::protocol_error,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 
@@ -660,7 +660,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             "pass1",
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -669,7 +669,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::connect_reason_code::not_authorized,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         // packet type checking is prior to version checking
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
@@ -680,7 +680,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -689,7 +689,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::puback_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -698,7 +698,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::pubrec_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -707,7 +707,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::pubrel_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -716,7 +716,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::pubcomp_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -729,7 +729,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -742,7 +742,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -755,7 +755,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -768,17 +768,17 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -786,7 +786,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::auth_reason_code::continue_authentication,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -794,7 +794,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
             am::disconnect_reason_code::protocol_error,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 
@@ -828,7 +828,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             "pass1",
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -837,7 +837,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::connect_reason_code::not_authorized,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         // packet type checking is prior to version checking
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
@@ -848,7 +848,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::qos::at_most_once | am::pub::retain::yes | am::pub::dup::yes,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -857,7 +857,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::puback_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -866,7 +866,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::pubrec_reason_code::packet_identifier_in_use,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -875,7 +875,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::pubrel_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -884,7 +884,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::pubcomp_reason_code::packet_identifier_not_found,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -897,7 +897,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -910,7 +910,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -923,7 +923,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -936,17 +936,17 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             args,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingreq_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
         auto p = am::v5::pingresp_packet{};
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -954,7 +954,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::auth_reason_code::continue_authentication,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
     {
@@ -962,7 +962,7 @@ BOOST_AUTO_TEST_CASE(v5_any) {
             am::disconnect_reason_code::protocol_error,
             am::properties{}
         };
-        auto ec = ep->send(am::packet_variant{p}, as::use_future).get();
+        auto ec = ep->async_send(am::packet_variant{p}, as::use_future).get();
         BOOST_TEST(!ec_what_start_with(ec, "packet cannot be send by MQTT protocol"));
     }
 

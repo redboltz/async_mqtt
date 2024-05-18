@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(success_digest) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(success_digest) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(success_digest) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
                         }
                    }
                 );
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(send_auth) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
                         0, // keep_alive
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(send_auth) {
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().recv(*this);
+                yield ep().async_recv(*this);
                 pv->visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
@@ -245,14 +245,14 @@ BOOST_AUTO_TEST_CASE(send_auth) {
                         }
                    }
                 );
-                yield ep().send(
+                yield ep().async_send(
                     am::v5::auth_packet{
                         am::auth_reason_code::success
                     },
                     *this
                 );
                 BOOST_TEST(!*se);
-                yield ep().close(*this);
+                yield ep().async_close(*this);
                 yield set_finish();
             }
         }

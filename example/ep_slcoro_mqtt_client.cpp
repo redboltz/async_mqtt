@@ -72,7 +72,7 @@ private:
                 if (ec) return;
 
                 // Send MQTT CONNECT
-                yield app_.amep_->send(
+                yield app_.amep_->async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -89,7 +89,7 @@ private:
                 }
 
                 // Recv MQTT CONNACK
-                yield app_.amep_->recv(*this);
+                yield app_.amep_->async_recv(*this);
                 if (pv) {
                     pv.visit(
                         am::overload {
@@ -112,7 +112,7 @@ private:
                 }
 
                 // Send MQTT SUBSCRIBE
-                yield app_.amep_->send(
+                yield app_.amep_->async_send(
                     am::v3_1_1::subscribe_packet{
                         *app_.amep_->acquire_unique_packet_id(),
                         { {"topic1", am::qos::at_most_once} }
@@ -124,7 +124,7 @@ private:
                     return;
                 }
                 // Recv MQTT SUBACK
-                yield app_.amep_->recv(*this);
+                yield app_.amep_->async_recv(*this);
                 if (pv) {
                     pv.visit(
                         am::overload {
@@ -150,7 +150,7 @@ private:
                     return;
                 }
                 // Send MQTT PUBLISH
-                yield app_.amep_->send(
+                yield app_.amep_->async_send(
                     am::v3_1_1::publish_packet{
                         *app_.amep_->acquire_unique_packet_id(),
                         "topic1",
@@ -165,7 +165,7 @@ private:
                 }
                 // Recv MQTT PUBLISH and PUBACK (order depends on broker)
                 for (app_.count_ = 0; app_.count_ != 2; ++app_.count_) {
-                    yield app_.amep_->recv(*this);
+                    yield app_.amep_->async_recv(*this);
                     if (pv) {
                         pv.visit(
                             am::overload {
@@ -199,7 +199,7 @@ private:
                     }
                 }
                 std::cout << "close" << std::endl;
-                yield app_.amep_->close(*this);
+                yield app_.amep_->async_close(*this);
             }
         }
 

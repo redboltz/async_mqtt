@@ -17,10 +17,10 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(packet_id_type)
 )
-client<Version, NextLayer>::acquire_unique_packet_id_wait_until(
+client<Version, NextLayer>::async_acquire_unique_packet_id_wait_until(
     CompletionToken&& token
 ) {
-    return ep_->acquire_unique_packet_id_wait_until(std::forward<CompletionToken>(token));
+    return ep_->async_acquire_unique_packet_id_wait_until(std::forward<CompletionToken>(token));
 }
 
 } // namespace async_mqtt

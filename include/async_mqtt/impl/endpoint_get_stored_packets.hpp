@@ -47,7 +47,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::get_stored_packets(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
     CompletionToken&& token
 ) const {
     ASYNC_MQTT_LOG("mqtt_api", info)

@@ -56,7 +56,7 @@ send_op {
                         [&](auto actual_packet) {
                             if (process_send_packet(self, actual_packet)) {
                                 auto& a_ep{ep};
-                                a_ep.stream_->write_packet(
+                                a_ep.stream_->async_write_packet(
                                     actual_packet,
                                     as::bind_executor(
                                         a_ep.get_executor(),
@@ -80,7 +80,7 @@ send_op {
                 if (process_send_packet(self, packet)) {
                     auto& a_ep{ep};
                     auto a_packet{packet};
-                    a_ep.stream_->write_packet(
+                    a_ep.stream_->async_write_packet(
                         force_move(a_packet),
                         as::bind_executor(
                             a_ep.get_executor(),
@@ -629,7 +629,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(system_error)
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::send(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
     Packet packet,
     CompletionToken&& token
 ) {
@@ -645,7 +645,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::send(
     }
 
     return
-        send(
+        async_send(
             force_move(packet),
             false, // not from queue
             std::forward<CompletionToken>(token)
@@ -660,7 +660,7 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void()
 )
-basic_endpoint<Role, PacketIdBytes, NextLayer>::send(
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
     Packet packet,
     bool from_queue,
     CompletionToken&& token
