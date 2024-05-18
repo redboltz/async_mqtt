@@ -110,7 +110,7 @@ Collaboration diagram for predefined underlying layer (Websocket on TLS):</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ga6ca99bfaf9ccf4acfac8209e5dd979e5" id="r_ga6ca99bfaf9ccf4acfac8209e5dd979e5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga6ca99bfaf9ccf4acfac8209e5dd979e5">async_mqtt::protocol::wss</a> = bs::websocket::stream&lt;<a class="el" href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601">mqtts</a>&gt;</td></tr>
-<tr class="memdesc:ga6ca99bfaf9ccf4acfac8209e5dd979e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of boost::beast::websocket::stream of mqtts underlying_handshake function can be called with wss. You can call the following functions to handshake.  <br /></td></tr>
+<tr class="memdesc:ga6ca99bfaf9ccf4acfac8209e5dd979e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of boost::beast::websocket::stream of mqtts async_underlying_handshake function can be called with wss. You can call the following functions to handshake.  <br /></td></tr>
 <tr class="separator:ga6ca99bfaf9ccf4acfac8209e5dd979e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -127,15 +127,15 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Type alias of boost::beast::websocket::stream of mqtts underlying_handshake function can be called with wss. You can call the following functions to handshake. </p>
-<p><a class="el" href="group__predefined__layer__ws.html#ga5b4d9505b919d29eae931ad73952cd95" title="Websocket handshake This function does underlying layers handshaking prior to Websocket handshake.">underlying_handshake(
+<p>Type alias of boost::beast::websocket::stream of mqtts async_underlying_handshake function can be called with wss. You can call the following functions to handshake. </p>
+<p><a class="el" href="group__predefined__layer__ws.html#ga24f02ea51005c77468c7f02df4b84d89" title="Websocket handshake This function does underlying layers handshaking prior to Websocket handshake.">async_underlying_handshake(
     bs::websocket::stream&lt;NextLayer&gt;&amp; layer,
     std::string_view host,
     std::string_view port,
     std::string_view path,
     CompletionToken&amp;&amp; token
 )</a></p>
-<p><a class="el" href="group__predefined__layer__ws.html#ga2e9378dc2e23d0dd06b4f970db49025a" title="Websocket handshake This function does underlying layers handshaking prior to Websocket handshake Web...">underlying_handshake(
+<p><a class="el" href="group__predefined__layer__ws.html#gaa852d19bb02f77d8603eeddf89ba18df" title="Websocket handshake This function does underlying layers handshaking prior to Websocket handshake Web...">async_underlying_handshake(
     bs::websocket::stream&lt;NextLayer&gt;&amp; layer,
     std::string_view host,
     std::string_view port,
