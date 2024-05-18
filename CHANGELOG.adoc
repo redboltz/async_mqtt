@@ -4,6 +4,8 @@
 
 == 6.0.0
 === breaking changes
+* Added `async_` prefix to all async functions to support default completion token. #238
+** Some of async/sync function overload had been conflicted. e.g) acquire_unique_packet_id().
 * Unified naming rule of types to `*_type`. #232
 * Refined type of PacketIdentifier. Now `packet_id_type` is the type. #231
 * Moved include/async_mqtt/broker/*.hpp to tool/include/broker/*.hpp #224
@@ -29,7 +31,7 @@
 * Used bound allocator to allocate buffer for packet on receive. #222
 * Added convenient handshaking function for underlying layers. #216
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
-* Refined documents. #220, #222, #232, #233, #234
+* Refined documents. #220, #222, #232, #233, #234, #235
 * Refined examples. #214, #220
 
 == 5.1.2
