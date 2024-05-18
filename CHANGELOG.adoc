@@ -25,6 +25,8 @@
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
 
 === other updates
+* client supported flexible parameters. #241
+** You can pass not only packet instence but also the parameters of packet's constructor directly to the packet sending member functions.
 * Supported default completion token. #238, #240
 * Refined CI. #228
 * Refined header dependency checking. #225

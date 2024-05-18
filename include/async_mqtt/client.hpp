@@ -94,106 +94,66 @@ public:
 
     /**
      * @brief send CONNECT packet and start packet receive loop
-     * @param packet CONNECT packet
-     * @param token the params are error_code, std::optional<connack_packet>
+     * @param args CONNECT packet of the Version followed by CompletionToken.
+     *             You can create CONNECT packet explicitly like std::vector::push_back(),
+     *             or implicitly like std::vector::emplace_back().
+     *             CompletionToken can be defaulted.
+     *             CompletionToken's parameters are error_code, std::optional<connack_packet>
      * @return deduced by token
      */
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<connack_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_start(
-        connect_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
+    template <typename... Args>
+    auto async_start(Args&&... args);
 
     /**
      * @brief send SUBSCRIBE packet
-     * @param packet SUBSCRIBE packet
-     * @param token the params are error_code, std::optional<suback_packet>
+     * @param args SUBSCRIBE packet of the Version followed by CompletionToken.
+     *             You can create SUBSCRIBE packet explicitly like std::vector::push_back(),
+     *             or implicitly like std::vector::emplace_back().
+     *             CompletionToken can be defaulted.
+     *             CompletionToken's parameters are error_code, std::optional<suback_packet>
      * @return deduced by token
      */
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_subscribe(
-        subscribe_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
+    template <typename... Args>
+    auto async_subscribe(Args&&... args);
 
     /**
      * @brief send UNSUBSCRIBE packet
-     * @param packet UNSUBSCRIBE packet
-     * @param token the params are error_code, std::optional<unsuback_packet>
+     * @param args UNSUBSCRIBE packet of the Version followed by CompletionToken.
+     *             You can create UNSUBSCRIBE packet explicitly like std::vector::push_back(),
+     *             or implicitly like std::vector::emplace_back().
+     *             CompletionToken can be defaulted.
+     *             CompletionToken's parameters are error_code, std::optional<unsuback_packet>
      * @return deduced by token
      */
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_unsubscribe(
-        unsubscribe_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
+    template <typename... Args>
+    auto async_unsubscribe(Args&&... args);
 
     /**
      * @brief send PUBLISH packet
-     * @param packet PUBLISH packet
-     * @param token the params are error_code, pubres_t
-     *              When sending QoS0 packet, all members of pubres_t is std::nullopt.
-     *              When sending QoS1 packet, only pubres_t::puback_opt is set.
-     *              When sending QoS1 packet, only pubres_t::pubrec_opt pubres_t::pubcomp are set.
+     * @param args PUBLISH packet of the Version followed by CompletionToken.
+     *             You can create PUBLISH packet explicitly like std::vector::push_back(),
+     *             or implicitly like std::vector::emplace_back().
+     *             CompletionToken can be defaulted.
+     *             CompletionToken's parameters are error_code, pubres_t
+     *             When sending QoS0 packet, all members of pubres_t is std::nullopt.
+     *             When sending QoS1 packet, only pubres_t::puback_opt is set.
+     *             When sending QoS1 packet, only pubres_t::pubrec_opt pubres_t::pubcomp are set.
      * @return deduced by token
      */
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, pubres_t)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_publish(
-        publish_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
+    template <typename... Args>
+    auto async_publish(Args&&... args);
 
     /**
      * @brief send DISCONNECT packet
-     * @param packet DISCONNECT packet
-     * @param token the params is error_code
+     * @param args DISCONNECT packet of the Version followed by CompletionToken.
+     *             You can create DISCONNECT packet explicitly like std::vector::push_back(),
+     *             or implicitly like std::vector::emplace_back().
+     *             CompletionToken can be defaulted.
+     *             CompletionToken's parameters is error_code.
      * @return deduced by token
      */
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_disconnect(
-        disconnect_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
+    template <typename... Args>
+    auto async_disconnect(Args&&... args);
 
     /**
      * @brief close the underlying connection
@@ -410,8 +370,78 @@ public:
     };
 
 private:
-    void recv_loop();
 
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, std::optional<connack_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_start_impl(
+        connect_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, std::optional<suback_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_subscribe_impl(
+        subscribe_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, std::optional<suback_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_unsubscribe_impl(
+        unsubscribe_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, pubres_t)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_publish_impl(
+        publish_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_disconnect_impl(
+        disconnect_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    void recv_loop();
 
     // async operations
     struct start_op;
