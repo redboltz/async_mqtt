@@ -18,7 +18,7 @@ var searchData=
   ['unsuback_5fpacket_15',['unsuback_packet',['../group__unsuback__v3__1__1.html#gad698dd5c294b42da124a7cb89a3acba0',1,'async_mqtt::v3_1_1::basic_unsuback_packet::unsuback_packet'],['../group__unsuback__v5.html#gad698dd5c294b42da124a7cb89a3acba0',1,'async_mqtt::v5::basic_unsuback_packet::unsuback_packet']]],
   ['unsuback_5freason_5fcode_16',['unsuback_reason_code',['../group__unsuback__v5.html#ga1c1aad570b8382ff16971161cad17cfe',1,'async_mqtt']]],
   ['unsuback_5freason_5fcode_5fto_5fstr_17',['unsuback_reason_code_to_str',['../group__unsuback__v5.html#gaba976f95fe6010cbe6a082dad065f4ce',1,'async_mqtt']]],
-  ['unsubscribe_18',['unsubscribe',['../classasync__mqtt_1_1client.html#acb292b6ef3875a8239b50968b3896999',1,'async_mqtt::client::unsubscribe()'],['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4aa013658e30387f7a60cdaf0acf26850d',1,'unsubscribeasync_mqtt']]],
+  ['unsubscribe_18',['unsubscribe',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4aa013658e30387f7a60cdaf0acf26850d',1,'async_mqtt']]],
   ['unsubscribe_20packet_20v3_201_201_19',['UNSUBSCRIBE packet (v3.1.1)',['../group__unsubscribe__v3__1__1.html',1,'']]],
   ['unsubscribe_20packet_20v5_200_20',['UNSUBSCRIBE packet (v5.0)',['../group__unsubscribe__v5.html',1,'']]],
   ['unsubscribe_5fpacket_21',['unsubscribe_packet',['../group__unsubscribe__v3__1__1.html#ga0366c5a1e09f36f76a1e6792fbe6bcf1',1,'async_mqtt::v3_1_1::basic_unsubscribe_packet::unsubscribe_packet'],['../group__unsubscribe__v5.html#ga0366c5a1e09f36f76a1e6792fbe6bcf1',1,'async_mqtt::v5::basic_unsubscribe_packet::unsubscribe_packet']]],
