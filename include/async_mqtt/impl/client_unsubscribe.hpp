@@ -138,24 +138,17 @@ client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
-                if constexpr(
+                static_assert(
                     std::is_constructible_v<
                         unsubscribe_packet,
                         decltype(rest_args)...
-                    >
-                ) {
-                    return async_unsubscribe_impl(
-                        unsubscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
-                else {
-                    static_assert(false, "unsubscribe_packet is not constructible");
-                    return async_unsubscribe_impl(
-                        unsubscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
+                    >,
+                    "unsubscribe_packet is not constructible"
+                );
+                return async_unsubscribe_impl(
+                    unsubscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    std::forward<decltype(back)>(back)
+                );
             }
         );
     }

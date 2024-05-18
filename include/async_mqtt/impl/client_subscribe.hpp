@@ -138,24 +138,17 @@ client<Version, NextLayer>::async_subscribe(Args&&... args) {
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
-                if constexpr(
+                static_assert(
                     std::is_constructible_v<
                         subscribe_packet,
                         decltype(rest_args)...
-                    >
-                ) {
-                    return async_subscribe_impl(
-                        subscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
-                else {
-                    static_assert(false, "subscribe_packet is not constructible");
-                    return async_subscribe_impl(
-                        subscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
+                    >,
+                    "subscribe_packet is not constructible"
+                );
+                return async_subscribe_impl(
+                    subscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    std::forward<decltype(back)>(back)
+                );
             }
         );
     }

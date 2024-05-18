@@ -134,28 +134,22 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
-                if constexpr(
+                static_assert(
                     std::is_constructible_v<
                         publish_packet,
                         decltype(rest_args)...
-                    >
-                ) {
-                    return async_publish_impl(
-                        publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
-                else {
-                    static_assert(false, "publish_packet is not constructible");
-                    return async_publish_impl(
-                        publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
+                    >,
+                    "publish_packet is not constructible"
+                );
+                return async_publish_impl(
+                    publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    std::forward<decltype(back)>(back)
+                );
             }
         );
     }
 }
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_PUBLISH_HPP

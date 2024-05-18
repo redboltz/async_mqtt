@@ -87,24 +87,17 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
-                if constexpr(
+                static_assert(
                     std::is_constructible_v<
                         disconnect_packet,
                         decltype(rest_args)...
-                    >
-                ) {
-                    return async_disconnect_impl(
-                        disconnect_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
-                else {
-                    static_assert(false, "disconnect_packet is not constructible");
-                    return async_disconnect_impl(
-                        disconnect_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
+                    >,
+                    "disconnect_packet is not constructible"
+                );
+                return async_disconnect_impl(
+                    disconnect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    std::forward<decltype(back)>(back)
+                );
             }
         );
     }

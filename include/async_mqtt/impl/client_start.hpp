@@ -139,24 +139,17 @@ client<Version, NextLayer>::async_start(Args&&... args) {
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
-                if constexpr(
+                static_assert(
                     std::is_constructible_v<
                         connect_packet,
                         decltype(rest_args)...
-                    >
-                ) {
-                    return async_start_impl(
-                        connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
-                else {
-                    static_assert(false, "connect_packet is not constructible");
-                    return async_start_impl(
-                        connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
-                        std::forward<decltype(back)>(back)
-                    );
-                }
+                    >,
+                    "connect_packet is not constructible"
+                );
+                return async_start_impl(
+                    connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    std::forward<decltype(back)>(back)
+                );
             }
         );
     }
