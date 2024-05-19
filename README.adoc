@@ -34,8 +34,8 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 *** xref:tutorial/cpp20_coro.adoc[C++20 Coroutine]
 *** xref:tutorial/sl_coro.adoc[Stackless Coroutine] if you don't have C++20 coroutine
 *** xref:tutorial/send_recv.adoc[send/recv]
-*** xref:tutorial/non_packet_based.adoc[non packet based APIs]
-*** xref:tutorial/strand.adoc[strand]
+** xref:tutorial/non_packet_based.adoc[non packet based APIs]
+** xref:tutorial/thread_safe.adoc[thread safe]
 * Functionality
 ** xref:functionality/connect_timeout.adoc[connect timeout]
 ** xref:logging.adoc[logging]

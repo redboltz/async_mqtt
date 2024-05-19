@@ -22,8 +22,8 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 *** ${include("tutorial/cpp20_coro.adoc")}
 *** ${include("tutorial/sl_coro.adoc")}
 *** ${include("tutorial/send_recv.adoc")}
-*** ${include("tutorial/non_packet_based.adoc")}
-*** ${include("tutorial/strand.adoc")}
+** ${include("tutorial/non_packet_based.adoc")}
+** ${include("tutorial/thread_safe.doc")}
 * Functionality
 ** ${include("functionality/connect_timeout.adoc")}
 ** ${include("logging.adoc")}

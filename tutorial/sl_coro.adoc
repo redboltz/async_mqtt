@@ -10,17 +10,21 @@ ifndef::env-github[:api-base: link:../api]
 
 = Using stackless coroutine
 
-This is stackless coroutine approach. It uses switch-case based Boost.Asio stackless corotuine.
+Here is the revised version in natural technical English:
+
+---
+
+This is the stackless coroutine approach. It uses the switch-case-based Boost.Asio stackless coroutine.
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
-It is convenient but a little tricky. Due to switch-case based, there are some restrictions especially define local variables.
-If you can use xref:cpp20_coro.adoc[C++20 coroutine], I recommend use it.
+It is convenient but a little tricky. Due to the switch-case basis, there are some restrictions, especially regarding defining local variables.
+If you can use xref:cpp20_coro.adoc[C++20 coroutine], I recommend using it.
 
-stackless coroutine can avoid deeply nested callbacks. The code becomes easy to read.
+Stackless coroutines can avoid deeply nested callbacks, making the code easier to read.
 
 == Prepare your application class
 
-Here is a application class prototype:
+Here is an application class prototype:
 
 ```cpp
 #include <boost/asio/yield.hpp>
@@ -68,8 +72,8 @@ private:
 #include <boost/asio/unyield.hpp>
 ```
 
-Then, add the app's constructor as follows. endpoint is created here. In the body of the constructor, `impl_()` is called. Then the coroutine is started.
-Then,Declare the app's member variables.
+Next, add the app's constructor as follows. The endpoint is created here. In the constructor body, `impl_()` is called to start the coroutine. Then, declare the app's member variables.
+
 
 ```cpp
     app(Executor exe,
@@ -111,7 +115,8 @@ private:
 };
 ```
 
-Then, implement `int main()` as follows:
+
+Next, implement `int main()` as follows:
 
 ```cpp
 int main(int argc, char* argv[]) {
@@ -126,7 +131,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-When you execute the program, you can see `start` output message. This indicates that the coroutine is started well.
+When you execute the program, you will see the `start` output message. This indicates that the coroutine has started successfully.
 
 ```cpp
         void proc(
@@ -139,8 +144,9 @@ When you execute the program, you can see `start` output message. This indicates
                 std::cout << "start" << std::endl;
 ```
 
-This is the basic of stackless coroutine approach.
-Now, adding more meaningful sequence.
+
+This is the basics of the stackless coroutine approach. Now, let's add a more meaningful sequence.
+
 
 == Handshake underlying layers (mqtt, mqtts, ws, wss)
 
@@ -155,7 +161,7 @@ Now, adding more meaningful sequence.
                 std::cout << "start" << std::endl;
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
-                yield am::underlying_handshake(
+                yield am::async_underlying_handshake(
                     app_.amep_->next_layer(),
                     app_.host_,
                     app_.port_,
@@ -173,7 +179,7 @@ Now, adding more meaningful sequence.
 The important point is
 
 ```cpp
-                yield am::underlying_handshake(
+                yield am::async_underlying_handshake(
                     app_.amep_->next_layer(),
                     app_.host_,
                     app_.port_,
@@ -181,8 +187,8 @@ The important point is
                 );
 ```
 
-The fourth argument of underlying_handshake is CompletionToken. When we use stackless coroutine, we pass `*this` as the CompletionToken. The function proc() is implicitly returned and underlying_handshake starts processing.
-When async process is finished, then the following operator() is called:
+The fourth argument of `underlying_handshake` is `CompletionToken`. When using a stackless coroutine, we pass `*this` as the `CompletionToken`. The function `proc()` is implicitly returned and `underlying_handshake` starts processing. When the asynchronous process is finished, the following `operator()` is called:
+
 
 ```cpp
         void operator()(boost::system::error_code const& ec) const {
@@ -190,8 +196,9 @@ When async process is finished, then the following operator() is called:
         }
 ```
 
-Then, proc is called. You can distinguish which async process is finished by proc()'s parameter.
-You can check `ec` as follows:
+
+Then, `proc` is called. You can distinguish which async process has finished by `proc()`'s parameter. You can check `ec` as follows:
+
 
 ```cpp
                 std::cout
@@ -202,7 +209,7 @@ You can check `ec` as follows:
                 if (ec) return;
 ```
 
-Even if proc() is called again, the following part of the code is skipped:
+Even if `proc()` is called again, the following part of the code is skipped:
 
 ```cpp
                 std::cout << "start" << std::endl;
@@ -216,7 +223,7 @@ Even if proc() is called again, the following part of the code is skipped:
                 );
 ```
 
-This is switch-case based Boost.Asio stackless coroutine mechanism.
+This is the switch-case-based Boost.Asio stackless coroutine mechanism.
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
 == Send MQTT CONNECT packet
@@ -225,7 +232,7 @@ Create MQTT CONNECT packet and send it as follows:
 
 ```cpp
                 // Send MQTT CONNECT
-                yield app_.amep_->send(
+                yield app_.amep_->async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -238,7 +245,8 @@ Create MQTT CONNECT packet and send it as follows:
                 );
 ```
 
-When async process is finished the function resumes at the following line:
+
+When the async process is finished, the function resumes at the following line:
 
 ```cpp
                 if (se) {
@@ -256,7 +264,7 @@ Receive MQTT packet as follows:
 
 ```cpp
                 // Recv MQTT CONNACK
-                yield app_.amep_->recv(*this);
+                yield app_.amep_->async_recv(*this);
 ```
 
 When a packet is received then the function resumes at the following line:
@@ -284,14 +292,13 @@ When a packet is received then the function resumes at the following line:
                 }
 ```
 
-The parameter of the completion token is `packet_variant pv`. You can access the `pv` using visit function and overloaded lamnda expressions. Each lambda expression is corresponding to the actual packet type.
-`pv` can be evalurated as bool. If any receive error happens then `pv` evaluated as false, otherwise true.
+The parameter of the completion token is `packet_variant pv`. You can access the `pv` using the `visit` function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type. `pv` can be evaluated as a boolean. If any receive error occurs, `pv` evaluates to `false`; otherwise, it evaluates to `true`.
+
 
 == Send/Recv packets
 See the simple example xref:{am-base-path}/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp].
 
-If you want to know more complex usecase, xref:{am-base-path}/tool/client_cli.cpp[client_cli.cpp] is helpful.
-This is commandline MQTT client application.
+If you want to explore a more complex use case, xref:{am-base-path}/tool/client_cli.cpp[client_cli.cpp] is helpful. It is a command-line MQTT client application.
 
 == Examples
 * xref:{am-base-path}/example/ep_slcoro_mqtt_client.cpp[ep_slcoro_mqtt_client.cpp]

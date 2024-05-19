@@ -1,0 +1,37 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../../main]
+ifndef::env-github[:am-base-path: ../..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:../api]
+
+= Thread safety
+
+== Single threaded
+
+You can call both async APIs and sync APIs without any special care required.
+
+== Multi threded
+
+The endpoint takes parameters for the next layer during construction. The endpoint gets the executor for asynchronous operations from the next layer. If the executor is wrapped by the strand, then `async_operations` are serialized even if the base `io_context` is running on multiple threads. If the running context is in the strand, you can call the following sync version functions.
+
+
+|===
+|endpoint member function | effects
+
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0++[acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01++[register_packet_id]|Register the packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b++[release_packet_id]|Release the packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5c54a4deadb8706eafe3f56fc59eca07++[get_qos2_publish_handled_pids]|Get already PUBLISH recv CompletionToken is invoked packet_ids
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#abcfa56073b24d3efa6c8ed881295e45e++[restore_qos2_publish_handled_pids]|Restore already PUBLISH recv CompletionToken is invoked packet_ids
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a6dfe47bd9ab1590e66f110e3dbe1087e++[restore_packets]|Restore pacets as stored packets
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5ed8d45ffcfb114533d8de5ddddb4f92++[get_stored_packets]|Get stored packets
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a9cbabd5f427b1cb18d61ac49c7bbf83b++[get_protocol_version]|Get MQTT protocol version
+|===
+
+`acquire_unique_packet_id`, `register_packet_id`, `release_packet_id`, `restore_packets`, and `get_stored_packets` have asynchronous versions that start with the `async_` prefix. These can be called from different threads.
+
+Other asynchronous functions such as `async_send()` and `async_recv()` can also be called from different threads.

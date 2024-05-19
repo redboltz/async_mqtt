@@ -14,7 +14,7 @@ C++20 coroutine is supported by the language.
 
 See https://en.cppreference.com/w/cpp/language/coroutines
 
-C++coroutine coroutine can avoid deeply nested callbacks. The code becomes easy to read.
+Using C++ coroutines can avoid deeply nested callbacks, making the code easier to read.
 
 == co_spawn your application routine
 
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-In order to use coroutine, you need to call `as::co_spawn()` to launch the coroutine as follows:
+To use a coroutine, you need to call `as::co_spawn()` to launch the coroutine as follows:
 
 ```cpp
 as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
@@ -39,7 +39,9 @@ as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
 
 == define application routine
 
-Define application routine `proc()` as follows. The return value should be wrapped `as::awaitable<>`.
+Define the application routine `proc()` as follows. The return value should be wrapped in `as::awaitable<>`.
+
+
 
 ```cpp
 template <typename Executor>
@@ -58,7 +60,8 @@ auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
 std::cout << "start" << std::endl;
 ```
 
-There is nothing special. The same as non coroutine endpoint.
+
+There is nothing special; it is the same as a non-coroutine endpoint.
 
 === chain async calls
 
@@ -118,10 +121,10 @@ else {
 }
 ```
 
-When you call async functions, add `co_await` keyword before the function call, and pass `as::use_awaitable` as CompletionToken. This is C++20 coroutine way.
+When you call async functions, add the `co_await` keyword before the function call and pass `as::use_awaitable` as the `CompletionToken`. This is the C++20 coroutine way.
 
-For example, sending CONNECT packet as follows. When send() is called, async send procedure is triggered. When the procedure is finished, then the context is returned. You can access return value se.
-If se is evalueted as true, that means some error happened. So the code printss error message and `co_return`. When you want to return from the function that has `as::awaitable<>` return value, you need to call `co_return` instead of `return`.
+For example, sending a CONNECT packet is done as follows. When `send()` is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value `se`. If `se` evaluates to true, it means an error occurred, so the code prints an error message and uses `co_return`. When you want to return from a function that has an `as::awaitable<>` return value, you need to call `co_return` instead of `return`.
+
 
 == whole code (example)
 
@@ -129,4 +132,4 @@ If se is evalueted as true, that means some error happened. So the code printss 
 
 == Other Completion Tokens
 
-You can use not only `as::use_awaitabe` but also `as::deferred`, `as::experiemntal::use_promise`. See asio document.
+You can use not only `as::use_awaitable` but also `as::deferred` and `as::experimental::use_promise`. See the Asio documentation for more details.

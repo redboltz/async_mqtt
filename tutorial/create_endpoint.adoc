@@ -10,19 +10,20 @@ ifndef::env-github[:api-base: link:../api]
 
 = Create endpoint
 
-First, choose underlying layer.
+First, choose the underlying layer.
 
 ifdef::env-github[image::../img/layer.svg[layer structure]]
 ifndef::env-github[image::layer.svg[layer structure]]
 
 == Include header files
 
-In order to use async_mqtt, include the following header file:
+To use `async_mqtt`, include the following header file:
+
 ```cpp
 #include <async_mqtt/all.hpp>
 ```
 
-In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in `all.hpp`.
+In addition, if you want to use TLS and/or WebSocket, include the following header files. They are not included in `all.hpp`.
 
 For TLS:
 ```cpp
@@ -39,7 +40,7 @@ For Websocket on TLS
 #include <async_mqtt/predefined_layer/wss.hpp>
 ```
 
-The following namespace alias is defined in the all code example:
+The following namespace alias is defined in all code examples:
 
 ```cpp
 namespace as = boost::asio;
