@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variable_5fproperty_0',['variable_property',['../structasync__mqtt_1_1property_1_1detail_1_1variable__property.html',1,'async_mqtt::property::detail']]]
+  ['user_5fproperty_0',['user_property',['../classasync__mqtt_1_1property_1_1user__property.html',1,'async_mqtt::property']]]
 ];

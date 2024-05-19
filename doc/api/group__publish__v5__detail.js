@@ -1,8 +1,8 @@
 var group__publish__v5__detail =
 [
     [ "async_mqtt::v5::basic_publish_packet< PacketIdBytes >", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html", [
-      [ "basic_publish_packet", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a15d0ba77bc16703bc49793c7dbc1b95e", null ],
-      [ "basic_publish_packet", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#af767e7b18aebfeefb600c10526e4521b", null ],
+      [ "basic_publish_packet", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#af3d724005411ce5c6d1aeee8c57df5d5", null ],
+      [ "basic_publish_packet", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#aa26bca6dc6fb8ba81ef5ce8bb2fe0742", null ],
       [ "add_topic", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#abd416ecf78a40ed18b585e50b60e69ca", null ],
       [ "add_topic_alias", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#ad0a124288fb644ded8eecc2c7c21ba9d", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#afed8ad2fcd7f27ebd43f0c66f26e1176", null ],

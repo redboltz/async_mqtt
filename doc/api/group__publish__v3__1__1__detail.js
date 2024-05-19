@@ -1,8 +1,8 @@
 var group__publish__v3__1__1__detail =
 [
     [ "async_mqtt::v3_1_1::basic_publish_packet< PacketIdBytes >", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html", [
-      [ "basic_publish_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a207fab39ba2ff8f48d2a733e33dd2cac", null ],
-      [ "basic_publish_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a2b9891728c72e657d3f985e2ec07dfc7", null ],
+      [ "basic_publish_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a5ea7e626b9871a72f714d31fdc2e3769", null ],
+      [ "basic_publish_packet", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a1cab00536134472e0405cd54d4d58580", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a45a9bdcd53a1d9703e17d68c21356fd7", null ],
       [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a63192e7a76c7772d8c049197e3f6f9ba", null ],
       [ "opts", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#af14f7deb4643ba6589e4191331a50f33", null ],

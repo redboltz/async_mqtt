@@ -39,29 +39,18 @@ class offline_messages;
 // these messages will be published to that client, and only that client.
 class offline_message {
 public:
-    template <
-        typename BufferSequence,
-        typename std::enable_if_t<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
-            std::nullptr_t
-        >* = nullptr
-    >
     offline_message(
         std::string topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         pub::opts pubopts,
         properties props,
         std::shared_ptr<as::steady_timer> tim_message_expiry)
-        : topic_(force_move(topic)),
-          pubopts_(pubopts),
+        : topic_{force_move(topic)},
+          payload_(force_move(payload)),
+          pubopts_{pubopts},
           props_(force_move(props)),
-          tim_message_expiry_(force_move(tim_message_expiry))
+          tim_message_expiry_{force_move(tim_message_expiry)}
     {
-        auto it = buffer_sequence_begin(payload);
-        auto end = buffer_sequence_end(payload);
-        for (; it != end; ++it) {
-            payload_.emplace_back(*it);
-        }
     }
 
     template <typename Epsp>
@@ -179,14 +168,10 @@ public:
         return messages_.empty();
     }
 
-    template <typename BufferSequence>
-    std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
-    >
-    push_back(
+    void push_back(
         as::io_context& timer_ioc,
         std::string pub_topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         pub::opts pubopts,
         properties props) {
         std::optional<std::chrono::steady_clock::duration> message_expiry_interval;
@@ -219,7 +204,7 @@ public:
         auto& seq_idx = messages_.get<tag_seq>();
         seq_idx.emplace_back(
             force_move(pub_topic),
-            std::forward<BufferSequence>(payload),
+            force_move(payload),
             pubopts,
             force_move(props),
             force_move(tim_message_expiry)

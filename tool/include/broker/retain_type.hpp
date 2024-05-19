@@ -18,16 +18,9 @@ namespace async_mqtt {
 // A collection of messages that have been retained in
 // case clients add a new subscription to the associated topics.
 struct retain_type {
-    template <
-        typename BufferSequence,
-        typename std::enable_if_t<
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value,
-            std::nullptr_t
-        > = nullptr
-    >
     retain_type(
         std::string topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         properties props,
         qos qos_value,
         std::shared_ptr<as::steady_timer> tim_message_expiry = std::shared_ptr<as::steady_timer>())
@@ -36,8 +29,8 @@ struct retain_type {
          qos_value(qos_value),
          tim_message_expiry(force_move(tim_message_expiry))
     {
-        auto it = buffer_sequence_begin(payload);
-        auto end = buffer_sequence_end(payload);
+        auto it = std::cbegin(payload);
+        auto end = std::cend(payload);
         for (; it != end; ++it) {
             this->payload.emplace_back(*it);
         }

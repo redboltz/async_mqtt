@@ -15,7 +15,7 @@
 #include <boost/container_hash/hash.hpp>
 
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/util/is_iterator.hpp>
+#include <async_mqtt/util/detail/is_iterator.hpp>
 
 /**
  * @defgroup buffer Reference counting immutable buffer
@@ -108,8 +108,8 @@ public:
         typename It,
         typename End,
         typename std::enable_if_t<
-            is_input_iterator<It>::value &&
-            is_input_iterator<End>::value
+            detail::is_input_iterator<It>::value &&
+            detail::is_input_iterator<End>::value
         >* = nullptr
     >
     constexpr buffer(It first, End last)
@@ -170,8 +170,8 @@ public:
         typename It,
         typename End,
         typename std::enable_if_t<
-            is_input_iterator<It>::value &&
-            is_input_iterator<End>::value
+            detail::is_input_iterator<It>::value &&
+            detail::is_input_iterator<End>::value
         >* = nullptr
     >
     buffer(It first, End last, std::shared_ptr<void> life)
@@ -527,6 +527,7 @@ public:
      * @brief find the first substring equal to the given view
      * @param buf  view to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring, or npos if no such substring is found.
      */
     constexpr size_type find(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find(buf.view_, pos);
@@ -536,6 +537,7 @@ public:
      * @brief find the first substring equal to the given view
      * @param v    view to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring, or npos if no such substring is found.
      */
     constexpr size_type find(std::string_view v, size_type pos = 0) const noexcept {
         return view_.find(v, pos);
@@ -545,6 +547,7 @@ public:
      * @brief find the first substring equal to the given view
      * @param ch   character to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring, or npos if no such substring is found.
      */
     constexpr size_type find(char ch, size_type pos = 0) const noexcept {
         return view_.find(ch, pos);
@@ -552,9 +555,10 @@ public:
 
     /**
      * @brief find the first substring equal to the given view
-     * @param s     view to search for
+     * @param s    pointer to a string of characters to search for
      * @param pos   position at which to start the search
-     * @param count search length
+     * @param count length of substring to search for
+     * @return position of the first character of the found substring, or npos if no such substring is found.
      */
     constexpr size_type find(char const* s, size_type pos, size_type count) const {
         return view_.find(s, pos, count);
@@ -562,8 +566,9 @@ public:
 
     /**
      * @brief find the first substring equal to the given view
-     * @param s     view to search for
-     * @param pos   position at which to start the search
+     * @param s    pointer to a string of characters to search for
+     * @param pos  position at which to start the search
+     * @return position of the first character of the found substring, or npos if no such substring is found.
      */
     constexpr size_type find(char const* s, size_type pos = 0) const {
         return view_.find(s, pos);
@@ -573,6 +578,7 @@ public:
      * @brief find the last substring equal to the given view
      * @param buf  view to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring or npos if no such substring is found.
      */
     constexpr size_type rfind(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.rfind(buf.view_, pos);
@@ -582,6 +588,7 @@ public:
      * @brief find the last substring equal to the given view
      * @param v    view to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring or npos if no such substring is found.
      */
     constexpr size_type rfind( std::string_view v, size_type pos = npos) const noexcept {
         return view_.rfind(v, pos);
@@ -591,6 +598,7 @@ public:
      * @brief find the last substring equal to the given view
      * @param ch   character to search for
      * @param pos  position at which to start the search
+     * @return position of the first character of the found substring or npos if no such substring is found.
      */
     constexpr size_type rfind(char ch, size_type pos = npos) const noexcept {
         return view_.rfind(ch, pos);
@@ -598,9 +606,10 @@ public:
 
     /**
      * @brief find the last substring equal to the given view
-     * @param s     view to search for
+     * @param s     pointer to a string of characters to search for
      * @param pos   position at which to start the search
-     * @param count search length
+     * @param count length of substring to search for
+     * @return position of the first character of the found substring or npos if no such substring is found.
      */
     constexpr size_type rfind(char const* s, size_type pos, size_type count) const {
         return view_.rfind(s, pos, count);
@@ -608,120 +617,331 @@ public:
 
     /**
      * @brief find the last substring equal to the given view
-     * @param s     view to search for
+     * @param s     pointer to a string of characters to search for
      * @param pos   position at which to start the search
+     * @return position of the first character of the found substring or npos if no such substring is found.
      */
     constexpr size_type rfind(char const* s, size_type pos = npos) const {
         return view_.rfind(s, pos);
     }
 
+    /**
+     * @brief find the first character equal to any of the characters in the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     * @return position of the first occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_first_of(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find_first_of(buf.view_, pos);
     }
+
+    /**
+     * @brief find the first character equal to any of the characters in the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     * @return position of the first occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_first_of( std::string_view v, size_type pos = 0) const noexcept {
         return view_.find_first_of(v, pos);
     }
+
+    /**
+     * @brief find the first character equal to any of the characters in the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     * @return position of the first occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_first_of(char ch, size_type pos = 0) const noexcept {
         return view_.find_first_of(ch, pos);
     }
+
+    /**
+     * @brief find the first character equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to search for
+     * @param pos   position at which to start the search
+     * @param count length of the string of characters to search for
+     * @return position of the first occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_first_of(char const* s, size_type pos, size_type count) const {
         return view_.find_first_of(s, pos, count);
     }
+
+    /**
+     * @brief find the first character equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to search for
+     * @param pos  position at which to start the search
+     * @return position of the first occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_first_of(char const* s, size_type pos = 0) const {
         return view_.find_first_of(s, pos);
     }
 
+    /**
+     * @brief find the last character equal to any of the characters in the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     * @return position of the last occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_last_of(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.find_last_of(buf.view_, pos);
     }
+
+    /**
+     * @brief find the last character equal to any of the characters in the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     * @return position of the last occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_last_of( std::string_view v, size_type pos = npos) const noexcept {
         return view_.find_last_of(v, pos);
     }
+
+    /**
+     * @brief find the last character equal to any of the characters in the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     * @return position of the last occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_last_of(char ch, size_type pos = npos) const noexcept {
         return view_.find_last_of(ch, pos);
     }
+
+    /**
+     * @brief find the last character equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to search for
+     * @param pos   position at which to start the search
+     * @param count length of the string of characters to search for
+     * @return position of the last occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_last_of(char const* s, size_type pos, size_type count) const {
         return view_.find_last_of(s, pos, count);
     }
+    /**
+     * @brief find the last character equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to search for
+     * @param pos  position at which to start the search
+     * @return position of the last occurrence of any character of the substring, or npos if no such character is found.
+     */
     constexpr size_type find_last_of(char const* s, size_type pos = npos) const {
         return view_.find_last_of(s, pos);
     }
 
+    /**
+     * @brief find the first character not equal to any of the characters in the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     * @return position of the first character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_first_not_of(buffer const& buf, size_type pos = 0) const noexcept {
         return view_.find_first_not_of(buf.view_, pos);
     }
+
+    /**
+     * @brief find the first character not equal to any of the characters in the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     * @return position of the first character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_first_not_of( std::string_view v, size_type pos = 0) const noexcept {
         return view_.find_first_not_of(v, pos);
     }
+
+    /**
+     * @brief find the first character not equal to any of the characters in the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     * @return position of the first character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_first_not_of(char ch, size_type pos = 0) const noexcept {
         return view_.find_first_not_of(ch, pos);
     }
+
+    /**
+     * @brief find the first character not equal to any of the characters in the given view
+     * @param s     view to search for
+     * @param pos   position at which to start the search
+     * @param count length of the string of characters to compare
+     * @return position of the first character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_first_not_of(char const* s, size_type pos, size_type count) const {
         return view_.find_first_not_of(s, pos, count);
     }
+
+    /**
+     * @brief find the first character not equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to compare
+     * @param pos  position at which to start the search
+     * @return position of the first character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_first_not_of(char const* s, size_type pos = 0) const {
         return view_.find_first_not_of(s, pos);
     }
 
+    /**
+     * @brief find the last character not equal to any of the characters in the given view
+     * @param buf  view to search for
+     * @param pos  position at which to start the search
+     * @return position of the last character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_last_not_of(buffer const& buf, size_type pos = npos) const noexcept {
         return view_.find_last_not_of(buf.view_, pos);
     }
+
+    /**
+     * @brief find the last character not equal to any of the characters in the given view
+     * @param v    view to search for
+     * @param pos  position at which to start the search
+     * @return position of the last character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_last_not_of( std::string_view v, size_type pos = npos) const noexcept {
         return view_.find_last_not_of(v, pos);
     }
+
+    /**
+     * @brief find the last character not equal to any of the characters in the given view
+     * @param ch   character to search for
+     * @param pos  position at which to start the search
+     * @return position of the last character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_last_not_of(char ch, size_type pos = npos) const noexcept {
         return view_.find_last_not_of(ch, pos);
     }
+
+    /**
+     * @brief find the last character not equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to compare
+     * @param pos   position at which to start the search
+     * @param count length of the string of characters to compare
+     * @return position of the last character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_last_not_of(char const* s, size_type pos, size_type count) const {
         return view_.find_last_not_of(s, pos, count);
     }
+
+    /**
+     * @brief find the last character not equal to any of the characters in the given view
+     * @param s    pointer to a string of characters to compare
+     * @param pos  position at which to start the search
+     * @return position of the last character not equal to any of the characters in the given string,
+     *         or npos if no such character is found.
+     */
     constexpr size_type find_last_not_of(char const* s, size_type pos = npos) const {
         return view_.find_last_not_of(s, pos);
     }
 
-    life_type const& get_life() const {
-        return life_;
-    }
-
+    /**
+     * @brief conversion operator to the buffer as asio const_buffer
+     * @return asio boost::asio::const_buffer
+     */
     operator as::const_buffer() const {
         return as::buffer(view_.data(), view_.size());
     }
 
+    /**
+     * @brief conversion operator to the buffer as asio const_buffer
+     * @return asio std::string_view
+     */
     operator std::string_view() const {
         return view_;
     }
 
+    /**
+     * @brief equal operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs equal to the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator==(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator==(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ == rhs.view_;
     }
+
+    /**
+     * @brief not equal operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs not equal to the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator!=(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator!=(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ != rhs.view_;
     }
+
+    /**
+     * @brief less than operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator<(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator<(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ < rhs.view_;
     }
+
+    /**
+     * @brief less than or equal to operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than or equal to the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator<=(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator<=(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ <= rhs.view_;
     }
+
+    /**
+     * @brief greater than operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs greater than the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator>(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator>(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ > rhs.view_;
     }
+
+    /**
+     * @brief greater than or equal to operator
+     *        comparison target is the view of the buffer. life holder is not compared.
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs greater than or equal to the rhs, otherwise false.
+     */
     friend
-    constexpr bool operator>=(buffer const& lhs, buffer const& rhs ) noexcept {
+    constexpr bool operator>=(buffer const& lhs, buffer const& rhs) noexcept {
         return lhs.view_ >= rhs.view_;
     }
 
+    /**
+     * @brief output to the stream
+     * @param o output stream
+     * @param v target
+     * @return output stream
+     */
     friend
-    std::ostream& operator<<(std::ostream& o, buffer const& buf) {
-        o << buf.view_;
+    std::ostream& operator<<(std::ostream& o, buffer const& v) {
+        o << v.view_;
         return o;
     }
 
+    /**
+     * @brief life checking
+     * @return true if the buffer has life, otherwise false.
+     */
     bool has_life() const noexcept {
         return bool(life_);
     }
@@ -731,99 +951,16 @@ private:
     life_type life_;
 };
 
+/**
+ * @brief hashing function
+ * @param v target
+ * @return hash value
+ */
 inline std::size_t hash_value(buffer const& v) noexcept {
     std::size_t result = 0;
     boost::hash_combine(result, static_cast<std::string_view const&>(v));
     return result;
 }
-
-inline buffer const* buffer_sequence_begin(buffer const& buf) {
-    return std::addressof(buf);
-}
-
-inline buffer const* buffer_sequence_end(buffer const& buf) {
-    return std::addressof(buf) + 1;
-}
-
-template <typename Col>
-inline typename Col::const_iterator buffer_sequence_begin(Col const& col) {
-    return col.cbegin();
-}
-
-template <typename Col>
-inline typename Col::const_iterator buffer_sequence_end(Col const& col) {
-    return col.cend();
-}
-
-namespace detail {
-
-template <typename>
-char buffer_sequence_begin_helper(...);
-
-template <typename T>
-char (&buffer_sequence_begin_helper(
-    T* t,
-    typename std::enable_if<
-        !std::is_same<
-            decltype(buffer_sequence_begin(*t)),
-            void
-        >::value
-    >::type*)
-)[2];
-
-template <typename>
-char buffer_sequence_end_helper(...);
-
-template <typename T>
-char (&buffer_sequence_end_helper(
-    T* t,
-    typename std::enable_if<
-        !std::is_same<
-            decltype(buffer_sequence_end(*t)),
-            void
-        >::value
-    >::type*)
-)[2];
-
-template <typename, typename>
-char (&buffer_sequence_element_type_helper(...))[2];
-
-template <typename T, typename Buffer>
-char buffer_sequence_element_type_helper(
-    T* t,
-    typename std::enable_if<
-        std::is_convertible<
-            decltype(*buffer_sequence_begin(*t)),
-            Buffer
-        >::value
-    >::type*
-);
-
-template <typename T, typename Buffer>
-struct is_buffer_sequence_class
-    : std::integral_constant<bool,
-      sizeof(buffer_sequence_begin_helper<T>(0, 0)) != 1 &&
-      sizeof(buffer_sequence_end_helper<T>(0, 0)) != 1 &&
-      sizeof(buffer_sequence_element_type_helper<T, Buffer>(0, 0)) == 1>
-{
-};
-
-} // namespace detail
-
-template <typename T>
-struct is_buffer_sequence :
-    std::conditional<
-        std::is_class<T>::value,
-        detail::is_buffer_sequence_class<T, buffer>,
-        std::false_type
-    >::type
-{
-};
-
-template <>
-struct is_buffer_sequence<buffer> : std::true_type
-{
-};
 
 } // namespace async_mqtt
 
@@ -849,9 +986,18 @@ inline const_buffer buffer(async_mqtt::buffer const& data) {
 
 namespace std {
 
+/**
+ * @ingroup buffer
+ * @brief class template hash specilization for the buffer
+ */
 template <>
 class hash<async_mqtt::buffer> {
 public:
+    /**
+     * @brief hashing operator
+     * @param v target
+     * @return hash value
+     */
     std::uint64_t operator()(async_mqtt::buffer const& v) const noexcept {
         return std::hash<std::string_view>()(static_cast<std::string_view const&>(v));
     }

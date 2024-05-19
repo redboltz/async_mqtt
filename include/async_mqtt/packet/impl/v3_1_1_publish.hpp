@@ -41,13 +41,10 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 template <
     typename StringViewLike,
-    typename BufferSequence,
+    typename Payload,
     std::enable_if_t<
         std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
-        (
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
-            std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
-        ),
+        detail::is_payload<Payload>(),
         std::nullptr_t
     >
 >
@@ -55,7 +52,7 @@ inline
 basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     StringViewLike&& topic_name,
-    BufferSequence&& payloads,
+    Payload&& payloads,
     pub::opts pubopts
 )
     : fixed_header_(
@@ -77,13 +74,13 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
         topic_name_length_buf_.data()
     );
 
-    if constexpr (std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>) {
+    if constexpr (std::is_convertible_v<std::decay_t<Payload>, std::string_view>) {
         remaining_length_ += std::string_view(payloads).size();
         payloads_.emplace_back(buffer{std::string{payloads}});
     }
     else {
-        auto b = buffer_sequence_begin(payloads);
-        auto e = buffer_sequence_end(payloads);
+        auto b = std::cbegin(payloads);
+        auto e = std::cend(payloads);
         auto num_of_payloads = static_cast<std::size_t>(std::distance(b, e));
         payloads_.reserve(num_of_payloads);
         for (; b != e; ++b) {
@@ -136,25 +133,22 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
 template <std::size_t PacketIdBytes>
 template <
     typename StringViewLike,
-    typename BufferSequence,
+    typename Payload,
     std::enable_if_t<
         std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
-        (
-            is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
-            std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
-        ),
+        detail::is_payload<Payload>(),
         std::nullptr_t
     >
 >
 inline
 basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     StringViewLike&& topic_name,
-    BufferSequence&& payloads,
+    Payload&& payloads,
     pub::opts pubopts
 ) : basic_publish_packet{
         0,
         std::forward<StringViewLike>(topic_name),
-        std::forward<BufferSequence>(payloads),
+        std::forward<Payload>(payloads),
         pubopts
     }
 {

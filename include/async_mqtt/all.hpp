@@ -71,7 +71,6 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/host_port.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
-#include <async_mqtt/util/is_iterator.hpp>
 #include <async_mqtt/util/json_like_out.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>

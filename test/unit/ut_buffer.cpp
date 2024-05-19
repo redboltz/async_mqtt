@@ -18,12 +18,6 @@ BOOST_AUTO_TEST_SUITE(ut_buffer)
 namespace am = async_mqtt;
 using namespace std::literals::string_view_literals;
 
-BOOST_AUTO_TEST_CASE(seq) {
-    BOOST_TEST(am::is_buffer_sequence<am::buffer>::value);
-    BOOST_TEST(am::is_buffer_sequence<std::vector<am::buffer>>::value);
-    BOOST_TEST(am::is_buffer_sequence<std::decay_t<std::vector<am::buffer> const&>>::value);
-}
-
 BOOST_AUTO_TEST_CASE( range ) {
     std::string s{"01234"};
     am::buffer buf{s.begin(), s.end()};
