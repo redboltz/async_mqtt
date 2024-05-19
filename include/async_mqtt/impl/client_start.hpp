@@ -7,7 +7,6 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_START_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_START_HPP
 
-#include <boost/asio/bind_executor.hpp>
 #include <boost/asio/append.hpp>
 #include <boost/asio/compose.hpp>
 
@@ -56,14 +55,10 @@ start_op {
         tim->expires_at(std::chrono::steady_clock::time_point::max());
         cl.pid_tim_pv_res_col_.get_tim_idx().emplace(tim);
         cl.recv_loop();
-        auto& a_cl{cl};
         tim->async_wait(
-            as::bind_executor(
-                a_cl.get_executor(),
-                as::append(
-                    force_move(self),
-                    tim
-                )
+            as::append(
+                force_move(self),
+                tim
             )
         );
     }

@@ -112,6 +112,14 @@ public:
         );
     }
 
+    as::any_io_executor get_executor() {
+        return visit(
+            [&](auto& ep) -> as::any_io_executor {
+                return ep.get_executor();
+            }
+        );
+    }
+
     // async functions
 
     template <typename CompletionToken>

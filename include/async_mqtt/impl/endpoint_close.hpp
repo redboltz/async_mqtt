@@ -15,7 +15,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 close_op {
     this_type& ep;
-    enum { dispatch, close, complete } state = dispatch;
+    enum { close, complete } state = close;
     this_type_sp life_keeper = ep.shared_from_this();
 
     template <typename Self>
@@ -24,16 +24,6 @@ close_op {
         error_code = error_code{}
     ) {
         switch (state) {
-        case dispatch: {
-            state = close;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
         case close:
             switch (ep.status_) {
             case connection_status::connecting:
@@ -46,10 +36,7 @@ close_op {
                 ep.status_ = connection_status::closing;
                 auto& a_ep{ep};
                 a_ep.stream_->async_close(
-                    as::bind_executor(
-                        a_ep.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             } break;
             case connection_status::closing: {
@@ -57,12 +44,8 @@ close_op {
                     << ASYNC_MQTT_ADD_VALUE(address, &ep)
                     << "already close requested";
                 auto& a_ep{ep};
-                auto exe = as::get_associated_executor(self);
                 a_ep.close_queue_.post(
-                    as::bind_executor(
-                        exe,
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             } break;
             case connection_status::closed:

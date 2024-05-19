@@ -16,29 +16,13 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 release_packet_id_op {
     this_type& ep;
     typename basic_packet_id_type<PacketIdBytes>::type packet_id;
-    enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        switch (state) {
-        case dispatch: {
-            state = complete;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
-        case complete:
-            ep.release_pid(packet_id);
-            state = complete;
-            self.complete();
-            break;
-        }
+        ep.release_pid(packet_id);
+        self.complete();
     }
 };
 

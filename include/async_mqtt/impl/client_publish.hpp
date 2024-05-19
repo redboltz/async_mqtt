@@ -60,14 +60,10 @@ publish_op {
         auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
         tim->expires_at(std::chrono::steady_clock::time_point::max());
         cl.pid_tim_pv_res_col_.get_tim_idx().emplace(pid, tim);
-        auto& a_cl{cl};
         tim->async_wait(
-            as::bind_executor(
-                a_cl.get_executor(),
-                as::append(
-                    force_move(self),
-                    tim
-                )
+            as::append(
+                force_move(self),
+                tim
             )
         );
     }

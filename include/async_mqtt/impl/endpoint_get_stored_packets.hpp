@@ -16,28 +16,13 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 get_stored_packets_op {
     this_type const& ep;
     std::vector<basic_store_packet_variant<PacketIdBytes>> packets = {};
-    enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        switch (state) {
-        case dispatch: {
-            state = complete;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
-        case complete:
-            packets = ep.get_stored_packets();
-            self.complete(force_move(packets));
-            break;
-        }
+        packets = ep.get_stored_packets();
+        self.complete(force_move(packets));
     }
 };
 

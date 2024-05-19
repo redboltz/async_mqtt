@@ -16,28 +16,13 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 regulate_for_store_op {
     this_type const& ep;
     v5::basic_publish_packet<PacketIdBytes> packet;
-    enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        switch (state) {
-        case dispatch: {
-            state = complete;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
-        case complete:
-            ep.regulate_for_store(packet);
-            self.complete(force_move(packet));
-            break;
-        }
+        ep.regulate_for_store(packet);
+        self.complete(force_move(packet));
     }
 };
 

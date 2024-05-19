@@ -18,7 +18,7 @@ send_op {
     this_type& ep;
     Packet packet;
     bool from_queue = false;
-    enum { dispatch, write, complete } state = dispatch;
+    enum { write, complete } state = write;
 
     template <typename Self>
     void operator()(
@@ -35,16 +35,6 @@ send_op {
         }
 
         switch (state) {
-        case dispatch: {
-            state = write;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
         case write: {
             state = complete;
             if constexpr(
@@ -58,10 +48,7 @@ send_op {
                                 auto& a_ep{ep};
                                 a_ep.stream_->async_write_packet(
                                     actual_packet,
-                                    as::bind_executor(
-                                        a_ep.get_executor(),
                                         force_move(self)
-                                    )
                                 );
                                 if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                                     // server send stored packets after connack sent
@@ -82,10 +69,7 @@ send_op {
                     auto a_packet{packet};
                     a_ep.stream_->async_write_packet(
                         force_move(a_packet),
-                        as::bind_executor(
-                            a_ep.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                     if constexpr(is_connack<Packet>()) {
                         // server send stored packets after connack sent

@@ -19,49 +19,34 @@ template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
 recv_op {
     this_type& cl;
-    enum { dispatch, recv, complete } state = dispatch;
+    enum { recv, complete } state = recv;
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        if (state == dispatch) {
-            state = recv;
+        BOOST_ASSERT(state == recv);
+        state = complete;
+        if (cl.recv_queue_.empty()) {
+            cl.recv_queue_inserted_ = false;
+            auto tim = std::make_shared<as::steady_timer>(
+                cl.ep_->get_executor()
+            );
+            cl.tim_notify_publish_recv_.expires_at(
+                std::chrono::steady_clock::time_point::max()
+            );
             auto& a_cl{cl};
-            as::dispatch(
-                as::bind_executor(
-                    a_cl.ep_->get_executor(),
-                    force_move(self)
-                )
+            a_cl.tim_notify_publish_recv_.async_wait(
+                force_move(self)
             );
         }
         else {
-            BOOST_ASSERT(state == recv);
-            state = complete;
-            if (cl.recv_queue_.empty()) {
-                cl.recv_queue_inserted_ = false;
-                auto tim = std::make_shared<as::steady_timer>(
-                    cl.ep_->get_executor()
-                );
-                cl.tim_notify_publish_recv_.expires_at(
-                    std::chrono::steady_clock::time_point::max()
-                );
-                auto& a_cl{cl};
-                a_cl.tim_notify_publish_recv_.async_wait(
-                    as::bind_executor(
-                        a_cl.get_executor(),
-                        force_move(self)
-                    )
-                );
-            }
-            else {
-                auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
-                cl.recv_queue_.pop_front();
-                self.complete(
-                    ec,
-                    force_move(publish_opt),
-                    force_move(disconnect_opt)
-                );
-            }
+            auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
+            cl.recv_queue_.pop_front();
+            self.complete(
+                ec,
+                force_move(publish_opt),
+                force_move(disconnect_opt)
+            );
         }
     }
 

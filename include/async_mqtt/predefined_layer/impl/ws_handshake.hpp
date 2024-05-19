@@ -40,10 +40,7 @@ struct ws_handshake_op {
             a_layer.next_layer(),
             host,
             port,
-            as::bind_executor(
-                a_layer.get_executor(),
-                force_move(self)
-            )
+            force_move(self)
         );
     }
 
@@ -64,10 +61,7 @@ struct ws_handshake_op {
             a_layer.async_handshake(
                 a_host,
                 a_path,
-                as::bind_executor(
-                    a_layer.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
         }
         else {

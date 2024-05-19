@@ -223,32 +223,29 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer() {
             std::chrono::milliseconds{*pingreq_send_interval_ms_}
         );
         tim_pingreq_send_->async_wait(
-            as::bind_executor(
-                get_executor(),
-                [this, wp = std::weak_ptr{tim_pingreq_send_}](error_code const& ec) {
-                    if (!ec) {
-                        if (auto sp = wp.lock()) {
-                            switch (protocol_version_) {
-                            case protocol_version::v3_1_1:
-                                async_send(
-                                    v3_1_1::pingreq_packet(),
-                                    [](system_error const&){}
-                                );
-                                break;
-                            case protocol_version::v5:
-                                async_send(
-                                    v5::pingreq_packet(),
-                                    [](system_error const&){}
-                                );
-                                break;
-                            default:
-                                BOOST_ASSERT(false);
-                                break;
-                            }
+            [this, wp = std::weak_ptr{tim_pingreq_send_}](error_code const& ec) {
+                if (!ec) {
+                    if (auto sp = wp.lock()) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            async_send(
+                                v3_1_1::pingreq_packet(),
+                                [](system_error const&){}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            async_send(
+                                v5::pingreq_packet(),
+                                [](system_error const&){}
+                            );
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
                         }
                     }
                 }
-            )
+            }
         );
     }
 }
@@ -266,47 +263,41 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
             std::chrono::milliseconds{*pingreq_recv_timeout_ms_}
         );
         tim_pingreq_recv_->async_wait(
-            as::bind_executor(
-                get_executor(),
-                [this, wp = std::weak_ptr{tim_pingreq_recv_}](error_code const& ec) {
-                    if (!ec) {
-                        if (auto sp = wp.lock()) {
-                            switch (protocol_version_) {
-                            case protocol_version::v3_1_1:
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "pingreq recv timeout. close.";
-                                async_close(
-                                    []{}
-                                );
-                                break;
-                            case protocol_version::v5:
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "pingreq recv timeout. close.";
-                                async_send(
-                                    v5::disconnect_packet{
-                                        disconnect_reason_code::keep_alive_timeout,
-                                        properties{}
-                                    },
-                                    as::bind_executor(
-                                        get_executor(),
-                                        [this](system_error const&){
-                                            async_close(
-                                                []{}
-                                            );
-                                        }
-                                    )
-                                );
-                                break;
-                            default:
-                                BOOST_ASSERT(false);
-                                break;
-                            }
+            [this, wp = std::weak_ptr{tim_pingreq_recv_}](error_code const& ec) {
+                if (!ec) {
+                    if (auto sp = wp.lock()) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingreq recv timeout. close.";
+                            async_close(
+                                []{}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingreq recv timeout. close.";
+                            async_send(
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::keep_alive_timeout,
+                                    properties{}
+                                },
+                                [this](system_error const&){
+                                    async_close(
+                                        []{}
+                                    );
+                                }
+                            );
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
                         }
                     }
                 }
-            )
+            }
         );
     }
 }
@@ -324,54 +315,48 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
             std::chrono::milliseconds{*pingresp_recv_timeout_ms_}
         );
         tim_pingresp_recv_->async_wait(
-            as::bind_executor(
-                get_executor(),
-                [this, wp = std::weak_ptr{tim_pingresp_recv_}](error_code const& ec) {
-                    if (!ec) {
-                        if (auto sp = wp.lock()) {
-                            switch (protocol_version_) {
-                            case protocol_version::v3_1_1:
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "pingresp recv timeout. close.";
+            [this, wp = std::weak_ptr{tim_pingresp_recv_}](error_code const& ec) {
+                if (!ec) {
+                    if (auto sp = wp.lock()) {
+                        switch (protocol_version_) {
+                        case protocol_version::v3_1_1:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingresp recv timeout. close.";
+                            async_close(
+                                []{}
+                            );
+                            break;
+                        case protocol_version::v5:
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << ASYNC_MQTT_ADD_VALUE(address, this)
+                                << "pingresp recv timeout. close.";
+                            if (status_ == connection_status::connected) {
+                                async_send(
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::keep_alive_timeout,
+                                        properties{}
+                                    },
+                                    [this](system_error const&){
+                                        async_close(
+                                            []{}
+                                        );
+                                    }
+                                );
+                            }
+                            else {
                                 async_close(
                                     []{}
                                 );
-                                break;
-                            case protocol_version::v5:
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << "pingresp recv timeout. close.";
-                                if (status_ == connection_status::connected) {
-                                    async_send(
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::keep_alive_timeout,
-                                            properties{}
-                                        },
-                                        as::bind_executor(
-                                            get_executor(),
-                                            [this](system_error const&){
-                                                async_close(
-                                                    []{}
-                                                );
-                                            }
-                                        )
-                                    );
-                                }
-                                else {
-                                    async_close(
-                                        []{}
-                                    );
-                                }
-                                break;
-                            default:
-                                BOOST_ASSERT(false);
-                                break;
                             }
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
                         }
                     }
                 }
-            )
+            }
         );
     }
 }

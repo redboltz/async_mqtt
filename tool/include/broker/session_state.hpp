@@ -245,40 +245,70 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 if (auto sp = wp.lock()) {
                     switch (version_) {
                     case protocol_version::v3_1_1:
-                        epsp.async_send(
-                            v3_1_1::publish_packet{
-                                pid,
-                                force_move(pub_topic),
-                                force_move(payload),
-                                pubopts
-                            },
-                            [this, epsp](system_error const& ec) {
-                                if (ec) {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                                        << "epsp:" << epsp.get_address() << " "
-                                        << ec.what();
+                        as::dispatch(
+                            as::bind_executor(
+                                epsp.get_executor(),
+                                [
+                                    this,
+                                    epsp,
+                                    pid,
+                                    pub_topic = force_move(pub_topic),
+                                    payload = force_move(payload),
+                                    pubopts,
+                                    props = force_move(props)
+                                ] () mutable {
+                                    epsp.async_send(
+                                        v3_1_1::publish_packet{
+                                            pid,
+                                            force_move(pub_topic),
+                                            force_move(payload),
+                                            pubopts
+                                        },
+                                        [this, epsp](system_error const& ec) {
+                                            if (ec) {
+                                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                                    << "epsp:" << epsp.get_address() << " "
+                                                    << ec.what();
+                                            }
+                                        }
+                                    );
                                 }
-                            }
+                            )
                         );
                         break;
                     case protocol_version::v5:
-                        epsp.async_send(
-                            v5::publish_packet{
-                                pid,
-                                force_move(pub_topic),
-                                force_move(payload),
-                                pubopts,
-                                force_move(props)
-                            },
-                            [this, epsp](system_error const& ec) {
-                                if (ec) {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                                        << "epsp:" << epsp.get_address() << " "
-                                        << ec.what();
+                        as::dispatch(
+                            as::bind_executor(
+                                epsp.get_executor(),
+                                [
+                                    this,
+                                    epsp,
+                                    pid,
+                                    pub_topic = force_move(pub_topic),
+                                    payload = force_move(payload),
+                                    pubopts,
+                                    props = force_move(props)
+                                ] () mutable {
+                                    epsp.async_send(
+                                        v5::publish_packet{
+                                            pid,
+                                            force_move(pub_topic),
+                                            force_move(payload),
+                                            pubopts,
+                                            force_move(props)
+                                        },
+                                        [this, epsp](system_error const& ec) {
+                                            if (ec) {
+                                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                                    << "epsp:" << epsp.get_address() << " "
+                                                    << ec.what();
+                                            }
+                                        }
+                                    );
                                 }
-                            }
+                            )
                         );
                         break;
                     default:
@@ -293,14 +323,21 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             auto qos_value = pubopts.get_qos();
             if (qos_value == qos::at_least_once ||
                 qos_value == qos::exactly_once) {
-                epsp.async_acquire_unique_packet_id(
-                    [send_publish = force_move(send_publish)]
-                    (auto pid_opt) mutable {
-                        if (pid_opt) {
-                            send_publish(*pid_opt);
-                            return;
+                as::dispatch(
+                    as::bind_executor(
+                        epsp.get_executor(),
+                        [epsp, send_publish] () mutable {
+                            epsp.async_acquire_unique_packet_id(
+                                [send_publish = force_move(send_publish)]
+                                (auto pid_opt) mutable {
+                                    if (pid_opt) {
+                                        send_publish(*pid_opt);
+                                        return;
+                                    }
+                                }
+                            );
                         }
-                    }
+                    )
                 );
                 return;
             }

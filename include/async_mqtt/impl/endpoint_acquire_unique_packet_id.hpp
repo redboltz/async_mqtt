@@ -16,29 +16,13 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 acquire_unique_packet_id_op {
     this_type& ep;
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> pid_opt = std::nullopt;
-    enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        switch (state) {
-        case dispatch: {
-            state = complete;
-            auto& a_ep{ep};
-            as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
-            );
-        } break;
-        case complete:
-            pid_opt = ep.pid_man_.acquire_unique_id();
-            state = complete;
-            self.complete(pid_opt);
-            break;
-        }
+        pid_opt = ep.pid_man_.acquire_unique_id();
+        self.complete(pid_opt);
     }
 };
 

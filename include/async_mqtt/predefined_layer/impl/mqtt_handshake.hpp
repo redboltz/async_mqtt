@@ -34,17 +34,13 @@ struct mqtt_handshake_op {
     void operator()(
         Self& self
     ) {
-        auto& a_layer{layer};
         auto res = std::make_shared<as::ip::tcp::resolver>(layer.get_executor());
         res->async_resolve(
             host,
             port,
-            as::bind_executor(
-                a_layer.get_executor(),
-                as::consign(
-                    force_move(self),
-                    res
-                )
+            as::consign(
+                force_move(self),
+                res
             )
         );
     }
@@ -71,10 +67,7 @@ struct mqtt_handshake_op {
             a_layer,
             eps,
             default_connect_condition(),
-            as::bind_executor(
-                a_layer.get_executor(),
-                force_move(self)
-            )
+            force_move(self)
         );
     }
 
