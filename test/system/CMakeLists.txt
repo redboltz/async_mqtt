@@ -22,7 +22,7 @@ list(APPEND check_PROGRAMS
     st_keep_alive.cpp
 #    st_inflight.cpp
     st_invalid.cpp
-#    st_offline.cpp
+    st_offline.cpp
     st_order.cpp
     st_pub.cpp
 #    st_retain.cpp

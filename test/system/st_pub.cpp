@@ -36,6 +36,13 @@ BOOST_AUTO_TEST_CASE(v311_pub_to_broker) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
+
                 ep().set_auto_pub_response(true);
 
                 yield ep().next_layer().async_connect(
@@ -135,6 +142,13 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
+
                 ep().set_auto_pub_response(true);
 
                 yield ep().next_layer().async_connect(
@@ -247,6 +261,13 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     std::optional<am::packet_id_type> /*pid*/
                 ) override {
                     reenter(this) {
+                        yield as::dispatch(
+                            as::bind_executor(
+                                ep().get_executor(),
+                                *this
+                            )
+                        );
+
                         // wait for subscribe endpoint becomes ready
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                         yield am::async_underlying_handshake(
@@ -335,6 +356,13 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     std::optional<am::packet_id_type> /*pid*/
                 ) override {
                     reenter(this) {
+                        yield as::dispatch(
+                            as::bind_executor(
+                                ep().get_executor(),
+                                *this
+                            )
+                        );
+
                         ep().set_auto_pub_response(true);
 
                         // connect sub
@@ -467,6 +495,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     std::optional<am::packet_id_type> /*pid*/
                 ) override {
                     reenter(this) {
+                        yield as::dispatch(
+                            as::bind_executor(
+                                ep().get_executor(),
+                                *this
+                            )
+                        );
+
                         ep().set_auto_pub_response(true);
                         // wait for subscribe endpoint becomes ready
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -556,6 +591,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     std::optional<am::packet_id_type> /*pid*/
                 ) override {
                     reenter(this) {
+                        yield as::dispatch(
+                            as::bind_executor(
+                                ep().get_executor(),
+                                *this
+                            )
+                        );
+
                         ep().set_auto_pub_response(true);
 
                         // connect sub

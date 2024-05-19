@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
@@ -724,7 +724,7 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
@@ -893,7 +893,7 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                 ) override {
                     reenter(this) {
                         // wait for subscribe endpoint becomes ready
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                         ep().set_auto_pub_response(true);
                         // connect pub
                         yield am::async_underlying_handshake(
