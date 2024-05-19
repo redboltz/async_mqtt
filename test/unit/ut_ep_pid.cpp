@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<am::role::client, am::stub_socket>::create(
         version,
         // for stub_socket args
         version,
@@ -54,17 +54,38 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         )
     );
 
-    auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-    auto fut2 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-    auto fut3 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-    ep->async_release_packet_id(10001, as::use_future).get();
-    ep->async_release_packet_id(10002, as::use_future).get();
-    ep->async_release_packet_id(10003, as::use_future).get();
-    auto pid2 = fut2.get();
+    std::promise<void> pro;
+    auto fut = pro.get_future();
+    std::future<am::packet_id_type> acq_fut1;
+    std::future<am::packet_id_type> acq_fut2;
+    std::future<am::packet_id_type> acq_fut3;
+    std::future<void> rel_fut1;
+    std::future<void> rel_fut2;
+    std::future<void> rel_fut3;
+    as::dispatch(
+        as::bind_executor(
+            ep->get_executor(),
+            [&] {
+                acq_fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+                acq_fut2 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+                acq_fut3 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
+                rel_fut1 = ep->async_release_packet_id(10001, as::use_future);
+                rel_fut2 = ep->async_release_packet_id(10002, as::use_future);
+                rel_fut3 = ep->async_release_packet_id(10003, as::use_future);
+                pro.set_value();
+            }
+        )
+    );
+    fut.get();
+    rel_fut1.get();
+    rel_fut2.get();
+    rel_fut3.get();
+
+    auto pid2 = acq_fut2.get();
     BOOST_TEST(pid2 == 10002);
-    auto pid1 = fut1.get();
+    auto pid1 = acq_fut1.get();
     BOOST_TEST(pid1 == 10001);
-    auto pid3 = fut3.get();
+    auto pid3 = acq_fut3.get();
     BOOST_TEST(pid3 == 10003);
     guard.reset();
     th.join();
