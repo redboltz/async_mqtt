@@ -8,20 +8,19 @@ ifndef::env-github[:am-base-path: ../..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:../api]
 
-= Client
-
-async_mqtt has class {api-base}/++classasync__mqtt_1_1basic__client.html#a9dd11900baa797fded499766bde8b81e++[client] for multi-threaded environment and class {api-base}/++classasync__mqtt_1_1basic__client.html#a0bb29717d22dda60a005f97c3a24b853++[client_st] for single-threaded environment.
-
-Both are implemented using {api-base}/++classasync__mqtt_1_1basic__client.html++[basic_client]
+= {api-base}/++classasync__mqtt_1_1client.html#details++[Client]
 
 == Include header files
 
-In order to use async_mqtt, include the following header file:
+To use async_mqtt, include the following header file:
+
+
 ```cpp
 #include <async_mqtt/all.hpp>
 ```
 
-In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in `all.hpp`.
+
+In addition, if you want to use TLS and/or WebSocket, include the following header files. They are not included in `all.hpp`.
 
 For TLS:
 ```cpp
@@ -39,7 +38,9 @@ For Websocket on TLS
 ```
 
 == Create client
+
 First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying layer.
+
 
 ifdef::env-github[image::../img/layer.svg[layer structure]]
 ifndef::env-github[image::layer.svg[layer structure]]
@@ -61,7 +62,7 @@ namespace tls = as::ssl;
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     );
     // handshake underlying layers
-    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 == mqtts
@@ -70,13 +71,13 @@ namespace tls = as::ssl;
     as::io_context ioc;
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
-    
+
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
 
     // You the broker requires additional TLS layer information,
     // you can use OpenSSL directly.
-    // 
+    //
     // static const unsigned char protos[5] = {4, 'm','q','t','t'};
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
@@ -86,7 +87,7 @@ namespace tls = as::ssl;
         ctx
     );
     // handshake underlying layers
-    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 == ws
@@ -98,7 +99,7 @@ namespace tls = as::ssl;
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     );
     // handshake underlying layers
-    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 
@@ -113,7 +114,7 @@ namespace tls = as::ssl;
 
     // You the broker requires additional TLS layer information,
     // you can use OpenSSL directly.
-    // 
+    //
     // static const unsigned char protos[5] = {4, 'm','q','t','t'};
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
@@ -123,12 +124,12 @@ namespace tls = as::ssl;
         ctx                  // mqtts is as::ssl::stream<mqtt>
     );
     // handshake underlying layers
-    co_await am::underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
 ```
 
 == Layer access
 
-You usually need to access only `next_layer()` to pass `underlying_handshake()` argument. But if you want to some configuration for each layers, you can access all underlying layers.
+Typically, you only need to `use next_layer()` to pass the `async_underlying_handshake()` argument. However, if you need to configure each layer individually, you can access all the underlying layers.
 
 |===
 |Layer access | mqtt | mqtts | ws | wss
@@ -141,9 +142,9 @@ You usually need to access only `next_layer()` to pass `underlying_handshake()` 
 
 == Send MQTT CONNECT packet and start receive loop
 
-After underlying layers' handshaking is completed, then start MQTT layer connection.
+After the handshaking of the underlying layers is complete, initiate the MQTT layer connection.
 
-=== async_start() funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#a6808a6f7f9535ec152dcc9ee430caf92++[async_start()] funtion
 
 ```cpp
 // prepare will message if you need.
@@ -174,7 +175,7 @@ if (connack_opt) {
 }
 ```
 
-CompletionToken parameters are error_code and connack_packet (optional). connack_packet has a value only if error_code is success. When you use CompletionToken such as `as::use_awaitable`, `as::use_future`, `as::deferred`, the first error_code is converted to exception. If you want to have the error_code as the return value, you can do as follows:
+CompletionToken parameters are `error_code` and `connack_packet` (optional). `connack_packet` has a value only if `error_code` is successful. When using CompletionToken such as `as::use_awaitable`, `as::use_future`, or `as::deferred`, the first `error_code` is converted to an exception. If you want the `error_code` as the return value, you can do the following:
 
 ```cpp
 // MQTT connect and receive loop start
@@ -195,9 +196,25 @@ if (connack_opt) {
 }
 ```
 
+You can omit explicit packet creation as follows:
+
+```cpp
+auto connack_opt = co_await amcl.async_start(
+    true,   // clean_start
+    std::uint16_t(0x1234), // keep_alive
+    "ClientIdentifier1",
+    will,   // you can pass std::nullopt if you don't want to set the will message
+    "UserName1",
+    "Password1",
+    as::use_awaitable
+);
+```
+
+The `connect_packet` correspondint to the client version is created automatically.
+
 == Send SUBSCRIBE/UNSUBSCRIBE and wait SUBACK/UNSUBACK
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#ae74159d835dca15f87b760b53acb4d51++[async_subscribe()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#a10936f4e6d279d8fd869c6774f65dbaf++[async_subscribe()] funtion
 
 ```cpp
 // subscribe
@@ -209,7 +226,7 @@ std::vector<am::topic_subopts> sub_entry{
 };
 auto suback_opt = co_await amcl.async_subscribe(
     am::v5::subscribe_packet{
-        *amcl.acquire_unique_packet_id(), // sync version only in strand
+        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
         am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
     },
     as::use_awaitable
@@ -221,7 +238,7 @@ if (suback_opt) {
 
 CompletionToken parameters are error_code and suback_packet (optional). suback_packet has a value only if error_code is success.
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#a0ff1b5b724340a3df4c9ce9fab7a4b90++[async_unsubscribe()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#a29e1d876f3ec12c7a8d69c406be15fc7++[async_unsubscribe()] funtion
 
 ```cpp
 // MQTT send unsubscribe and wait unsuback
@@ -233,7 +250,7 @@ std::vector<am::topic_sharename> unsub_entry{
 
 auto unsuback_opt = co_await amcl.async_unsubscribe(
     am::v5::unsubscribe_packet{
-        *amcl.acquire_unique_packet_id(), // sync version only in strand
+        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
         am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
     },
     as::use_awaitable
@@ -247,7 +264,7 @@ CompletionToken parameters are error_code and unsuback_packet (optional). unsuba
 
 == Send PUBLISH packet and wait response
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c++[async_publish()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#aea02e31d5f8e45f5eb7eb886f7a5068a++[async_publish()] funtion
 
 Here is a code example that sending QoS0 PUBLISH packet.
 
@@ -263,7 +280,7 @@ auto pubres0 = co_await amcl.async_publish(
 );
 ```
 
-CompletionToken parameters are error_code and {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t].
+CompletionToken parameters are error_code and {api-base}/++structasync__mqtt_1_1client_1_1pubres__t.html++[pubres_t].
 When you send QoS0 PUBLISH packet, no response packet is expected, so the CompletionToken is invoked when underlying layer's async_write operation is finished.
 All the members of pubres_t are nullopt.
 
@@ -271,7 +288,7 @@ Here is a code example that sending QoS1 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS1 and wait response (puback receive)
-auto pid_pub1_opt = co_await amcl.acquire_unique_packet_id(as::use_awaitable); // async version
+auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
 auto pubres1 = co_await amcl.async_publish(
     am::v5::publish_packet{
         *pid_pub1_opt,
@@ -283,9 +300,9 @@ auto pubres1 = co_await amcl.async_publish(
 );
 ```
 
-In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1basic__client.html#aa5a37f75664bb4dd8b883e464f2016e5++[acquire_unique_packet_id()]. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version {api-base}/++classasync__mqtt_1_1basic__client.html#acaea92142dca0924af36e5acef91d8bb++[acquire_unique_packet_id()] exists. When you use callback function approach, it could help keep the code simple. Sync version must be called in the client's strand. For example, anywhare in the callback function that is registered to client member functions as a CompletionToken(CompletionHandler).
+In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23++[async_acquire_unique_packet_id()]. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version {api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id()] exists. Sync version must be called in the thread safe context. For example, if you pass the strand wrapped executor to the client on creation, in the async_function's callback handler is a thread safe context.
 
-After async_publish() is completer, puback_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] is set. You can get puback packet.
+After async_publish() is completer, puback_opt of {api-base}/++structasync__mqtt_1_1client_1_1pubres__t.html++[pubres_t] is set. You can get puback packet.
 
 Here is a code example that sending QoS1 PUBLISH packet.
 
@@ -303,13 +320,13 @@ auto pubres2 = co_await amcl.async_publish(
 );
 ```
 
-In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, {api-base}/++classasync__mqtt_1_1basic__client.html#afbc77b4e603db0c1141d3235c8fa8b35++[acquire_unique_packet_id_wait_until()] is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.
+In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, {api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_acquire_unique_packet_id_wait_until()] is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.
 
-After async_publish() is completer, pubrec_opt and pubcomp_opt of {api-base}/++structasync__mqtt_1_1basic__client_1_1pubres__t.html++[pubres_t] are set. You can get pubrec and pubcomp packet.
+After async_publish() is completer, pubrec_opt and pubcomp_opt of {api-base}/++structasync__mqtt_1_1client_1_1pubres__t.html++[pubres_t] are set. You can get pubrec and pubcomp packet.
 
 == Receive PUBLISH packet from the broker
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#aad1963132aa1d0c6458bd6f38d9b7e48++[async_recv()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#a825c14790ca009436f20c1b2c7952204++[async_recv()] funtion
 
 ```cpp
 auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
@@ -327,7 +344,7 @@ CompletionToken parameters are error_code and publish_packet (optional), and dis
 
 == Send DISCONNECT packet
 
-=== {api-base}/++classasync__mqtt_1_1basic__client.html#a13400c20164b4e0d2ed4d295cd6413d0++[async_disconnect()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#acd225df7e04770be801742bbbb437d9e++[async_disconnect()] funtion
 
 ```cpp
 co_await amcl.async_disconnect(
@@ -341,7 +358,7 @@ Sending DISCONNECT packet to the broker starts a glaceful disconnect sequence. T
 
 == Close
 
-==== {api-base}/++classasync__mqtt_1_1basic__client.html#a4758d075939de30c77f3f4bdf0f7a4e1++[async_close()] funtion
+==== {api-base}/++classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110++[async_close()] funtion
 
 ```cpp
 co_await amcl.async_close(as::use_awaitable);
