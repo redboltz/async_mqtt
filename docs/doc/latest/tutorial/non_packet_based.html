@@ -64,9 +64,14 @@ div#navigation table {
 </div>
 <div id="content">
 <div class="paragraph">
-<p>Most of async_mqtt APIs are <a href="send_recv.html#packet-based-apis">packet based</a> so functionalities are automatically applied by simply set packets parameters and send/recv them. However, some of functionalities cannot be explained the packets.
-Such functionalities are implemented as non packet based APIs.
-Here are the list of non packet based APIs. The functions should be called before send/recv is called.</p>
+<p>Here is the revised version incorporating your instruction:</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>Most of the <code>async_mqtt</code> APIs are <a href="send_recv.html#packet-based-apis">packet based</a>, so functionalities are automatically applied by simply setting packet parameters and sending/receiving them. However, some functionalities cannot be explained by packets alone. Such functionalities are implemented as non-packet-based APIs.</p>
+</div>
+<div class="paragraph">
+<p>Here is the list of non-packet-based APIs. These functions should be called before <code>async_send</code>/<code>async_recv</code> is called.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -106,6 +111,36 @@ Here are the list of non packet based APIs. The functions should be called befor
 </tr>
 </tbody>
 </table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">Effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a565335cdfde52860dcfcb483624b6b7e">set_auto_map_topic_alias_send()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If set true, TopicAlias is automatically acquired and applied on sending PUBLISH packets. The limit is decidec by received TopicAliasMaximum property. If it is 0, no TopicAlias is used. If TopicAlias is fully used, then overwrite the oldest TopicAlias (LRU algorithm).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2">set_auto_replace_topic_alias_send()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">It is similar to set_auto_map_topic_alias but not automatically acquired. So you need to register topicalias by yourself. If set true, then TopicAlias is automatically applied if TopicAlias is already registered.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">set_ping_resp_recv_timeout_ms()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set timer after sending PINGREQ packet. The timer would be cancelled when PINGRESP packet is received. If timer is fired then the connection is disconnected automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649">set_bulk_write()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one.</p></td>
+</tr>
+</tbody>
+</table>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -118,7 +153,7 @@ Here are the list of non packet based APIs. The functions should be called befor
 <th class="tableblock halign-left valign-middle"><a href="send_recv.html">Prev</a></th>
 <th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
 <a href="../index.html">Home</a></th>
-<th class="tableblock halign-right valign-middle"><a href="strand.html">Next</a></th>
+<th class="tableblock halign-right valign-middle"><a href="../functionality/connect_timeout.html">Next</a></th>
 </tr>
 </thead>
 </table>

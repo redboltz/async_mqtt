@@ -66,21 +66,12 @@ div#navigation table {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before think about connect timeout, we need define what is the connect. Here is typical connect sequence.</p>
+<p>Before thinking about connection timeout, we need to define what a connection is. Here is a typical connection sequence:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Resolve hostname (optional)</p>
-</li>
-<li>
-<p>TCP handshake</p>
-</li>
-<li>
-<p>TLS handshake (optional)</p>
-</li>
-<li>
-<p>WebSocket handshake (optional)</p>
+<p><code>am::async_underlying_handshake</code> (resolves hostname, TCP, TLS, and WebSocket handshake if required)</p>
 </li>
 <li>
 <p>Send MQTT CONNECT packet</p>
@@ -90,20 +81,8 @@ div#navigation table {
 </li>
 </ol>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-Step1-4 is outside of async_mqtt.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>Typically, user can set timer before the Step1, and cancel the timer after Step6. If the timer is fired, then call <code>close()</code> function.</p>
+<p>Typically, the user can set a timer before Step 1 and cancel the timer after Step 3. If the timer expires, call the <code>close()</code> function.</p>
 </div>
 </div>
 </div>
@@ -111,8 +90,10 @@ Step1-4 is outside of async_mqtt.
 <h2 id="_pingresp_timeout">PINGRESP timeout</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After MQTT connection is established (Step6 is finished successfully), if underlying connection is disconnected, then <code>recv()</code> function returns as error. However, if the broker is freezed or disconnect is not detected but acutually disconnected, the client want to know the status of the connection.
-In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send PINGREQ packet.</p>
+<p>After the MQTT connection is established (Step 3 is finished successfully), if the underlying connection is disconnected, then the <code>recv()</code> function returns an error. However, if the broker is frozen or the disconnect is not detected but actually disconnected, the client needs to know the status of the connection.</p>
+</div>
+<div class="paragraph">
+<p>In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send a PINGREQ packet.</p>
 </div>
 </div>
 </div>
@@ -122,15 +103,15 @@ In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send P
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../api/classasync__mqtt_1_1basic__client.html#ae6de76e91012ea196666ca450d025560">set_pingresp_recv_timeout_ms() for client</a></p>
+<p><a href="../api/classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">set_pingresp_recv_timeout_ms() for client</a></p>
 </li>
 <li>
-<p><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a33de735f6ac4f8aa9fbca3f120c38ac0">set_pingresp_recv_timeout_ms() for endpoint</a></p>
+<p><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0">set_pingresp_recv_timeout_ms() for endpoint</a></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The parameter is milliseconds. You need to call this function before sending MQTT CONNECT packet. The timer is automatically set when PINGREQ packet is sent. If PINGRESP packet is received from the broker, then the timer is cancelled. If the timer is fired, the connection is disconnected from the client side. Finally, the client gets error from the <code>recv()</code> function.</p>
+<p>The parameter is in milliseconds. You need to call this function before sending the MQTT CONNECT packet. The timer is automatically set when the PINGREQ packet is sent. If a PINGRESP packet is received from the broker, the timer is canceled. If the timer expires, the connection is disconnected from the client side. Finally, the client gets an error from the <code>async_recv()</code> function.</p>
 </div>
 </div>
 </div>
@@ -138,8 +119,7 @@ In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send P
 <h2 id="_sending_pingreq_packet">sending PINGREQ packet</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can create PINGREQ packet and send it. This is a manual way.
-You can set CONNECT packet keep_alive value that is greater than 0, then the client automatically start sending PINGREQ packet if keep_alive seconds passed after any packet is sent.</p>
+<p>You can create a PINGREQ packet and send it manually. Alternatively, you can set the keep_alive value in the CONNECT packet to a value greater than 0. Then, the client will automatically start sending PINGREQ packets if the keep_alive seconds pass without any packet being sent.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -148,7 +128,7 @@ You can set CONNECT packet keep_alive value that is greater than 0, then the cli
 <div class="title">Note</div>
 </td>
 <td class="content">
-If keep_alive set to greater than 0, the broker also start checking the client connection stateus. If the broker doesn&#8217;t receive any packet from client during keep_alive * 1.5 seconds, then the connection is closed by the broker.
+If keep_alive is set to a value greater than 0, the broker also starts checking the client connection status. If the broker doesn&#8217;t receive any packet from the client during keep_alive * 1.5 seconds, the connection is closed by the broker.
 </td>
 </tr>
 </table>
@@ -162,7 +142,7 @@ If keep_alive set to greater than 0, the broker also start checking the client c
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-middle"><a href="../tutorial/strand.html">Prev</a></th>
+<th class="tableblock halign-left valign-middle"><a href="../tutorial/non_packet_based.html">Prev</a></th>
 <th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
 <a href="../index.html">Home</a></th>
 <th class="tableblock halign-right valign-middle"><a href="../logging.html">Next</a></th>

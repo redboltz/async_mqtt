@@ -66,9 +66,8 @@ div#navigation table {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>MQTT has the concept "session". See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230</a>
-It contains subscription information and halfway PUBLISH (QoS1 and QoS2 only) and PUBREL packets.
-async_mqtt automatically configured when the client sends CONNECT packet and the broker receives CONNECT packet. All you need to do is setup CONNECT packet and send it.</p>
+<p>MQTT has the concept of a "session." See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230</a>
+It contains subscription information, halfway PUBLISH (QoS1 and QoS2 only), and PUBREL packets. <code>async_mqtt</code> is automatically configured when the client sends a CONNECT packet and the broker receives it. All you need to do is set up the CONNECT packet and send it.</p>
 </div>
 </div>
 </div>
@@ -76,7 +75,7 @@ async_mqtt automatically configured when the client sends CONNECT packet and the
 <h2 id="_mqtt_v3_1_1">MQTT v3.1.1</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>session is controlled by clean_session flag of CONNECT packet.</p>
+<p>The session is controlled by the <code>clean_session</code> flag of the CONNECT packet.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -85,7 +84,7 @@ async_mqtt automatically configured when the client sends CONNECT packet and the
 <div class="title">Note</div>
 </td>
 <td class="content">
-the broker could expire the session by implement limitation.
+The broker could expire the session due to implementation limitations.
 </td>
 </tr>
 </table>
@@ -97,13 +96,13 @@ the broker could expire the session by implement limitation.
 <div class="ulist">
 <ul>
 <li>
-<p>The broker returns CONNACK with session_present 1.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 1.</p>
 </li>
 <li>
-<p>The broker sends halfway PUBLISH and PUBREL after CONNACK is sent.</p>
+<p>The broker sends halfway PUBLISH and PUBREL packets after the CONNACK is sent.</p>
 </li>
 <li>
-<p>The client sends halfway PUBLISH and PUBREL after CONNACK is received.</p>
+<p>The client sends halfway PUBLISH and PUBREL packets after the CONNACK is received.</p>
 </li>
 </ul>
 </div>
@@ -114,7 +113,7 @@ the broker could expire the session by implement limitation.
 <div class="title">Note</div>
 </td>
 <td class="content">
-MQTT v5.0 spec said that the client can send packets before CONNACK is received but CONNACK could be error, so waiting CONNACK is reasonable design choice.
+The MQTT v5.0 specification states that the client can send packets before the CONNACK is received, but since the CONNACK could indicate an error, waiting for the CONNACK is a reasonable design choice.
 </td>
 </tr>
 </table>
@@ -122,7 +121,7 @@ MQTT v5.0 spec said that the client can send packets before CONNACK is received 
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker store session during the connection and after disconnection.</p>
+<p>Both the client and the broker store the session during the connection and after disconnection.</p>
 </li>
 </ul>
 </div>
@@ -132,10 +131,10 @@ MQTT v5.0 spec said that the client can send packets before CONNACK is received 
 <div class="ulist">
 <ul>
 <li>
-<p>The broker returns CONNACK with session_present 0.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 0.</p>
 </li>
 <li>
-<p>The client clears halfway PUBLISH and PUBREL after CONNACK is received.</p>
+<p>The client clears halfway PUBLISH and PUBREL packets after the CONNACK is received.</p>
 </li>
 </ul>
 </div>
@@ -146,7 +145,7 @@ MQTT v5.0 spec said that the client can send packets before CONNACK is received 
 <div class="title">Note</div>
 </td>
 <td class="content">
-the halfway packets are for the previous session. If the previous session doesn&#8217;t exist, the client side halfway packets should be cleared.
+The halfway packets are for the previous session. If the previous session doesn&#8217;t exist, the client-side halfway packets should be cleared.
 </td>
 </tr>
 </table>
@@ -154,7 +153,7 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker store session during the connection and after disconnection.</p>
+<p>Both the client and the broker store the session during the connection and after disconnection.</p>
 </li>
 </ul>
 </div>
@@ -165,13 +164,13 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker session are cleared.</p>
+<p>Both the client&#8217;s and the broker&#8217;s sessions are cleared.</p>
 </li>
 <li>
-<p>The broker returns CONNACK with session_present 0.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 0.</p>
 </li>
 <li>
-<p>Both the client and the broker don&#8217;t store session during the connection and after disconnection.</p>
+<p>Both the client and the broker do not store sessions during the connection and after disconnection.</p>
 </li>
 </ul>
 </div>
@@ -182,7 +181,7 @@ the halfway packets are for the previous session. If the previous session doesn&
 <h2 id="_mqtt_v5_0">MQTT v5.0</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>session is controlled by clean_start flag and Session Expiry Interval property of CONNECT packet.</p>
+<p>The session is controlled by the <code>clean_start</code> flag and the Session Expiry Interval property of the CONNECT packet.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -191,7 +190,7 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="title">Note</div>
 </td>
 <td class="content">
-the broker could expire the session by implement limitation.
+The broker could expire the session due to implementation limitations.
 </td>
 </tr>
 </table>
@@ -205,13 +204,13 @@ the broker could expire the session by implement limitation.
 <div class="ulist">
 <ul>
 <li>
-<p>The broker returns CONNACK with session_present 1.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 1.</p>
 </li>
 <li>
-<p>The broker sends halfway PUBLISH and PUBREL after CONNACK is sent.</p>
+<p>The broker sends halfway PUBLISH and PUBREL packets after the CONNACK is sent.</p>
 </li>
 <li>
-<p>The client sends halfway PUBLISH and PUBREL after CONNACK is received.</p>
+<p>The client sends halfway PUBLISH and PUBREL packets after the CONNACK is received.</p>
 </li>
 </ul>
 </div>
@@ -222,7 +221,7 @@ the broker could expire the session by implement limitation.
 <div class="title">Note</div>
 </td>
 <td class="content">
-MQTT v5.0 spec said that the client can send packets before CONNACK is received but CONNACK could be error, so waiting CONNACK is reasonable design choice.
+The MQTT v5.0 spec states that the client can send packets before the CONNACK is received, but since the CONNACK could indicate an error, waiting for the CONNACK is a reasonable design choice.
 </td>
 </tr>
 </table>
@@ -233,10 +232,10 @@ MQTT v5.0 spec said that the client can send packets before CONNACK is received 
 <div class="ulist">
 <ul>
 <li>
-<p>The broker returns CONNACK with session_present 0.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 0.</p>
 </li>
 <li>
-<p>The client clears halfway PUBLISH and PUBREL after CONNACK is received.</p>
+<p>The client clears halfway PUBLISH and PUBREL packets after the CONNACK is received.</p>
 </li>
 </ul>
 </div>
@@ -247,7 +246,7 @@ MQTT v5.0 spec said that the client can send packets before CONNACK is received 
 <div class="title">Note</div>
 </td>
 <td class="content">
-the halfway packets are for the previous session. If the previous session doesn&#8217;t exist, the client side halfway packets should be cleared.
+The halfway packets are for the previous session. If the previous session doesn&#8217;t exist, the client-side halfway packets should be cleared.
 </td>
 </tr>
 </table>
@@ -259,10 +258,10 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker session are cleared.</p>
+<p>Both the client&#8217;s and the broker&#8217;s sessions are cleared.</p>
 </li>
 <li>
-<p>The broker returns CONNACK with session_present 0.</p>
+<p>The broker returns CONNACK with <code>session_present</code> set to 0.</p>
 </li>
 </ul>
 </div>
@@ -275,7 +274,7 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker store session during the connection and after disconnection until the <code>Session Expiry Interval</code> seconds passed.</p>
+<p>Both the client and the broker store the session during the connection and after disconnection until the Session Expiry Interval seconds have passed.</p>
 </li>
 </ul>
 </div>
@@ -285,7 +284,7 @@ the halfway packets are for the previous session. If the previous session doesn&
 <div class="ulist">
 <ul>
 <li>
-<p>Both the client and the broker don&#8217;t store session during the connection and after disconnection.</p>
+<p>Both the client and the broker do not store the session during the connection and after disconnection.</p>
 </li>
 </ul>
 </div>

@@ -143,9 +143,16 @@ pre.rouge .ss {
 </head>
 <body class="article">
 <div id="header">
-<h1><a href="../api/classasync__mqtt_1_1client.html#details">Client</a></h1>
+<h1>Client</h1>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="../api/classasync__mqtt_1_1client.html#details">Client</a> provides high level MQTT client APIs.</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_include_header_files">Include header files</h2>
 <div class="sectionbody">
@@ -392,7 +399,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are <code>error_code</code> and <code>connack_packet</code> (optional). <code>connack_packet</code> has a value only if <code>error_code</code> is successful. When using CompletionToken such as <code>as::use_awaitable</code>, <code>as::use_future</code>, or <code>as::deferred</code>, the first <code>error_code</code> is converted to an exception. If you want the <code>error_code</code> as the return value, you can do the following:</p>
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and (optionally) <code>connack_packet</code>. The <code>connack_packet</code> will have a value only if <code>error_code</code> indicates success. When using <code>CompletionToken</code> with mechanisms like <code>as::use_awaitable</code>, <code>as::use_future</code>, or <code>as::deferred</code>, the initial <code>error_code</code> is converted into an exception. If you prefer to receive the <code>error_code</code> as a return value, you can proceed as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -463,7 +470,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and suback_packet (optional). suback_packet has a value only if error_code is success.</p>
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and an optional <code>suback_packet</code>. The <code>suback_packet</code> will have a value only if the <code>error_code</code> indicates success.</p>
 </div>
 </div>
 <div class="sect2">
@@ -490,7 +497,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and unsuback_packet (optional). unsuback_packet has a value only if error_code is success.</p>
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and an optional <code>unsuback_packet</code>. The <code>unsuback_packet</code> will have a value only if the <code>error_code</code> indicates success.</p>
 </div>
 </div>
 </div>
@@ -517,9 +524,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>.
-When you send QoS0 PUBLISH packet, no response packet is expected, so the CompletionToken is invoked when underlying layer&#8217;s async_write operation is finished.
-All the members of pubres_t are nullopt.</p>
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>. When you send a QoS0 PUBLISH packet, no response packet is expected, so the <code>CompletionToken</code> is invoked when the underlying layer&#8217;s <code>async_write</code> operation is finished. All members of <code>pubres_t</code> are <code>nullopt</code>.</p>
 </div>
 <div class="paragraph">
 <p>Here is a code example that sending QoS1 PUBLISH packet.</p>
@@ -540,10 +545,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id()</a>. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version <a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id()</a> exists. Sync version must be called in the thread safe context. For example, if you pass the strand wrapped executor to the client on creation, in the async_function&#8217;s callback handler is a thread safe context.</p>
+<p>To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id()</a>, which is the asynchronous version. You can call it from anywhere you want. If all packet IDs are acquired, the <code>CompletionToken</code> parameter will be <code>nullopt</code>. For convenience, a synchronous version, <a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id()</a>, also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.</p>
 </div>
 <div class="paragraph">
-<p>After async_publish() is completer, puback_opt of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> is set. You can get puback packet.</p>
+<p>After <code>async_publish()</code> completes, the <code>puback_opt</code> of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> is set. You can then retrieve the PUBACK packet.</p>
 </div>
 <div class="paragraph">
 <p>Here is a code example that sending QoS1 PUBLISH packet.</p>
@@ -564,10 +569,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, <a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until()</a> is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.</p>
+<p>To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, <a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until()</a> is used. The <code>CompletionToken</code> parameter is a packet identifier that is not optional. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the <code>CompletionToken</code>. This helps keep the user code simple.</p>
 </div>
 <div class="paragraph">
-<p>After async_publish() is completer, pubrec_opt and pubcomp_opt of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> are set. You can get pubrec and pubcomp packet.</p>
+<p>After <code>async_publish()</code> completes, the <code>pubrec_opt</code> and <code>pubcomp_opt</code> of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> are set. You can then retrieve the PUBREC and PUBCOMP packets.</p>
 </div>
 </div>
 </div>
@@ -589,10 +594,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>After you called async_start() function, the received PUBLISH packets are stored in the clinet. You can get it using async_recv() function. If the no packets are stored, async_recv() waits until PUBLISH packet would be received.</p>
+<p>After you call the <code>async_start()</code> function, the received PUBLISH packets are stored in the client. You can retrieve them using the <code>async_recv()</code> function. If no packets are stored, <code>async_recv()</code> waits until a PUBLISH packet is received.</p>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and publish_packet (optional), and disconnect_packet(optional). publish_packet or disconnect_packet has a value only if error_code is success.</p>
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code>, <code>publish_packet</code> (optional), and <code>disconnect_packet</code> (optional). <code>publish_packet</code> or <code>disconnect_packet</code> will have a value only if <code>error_code</code> indicates success.</p>
 </div>
 </div>
 </div>
@@ -611,8 +616,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters is error_code.
-Sending DISCONNECT packet to the broker starts a glaceful disconnect sequence. The broker sends MQTT will message if needed and then disconnect the network connection from the broker side. And then, the client detects the disconnection, finally close the client side socket.</p>
+<p>The <code>CompletionToken</code> parameter is <code>error_code</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sending a DISCONNECT packet to the broker initiates a graceful disconnect sequence. The broker sends the MQTT will message if needed, then disconnects the network connection from its side. The client detects the disconnection and finally closes the client-side socket.</p>
 </div>
 </div>
 </div>
@@ -628,8 +635,10 @@ Sending DISCONNECT packet to the broker starts a glaceful disconnect sequence. T
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters is nothing.
-If you want to close the socket forcibly, you can call async_close() function. For example, no packets are received from the broker unexpectedly, but the client side doesn&#8217;t detect disconnection.</p>
+<p>The <code>CompletionToken</code> parameter is nothing.</p>
+</div>
+<div class="paragraph">
+<p>If you want to close the socket forcibly, you can call the <code>async_close()</code> function. This is useful, for example, when no packets are received from the broker unexpectedly and the client side doesn&#8217;t detect the disconnection.</p>
 </div>
 </div>
 </div>

@@ -155,7 +155,7 @@ pre.rouge .ss {
 <p>See <a href="https://en.cppreference.com/w/cpp/language/coroutines" class="bare">https://en.cppreference.com/w/cpp/language/coroutines</a></p>
 </div>
 <div class="paragraph">
-<p>C++coroutine coroutine can avoid deeply nested callbacks. The code becomes easy to read.</p>
+<p>Using C++ coroutines can avoid deeply nested callbacks, making the code easier to read.</p>
 </div>
 </div>
 </div>
@@ -177,7 +177,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>In order to use coroutine, you need to call <code>as::co_spawn()</code> to launch the coroutine as follows:</p>
+<p>To use a coroutine, you need to call <code>as::co_spawn()</code> to launch the coroutine as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -190,7 +190,7 @@ pre.rouge .ss {
 <h2 id="_define_application_routine">define application routine</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Define application routine <code>proc()</code> as follows. The return value should be wrapped <code>as::awaitable&lt;&gt;</code>.</p>
+<p>Define the application routine <code>proc()</code> as follows. The return value should be wrapped in <code>as::awaitable&lt;&gt;</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -212,7 +212,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>There is nothing special. The same as non coroutine endpoint.</p>
+<p>There is nothing special; it is the same as a non-coroutine endpoint.</p>
 </div>
 </div>
 <div class="sect2">
@@ -275,11 +275,10 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>When you call async functions, add <code>co_await</code> keyword before the function call, and pass <code>as::use_awaitable</code> as CompletionToken. This is C++20 coroutine way.</p>
+<p>When you call async functions, add the <code>co_await</code> keyword before the function call and pass <code>as::use_awaitable</code> as the <code>CompletionToken</code>. This is the C++20 coroutine way.</p>
 </div>
 <div class="paragraph">
-<p>For example, sending CONNECT packet as follows. When send() is called, async send procedure is triggered. When the procedure is finished, then the context is returned. You can access return value se.
-If se is evalueted as true, that means some error happened. So the code printss error message and <code>co_return</code>. When you want to return from the function that has <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
+<p>For example, sending a CONNECT packet is done as follows. When <code>send()</code> is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value <code>se</code>. If <code>se</code> evaluates to true, it means an error occurred, so the code prints an error message and uses <code>co_return</code>. When you want to return from a function that has an <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
 </div>
 </div>
 </div>
@@ -300,7 +299,7 @@ If se is evalueted as true, that means some error happened. So the code printss 
 <h2 id="_other_completion_tokens">Other Completion Tokens</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can use not only <code>as::use_awaitabe</code> but also <code>as::deferred</code>, <code>as::experiemntal::use_promise</code>. See asio document.</p>
+<p>You can use not only <code>as::use_awaitable</code> but also <code>as::deferred</code> and <code>as::experimental::use_promise</code>. See the Asio documentation for more details.</p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
