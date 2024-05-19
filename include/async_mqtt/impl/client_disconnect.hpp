@@ -78,7 +78,7 @@ template <typename... Args>
 auto
 client<Version, NextLayer>::async_disconnect(Args&&... args) {
     if constexpr (std::is_constructible_v<disconnect_packet, decltype(std::forward<Args>(args))...>) {
-        return async_disconnect_impl(std::forward<Args>(args)...);
+        return async_disconnect_impl(disconnect_packet{std::forward<Args>(args)...});
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -95,7 +95,7 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
                     "disconnect_packet is not constructible"
                 );
                 return async_disconnect_impl(
-                    disconnect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    disconnect_packet{std::forward<decltype(rest_args)>(rest_args)...},
                     std::forward<decltype(back)>(back)
                 );
             }

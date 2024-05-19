@@ -125,7 +125,7 @@ template <typename... Args>
 auto
 client<Version, NextLayer>::async_publish(Args&&... args) {
     if constexpr (std::is_constructible_v<publish_packet, decltype(std::forward<Args>(args))...>) {
-        return async_publish_impl(std::forward<Args>(args)...);
+        return async_publish_impl(publish_packet{std::forward<Args>(args)...});
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -142,7 +142,7 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
                     "publish_packet is not constructible"
                 );
                 return async_publish_impl(
-                    publish_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    publish_packet{std::forward<decltype(rest_args)>(rest_args)...},
                     std::forward<decltype(back)>(back)
                 );
             }

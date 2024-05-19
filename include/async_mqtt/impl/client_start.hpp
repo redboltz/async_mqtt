@@ -130,7 +130,7 @@ template <typename... Args>
 auto
 client<Version, NextLayer>::async_start(Args&&... args) {
     if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
-        return async_start_impl(std::forward<Args>(args)...);
+        return async_start_impl(connect_packet{std::forward<Args>(args)...});
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -147,7 +147,7 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                     "connect_packet is not constructible"
                 );
                 return async_start_impl(
-                    connect_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
                     std::forward<decltype(back)>(back)
                 );
             }
