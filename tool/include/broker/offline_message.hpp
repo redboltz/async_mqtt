@@ -46,9 +46,9 @@ public:
         properties props,
         std::shared_ptr<as::steady_timer> tim_message_expiry)
         : topic_{force_move(topic)},
-          payload_{force_move(payload)},
+          payload_(force_move(payload)),
           pubopts_{pubopts},
-          props_{force_move(props)},
+          props_(force_move(props)),
           tim_message_expiry_{force_move(tim_message_expiry)}
     {
     }
