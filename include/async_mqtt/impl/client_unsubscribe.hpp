@@ -129,7 +129,7 @@ template <typename... Args>
 auto
 client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
     if constexpr (std::is_constructible_v<unsubscribe_packet, decltype(std::forward<Args>(args))...>) {
-        return async_unsubscribe_impl(std::forward<Args>(args)...);
+        return async_unsubscribe_impl(unsubscribe_packet{std::forward<Args>(args)...});
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -146,7 +146,7 @@ client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
                     "unsubscribe_packet is not constructible"
                 );
                 return async_unsubscribe_impl(
-                    unsubscribe_packet(std::forward<decltype(rest_args)>(rest_args)...),
+                    unsubscribe_packet{std::forward<decltype(rest_args)>(rest_args)...},
                     std::forward<decltype(back)>(back)
                 );
             }

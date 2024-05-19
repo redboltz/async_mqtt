@@ -143,24 +143,14 @@ pre.rouge .ss {
 </head>
 <body class="article">
 <div id="header">
-<h1>Client</h1>
+<h1><a href="../api/classasync__mqtt_1_1client.html#details">Client</a></h1>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>async_mqtt has class <a href="../api/classasync__mqtt_1_1basic__client.html#a9dd11900baa797fded499766bde8b81e">client</a> for multi-threaded environment and class <a href="../api/classasync__mqtt_1_1basic__client.html#a0bb29717d22dda60a005f97c3a24b853">client_st</a> for single-threaded environment.</p>
-</div>
-<div class="paragraph">
-<p>Both are implemented using <a href="../api/classasync__mqtt_1_1basic__client.html">basic_client</a></p>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_include_header_files">Include header files</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to use async_mqtt, include the following header file:</p>
+<p>To use async_mqtt, include the following header file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -168,7 +158,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>In addition, if you want to use TLS and/or Websocket, include the follwing header file. They are not included in <code>all.hpp</code>.</p>
+<p>In addition, if you want to use TLS and/or WebSocket, include the following header files. They are not included in <code>all.hpp</code>.</p>
 </div>
 <div class="paragraph">
 <p>For TLS:</p>
@@ -229,7 +219,7 @@ pre.rouge .ss {
         <span class="c1">// mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;</span>
     <span class="p">);</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -258,7 +248,7 @@ pre.rouge .ss {
         <span class="n">ctx</span>
     <span class="p">);</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -274,7 +264,7 @@ pre.rouge .ss {
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span>  <span class="c1">// args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)</span>
     <span class="p">);</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -302,7 +292,7 @@ pre.rouge .ss {
         <span class="n">ctx</span>                  <span class="c1">// mqtts is as::ssl::stream&lt;mqtt&gt;</span>
     <span class="p">);</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -311,7 +301,7 @@ pre.rouge .ss {
 <h2 id="_layer_access">Layer access</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You usually need to access only <code>next_layer()</code> to pass <code>underlying_handshake()</code> argument. But if you want to some configuration for each layers, you can access all underlying layers.</p>
+<p>Typically, you only need to <code>use next_layer()</code> to pass the <code>async_underlying_handshake()</code> argument. However, if you need to configure each layer individually, you can access all the underlying layers.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -367,10 +357,10 @@ pre.rouge .ss {
 <h2 id="_send_mqtt_connect_packet_and_start_receive_loop">Send MQTT CONNECT packet and start receive loop</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After underlying layers' handshaking is completed, then start MQTT layer connection.</p>
+<p>After the handshaking of the underlying layers is complete, initiate the MQTT layer connection.</p>
 </div>
 <div class="sect2">
-<h3 id="_async_start_funtion">async_start() funtion</h3>
+<h3 id="_async_start_funtion"><a href="../api/classasync__mqtt_1_1client.html#a6808a6f7f9535ec152dcc9ee430caf92">async_start()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// prepare will message if you need.</span>
@@ -402,7 +392,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and connack_packet (optional). connack_packet has a value only if error_code is success. When you use CompletionToken such as <code>as::use_awaitable</code>, <code>as::use_future</code>, <code>as::deferred</code>, the first error_code is converted to exception. If you want to have the error_code as the return value, you can do as follows:</p>
+<p>CompletionToken parameters are <code>error_code</code> and <code>connack_packet</code> (optional). <code>connack_packet</code> has a value only if <code>error_code</code> is successful. When using CompletionToken such as <code>as::use_awaitable</code>, <code>as::use_future</code>, or <code>as::deferred</code>, the first <code>error_code</code> is converted to an exception. If you want the <code>error_code</code> as the return value, you can do the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -424,6 +414,25 @@ pre.rouge .ss {
 <span class="p">}</span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>You can omit explicit packet creation as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_start</span><span class="p">(</span>
+    <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">uint16_t</span><span class="p">(</span><span class="mh">0x1234</span><span class="p">),</span> <span class="c1">// keep_alive</span>
+    <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+    <span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+    <span class="s">"UserName1"</span><span class="p">,</span>
+    <span class="s">"Password1"</span><span class="p">,</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
+<span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>connect_packet</code> correspondint to the client version is created automatically.</p>
+</div>
 </div>
 </div>
 </div>
@@ -431,7 +440,7 @@ pre.rouge .ss {
 <h2 id="_send_subscribeunsubscribe_and_wait_subackunsuback">Send SUBSCRIBE/UNSUBSCRIBE and wait SUBACK/UNSUBACK</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_async_subscribe_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#ae74159d835dca15f87b760b53acb4d51">async_subscribe()</a> funtion</h3>
+<h3 id="_async_subscribe_funtion"><a href="../api/classasync__mqtt_1_1client.html#a10936f4e6d279d8fd869c6774f65dbaf">async_subscribe()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// subscribe</span>
@@ -443,7 +452,7 @@ pre.rouge .ss {
 <span class="p">};</span>
 <span class="k">auto</span> <span class="n">suback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_subscribe</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">subscribe_packet</span><span class="p">{</span>
-        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in strand</span>
+        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
         <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">sub_entry</span><span class="p">)</span> <span class="c1">// sub_entry variable is required to avoid g++ bug</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -458,7 +467,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_async_unsubscribe_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#a0ff1b5b724340a3df4c9ce9fab7a4b90">async_unsubscribe()</a> funtion</h3>
+<h3 id="_async_unsubscribe_funtion"><a href="../api/classasync__mqtt_1_1client.html#a29e1d876f3ec12c7a8d69c406be15fc7">async_unsubscribe()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT send unsubscribe and wait unsuback</span>
@@ -470,7 +479,7 @@ pre.rouge .ss {
 
 <span class="k">auto</span> <span class="n">unsuback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_unsubscribe</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">unsubscribe_packet</span><span class="p">{</span>
-        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in strand</span>
+        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
         <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">unsub_entry</span><span class="p">)</span> <span class="c1">// unsub_entry variable is required to avoid g++ bug</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -490,7 +499,7 @@ pre.rouge .ss {
 <h2 id="_send_publish_packet_and_wait_response">Send PUBLISH packet and wait response</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_async_publish_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#ab6bed9cb83ac66b7bcb8595941edae4c">async_publish()</a> funtion</h3>
+<h3 id="_async_publish_funtion"><a href="../api/classasync__mqtt_1_1client.html#aea02e31d5f8e45f5eb7eb886f7a5068a">async_publish()</a> funtion</h3>
 <div class="paragraph">
 <p>Here is a code example that sending QoS0 PUBLISH packet.</p>
 </div>
@@ -508,7 +517,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>CompletionToken parameters are error_code and <a href="../api/structasync__mqtt_1_1basic__client_1_1pubres__t.html">pubres_t</a>.
+<p>CompletionToken parameters are error_code and <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>.
 When you send QoS0 PUBLISH packet, no response packet is expected, so the CompletionToken is invoked when underlying layer&#8217;s async_write operation is finished.
 All the members of pubres_t are nullopt.</p>
 </div>
@@ -518,7 +527,7 @@ All the members of pubres_t are nullopt.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS1 and wait response (puback receive)</span>
-<span class="k">auto</span> <span class="n">pid_pub1_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
+<span class="k">auto</span> <span class="n">pid_pub1_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
 <span class="k">auto</span> <span class="n">pubres1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="o">*</span><span class="n">pid_pub1_opt</span><span class="p">,</span>
@@ -531,10 +540,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1basic__client.html#aa5a37f75664bb4dd8b883e464f2016e5">acquire_unique_packet_id()</a>. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version <a href="../api/classasync__mqtt_1_1basic__client.html#acaea92142dca0924af36e5acef91d8bb">acquire_unique_packet_id()</a> exists. When you use callback function approach, it could help keep the code simple. Sync version must be called in the client&#8217;s strand. For example, anywhare in the callback function that is registered to client member functions as a CompletionToken(CompletionHandler).</p>
+<p>In order to create QoS1 PUBLISH packet, you need to acquire packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id()</a>. This is asynchnorous version. You can call it form anywhere you want. If all packet id is acquired, the CompletionToken parameter is nullopt. For convenience, sync version <a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id()</a> exists. Sync version must be called in the thread safe context. For example, if you pass the strand wrapped executor to the client on creation, in the async_function&#8217;s callback handler is a thread safe context.</p>
 </div>
 <div class="paragraph">
-<p>After async_publish() is completer, puback_opt of <a href="../api/structasync__mqtt_1_1basic__client_1_1pubres__t.html">pubres_t</a> is set. You can get puback packet.</p>
+<p>After async_publish() is completer, puback_opt of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> is set. You can get puback packet.</p>
 </div>
 <div class="paragraph">
 <p>Here is a code example that sending QoS1 PUBLISH packet.</p>
@@ -555,10 +564,10 @@ All the members of pubres_t are nullopt.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, <a href="../api/classasync__mqtt_1_1basic__client.html#afbc77b4e603db0c1141d3235c8fa8b35">acquire_unique_packet_id_wait_until()</a> is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.</p>
+<p>In order to create QoS2 PUBLISH packet, you need to acquire packet identifier. In this example, <a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until()</a> is used. The CompletionToken parameter is packet identifier that not optional. If all packet identifiers are used, the function waits at least one of the packet identifier becomes usable again, and then invokes CompletionToken. It can help keeping user code simple.</p>
 </div>
 <div class="paragraph">
-<p>After async_publish() is completer, pubrec_opt and pubcomp_opt of <a href="../api/structasync__mqtt_1_1basic__client_1_1pubres__t.html">pubres_t</a> are set. You can get pubrec and pubcomp packet.</p>
+<p>After async_publish() is completer, pubrec_opt and pubcomp_opt of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> are set. You can get pubrec and pubcomp packet.</p>
 </div>
 </div>
 </div>
@@ -567,7 +576,7 @@ All the members of pubres_t are nullopt.</p>
 <h2 id="_receive_publish_packet_from_the_broker">Receive PUBLISH packet from the broker</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_async_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#aad1963132aa1d0c6458bd6f38d9b7e48">async_recv()</a> funtion</h3>
+<h3 id="_async_recv_funtion"><a href="../api/classasync__mqtt_1_1client.html#a825c14790ca009436f20c1b2c7952204">async_recv()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="p">[</span><span class="n">publish_opt</span><span class="p">,</span> <span class="n">disconnect_opt</span><span class="p">]</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
@@ -592,7 +601,7 @@ All the members of pubres_t are nullopt.</p>
 <h2 id="_send_disconnect_packet">Send DISCONNECT packet</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_async_disconnect_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#a13400c20164b4e0d2ed4d295cd6413d0">async_disconnect()</a> funtion</h3>
+<h3 id="_async_disconnect_funtion"><a href="../api/classasync__mqtt_1_1client.html#acd225df7e04770be801742bbbb437d9e">async_disconnect()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_disconnect</span><span class="p">(</span>
@@ -612,7 +621,7 @@ Sending DISCONNECT packet to the broker starts a glaceful disconnect sequence. T
 <h2 id="_close">Close</h2>
 <div class="sectionbody">
 <div class="sect3">
-<h4 id="_async_close_funtion"><a href="../api/classasync__mqtt_1_1basic__client.html#a4758d075939de30c77f3f4bdf0f7a4e1">async_close()</a> funtion</h4>
+<h4 id="_async_close_funtion"><a href="../api/classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110">async_close()</a> funtion</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_close</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
