@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
             }
         }
     };
@@ -295,7 +295,7 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
             }
         }
     };

@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v311_cs1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -36,6 +37,12 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -66,6 +73,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                 );
                 yield ep().async_close(*this);
                 set_finish();
+                guard.reset();
             }
         }
     };
@@ -79,6 +87,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
 BOOST_AUTO_TEST_CASE(v311_cs0) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -95,6 +104,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -125,7 +140,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -139,6 +155,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
 BOOST_AUTO_TEST_CASE(v5_cs1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v5,
@@ -155,6 +172,12 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -198,7 +221,8 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -214,6 +238,7 @@ std::string v5_cs0_aci;
 BOOST_AUTO_TEST_CASE(v5_cs0) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v5,
@@ -230,6 +255,12 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -302,7 +333,8 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };

@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v311_sub) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -36,6 +37,12 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -129,7 +136,8 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
         am::packet_id_type pid;
@@ -144,6 +152,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
 BOOST_AUTO_TEST_CASE(v5_sub) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v5,
@@ -160,6 +169,12 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -281,7 +296,8 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     })
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
         am::packet_id_type pid;

@@ -12,6 +12,8 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/util/stream.hpp>
+#include <async_mqtt/util/scope_guard.hpp>
+
 #include <async_mqtt/packet/v3_1_1_pingreq.hpp>
 
 #include "stub_socket.hpp"
@@ -31,23 +33,32 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(write_cont) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
+    auto guard{as::make_work_guard(ioc.get_executor())};
 
     using strm_t = am::stream<async_mqtt::stub_socket>;
-    auto s = strm_t::create(
-        // for stub_socket args
-        version,
-        ioc.get_executor()
-    );
+    {
+        auto s = strm_t::create(
+            // for stub_socket args
+            version,
+            ioc.get_executor()
+        );
+        auto sg =
+            am::shared_scope_guard(
+                [&, s] {
+                    guard.reset();
+                }
+            );
 
-    auto p = am::v3_1_1::pingreq_packet();
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
-    s->async_write_packet(p, [](am::error_code const&, std::size_t){});
+        auto p = am::v3_1_1::pingreq_packet();
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+    }
     ioc.run();
 }
 

@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v311_will) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -44,6 +45,13 @@ BOOST_AUTO_TEST_CASE(v311_will) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -87,6 +95,13 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -113,6 +128,13 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                 BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -125,7 +147,8 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                 );
 
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -139,6 +162,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
 BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -163,6 +187,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -205,6 +236,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                 BOOST_TEST(!*se);
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -236,6 +274,12 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -248,7 +292,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                 );
 
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -262,6 +307,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
 BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -286,6 +332,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -328,6 +381,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                 BOOST_TEST(!*se);
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -359,6 +419,12 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -371,7 +437,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                 );
 
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -385,6 +452,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
 BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -409,6 +477,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -451,6 +526,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                 BOOST_TEST(!*se);
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -489,6 +571,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                 BOOST_TEST(!*se);
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -501,7 +590,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                 );
 
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -515,6 +605,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
 BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -539,6 +630,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -581,6 +679,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                 BOOST_TEST(!*se);
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -616,6 +721,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                 BOOST_TEST(!*se);
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // longer than will delay
                 std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -643,7 +755,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                         BOOST_TEST(!*pv); // recv error due to close
                     }
                 }
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -657,6 +770,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
 BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -681,6 +795,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -724,6 +845,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -757,6 +885,13 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
                 yield ep(pub).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // longer than will delay
                 std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -784,7 +919,8 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                         BOOST_TEST(!*pv); // recv error due to close
                     }
                 }
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
