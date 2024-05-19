@@ -364,7 +364,7 @@ Sending a DISCONNECT packet to the broker initiates a graceful disconnect sequen
 
 == Close
 
-==== {api-base}/++classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110++[async_close()] funtion
+=== {api-base}/++classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110++[async_close()] funtion
 
 ```cpp
 co_await amcl.async_close(as::use_awaitable);
