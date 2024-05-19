@@ -11,7 +11,7 @@
 #include <optional>
 
 #include <async_mqtt/util/static_vector.hpp>
-#include <async_mqtt/util/is_iterator.hpp>
+#include <async_mqtt/util/detail/is_iterator.hpp>
 
 namespace async_mqtt {
 
@@ -31,8 +31,8 @@ val_to_variable_bytes(std::uint32_t val) {
 template <typename It, typename End>
 constexpr
 std::enable_if_t<
-    is_input_iterator<It>::value &&
-    is_input_iterator<End>::value,
+    detail::is_input_iterator<It>::value &&
+    detail::is_input_iterator<End>::value,
     std::optional<std::uint32_t>
 >
 variable_bytes_to_val(It& it, End e) {

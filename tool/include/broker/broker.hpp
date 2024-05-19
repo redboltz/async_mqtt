@@ -833,16 +833,12 @@ private:
         );
     }
 
-    template <typename BufferSequence>
-    std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
-    >
-    publish_handler(
+    void publish_handler(
         epsp_type epsp,
         packet_id_type packet_id,
         pub::opts opts,
         std::string topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         properties props
     ) {
         auto usg = unique_scope_guard(
@@ -1071,7 +1067,7 @@ private:
         bool matched = do_publish(
             **it,
             force_move(topic),
-            std::forward<BufferSequence>(payload),
+            force_move(payload),
             opts.get_qos() | opts.get_retain(), // remove dup flag
             force_move(forward_props)
         );
@@ -1088,15 +1084,10 @@ private:
      * @param pubopts - publish options
      * @param props - properties
      */
-    template <typename BufferSequence>
-    std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value,
-        bool
-    >
-    do_publish(
+    bool do_publish(
         session_state<epsp_type> const& source_ss,
         std::string topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         pub::opts opts,
         properties props
     ) {
@@ -1243,7 +1234,7 @@ private:
                     topic,
                     retain_type {
                         topic,
-                        std::forward<BufferSequence>(payload),
+                        force_move(payload),
                         force_move(props),
                         opts.get_qos(),
                         tim_message_expiry

@@ -13,6 +13,7 @@
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
+#include <async_mqtt/packet/detail/is_payload.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -55,7 +56,7 @@ public:
     /**
      * @brief constructor
      * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
-     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
+     * @tparam Payload Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param packet_id  MQTT PacketIdentifier. If QoS0 then it must be 0. You can use no packet_id version constructor.
      *                   If QoS is 0 or 1 then, the packet_id must be acquired by
      *                   basic_endpoint::acquire_unique_packet_id(), or must be registered by
@@ -73,20 +74,17 @@ public:
      */
     template <
         typename StringViewLike,
-        typename BufferSequence,
+        typename Payload,
         std::enable_if_t<
             std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
-            (
-                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
-                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
-            ),
+            detail::is_payload<Payload>(),
             std::nullptr_t
         > = nullptr
     >
     basic_publish_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         StringViewLike&& topic_name,
-        BufferSequence&& payloads,
+        Payload&& payloads,
         pub::opts pubopts
     );
 
@@ -94,7 +92,7 @@ public:
      * @brief constructor for QoS0
      * This constructor doesn't have packet_id parameter. The packet_id is set to 0 internally and not send actually.
      * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
-     * @tparam BufferSequence Type of the payload. Any type can convert to std::string_view or its sequence.
+     * @tparam Payload Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param topic_name MQTT TopicName
      *                   \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349267
      * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
@@ -106,19 +104,16 @@ public:
      */
     template <
         typename StringViewLike,
-        typename BufferSequence,
+        typename Payload,
         std::enable_if_t<
             std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
-            (
-                is_buffer_sequence<std::decay_t<BufferSequence>>::value ||
-                std::is_convertible_v<std::decay_t<BufferSequence>, std::string_view>
-            ),
+            detail::is_payload<Payload>(),
             std::nullptr_t
         > = nullptr
     >
     basic_publish_packet(
         StringViewLike&& topic_name,
-        BufferSequence&& payloads,
+        Payload&& payloads,
         pub::opts pubopts
     );
 

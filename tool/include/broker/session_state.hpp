@@ -57,7 +57,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         void(
             session_state<epsp_type> const& source_ss,
             std::string topic,
-            buffer payload,
+            std::vector<buffer> payload,
             pub::opts pubopts,
             properties props
         )
@@ -231,15 +231,11 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         session_expiry_interval_ = force_move(session_expiry_interval);
     }
 
-    template <typename BufferSequence>
-    std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
-    >
-    publish(
+    void publish(
         epsp_type& epsp,
         as::io_context& timer_ioc,
         std::string pub_topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         pub::opts pubopts,
         properties props) {
 
@@ -318,20 +314,16 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         offline_messages_.push_back(
             timer_ioc,
             force_move(pub_topic),
-            std::forward<BufferSequence>(payload),
+            force_move(payload),
             pubopts,
             force_move(props)
         );
     }
 
-    template <typename BufferSequence>
-    std::enable_if_t<
-        is_buffer_sequence<std::decay_t<BufferSequence>>::value
-    >
-    deliver(
+    void deliver(
         as::io_context& timer_ioc,
         std::string pub_topic,
-        BufferSequence&& payload,
+        std::vector<buffer> payload,
         pub::opts pubopts,
         properties props) {
 
@@ -340,7 +332,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 epsp,
                 timer_ioc,
                 force_move(pub_topic),
-                std::forward<BufferSequence>(payload),
+                force_move(payload),
                 pubopts,
                 force_move(props)
             );
@@ -350,7 +342,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             offline_messages_.push_back(
                 timer_ioc,
                 force_move(pub_topic),
-                std::forward<BufferSequence>(payload),
+                force_move(payload),
                 pubopts,
                 force_move(props)
             );
@@ -737,7 +729,7 @@ private:
             will_sender_(
                 *this,
                 force_move(topic),
-                force_move(payload),
+                std::vector{force_move(payload)},
                 opts,
                 force_move(forward_props)
             );
