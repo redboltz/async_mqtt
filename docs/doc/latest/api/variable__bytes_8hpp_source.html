@@ -113,7 +113,7 @@ $(function(){initNavTree('variable__bytes_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;optional&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;async_mqtt/util/static_vector.hpp&gt;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;async_mqtt/util/is_iterator.hpp&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;async_mqtt/util/detail/is_iterator.hpp&gt;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>async_mqtt {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
@@ -133,8 +133,8 @@ $(function(){initNavTree('variable__bytes_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> It, <span class="keyword">typename</span> End&gt;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">constexpr</span></div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>std::enable_if_t&lt;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    is_input_iterator&lt;It&gt;::value &amp;&amp;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    is_input_iterator&lt;End&gt;::value,</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    detail::is_input_iterator&lt;It&gt;::value &amp;&amp;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    detail::is_input_iterator&lt;End&gt;::value,</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    std::optional&lt;std::uint32_t&gt;</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>&gt;</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>variable_bytes_to_val(It&amp; it, End e) {</div>
