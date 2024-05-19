@@ -128,84 +128,100 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         clean();
     }
 
-    template <typename SessionExpireHandler>
+    template <
+        typename SessionExpireHandler,
+        typename CompletionHandler
+    >
     void become_offline(
         epsp_type epsp,
-        SessionExpireHandler&& session_expire_handler
+        SessionExpireHandler&& session_expire_handler,
+        CompletionHandler&& completion_handler
     ) {
         ASYNC_MQTT_LOG("mqtt_broker", trace)
             << ASYNC_MQTT_ADD_VALUE(address, this)
             << "store inflight message";
-
-        auto stored = epsp.get_stored_packets();
-        for (auto& store : stored) {
-            std::shared_ptr<as::steady_timer> tim_message_expiry;
-            store.visit(
-                overload {
-                    [&](v5::publish_packet const& p) {
-                        for (auto const& prop : p.props()) {
-                            prop.visit(
-                                overload {
-                                    [&](property::message_expiry_interval const& v) {
-                                        tim_message_expiry =
-                                            std::make_shared<as::steady_timer>(
-                                                timer_ioc_,
-                                                std::chrono::seconds(v.val())
-                                            );
-                                        tim_message_expiry->async_wait(
-                                            [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
-                                            (error_code ec) {
-                                                if (auto sp = wp.lock()) {
-                                                    if (!ec) {
-                                                        erase_inflight_message_by_expiry(sp);
-                                                    }
-                                                }
-                                            }
-                                        );
-                                    },
-                                    [](auto const&) {}
-                                }
-                            );
-                        }
-                    },
-                    [&](auto const&) {}
-                }
-            );
-
-            insert_inflight_message(
-                force_move(store),
-                force_move(tim_message_expiry)
-            );
-        }
-
-        qos2_publish_handled_ = epsp.get_qos2_publish_handled_pids();
-
-        if (session_expiry_interval_ &&
-            *session_expiry_interval_ != std::chrono::seconds(session_never_expire)) {
-
-            ASYNC_MQTT_LOG("mqtt_broker", trace)
-                << ASYNC_MQTT_ADD_VALUE(address, this)
-                << "session expiry interval timer set";
-
-            tim_session_expiry_ = std::make_shared<as::steady_timer>(timer_ioc_, *session_expiry_interval_);
-            tim_session_expiry_->async_wait(
+        as::dispatch(
+            as::bind_executor(
+                epsp.get_executor(),
                 [
                     this,
-                    wp = std::weak_ptr<as::steady_timer>(tim_session_expiry_),
-                    session_expire_handler = std::forward<SessionExpireHandler>(session_expire_handler)
-                ]
-                (error_code ec) {
-                    if (auto sp = wp.lock()) {
-                        if (!ec) {
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, this)
-                                << "session expired";
-                            session_expire_handler(sp);
-                        }
+                    epsp,
+                    session_expire_handler = std::forward<SessionExpireHandler>(session_expire_handler),
+                    completion_handler = std::forward<CompletionHandler>(completion_handler)
+                ] () mutable {
+                    auto stored = epsp.get_stored_packets();
+                    for (auto& store : stored) {
+                        std::shared_ptr<as::steady_timer> tim_message_expiry;
+                        store.visit(
+                            overload {
+                                [&](v5::publish_packet const& p) {
+                                    for (auto const& prop : p.props()) {
+                                        prop.visit(
+                                            overload {
+                                                [&](property::message_expiry_interval const& v) {
+                                                    tim_message_expiry =
+                                                        std::make_shared<as::steady_timer>(
+                                                            timer_ioc_,
+                                                            std::chrono::seconds(v.val())
+                                                        );
+                                                    tim_message_expiry->async_wait(
+                                                        [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
+                                                        (error_code ec) {
+                                                            if (auto sp = wp.lock()) {
+                                                                if (!ec) {
+                                                                    erase_inflight_message_by_expiry(sp);
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                },
+                                                [](auto const&) {}
+                                            }
+                                        );
+                                    }
+                                },
+                                [&](auto const&) {}
+                            }
+                        );
+
+                        insert_inflight_message(
+                            force_move(store),
+                            force_move(tim_message_expiry)
+                        );
                     }
+
+                    qos2_publish_handled_ = epsp.get_qos2_publish_handled_pids();
+
+                    if (session_expiry_interval_ &&
+                        *session_expiry_interval_ != std::chrono::seconds(session_never_expire)) {
+
+                        ASYNC_MQTT_LOG("mqtt_broker", trace)
+                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                            << "session expiry interval timer set";
+
+                        tim_session_expiry_ = std::make_shared<as::steady_timer>(timer_ioc_, *session_expiry_interval_);
+                        tim_session_expiry_->async_wait(
+                            [
+                                this,
+                                wp = std::weak_ptr<as::steady_timer>(tim_session_expiry_),
+                                session_expire_handler = std::forward<SessionExpireHandler>(session_expire_handler)
+                            ]
+                            (error_code ec) {
+                                if (auto sp = wp.lock()) {
+                                    if (!ec) {
+                                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                                            << ASYNC_MQTT_ADD_VALUE(address, this)
+                                            << "session expired";
+                                        session_expire_handler(sp);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                    completion_handler();
                 }
-            );
-        }
+            )
+        );
     }
 
     void renew(

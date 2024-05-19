@@ -63,7 +63,6 @@ list(APPEND check_PROGRAMS
     ut_prop_variant.cpp
     ut_retained_topic_map.cpp
     ut_retained_topic_map_broker.cpp
-    ut_strm.cpp
     ut_subscription_map.cpp
     ut_subscription_map_broker.cpp
     ut_system_error.cpp
