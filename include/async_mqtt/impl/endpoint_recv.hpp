@@ -36,10 +36,7 @@ recv_op {
             state = close;
             auto& a_ep{ep};
             a_ep.async_close(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
             return;
         }
@@ -49,10 +46,7 @@ recv_op {
             state = read;
             auto& a_ep{ep};
             a_ep.stream_->async_read_packet(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
         } break;
         case read: {
@@ -71,10 +65,7 @@ recv_op {
                     v5::disconnect_packet{
                         disconnect_reason_code::packet_too_large
                     },
-                    as::bind_executor(
-                        a_ep.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
                 return;
             }
@@ -216,10 +207,7 @@ recv_op {
                                     v5::disconnect_packet{
                                         disconnect_reason_code::receive_maximum_exceeded
                                     },
-                                    as::bind_executor(
-                                        a_ep.get_executor(),
-                                        force_move(self)
-                                    )
+                                    force_move(self)
                                 );
                                 return;
                             }
@@ -246,10 +234,7 @@ recv_op {
                                     v5::disconnect_packet{
                                         disconnect_reason_code::receive_maximum_exceeded
                                     },
-                                    as::bind_executor(
-                                        a_ep.get_executor(),
-                                        force_move(self)
-                                    )
+                                    force_move(self)
                                 );
                                 return;
                             }
@@ -278,10 +263,7 @@ recv_op {
                                         v5::disconnect_packet{
                                             disconnect_reason_code::topic_alias_invalid
                                         },
-                                        as::bind_executor(
-                                            a_ep.get_executor(),
-                                            force_move(self)
-                                        )
+                                        force_move(self)
                                     );
                                     return;
                                 }
@@ -304,10 +286,7 @@ recv_op {
                                             v5::disconnect_packet{
                                                 disconnect_reason_code::topic_alias_invalid
                                             },
-                                            as::bind_executor(
-                                                a_ep.get_executor(),
-                                                force_move(self)
-                                            )
+                                            force_move(self)
                                         );
                                         return;
                                     }
@@ -332,10 +311,7 @@ recv_op {
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
                                     },
-                                    as::bind_executor(
-                                        a_ep.get_executor(),
-                                        force_move(self)
-                                    )
+                                    force_move(self)
                                 );
                                 return;
                             }
@@ -356,10 +332,7 @@ recv_op {
                                         v5::disconnect_packet{
                                             disconnect_reason_code::topic_alias_invalid
                                         },
-                                        as::bind_executor(
-                                            a_ep.get_executor(),
-                                            force_move(self)
-                                        )
+                                        force_move(self)
                                     );
                                     return;
                                 }
@@ -394,10 +367,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -426,10 +396,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -461,10 +428,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -502,10 +466,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -555,10 +516,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -586,10 +544,7 @@ recv_op {
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 },
-                                as::bind_executor(
-                                    a_ep.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                             return;
                         }
@@ -684,10 +639,8 @@ recv_op {
                         state = initiate;
                         auto& a_ep{ep};
                         as::dispatch(
-                            as::bind_executor(
-                                a_ep.get_executor(),
-                                force_move(self)
-                            )
+                            a_ep.get_executor(),
+                            force_move(self)
                         );
                     }
                     else {
@@ -706,10 +659,7 @@ recv_op {
             state = close;
             auto& a_ep{ep};
             a_ep.async_close(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
         } break;
         case close: {
@@ -736,10 +686,7 @@ recv_op {
         state = close;
         auto& a_ep{ep};
         a_ep.async_close(
-            as::bind_executor(
-                a_ep.get_executor(),
-                force_move(self)
-            )
+            force_move(self)
         );
     }
 
@@ -796,10 +743,7 @@ recv_op {
             // do the next read
             auto& a_ep{ep};
             a_ep.stream_->async_read_packet(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
             return false;
         }

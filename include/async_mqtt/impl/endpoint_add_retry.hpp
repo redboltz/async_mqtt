@@ -24,10 +24,7 @@ add_retry_op {
         tim->expires_at(std::chrono::steady_clock::time_point::max());
         auto& a_ep{ep};
         tim->async_wait(
-            as::bind_executor(
-                a_ep.get_executor(),
-                force_move(self)
-            )
+            force_move(self)
         );
         a_ep.tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
     }

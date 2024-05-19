@@ -30,10 +30,8 @@ acquire_unique_packet_id_wait_until_op {
             state = complete;
             auto& a_ep{ep};
             as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                a_ep.get_executor(),
+                force_move(self)
             );
         } break;
         case complete: {
@@ -50,10 +48,7 @@ acquire_unique_packet_id_wait_until_op {
                         // infinity timer. cancel is retry trigger.
                         auto& a_ep{ep};
                         a_ep.async_add_retry(
-                            as::bind_executor(
-                                a_ep.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                 };
@@ -69,10 +64,7 @@ acquire_unique_packet_id_wait_until_op {
                 // infinity timer. cancel is retry trigger.
                 auto& a_ep{ep};
                 a_ep.async_add_retry(
-                    as::bind_executor(
-                        a_ep.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             }
             else {

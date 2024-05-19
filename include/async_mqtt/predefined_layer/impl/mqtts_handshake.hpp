@@ -37,10 +37,7 @@ struct mqtts_handshake_op {
             a_layer.next_layer(),
             host,
             port,
-            as::bind_executor(
-                a_layer.get_executor(),
-                force_move(self)
-            )
+            force_move(self)
         );
     }
 
@@ -58,10 +55,7 @@ struct mqtts_handshake_op {
             auto& a_layer{layer};
             a_layer.async_handshake(
                 as::ssl::stream_base::client,
-                as::bind_executor(
-                    a_layer.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
         }
         else {

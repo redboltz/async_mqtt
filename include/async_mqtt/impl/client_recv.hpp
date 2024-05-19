@@ -28,10 +28,8 @@ recv_op {
             state = recv;
             auto& a_cl{cl};
             as::dispatch(
-                as::bind_executor(
-                    a_cl.ep_->get_executor(),
-                    force_move(self)
-                )
+                a_cl.ep_->get_executor(),
+                force_move(self)
             );
         }
         else {
@@ -47,10 +45,7 @@ recv_op {
                 );
                 auto& a_cl{cl};
                 a_cl.tim_notify_publish_recv_.async_wait(
-                    as::bind_executor(
-                        a_cl.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             }
             else {

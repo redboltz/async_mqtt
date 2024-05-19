@@ -39,10 +39,8 @@ send_op {
             state = write;
             auto& a_ep{ep};
             as::dispatch(
-                as::bind_executor(
-                    a_ep.get_executor(),
-                    force_move(self)
-                )
+                a_ep.get_executor(),
+                force_move(self)
             );
         } break;
         case write: {
@@ -58,10 +56,7 @@ send_op {
                                 auto& a_ep{ep};
                                 a_ep.stream_->async_write_packet(
                                     actual_packet,
-                                    as::bind_executor(
-                                        a_ep.get_executor(),
-                                        force_move(self)
-                                    )
+                                    force_move(self)
                                 );
                                 if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                                     // server send stored packets after connack sent
@@ -82,10 +77,7 @@ send_op {
                     auto a_packet{packet};
                     a_ep.stream_->async_write_packet(
                         force_move(a_packet),
-                        as::bind_executor(
-                            a_ep.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                     if constexpr(is_connack<Packet>()) {
                         // server send stored packets after connack sent
