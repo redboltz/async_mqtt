@@ -44,6 +44,7 @@ var hierarchy =
     [ "async_mqtt::v5::connect_packet", "classasync__mqtt_1_1v5_1_1connect__packet.html", null ],
     [ "async_mqtt::v3_1_1::disconnect_packet", "classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html", null ],
     [ "async_mqtt::v5::disconnect_packet", "classasync__mqtt_1_1v5_1_1disconnect__packet.html", null ],
+    [ "std::hash< async_mqtt::buffer >", "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html", null ],
     [ "async_mqtt::layer_customize< Layer >", "structasync__mqtt_1_1layer__customize.html", null ],
     [ "async_mqtt::layer_customize< as::basic_stream_socket< Protocol, Executor > >", "structasync__mqtt_1_1layer__customize_3_01as_1_1basic__stream__socket_3_01Protocol_00_01Executor_01_4_01_4.html", null ],
     [ "async_mqtt::layer_customize< as::ssl::stream< NextLayer > >", "structasync__mqtt_1_1layer__customize_3_01as_1_1ssl_1_1stream_3_01NextLayer_01_4_01_4.html", null ],

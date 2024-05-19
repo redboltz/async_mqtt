@@ -90,5 +90,8 @@ var annotated_dup =
       [ "topic_sharename", "classasync__mqtt_1_1topic__sharename.html", "classasync__mqtt_1_1topic__sharename" ],
       [ "topic_subopts", "classasync__mqtt_1_1topic__subopts.html", "classasync__mqtt_1_1topic__subopts" ],
       [ "will", "classasync__mqtt_1_1will.html", "classasync__mqtt_1_1will" ]
+    ] ],
+    [ "std", null, [
+      [ "hash< async_mqtt::buffer >", "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html", "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4" ]
     ] ]
 ];
