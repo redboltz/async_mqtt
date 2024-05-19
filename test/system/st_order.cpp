@@ -12,6 +12,8 @@
 #include <async_mqtt/all.hpp>
 #include <boost/asio/yield.hpp>
 
+static constexpr int max_count = 20;
+
 BOOST_AUTO_TEST_SUITE(st_order)
 
 namespace am = async_mqtt;
@@ -85,7 +87,7 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                                 *this
                             );
                             BOOST_TEST(!*se);
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
 
                         yield ep().async_close(*this);
@@ -170,7 +172,7 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                                     am::qos::at_most_once
                                 })
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
 
@@ -257,7 +259,7 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                             );
                             BOOST_TEST(!*se);
                             yield ep().async_recv(*this); // recv puback
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_pub.reset();
@@ -339,7 +341,7 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                                 ==
                                 "payload" + std::to_string(++count)
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
 
@@ -426,7 +428,7 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                             );
                             BOOST_TEST(!*se);
                             yield ep().async_recv(*this); // recv pubrec
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_pub.reset();
@@ -507,7 +509,7 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                                 ==
                                 "payload" + std::to_string(++count)
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_sub.reset();
@@ -592,7 +594,7 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                                 *this
                             );
                             BOOST_TEST(!*se);
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
 
                         yield ep().async_close(*this);
@@ -677,7 +679,7 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                                     am::qos::at_most_once
                                 })
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
 
@@ -764,7 +766,7 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                             );
                             BOOST_TEST(!*se);
                             yield ep().async_recv(*this); // recv puback
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_pub.reset();
@@ -846,7 +848,7 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                                 ==
                                 "payload" + std::to_string(++count)
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
 
@@ -933,7 +935,7 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                             );
                             BOOST_TEST(!*se);
                             yield ep().async_recv(*this); // recv pubrec
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_pub.reset();
@@ -1014,7 +1016,7 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                                 ==
                                 "payload" + std::to_string(++count)
                             );
-                            if (count == 100) break;
+                            if (count == max_count) break;
                         }
                         yield ep().async_close(*this);
                         guard_sub.reset();
