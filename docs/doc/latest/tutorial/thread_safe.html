@@ -75,7 +75,30 @@ div#navigation table {
 <h2 id="_multi_threded">Multi threded</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The endpoint takes parameters for the next layer during construction. The endpoint gets the executor for asynchronous operations from the next layer. If the executor is wrapped by the strand, then <code>async_operations</code> are serialized even if the base <code>io_context</code> is running on multiple threads. If the running context is in the strand, you can call the following sync version functions.</p>
+<p>All distinct objects are thread unsafe. To access shared <code>client</code> and/or <code>endpoint</code>, you can construct it with strand wrapped executor for the underlying layer&#8217;s argument. <code>client</code> and <code>endpoint</code> <code>async_*</code> member functions dispatch to the executor. As the result of the strand effect, your asynchronous process is serialized.</p>
+</div>
+<div class="paragraph">
+<p>The following synchronous member functions is directly accessed. So you need to introduce the locks or explicit dispatching to the executor.</p>
+</div>
+</div>
+</div>
+<h1 id="_thread_safety" class="sect0">Thread Safety</h1>
+<div class="sect1">
+<h2 id="_single_threaded_2">Single Threaded</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can call both asynchronous (async) and synchronous (sync) APIs without any special precautions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_threaded">Multi-threaded</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All distinct objects are not thread-safe. To access shared <code>client</code> and/or <code>endpoint</code> objects, construct them with a strand-wrapped executor for the underlying layer&#8217;s argument. The <code>async_*</code> member functions of <code>client</code> and <code>endpoint</code> will dispatch to the executor. As a result of the strand&#8217;s effect, your asynchronous processes will be serialized.</p>
+</div>
+<div class="paragraph">
+<p>The following synchronous member functions are accessed directly. Therefore, you need to introduce locks or explicitly dispatch to the executor.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -123,29 +146,58 @@ div#navigation table {
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p><code>acquire_unique_packet_id</code>, <code>register_packet_id</code>, <code>release_packet_id</code>, <code>restore_packets</code>, and <code>get_stored_packets</code> have asynchronous versions that start with the <code>async_</code> prefix. These can be called from different threads.</p>
-</div>
-<div class="paragraph">
-<p>Other asynchronous functions such as <code>async_send()</code> and <code>async_recv()</code> can also be called from different threads.</p>
-</div>
-<div id="navigation">
-<table class="tableblock frame-none grid-none stretch">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-middle"><a href="non_packet_based.html">Prev</a></th>
-<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
-<a href="../index.html">Home</a></th>
-<th class="tableblock halign-right valign-middle"><a href="../functionality/connect_timeout.html">Next</a></th>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
 </tr>
 </thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire the new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p>
+<p class="tableblock">+
+<div id="navigation">
++
+[frame=none, grid=none, cols="&lt;.<sup>,</sup>.<sup>,&gt;.</sup>"]</p></td>
+</tr>
+</tbody>
 </table>
+<div class="paragraph">
+<p>|<a href="non_packet_based.html">Prev</a></p>
 </div>
+<div class="paragraph">
+<p>|<a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></p>
+</div>
+<div class="paragraph">
+<p>|<a href="../functionality/connect_timeout.html">Next</a></p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">+
+</div>
++</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

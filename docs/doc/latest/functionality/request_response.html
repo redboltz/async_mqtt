@@ -79,7 +79,7 @@ div#navigation table {
 <h2 id="_client">Client</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>async_mqtt doesn&#8217;t do any special treatment for Request/Response. Simply, send CONNECT packet with RequestResponseInformation property that value is 1, and then receives CONNACK packet. If the CONNACK packet has ResponseInformation, then you can get ResponseInformation. You can subscribe it.</p>
+<p>async_mqtt doesn&#8217;t perform any special treatment for Request/Response. Simply send a CONNECT packet with the <code>RequestResponseInformation</code> property set to 1, and then receive the CONNACK packet. If the CONNACK packet includes <code>ResponseInformation</code>, you can obtain <code>ResponseInformation</code> from it and subscribe to it.</p>
 </div>
 </div>
 </div>
@@ -87,8 +87,8 @@ div#navigation table {
 <h2 id="_broker">Broker</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The broker part of async_mqtt supports Request/Response. When the broker receives CONNECT packet with RequestResponseInformation=1, then the broker automatically generate ResponseInformation and sends back CONNACK packet with it. ResponseInformation is TopicName for the response. So the client can use it as ResponseTopic property when sending PUBLISH packet.
-async_mqtt broker has authentication/authorization support. The generated topic can be subscribed only the client that sends RequestResponseInformation. The generated topic can be published by all clients.</p>
+<p>The broker part of async_mqtt supports Request/Response. When the broker receives a CONNECT packet with <code>RequestResponseInformation</code> set to 1, it automatically generates <code>ResponseInformation</code> and sends back a CONNACK packet with it. <code>ResponseInformation</code> is the <code>TopicName</code> for the response, so the client can use it as the <code>ResponseTopic</code> property when sending a PUBLISH packet.
+The async_mqtt broker has authentication/authorization support. The generated topic can be subscribed to only by the client that sent <code>RequestResponseInformation</code>. The generated topic can be published to by all clients.</p>
 </div>
 </div>
 </div>
@@ -99,7 +99,7 @@ async_mqtt broker has authentication/authorization support. The generated topic 
 <p>See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115</a></p>
 </div>
 <div class="paragraph">
-<p>The client has only one ResponseTopic and use it for all request. The request receiver client could be different. So the responses could be mixed. In order to distingish correct response, CorrelationData can be used. See the following diagram.</p>
+<p>The client has only one <code>ResponseTopic</code> and uses it for all requests. The request receiver client could be different, so the responses could be mixed. To distinguish the correct response, <code>CorrelationData</code> can be used. See the following diagram.</p>
 </div>
 <div class="imageblock">
 <div class="content">
