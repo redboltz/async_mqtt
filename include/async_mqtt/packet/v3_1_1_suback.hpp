@@ -36,6 +36,10 @@ namespace as = boost::asio;
 /**
  * @ingroup suback_v3_1_1_detail
  * @brief MQTT SUBACK packet (v3.1.1)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT SUBACK packet.

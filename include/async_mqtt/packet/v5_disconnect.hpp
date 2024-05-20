@@ -29,6 +29,10 @@ namespace as = boost::asio;
 /**
  * @ingroup disconnect_v5
  * @brief MQTT DISCONNECT packet (v5)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
  * The endpoint can't send packets any more.

@@ -27,6 +27,10 @@ namespace as = boost::asio;
 /**
  * @ingroup connect_v3_1_1
  * @brief MQTT CONNECT packet (v3.1.1)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * Only MQTT client can send this packet.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718028

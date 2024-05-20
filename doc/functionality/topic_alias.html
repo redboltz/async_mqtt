@@ -82,17 +82,17 @@ div#navigation table {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_broker_to_client_topic_alias">broker to client Topic Alias</h3>
+<h3 id="_broker_to_client_topic_alias">Broker to Client Topic Alias</h3>
 <div class="paragraph">
-<p>The client can set <code>Topic Alias Maximum</code> property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH packet with <code>Topic Alias</code> property that the value is less than or equal to <code>Topic Alias Maximum</code>. The broker could send the PUBLISH packet using <code>Topic Alias</code> property.
-If the broker doesn&#8217;t receive CONNECT packet with <code>Topic Alias Maximum</code> property that value is greater than 0, then the broker cannot use <code>Topic Alias</code>.</p>
+<p>The client can set the <code>Topic Alias Maximum</code> property to a value greater than 0 in the CONNECT packet. This means the client can receive PUBLISH packets with the <code>Topic Alias</code> property set to a value less than or equal to the <code>Topic Alias Maximum</code>. The broker can then send PUBLISH packets using the <code>Topic Alias</code> property.
+If the broker does not receive a CONNECT packet with the <code>Topic Alias Maximum</code> property set to a value greater than 0, the broker cannot use <code>Topic Alias</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_client_to_broker_topic_alias">client to broker Topic Alias</h3>
+<h3 id="_client_to_broker_topic_alias">Client to Broker Topic Alias</h3>
 <div class="paragraph">
-<p>The broker can set <code>Topic Alias Maximum</code> property that value is greater than 0 to the CONNACK packet. This means the broker can receive the PUBLISH packet with <code>Topic Alias</code> property that the value is less than or equal to <code>Topic Alias Maximum</code>. The client could send the PUBLISH packet using <code>Topic Alias</code> property.
-If the client doesn&#8217;t receive CONNACK packet with <code>Topic Alias Maximum</code> property that value is greater than 0, then the client cannot use <code>Topic Alias</code>.</p>
+<p>The broker can set the <code>Topic Alias Maximum</code> property to a value greater than 0 in the CONNACK packet. This means the broker can receive PUBLISH packets with the <code>Topic Alias</code> property set to a value less than or equal to the <code>Topic Alias Maximum</code>. The client can then send PUBLISH packets using the <code>Topic Alias</code> property.
+If the client does not receive a CONNACK packet with the <code>Topic Alias Maximum</code> property set to a value greater than 0, the client cannot use <code>Topic Alias</code>.</p>
 </div>
 </div>
 </div>
@@ -108,47 +108,47 @@ If the client doesn&#8217;t receive CONNACK packet with <code>Topic Alias Maximu
 <div class="sect2">
 <h3 id="_registeroverwrite">Register/Overwrite</h3>
 <div class="paragraph">
-<p>When you set TopicName and <code>Topic Alias</code> property to the PUBLISH packet, then the mapping is registered. If the <code>Topic Alias</code> is already mapped, then the mapping is overwritten.</p>
+<p>When you set the <code>TopicName</code> filed and <code>Topic Alias</code> property in the PUBLISH packet, the mapping is registered. If the <code>Topic Alias</code> is already mapped, the mapping is overwritten.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_use">Use</h3>
 <div class="paragraph">
-<p>When you set empty (zero length) TopicName and <code>Topic Alias</code> property to the PUBLISH packet, then the receiver needs to extract the TopicName that is corresponding to the <code>Topic Alias</code>.
-In this case, the packet size is usually reduced. (Especially the TopicName is long).</p>
+<p>When you set an empty (zero length) <code>TopicName</code> field and <code>Topic Alias</code> property in the PUBLISH packet, the receiver needs to extract the <code>TopicName</code> corresponding to the <code>Topic Alias</code>.
+In this case, the packet size is usually reduced, especially if the <code>TopicName</code> is long.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_async_mqtt_support">async_mqtt support</h2>
+<h2 id="_async_mqtt_support">async_mqtt Support</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_setup">setup</h3>
+<h3 id="_setup">Setup</h3>
 <div class="paragraph">
-<p>If you are using the async_mqtt as the client, all you need to do is set <code>Topic Alias Maximum</code> property to CONNECT packet.
-If you are using the async_mqtt as the server(broker), all you need to do is set <code>Topic Alias Maximum</code> property to CONNACK packet.</p>
+<p>If you are using async_mqtt as the client, all you need to do is set the <code>Topic Alias Maximum</code> property in the CONNECT packet.
+If you are using async_mqtt as the server (broker), all you need to do is set the <code>Topic Alias Maximum</code> property in the CONNACK packet.</p>
 </div>
 <div class="paragraph">
-<p>Then mapping functionality is automatically set up.</p>
+<p>Then the mapping functionality is automatically set up.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_set_auto_map_topic_alias_sendbool">set_auto_map_topic_alias_send(bool)</h3>
 <div class="paragraph">
-<p>When you set this function is called with argument true, then <code>Topic Alias</code> is automatically allocated and used when you send PUBLISH packet. If you run out all <code>Topic Alias</code>, the oldest mapping is automatically replaced. It is called LRU algorithm.</p>
+<p>When you call this function with the argument <code>true</code>, the <code>Topic Alias</code> is automatically allocated and used when you send a PUBLISH packet. If you run out of all <code>Topic Alias</code> values, the oldest mapping is automatically replaced using the LRU (Least Recently Used) algorithm.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_set_replace_map_topic_alias_sendbool">set_replace_map_topic_alias_send(bool)</h3>
 <div class="paragraph">
-<p>When you set this function is called with argument true, then <code>Topic Alias</code> is automatically used if the mapping is registered when you send PUBLISH packet.</p>
+<p>When you call this function with the argument <code>true</code>, the <code>Topic Alias</code> is automatically used if the mapping is registered when you send a PUBLISH packet.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_manual_use">manual use</h3>
+<h3 id="_manual_use">Manual Use</h3>
 <div class="paragraph">
-<p>You can register/use Topic Alias manually by setting PUBLISH packet. This works well with above two automatic functionalities.</p>
+<p>You can register/use <code>Topic Alias</code> manually by setting the PUBLISH packet. This works well with the above two automatic functionalities.</p>
 </div>
 </div>
 </div>
@@ -157,15 +157,17 @@ If you are using the async_mqtt as the server(broker), all you need to do is set
 <h2 id="_pitfall">Pitfall</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>async_mqtt has already solved this problem. This is implementation note.
-If client/broker <a href="keep_session.html">keep the session</a>, the halfway QoS1 and QoS2 PUBLISH packet should be resent just after reconnection. What happened if the PUBLISH packet <strong>uses</strong> Topic Alias? In this case, the TopicName is empty. The counter part <code>Topic Alias Maximum</code> could be reduced (or removed) on reconnection. MQTT spec said that the lifetime of Topic Alias mapping should end on disconnect. In other words, the lifetime of Topic Alias mapping is the same as the lifetime of connection, <strong>not the lifetime of the session</strong>.
-So, the client/broker sends PUBLISH packet with empty length TopicName and <code>Topic Alias</code> property on just after reconnection, it is protocol violation.</p>
+<p>async_mqtt has already solved this problem. This is an implementation note.
+If the client/broker <a href="keep_session.html">keeps the session</a>, any halfway QoS1 and QoS2 PUBLISH packets should be resent just after reconnection. What happens if the PUBLISH packet uses a <code>Topic Alias</code>? In this case, the <code>TopicName</code> is empty. The counterpart&#8217;s <code>Topic Alias Maximum</code> could be reduced (or removed) upon reconnection. The MQTT spec states that the lifetime of a <code>Topic Alias</code> mapping should end on disconnect. In other words, the lifetime of a <code>Topic Alias</code> mapping is the same as the lifetime of the connection, not the session.</p>
 </div>
 <div class="paragraph">
-<p>In order to solve the problem, the client/broker needs to extract TopicName from the <code>Topic Alias</code> property <strong>on sending</strong> and create the new PUBLISH packet for storing that is contained from the extracted TopicName and remove <code>Topic Alias</code> property form the sending PUBLISH packet. When resending, use the stored (non Topic Aliased) packet.</p>
+<p>So, if the client/broker sends a PUBLISH packet with an empty <code>TopicName</code> and <code>Topic Alias</code> property just after reconnection, it is a protocol violation.</p>
 </div>
 <div class="paragraph">
-<p>This process is automatically done by async_mqtt internally. Users don&#8217;t need to care about this issue.</p>
+<p>To solve this problem, the client/broker needs to extract the <code>TopicName</code> from the <code>Topic Alias</code> property when sending and create a new PUBLISH packet containing the extracted <code>TopicName</code>, and remove the <code>Topic Alias</code> property from the sending PUBLISH packet. When resending, use the stored (non-Topic Aliased) packet.</p>
+</div>
+<div class="paragraph">
+<p>This process is automatically handled by async_mqtt internally. Users don&#8217;t need to worry about this issue.</p>
 </div>
 <div class="imageblock">
 <div class="content">

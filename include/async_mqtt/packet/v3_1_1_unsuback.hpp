@@ -33,6 +33,10 @@ namespace as = boost::asio;
 /**
  * @ingroup unsuback_v3_1_1_detail
  * @brief MQTT UNSUBACK packet (v3.1.1)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT UNSUBACK packet.

@@ -29,6 +29,10 @@ namespace as = boost::asio;
 /**
  * @ingroup pingreq_v5
  * @brief MQTT PINGREQ packet (v5)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * Only MQTT client can send this packet.
  * This packet is to notify the client is living.

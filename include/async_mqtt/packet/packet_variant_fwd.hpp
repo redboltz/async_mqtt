@@ -24,6 +24,10 @@ namespace async_mqtt {
 /**
  * @ingroup packet_variant_detail
  * @brief The varaint type of all packets and system_error
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_packet_variant;

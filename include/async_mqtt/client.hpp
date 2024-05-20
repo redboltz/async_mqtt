@@ -30,6 +30,10 @@ namespace as = boost::asio;
 /**
  * @ingroup client
  * @brief MQTT client for casual usecases
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  * @tparam Version       MQTT protocol version.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */

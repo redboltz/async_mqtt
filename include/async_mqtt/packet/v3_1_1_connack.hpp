@@ -28,6 +28,10 @@ namespace as = boost::asio;
 /**
  * @ingroup connack_v3_1_1
  * @brief MQTT CONNACK packet (v3.1.1)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * Only MQTT broker(sever) can send this packet.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718033

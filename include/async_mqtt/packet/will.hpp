@@ -18,6 +18,10 @@ namespace async_mqtt {
  * @ingroup connect_v3_1_1
  * @ingroup connect_v5
  * @brief MQTT will message
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class will {
 public:

@@ -32,6 +32,10 @@ namespace as = boost::asio;
 /**
  * @ingroup auth_v5
  * @brief MQTT AUTH packet (v35)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * MQTT UNSUBACK packet.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217

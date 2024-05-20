@@ -35,6 +35,10 @@ namespace as = boost::asio;
 /**
  * @ingroup pingresp_v5
  * @brief MQTT PINGRESP packet (v5)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  *
  * Only MQTT broker(sever) can send this packet.
  * If basic_endpoint::set_auto_ping_response() is called with true, then this packet is
