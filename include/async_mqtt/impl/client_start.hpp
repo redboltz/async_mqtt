@@ -7,7 +7,6 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_START_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_START_HPP
 
-#include <boost/asio/bind_executor.hpp>
 #include <boost/asio/append.hpp>
 #include <boost/asio/compose.hpp>
 
