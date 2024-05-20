@@ -80,8 +80,11 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                 );
                 BOOST_TEST(!*se);
 
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -140,7 +143,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 1883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -208,8 +211,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                 );
                 BOOST_TEST(!*se);
 
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -269,7 +275,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 1883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -302,8 +308,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     )
                 );
 
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -368,8 +377,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                 );
                 BOOST_TEST(!*se);
 
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -411,7 +423,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 1883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -453,8 +465,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect sub
-                yield ep(sub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(sub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -507,8 +521,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect pub
-                yield ep(pub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(pub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -574,8 +590,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect sub
-                yield ep(sub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(sub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -642,7 +660,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -684,8 +702,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 );
 
                 // connect sub
-                yield ep(sub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(sub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -739,8 +759,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 );
 
                 // connect pub
-                yield ep(pub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(pub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -811,8 +833,10 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 std::this_thread::sleep_for(std::chrono::seconds(2));
 
                 // connect sub
-                yield ep(sub).next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep(sub).next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -869,7 +893,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}, "127.0.0.1", 1883};
+    tc t{{*amep_pub, *amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

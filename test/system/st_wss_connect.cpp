@@ -105,32 +105,10 @@ BOOST_AUTO_TEST_CASE(fut) {
     );
 
     {
-        auto fut = amep->lowest_layer().async_connect(
-            endpoint,
-            as::use_future
-        );
-        try {
-            fut.get();
-        }
-        catch (am::error_code const&) {
-            BOOST_TEST(false);
-        }
-    }
-    {
-        auto fut = amep->next_layer().next_layer().async_handshake(
-            as::ssl::stream_base::client,
-            as::use_future
-        );
-        try {
-            fut.get();
-        }
-        catch (am::error_code const&) {
-            BOOST_TEST(false);
-        }
-    }
-    {
-        auto fut = amep->next_layer().async_handshake(
+        auto fut = am::async_underlying_handshake(
+            amep->next_layer(),
             "127.0.0.1",
+            "10443",
             "/",
             as::use_future
         );
@@ -202,18 +180,10 @@ BOOST_AUTO_TEST_CASE(coro) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
-                yield ep().lowest_layer().async_connect(
-                    dest(),
-                    *this
-                );
-                BOOST_TEST(*ec == am::error_code{});
-                yield ep().next_layer().next_layer().async_handshake(
-                    as::ssl::stream_base::client,
-                    *this
-                );
-                BOOST_TEST(*ec == am::error_code{});
-                yield ep().next_layer().async_handshake(
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
                     "127.0.0.1",
+                    "10443",
                     "/",
                     *this
                 );
@@ -247,7 +217,7 @@ BOOST_AUTO_TEST_CASE(coro) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 10443};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

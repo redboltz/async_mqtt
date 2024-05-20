@@ -20,11 +20,11 @@ namespace am = async_mqtt;
 template <typename Ep, std::size_t PidBytes = 2>
 struct coro_base : as::coroutine {
     using packet_id_t = typename am::basic_packet_id_type<PidBytes>::type;
-    coro_base(Ep& ep, std::string_view host, std::uint16_t port)
-        :eps_{ep}, dest_{boost::asio::ip::make_address(host), port}
+    coro_base(Ep& ep)
+        :eps_{ep}
     {}
-    coro_base(std::vector<std::reference_wrapper<Ep>> eps, std::string_view host, std::uint16_t port)
-        :eps_(am::force_move(eps)), dest_{boost::asio::ip::make_address(host), port}
+    coro_base(std::vector<std::reference_wrapper<Ep>> eps)
+        :eps_(am::force_move(eps))
     {}
     virtual ~coro_base() = default;
     void operator()() {
@@ -48,9 +48,6 @@ struct coro_base : as::coroutine {
 protected:
     Ep& ep(std::size_t idx = 0) { return eps_.at(idx).get(); }
     Ep const& ep(std::size_t idx = 0) const { return eps_.at(idx).get(); }
-    as::ip::tcp::endpoint dest() const {
-        return dest_;
-    }
     void set_finish() {
         *finish_ = true;
     }
@@ -62,7 +59,6 @@ private:
         std::optional<packet_id_t> pid
     ) = 0;
     std::vector<std::reference_wrapper<Ep>> eps_;
-    as::ip::tcp::endpoint dest_;
     std::shared_ptr<bool> finish_ = std::make_shared<bool>(false);
 };
 

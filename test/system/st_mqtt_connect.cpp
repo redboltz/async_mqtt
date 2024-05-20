@@ -158,8 +158,10 @@ BOOST_AUTO_TEST_CASE(coro) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -192,7 +194,7 @@ BOOST_AUTO_TEST_CASE(coro) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 1883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
