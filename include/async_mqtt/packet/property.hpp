@@ -367,6 +367,10 @@ struct variable_property : private boost::totally_ordered<variable_property> {
 /**
  * @ingroup property
  * @brief payload_format_indicator property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class payload_format_indicator : public detail::n_bytes_property<1> {
 public:
@@ -415,6 +419,10 @@ private:
 /**
  * @ingroup property
  * @brief message_expiry_interval property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class message_expiry_interval : public detail::n_bytes_property<4> {
 public:
@@ -445,6 +453,10 @@ private:
 /**
  * @ingroup property
  * @brief content_type property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class content_type : public detail::string_property {
 public:
@@ -470,6 +482,10 @@ private:
 /**
  * @ingroup property
  * @brief response_topic property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class response_topic : public detail::string_property {
 public:
@@ -494,6 +510,10 @@ private:
 /**
  * @ingroup property
  * @brief correlation_data property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class correlation_data : public detail::binary_property {
 public:
@@ -518,6 +538,10 @@ private:
 /**
  * @ingroup property
  * @brief subscription_identifier property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class subscription_identifier : public detail::variable_property {
 public:
@@ -532,6 +556,10 @@ public:
 /**
  * @ingroup property
  * @brief session_expiry_interval property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class session_expiry_interval : public detail::n_bytes_property<4> {
 public:
@@ -563,6 +591,10 @@ private:
 /**
  * @ingroup property
  * @brief assigned_client_identifier property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class assigned_client_identifier : public detail::string_property {
 public:
@@ -588,6 +620,10 @@ private:
 /**
  * @ingroup property
  * @brief server_keep_alive property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class server_keep_alive : public detail::n_bytes_property<2> {
 public:
@@ -618,6 +654,10 @@ private:
 /**
  * @ingroup property
  * @brief authentication_method property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class authentication_method : public detail::string_property {
 public:
@@ -643,6 +683,10 @@ private:
 /**
  * @ingroup property
  * @brief authentication_data property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class authentication_data : public detail::binary_property {
 public:
@@ -667,6 +711,10 @@ private:
 /**
  * @ingroup property
  * @brief request_problem_information property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class request_problem_information : public detail::n_bytes_property<1> {
 public:
@@ -706,6 +754,10 @@ private:
 /**
  * @ingroup property
  * @brief will_delay_interval property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class will_delay_interval : public detail::n_bytes_property<4> {
 public:
@@ -736,6 +788,10 @@ private:
 /**
  * @ingroup property
  * @brief request_response_information property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class request_response_information : public detail::n_bytes_property<1> {
 public:
@@ -775,6 +831,10 @@ private:
 /**
  * @ingroup property
  * @brief response_information property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class response_information : public detail::string_property {
 public:
@@ -800,6 +860,10 @@ private:
 /**
  * @ingroup property
  * @brief server_reference property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class server_reference : public detail::string_property {
 public:
@@ -825,6 +889,10 @@ private:
 /**
  * @ingroup property
  * @brief reason_string property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class reason_string : public detail::string_property {
 public:
@@ -850,6 +918,10 @@ private:
 /**
  * @ingroup property
  * @brief receive_maximum property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class receive_maximum : public detail::n_bytes_property<2> {
 public:
@@ -895,6 +967,10 @@ private:
 /**
  * @ingroup property
  * @brief topic_alias_maximum property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class topic_alias_maximum : public detail::n_bytes_property<2> {
 public:
@@ -926,6 +1002,10 @@ private:
 /**
  * @ingroup property
  * @brief topic_alias property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class topic_alias : public detail::n_bytes_property<2> {
 public:
@@ -956,6 +1036,10 @@ private:
 /**
  * @ingroup property
  * @brief maximum_qos property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class maximum_qos : public detail::n_bytes_property<1> {
 public:
@@ -996,6 +1080,10 @@ private:
 /**
  * @ingroup property
  * @brief retain_available property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class retain_available : public detail::n_bytes_property<1> {
 public:
@@ -1036,6 +1124,10 @@ private:
 /**
  * @ingroup property
  * @brief user property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class user_property : private boost::totally_ordered<user_property> {
 public:
@@ -1171,6 +1263,10 @@ private:
 /**
  * @ingroup property
  * @brief maximum_packet_size property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class maximum_packet_size : public detail::n_bytes_property<4> {
 public:
@@ -1216,6 +1312,10 @@ private:
 /**
  * @ingroup property
  * @brief wildcard_subscription_available property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class wildcard_subscription_available : public detail::n_bytes_property<1> {
 public:
@@ -1256,6 +1356,10 @@ private:
 /**
  * @ingroup property
  * @brief subscription_identifier_available property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class subscription_identifier_available : public detail::n_bytes_property<1> {
 public:
@@ -1296,6 +1400,10 @@ private:
 /**
  * @ingroup property
  * @brief shared_subscription_available property
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class shared_subscription_available : public detail::n_bytes_property<1> {
 public:

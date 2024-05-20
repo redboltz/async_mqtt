@@ -35,6 +35,10 @@ namespace as = boost::asio;
 /**
  * @ingroup pubrec_v5_detail
  * @brief MQTT PUBREC packet (v5)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  * @tparam PacketIdBytes size of packet_id
  *
  * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is

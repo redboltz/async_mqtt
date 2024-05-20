@@ -92,6 +92,9 @@ enum class dup : std::uint8_t {
 /**
  * @ingroup publish_options
  * @brief MQTT PublishOptions
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901101
  */

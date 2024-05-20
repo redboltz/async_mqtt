@@ -37,6 +37,10 @@ namespace as = boost::asio;
 /**
  * @ingroup unsubscribe_v5_detail
  * @brief MQTT UNSUBSCRIBE packet (v5)
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT UNSUBSCRIBE packet.

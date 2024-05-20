@@ -48,6 +48,10 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
 /**
  * @ingroup property_variant
  * @brief property variant
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
  */
 class property_variant {
 public:
