@@ -10,10 +10,6 @@ ifndef::env-github[:api-base: link:../api]
 
 = Non packet based APIs
 
-Here is the revised version incorporating your instruction:
-
----
-
 Most of the `async_mqtt` APIs are xref:send_recv.adoc#packet-based-apis[packet based], so functionalities are automatically applied by simply setting packet parameters and sending/receiving them. However, some functionalities cannot be explained by packets alone. Such functionalities are implemented as non-packet-based APIs.
 
 Here is the list of non-packet-based APIs. These functions should be called before `async_send`/`async_recv` is called.

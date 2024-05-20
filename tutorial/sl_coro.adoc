@@ -10,10 +10,6 @@ ifndef::env-github[:api-base: link:../api]
 
 = Using stackless coroutine
 
-Here is the revised version in natural technical English:
-
----
-
 This is the stackless coroutine approach. It uses the switch-case-based Boost.Asio stackless coroutine.
 See https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html
 
