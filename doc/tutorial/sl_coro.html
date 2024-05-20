@@ -149,15 +149,19 @@ pre.rouge .ss {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This is stackless coroutine approach. It uses switch-case based Boost.Asio stackless corotuine.
+<p>Here is the revised version in natural technical English:</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>This is the stackless coroutine approach. It uses the switch-case-based Boost.Asio stackless coroutine.
 See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
 </div>
 <div class="paragraph">
-<p>It is convenient but a little tricky. Due to switch-case based, there are some restrictions especially define local variables.
-If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend use it.</p>
+<p>It is convenient but a little tricky. Due to the switch-case basis, there are some restrictions, especially regarding defining local variables.
+If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using it.</p>
 </div>
 <div class="paragraph">
-<p>stackless coroutine can avoid deeply nested callbacks. The code becomes easy to read.</p>
+<p>Stackless coroutines can avoid deeply nested callbacks, making the code easier to read.</p>
 </div>
 </div>
 </div>
@@ -165,7 +169,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend use it
 <h2 id="_prepare_your_application_class">Prepare your application class</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Here is a application class prototype:</p>
+<p>Here is an application class prototype:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -215,8 +219,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend use it
 </div>
 </div>
 <div class="paragraph">
-<p>Then, add the app&#8217;s constructor as follows. endpoint is created here. In the body of the constructor, <code>impl_()</code> is called. Then the coroutine is started.
-Then,Declare the app&#8217;s member variables.</p>
+<p>Next, add the app&#8217;s constructor as follows. The endpoint is created here. In the constructor body, <code>impl_()</code> is called to start the coroutine. Then, declare the app&#8217;s member variables.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -260,7 +263,7 @@ Then,Declare the app&#8217;s member variables.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Then, implement <code>int main()</code> as follows:</p>
+<p>Next, implement <code>int main()</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -277,7 +280,7 @@ Then,Declare the app&#8217;s member variables.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>When you execute the program, you can see <code>start</code> output message. This indicates that the coroutine is started well.</p>
+<p>When you execute the program, you will see the <code>start</code> output message. This indicates that the coroutine has started successfully.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -292,8 +295,7 @@ Then,Declare the app&#8217;s member variables.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This is the basic of stackless coroutine approach.
-Now, adding more meaningful sequence.</p>
+<p>This is the basics of the stackless coroutine approach. Now, let&#8217;s add a more meaningful sequence.</p>
 </div>
 </div>
 </div>
@@ -312,7 +314,7 @@ Now, adding more meaningful sequence.</p>
                 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
                 <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
-                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
@@ -332,7 +334,7 @@ Now, adding more meaningful sequence.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
@@ -341,8 +343,7 @@ Now, adding more meaningful sequence.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The fourth argument of underlying_handshake is CompletionToken. When we use stackless coroutine, we pass <code>*this</code> as the CompletionToken. The function proc() is implicitly returned and underlying_handshake starts processing.
-When async process is finished, then the following operator() is called:</p>
+<p>The fourth argument of <code>underlying_handshake</code> is <code>CompletionToken</code>. When using a stackless coroutine, we pass <code>*this</code> as the <code>CompletionToken</code>. The function <code>proc()</code> is implicitly returned and <code>underlying_handshake</code> starts processing. When the asynchronous process is finished, the following <code>operator()</code> is called:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -352,8 +353,7 @@ When async process is finished, then the following operator() is called:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Then, proc is called. You can distinguish which async process is finished by proc()'s parameter.
-You can check <code>ec</code> as follows:</p>
+<p>Then, <code>proc</code> is called. You can distinguish which async process has finished by <code>proc()&#8217;s parameter. You can check `ec</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -366,7 +366,7 @@ You can check <code>ec</code> as follows:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Even if proc() is called again, the following part of the code is skipped:</p>
+<p>Even if <code>proc()</code> is called again, the following part of the code is skipped:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -382,7 +382,7 @@ You can check <code>ec</code> as follows:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This is switch-case based Boost.Asio stackless coroutine mechanism.
+<p>This is the switch-case-based Boost.Asio stackless coroutine mechanism.
 See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
 </div>
 </div>
@@ -396,7 +396,7 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Send MQTT CONNECT</span>
-                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">send</span><span class="p">(</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">async_send</span><span class="p">(</span>
                     <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
                         <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
                         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
@@ -410,7 +410,7 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 </div>
 </div>
 <div class="paragraph">
-<p>When async process is finished the function resumes at the following line:</p>
+<p>When the async process is finished, the function resumes at the following line:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -435,7 +435,7 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Recv MQTT CONNACK</span>
-                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -466,8 +466,7 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 </div>
 </div>
 <div class="paragraph">
-<p>The parameter of the completion token is <code>packet_variant pv</code>. You can access the <code>pv</code> using visit function and overloaded lamnda expressions. Each lambda expression is corresponding to the actual packet type.
-<code>pv</code> can be evalurated as bool. If any receive error happens then <code>pv</code> evaluated as false, otherwise true.</p>
+<p>The parameter of the completion token is <code>packet_variant pv</code>. You can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type. <code>pv</code> can be evaluated as a boolean. If any receive error occurs, <code>pv</code> evaluates to <code>false</code>; otherwise, it evaluates to <code>true</code>.</p>
 </div>
 </div>
 </div>
@@ -478,8 +477,7 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 <p>See the simple example <a href="../../example/ep_slcoro_mqtt_client.cpp">ep_slcoro_mqtt_client.cpp</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you want to know more complex usecase, <a href="../../tool/client_cli.cpp">client_cli.cpp</a> is helpful.
-This is commandline MQTT client application.</p>
+<p>If you want to explore a more complex use case, <a href="../../tool/client_cli.cpp">client_cli.cpp</a> is helpful. It is a command-line MQTT client application.</p>
 </div>
 </div>
 </div>

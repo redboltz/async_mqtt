@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<title>Strand</title>
+<title>Thread safety</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
  *
@@ -60,16 +60,22 @@ div#navigation table {
 </head>
 <body class="article">
 <div id="header">
-<h1>Strand</h1>
+<h1>Thread safety</h1>
 </div>
 <div id="content">
+<div class="sect1">
+<h2 id="_single_threaded">Single threaded</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>endpoint has boost asio&#8217;s strand internally.CompletionToken is called in the endpoint&#8217;s strand. Strand is useful to avoid locks and mutexes.
-You can get the strand from the endpoint using <code>strand()</code> function and use it as the executor for Boost.Asio&#8217;s async functions like <code>steady_timer</code>.</p>
+<p>You can call both async APIs and sync APIs without any special care required.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_threded">Multi threded</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>It could be annoying calling async APIs from obiously in the strand context. e.g. in the recv() CompletionToken. async_mqtt provides some of sync APIs.
-Here is the list of <strong>sync</strong> APIs that can be called only in the strand.</p>
+<p>The endpoint takes parameters for the next layer during construction. The endpoint gets the executor for asynchronous operations from the next layer. If the executor is wrapped by the strand, then <code>async_operations</code> are serialized even if the base <code>io_context</code> is running on multiple threads. If the running context is in the strand, you can call the following sync version functions.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -84,41 +90,44 @@ Here is the list of <strong>sync</strong> APIs that can be called only in the st
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#af0f43d8cdb723fea82a2b0b8a37e5953">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">acquire_unique_packet_id</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Acquire the new unique packet_id</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a69d7bdefdbcfe71c7fa1ce40cbc583b6">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01">register_packet_id</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a23bd0f62e5f5e27cb715e37b47b6b754">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b">release_packet_id</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a4373b14f01a1954780a55fa108618734">get_qos2_publish_handled_pids</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5c54a4deadb8706eafe3f56fc59eca07">get_qos2_publish_handled_pids</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Get already PUBLISH recv CompletionToken is invoked packet_ids</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a78a9e9c6a92f5cb72c87de37bb58ae94">restore_qos2_publish_handled_pids</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#abcfa56073b24d3efa6c8ed881295e45e">restore_qos2_publish_handled_pids</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Restore already PUBLISH recv CompletionToken is invoked packet_ids</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#ae60e7fe678e7844c33cd45fed8db028c">restore_packets</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a6dfe47bd9ab1590e66f110e3dbe1087e">restore_packets</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Restore pacets as stored packets</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a205376516c6337bfb5bbff9c04747de7">get_stored_packets</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ed8d45ffcfb114533d8de5ddddb4f92">get_stored_packets</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Get stored packets</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a501a5d70d41e7e019bdd606ed0885cef">get_protocol_version</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a9cbabd5f427b1cb18d61ac49c7bbf83b">get_protocol_version</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Get MQTT protocol version</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>acquire_unique_packet_id, register_packet_id, release_packet_id, restore_packets, and get_stored_packets have async version (the same name overload) to call out of strand.</p>
+<p><code>acquire_unique_packet_id</code>, <code>register_packet_id</code>, <code>release_packet_id</code>, <code>restore_packets</code>, and <code>get_stored_packets</code> have asynchronous versions that start with the <code>async_</code> prefix. These can be called from different threads.</p>
+</div>
+<div class="paragraph">
+<p>Other asynchronous functions such as <code>async_send()</code> and <code>async_recv()</code> can also be called from different threads.</p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
@@ -136,6 +145,8 @@ Here is the list of <strong>sync</strong> APIs that can be called only in the st
 </tr>
 </thead>
 </table>
+</div>
+</div>
 </div>
 </div>
 <div id="footer">

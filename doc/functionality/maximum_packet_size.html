@@ -66,8 +66,7 @@ div#navigation table {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Maximum Packet Size is a way to size control for all packets.
-If the node sends over the Maximum Packet Size packet, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x95 (Packet too large).</p>
+<p>The Maximum Packet Size is a way to control the size of all packets. If a node sends a packet larger than the Maximum Packet Size, it is considered a protocol error. The counterpart disconnects the connection with a DISCONNECT packet with Reason Code 0x95 (Packet too large).</p>
 </div>
 </div>
 </div>
@@ -75,7 +74,7 @@ If the node sends over the Maximum Packet Size packet, then it is protocol error
 <h2 id="_notifying_maximum_packet_size">Notifying Maximum Packet Size</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are two independent Maximum Packet Size.</p>
+<p>There are two independent Maximum Packet Size limits.</p>
 </div>
 <div class="imageblock">
 <div class="content">
