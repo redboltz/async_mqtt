@@ -54,3 +54,4 @@ The following synchronous member functions are accessed directly. Therefore, you
 |{api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id]|Acquire the new unique packet_id
 |{api-base}/++classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc++[register_packet_id]|Register the packet_id
 |{api-base}/++classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2++[release_packet_id]|Release the packet_id
+|===
