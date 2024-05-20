@@ -16,7 +16,23 @@ You can call both async APIs and sync APIs without any special care required.
 
 == Multi threded
 
-The endpoint takes parameters for the next layer during construction. The endpoint gets the executor for asynchronous operations from the next layer. If the executor is wrapped by the strand, then `async_operations` are serialized even if the base `io_context` is running on multiple threads. If the running context is in the strand, you can call the following sync version functions.
+All distinct objects are thread unsafe. To access shared `client` and/or `endpoint`, you can construct it with strand wrapped executor for the underlying layer's argument. `client` and `endpoint` `async_*` member functions dispatch to the executor. As the result of the strand effect, your asynchronous process is serialized.
+
+The following synchronous member functions is directly accessed. So you need to introduce the locks or explicit dispatching to the executor.
+
+
+
+= Thread Safety
+
+== Single Threaded
+
+You can call both asynchronous (async) and synchronous (sync) APIs without any special precautions.
+
+== Multi-threaded
+
+All distinct objects are not thread-safe. To access shared `client` and/or `endpoint` objects, construct them with a strand-wrapped executor for the underlying layer's argument. The `async_*` member functions of `client` and `endpoint` will dispatch to the executor. As a result of the strand's effect, your asynchronous processes will be serialized.
+
+The following synchronous member functions are accessed directly. Therefore, you need to introduce locks or explicitly dispatch to the executor.
 
 
 |===
@@ -32,6 +48,9 @@ The endpoint takes parameters for the next layer during construction. The endpoi
 |{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a9cbabd5f427b1cb18d61ac49c7bbf83b++[get_protocol_version]|Get MQTT protocol version
 |===
 
-`acquire_unique_packet_id`, `register_packet_id`, `release_packet_id`, `restore_packets`, and `get_stored_packets` have asynchronous versions that start with the `async_` prefix. These can be called from different threads.
+|===
+|client member function | effects
 
-Other asynchronous functions such as `async_send()` and `async_recv()` can also be called from different threads.
+|{api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc++[register_packet_id]|Register the packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2++[release_packet_id]|Release the packet_id
