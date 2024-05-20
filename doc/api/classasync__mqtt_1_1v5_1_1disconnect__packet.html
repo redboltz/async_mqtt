@@ -148,6 +148,12 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT DISCONNECT packet (v5) </p>
+<h4><a class="anchor" id="autotoc_md50"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
 <p>When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status. The endpoint can't send packets any more. The underlying layer is not automatically closed from the client side. If you want to close the underlying layer from the client side, you need to call basic_endpoint::close() after sending DISCONNECT packet. When the broker receives DISCONNECT packet, then close underlying layer from the broker. In this case, Will is not published by the broker except reason_code is Disconnect with Will Message. <br  />
  See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205</a> </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
