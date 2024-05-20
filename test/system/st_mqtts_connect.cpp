@@ -105,26 +105,16 @@ BOOST_AUTO_TEST_CASE(fut) {
     );
 
     {
-        auto fut = amep->lowest_layer().async_connect(
-            endpoint,
+        auto fut = am::async_underlying_handshake(
+            amep->next_layer(),
+            "127.0.0.1",
+            "8883",
             as::use_future
         );
         try {
             fut.get();
         }
         catch (am::error_code const&) {
-            BOOST_TEST(false);
-        }
-    }
-    {
-        auto fut = amep->next_layer().async_handshake(
-            as::ssl::stream_base::client,
-            as::use_future
-        );
-        try {
-            fut.get();
-        }
-        catch (am::error_code const& ec) {
             BOOST_TEST(false);
         }
     }
@@ -189,13 +179,10 @@ BOOST_AUTO_TEST_CASE(coro) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
-                yield ep().lowest_layer().async_connect(
-                    dest(),
-                    *this
-                );
-                BOOST_TEST(*ec == am::error_code{});
-                yield ep().next_layer().async_handshake(
-                    as::ssl::stream_base::client,
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "8883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -228,7 +215,7 @@ BOOST_AUTO_TEST_CASE(coro) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 8883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -260,13 +247,10 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
-                yield ep().lowest_layer().async_connect(
-                    dest(),
-                    *this
-                );
-                BOOST_TEST(*ec == am::error_code{});
-                yield ep().next_layer().async_handshake(
-                    as::ssl::stream_base::client,
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "8883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -300,7 +284,7 @@ BOOST_AUTO_TEST_CASE(coro_client_cert) {
         }
     };
 
-    tc t{*amep, "127.0.0.1", 8883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

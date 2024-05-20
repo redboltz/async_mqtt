@@ -44,8 +44,11 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     )
                 );
 
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -91,8 +94,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                 yield ep().async_close(*this);
 
                 // reconnect inherit
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -139,8 +144,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                 yield ep().async_close(*this);
 
                 // reconnect no inherit (clean_start)
-                yield ep().next_layer().async_connect(
-                    dest(),
+                yield am::async_underlying_handshake(
+                    ep().next_layer(),
+                    "127.0.0.1",
+                    "1883",
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
@@ -193,7 +200,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
         am::buffer response_topic;
     };
 
-    tc t{*amep, "127.0.0.1", 1883};
+    tc t{*amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
