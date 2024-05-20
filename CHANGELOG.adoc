@@ -25,6 +25,7 @@
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
 
 === other updates
+* Removed all boost::asio::bind_executor() from the library code. #247
 * client supported flexible parameters. #241, #244
 ** You can pass not only packet instence but also the parameters of packet's constructor directly to the packet sending member functions.
 * Supported default completion token. #238, #240

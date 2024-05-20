@@ -56,14 +56,10 @@ start_op {
         tim->expires_at(std::chrono::steady_clock::time_point::max());
         cl.pid_tim_pv_res_col_.get_tim_idx().emplace(tim);
         cl.recv_loop();
-        auto& a_cl{cl};
         tim->async_wait(
-            as::bind_executor(
-                a_cl.get_executor(),
-                as::append(
-                    force_move(self),
-                    tim
-                )
+            as::append(
+                force_move(self),
+                tim
             )
         );
     }

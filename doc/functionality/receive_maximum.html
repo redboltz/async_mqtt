@@ -66,33 +66,31 @@ div#navigation table {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Receive Maximum is a way to flow control PUBLISH(QoS1, QoS2) packets. They require to store for resending. So the node should prepare the memory packet size * Receive Maximum.
-The maximum value of the packet size can be defined using <a href="maximum_packet_size.html">Maximum Packet Size</a>.
-If the node sends over the Receive Maximum packets, then it is protocol error. The counter part disconnect the connetion with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).</p>
+<p>Receive Maximum is a way to flow control PUBLISH (QoS1, QoS2) packets. They require storage for resending. So the node should prepare the memory packet size * Receive Maximum. The maximum value of the packet size can be defined using <a href="maximum_packet_size.html">Maximum Packet Size</a>. If the node sends over the Receive Maximum packets, then it is protocol error. The counterpart disconnects the connection with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_when_increasedecrease_the_receive_count">When increase/decrease the receive count?</h2>
+<h2 id="_when_to_increasedecrease_the_receive_count">When to Increase/Decrease the Receive Count?</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>When the node send/receive PUBLISH (QoS1 or QoS2) packet, then increase the receive count.</p>
+<p>When the node sends/receives a PUBLISH (QoS1 or QoS2) packet, the receive count is increased.</p>
 </li>
 <li>
-<p>When the node send/receive PUBACK packet corresponding to the PUBLISH QoS1 packet, then decrease the receive count.</p>
+<p>When the node sends/receives a PUBACK packet corresponding to the PUBLISH QoS1 packet, the receive count is decreased.</p>
 </li>
 <li>
-<p>When the node send/receive PUBCOMP packet corresponding to the PUBLISH QoS2 packet, then decrease the receive count.</p>
+<p>When the node sends/receives a PUBCOMP packet corresponding to the PUBLISH QoS2 packet, the receive count is decreased.</p>
 </li>
 <li>
-<p>When the node send/receive PUBREC packet corresponding to the PUBLISH QoS2 packet and if the PUBREC Reason Code is error, then decrease the receive count.</p>
+<p>When the node sends/receives a PUBREC packet corresponding to the PUBLISH QoS2 packet, and if the PUBREC Reason Code is an error, then the receive count is decreased.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The timing is the same as Packet Identifier becomes reusable.</p>
+<p>The timing for decreasing the receive count is the same as when the Packet Identifier becomes reusable.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -101,7 +99,7 @@ If the node sends over the Receive Maximum packets, then it is protocol error. T
 <div class="title">Note</div>
 </td>
 <td class="content">
-Packet Identifier and Receive Maximum are not directly related. Packet Identifier is not only used for PUBLISH (QoS1 or QoS2) packet but also SUBSCRIBE/UNSUBSCRIBE packet.
+Packet Identifier and Receive Maximum are not directly related. Packet Identifier is not only used for PUBLISH (QoS1 or QoS2) packets but also for SUBSCRIBE/UNSUBSCRIBE packets.
 </td>
 </tr>
 </table>
@@ -112,7 +110,7 @@ Packet Identifier and Receive Maximum are not directly related. Packet Identifie
 <h2 id="_notifying_receive_maximum">Notifying Receive Maximum</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are two independent Receive Maximum.</p>
+<p>There are two independent Receive Maximum limits.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -122,13 +120,13 @@ Packet Identifier and Receive Maximum are not directly related. Packet Identifie
 <div class="sect2">
 <h3 id="_broker_to_client_receive_maximum">broker to client Receive Maximum</h3>
 <div class="paragraph">
-<p>The client can set <code>Receive Maximum</code> property that value is greater than 0 to the CONNECT packet. This means the client can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.</p>
+<p>The client can set the <code>Receive Maximum</code> property, with a value greater than 0, to the CONNECT packet. This means the client can concurrently receive PUBLISH (QoS1 or QoS2) packets until the receive count reaches the Receive Maximum.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_client_to_client_receive_maximum">client to client Receive Maximum</h3>
 <div class="paragraph">
-<p>The broker can set <code>Receive Maximum</code> property that value is greater than 0 to the CONNACK packet. This means the broker can receive the PUBLISH (QoS1 or QoS2) packet concurrently until the receive count would reach to Receive Maximum.</p>
+<p>The broker can set the <code>Receive Maximum</code> property, with a value greater than 0, to the CONNACK packet. This means the broker can concurrently receive PUBLISH (QoS1 or QoS2) packets until the receive count reaches the Receive Maximum.</p>
 </div>
 </div>
 </div>
@@ -137,8 +135,10 @@ Packet Identifier and Receive Maximum are not directly related. Packet Identifie
 <h2 id="_async_mqtt_implementation">async_mqtt implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>asnyc_mqtt automatically respect Receive Maximum so user doesn&#8217;t care about that. If user calls send() with PUBLISH (QoS1 or QoS2) packets over received Receive Maximum times before the publish sequence is not finished, async_mqtt queuing the PUBLISH packet internally. When the receive count is decreased, then send the queued PUBLISH packet. The order of sending the PUBLISH is the same as user&#8217;s send() function call order.
-There is no explicit limitation for the number of queuing packets. But in order to create PUBLISH (QoS1 or QoS2) packet, user needs to acquire a Packet Identifier. It is limited at most 65535, so it is also the limit of queuing packets.</p>
+<p><code>async_mqtt</code> automatically respects the Receive Maximum, so users don&#8217;t need to worry about it. If a user calls <code>async_send()</code> with PUBLISH (QoS1 or QoS2) packets more than the received Receive Maximum times before the publish sequence finishes, async_mqtt internally queues the PUBLISH packets. When the receive count decreases, the queued PUBLISH packets are sent. The order of sending the PUBLISH packets is the same as the order of the user&#8217;s <code>async_send()</code> function calls.</p>
+</div>
+<div class="paragraph">
+<p>There is no explicit limitation on the number of queued packets. However, in order to create PUBLISH (QoS1 or QoS2) packets, the user needs to acquire a Packet Identifier. This is limited to a maximum of 65535, so it also limits the number of queued packets.</p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">

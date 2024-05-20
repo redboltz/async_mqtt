@@ -22,6 +22,7 @@ char invalid_remaining_length_packet[] { 0x10, char(0xff), char(0xff), char(0xff
 BOOST_AUTO_TEST_CASE(remaining_length) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -38,6 +39,12 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -51,7 +58,8 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
                 BOOST_TEST(!*ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(!*pv); // auto close if receive error
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };

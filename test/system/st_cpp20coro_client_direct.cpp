@@ -26,6 +26,13 @@ BOOST_AUTO_TEST_CASE(v311) {
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
+            co_await as::dispatch(
+                as::bind_executor(
+                    amcl.get_executor(),
+                    as::use_awaitable
+                )
+            );
+
             // Handshake undlerying layer (Name resolution and TCP handshaking)
             auto [ec_und] = co_await am::async_underlying_handshake(
                 amcl.next_layer(),
@@ -173,6 +180,13 @@ BOOST_AUTO_TEST_CASE(v5) {
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
+            co_await as::dispatch(
+                as::bind_executor(
+                    amcl.get_executor(),
+                    as::use_awaitable
+                )
+            );
+
             // Handshake undlerying layer (Name resolution and TCP handshaking)
             auto [ec_und] = co_await am::async_underlying_handshake(
                 amcl.next_layer(),

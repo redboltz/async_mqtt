@@ -33,10 +33,8 @@ struct stream<NextLayer>::stream_write_packet_op {
             state = post;
             auto& a_strm{strm};
             as::dispatch(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    force_move(self)
-                )
+                a_strm.get_executor(),
+                force_move(self)
             );
         } break;
         case post: {
@@ -51,10 +49,7 @@ struct stream<NextLayer>::stream_write_packet_op {
                 std::copy(cbs.begin(), cbs.end(), std::back_inserter(a_strm.storing_cbs_));
             }
             a_strm.queue_.post(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    force_move(self)
-                )
+                force_move(self)
             );
         } break;
         case write: {
@@ -68,20 +63,14 @@ struct stream<NextLayer>::stream_write_packet_op {
                     layer_customize<next_layer_type>::async_write(
                         a_strm.nl_,
                         a_packet.const_buffer_sequence(),
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                 }
                 else {
                     async_write(
                         a_strm.nl_,
                         a_packet.const_buffer_sequence(),
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                 }
             }
@@ -89,13 +78,11 @@ struct stream<NextLayer>::stream_write_packet_op {
                 state = complete;
                 auto& a_strm{strm};
                 as::dispatch(
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        as::append(
-                            force_move(self),
-                            errc::make_error_code(errc::connection_reset),
-                            0
-                        )
+                    a_strm.get_executor(),
+                    as::append(
+                        force_move(self),
+                        errc::make_error_code(errc::connection_reset),
+                        0
                     )
                 );
             }
@@ -109,13 +96,11 @@ struct stream<NextLayer>::stream_write_packet_op {
                     auto& a_strm{strm};
                     auto& a_size{size};
                     as::dispatch(
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            as::append(
-                                force_move(self),
-                                errc::make_error_code(errc::success),
-                                a_size
-                            )
+                        a_strm.get_executor(),
+                        as::append(
+                            force_move(self),
+                            errc::make_error_code(errc::success),
+                            a_size
                         )
                     );
                 }
@@ -126,20 +111,14 @@ struct stream<NextLayer>::stream_write_packet_op {
                         layer_customize<next_layer_type>::async_write(
                             a_strm.nl_,
                             a_strm.sending_cbs_,
-                            as::bind_executor(
-                                a_strm.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                     else {
                         async_write(
                             a_strm.nl_,
                             a_strm.sending_cbs_,
-                            as::bind_executor(
-                                a_strm.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                 }
@@ -148,13 +127,11 @@ struct stream<NextLayer>::stream_write_packet_op {
                 state = complete;
                 auto& a_strm{strm};
                 as::dispatch(
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        as::append(
-                            force_move(self),
-                            errc::make_error_code(errc::connection_reset),
-                            0
-                        )
+                    a_strm.get_executor(),
+                    as::append(
+                        force_move(self),
+                        errc::make_error_code(errc::connection_reset),
+                        0
                     )
                 );
             }
@@ -175,14 +152,10 @@ struct stream<NextLayer>::stream_write_packet_op {
             strm.queue_.stop_work();
             auto& a_strm{strm};
             as::post(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    [&a_strm,wp = a_strm.weak_from_this()] {
-                        if (auto sp = wp.lock()) {
-                            a_strm.queue_.poll_one();
-                        }
-                    }
-                )
+                a_strm.get_executor(),
+                [&a_strm, life_keeper = life_keeper] {
+                    a_strm.queue_.poll_one();
+                }
             );
             self.complete(ec, bytes_transferred);
             return;
@@ -193,14 +166,10 @@ struct stream<NextLayer>::stream_write_packet_op {
             strm.sending_cbs_.clear();
             auto& a_strm{strm};
             as::post(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    [&a_strm, wp = a_strm.weak_from_this()] {
-                        if (auto sp = wp.lock()) {
-                            a_strm.queue_.poll_one();
-                        }
-                    }
-                )
+                a_strm.get_executor(),
+                [&a_strm, life_keeper = life_keeper] {
+                    a_strm.queue_.poll_one();
+                }
             );
             self.complete(ec, size);
         } break;

@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v5_from_broker) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -60,6 +61,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 ep(sub3).set_auto_pub_response(true);
 
                 // connect sub1
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).next_layer().async_connect(
                     dest(),
                     *this
@@ -79,6 +86,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub1).acquire_unique_packet_id(),
@@ -98,6 +111,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     *this
                 );
                 BOOST_TEST(*ec == am::error_code{});
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub2).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -112,6 +132,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub2).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub2).acquire_unique_packet_id(),
@@ -126,6 +152,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect sub3
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub3).next_layer().async_connect(
                     dest(),
                     *this
@@ -145,6 +177,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub3).async_send(
                     am::v5::subscribe_packet{
                         *ep(sub3).acquire_unique_packet_id(),
@@ -159,6 +198,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
                 // connect pub
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).next_layer().async_connect(
                     dest(),
                     *this
@@ -191,6 +236,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 2
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
@@ -204,6 +255,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 3
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
@@ -215,6 +272,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 );
                 BOOST_TEST(!*se);
                 yield ep(pub).async_recv(*this); // recv pubrec
+
 
                 // publish 4
                 yield ep(pub).async_send(
@@ -228,6 +286,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
 
                 // publish 5
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
@@ -241,6 +305,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(pub).async_recv(*this); // recv puback
 
                 // publish 6
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_send(
                     am::v5::publish_packet{
                         *ep(pub).acquire_unique_packet_id(),
@@ -253,6 +323,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(pub).async_recv(*this); // recv pubrec
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -262,6 +338,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         "payload1",
                         am::qos::at_most_once
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
                 );
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
@@ -273,6 +356,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         "payload2",
                         am::qos::at_least_once
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
                 );
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
@@ -286,6 +376,12 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     })
                 );
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -295,6 +391,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         "payload4",
                         am::qos::at_most_once
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
                 );
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
@@ -306,6 +409,13 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         "payload5",
                         am::qos::at_least_once
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
                 );
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
@@ -320,11 +430,39 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 );
 
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub2).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub3).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -338,6 +476,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
 BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -377,6 +516,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 ep(sub2).set_auto_pub_response(true);
                 ep(sub3).set_auto_pub_response(true);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub1
                 yield ep(sub1).next_layer().async_connect(
                     dest(),
@@ -410,6 +556,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect sub2
                 yield ep(sub2).next_layer().async_connect(
@@ -445,6 +598,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub3
                 yield ep(sub3).next_layer().async_connect(
                     dest(),
@@ -478,6 +638,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -538,6 +705,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 yield ep(pub).async_recv(*this); // recv pubrec
 
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -549,6 +723,14 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -561,6 +743,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -572,6 +761,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         am::qos::exactly_once,
                         {am::property::subscription_identifier{10}}
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
                 );
 
                 // unsub
@@ -588,6 +784,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(sub1).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::unsuback_packet>());
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // publish 4
                 yield ep(pub).async_send(
@@ -626,6 +829,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 BOOST_TEST(!*se);
                 yield ep(pub).async_recv(*this); // recv pubrec
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
                     *pv
@@ -637,6 +847,14 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         {am::property::subscription_identifier{1}}
                     })
                 );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
+
                 yield ep(sub3).async_recv(*this); // recv pubrel
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
@@ -649,6 +867,13 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         am::qos::at_least_once,
                         {am::property::subscription_identifier{10}}
                     })
+                );
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
                 );
                 yield ep(sub2).async_recv(*this);
                 BOOST_TEST(
@@ -664,11 +889,39 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(pub).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub1).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub2).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub3).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(sub3).async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };

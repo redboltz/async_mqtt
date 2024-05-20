@@ -147,21 +147,24 @@ pre.rouge .ss {
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a30eb38c816f1003c04ead18fdb5040da">recv()</a> funtion</h2>
+<h2 id="_async_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2">async_recv()</a> funtion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need to call <a href="../api/classasync__mqtt_1_1basic__endpoint.html#a30eb38c816f1003c04ead18fdb5040da">recv()</a> function when you want to receive MQTT packet. It is similar to Boost.Asio read() function.
-You can control packet receiving timing. async_mqtt doesn&#8217;t use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using recv().
-recv() function is more flexible than handler registering APIs. In addition, it works well with <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a>.</p>
+<p>You need to call the <a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2">async_recv()</a> function when you want to receive MQTT packets. It is similar to Boost.Asio&#8217;s <code>read()</code> function, allowing you to control packet receiving timing. <code>async_mqtt</code> does not use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using <code>async_recv()</code>.</p>
 </div>
 <div class="paragraph">
-<p>You cannot call recv() function continuously. You can call the next recv() function after the previous recv() function&#8217;s CompletionToken is invoked or in the Completion handler.</p>
+<p>The <code>async_recv()</code> function is more flexible than handler registering APIs. Additionally, it works well with the <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a> model.</p>
+</div>
+<div class="paragraph">
+<p>You cannot call the <code>async_recv()</code> function continuously. You can call the next <code>async_recv()</code> function only after the previous <code>async_recv()</code> function&#8217;s <code>CompletionToken</code> is invoked or within the completion handler.</p>
 </div>
 <div class="sect2">
-<h3 id="_packet_variant"><a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a></h3>
+<h3 id="_packet_variant"><a href="../api/group__packet__variant.html">packet_variant</a></h3>
 <div class="paragraph">
-<p>recv()'s CompletionToken parameter is <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.
-It is a variant type of all MQTT packets and error.</p>
+<p>async_recv()'s CompletionToken parameter is <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.</p>
+</div>
+<div class="paragraph">
+<p>It is a variant type of all MQTT packets and errors.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -170,13 +173,13 @@ It is a variant type of all MQTT packets and error.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-async_mqtt has basic_foobar type and foobar type if the type contains MQTT&#8217;s Packet Identifier. basic_foobar takes PacketIdBytes parameter. basic_foobar&lt;2&gt; is the same as foobar. MQTT spec defines the size of Packet Identifier to 2. But some of clustering brokers use expanded Packet Identifer for inter brokers communication. General users doesn&#8217;t need to care basic_foobar types, simply use foobar.
+<code>async_mqtt</code> has <code>basic_foobar</code> type and <code>foobar</code> type if the type contains MQTT&#8217;s Packet Identifier. <code>basic_foobar</code> takes a <code>PacketIdBytes</code> parameter. <code>basic_foobar&lt;2&gt;</code> is the same as <code>foobar</code>. The MQTT spec defines the size of the Packet Identifier as 2. However, some clustering brokers use an expanded Packet Identifier for inter-broker communication. General users don&#8217;t need to worry about <code>basic_foobar</code> types; simply use <code>foobar</code>.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>You can access packet_variant as follows:</p>
+<p>You can access <code>packet_variant</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -209,13 +212,13 @@ async_mqtt has basic_foobar type and foobar type if the type contains MQTT&#8217
 </div>
 </div>
 <div class="paragraph">
-<p><code>pv</code> can evaluated as bool. If <code>pv</code> has valid packet then it is convert to true, otherwise false. Typically, when underlying socket is disconnected, <code>pv</code> contains error and it is evaluated as false.</p>
+<p><code>pv</code> can be evaluated as a boolean. If <code>pv</code> contains a valid packet, it converts to <code>true</code>; otherwise, it converts to <code>false</code>. Typically, when the underlying socket is disconnected, <code>pv</code> contains an error and evaluates to <code>false</code>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_control_packet_type_filter">Control Packet Type filter</h3>
 <div class="paragraph">
-<p>You might interested in the specific packets. Your application doesn&#8217;t want to care non important packet like pingresp, puback, pubrec, pubrel, and pubcomp packets.</p>
+<p>You might be interested in specific packets. Your application may not need to handle non-important packets like PINGRESP, PUBACK, PUBREC, PUBREL, and PUBCOMP packets.</p>
 </div>
 <div class="paragraph">
 <p>You can filter packets as follows:</p>
@@ -223,32 +226,32 @@ async_mqtt has basic_foobar type and foobar type if the type contains MQTT&#8217
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// ep is endpoint shared_ptr</span>
-<span class="n">ep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">match</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">publish</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
+<span class="n">ep</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">match</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">publish</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>When you set <code>filter::match</code> as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, completion_token isn&#8217;t invoked but received packets are apropriately proccessed.
-If error is happened, completion_token is invoked with packet_variant that contains error.</p>
+<p>When you set <code>filter::match</code> as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, the <code>completion_token</code> isn&#8217;t invoked, but the received packets are appropriately processed. If an error occurs, the <code>completion_token</code> is invoked with a <code>packet_variant</code> that contains the error.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// ep is endpoint</span>
-<span class="n">ep</span><span class="o">-&gt;</span><span class="n">recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">except</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">pingresp</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">puback</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
+<span class="n">ep</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">filter</span><span class="o">::</span><span class="n">except</span><span class="p">,</span> <span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">pingresp</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">control_packet_type</span><span class="o">::</span><span class="n">puback</span><span class="p">},</span> <span class="n">completion_token</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>When you set <code>filter::except</code> as the first argument, the second parameter is a list of ignoring MQTT Control Packet types. If the packets int the list are received, completion_token isn&#8217;t invoked but received packets are apropriately proccessed.
-If error is happened, completion_token is invoked with packet_variant that contains error.</p>
+<p>When you set <code>filter::except</code> as the first argument, the second parameter is a list of MQTT Control Packet types to ignore. If the packets in the list are received, the <code>completion_token</code> isn&#8217;t invoked, but the received packets are appropriately processed. If an error occurs, the <code>completion_token</code> is invoked with a <code>packet_variant</code> that contains the error.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_send_function"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a85371d8868757f5760d0edd3bdef9ad9">send()</a> function</h2>
+<h2 id="_async_send_function"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a40082e1947ebe5f8c008f0696d18d6bb">async_send()</a> function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>MQTT has various packet types for example CONNECT, PUBLISH, SUBSCRIBE and so on. In order to send the packet, first create the packet and then pass it as send() parameter. If you send timing is a protocol error then the send() CompletionToken is invoked with system_error.
-You can call send() continuously. async_mqtt endpoint has queuing mechanism. When the previous send() function&#8217;s CompletionToken is invoked, then the next packet in the queue is sent if exists.</p>
+<p>MQTT has various packet types, such as CONNECT, PUBLISH, SUBSCRIBE, and so on. To send a packet, first create the packet and then pass it as a parameter to <code>async_send()</code>. If the send timing is a protocol error, the <code>async_send()</code> <code>CompletionToken</code> is invoked with a <code>system_error</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can call <code>async_send()</code> continuously. The <code>async_mqtt</code> endpoint has a queuing mechanism. When the previous <code>async_send()</code> function&#8217;s <code>CompletionToken</code> is invoked, the next packet in the queue is sent, if it exists.</p>
 </div>
 </div>
 </div>
@@ -256,7 +259,7 @@ You can call send() continuously. async_mqtt endpoint has queuing mechanism. Whe
 <h2 id="_packet_based_apis">Packet Based APIs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>async_mqtt automatically update endpoint&#8217;s interenal state when packet sending and receiving. For example, When you send CONNECT packet with maximum_packet_size property, endpoint set maximum packet size for receiving. See the packet and property API reference and functionality documents.</p>
+<p><code>async_mqtt</code> automatically updates the endpoint&#8217;s internal state when sending and receiving packets. For example, when you send a CONNECT packet with the <code>maximum_packet_size</code> property, the endpoint sets the maximum packet size for receiving. See the packet and property API reference and functionality documents for more details.</p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">

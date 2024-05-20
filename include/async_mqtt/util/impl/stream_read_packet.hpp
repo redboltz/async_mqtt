@@ -35,10 +35,8 @@ struct stream<NextLayer>::stream_read_packet_op {
             state = header;
             auto& a_strm{strm};
             as::dispatch(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    force_move(self)
-                )
+                a_strm.get_executor(),
+                force_move(self)
             );
         } break;
         case header: {
@@ -50,10 +48,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                     layer_customize<next_layer_type>::async_read(
                         a_strm.nl_,
                         as::buffer(address, 1),
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                 }
             else {
@@ -61,10 +56,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                     a_strm.nl_,
                     as::buffer(address, 1),
                     as::transfer_all(),
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             }
         } break;
@@ -101,10 +93,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         layer_customize<next_layer_type>::async_read(
                             a_strm.nl_,
                             as::buffer(address, 1),
-                            as::bind_executor(
-                                a_strm.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                 else {
@@ -112,10 +101,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::transfer_all(),
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                 }
             }
@@ -144,10 +130,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         layer_customize<next_layer_type>::async_read(
                             a_strm.nl_,
                             as::buffer(address, 1),
-                            as::bind_executor(
-                                a_strm.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                 else {
@@ -155,10 +138,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         a_strm.nl_,
                         as::buffer(address, 1),
                         as::transfer_all(),
-                        as::bind_executor(
-                            a_strm.get_executor(),
-                            force_move(self)
-                        )
+                        force_move(self)
                     );
                 }
             }
@@ -196,10 +176,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                             layer_customize<next_layer_type>::async_read(
                                 a_strm.nl_,
                                 as::buffer(address, rl),
-                                as::bind_executor(
-                                    a_strm.get_executor(),
-                                    force_move(self)
-                                )
+                                force_move(self)
                             );
                         }
                     else {
@@ -207,10 +184,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                             a_strm.nl_,
                             as::buffer(address, rl),
                             as::transfer_all(),
-                            as::bind_executor(
-                                a_strm.get_executor(),
-                                force_move(self)
-                            )
+                            force_move(self)
                         );
                     }
                 }

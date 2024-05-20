@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
             }
         }
     };

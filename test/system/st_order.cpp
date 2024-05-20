@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v311_qos0) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -46,6 +47,14 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -90,6 +99,13 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                 BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
 
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -126,6 +142,13 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS0
                 count = 0;
                 while (true) {
@@ -141,9 +164,18 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+
+                set_finish();
+                guard.reset();
             }
         }
 
@@ -159,6 +191,7 @@ BOOST_AUTO_TEST_CASE(v311_qos0) {
 BOOST_AUTO_TEST_CASE(v311_qos1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -185,6 +218,14 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -228,6 +269,13 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
 
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -267,6 +315,13 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS1
                 count = 0;
                 while (true) {
@@ -280,9 +335,17 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
             }
         }
 
@@ -298,6 +361,7 @@ BOOST_AUTO_TEST_CASE(v311_qos1) {
 BOOST_AUTO_TEST_CASE(v311_qos2) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -324,6 +388,14 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -367,6 +439,13 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
 
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -406,6 +485,13 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS2
                 count = 0;
                 while (true) {
@@ -419,9 +505,17 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
             }
         }
 
@@ -437,6 +531,7 @@ BOOST_AUTO_TEST_CASE(v311_qos2) {
 BOOST_AUTO_TEST_CASE(v5_qos0) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -463,6 +558,14 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -506,6 +609,13 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
 
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -543,6 +653,13 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS0
                 count = 0;
                 while (true) {
@@ -558,9 +675,17 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
             }
         }
 
@@ -576,6 +701,7 @@ BOOST_AUTO_TEST_CASE(v5_qos0) {
 BOOST_AUTO_TEST_CASE(v5_qos1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -602,6 +728,14 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -645,6 +779,13 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
 
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
@@ -684,6 +825,13 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS1
                 count = 0;
                 while (true) {
@@ -697,9 +845,17 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
             }
         }
 
@@ -715,6 +871,7 @@ BOOST_AUTO_TEST_CASE(v5_qos1) {
 BOOST_AUTO_TEST_CASE(v5_qos2) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep_pub = ep_t::create(
         am::protocol_version::v5,
@@ -741,6 +898,14 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
             reenter(this) {
                 ep(pub).set_auto_pub_response(true);
                 ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect sub
                 yield ep(sub).next_layer().async_connect(
                     dest(),
@@ -785,6 +950,13 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                 BOOST_TEST(pv->get_if<am::v5::suback_packet>());
 
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+
                 // connect pub
                 yield ep(pub).next_layer().async_connect(
                     dest(),
@@ -823,6 +995,13 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                     if (count == 100) break;
                 }
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
                 // recv publish QoS2
                 count = 0;
                 while (true) {
@@ -836,9 +1015,17 @@ BOOST_AUTO_TEST_CASE(v5_qos2) {
                     );
                     if (count == 100) break;
                 }
-                yield ep(pub).async_close(*this);
                 yield ep(sub).async_close(*this);
-                yield set_finish();
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
             }
         }
 

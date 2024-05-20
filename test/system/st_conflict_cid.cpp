@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(v311_cs1to1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -44,6 +45,12 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c1).next_layer().async_connect(
                     dest(),
                     *this
@@ -73,6 +80,12 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                    }
                 );
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c2).next_layer().async_connect(
                     dest(),
                     *this
@@ -104,6 +117,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
 
                 yield ep(c2).async_close(*this);
                 set_finish();
+                guard.reset();
             }
         }
     };
@@ -117,6 +131,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
 BOOST_AUTO_TEST_CASE(v311_cs0to1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -141,6 +156,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c1).next_layer().async_connect(
                     dest(),
                     *this
@@ -170,6 +191,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                    }
                 );
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c2).next_layer().async_connect(
                     dest(),
                     *this
@@ -201,6 +228,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
 
                 yield ep(c2).async_close(*this);
                 set_finish();
+                guard.reset();
             }
         }
     };
@@ -214,6 +242,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
 BOOST_AUTO_TEST_CASE(v311_cs0to0) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -238,6 +267,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c1).next_layer().async_connect(
                     dest(),
                     *this
@@ -267,6 +302,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                    }
                 );
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c2).next_layer().async_connect(
                     dest(),
                     *this
@@ -298,6 +339,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
 
                 yield ep(c2).async_close(*this);
                 set_finish();
+                guard.reset();
             }
         }
     };
@@ -311,6 +353,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
 BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep1 = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -335,6 +378,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c1).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c1).next_layer().async_connect(
                     dest(),
                     *this
@@ -365,6 +414,12 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                 );
                 yield ep(c1).async_close(*this);
 
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(c2).get_executor(),
+                        *this
+                    )
+                );
                 yield ep(c2).next_layer().async_connect(
                     dest(),
                     *this
@@ -396,6 +451,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
 
                 yield ep(c2).async_close(*this);
                 set_finish();
+                guard.reset();
             }
         }
     };

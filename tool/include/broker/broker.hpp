@@ -1935,9 +1935,11 @@ private:
                                                 // lock for expire (async)
                                                 std::lock_guard<mutex> g(mtx_sessions_);
                                                 sessions_.template get<tag_tim>().erase(sp_tim);
+                                            },
+                                            [completion_handler = force_move(completion_handler)] () mutable {
+                                                force_move(completion_handler)(true);
                                             }
                                         );
-                                        force_move(completion_handler)(true);
                                     }
                                 );
                             }
@@ -1959,9 +1961,11 @@ private:
                                                 // lock for expire (async)
                                                 std::lock_guard<mutex> g(mtx_sessions_);
                                                 sessions_.template get<tag_tim>().erase(sp_tim);
+                                            },
+                                            [completion_handler = force_move(completion_handler)] () mutable {
+                                                force_move(completion_handler)(true);
                                             }
                                         );
-                                        force_move(completion_handler)(true);
                                     }
                                 );
                             }

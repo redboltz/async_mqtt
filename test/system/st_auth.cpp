@@ -20,6 +20,7 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(fail_plain) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -36,6 +37,12 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -66,7 +73,8 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -80,6 +88,7 @@ BOOST_AUTO_TEST_CASE(fail_plain) {
 BOOST_AUTO_TEST_CASE(success_digest) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -96,6 +105,12 @@ BOOST_AUTO_TEST_CASE(success_digest) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -126,7 +141,8 @@ BOOST_AUTO_TEST_CASE(success_digest) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -140,6 +156,7 @@ BOOST_AUTO_TEST_CASE(success_digest) {
 BOOST_AUTO_TEST_CASE(fail_digest) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v3_1_1,
@@ -156,6 +173,12 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -186,7 +209,8 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
                    }
                 );
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };
@@ -200,6 +224,7 @@ BOOST_AUTO_TEST_CASE(fail_digest) {
 BOOST_AUTO_TEST_CASE(send_auth) {
     broker_runner br;
     as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
     auto amep = ep_t::create(
         am::protocol_version::v5,
@@ -216,6 +241,12 @@ BOOST_AUTO_TEST_CASE(send_auth) {
             std::optional<am::packet_id_type> /*pid*/
         ) override {
             reenter(this) {
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep().get_executor(),
+                        *this
+                    )
+                );
                 yield ep().next_layer().async_connect(
                     dest(),
                     *this
@@ -253,7 +284,8 @@ BOOST_AUTO_TEST_CASE(send_auth) {
                 );
                 BOOST_TEST(!*se);
                 yield ep().async_close(*this);
-                yield set_finish();
+                set_finish();
+                guard.reset();
             }
         }
     };

@@ -34,13 +34,11 @@ struct stream<NextLayer>::stream_close_op {
             state = close;
             auto& a_strm{strm};
             as::dispatch(
-                as::bind_executor(
-                    a_strm.get_executor(),
-                    as::append(
-                        force_move(self),
-                        error_code{},
-                        std::ref(a_strm.nl_)
-                    )
+                a_strm.get_executor(),
+                as::append(
+                    force_move(self),
+                    error_code{},
+                    std::ref(a_strm.nl_)
                 )
             );
         }
@@ -64,12 +62,9 @@ struct stream<NextLayer>::stream_close_op {
             if constexpr (has_next_layer<Layer>::value) {
                 layer_customize<Layer>::async_close(
                     stream.get(),
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        as::append(
-                            force_move(self),
-                            std::ref(stream.get().next_layer())
-                        )
+                    as::append(
+                        force_move(self),
+                        std::ref(stream.get().next_layer())
                     )
                 );
             }
@@ -77,33 +72,26 @@ struct stream<NextLayer>::stream_close_op {
                 state = complete;
                 layer_customize<Layer>::async_close(
                     stream.get(),
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        force_move(self)
-                    )
+                    force_move(self)
                 );
             }
         }
         else {
             if constexpr (has_next_layer<Layer>::value) {
                 as::dispatch(
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        as::append(
-                            force_move(self),
-                            error_code{},
-                            std::ref(a_strm.nl_)
-                        )
+                    a_strm.get_executor(),
+                    as::append(
+                        force_move(self),
+                        error_code{},
+                        std::ref(a_strm.nl_)
                     )
                 );
             }
             else {
                 state = complete;
                 as::dispatch(
-                    as::bind_executor(
-                        a_strm.get_executor(),
-                        force_move(self)
-                    )
+                    a_strm.get_executor(),
+                    force_move(self)
                 );
             }
         }
