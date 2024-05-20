@@ -220,19 +220,20 @@ struct bench {
 
     // forwarding callbacks
     void operator()(ClientInfo* pci = nullptr) {
-        proc({}, {}, {}, pci);
+        proc({}, {}, {}, {}, pci);
     }
     void operator()(boost::system::error_code ec, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, pci);
-    }
-    void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, pci);
+        proc(ec, {}, {}, {}, pci);
     }
     void operator()(am::system_error const& se, ClientInfo* pci = nullptr) {
-        proc({}, se, {}, pci);
+        proc({}, se, {}, {}, pci);
     }
     void operator()(am::packet_variant pv, ClientInfo* pci = nullptr) {
-        proc({}, {}, am::force_move(pv), pci);
+        proc({}, {}, am::force_move(pv), {}, pci);
+    }
+    void operator()(std::optional<am::packet_id_type> pid_opt, ClientInfo* pci = nullptr) {
+        pci->pid_opt = pid_opt;
+        proc({}, {}, {}, am::force_move(pid_opt), pci);
     }
 
 private:
@@ -240,6 +241,7 @@ private:
         std::optional<boost::system::error_code> ec,
         std::optional<am::system_error> se,
         am::packet_variant pv,
+        std::optional<am::packet_id_type> pid_opt,
         ClientInfo* pci
     ) {
         reenter (coro_) {
@@ -267,6 +269,16 @@ private:
                 locked_cout() << "async_connect interval timer error:" << ec->message() << std::endl;
                 exit(-1);
             }
+
+            yield as::dispatch(
+                as::bind_executor(
+                    pci->c->get_executor(),
+                    as::append(
+                        *this,
+                        pci
+                    )
+                )
+            );
 
             // Handshake underlying layer
             yield am::async_underlying_handshake(
@@ -300,6 +312,16 @@ private:
                     )
                 );
             }
+
+            yield as::dispatch(
+                as::bind_executor(
+                    pci->c->get_executor(),
+                    as::append(
+                        *this,
+                        pci
+                    )
+                )
+            );
 
             // MQTT connect send
             yield {
@@ -357,6 +379,17 @@ private:
                 locked_cout() << "connect send error:" << se->what() << std::endl;
                 exit(-1);
             }
+
+            yield as::dispatch(
+                as::bind_executor(
+                    pci->c->get_executor(),
+                    as::append(
+                        *this,
+                        pci
+                    )
+                )
+            );
+
             // MQTT connack recv
             yield pci->c->async_recv(
                 as::append(
@@ -425,13 +458,30 @@ private:
                     locked_cout() << "sub interval timer error:" << ec->message() << std::endl;
                     exit(-1);
                 }
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        pci->c->get_executor(),
+                        as::append(
+                            *this,
+                            pci
+                        )
+                    )
+                );
+
+                yield pci->c->async_acquire_unique_packet_id(
+                    as::append(
+                        *this,
+                        pci
+                    )
+                );
+                BOOST_ASSERT(pid_opt);
                 yield {
                     switch (bc_.version) {
                     case am::protocol_version::v5: {
                         pci->c->async_send(
                             am::v5::subscribe_packet{
-                                // sync version can be called because the previous timer handler is on the strand
-                                *pci->c->acquire_unique_packet_id(),
+                                *pid_opt,
                                 {
                                     { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 },
@@ -446,8 +496,7 @@ private:
                     case am::protocol_version::v3_1_1: {
                         pci->c->async_send(
                             am::v3_1_1::subscribe_packet{
-                                // sync version can be called because the previous timer handler is on the strand
-                                *pci->c->acquire_unique_packet_id(),
+                                *pid_opt,
                                 {
                                     { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 }
@@ -468,6 +517,17 @@ private:
                     locked_cout() << "subscribe send error:" << se->what() << std::endl;
                     exit(-1);
                 }
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        pci->c->get_executor(),
+                        as::append(
+                            *this,
+                            pci
+                        )
+                    )
+                );
+
                 // MQTT suback recv
                 yield pci->c->async_recv(
                     as::append(
@@ -626,12 +686,12 @@ private:
 
             for (;;) yield {
                 auto send_publish =
-                    [this, &pci] (am::packet_id_type pid, am::pub::opts opts) {
+                    [this, &pci] (am::pub::opts opts) {
                         switch (bc_.version) {
                         case am::protocol_version::v5: {
                             pci->c->async_send(
                                 am::v5::publish_packet{
-                                    pid,
+                                    *pci->pid_opt,
                                     bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts,
@@ -647,7 +707,7 @@ private:
                         case am::protocol_version::v3_1_1: {
                             pci->c->async_send(
                                 am::v3_1_1::publish_packet{
-                                    pid,
+                                    *pci->pid_opt,
                                     bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts
@@ -669,17 +729,29 @@ private:
                     if (bc_.md == mode::single || bc_.md == mode::send) {
                         auto trigger_pub =
                             [&] {
-                                am::packet_id_type pid = 0;
                                 if (bc_.qos == am::qos::at_least_once ||
                                     bc_.qos == am::qos::exactly_once) {
-                                    // sync version can be called because the previous timer handler is on the strand
-                                    pid = *pci->c->acquire_unique_packet_id();
+                                    pci->c->async_acquire_unique_packet_id(
+                                        as::append(
+                                            *this,
+                                            pci
+                                        )
+                                    );
+                                    BOOST_ASSERT(pci->pid_opt);
+                                    am::pub::opts opts = bc_.qos | bc_.retain;
+                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                    send_publish(opts);
+                                    BOOST_ASSERT(pci->send_times != 0);
+                                    --pci->send_times;
                                 }
-                                am::pub::opts opts = bc_.qos | bc_.retain;
-                                pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                                send_publish(pid, opts);
-                                BOOST_ASSERT(pci->send_times != 0);
-                                --pci->send_times;
+                                else {
+                                    pci->pid_opt.emplace(0);
+                                    am::pub::opts opts = bc_.qos | bc_.retain;
+                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                    send_publish(opts);
+                                    BOOST_ASSERT(pci->send_times != 0);
+                                    --pci->send_times;
+                                }
                             };
 
 
@@ -1708,6 +1780,7 @@ int main(int argc, char *argv[]) {
             std::shared_ptr<as::steady_timer> tim;
             std::string host;
             std::string port;
+            std::optional<am::packet_id_type> pid_opt;
         };
 
         as::io_context ioc_timer;
