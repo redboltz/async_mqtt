@@ -106,23 +106,78 @@ $(function(){initNavTree('structasync__mqtt_1_1client_1_1pubres__t.html',''); in
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aca5c91aede1691f224cd1feec406a05a" id="r_aca5c91aede1691f224cd1feec406a05a"><td class="memItemLeft" align="right" valign="top"><a id="aca5c91aede1691f224cd1feec406a05a" name="aca5c91aede1691f224cd1feec406a05a"></a>
-std::optional&lt; puback_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>puback_opt</b></td></tr>
-<tr class="memdesc:aca5c91aede1691f224cd1feec406a05a"><td class="mdescLeft">&#160;</td><td class="mdescRight">puback_packet as the response when you send QoS1 publish <br /></td></tr>
+<tr class="memitem:aca5c91aede1691f224cd1feec406a05a" id="r_aca5c91aede1691f224cd1feec406a05a"><td class="memItemLeft" align="right" valign="top">std::optional&lt; puback_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca5c91aede1691f224cd1feec406a05a">puback_opt</a></td></tr>
 <tr class="separator:aca5c91aede1691f224cd1feec406a05a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d89767cf9dc06c72577b2d5670f8440" id="r_a4d89767cf9dc06c72577b2d5670f8440"><td class="memItemLeft" align="right" valign="top"><a id="a4d89767cf9dc06c72577b2d5670f8440" name="a4d89767cf9dc06c72577b2d5670f8440"></a>
-std::optional&lt; pubrec_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pubrec_opt</b></td></tr>
-<tr class="memdesc:a4d89767cf9dc06c72577b2d5670f8440"><td class="mdescLeft">&#160;</td><td class="mdescRight">pubrec_packet as the response when you send QoS2 publish <br /></td></tr>
+<tr class="memitem:a4d89767cf9dc06c72577b2d5670f8440" id="r_a4d89767cf9dc06c72577b2d5670f8440"><td class="memItemLeft" align="right" valign="top">std::optional&lt; pubrec_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d89767cf9dc06c72577b2d5670f8440">pubrec_opt</a></td></tr>
 <tr class="separator:a4d89767cf9dc06c72577b2d5670f8440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8619b87284f9ce36674766904abe1f5" id="r_ad8619b87284f9ce36674766904abe1f5"><td class="memItemLeft" align="right" valign="top"><a id="ad8619b87284f9ce36674766904abe1f5" name="ad8619b87284f9ce36674766904abe1f5"></a>
-std::optional&lt; pubcomp_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>pubcomp_opt</b></td></tr>
-<tr class="memdesc:ad8619b87284f9ce36674766904abe1f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">pubcomp_packet as the response when you send QoS2 publish <br /></td></tr>
+<tr class="memitem:ad8619b87284f9ce36674766904abe1f5" id="r_ad8619b87284f9ce36674766904abe1f5"><td class="memItemLeft" align="right" valign="top">std::optional&lt; pubcomp_packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8619b87284f9ce36674766904abe1f5">pubcomp_opt</a></td></tr>
 <tr class="separator:ad8619b87284f9ce36674766904abe1f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer&gt;<br />
 struct async_mqtt::client&lt; Version, NextLayer &gt;::pubres_t</div><p>publish completion handler parameter class </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="aca5c91aede1691f224cd1feec406a05a" name="aca5c91aede1691f224cd1feec406a05a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca5c91aede1691f224cd1feec406a05a">&#9670;&#160;</a></span>puback_opt</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;puback_packet&gt; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::pubres_t::puback_opt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>puback_packet as the response when you send QoS1 publish</p><ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html" title="MQTT PUBACK packet (v3.1.1)">v3_1_1::basic_puback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html" title="MQTT PUBACK packet (v5)">v5::basic_puback_packet</a> </li>
+</ul>
+
+</div>
+</div>
+<a id="ad8619b87284f9ce36674766904abe1f5" name="ad8619b87284f9ce36674766904abe1f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8619b87284f9ce36674766904abe1f5">&#9670;&#160;</a></span>pubcomp_opt</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;pubcomp_packet&gt; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::pubres_t::pubcomp_opt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>pubcomp_packet as the response when you send QoS2 publish</p><ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubcomp__packet.html" title="MQTT PUBCOMP packet (v3.1.1)">v3_1_1::basic_pubcomp_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubcomp__packet.html" title="MQTT PUBCOMP packet (v5)">v5::basic_pubcomp_packet</a> </li>
+</ul>
+
+</div>
+</div>
+<a id="a4d89767cf9dc06c72577b2d5670f8440" name="a4d89767cf9dc06c72577b2d5670f8440"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d89767cf9dc06c72577b2d5670f8440">&#9670;&#160;</a></span>pubrec_opt</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;pubrec_packet&gt; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::pubres_t::pubrec_opt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>pubrec_packet as the response when you send QoS2 publish</p><ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v3.1.1)">v3_1_1::basic_pubrec_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">v5::basic_pubrec_packet</a> </li>
+</ul>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/kondo/work/async_mqtt/include/async_mqtt/<a class="el" href="client_8hpp_source.html">client.hpp</a></li>
 </ul>
 </div><!-- contents -->

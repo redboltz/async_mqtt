@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classasync__mqtt_1_1property_1_1wildcard__subscription__available.html":[0,2,1,0,26],
 "classasync__mqtt_1_1property_1_1wildcard__subscription__available.html#a5bb7ad6bfbf5d57280c04c21bcae96b2":[0,2,1,0,26,1],
 "classasync__mqtt_1_1property_1_1wildcard__subscription__available.html#ada5c2df5f7489a678f46e2b4280918a8":[0,2,1,0,26,0],
 "classasync__mqtt_1_1property_1_1will__delay__interval.html":[0,2,1,0,14],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a0e4b1c1b64443147c336fe95f6228099":[0,2,1,15,0,0,0],
 "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a1be9d37d7e65f12aefa13f1c0b67fbc7":[0,2,1,15,0,0,1],
 "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a1f293f5bb8b724a8570d88a40c1c4543":[0,2,1,15,0,0,3],
-"classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a55301bcaa6044b38ccb5a754a24452dc":[0,2,1,15,0,0,6],
-"classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a6e680db726a453aba52aab2ca72148b5":[0,2,1,15,0,0,4]
+"classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a55301bcaa6044b38ccb5a754a24452dc":[0,2,1,15,0,0,6]
 };

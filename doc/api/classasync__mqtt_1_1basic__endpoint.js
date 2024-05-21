@@ -4,6 +4,7 @@ var classasync__mqtt_1_1basic__endpoint =
     [ "lowest_layer_type", "classasync__mqtt_1_1basic__endpoint.html#ac6d52c82d975d51c9f08627abbf8dec7", null ],
     [ "next_layer_type", "classasync__mqtt_1_1basic__endpoint.html#af485b15270d8b1e12746342d4f79cb15", null ],
     [ "packet_variant_type", "classasync__mqtt_1_1basic__endpoint.html#a5098e22b58adbee93e452ede78ab1adc", null ],
+    [ "~basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html#a1e1d46688d3a6ed1d20e3669cb5aefc2", null ],
     [ "acquire_unique_packet_id", "classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0", null ],
     [ "async_acquire_unique_packet_id", "classasync__mqtt_1_1basic__endpoint.html#a7274b1d7f83634fd64fe616de1ff3e7f", null ],
     [ "async_acquire_unique_packet_id_wait_until", "classasync__mqtt_1_1basic__endpoint.html#a425e8172d00a1ace4274cf188d626de5", null ],

@@ -1,5 +1,8 @@
 var NAVTREEINDEX5 =
 {
+"v5__publish_8hpp_source.html":[2,0,0,0,0,43],
+"v5__pubrec_8hpp_source.html":[2,0,0,0,0,44],
+"v5__pubrel_8hpp_source.html":[2,0,0,0,0,45],
 "v5__suback_8hpp_source.html":[2,0,0,0,0,46],
 "v5__subscribe_8hpp_source.html":[2,0,0,0,0,47],
 "v5__unsuback_8hpp_source.html":[2,0,0,0,0,48],

@@ -8,7 +8,7 @@ var searchData=
   ['layer_20websocket_20on_20tls_5',['predefined underlying layer (Websocket on TLS)',['../group__predefined__layer__wss.html',1,'']]],
   ['layers_6',['predefined underlying layers',['../group__predefined__layer.html',1,'']]],
   ['layers_20and_20how_20to_20adapt_20your_20own_20layer_7',['predefined underlying layers and how to adapt your own layer',['../group__underlying__layer.html',1,'']]],
-  ['level_20mqtt_20client_8',['High level MQTT client',['../group__client.html',1,'']]],
-  ['level_20mqtt_20endpoint_20for_20client_20server_20broker_9',['Packet level MQTT endpoint for client/server(broker)',['../group__endpoint.html',1,'']]],
+  ['level_20mqtt_20client_8',['client (High level MQTT client)',['../group__client.html',1,'']]],
+  ['level_20mqtt_20endpoint_20for_20client_20server_20broker_9',['endpoint (Packet level MQTT endpoint for client/server,broker)',['../group__endpoint.html',1,'']]],
   ['logging_10',['logging',['../group__log.html',1,'']]]
 ];

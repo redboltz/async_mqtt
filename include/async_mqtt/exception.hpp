@@ -24,19 +24,19 @@ namespace async_mqtt {
 
 /**
  * @ingroup error
- * @brief type alias of boost::sytem.
+ * @brief sys is a namespace alias of [boost::sytem](https://www.boost.org/libs/system/doc/html/system.html).
  */
 namespace sys = boost::system;
 
 /**
  * @ingroup error
- * @brief type alias of boost::sytem::error_code.
+ * @brief error_code is a type alias of [boost::sytem::error_code](https://www.boost.org/libs/system/doc/html/system.html#ref_error_code).
  */
 using error_code = sys::error_code;
 
 /**
  * @ingroup error
- * @brief type alias of boost::sytem::errc.
+ * @brief errc is a namespace alias of [boost::sytem::errc](https://www.boost.org/libs/system/doc/html/system.html#ref_errc).
  */
 namespace errc = sys::errc;
 

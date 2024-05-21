@@ -29,7 +29,7 @@
  */
 
 /**
- * @defgroup endpoint Packet level MQTT endpoint for client/server(broker)
+ * @defgroup endpoint endpoint (Packet level MQTT endpoint for client/server,broker)
  * @ingroup connection
  */
 
@@ -65,31 +65,6 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
         closed
     };
 
-    static constexpr bool can_send_as_client(role r) {
-        return static_cast<int>(r) & static_cast<int>(role::client);
-    }
-
-    static constexpr bool can_send_as_server(role r) {
-        return static_cast<int>(r) & static_cast<int>(role::server);
-    }
-
-    static inline std::optional<topic_alias_type> get_topic_alias(properties const& props) {
-        std::optional<topic_alias_type> ta_opt;
-        for (auto const& prop : props) {
-            prop.visit(
-                overload {
-                    [&](property::topic_alias const& p) {
-                        ta_opt.emplace(p.val());
-                    },
-                    [](auto const&) {
-                    }
-                }
-            );
-            if (ta_opt) return ta_opt;
-        }
-        return ta_opt;
-    }
-
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
     using this_type_sp = std::shared_ptr<this_type>;
     using this_type_wp = std::weak_ptr<this_type>;
@@ -124,9 +99,12 @@ public:
      * @tparam Args Types for the next layer
      * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
      *              server can set undetermined
-     * @param  args args for the next layer. There are predefined next layer types:
-     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
-     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
+     * @param  args args for the next layer.
+     * - There are predefined next layer types:
+     *    - protocol::mqtt
+     *    - protocol::mqtts
+     *    - protocol::ws
+     *    - protocol::wss
      * @return shared_ptr of basic_endpoint.
      */
     template <typename... Args>
@@ -137,11 +115,10 @@ public:
         return make_shared_helper<this_type>::make_shared(ver, std::forward<Args>(args)...);
     }
 
-    ~basic_endpoint() {
-        ASYNC_MQTT_LOG("mqtt_impl", trace)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "destroy";
-    }
+    /**
+     * @brief destructor
+     */
+    ~basic_endpoint();
 
     basic_endpoint(this_type const&) = delete;
     basic_endpoint(this_type&&) = delete;
@@ -520,13 +497,12 @@ public:
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     ) const;
 
-    // sync APIs (Thread unsafe without strand)
+    // sync APIs
 
     /**
      * @brief acuire unique packet_id.
      * @return std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
      * if acquired return acquired packet id, otherwise std::nullopt
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
 
@@ -534,14 +510,12 @@ public:
      * @brief register packet_id.
      * @param packet_id packet_id to register
      * @return If true, success, otherwise the packet_id has already been used.
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
@@ -549,7 +523,6 @@ public:
      * @brief Get processed but not released QoS2 packet ids
      *        This function should be called after disconnection
      * @return set of packet_ids
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> get_qos2_publish_handled_pids() const;
 
@@ -557,7 +530,6 @@ public:
      * @brief Restore processed but not released QoS2 packet ids
      *        This function should be called before receive the first publish
      * @param pids packet ids
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     void restore_qos2_publish_handled_pids(std::set<typename basic_packet_id_type<PacketIdBytes>::type> pids);
 
@@ -565,7 +537,6 @@ public:
      * @brief restore packets
      *        the restored packets would automatically send when CONNACK packet is received
      * @param pvs packets to restore
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     void restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
@@ -578,14 +549,12 @@ public:
      *        - PUBLISH packet (QoS1) not received PUBREC packet
      *        - PUBREL  packet not received PUBCOMP packet
      * @return std::vector<basic_store_packet_variant<PacketIdBytes>>
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored_packets() const;
 
     /**
      * @brief get MQTT protocol version
      * @return MQTT protocol version
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     protocol_version get_protocol_version() const;
 
@@ -593,7 +562,6 @@ public:
      * @brief Get MQTT PUBLISH packet processing status
      * @param pid packet_id corresponding to the publish packet.
      * @return If the packet is processing, then true, otherwise false.
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     bool is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const;
 
@@ -602,7 +570,6 @@ public:
      *        If topic is empty, extract topic from topic alias, and remove topic alias
      *        Otherwise, remove topic alias if exists.
      * @param packet packet to regulate
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     void regulate_for_store(v5::basic_publish_packet<PacketIdBytes>& packet) const;
 
@@ -647,6 +614,10 @@ private: // compose operation impl
     basic_endpoint(
         basic_endpoint<Role, PacketIdBytes, Other>&& other
     );
+
+    static constexpr bool can_send_as_client(role r);
+    static constexpr bool can_send_as_server(role r);
+    static std::optional<topic_alias_type> get_topic_alias(properties const& props);
 
     struct acquire_unique_packet_id_op;
     struct acquire_unique_packet_id_wait_until_op;
