@@ -60,7 +60,8 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
                 stream,
                 cbs
             },
-            token
+            token,
+            stream
         );
     }
 
@@ -106,7 +107,8 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
             async_close_impl{
                 stream
             },
-            token
+            token,
+            stream
         );
     }
 

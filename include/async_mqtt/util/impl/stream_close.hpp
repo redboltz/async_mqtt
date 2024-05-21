@@ -115,7 +115,8 @@ stream<NextLayer>::async_close(
             stream_close_op{
                 *this
             },
-            token
+            token,
+            get_executor()
         );
 }
 

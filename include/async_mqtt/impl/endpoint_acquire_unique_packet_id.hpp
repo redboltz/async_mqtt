@@ -60,7 +60,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id(
             acquire_unique_packet_id_op{
                 *this
             },
-            token
+            token,
+            get_executor()
         );
 }
 

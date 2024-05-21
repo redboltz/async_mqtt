@@ -98,7 +98,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_close(CompletionToken&& to
             close_op{
                 *this
             },
-            token
+            token,
+            get_executor()
         );
 }
 

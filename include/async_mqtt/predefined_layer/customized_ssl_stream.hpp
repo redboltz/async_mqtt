@@ -43,7 +43,8 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
             async_close_impl{
                 stream
             },
-            token
+            token,
+            stream
         );
     }
 

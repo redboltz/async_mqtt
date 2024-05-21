@@ -218,7 +218,8 @@ stream<NextLayer>::async_read_packet(
         stream_read_packet_op{
             *this
         },
-        token
+        token,
+        get_executor()
     );
 }
 

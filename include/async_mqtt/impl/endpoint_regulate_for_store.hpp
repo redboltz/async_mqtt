@@ -61,7 +61,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
                 *this,
                 force_move(packet)
             },
-            token
+            token,
+            get_executor()
         );
 }
 

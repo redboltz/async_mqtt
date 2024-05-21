@@ -667,7 +667,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
                 force_move(packet),
                 from_queue
             },
-            token
+            token,
+            get_executor()
         );
 }
 
