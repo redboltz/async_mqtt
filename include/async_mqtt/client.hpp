@@ -19,7 +19,7 @@
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
 
 /**
- * @defgroup client High level MQTT client
+ * @defgroup client client (High level MQTT client)
  * @ingroup connection
  */
 
@@ -67,17 +67,29 @@ public:
      * @brief publish completion handler parameter class
      */
     struct pubres_t {
-        std::optional<puback_packet> puback_opt;   ///< puback_packet as the response when you send QoS1 publish
-        std::optional<pubrec_packet> pubrec_opt;   ///< pubrec_packet as the response when you send QoS2 publish
-        std::optional<pubcomp_packet> pubcomp_opt; ///< pubcomp_packet as the response when you send QoS2 publish
+        /// puback_packet as the response when you send QoS1 publish
+        /// - v3_1_1::basic_puback_packet
+        /// - v5::basic_puback_packet
+        std::optional<puback_packet> puback_opt;
+        /// pubrec_packet as the response when you send QoS2 publish
+        /// - v3_1_1::basic_pubrec_packet
+        /// - v5::basic_pubrec_packet
+        std::optional<pubrec_packet> pubrec_opt;
+        /// pubcomp_packet as the response when you send QoS2 publish
+        /// - v3_1_1::basic_pubcomp_packet
+        /// - v5::basic_pubcomp_packet
+        std::optional<pubcomp_packet> pubcomp_opt;
     };
 
     /**
      * @brief constructor
      * @tparam Args Types for the next layer
-     * @param  args args for the next layer. There are predefined next layer types:
-     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
-     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
+     * @param  args args for the next layer.
+     * - There are predefined next layer types:
+     *    - protocol::mqtt
+     *    - protocol::mqtts
+     *    - protocol::ws
+     *    - protocol::wss
      */
     template <typename... Args>
     explicit
@@ -98,11 +110,17 @@ public:
 
     /**
      * @brief send CONNECT packet and start packet receive loop
-     * @param args CONNECT packet of the Version followed by CompletionToken.
-     *             You can create CONNECT packet explicitly like std::vector::push_back(),
-     *             or implicitly like std::vector::emplace_back().
-     *             CompletionToken can be defaulted.
-     *             CompletionToken's parameters are error_code, std::optional<connack_packet>
+     * @param args
+     *  - the preceding arguments
+     *     - CONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v3_1_1::connect_packet
+     *        - v5::connect_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature:  void(@link error_code @endlink, std::optional<connack_packet>)
+     *           - v3_1_1::connack_packet
+     *           - v5::connack_packet
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <typename... Args>
@@ -110,11 +128,17 @@ public:
 
     /**
      * @brief send SUBSCRIBE packet
-     * @param args SUBSCRIBE packet of the Version followed by CompletionToken.
-     *             You can create SUBSCRIBE packet explicitly like std::vector::push_back(),
-     *             or implicitly like std::vector::emplace_back().
-     *             CompletionToken can be defaulted.
-     *             CompletionToken's parameters are error_code, std::optional<suback_packet>
+     * @param args
+     *  - the preceding arguments
+     *     - SUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v3_1_1::basic_subscribe_packet
+     *        - v5::basic_subscribe_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature: void(@link error_code @endlink, std::optional<suback_packet>)
+     *           - v3_1_1::basic_suback_packet
+     *           - v5::basic_suback_packet
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <typename... Args>
@@ -122,11 +146,17 @@ public:
 
     /**
      * @brief send UNSUBSCRIBE packet
-     * @param args UNSUBSCRIBE packet of the Version followed by CompletionToken.
-     *             You can create UNSUBSCRIBE packet explicitly like std::vector::push_back(),
-     *             or implicitly like std::vector::emplace_back().
-     *             CompletionToken can be defaulted.
-     *             CompletionToken's parameters are error_code, std::optional<unsuback_packet>
+     * @param args
+     *  - the preceding arguments
+     *     - UNSUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v3_1_1::basic_unsubscribe_packet
+     *        - v5::basic_unsubscribe_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature: void(@link error_code @endlink, std::optional<unsuback_packet>)
+     *           - v3_1_1::basic_unsuback_packet
+     *           - v5::basic_unsuback_packet
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <typename... Args>
@@ -134,14 +164,18 @@ public:
 
     /**
      * @brief send PUBLISH packet
-     * @param args PUBLISH packet of the Version followed by CompletionToken.
-     *             You can create PUBLISH packet explicitly like std::vector::push_back(),
-     *             or implicitly like std::vector::emplace_back().
-     *             CompletionToken can be defaulted.
-     *             CompletionToken's parameters are error_code, pubres_t
-     *             When sending QoS0 packet, all members of pubres_t is std::nullopt.
-     *             When sending QoS1 packet, only pubres_t::puback_opt is set.
-     *             When sending QoS1 packet, only pubres_t::pubrec_opt pubres_t::pubcomp are set.
+     * @param args
+     *  - the preceding arguments
+     *     - PUBLISH packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v3_1_1::basic_publish_packet
+     *        - v5::basic_publish_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature: void(@link error_code @endlink, @link pubres_t @endlink)
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     *        - When sending QoS0 packet, all members of pubres_t are std::nullopt.
+     *        - When sending QoS1 packet, only pubres_t::puback_opt is set.
+     *        - When sending QoS2 packet, only pubres_t::pubrec_opt and pubres_t::pubcomp are set.
      * @return deduced by token
      */
     template <typename... Args>
@@ -149,11 +183,15 @@ public:
 
     /**
      * @brief send DISCONNECT packet
-     * @param args DISCONNECT packet of the Version followed by CompletionToken.
-     *             You can create DISCONNECT packet explicitly like std::vector::push_back(),
-     *             or implicitly like std::vector::emplace_back().
-     *             CompletionToken can be defaulted.
-     *             CompletionToken's parameters is error_code.
+     * @param args
+     *  - the preceding arguments
+     *     - DISCONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v3_1_1::disconnect_packet
+     *        - v5::disconnect_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature: void(@link error_code @endlink)
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <typename... Args>
@@ -180,7 +218,15 @@ public:
     /**
      * @brief receive PUBLISH or DISCONNECT packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
-     * @param token the params are error_code, std::optional<publish_packet>, and std::optional<disconnect_packet>
+     * @param token the params are
+     *     - CompletionToken
+     *        - Signature: void(@link error_code @endlink, std::optional<publish_packet>, std::optional<disconnect_packet>)
+     *           - publish_packet
+     *              - v3_1_1::basic_publish_packet
+     *              - v5::basic_publish_packet
+     *           - disconnect_packet
+     *              - v3_1_1::disconnect_packet
+     *              - v5::disconnect_packet
      * @return deduced by token
      */
     template <
@@ -268,7 +314,10 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token the param is std::optional<packet_id_type>
+     * @param token
+     *  - CompletionToken
+     *     - Signature: void(std::optional<packet_id_type>)
+     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <
@@ -287,7 +336,10 @@ public:
     /**
      * @brief acuire unique packet_id.
      * If packet_id is fully acquired, then wait until released.
-     * @param token the param is packet_id_type
+     * @param token
+     *  - CompletionToken
+     *     - Signature: void(packet_id_type)
+     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <
@@ -306,7 +358,11 @@ public:
     /**
      * @brief register packet_id.
      * @param packet_id packet_id to register
-     * @param token     the param is bool. If true, success, otherwise the packet_id has already been used.
+     * @param token
+     *  - CompletionToken
+     *     - Signature: void(bool)
+     *        - If true, success, otherwise the packet_id has already been used.
+     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <
@@ -326,7 +382,10 @@ public:
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @param token     the param is void
+     * @param token
+     *  - CompletionToken
+     *     - Signature: void()
+     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
     template <
@@ -346,7 +405,6 @@ public:
     /**
      * @brief acuire unique packet_id.
      * @return std::optional<packet_id_type> if acquired return acquired packet id, otherwise std::nullopt
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     std::optional<packet_id_type> acquire_unique_packet_id();
 
@@ -354,14 +412,12 @@ public:
      * @brief register packet_id.
      * @param packet_id packet_id to register
      * @return If true, success, otherwise the packet_id has already been used.
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     bool register_packet_id(packet_id_type packet_id);
 
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @note This function is SYNC function that thread unsafe without strand.
      */
     void release_packet_id(packet_id_type packet_id);
 

@@ -1,8 +1,8 @@
 <map id="MQTT connection" name="MQTT connection">
-<area shape="rect" id="Node000002" href="$group__client.html" title=" " alt="" coords="204,5,374,33"/>
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,125,140,153"/>
-<area shape="rect" id="Node000003" href="$group__endpoint.html" title=" " alt="" coords="188,57,390,102"/>
-<area shape="rect" id="Node000005" href="$group__mqtt.html" title=" " alt="" coords="231,125,347,153"/>
-<area shape="rect" id="Node000006" href="$group__role.html" title=" " alt="" coords="204,177,374,222"/>
-<area shape="rect" id="Node000004" href="$group__underlying__layer.html" title=" " alt="" coords="198,246,380,307"/>
+<area shape="rect" id="Node000002" href="$group__client.html" title=" " alt="" coords="215,5,347,50"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,161,140,188"/>
+<area shape="rect" id="Node000003" href="$group__endpoint.html" title=" " alt="" coords="188,74,374,136"/>
+<area shape="rect" id="Node000005" href="$group__mqtt.html" title=" " alt="" coords="223,161,339,188"/>
+<area shape="rect" id="Node000006" href="$group__role.html" title=" " alt="" coords="196,212,366,257"/>
+<area shape="rect" id="Node000004" href="$group__underlying__layer.html" title=" " alt="" coords="190,281,372,343"/>
 </map>

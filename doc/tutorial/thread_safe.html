@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<title>Thread safety</title>
+<title>Thread Safety</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
  *
@@ -60,31 +60,11 @@ div#navigation table {
 </head>
 <body class="article">
 <div id="header">
-<h1>Thread safety</h1>
+<h1>Thread Safety</h1>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_single_threaded">Single threaded</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can call both async APIs and sync APIs without any special care required.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_multi_threded">Multi threded</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>All distinct objects are thread unsafe. To access shared <code>client</code> and/or <code>endpoint</code>, you can construct it with strand wrapped executor for the underlying layer&#8217;s argument. <code>client</code> and <code>endpoint</code> <code>async_*</code> member functions dispatch to the executor. As the result of the strand effect, your asynchronous process is serialized.</p>
-</div>
-<div class="paragraph">
-<p>The following synchronous member functions is directly accessed. So you need to introduce the locks or explicit dispatching to the executor.</p>
-</div>
-</div>
-</div>
-<h1 id="_thread_safety" class="sect0">Thread Safety</h1>
-<div class="sect1">
-<h2 id="_single_threaded_2">Single Threaded</h2>
+<h2 id="_single_threaded">Single Threaded</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You can call both asynchronous (async) and synchronous (sync) APIs without any special precautions.</p>

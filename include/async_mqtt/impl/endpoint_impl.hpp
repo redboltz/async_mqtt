@@ -27,6 +27,16 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::tim_cancelled {
 // member functions
 
 // public
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+basic_endpoint<Role, PacketIdBytes, NextLayer>::~basic_endpoint() {
+    ASYNC_MQTT_LOG("mqtt_impl", trace)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "destroy";
+}
+
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 std::set<typename basic_packet_id_type<PacketIdBytes>::type>
@@ -89,6 +99,42 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms_for
 }
 
 // private
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+constexpr bool
+basic_endpoint<Role, PacketIdBytes, NextLayer>::can_send_as_client(role r) {
+    return
+        static_cast<int>(r) &
+        static_cast<int>(role::client);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+constexpr bool
+basic_endpoint<Role, PacketIdBytes, NextLayer>::can_send_as_server(role r) {
+    return static_cast<int>(r) & static_cast<int>(role::server);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+std::optional<topic_alias_type>
+basic_endpoint<Role, PacketIdBytes, NextLayer>::get_topic_alias(properties const& props) {
+    std::optional<topic_alias_type> ta_opt;
+    for (auto const& prop : props) {
+        prop.visit(
+            overload {
+                [&](property::topic_alias const& p) {
+                    ta_opt.emplace(p.val());
+                },
+                [](auto const&) {
+                }
+            }
+        );
+        if (ta_opt) return ta_opt;
+        }
+    return ta_opt;
+}
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename... Args>

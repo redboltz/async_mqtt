@@ -96,7 +96,7 @@ $(function(){initNavTree('classasync__mqtt_1_1client.html',''); initResizable();
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1client-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::client&lt; Version, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__client.html">High level MQTT client</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::client&lt; Version, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__client.html">client (High level MQTT client)</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -259,8 +259,16 @@ template&lt;typename... Args&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>args for the next layer. There are predefined next layer types: <br  />
- <a class="el" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">protocol::mqtt</a>, <a class="el" href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601">protocol::mqtts</a>, <a class="el" href="group__predefined__layer__ws.html#gafa0029e1fe1da9ffc3e87e073cc1930c">protocol::ws</a>, and <a class="el" href="group__predefined__layer__wss.html#ga6ca99bfaf9ccf4acfac8209e5dd979e5">protocol::wss</a>. </td></tr>
+    <tr><td class="paramname">args</td><td>args for the next layer.<ul>
+<li>There are predefined next layer types:<ul>
+<li><a class="el" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983" title="Type alias of Boost.Asio TCP socket.">protocol::mqtt</a></li>
+<li><a class="el" href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601" title="Type alias of boost::asio::ssl::stream of mqtt.">protocol::mqtts</a></li>
+<li><a class="el" href="group__predefined__layer__ws.html#gafa0029e1fe1da9ffc3e87e073cc1930c" title="Type alias of boost::beast::websocket::stream of mqtt.">protocol::ws</a></li>
+<li><a class="el" href="group__predefined__layer__wss.html#ga6ca99bfaf9ccf4acfac8209e5dd979e5" title="Type alias of boost::beast::websocket::stream of mqtts async_underlying_handshake function can be cal...">protocol::wss</a> </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -324,7 +332,6 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 
 <p>acuire unique packet_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>std::optional&lt;packet_id_type&gt; if acquired return acquired packet id, otherwise std::nullopt </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -350,7 +357,14 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>acuire unique packet_id. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is std::optional&lt;packet_id_type&gt; </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(std::optional&lt;packet_id_type&gt;)</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -380,7 +394,14 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>acuire unique packet_id. If packet_id is fully acquired, then wait until released. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is packet_id_type </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(packet_id_type)</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -440,7 +461,25 @@ template&lt;typename... Args&gt; </div>
 <p>send DISCONNECT packet </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>DISCONNECT packet of the Version followed by CompletionToken. You can create DISCONNECT packet explicitly like std::vector::push_back(), or implicitly like std::vector::emplace_back(). CompletionToken can be defaulted. CompletionToken's parameters is error_code. </td></tr>
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>DISCONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v3.1.1)">v3_1_1::disconnect_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -470,7 +509,28 @@ template&lt;typename... Args&gt; </div>
 <p>send PUBLISH packet </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>PUBLISH packet of the Version followed by CompletionToken. You can create PUBLISH packet explicitly like std::vector::push_back(), or implicitly like std::vector::emplace_back(). CompletionToken can be defaulted. CompletionToken's parameters are error_code, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> is std::nullopt. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a" title="puback_packet as the response when you send QoS1 publish">pubres_t::puback_opt</a> is set. When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440" title="pubrec_packet as the response when you send QoS2 publish">pubres_t::pubrec_opt</a> pubres_t::pubcomp are set. </td></tr>
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>PUBLISH packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v3.1.1)">v3_1_1::basic_publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">v5::basic_publish_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>)</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported</li>
+<li>When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> are std::nullopt.</li>
+<li>When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a">pubres_t::puback_opt</a> is set.</li>
+<li>When sending QoS2 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440">pubres_t::pubrec_opt</a> and pubres_t::pubcomp are set. </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -500,7 +560,25 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the params are error_code, std::optional&lt;publish_packet&gt;, and std::optional&lt;disconnect_packet&gt; </td></tr>
+    <tr><td class="paramname">token</td><td>the params are<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
+<li>publish_packet<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v3.1.1)">v3_1_1::basic_publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">v5::basic_publish_packet</a></li>
+</ul>
+</li>
+<li>disconnect_packet<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v3.1.1)">v3_1_1::disconnect_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a> </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -535,7 +613,17 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
-    <tr><td class="paramname">token</td><td>the param is bool. If true, success, otherwise the packet_id has already been used. </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(bool)<ul>
+<li>If true, success, otherwise the packet_id has already been used.</li>
+</ul>
+</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -570,7 +658,14 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
-    <tr><td class="paramname">token</td><td>the param is void </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void()</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -600,7 +695,29 @@ template&lt;typename... Args&gt; </div>
 <p>send CONNECT packet and start packet receive loop </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>CONNECT packet of the Version followed by CompletionToken. You can create CONNECT packet explicitly like std::vector::push_back(), or implicitly like std::vector::emplace_back(). CompletionToken can be defaulted. CompletionToken's parameters are error_code, std::optional&lt;connack_packet&gt; </td></tr>
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>CONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connect__packet.html" title="MQTT CONNECT packet (v3.1.1)">v3_1_1::connect_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1connect__packet.html" title="MQTT CONNECT packet (v5)">v5::connect_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;connack_packet&gt;)<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connack__packet.html" title="MQTT CONNACK packet (v3.1.1)">v3_1_1::connack_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
+</ul>
+</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -630,7 +747,29 @@ template&lt;typename... Args&gt; </div>
 <p>send SUBSCRIBE packet </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>SUBSCRIBE packet of the Version followed by CompletionToken. You can create SUBSCRIBE packet explicitly like std::vector::push_back(), or implicitly like std::vector::emplace_back(). CompletionToken can be defaulted. CompletionToken's parameters are error_code, std::optional&lt;suback_packet&gt; </td></tr>
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>SUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v3.1.1)">v3_1_1::basic_subscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v5)">v5::basic_subscribe_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html" title="MQTT SUBACK packet (v3.1.1)">v3_1_1::basic_suback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html" title="MQTT SUBACK packet (v5)">v5::basic_suback_packet</a></li>
+</ul>
+</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -660,7 +799,29 @@ template&lt;typename... Args&gt; </div>
 <p>send UNSUBSCRIBE packet </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">args</td><td>UNSUBSCRIBE packet of the Version followed by CompletionToken. You can create UNSUBSCRIBE packet explicitly like std::vector::push_back(), or implicitly like std::vector::emplace_back(). CompletionToken can be defaulted. CompletionToken's parameters are error_code, std::optional&lt;unsuback_packet&gt; </td></tr>
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>UNSUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v3.1.1)">v3_1_1::basic_unsubscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v5)">v5::basic_unsubscribe_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html" title="MQTT UNSUBACK packet (v3.1.1)">v3_1_1::basic_unsuback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html" title="MQTT UNSUBACK packet (v5)">v5::basic_unsuback_packet</a></li>
+</ul>
+</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -803,7 +964,6 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If true, success, otherwise the packet_id has already been used. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -831,7 +991,6 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>

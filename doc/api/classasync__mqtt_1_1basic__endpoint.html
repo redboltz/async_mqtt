@@ -99,7 +99,7 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__endpoint.html',''); initRes
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1basic__endpoint-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__endpoint.html">Packet level MQTT endpoint for client/server(broker)</a></div></div></div>
+  <div class="headertitle"><div class="title">async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__endpoint.html">endpoint (Packet level MQTT endpoint for client/server,broker)</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -131,6 +131,10 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>packet_variant_type<
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a1e1d46688d3a6ed1d20e3669cb5aefc2" id="r_a1e1d46688d3a6ed1d20e3669cb5aefc2"><td class="memItemLeft" align="right" valign="top"><a id="a1e1d46688d3a6ed1d20e3669cb5aefc2" name="a1e1d46688d3a6ed1d20e3669cb5aefc2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>~basic_endpoint</b> ()</td></tr>
+<tr class="memdesc:a1e1d46688d3a6ed1d20e3669cb5aefc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
+<tr class="separator:a1e1d46688d3a6ed1d20e3669cb5aefc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81789e00806d27efd54003149dd5c4f1" id="r_a81789e00806d27efd54003149dd5c4f1"><td class="memItemLeft" align="right" valign="top">as::any_io_executor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81789e00806d27efd54003149dd5c4f1">get_executor</a> () const</td></tr>
 <tr class="memdesc:a81789e00806d27efd54003149dd5c4f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor getter  <br /></td></tr>
 <tr class="separator:a81789e00806d27efd54003149dd5c4f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -307,7 +311,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 
 <p>acuire unique packet_id. </p>
 <dl class="section return"><dt>Returns</dt><dd>std::optional&lt;typename basic_packet_id_type&lt;PacketIdBytes&gt;::type&gt; if acquired return acquired packet id, otherwise std::nullopt </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -709,7 +712,7 @@ template&lt;typename Packet , typename CompletionToken  = as::default_completion
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet</td><td>packet to send </td></tr>
-    <tr><td class="paramname">token</td><td>the param is <a class="el" href="structasync__mqtt_1_1system__error.html" title="type alias of boost::sytem::errc.">system_error</a> </td></tr>
+    <tr><td class="paramname">token</td><td>the param is <a class="el" href="structasync__mqtt_1_1system__error.html" title="errc is a namespace alias of boost::sytem::errc.">system_error</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -758,8 +761,16 @@ template&lt;typename... Args&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ver</td><td>MQTT protocol version client can set v5 or v3_1_1, in addition server can set undetermined </td></tr>
-    <tr><td class="paramname">args</td><td>args for the next layer. There are predefined next layer types: <br  />
- <a class="el" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983">protocol::mqtt</a>, <a class="el" href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601">protocol::mqtts</a>, <a class="el" href="group__predefined__layer__ws.html#gafa0029e1fe1da9ffc3e87e073cc1930c">protocol::ws</a>, and <a class="el" href="group__predefined__layer__wss.html#ga6ca99bfaf9ccf4acfac8209e5dd979e5">protocol::wss</a>. </td></tr>
+    <tr><td class="paramname">args</td><td>args for the next layer.<ul>
+<li>There are predefined next layer types:<ul>
+<li><a class="el" href="group__predefined__layer__mqtt.html#gaf0fedc2324340e8a97a85d091e912983" title="Type alias of Boost.Asio TCP socket.">protocol::mqtt</a></li>
+<li><a class="el" href="group__predefined__layer__mqtts.html#ga2c89e72af39c22d974e557ad822a5601" title="Type alias of boost::asio::ssl::stream of mqtt.">protocol::mqtts</a></li>
+<li><a class="el" href="group__predefined__layer__ws.html#gafa0029e1fe1da9ffc3e87e073cc1930c" title="Type alias of boost::beast::websocket::stream of mqtt.">protocol::ws</a></li>
+<li><a class="el" href="group__predefined__layer__wss.html#ga6ca99bfaf9ccf4acfac8209e5dd979e5" title="Type alias of boost::beast::websocket::stream of mqtts async_underlying_handshake function can be cal...">protocol::wss</a> </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -816,7 +827,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 
 <p>get MQTT protocol version </p>
 <dl class="section return"><dt>Returns</dt><dd>MQTT protocol version </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -839,7 +849,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 
 <p>Get processed but not released QoS2 packet ids This function should be called after disconnection. </p>
 <dl class="section return"><dt>Returns</dt><dd>set of packet_ids </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -865,7 +874,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 <li>PUBLISH packet (QoS1) not received PUBACK packet</li>
 <li>PUBLISH packet (QoS1) not received PUBREC packet</li>
 <li>PUBREL packet not received PUBCOMP packet <dl class="section return"><dt>Returns</dt><dd>std::vector&lt;basic_store_packet_variant&lt;PacketIdBytes&gt;&gt; </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 </li>
 </ul>
 
@@ -896,7 +904,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If the packet is processing, then true, otherwise false. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1045,7 +1052,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If true, success, otherwise the packet_id has already been used. </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1073,7 +1079,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1101,7 +1106,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1129,7 +1133,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>
@@ -1157,7 +1160,6 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>This function is SYNC function that thread unsafe without strand. </dd></dl>
 
 </div>
 </div>

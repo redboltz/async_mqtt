@@ -4,7 +4,7 @@ var searchData=
   ['send_1',['send',['../group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa2541d938b0a58946090d7abdde0d3890',1,'async_mqtt::sub']]],
   ['send_5fonly_5fnew_5fsubscription_2',['send_only_new_subscription',['../group__subscribe__options.html#gga9ba40e799df5fa42cc6ef4a283679acaa192b8c04969ab388ce5264194247e9b0',1,'async_mqtt::sub']]],
   ['server_3',['server',['../group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aacf1e8c14e54505f60aa10ceb8d5d8ab3',1,'async_mqtt']]],
-  ['server_20broker_4',['Packet level MQTT endpoint for client/server(broker)',['../group__endpoint.html',1,'']]],
+  ['server_20broker_4',['endpoint (Packet level MQTT endpoint for client/server,broker)',['../group__endpoint.html',1,'']]],
   ['server_20or_20both_5',['MQTT connection role (client, server or both)',['../group__role.html',1,'']]],
   ['server_5fbusy_6',['server_busy',['../group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a28305906bb08a2df4e3ef2b0d522dedf',1,'server_busyasync_mqtt'],['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a28305906bb08a2df4e3ef2b0d522dedf',1,'server_busyasync_mqtt']]],
   ['server_5fkeep_5falive_7',['server_keep_alive',['../classasync__mqtt_1_1property_1_1server__keep__alive.html',1,'async_mqtt::property::server_keep_alive'],['../classasync__mqtt_1_1property_1_1server__keep__alive.html#a65c53639d080b6e6edc8c279fd065c13',1,'async_mqtt::property::server_keep_alive::server_keep_alive()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89ab679a6a76c34d79fbe6fa98606eef93a',1,'server_keep_aliveasync_mqtt::property']]],
