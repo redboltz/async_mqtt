@@ -270,16 +270,6 @@ private:
                 exit(-1);
             }
 
-            yield as::dispatch(
-                as::bind_executor(
-                    pci->c->get_executor(),
-                    as::append(
-                        *this,
-                        pci
-                    )
-                )
-            );
-
             // Handshake underlying layer
             yield am::async_underlying_handshake(
                 pci->c->next_layer(),
@@ -312,16 +302,6 @@ private:
                     )
                 );
             }
-
-            yield as::dispatch(
-                as::bind_executor(
-                    pci->c->get_executor(),
-                    as::append(
-                        *this,
-                        pci
-                    )
-                )
-            );
 
             // MQTT connect send
             yield {
@@ -380,16 +360,6 @@ private:
                 exit(-1);
             }
 
-            yield as::dispatch(
-                as::bind_executor(
-                    pci->c->get_executor(),
-                    as::append(
-                        *this,
-                        pci
-                    )
-                )
-            );
-
             // MQTT connack recv
             yield pci->c->async_recv(
                 as::append(
@@ -432,7 +402,9 @@ private:
                 bc_.ph.store(phase::sub_delay);
                 bc_.tp_sub_delay = std::chrono::steady_clock::now();
                 bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.sub_delay_ms));
-                yield bc_.tim_delay.async_wait(*this);
+                yield bc_.tim_delay.async_wait(
+                    *this
+                );
                 if (*ec) {
                     locked_cout() << "sub delay timer error:" << ec->message() << std::endl;
                     exit(-1);
@@ -458,16 +430,6 @@ private:
                     locked_cout() << "sub interval timer error:" << ec->message() << std::endl;
                     exit(-1);
                 }
-
-                yield as::dispatch(
-                    as::bind_executor(
-                        pci->c->get_executor(),
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    )
-                );
 
                 yield pci->c->async_acquire_unique_packet_id(
                     as::append(
@@ -517,16 +479,6 @@ private:
                     locked_cout() << "subscribe send error:" << se->what() << std::endl;
                     exit(-1);
                 }
-
-                yield as::dispatch(
-                    as::bind_executor(
-                        pci->c->get_executor(),
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    )
-                );
 
                 // MQTT suback recv
                 yield pci->c->async_recv(
