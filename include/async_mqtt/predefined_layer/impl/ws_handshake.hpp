@@ -29,19 +29,31 @@ struct ws_handshake_op {
     std::string host;
     std::string_view port;
     std::string path;
-    enum {under, ws} state = under;
+    enum {dispatch, under, handshake, complete} state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        auto& a_layer{layer};
-        async_underlying_handshake(
-            a_layer.next_layer(),
-            host,
-            port,
-            force_move(self)
-        );
+        if (state == dispatch) {
+            state = under;
+            auto& a_layer{layer};
+            as::dispatch(
+                a_layer.get_executor(),
+                force_move(self)
+            );
+        }
+        else {
+            BOOST_ASSERT(state == under);
+            state = handshake;
+            auto& a_layer{layer};
+            async_underlying_handshake(
+                a_layer.next_layer(),
+                host,
+                port,
+                force_move(self)
+            );
+        }
     }
 
     template <typename Self>
@@ -49,8 +61,8 @@ struct ws_handshake_op {
         Self& self,
         error_code ec
     ) {
-        if (state == under) {
-            state = ws;
+        if (state == handshake) {
+            state = complete;
             if (ec) {
                 self.complete(ec);
                 return;
@@ -65,7 +77,7 @@ struct ws_handshake_op {
             );
         }
         else {
-            BOOST_ASSERT(state == ws);
+            BOOST_ASSERT(state == complete);
             self.complete(ec);
         }
     }

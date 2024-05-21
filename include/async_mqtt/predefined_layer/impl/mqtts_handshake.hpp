@@ -26,19 +26,31 @@ struct mqtts_handshake_op {
     as::ssl::stream<NextLayer>& layer;
     std::string_view host;
     std::string_view port;
-    enum {under, tls} state = under;
+    enum { dispatch, under, handshake, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        auto& a_layer{layer};
-        async_underlying_handshake(
-            a_layer.next_layer(),
-            host,
-            port,
-            force_move(self)
-        );
+        if (state == dispatch) {
+            state = under;
+            auto& a_layer{layer};
+            as::dispatch(
+                a_layer.get_executor(),
+                force_move(self)
+            );
+        }
+        else {
+            BOOST_ASSERT(state == under);
+            state = handshake;
+            auto& a_layer{layer};
+            async_underlying_handshake(
+                a_layer.next_layer(),
+                host,
+                port,
+                force_move(self)
+            );
+        }
     }
 
     template <typename Self>
@@ -46,8 +58,8 @@ struct mqtts_handshake_op {
         Self& self,
         error_code ec
     ) {
-        if (state == under) {
-            state = tls;
+        if (state == handshake) {
+            state = complete;
             if (ec) {
                 self.complete(ec);
                 return;
@@ -59,7 +71,7 @@ struct mqtts_handshake_op {
             );
         }
         else {
-            BOOST_ASSERT(state == tls);
+            BOOST_ASSERT(state == complete);
             self.complete(ec);
         }
     }
