@@ -62,7 +62,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
                 *this,
                 packet_id
             },
-            token
+            token,
+            get_executor()
         );
 }
 

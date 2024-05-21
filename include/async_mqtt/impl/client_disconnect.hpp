@@ -69,7 +69,8 @@ client<Version, NextLayer>::async_disconnect_impl(
                 *this,
                 force_move(packet)
             },
-            token
+            token,
+            get_executor()
         );
 }
 

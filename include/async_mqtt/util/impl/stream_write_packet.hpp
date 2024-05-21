@@ -199,7 +199,8 @@ stream<NextLayer>::async_write_packet(
                 *this,
                 std::make_shared<Packet>(force_move(packet))
             },
-            token
+            token,
+            get_executor()
         );
 }
 } // namespace async_mqtt

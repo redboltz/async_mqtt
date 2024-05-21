@@ -52,7 +52,8 @@ struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
                 }
                 self.complete(ec);
             },
-            token
+            token,
+            stream
         );
     }
 };

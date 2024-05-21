@@ -59,7 +59,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
             get_stored_packets_op{
                 *this
             },
-            token
+            token,
+            get_executor()
         );
 }
 

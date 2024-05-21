@@ -112,7 +112,8 @@ client<Version, NextLayer>::async_publish_impl(
                 *this,
                 force_move(packet)
             },
-            token
+            token,
+            get_executor()
         );
 }
 
