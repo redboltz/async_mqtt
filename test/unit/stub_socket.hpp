@@ -99,7 +99,8 @@ struct basic_stub_socket {
                 *this,
                 buffers
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -144,7 +145,8 @@ struct basic_stub_socket {
                 *this,
                 mb
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -273,7 +275,8 @@ struct layer_customize<stub_socket> {
                 stream,
                 mbs
             },
-            token
+            token,
+            stream
         );
     }
 
@@ -333,7 +336,8 @@ struct layer_customize<stub_socket> {
                 }
                 self.complete(ec);
             },
-            token
+            token,
+            stream
         );
     }
 };
@@ -358,7 +362,8 @@ struct layer_customize<basic_stub_socket<4>> {
                 stream,
                 mbs
             },
-            token
+            token,
+            stream
         );
     }
 
@@ -418,7 +423,8 @@ struct layer_customize<basic_stub_socket<4>> {
                 }
                 self.complete(ec);
             },
-            token
+            token,
+            stream
         );
     }
 };

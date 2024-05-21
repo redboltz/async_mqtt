@@ -49,7 +49,8 @@ struct cpp20coro_basic_stub_socket {
                 *this,
                 force_move(pv)
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -93,7 +94,8 @@ struct cpp20coro_basic_stub_socket {
             wait_response_impl{
                 *this
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -147,7 +149,8 @@ struct cpp20coro_basic_stub_socket {
                 *this,
                 buffers
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -196,7 +199,8 @@ struct cpp20coro_basic_stub_socket {
                 *this,
                 mb
             },
-            token
+            token,
+            get_executor()
         );
     }
 
@@ -295,7 +299,8 @@ struct layer_customize<cpp20coro_stub_socket> {
                 stream,
                 mbs
             },
-            token
+            token,
+            stream
         );
     }
 
@@ -356,7 +361,8 @@ struct layer_customize<cpp20coro_stub_socket> {
                 }
                 self.complete(ec);
             },
-            token
+            token,
+            stream
         );
     }
 };
@@ -381,7 +387,8 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
                 stream,
                 mbs
             },
-            token
+            token,
+            stream
         );
     }
 
@@ -442,7 +449,8 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
                 }
                 self.complete(ec);
             },
-            token
+            token,
+            stream
         );
     }
 };
