@@ -29,20 +29,33 @@ struct mqtt_handshake_op {
     as::basic_stream_socket<Socket, Executor>& layer;
     std::string_view host;
     std::string_view port;
+    enum { dispatch, resolve, connect, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        auto res = std::make_shared<as::ip::tcp::resolver>(layer.get_executor());
-        res->async_resolve(
-            host,
-            port,
-            as::consign(
-                force_move(self),
-                res
-            )
-        );
+        if (state == dispatch) {
+            state = resolve;
+            auto& a_layer{layer};
+            as::dispatch(
+                a_layer.get_executor(),
+                force_move(self)
+            );
+        }
+        else {
+            BOOST_ASSERT(state == resolve);
+            state = connect;
+            auto res = std::make_shared<as::ip::tcp::resolver>(layer.get_executor());
+            res->async_resolve(
+                host,
+                port,
+                as::consign(
+                    force_move(self),
+                    res
+                )
+            );
+        }
     }
 
     struct default_connect_condition {
@@ -58,6 +71,8 @@ struct mqtt_handshake_op {
         error_code ec,
         as::ip::tcp::resolver::results_type eps
     ) {
+        BOOST_ASSERT(state == connect);
+        state = complete;
         if (ec) {
             self.complete(ec);
             return;
@@ -77,6 +92,7 @@ struct mqtt_handshake_op {
         error_code ec,
         as::ip::tcp::endpoint /*unused*/
     ) {
+        BOOST_ASSERT(state == complete);
         self.complete(ec);
     }
 };
