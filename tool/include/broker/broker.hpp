@@ -28,6 +28,8 @@ namespace async_mqtt {
 template <typename Epsp>
 class broker {
     using epsp_type = epsp_wrap<Epsp>;
+    using this_type = broker<Epsp>;
+
 public:
     broker(as::io_context& timer_ioc)
         :timer_ioc_{timer_ioc},
@@ -339,8 +341,13 @@ private:
                 false, // session present
                 false, // authenticated
                 force_move(connack_props),
-                [epsp, version](system_error) {
-                    disconnect_and_close(epsp, version, disconnect_reason_code::not_authorized, []{});
+                [epsp, version](system_error) mutable {
+                    disconnect_and_close(
+                        epsp,
+                        version,
+                        disconnect_reason_code::not_authorized,
+                        as::detached
+                    );
                 }
             );
             return;
@@ -708,11 +715,14 @@ private:
                                         << ec.what();
                                 }
                                 epsp.async_close(
-                                    [epsp] {
-                                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                            << "closed";
-                                    }
+                                    as::bind_executor(
+                                        epsp.get_executor(),
+                                        [epsp] {
+                                            ASYNC_MQTT_LOG("mqtt_broker", info)
+                                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                                << "closed";
+                                        }
+                                    )
                                 );
                             }
                         );
@@ -747,6 +757,77 @@ private:
         return true;
     }
 
+    struct send_connack_op {
+        this_type& brk;
+        epsp_type epsp;
+        bool session_present;
+        bool authenticated;
+        properties props;
+
+        template <typename Self>
+        void operator()(Self& self) {
+            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                << "send_connack";
+            // Reply to the connect message.
+            switch (epsp.get_protocol_version()) {
+            case protocol_version::v3_1_1:
+                if (brk.connack_) {
+                    epsp.async_send(
+                        v3_1_1::connack_packet{
+                            session_present,
+                            authenticated ? connect_return_code::accepted
+                                          : connect_return_code::not_authorized,
+                        },
+                        force_move(self)
+                    );
+                }
+                break;
+            case protocol_version::v5:
+                // connack_props_ member varible is for testing
+                if (brk.connack_props_.empty()) {
+                    // props local variable is is for real case
+                    props.emplace_back(property::topic_alias_maximum{topic_alias_max});
+                    props.emplace_back(property::receive_maximum{receive_maximum_max});
+                    if (brk.connack_) {
+                        epsp.async_send(
+                            v5::connack_packet{
+                                session_present,
+                                authenticated ? connect_reason_code::success
+                                              : connect_reason_code::not_authorized,
+                                force_move(props)
+                            },
+                            force_move(self)
+                        );
+                    }
+                }
+                else {
+                    // use connack_props_ for testing
+                    if (brk.connack_) {
+                        epsp.async_send(
+                            v5::connack_packet{
+                                session_present,
+                                authenticated ? connect_reason_code::success
+                                              : connect_reason_code::not_authorized,
+                                brk.connack_props_
+                            },
+                            force_move(self)
+                        );
+                    }
+                }
+                break;
+            default:
+                BOOST_ASSERT(false);
+                break;
+            }
+        }
+
+        template <typename Self>
+        void operator()(Self& self, system_error se) {
+            self.complete(se);
+        }
+    };
+
     template <typename CompletionToken>
     auto send_connack(
         epsp_type& epsp,
@@ -755,81 +836,20 @@ private:
         properties props,
         CompletionToken&& token
     ) {
-        auto init =
-            [this]
-            (
-                auto completion_handler,
-                epsp_type epsp,
-                bool session_present,
-                bool authenticated,
-                properties props
-            ) {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "send_connack";
-                // Reply to the connect message.
-                switch (epsp.get_protocol_version()) {
-                case protocol_version::v3_1_1:
-                    if (connack_) {
-                        epsp.async_send(
-                            v3_1_1::connack_packet{
-                                session_present,
-                                authenticated ? connect_return_code::accepted
-                                              : connect_return_code::not_authorized,
-                            },
-                            force_move(completion_handler)
-                        );
-                    }
-                    break;
-                case protocol_version::v5:
-                    // connack_props_ member varible is for testing
-                    if (connack_props_.empty()) {
-                        // props local variable is is for real case
-                        props.emplace_back(property::topic_alias_maximum{topic_alias_max});
-                        props.emplace_back(property::receive_maximum{receive_maximum_max});
-                        if (connack_) {
-                            epsp.async_send(
-                                v5::connack_packet{
-                                    session_present,
-                                    authenticated ? connect_reason_code::success
-                                                  : connect_reason_code::not_authorized,
-                                    force_move(props)
-                                },
-                                force_move(completion_handler)
-                            );
-                        }
-                    }
-                    else {
-                        // use connack_props_ for testing
-                        if (connack_) {
-                            epsp.async_send(
-                                v5::connack_packet{
-                                    session_present,
-                                    authenticated ? connect_reason_code::success
-                                                  : connect_reason_code::not_authorized,
-                                    connack_props_
-                                },
-                                force_move(completion_handler)
-                            );
-                        }
-                    }
-                    break;
-                default:
-                    BOOST_ASSERT(false);
-                    break;
-                }
-            };
-
-        return as::async_initiate<
+        auto exe = epsp.get_executor();
+        return as::async_compose<
             CompletionToken,
             void(system_error const&)
         >(
-            init,
+            send_connack_op{
+                *this,
+                force_move(epsp),
+                session_present,
+                authenticated,
+                force_move(props)
+            },
             token,
-            force_move(epsp),
-            session_present,
-            authenticated,
-            force_move(props)
+            exe
         );
     }
 
@@ -873,7 +893,7 @@ private:
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
+                                    << ec.what();
                                 }
                             }
                         );
@@ -1863,6 +1883,155 @@ private:
         );
     }
 
+    struct close_proc_no_lock_op {
+        close_proc_no_lock_op(
+            this_type& brk,
+            epsp_type epsp,
+            bool send_will,
+            std::optional<disconnect_reason_code> rc_opt
+        ) :
+            brk{brk},
+            epsp{force_move(epsp)},
+            send_will{send_will},
+            rc_opt{rc_opt}
+        {}
+
+        this_type& brk;
+        epsp_type epsp;
+        bool send_will;
+        std::optional<disconnect_reason_code> rc_opt;
+        enum {close, complete} state = close;
+
+        template <typename Self>
+        void operator()(Self& self) {
+            auto do_send_will =
+                [&](session_state<epsp_type>& ss) {
+                    if (send_will) {
+                        ss.send_will();
+                    }
+                    else {
+                        ss.clear_will();
+                    }
+                };
+            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                << "close_proc_no_lock";
+
+            auto& idx = brk.sessions_.template get<tag_con>();
+            auto it = idx.find(epsp);
+
+            // act_sess_it == act_sess_idx.end() could happen if broker accepts
+            // the session from client but the client closes the session  before sending
+            // MQTT `CONNECT` message.
+            // In this case, do nothing is correct behavior.
+            if (it == idx.end()) {
+                self.complete(false);
+                return;
+            }
+
+
+            if ((*it)->remain_after_close()) {
+                idx.modify(
+                    it,
+                    [&](std::shared_ptr<session_state<epsp_type>>& sssp) {
+                        do_send_will(*sssp);
+                        if (rc_opt) {
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                << "disconnect_and_close() cid:" << sssp->client_id();
+                            auto a_epsp{epsp};
+                            disconnect_and_close(
+                                a_epsp,
+                                (*it)->get_protocol_version(),
+                                *rc_opt,
+                                as::append(
+                                    force_move(self),
+                                    sssp
+                                )
+                            );
+                        }
+                        else {
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                                << "close cid:" << sssp->client_id();
+                            auto a_epsp{epsp};
+                            a_epsp.async_close(
+                                as::append(
+                                    force_move(self),
+                                    sssp
+                                )
+                            );
+                        }
+                    }
+                );
+            }
+            else {
+                auto sssp{force_move(idx.extract(it).value())};
+                do_send_will(*sssp);
+                if (rc_opt) {
+                    ASYNC_MQTT_LOG("mqtt_broker", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << "disconnect_and_close() cid:" << sssp->client_id();
+                    auto a_epsp{epsp};
+                    disconnect_and_close(
+                        a_epsp,
+                        sssp->get_protocol_version(),
+                        *rc_opt,
+                        as::consign(
+                            as::append(
+                                force_move(self),
+                                nullptr
+                            ),
+                            sssp
+                        )
+                    );
+                }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_broker", trace)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << "close cid:" << sssp->client_id();
+                    auto a_epsp{epsp};
+                    a_epsp.async_close(
+                        as::consign(
+                            as::append(
+                                force_move(self),
+                                nullptr
+                            ),
+                            sssp
+                        )
+                    );
+                }
+            }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            std::shared_ptr<session_state<epsp_type>> sssp
+        ) {
+            ASYNC_MQTT_LOG("mqtt_broker", info)
+                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                << "disconnect(optional)_and_closed";
+            if (sssp) {
+                // sessions_ index is never changed because owner_less
+                // remains original order even if shared_count would be zero
+                sssp->become_offline(
+                    epsp,
+                    [&brk = this->brk]
+                    (std::shared_ptr<as::steady_timer> const& sp_tim) {
+                        // lock for expire (async)
+                        std::lock_guard<mutex> g(brk.mtx_sessions_);
+                        brk.sessions_.template get<tag_tim>().erase(sp_tim);
+                    }
+                );
+                self.complete(true);
+            }
+            else {
+                self.complete(false);
+            }
+        }
+    };
+
     /**
      * @brief close_proc_no_lock - clean up a connection that has been closed.
      *
@@ -1878,147 +2047,19 @@ private:
         std::optional<disconnect_reason_code> rc_opt,
         CompletionToken&& token) {
 
-        auto init =
-            [this]
-            (
-                auto completion_handler,
-                epsp_type epsp,
-                bool send_will,
-                std::optional<disconnect_reason_code> rc_opt
-            ) {
-                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                    << "close_proc_no_lock";
-
-                auto& idx = sessions_.template get<tag_con>();
-                auto it = idx.find(epsp);
-
-                // act_sess_it == act_sess_idx.end() could happen if broker accepts
-                // the session from client but the client closes the session  before sending
-                // MQTT `CONNECT` message.
-                // In this case, do nothing is correct behavior.
-                if (it == idx.end()) {
-                    force_move(completion_handler)(false);
-                    return;
-                }
-
-                auto do_send_will =
-                    [&](session_state<epsp_type>& ss) {
-                        if (send_will) {
-                            ss.send_will();
-                        }
-                        else {
-                            ss.clear_will();
-                        }
-                    };
-
-                if ((*it)->remain_after_close()) {
-                    idx.modify(
-                        it,
-                        [&](std::shared_ptr<session_state<epsp_type>>& sssp) {
-                            do_send_will(*sssp);
-                            if (rc_opt) {
-                                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << "disconnect_and_close() cid:" << sssp->client_id();
-                                disconnect_and_close(
-                                    epsp,
-                                    (*it)->get_protocol_version(),
-                                    *rc_opt,
-                                    [this, sssp, epsp, completion_handler = force_move(completion_handler)]
-                                    () mutable {
-                                        // become_offline updates index
-                                        sssp->become_offline(
-                                            epsp,
-                                            [this]
-                                            (std::shared_ptr<as::steady_timer> const& sp_tim) {
-                                                // lock for expire (async)
-                                                std::lock_guard<mutex> g(mtx_sessions_);
-                                                sessions_.template get<tag_tim>().erase(sp_tim);
-                                            },
-                                            [completion_handler = force_move(completion_handler)] () mutable {
-                                                force_move(completion_handler)(true);
-                                            }
-                                        );
-                                    }
-                                );
-                            }
-                            else {
-                                ASYNC_MQTT_LOG("mqtt_broker", trace)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << "close cid:" << sssp->client_id();
-                                epsp.async_close(
-                                    [this, epsp, sssp, completion_handler = force_move(completion_handler)]
-                                    () mutable {
-                                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                            << "closed";
-                                        // become_offline updates index
-                                        sssp->become_offline(
-                                            epsp,
-                                            [this]
-                                            (std::shared_ptr<as::steady_timer> const& sp_tim) {
-                                                // lock for expire (async)
-                                                std::lock_guard<mutex> g(mtx_sessions_);
-                                                sessions_.template get<tag_tim>().erase(sp_tim);
-                                            },
-                                            [completion_handler = force_move(completion_handler)] () mutable {
-                                                force_move(completion_handler)(true);
-                                            }
-                                        );
-                                    }
-                                );
-                            }
-                        },
-                        [](auto&) { BOOST_ASSERT(false); }
-                    );
-                }
-                else {
-                    auto sssp{force_move(idx.extract(it).value())};
-                    do_send_will(*sssp);
-                    if (rc_opt) {
-                        ASYNC_MQTT_LOG("mqtt_broker", trace)
-                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "disconnect_and_close() cid:" << sssp->client_id();
-                        disconnect_and_close(
-                            epsp,
-                            sssp->get_protocol_version(),
-                            *rc_opt,
-                            [sssp, epsp, completion_handler = force_move(completion_handler)]
-                            () mutable {
-                                ASYNC_MQTT_LOG("mqtt_broker", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << "disconnect_and_closed";
-                                force_move(completion_handler)(false);
-                            }
-                        );
-                    }
-                    else {
-                        ASYNC_MQTT_LOG("mqtt_broker", trace)
-                            << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << "close cid:" << sssp->client_id();
-                        epsp.async_close(
-                            [sssp, epsp, completion_handler = force_move(completion_handler)]
-                            () mutable {
-                                ASYNC_MQTT_LOG("mqtt_broker", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << "closed";
-                                force_move(completion_handler)(false);
-                            }
-                        );
-                    }
-                }
-            };
-
-        return as::async_initiate<
+        auto exe = epsp.get_executor();
+        return as::async_compose<
             CompletionToken,
             void(bool)
         >(
-            init,
+            close_proc_no_lock_op{
+                *this,
+                force_move(epsp),
+                send_will,
+                force_move(rc_opt)
+            },
             token,
-            force_move(epsp),
-            send_will,
-            force_move(rc_opt)
+            exe
         );
     }
 
@@ -2057,6 +2098,66 @@ private:
         if (h_auth_props_) h_auth_props_(force_move(props));
     }
 
+    struct disconnect_and_close_op {
+        disconnect_and_close_op(
+            epsp_type epsp,
+            protocol_version version,
+            disconnect_reason_code rc
+        ):
+            epsp{force_move(epsp)},
+            version{version},
+            rc{rc},
+            state{
+                [&] {
+                    if (version == protocol_version::v3_1_1) {
+                        return close;
+                    }
+                    else {
+                        return disconnect;
+                    }
+                }()
+            }
+        {
+        }
+
+        epsp_type epsp;
+        protocol_version version;
+        disconnect_reason_code rc;
+        enum {disconnect, close, complete} state;
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            system_error = {}) {
+            switch (state) {
+            case disconnect: {
+                state = close;
+                auto a_epsp{epsp};
+                a_epsp.async_send(
+                    v5::disconnect_packet{
+                        rc,
+                        properties{}
+                    },
+                    force_move(self)
+                );
+            } break;
+            case close: {
+                state = complete;
+                auto a_epsp{epsp};
+                a_epsp.async_close(
+                    force_move(self)
+                );
+            } break;
+            case complete:
+                ASYNC_MQTT_LOG("mqtt_broker", info)
+                    << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                    << "closed";
+                self.complete();
+                break;
+            }
+        }
+    };
+
     template <typename CompletionToken>
     static auto disconnect_and_close(
         epsp_type epsp,
@@ -2064,64 +2165,18 @@ private:
         disconnect_reason_code rc,
         CompletionToken&& token
     ) {
-        auto init =
-            []
-            (
-                auto completion_handler,
-                epsp_type epsp,
-                protocol_version version,
-                disconnect_reason_code rc
-            ) {
-                switch (version) {
-                case protocol_version::v3_1_1:
-                    epsp.async_close(
-                        [epsp, completion_handler = force_move(completion_handler)]
-                        () mutable {
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << "closed";
-                            force_move(completion_handler)();
-                        }
-                    );
-                    break;
-                case protocol_version::v5:
-                    epsp.async_send(
-                        v5::disconnect_packet{
-                            rc,
-                                properties{}
-                        },
-                        [epsp, completion_handler = force_move(completion_handler)]
-                        (system_error const& ec) mutable {
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << ec.what();
-                            epsp.async_close(
-                                [epsp, completion_handler = force_move(completion_handler)]
-                                () mutable {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << "closed";
-                                    force_move(completion_handler)();
-                                }
-                            );
-                        }
-                    );
-                    break;
-                default:
-                    BOOST_ASSERT(false);
-                    break;
-                }
-            };
-
-        return as::async_initiate<
+        auto exe = epsp.get_executor();
+        return as::async_compose<
             CompletionToken,
             void()
         >(
-            init,
+            disconnect_and_close_op{
+                force_move(epsp),
+                version,
+                rc
+            },
             token,
-            force_move(epsp),
-            version,
-            rc
+            exe
         );
     }
 
