@@ -8,20 +8,6 @@ ifndef::env-github[:am-base-path: ../..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:../api]
 
-= Thread safety
-
-== Single threaded
-
-You can call both async APIs and sync APIs without any special care required.
-
-== Multi threded
-
-All distinct objects are thread unsafe. To access shared `client` and/or `endpoint`, you can construct it with strand wrapped executor for the underlying layer's argument. `client` and `endpoint` `async_*` member functions dispatch to the executor. As the result of the strand effect, your asynchronous process is serialized.
-
-The following synchronous member functions is directly accessed. So you need to introduce the locks or explicit dispatching to the executor.
-
-
-
 = Thread Safety
 
 == Single Threaded
