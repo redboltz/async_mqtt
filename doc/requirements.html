@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<title>Maximum Packet Size</title>
+<title>Requirements</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
  *
@@ -60,26 +60,24 @@ div#navigation table {
 </head>
 <body class="article">
 <div id="header">
-<h1>Maximum Packet Size</h1>
+<h1>Requirements</h1>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>The Maximum Packet Size is a way to control the size of all packets. If a node sends a packet larger than the Maximum Packet Size, it is considered a protocol error. The counterpart disconnects the connection with a DISCONNECT packet with Reason Code 0x95 (Packet too large).</p>
+<p>async_mqtt requires:</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_notifying_maximum_packet_size">Notifying Maximum Packet Size</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>There are two independent Maximum Packet Size limits.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../images/diag-mermaid-md5-d59c29a622aaa54d9ab204bb4d3489e4.png" alt="Diagram" width="784" height="224">
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>C++17:</strong> Robust support for most language features.</p>
+</li>
+<li>
+<p><strong>Boost:</strong> async_mqtt only works with Boost, not stand-alone Asio</p>
+</li>
+<li>
+<p><strong>OpenSSL:</strong> If you need TLS connection.</p>
+</li>
+</ul>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
@@ -90,15 +88,13 @@ div#navigation table {
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-middle"><a href="receive_maximum.html">Prev</a></th>
-<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
-<a href="../index.html">Home</a></th>
-<th class="tableblock halign-right valign-middle"><a href="../customize.html">Next</a></th>
+<th class="tableblock halign-left valign-middle"><a href="CHANGELOG.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="index.html">Up</a><br>
+<a href="index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="performance.html">Next</a></th>
 </tr>
 </thead>
 </table>
-</div>
-</div>
 </div>
 </div>
 <div id="footer">

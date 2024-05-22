@@ -25,7 +25,7 @@
 ** For wss, include `async_mqtt/predefined_layer/wss.hpp`
 
 === other updates
-* Removed all boost::asio::bind_executor() from the library code. #247, #250
+* Removed all boost::asio::bind_executor() from the library code. #247, #250, #256, #257
 * client supported flexible parameters. #241, #244
 ** You can pass not only packet instence but also the parameters of packet's constructor directly to the packet sending member functions.
 * Supported default completion token. #238, #240
@@ -33,10 +33,10 @@
 * Refined header dependency checking. #225
 * Removed the inclusion of the Boost.Beast detail directory. #223
 * Used bound allocator to allocate buffer for packet on receive. #222, #243
-* Added convenient handshaking function for underlying layers. #216
+* Added convenient handshaking function for underlying layers. #216, #255
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
-* Refined documents. #220, #222, #232, #233, #234, #235, #243, #252, #253
-* Refined examples. #214, #220, #250
+* Refined documents. #220, #222, #232, #233, #234, #235, #243, #252, #253, #258
+* Refined examples. #214, #220, #250, #258
 
 == 5.1.2
 * Refined custom underlying layer support. #190, #191, #193

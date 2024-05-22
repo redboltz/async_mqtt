@@ -4,6 +4,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+// This example connects to the specified MQTT broker.
+// It then publishes to topic1, topic2, and topic3, and receives the publish results.
+// Finally, it disconnects from the broker.
+//
+// Example:
+// ./cl_cpp20coro_mqtt_pub mqtt.redboltz.net 1883
+
 #include <iostream>
 #include <string>
 
