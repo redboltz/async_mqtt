@@ -114,7 +114,7 @@ private:
                 // Send MQTT SUBSCRIBE
                 yield app_.amep_->async_send(
                     am::v3_1_1::subscribe_packet{
-                        *app_.amep_->acquire_unique_packet_id(),
+                        *app_.amep_->acquire_unique_packet_id(), // sync version only works thread safe context
                         { {"topic1", am::qos::at_most_once} }
                     },
                     *this
@@ -152,7 +152,7 @@ private:
                 // Send MQTT PUBLISH
                 yield app_.amep_->async_send(
                     am::v3_1_1::publish_packet{
-                        *app_.amep_->acquire_unique_packet_id(),
+                        *app_.amep_->acquire_unique_packet_id(), // sync version only works thread safe context
                         "topic1",
                         "payload1",
                         am::qos::at_least_once

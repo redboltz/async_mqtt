@@ -96,7 +96,7 @@ struct app {
                         // Send MQTT SUBSCRIBE
                         amep->async_send(
                             am::v3_1_1::subscribe_packet{
-                                *amep->acquire_unique_packet_id(),
+                                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
                                 { {"topic1", am::qos::at_most_once} }
                             },
                             [this]
@@ -148,7 +148,7 @@ struct app {
                         // Send MQTT PUBLISH
                         amep->async_send(
                             am::v3_1_1::publish_packet{
-                                *amep->acquire_unique_packet_id(),
+                                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
                                 "topic1",
                                 "payload1",
                                 am::qos::at_least_once

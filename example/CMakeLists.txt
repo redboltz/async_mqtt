@@ -2,6 +2,8 @@ list(APPEND exec_PROGRAMS
     ep_cb_mqtt_client.cpp
     ep_future_mqtt_client.cpp
     ep_slcoro_mqtt_client.cpp
+    cl_cpp17_mqtt_pub.cpp
+    cl_cpp17_mqtt_sub.cpp
 )
 
 if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
