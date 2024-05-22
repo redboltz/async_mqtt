@@ -24,7 +24,7 @@ namespace am = async_mqtt;
 // Use as::use_awaitable as the default completion token for am::client
 using awaitable_client =
     boost::asio::use_awaitable_t<>::as_default_on_t<
-        am::client<am::protocol_version::v3_1_1, am::protocol::mqtt>
+        am::client<am::protocol_version::v5, am::protocol::mqtt>
     >;
 
 as::awaitable<void>
