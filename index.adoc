@@ -25,8 +25,8 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 * Introduction
 ** ${include("requirements.adoc")}
 * Quick Look
-** xref:{am-base-path}/example/cl_cpp20coro_mqtt_pub.cpp[Simple publish client]
-** xref:{am-base-path}/example/cl_cpp20coro_mqtt_sub.cpp[Simple subscribe client]
+** ${include("quicklook.adoc#run-subscriber")}
+** ${include("quicklook.adoc#run-publisher")}
 ** ${include("performance.adoc")}
 * Tutorial
 ** ${include("tutorial/client.adoc")} - For casual MQTT client operations
