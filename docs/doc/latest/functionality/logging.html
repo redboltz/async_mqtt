@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<title>Run async_mqtt broker/client on the docker container</title>
+<title>logging</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
  *
@@ -143,92 +143,25 @@ pre.rouge .ss {
 </head>
 <body class="article">
 <div id="header">
-<h1>Run async_mqtt broker/client on the docker container</h1>
+<h1>logging</h1>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>You can run async_mqtt broker, benchmarking tool, and CLI client using docker.</p>
+<p>async_mqtt supports Boost.Log style logging. The severity levels are <code>fatal</code>, <code>error</code>, <code>warning</code>, <code>info</code>, <code>debug</code>, and <code>trace</code>.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="https://github.com/redboltz/async_mqtt/tree/main/docker" class="bare">https://github.com/redboltz/async_mqtt/tree/main/docker</a></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_preparation">Preparation</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>git clone https://github.com/redboltz/async_mqtt.git
-cd async_mqtt
-cd docker</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_run_broker">Run broker</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>./broker.sh</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you don&#8217;t have executing docker permission, then run as follows:</p>
+<p>The easiest way to setup logging is</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code>sudo ./broker.sh</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_run_client_cli">Run client_cli</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>On another terminal:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>./client_cli.sh --host host.docker.internal</code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="n">async_mqtt</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span><span class="n">async_mqtt</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">info</span><span class="p">);</span> <span class="c1">// you can use any other severity_level</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you don&#8217;t have executing docker permission, then run as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>sudo ./client_cli.sh --host host.docker.internal</code></pre>
-</div>
+<p>You can setup your custom settings.</p>
 </div>
 <div class="paragraph">
-<p>Then, you can communicate to the broker container on the same machine.</p>
-</div>
-<div class="paragraph">
-<p>You can subscribe and publish as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>cli&gt; sub t1 1
-cli&gt; pub t1 hello 1
-cli&gt; exit</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Red colored message is command response.
-Cyan colored message is received packet.</p>
-</div>
-<div class="paragraph">
-<p>Also you can connect mosquitto.org as follows.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>./client_cli --host test.mosquitto.rog</code></pre>
-</div>
+<p>See <a href="../../include/async_mqtt/setup_log.hpp">include/async_mqtt/setup_log.hpp</a></p>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
@@ -239,15 +172,13 @@ Cyan colored message is received packet.</p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-middle"><a href="index.html">Prev</a></th>
-<th class="tableblock halign-center valign-middle"><a href="index.html">Up</a><br>
-<a href="index.html">Home</a></th>
-<th class="tableblock halign-right valign-middle"><a href="trial.html">Next</a></th>
+<th class="tableblock halign-left valign-middle"><a href="thread_safe.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="connect_timeout.html">Next</a></th>
 </tr>
 </thead>
 </table>
-</div>
-</div>
 </div>
 </div>
 <div id="footer">
