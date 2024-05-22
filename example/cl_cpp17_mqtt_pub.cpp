@@ -21,7 +21,7 @@
 namespace as = boost::asio;
 namespace am = async_mqtt;
 
-using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt>;
+using client_t = am::client<am::protocol_version::v5, am::protocol::mqtt>;
 
 struct app {
     app(as::any_io_executor exe, std::string_view host, std::string_view port)

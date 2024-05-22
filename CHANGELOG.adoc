@@ -36,7 +36,7 @@
 * Added convenient handshaking function for underlying layers. #216, #255
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
 * Refined documents. #220, #222, #232, #233, #234, #235, #243, #252, #253, #258
-* Refined examples. #214, #220, #250, #258, #259
+* Refined examples. #214, #220, #250, #258, #259, #260, #261
 
 == 5.1.2
 * Refined custom underlying layer support. #190, #191, #193
