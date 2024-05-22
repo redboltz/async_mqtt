@@ -3,10 +3,10 @@
 :source-highlighter: rouge
 :rouge-style: base16.monokai
 
-ifdef::env-github[:am-base-path: ../main]
-ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:am-base-path: ../../main]
+ifndef::env-github[:am-base-path: ../..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
-ifndef::env-github[:api-base: link:api]
+ifndef::env-github[:api-base: link:../api]
 
 = Run async_mqtt broker/client on the docker container
 

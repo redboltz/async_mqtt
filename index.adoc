@@ -1,4 +1,12 @@
 :last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:api]
 
 = async_mqtt
 
@@ -13,8 +21,13 @@ Distributed under the Boost Software License, Version 1.0. (See accompanying fil
 ifdef::env-github[* https://redboltz.github.io/async_mqtt/[API Reference]]
 ifndef::env-github[* xref:api/topics.html[API Reference]]
 
-* ${include("container.adoc")}
-* ${include("trial.adoc")}
+* ${include("CHANGELOG.adoc")}
+* Introduction
+** ${include("requirements.adoc")}
+* Quick Look
+** xref:{am-base-path}/example/cl_cpp20coro_mqtt_pub.cpp[Simple publish client]
+** xref:{am-base-path}/example/cl_cpp20coro_mqtt_sub.cpp[Simple subscribe client]
+** ${include("performance.adoc")}
 * Tutorial
 ** ${include("tutorial/client.adoc")} - For casual MQTT client operations
 ** endpoint - For more detailed MQTT operations
@@ -23,24 +36,23 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 *** ${include("tutorial/sl_coro.adoc")}
 *** ${include("tutorial/send_recv.adoc")}
 ** ${include("tutorial/non_packet_based.adoc")}
-
-** ${include("tutorial/thread_safe.adoc")}
-
 * Functionality
+** ${include("functionality/thread_safe.adoc")}
+** ${include("functionality/logging.adoc")}
 ** ${include("functionality/connect_timeout.adoc")}
-** ${include("logging.adoc")}
 ** ${include("functionality/keep_session.adoc")}
 ** ${include("functionality/topic_alias.adoc")}
 ** ${include("functionality/request_response.adoc")}
 ** ${include("functionality/receive_maximum.adoc")}
 ** ${include("functionality/maximum_packet_size.adoc")}
+* Customize/Config
+* ${include("customize.adoc")}
+* ${include("config.adoc")}
 * Tools
+** ${include("tool/container.adoc")}
+** ${include("tool/trial.adoc")}
 ** ${include("tool/broker.adoc")}
 ** ${include("tool/client_cli.adoc")}
 ** ${include("tool/bench.adoc")}
-* ${include("performance.adoc")}
-* ${include("config.adoc")}
-* ${include("customize.adoc")}
-* ${include("CHANGELOG.adoc")}
 
 https://github.com/redboltz/async_mqtt/[back to the project top page]

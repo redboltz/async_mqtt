@@ -25,8 +25,13 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 == Under development
 
 * https://redboltz.github.io/async_mqtt/[API Reference]
-* xref:container.adoc[Run async_mqtt broker/client on the docker container]
-* xref:trial.adoc[Free trial broker on cloud]
+* xref:{am-base-path}/CHANGELOG.adoc[History]
+* Introduction
+** xref:requirements.adoc[Requirements]
+* Quick Look
+** xref:{am-base-path}/example/cl_cpp20coro_mqtt_pub.cpp[Simple publish client]
+** xref:{am-base-path}/example/cl_cpp20coro_mqtt_sub.cpp[Simple subscribe client]
+** xref:performance.adoc[Performance]
 * Tutorial
 ** xref:tutorial/client.adoc[Client] - For casual MQTT client operations
 ** endpoint - For more detailed MQTT operations
@@ -35,22 +40,23 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 *** xref:tutorial/sl_coro.adoc[Stackless Coroutine] if you don't have C++20 coroutine
 *** xref:tutorial/send_recv.adoc[send/recv]
 ** xref:tutorial/non_packet_based.adoc[non packet based APIs]
-** xref:tutorial/thread_safe.adoc[thread safe]
 * Functionality
+** xref:functionality/thread_safe.adoc[thread safety]
+** xref:functionality/logging.adoc[logging]
 ** xref:functionality/connect_timeout.adoc[connect timeout]
-** xref:logging.adoc[logging]
 ** xref:functionality/keep_session.adoc[Keep session]
 ** xref:functionality/topic_alias.adoc[Topic Alias]
 ** xref:functionality/request_response.adoc[Reuqest/Response]
 ** xref:functionality/receive_maximum.adoc[Receive Maximum]
 ** xref:functionality/maximum_packet_size.adoc[Maximum Packet Size]
+* Customize/Config
+** xref:config.adoc[Config]
+** xref:customize.adoc[Customize Underlying Layer]
 * Tools
+** xref:container.adoc[Run async_mqtt broker/client on the docker container]
+** xref:trial.adoc[Free trial broker on cloud]
 ** xref:tool/broker.adoc[broker]
 ** xref:tool/client_cli.adoc[client_cli]
 ** xref:tool/bench.adoc[bench]
-* xref:performance.adoc[Performance]
-* xref:config.adoc[Config]
-* xref:customize.adoc[Customize Underlying Layer]
-* xref:{am-base-path}/CHANGELOG.adoc[History]
 
 https://github.com/redboltz/async_mqtt/[async_mqtt project top page]
