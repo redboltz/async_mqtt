@@ -46,8 +46,8 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 ** ${include("functionality/receive_maximum.adoc")}
 ** ${include("functionality/maximum_packet_size.adoc")}
 * Customize/Config
-* ${include("customize.adoc")}
-* ${include("config.adoc")}
+** ${include("customize.adoc")}
+** ${include("config.adoc")}
 * Tools
 ** ${include("tool/container.adoc")}
 ** ${include("tool/trial.adoc")}

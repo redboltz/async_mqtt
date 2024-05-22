@@ -11,6 +11,9 @@ ifndef::env-github[:api-base: link:api]
 = Requirements
 
 async_mqtt requires:
+
 * *C++17:* Robust support for most language features.
+
 * *Boost:* async_mqtt only works with Boost, not stand-alone Asio
+
 * *OpenSSL:* If you need TLS connection.
