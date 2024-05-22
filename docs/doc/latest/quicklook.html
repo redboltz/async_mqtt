@@ -153,17 +153,20 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="sh">git clone https://github.com/redboltz/async_mqtt.git
 <span class="nb">cd </span>async_mqtt
-cmake  <span class="nt">-DASYNC_MQTT_USE_LOG</span><span class="o">=</span>ON <span class="nt">-DASYNC_MQTT_BUILD_EXAMPLES</span><span class="o">=</span>ON ..
-make cl_cpp20coro_mqtt_pub
+cmake  <span class="nt">-DASYNC_MQTT_USE_LOG</span><span class="o">=</span>ON <span class="nt">-DASYNC_MQTT_BUILD_EXAMPLES</span><span class="o">=</span>ON ..</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c20_coroutine_version">C++20 coroutine version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>make cl_cpp20coro_mqtt_pub
 make cl_cpp20coro_mqtt_sub
-<span class="nb">cd </span>example</code></pre>
+cd example</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_run_subscriber">Run subscriber</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_run_subscriber">Run subscriber</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="sh">./cl_cpp20coro_mqtt_sub mqtt.redboltz.net 1883</code></pre>
@@ -177,10 +180,8 @@ make cl_cpp20coro_mqtt_sub
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_run_publisher">Run publisher</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_run_publisher">Run publisher</h4>
 <div class="paragraph">
 <p>At another terminal, run publisher.</p>
 </div>
@@ -196,6 +197,52 @@ make cl_cpp20coro_mqtt_sub
 <ul>
 <li>
 <p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/cl_cpp20coro_mqtt_pub.cpp">Simple publish client</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_c17_callback_version">C++17 callback version</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>make cl_cpp17_mqtt_pub
+make cl_cpp17_mqtt_sub
+cd example</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_run_subscriber_2">Run subscriber</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sh">./cl_cpp17_mqtt_sub mqtt.redboltz.net 1883</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/cl_cpp17_mqtt_sub.cpp">Simple subscribe client</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_run_publisher_2">Run publisher</h4>
+<div class="paragraph">
+<p>At another terminal, run publisher.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sh">./cl_cpp17_mqtt_pub mqtt.redboltz.net 1883</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, you can see the published messages to delivered to the subscriber.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/cl_cpp17_mqtt_pub.cpp">Simple publish client</a></p>
 </li>
 </ul>
 </div>
@@ -215,6 +262,8 @@ make cl_cpp20coro_mqtt_sub
 </tr>
 </thead>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
