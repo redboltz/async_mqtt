@@ -8,7 +8,7 @@ ifndef::env-github[:am-base-path: ..]
 ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
 ifndef::env-github[:api-base: link:api]
 
-= Quick Look
+= Simple Pub/Sub client
 
 == Get async_mqtt and build examples
 
