@@ -238,7 +238,7 @@ inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBy
                 o << p;
             },
             [&] (system_error const& se) {
-                o << se.what();
+                o << se.message();
             }
         }
     );
