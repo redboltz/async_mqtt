@@ -84,8 +84,8 @@ proc(
         };
         if (auto se = co_await amep->async_send(
                 am::v3_1_1::subscribe_packet{
-                    *amep->acquire_unique_packet_id(),
-                    am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
+                    *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                    am::force_move(sub_entry)
                 },
                 as::use_awaitable
             )
@@ -121,7 +121,7 @@ proc(
         // Send MQTT PUBLISH
         if (auto se = co_await amep->async_send(
                 am::v3_1_1::publish_packet{
-                    *amep->acquire_unique_packet_id(),
+                    *amep->acquire_unique_packet_id(), // sync version only works thread safe context
                     "topic1",
                     "payload1",
                     am::qos::at_least_once

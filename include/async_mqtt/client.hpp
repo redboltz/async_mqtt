@@ -43,6 +43,11 @@ class client {
     using ep_type = basic_endpoint<role::client, 2, NextLayer>;
     using ep_type_sp = std::shared_ptr<ep_type>;
 
+public:
+    using executor_type = typename ep_type::executor_type;
+    using next_layer_type = typename ep_type::next_layer_type;
+    using lowest_layer_type = typename ep_type::lowest_layer_type;
+
     ASYNC_MQTT_PACKET_TYPE(Version, connect)
     ASYNC_MQTT_PACKET_TYPE(Version, connack)
     ASYNC_MQTT_PACKET_TYPE(Version, subscribe)
@@ -57,11 +62,6 @@ class client {
     ASYNC_MQTT_PACKET_TYPE(Version, pingreq)
     ASYNC_MQTT_PACKET_TYPE(Version, pingresp)
     ASYNC_MQTT_PACKET_TYPE(Version, disconnect)
-
-public:
-    using executor_type = typename ep_type::executor_type;
-    using next_layer_type = typename ep_type::next_layer_type;
-    using lowest_layer_type = typename ep_type::lowest_layer_type;
 
     /**
      * @brief publish completion handler parameter class
