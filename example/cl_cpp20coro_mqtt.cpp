@@ -182,7 +182,7 @@ proc(
         std::cout << "finished" << std::endl;
     }
     catch (boost::system::system_error const& se) {
-        std::cout << se.what() << std::endl;
+        std::cout << se.code().message() << std::endl;
     }
 }
 
