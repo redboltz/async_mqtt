@@ -15,7 +15,7 @@
 * Re-desined strand handling. #206
 ** template parameter Strand is removed. Users can pass strand wrapped executor for multi threading.
 ** associated properties of the completion handler are correctly propagated.
-* Removed buffer from packet interface except the infterface for adcanced user. #195
+* Removed buffer from packet interface except the infterface for adcanced user. #195, #262
 ** For example, create PUBLISH packet using "topic1", and get the filed as string by `topic()`.
 *** No `allocate_buffer("topic1")` is required.
 * Organized predefined headers. #194
@@ -35,7 +35,7 @@
 * Used bound allocator to allocate buffer for packet on receive. #222, #243
 * Added convenient handshaking function for underlying layers. #216, #255
 ** TCP, TLS, Websocket, Websocket on TLS are handshaked by one function call.
-* Refined documents. #220, #222, #232, #233, #234, #235, #243, #252, #253, #258
+* Refined documents. #220, #222, #232, #233, #234, #235, #243, #252, #253, #258, #262
 * Refined examples. #214, #220, #250, #258, #259, #260, #261
 
 == 5.1.2

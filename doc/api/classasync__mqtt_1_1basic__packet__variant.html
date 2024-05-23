@@ -105,7 +105,7 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__packet__variant.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450" id="r_a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplParams" colspan="2">template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt; &gt; *  = nullptr&gt; </td></tr>
+<tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450" id="r_a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplParams" colspan="2">template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt;, std::nullptr_t &gt;  = nullptr&gt; </td></tr>
 <tr class="memitem:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8f9c3e84ebae1e4eb0955988ceb11450">basic_packet_variant</a> (Packet &amp;&amp;packet)</td></tr>
 <tr class="memdesc:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <br /></td></tr>
 <tr class="separator:a8f9c3e84ebae1e4eb0955988ceb11450"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,7 +160,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>packet_variant</b> =
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt;</div><p>The varaint type of all packets and <a class="el" href="structasync__mqtt_1_1system__error.html" title="errc is a namespace alias of boost::sytem::errc.">system_error</a>. </p>
-<h4><a class="anchor" id="autotoc_md2"></a>
+<h4><a class="anchor" id="autotoc_md3"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
@@ -175,7 +175,7 @@ Thread Safety</h4>
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
-template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt; &gt; *  = nullptr&gt; </div>
+template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt;, std::nullptr_t &gt;  = nullptr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

@@ -93,10 +93,10 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__endpoint.html',''); initRes
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1basic__endpoint-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__endpoint.html">endpoint (Packet level MQTT endpoint for client/server,broker)</a></div></div></div>
@@ -110,19 +110,25 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__endpoint.html',''); initRes
 
 <p>Inherits std::enable_shared_from_this&lt; basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt; &gt;.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structasync__mqtt_1_1basic__endpoint_1_1rebind__executor.html">rebind_executor</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebinds the <a class="el" href="classasync__mqtt_1_1basic__endpoint.html" title="MQTT endpoint corresponding to the connection.">basic_endpoint</a> type to another executor  <a href="structasync__mqtt_1_1basic__endpoint_1_1rebind__executor.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:af485b15270d8b1e12746342d4f79cb15" id="r_af485b15270d8b1e12746342d4f79cb15"><td class="memItemLeft" align="right" valign="top"><a id="af485b15270d8b1e12746342d4f79cb15" name="af485b15270d8b1e12746342d4f79cb15"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>next_layer_type</b> = typename stream_type::next_layer_type</td></tr>
-<tr class="memdesc:af485b15270d8b1e12746342d4f79cb15"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next layer type. The type is the same as NextLayer as the template argument. <br /></td></tr>
+<tr class="memdesc:af485b15270d8b1e12746342d4f79cb15"><td class="mdescLeft">&#160;</td><td class="mdescRight">type of the given NextLayer <br /></td></tr>
 <tr class="separator:af485b15270d8b1e12746342d4f79cb15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6d52c82d975d51c9f08627abbf8dec7" id="r_ac6d52c82d975d51c9f08627abbf8dec7"><td class="memItemLeft" align="right" valign="top"><a id="ac6d52c82d975d51c9f08627abbf8dec7" name="ac6d52c82d975d51c9f08627abbf8dec7"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>lowest_layer_type</b> = typename stream_type::lowest_layer_type</td></tr>
-<tr class="memdesc:ac6d52c82d975d51c9f08627abbf8dec7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next layer's lowest layer type. <br /></td></tr>
+<tr class="memdesc:ac6d52c82d975d51c9f08627abbf8dec7"><td class="mdescLeft">&#160;</td><td class="mdescRight">lowest_layer_type of the given NextLayer <br /></td></tr>
 <tr class="separator:ac6d52c82d975d51c9f08627abbf8dec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a631e1e2d54cfc10767b1d8c29639441d" id="r_a631e1e2d54cfc10767b1d8c29639441d"><td class="memItemLeft" align="right" valign="top"><a id="a631e1e2d54cfc10767b1d8c29639441d" name="a631e1e2d54cfc10767b1d8c29639441d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>executor_type</b> = typename next_layer_type::executor_type</td></tr>
-<tr class="memdesc:a631e1e2d54cfc10767b1d8c29639441d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next layer's executor type. <br /></td></tr>
+<tr class="memdesc:a631e1e2d54cfc10767b1d8c29639441d"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor_type of the given NextLayer <br /></td></tr>
 <tr class="separator:a631e1e2d54cfc10767b1d8c29639441d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5098e22b58adbee93e452ede78ab1adc" id="r_a5098e22b58adbee93e452ede78ab1adc"><td class="memItemLeft" align="right" valign="top"><a id="a5098e22b58adbee93e452ede78ab1adc" name="a5098e22b58adbee93e452ede78ab1adc"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>packet_variant_type</b> = <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt;PacketIdBytes&gt;</td></tr>
@@ -135,6 +141,22 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>~basic_endpoint</b> ()</td></tr>
 <tr class="memdesc:a1e1d46688d3a6ed1d20e3669cb5aefc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">destructor <br /></td></tr>
 <tr class="separator:a1e1d46688d3a6ed1d20e3669cb5aefc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5a4b56044d5b32a8c85030502045c3" id="r_a9f5a4b56044d5b32a8c85030502045c3"><td class="memItemLeft" align="right" valign="top"><a id="a9f5a4b56044d5b32a8c85030502045c3" name="a9f5a4b56044d5b32a8c85030502045c3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>basic_endpoint</b> (<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> const &amp;)=delete</td></tr>
+<tr class="memdesc:a9f5a4b56044d5b32a8c85030502045c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor <b>deleted</b> <br /></td></tr>
+<tr class="separator:a9f5a4b56044d5b32a8c85030502045c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9ca993fb5332cd9a894c08a387e1ae5" id="r_ac9ca993fb5332cd9a894c08a387e1ae5"><td class="memItemLeft" align="right" valign="top"><a id="ac9ca993fb5332cd9a894c08a387e1ae5" name="ac9ca993fb5332cd9a894c08a387e1ae5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>basic_endpoint</b> (<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:ac9ca993fb5332cd9a894c08a387e1ae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">move constructor <b>deleted</b> <br /></td></tr>
+<tr class="separator:ac9ca993fb5332cd9a894c08a387e1ae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3d2098ffbe958479234ab7874e81511" id="r_ae3d2098ffbe958479234ab7874e81511"><td class="memItemLeft" align="right" valign="top"><a id="ae3d2098ffbe958479234ab7874e81511" name="ae3d2098ffbe958479234ab7874e81511"></a>
+<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> const &amp;)=delete</td></tr>
+<tr class="memdesc:ae3d2098ffbe958479234ab7874e81511"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy assign operator <b>deleted</b> <br /></td></tr>
+<tr class="separator:ae3d2098ffbe958479234ab7874e81511"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaebbab4159eb127b6fad36d35fef8f0b" id="r_aaebbab4159eb127b6fad36d35fef8f0b"><td class="memItemLeft" align="right" valign="top"><a id="aaebbab4159eb127b6fad36d35fef8f0b" name="aaebbab4159eb127b6fad36d35fef8f0b"></a>
+<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:aaebbab4159eb127b6fad36d35fef8f0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">move assign operator <b>deleted</b> <br /></td></tr>
+<tr class="separator:aaebbab4159eb127b6fad36d35fef8f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81789e00806d27efd54003149dd5c4f1" id="r_a81789e00806d27efd54003149dd5c4f1"><td class="memItemLeft" align="right" valign="top">as::any_io_executor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81789e00806d27efd54003149dd5c4f1">get_executor</a> () const</td></tr>
 <tr class="memdesc:a81789e00806d27efd54003149dd5c4f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor getter  <br /></td></tr>
 <tr class="separator:a81789e00806d27efd54003149dd5c4f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -214,7 +236,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abbeb968d96506e91e1eb69e6ff22925c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9de1f2e3dff360d1817e8bbacc385c3" id="r_ac9de1f2e3dff360d1817e8bbacc385c3"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:ac9de1f2e3dff360d1817e8bbacc385c3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac9de1f2e3dff360d1817e8bbacc385c3">async_get_stored_packets</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{}) const</td></tr>
-<tr class="memdesc:ac9de1f2e3dff360d1817e8bbacc385c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">get stored packets sotred packets mean inflight packets.  <br /></td></tr>
+<tr class="memdesc:ac9de1f2e3dff360d1817e8bbacc385c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">get stored packets  <br /></td></tr>
 <tr class="separator:ac9de1f2e3dff360d1817e8bbacc385c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf5a6c0a3beea25d0b61ae70322fbc92" id="r_adf5a6c0a3beea25d0b61ae70322fbc92"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:adf5a6c0a3beea25d0b61ae70322fbc92"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adf5a6c0a3beea25d0b61ae70322fbc92">async_regulate_for_store</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::basic_publish_packet</a>&lt; PacketIdBytes &gt; packet, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{}) const</td></tr>
@@ -250,20 +272,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2e65de9df8df56eb3dca5b09a8c04d00" id="r_a2e65de9df8df56eb3dca5b09a8c04d00"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e65de9df8df56eb3dca5b09a8c04d00">regulate_for_store</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::basic_publish_packet</a>&lt; PacketIdBytes &gt; &amp;packet) const</td></tr>
 <tr class="memdesc:a2e65de9df8df56eb3dca5b09a8c04d00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Regulate publish packet for store If topic is empty, extract topic from topic alias, and remove topic alias Otherwise, remove topic alias if exists.  <br /></td></tr>
 <tr class="separator:a2e65de9df8df56eb3dca5b09a8c04d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc343e2fad88dabbcad10c2ece142fdc" id="r_abc343e2fad88dabbcad10c2ece142fdc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc343e2fad88dabbcad10c2ece142fdc">set_pingreq_send_interval_ms</a> (std::size_t ms)</td></tr>
+<tr class="memdesc:abc343e2fad88dabbcad10c2ece142fdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set PINGREQ packet sending interval.  <br /></td></tr>
+<tr class="separator:abc343e2fad88dabbcad10c2ece142fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3faa98c0f30e8df05ef02a6a1f4ed85" id="r_ae3faa98c0f30e8df05ef02a6a1f4ed85"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ae3faa98c0f30e8df05ef02a6a1f4ed85"><td class="memTemplItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">this_type</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae3faa98c0f30e8df05ef02a6a1f4ed85">create</a> (<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> ver, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:ae3faa98c0f30e8df05ef02a6a1f4ed85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of MQTT Packet Identifier.  <br /></td></tr>
+<tr class="memdesc:ae3faa98c0f30e8df05ef02a6a1f4ed85"><td class="mdescLeft">&#160;</td><td class="mdescRight">create  <br /></td></tr>
 <tr class="separator:ae3faa98c0f30e8df05ef02a6a1f4ed85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:ae37385dccb86c73c3fa61e1f7eec5e23" id="r_ae37385dccb86c73c3fa61e1f7eec5e23"><td class="memItemLeft" align="right" valign="top"><a id="ae37385dccb86c73c3fa61e1f7eec5e23" name="ae37385dccb86c73c3fa61e1f7eec5e23"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>packet_id_bytes</b> = PacketIdBytes</td></tr>
-<tr class="memdesc:ae37385dccb86c73c3fa61e1f7eec5e23"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value given as PacketIdBytes. <br /></td></tr>
-<tr class="separator:ae37385dccb86c73c3fa61e1f7eec5e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="related" name="related"></a>
 Related Symbols</h2></td></tr>
@@ -277,7 +295,7 @@ Related Symbols</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer&gt;<br />
 class async_mqtt::basic_endpoint&lt; Role, PacketIdBytes, NextLayer &gt;</div><p>MQTT endpoint corresponding to the connection. </p>
-<h4><a class="anchor" id="autotoc_md1"></a>
+<h4><a class="anchor" id="autotoc_md2"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
@@ -336,7 +354,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>acuire unique packet_id. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is std::optional&lt;packet_id_t&gt; </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(std::optional&lt;basic_packet_id_type&lt;PacketIdBytes&gt;&gt;) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -366,7 +390,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>acuire unique packet_id. If packet_id is fully acquired, then wait until released. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is packet_id_t </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(basic_packet_id_type&lt;PacketIdBytes&gt;) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -396,7 +426,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>close the underlying connection </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is void </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void() </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -423,19 +459,28 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
       </table>
 </div><div class="memdoc">
 
-<p>get stored packets sotred packets mean inflight packets. </p>
+<p>get stored packets </p>
 <ul>
+<li>stored packets mean inflight packets.<ul>
 <li>PUBLISH packet (QoS1) not received PUBACK packet</li>
-<li>PUBLISH packet (QoS1) not received PUBREC packet</li>
-<li>PUBREL packet not received PUBCOMP packet <dl class="params"><dt>Parameters</dt><dd>
+<li>PUBLISH packet (QoS2) not received PUBREC packet</li>
+<li>PUBREL packet not received PUBCOMP packet</li>
+</ul>
+</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is std::vector&lt;basic_store_packet_variant&lt;PacketIdBytes&gt;&gt; </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(std::vector&lt;basic_store_packet_variant&lt;PacketIdBytes&gt;&gt;) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
-</li>
-</ul>
 
 </div>
 </div>
@@ -461,7 +506,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <p>receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">token</td><td>the param is packet_variant_type </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(packet_variant_type) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -502,7 +553,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">fil</td><td>if <code>match</code> then matched types are targets. if <code>except</code> then not matched types are targets. </td></tr>
     <tr><td class="paramname">types</td><td>target control_packet_types </td></tr>
-    <tr><td class="paramname">token</td><td>the param is packet_variant_type </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(packet_variant_type) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -537,7 +594,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">types</td><td>target control_packet_types </td></tr>
-    <tr><td class="paramname">token</td><td>the param is packet_variant_type </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(packet_variant_type) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -572,7 +635,14 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet_id</td><td>packet_id to register </td></tr>
-    <tr><td class="paramname">token</td><td>the param is bool. If true, success, otherwise the packet_id has already been used. </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(bool)</li>
+<li>the param is bool. If true, success, otherwise the packet_id has already been used. </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -607,7 +677,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet</td><td>target packet to regulate </td></tr>
-    <tr><td class="paramname">token</td><td>the param is v5::basic_publish_packet&lt;PacketIdBytes&gt; </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(v5::basic_publish_packet&lt;PacketIdBytes&gt;) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -642,7 +718,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet_id</td><td>packet_id to release </td></tr>
-    <tr><td class="paramname">token</td><td>the param is void </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void() </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -677,7 +759,13 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pvs</td><td>packets to restore </td></tr>
-    <tr><td class="paramname">token</td><td>the param is void </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void() </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -712,7 +800,13 @@ template&lt;typename Packet , typename CompletionToken  = as::default_completion
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet</td><td>packet to send </td></tr>
-    <tr><td class="paramname">token</td><td>the param is <a class="el" href="structasync__mqtt_1_1system__error.html" title="errc is a namespace alias of boost::sytem::errc.">system_error</a> </td></tr>
+    <tr><td class="paramname">token</td><td><ul>
+<li>CompletionToken<ul>
+<li>Signature: void(system_error) </li>
+</ul>
+</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -751,8 +845,8 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Type of MQTT Packet Identifier. </p>
-<p>create </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+<p>create </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Args</td><td>Types for the next layer </td></tr>
   </table>
@@ -1340,6 +1434,34 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">val</td><td>if true, enable bulk write mode, otherwise disable it. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abc343e2fad88dabbcad10c2ece142fdc" name="abc343e2fad88dabbcad10c2ece142fdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc343e2fad88dabbcad10c2ece142fdc">&#9670;&#160;</a></span>set_pingreq_send_interval_ms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::set_pingreq_send_interval_ms </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>ms</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set PINGREQ packet sending interval. </p>
+<dl class="section note"><dt>Note</dt><dd>By default, PINGREQ packet sending interval is set the same value as CONNECT packet keep alive seconds. This function overrides it. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ms</td><td>if 0, timer is not set, otherwise set val milliseconds. </td></tr>
   </table>
   </dd>
 </dl>

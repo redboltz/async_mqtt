@@ -2,12 +2,6 @@ var annotated_dup =
 [
     [ "async_mqtt", null, [
       [ "property", null, [
-        [ "detail", null, [
-          [ "binary_property", "structasync__mqtt_1_1property_1_1detail_1_1binary__property.html", "structasync__mqtt_1_1property_1_1detail_1_1binary__property" ],
-          [ "n_bytes_property", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property.html", "structasync__mqtt_1_1property_1_1detail_1_1n__bytes__property" ],
-          [ "string_property", "structasync__mqtt_1_1property_1_1detail_1_1string__property.html", null ],
-          [ "variable_property", "structasync__mqtt_1_1property_1_1detail_1_1variable__property.html", "structasync__mqtt_1_1property_1_1detail_1_1variable__property" ]
-        ] ],
         [ "assigned_client_identifier", "classasync__mqtt_1_1property_1_1assigned__client__identifier.html", "classasync__mqtt_1_1property_1_1assigned__client__identifier" ],
         [ "authentication_data", "classasync__mqtt_1_1property_1_1authentication__data.html", "classasync__mqtt_1_1property_1_1authentication__data" ],
         [ "authentication_method", "classasync__mqtt_1_1property_1_1authentication__method.html", "classasync__mqtt_1_1property_1_1authentication__method" ],

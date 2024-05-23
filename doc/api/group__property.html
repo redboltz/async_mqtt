@@ -271,6 +271,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga085c291f45e3023e2a0449293af99a75" id="r_ga085c291f45e3023e2a0449293af99a75"><td class="memTemplParams" colspan="2">template&lt;typename Property &gt; </td></tr>
+<tr class="memitem:ga085c291f45e3023e2a0449293af99a75"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; Property::of_==detail::ostream_format::direct, std::ostream &amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga085c291f45e3023e2a0449293af99a75">async_mqtt::property::operator&lt;&lt;</a> (std::ostream &amp;o, Property const &amp;p)</td></tr>
+<tr class="memdesc:ga085c291f45e3023e2a0449293af99a75"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
+<tr class="separator:ga085c291f45e3023e2a0449293af99a75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga268baa3c63f4381f3347199135e1c64c" id="r_ga268baa3c63f4381f3347199135e1c64c"><td class="memItemLeft" align="right" valign="top">constexpr char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga268baa3c63f4381f3347199135e1c64c">async_mqtt::property::id_to_str</a> (<a class="el" href="#ga5cb48750d7fa394639fc0dada2c34f89">id</a> v)</td></tr>
 <tr class="memdesc:ga268baa3c63f4381f3347199135e1c64c"><td class="mdescLeft">&#160;</td><td class="mdescRight">stringize packet identifier  <br /></td></tr>
 <tr class="separator:ga268baa3c63f4381f3347199135e1c64c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -428,7 +432,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="ga626e41c9b69507e3a67ac170d03d1883" name="ga626e41c9b69507e3a67ac170d03d1883"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga626e41c9b69507e3a67ac170d03d1883">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga626e41c9b69507e3a67ac170d03d1883">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -455,6 +459,39 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>output to the stream </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">o</td><td>output stream </td></tr>
+    <tr><td class="paramname">v</td><td>target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="ga085c291f45e3023e2a0449293af99a75" name="ga085c291f45e3023e2a0449293af99a75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga085c291f45e3023e2a0449293af99a75">&#9670;&#160;</a></span>operator&lt;&lt;() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Property &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt; Property::of_==detail::ostream_format::direct, std::ostream &amp; &gt; async_mqtt::property::operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Property const &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>stream output operator </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">o</td><td>output stream </td></tr>

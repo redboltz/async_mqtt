@@ -128,7 +128,7 @@ $(function(){initNavTree('value__allocator_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keyword">class </span>value_interval {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">public</span>:</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keyword">explicit</span> value_interval(value_type v) : low_{v}, high_{v} {}</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        value_interval(value_type l, value_type h) : low_{l}, high_{h} {}</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keyword">explicit</span> value_interval(value_type l, value_type h) : low_{l}, high_{h} {}</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="comment">// true</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="comment">// | lhs |   | rhs |</span></div>
@@ -175,7 +175,7 @@ $(function(){initNavTree('value__allocator_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    };</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    value_allocator(value_type lowest, value_type highest)</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">explicit</span> value_allocator(value_type lowest, value_type highest)</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        :lowest_{lowest}, highest_{highest} {</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        BOOST_ASSERT(std::numeric_limits&lt;value_type&gt;::min() &lt;= lowest);</div>
