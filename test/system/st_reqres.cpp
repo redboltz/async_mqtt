@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
             }
         }
 
-        am::buffer response_topic;
+        std::string response_topic;
     };
 
     tc t{*amep};

@@ -50,7 +50,7 @@ public:
      * @param props       properties.
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901080
      */
-    connack_packet(
+    explicit connack_packet(
         bool session_present,
         connect_reason_code reason_code,
         properties props = {}
@@ -110,7 +110,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    connack_packet(buffer buf);
+    explicit connack_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

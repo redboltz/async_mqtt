@@ -46,7 +46,7 @@ public:
      * @param return_code ConnectReturnCode
      *                    See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
      */
-    connack_packet(
+    explicit connack_packet(
         bool session_present,
         connect_return_code return_code
     );
@@ -99,7 +99,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    connack_packet(buffer buf);
+    explicit connack_packet(buffer buf);
 
 private:
     static_vector<char, 4> all_;

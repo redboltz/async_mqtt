@@ -1,11 +1,14 @@
 var group__endpoint =
 [
     [ "async_mqtt::basic_endpoint< Role, PacketIdBytes, NextLayer >", "classasync__mqtt_1_1basic__endpoint.html", [
+      [ "rebind_executor", "structasync__mqtt_1_1basic__endpoint_1_1rebind__executor.html", null ],
       [ "executor_type", "classasync__mqtt_1_1basic__endpoint.html#a631e1e2d54cfc10767b1d8c29639441d", null ],
       [ "lowest_layer_type", "classasync__mqtt_1_1basic__endpoint.html#ac6d52c82d975d51c9f08627abbf8dec7", null ],
       [ "next_layer_type", "classasync__mqtt_1_1basic__endpoint.html#af485b15270d8b1e12746342d4f79cb15", null ],
       [ "packet_variant_type", "classasync__mqtt_1_1basic__endpoint.html#a5098e22b58adbee93e452ede78ab1adc", null ],
       [ "~basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html#a1e1d46688d3a6ed1d20e3669cb5aefc2", null ],
+      [ "basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html#a9f5a4b56044d5b32a8c85030502045c3", null ],
+      [ "basic_endpoint", "classasync__mqtt_1_1basic__endpoint.html#ac9ca993fb5332cd9a894c08a387e1ae5", null ],
       [ "acquire_unique_packet_id", "classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0", null ],
       [ "async_acquire_unique_packet_id", "classasync__mqtt_1_1basic__endpoint.html#a7274b1d7f83634fd64fe616de1ff3e7f", null ],
       [ "async_acquire_unique_packet_id_wait_until", "classasync__mqtt_1_1basic__endpoint.html#a425e8172d00a1ace4274cf188d626de5", null ],
@@ -28,6 +31,8 @@ var group__endpoint =
       [ "lowest_layer", "classasync__mqtt_1_1basic__endpoint.html#a8e4738c4c3261558ac0e1e06bd326ea5", null ],
       [ "next_layer", "classasync__mqtt_1_1basic__endpoint.html#acc21bc830ae4ffd4a7803d3bdd166a21", null ],
       [ "next_layer", "classasync__mqtt_1_1basic__endpoint.html#ada60e5d8c35b1d668a4edf5d0c332f0b", null ],
+      [ "operator=", "classasync__mqtt_1_1basic__endpoint.html#aaebbab4159eb127b6fad36d35fef8f0b", null ],
+      [ "operator=", "classasync__mqtt_1_1basic__endpoint.html#ae3d2098ffbe958479234ab7874e81511", null ],
       [ "register_packet_id", "classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01", null ],
       [ "regulate_for_store", "classasync__mqtt_1_1basic__endpoint.html#a2e65de9df8df56eb3dca5b09a8c04d00", null ],
       [ "release_packet_id", "classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b", null ],
@@ -38,6 +43,7 @@ var group__endpoint =
       [ "set_auto_pub_response", "classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f", null ],
       [ "set_auto_replace_topic_alias_send", "classasync__mqtt_1_1basic__endpoint.html#a70f40da2602fb6b22049aafa815782e0", null ],
       [ "set_bulk_write", "classasync__mqtt_1_1basic__endpoint.html#a2259505ae9d0272321f9cabd7b6f45e1", null ],
+      [ "set_pingreq_send_interval_ms", "classasync__mqtt_1_1basic__endpoint.html#abc343e2fad88dabbcad10c2ece142fdc", null ],
       [ "set_pingresp_recv_timeout_ms", "classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0", null ],
       [ "endpoint", "group__endpoint.html#ga2e1a75540d6fe007c2a768600ad6d8cb", null ]
     ] ],

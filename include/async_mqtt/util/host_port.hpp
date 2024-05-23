@@ -21,7 +21,7 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 struct host_port {
-    host_port(std::string host, std::uint16_t port)
+    explicit host_port(std::string host, std::uint16_t port)
         :host{force_move(host)},
          port{port}
     {}

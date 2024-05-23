@@ -26,7 +26,7 @@ class value_allocator {
     class value_interval {
     public:
         explicit value_interval(value_type v) : low_{v}, high_{v} {}
-        value_interval(value_type l, value_type h) : low_{l}, high_{h} {}
+        explicit value_interval(value_type l, value_type h) : low_{l}, high_{h} {}
 
         // true
         // | lhs |   | rhs |
@@ -79,7 +79,7 @@ public:
      * @param lowest The lowest value
      * @param highest The highest value.
      */
-    value_allocator(value_type lowest, value_type highest)
+    explicit value_allocator(value_type lowest, value_type highest)
         :lowest_{lowest}, highest_{highest} {
 
         BOOST_ASSERT(std::numeric_limits<value_type>::min() <= lowest);

@@ -16,7 +16,7 @@ namespace detail {
 template <typename Proc>
 class unique_sg {
 public:
-    unique_sg(Proc proc)
+    explicit unique_sg(Proc proc)
         :proc_{std::move(proc)}
     {}
     unique_sg(unique_sg const&) = delete;

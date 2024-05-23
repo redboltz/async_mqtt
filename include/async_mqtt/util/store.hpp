@@ -29,7 +29,7 @@ class store {
 public:
     using store_packet_type = basic_store_packet_variant<PacketIdBytes>;
 
-    store(as::any_io_executor exe):exe_{exe}{}
+    explicit store(as::any_io_executor exe):exe_{exe}{}
 
     template <typename Packet>
     bool add(Packet const& packet) {

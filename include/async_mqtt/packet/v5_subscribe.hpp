@@ -57,7 +57,7 @@ public:
      * @param props     properties.
      *                  \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901164
      */
-    basic_subscribe_packet(
+    explicit basic_subscribe_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::vector<topic_subopts> params,
         properties props = {}
@@ -118,7 +118,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_subscribe_packet(buffer buf);
+    explicit basic_subscribe_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

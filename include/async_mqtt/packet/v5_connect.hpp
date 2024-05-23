@@ -71,7 +71,7 @@ public:
      * @param props          Connect properties.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
      */
-    connect_packet(
+    explicit connect_packet(
         bool clean_start,
         std::uint16_t keep_alive_sec,
         std::string client_id,
@@ -110,7 +110,7 @@ public:
      * @param props          Connect properties.
      *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
      */
-    connect_packet(
+    explicit connect_packet(
         bool clean_start,
         std::uint16_t keep_alive_sec,
         std::string client_id,
@@ -198,7 +198,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    connect_packet(buffer buf);
+    explicit connect_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

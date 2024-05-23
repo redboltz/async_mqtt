@@ -27,7 +27,7 @@ namespace mi = boost::multi_index;
 
 class topic_alias_recv {
 public:
-    topic_alias_recv(topic_alias_type max)
+    explicit topic_alias_recv(topic_alias_type max)
         :max_{max} {}
 
     void insert_or_update(std::string_view topic, topic_alias_type alias) {

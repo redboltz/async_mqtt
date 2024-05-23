@@ -48,7 +48,7 @@ public:
     /**
      * @brief Constructor
      */
-    pingreq_packet();
+    explicit pingreq_packet();
 
     /**
      * @brief Get MQTT control packet type
@@ -86,7 +86,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    pingreq_packet(buffer buf);
+    explicit pingreq_packet(buffer buf);
 
 private:
     static_vector<char, 2> all_;

@@ -60,7 +60,7 @@ public:
      * @param props       properties.
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901155
      */
-    basic_pubcomp_packet(
+    explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         pubcomp_reason_code reason_code,
         properties props
@@ -70,7 +70,7 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
      */
-    basic_pubcomp_packet(
+    explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
@@ -80,7 +80,7 @@ public:
      * @param reason_code PubcompReasonCode
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
      */
-    basic_pubcomp_packet(
+    explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         pubcomp_reason_code reason_code
     );
@@ -164,13 +164,13 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_pubcomp_packet(
+    explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::optional<pubcomp_reason_code> reason_code,
         properties props
     );
 
-    basic_pubcomp_packet(buffer buf);
+    explicit basic_pubcomp_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

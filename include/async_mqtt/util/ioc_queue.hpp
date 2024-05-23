@@ -17,7 +17,7 @@ namespace as = boost::asio;
 
 class ioc_queue {
 public:
-    ioc_queue() {
+    explicit ioc_queue() {
         queue_.stop();
     }
 

@@ -16,7 +16,7 @@ class make_shared_helper {
     friend T;
     struct target : public T {
         template<typename... Args>
-        target(Args&&... args)
+        explicit target(Args&&... args)
             :T{std::forward<Args>(args)...}
         {}
     };

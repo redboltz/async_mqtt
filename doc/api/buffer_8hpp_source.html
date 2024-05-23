@@ -193,14 +193,14 @@ $(function(){initNavTree('buffer_8hpp_source.html',''); initResizable(); });
 </div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
 <div class="foldopen" id="foldopen00145" data-start="{" data-end="}">
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#a55fb8cd69efe05757c164e8c87d0b76c">  145</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#a55fb8cd69efe05757c164e8c87d0b76c">buffer</a>(std::string_view sv, std::shared_ptr&lt;void&gt; life)</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#a55fb8cd69efe05757c164e8c87d0b76c">  145</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#a55fb8cd69efe05757c164e8c87d0b76c">buffer</a>(std::string_view sv, std::shared_ptr&lt;void&gt; life)</div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        : view_{force_move(sv)},</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>          life_{force_move(life)}</div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    {}</div>
 </div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
 <div class="foldopen" id="foldopen00157" data-start="{" data-end="}">
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#a55447262777041aa99c4c260382670fc">  157</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#a55447262777041aa99c4c260382670fc">buffer</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* s, std::size_t count,std::shared_ptr&lt;void&gt; life)</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#a55447262777041aa99c4c260382670fc">  157</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#a55447262777041aa99c4c260382670fc">buffer</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* s, std::size_t count,std::shared_ptr&lt;void&gt; life)</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        : view_{s, count},</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>          life_{force_move(life)}</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    {}</div>
@@ -215,7 +215,7 @@ $(function(){initNavTree('buffer_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        &gt;* = <span class="keyword">nullptr</span></div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    &gt;</div>
 <div class="foldopen" id="foldopen00177" data-start="{" data-end="}">
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#aceb1698f2803378a97b415e53b9f6a1c">  177</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#aceb1698f2803378a97b415e53b9f6a1c">buffer</a>(It first, End last, std::shared_ptr&lt;void&gt; life)</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1buffer.html#aceb1698f2803378a97b415e53b9f6a1c">  177</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classasync__mqtt_1_1buffer.html#aceb1698f2803378a97b415e53b9f6a1c">buffer</a>(It first, End last, std::shared_ptr&lt;void&gt; life)</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        : view_{&amp;*first, static_cast&lt;std::size_t&gt;(std::distance(first, last))},</div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>          life_{force_move(life)}</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>

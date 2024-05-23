@@ -9,7 +9,6 @@
 
 #include <set>
 #include <deque>
-#include <atomic>
 
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
@@ -77,22 +76,17 @@ class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, 
     friend class make_shared_helper;
 
 public:
-    /// @brief The next layer type. The type is the same as NextLayer as the template argument.
+    /// @brief type of the given NextLayer
     using next_layer_type = typename stream_type::next_layer_type;
 
-    /// @brief The next layer's lowest layer type.
+    /// @brief lowest_layer_type of the given NextLayer
     using lowest_layer_type = typename stream_type::lowest_layer_type;
 
-    /// @brief The next layer's executor type
+    /// @brief executor_type of the given NextLayer
     using executor_type = typename next_layer_type::executor_type;
-
-    /// @brief The value given as PacketIdBytes
-    static constexpr std::size_t packet_id_bytes = PacketIdBytes;
 
     /// @brief Type of packet_variant.
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
-
-    /// @brief Type of MQTT Packet Identifier.
 
     /**
      * @brief create
@@ -120,9 +114,24 @@ public:
      */
     ~basic_endpoint();
 
+    /**
+     * @brief copy constructor **deleted**
+     */
     basic_endpoint(this_type const&) = delete;
+
+    /**
+     * @brief move constructor **deleted**
+     */
     basic_endpoint(this_type&&) = delete;
+
+    /**
+     * @brief copy assign operator **deleted**
+     */
     this_type& operator=(this_type const&) = delete;
+
+    /**
+     * @brief move assign operator **deleted**
+     */
     this_type& operator=(this_type&&) = delete;
 
     /**
@@ -251,7 +260,9 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token the param is std::optional<packet_id_t>
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(std::optional<basic_packet_id_type<PacketIdBytes>>)
      * @return deduced by token
      */
     template <
@@ -260,7 +271,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(std::optional<packet_id_t>)
+        void(std::optional<basic_packet_id_type<PacketIdBytes>>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id(
@@ -270,7 +281,9 @@ public:
     /**
      * @brief acuire unique packet_id.
      * If packet_id is fully acquired, then wait until released.
-     * @param token the param is packet_id_t
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(basic_packet_id_type<PacketIdBytes>)
      * @return deduced by token
      */
     template <
@@ -279,17 +292,20 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_id_t)
+        void(basic_packet_id_type<PacketIdBytes>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
-        async_acquire_unique_packet_id_wait_until(
+    async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
     /**
      * @brief register packet_id.
      * @param packet_id packet_id to register
-     * @param token     the param is bool. If true, success, otherwise the packet_id has already been used.
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(bool)
+     *    - the param is bool. If true, success, otherwise the packet_id has already been used.
      * @return deduced by token
      */
     template <
@@ -309,7 +325,9 @@ public:
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @param token     the param is void
+     * @param token
+     * - CompletionToken
+     *    - Signature: void()
      * @return deduced by token
      */
     template <
@@ -330,7 +348,9 @@ public:
      * @brief send packet
      *        users can call send() before the previous send()'s CompletionToken is invoked
      * @param packet packet to send
-     * @param token  the param is system_error
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(system_error)
      * @return deduced by token
      */
     template <
@@ -351,7 +371,9 @@ public:
     /**
      * @brief receive packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
-     * @param token the param is packet_variant_type
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -373,7 +395,9 @@ public:
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
      * @param types target control_packet_types
-     * @param token the param is packet_variant_type
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -397,7 +421,9 @@ public:
      *        if receive error happenes, then token would be invoked.
      * @param fil  if `match` then matched types are targets. if `except` then not matched types are targets.
      * @param types target control_packet_types
-     * @param token the param is packet_variant_type
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -417,7 +443,9 @@ public:
 
     /**
      * @brief close the underlying connection
-     * @param token  the param is void
+     * @param token
+     * - CompletionToken
+     *    - Signature: void()
      * @return deduced by token
      */
     template <
@@ -437,7 +465,9 @@ public:
      * @brief restore packets
      *        the restored packets would automatically send when CONNACK packet is received
      * @param pvs packets to restore
-     * @param token  the param is void
+     * @param token
+     * - CompletionToken
+     *    - Signature: void()
      * @return deduced by token
      */
     template <
@@ -456,11 +486,14 @@ public:
 
     /**
      * @brief get stored packets
-     *        sotred packets mean inflight packets.
-     *        - PUBLISH packet (QoS1) not received PUBACK packet
-     *        - PUBLISH packet (QoS1) not received PUBREC packet
-     *        - PUBREL  packet not received PUBCOMP packet
-     * @param token  the param is std::vector<basic_store_packet_variant<PacketIdBytes>>
+     *        - stored packets mean inflight packets.
+     *           - PUBLISH packet (QoS1) not received PUBACK packet
+     *           - PUBLISH packet (QoS2) not received PUBREC packet
+     *           - PUBREL  packet not received PUBCOMP packet
+     *
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
      * @return deduced by token
      */
     template <
@@ -480,7 +513,9 @@ public:
      * @brief regulate publish packet for store
      *        remove topic alias from the packet and extract the topic name
      * @param packet target packet to regulate
-     * @param token  the param is v5::basic_publish_packet<PacketIdBytes>
+     * @param token
+     * - CompletionToken
+     *    - Signature: void(v5::basic_publish_packet<PacketIdBytes>)
      * @return deduced by token
      */
     template <
@@ -573,10 +608,18 @@ public:
      */
     void regulate_for_store(v5::basic_publish_packet<PacketIdBytes>& packet) const;
 
-    void cancel_all_timers_for_test();
+    /**
+     * @brief Set PINGREQ packet sending interval.
+     * @note By default, PINGREQ packet sending interval is set the same value as
+     *       CONNECT packet keep alive seconds.
+     *       This function overrides it.
+     * @param ms if 0, timer is not set, otherwise set val milliseconds.
+     */
+    void set_pingreq_send_interval_ms(std::size_t ms);
 
-    void set_pingreq_send_interval_ms_for_test(std::size_t ms);
-
+    /**
+     * @brief rebinds the basic_endpoint type to another executor
+     */
     template <typename Executor1>
     struct rebind_executor {
         using other = basic_endpoint<

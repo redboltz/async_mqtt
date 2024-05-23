@@ -94,6 +94,7 @@ $(function(){initNavTree('classasync__mqtt_1_1client.html',''); initResizable();
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classasync__mqtt_1_1client-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">async_mqtt::client&lt; Version, NextLayer &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__connection.html">MQTT connection</a> &raquo; <a class="el" href="group__client.html">client (High level MQTT client)</a></div></div></div>
@@ -110,6 +111,24 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">publish completion handler parameter class  <a href="structasync__mqtt_1_1client_1_1pubres__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structasync__mqtt_1_1client_1_1rebind__executor.html">rebind_executor</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">rebinds the client type to another executor  <a href="structasync__mqtt_1_1client_1_1rebind__executor.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a1962646334611746d9ecd4263edba3ea" id="r_a1962646334611746d9ecd4263edba3ea"><td class="memItemLeft" align="right" valign="top"><a id="a1962646334611746d9ecd4263edba3ea" name="a1962646334611746d9ecd4263edba3ea"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>next_layer_type</b> = typename <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#af485b15270d8b1e12746342d4f79cb15">ep_type::next_layer_type</a></td></tr>
+<tr class="memdesc:a1962646334611746d9ecd4263edba3ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">type of the given NextLayer <br /></td></tr>
+<tr class="separator:a1962646334611746d9ecd4263edba3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9d3d1dd77a060b5a8bcd1fb9baa0012" id="r_af9d3d1dd77a060b5a8bcd1fb9baa0012"><td class="memItemLeft" align="right" valign="top"><a id="af9d3d1dd77a060b5a8bcd1fb9baa0012" name="af9d3d1dd77a060b5a8bcd1fb9baa0012"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>lowest_layer_type</b> = typename <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#ac6d52c82d975d51c9f08627abbf8dec7">ep_type::lowest_layer_type</a></td></tr>
+<tr class="memdesc:af9d3d1dd77a060b5a8bcd1fb9baa0012"><td class="mdescLeft">&#160;</td><td class="mdescRight">lowest_layer_type of the given NextLayer <br /></td></tr>
+<tr class="separator:af9d3d1dd77a060b5a8bcd1fb9baa0012"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7073390c763e22c35ed86134a8952ea" id="r_ae7073390c763e22c35ed86134a8952ea"><td class="memItemLeft" align="right" valign="top"><a id="ae7073390c763e22c35ed86134a8952ea" name="ae7073390c763e22c35ed86134a8952ea"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>executor_type</b> = typename <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a631e1e2d54cfc10767b1d8c29639441d">ep_type::executor_type</a></td></tr>
+<tr class="memdesc:ae7073390c763e22c35ed86134a8952ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor_type of the given NextLayer <br /></td></tr>
+<tr class="separator:ae7073390c763e22c35ed86134a8952ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -121,6 +140,22 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae422a3de6052d79df44db7f73994c54f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae422a3de6052d79df44db7f73994c54f">client</a> (<a class="el" href="classasync__mqtt_1_1client.html">client</a>&lt; Version, Other &gt; &amp;&amp;other)</td></tr>
 <tr class="memdesc:ae422a3de6052d79df44db7f73994c54f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebinding constructor This constructor creates a client from the client with a different executor.  <br /></td></tr>
 <tr class="separator:ae422a3de6052d79df44db7f73994c54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09c99f0a62f86b9449cbd2407d74be69" id="r_a09c99f0a62f86b9449cbd2407d74be69"><td class="memItemLeft" align="right" valign="top"><a id="a09c99f0a62f86b9449cbd2407d74be69" name="a09c99f0a62f86b9449cbd2407d74be69"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>client</b> (<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> const &amp;)=delete</td></tr>
+<tr class="memdesc:a09c99f0a62f86b9449cbd2407d74be69"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy constructor <b>deleted</b> <br /></td></tr>
+<tr class="separator:a09c99f0a62f86b9449cbd2407d74be69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab47c58452e33366ac3646846b9126a70" id="r_ab47c58452e33366ac3646846b9126a70"><td class="memItemLeft" align="right" valign="top"><a id="ab47c58452e33366ac3646846b9126a70" name="ab47c58452e33366ac3646846b9126a70"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>client</b> (<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:ab47c58452e33366ac3646846b9126a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">move constructor <br /></td></tr>
+<tr class="separator:ab47c58452e33366ac3646846b9126a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af70a56e528cc0a32b2d5dbc5a43bc806" id="r_af70a56e528cc0a32b2d5dbc5a43bc806"><td class="memItemLeft" align="right" valign="top"><a id="af70a56e528cc0a32b2d5dbc5a43bc806" name="af70a56e528cc0a32b2d5dbc5a43bc806"></a>
+<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> const &amp;)=delete</td></tr>
+<tr class="memdesc:af70a56e528cc0a32b2d5dbc5a43bc806"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy assign operator <b>deleted</b> <br /></td></tr>
+<tr class="separator:af70a56e528cc0a32b2d5dbc5a43bc806"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad4b874d0e7adedc8f8714f2acc2b98d" id="r_aad4b874d0e7adedc8f8714f2acc2b98d"><td class="memItemLeft" align="right" valign="top"><a id="aad4b874d0e7adedc8f8714f2acc2b98d" name="aad4b874d0e7adedc8f8714f2acc2b98d"></a>
+<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classasync__mqtt_1_1client.html">this_type</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:aad4b874d0e7adedc8f8714f2acc2b98d"><td class="mdescLeft">&#160;</td><td class="mdescRight">move assign operator <br /></td></tr>
+<tr class="separator:aad4b874d0e7adedc8f8714f2acc2b98d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6808a6f7f9535ec152dcc9ee430caf92" id="r_a6808a6f7f9535ec152dcc9ee430caf92"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:a6808a6f7f9535ec152dcc9ee430caf92"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6808a6f7f9535ec152dcc9ee430caf92">async_start</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a6808a6f7f9535ec152dcc9ee430caf92"><td class="mdescLeft">&#160;</td><td class="mdescRight">send CONNECT packet and start packet receive loop  <br /></td></tr>
@@ -142,26 +177,26 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:acd225df7e04770be801742bbbb437d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">send DISCONNECT packet  <br /></td></tr>
 <tr class="separator:acd225df7e04770be801742bbbb437d9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dda4bdcebd220beb5392adb5da86110" id="r_a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9dda4bdcebd220beb5392adb5da86110">async_close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9dda4bdcebd220beb5392adb5da86110">async_close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a9dda4bdcebd220beb5392adb5da86110"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the underlying connection  <br /></td></tr>
 <tr class="separator:a9dda4bdcebd220beb5392adb5da86110"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a825c14790ca009436f20c1b2c7952204" id="r_a825c14790ca009436f20c1b2c7952204"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a825c14790ca009436f20c1b2c7952204"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a825c14790ca009436f20c1b2c7952204">async_recv</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:a825c14790ca009436f20c1b2c7952204"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a825c14790ca009436f20c1b2c7952204">async_recv</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a825c14790ca009436f20c1b2c7952204"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive PUBLISH or DISCONNECT packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked  <br /></td></tr>
 <tr class="separator:a825c14790ca009436f20c1b2c7952204"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac717d23602387557b4652841050f2825" id="r_ac717d23602387557b4652841050f2825"><td class="memItemLeft" align="right" valign="top">as::any_io_executor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac717d23602387557b4652841050f2825">get_executor</a> () const</td></tr>
 <tr class="memdesc:ac717d23602387557b4652841050f2825"><td class="mdescLeft">&#160;</td><td class="mdescRight">executor getter  <br /></td></tr>
 <tr class="separator:ac717d23602387557b4652841050f2825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a243692c7f749de1b589c665401a5b43a" id="r_a243692c7f749de1b589c665401a5b43a"><td class="memItemLeft" align="right" valign="top">next_layer_type const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a243692c7f749de1b589c665401a5b43a">next_layer</a> () const</td></tr>
+<tr class="memitem:a243692c7f749de1b589c665401a5b43a" id="r_a243692c7f749de1b589c665401a5b43a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a1962646334611746d9ecd4263edba3ea">next_layer_type</a> const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a243692c7f749de1b589c665401a5b43a">next_layer</a> () const</td></tr>
 <tr class="memdesc:a243692c7f749de1b589c665401a5b43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">next_layer getter  <br /></td></tr>
 <tr class="separator:a243692c7f749de1b589c665401a5b43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a408de6451241efe9acb6d8f671228e28" id="r_a408de6451241efe9acb6d8f671228e28"><td class="memItemLeft" align="right" valign="top">next_layer_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a408de6451241efe9acb6d8f671228e28">next_layer</a> ()</td></tr>
+<tr class="memitem:a408de6451241efe9acb6d8f671228e28" id="r_a408de6451241efe9acb6d8f671228e28"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a1962646334611746d9ecd4263edba3ea">next_layer_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a408de6451241efe9acb6d8f671228e28">next_layer</a> ()</td></tr>
 <tr class="memdesc:a408de6451241efe9acb6d8f671228e28"><td class="mdescLeft">&#160;</td><td class="mdescRight">next_layer getter  <br /></td></tr>
 <tr class="separator:a408de6451241efe9acb6d8f671228e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84882203ef55d144ed04d71d25d5a158" id="r_a84882203ef55d144ed04d71d25d5a158"><td class="memItemLeft" align="right" valign="top">lowest_layer_type const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84882203ef55d144ed04d71d25d5a158">lowest_layer</a> () const</td></tr>
+<tr class="memitem:a84882203ef55d144ed04d71d25d5a158" id="r_a84882203ef55d144ed04d71d25d5a158"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#af9d3d1dd77a060b5a8bcd1fb9baa0012">lowest_layer_type</a> const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84882203ef55d144ed04d71d25d5a158">lowest_layer</a> () const</td></tr>
 <tr class="memdesc:a84882203ef55d144ed04d71d25d5a158"><td class="mdescLeft">&#160;</td><td class="mdescRight">lowest_layer getter  <br /></td></tr>
 <tr class="separator:a84882203ef55d144ed04d71d25d5a158"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56ea5843ac36b21e1c5cabd6dec4416f" id="r_a56ea5843ac36b21e1c5cabd6dec4416f"><td class="memItemLeft" align="right" valign="top">lowest_layer_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56ea5843ac36b21e1c5cabd6dec4416f">lowest_layer</a> ()</td></tr>
+<tr class="memitem:a56ea5843ac36b21e1c5cabd6dec4416f" id="r_a56ea5843ac36b21e1c5cabd6dec4416f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#af9d3d1dd77a060b5a8bcd1fb9baa0012">lowest_layer_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56ea5843ac36b21e1c5cabd6dec4416f">lowest_layer</a> ()</td></tr>
 <tr class="memdesc:a56ea5843ac36b21e1c5cabd6dec4416f"><td class="mdescLeft">&#160;</td><td class="mdescRight">lowest_layer getter  <br /></td></tr>
 <tr class="separator:a56ea5843ac36b21e1c5cabd6dec4416f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a565335cdfde52860dcfcb483624b6b7e" id="r_a565335cdfde52860dcfcb483624b6b7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a565335cdfde52860dcfcb483624b6b7e">set_auto_map_topic_alias_send</a> (bool val)</td></tr>
@@ -181,19 +216,19 @@ Public Member Functions</h2></td></tr>
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:aa56df38927dcfa249981a336cd14c649"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae866b887888316e02f14487ec2892a23" id="r_ae866b887888316e02f14487ec2892a23"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:ae866b887888316e02f14487ec2892a23"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:ae866b887888316e02f14487ec2892a23"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:ae866b887888316e02f14487ec2892a23"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
 <tr class="separator:ae866b887888316e02f14487ec2892a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a107f857b734a01cfeb6f8fc7894e60f1" id="r_a107f857b734a01cfeb6f8fc7894e60f1"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a107f857b734a01cfeb6f8fc7894e60f1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:a107f857b734a01cfeb6f8fc7894e60f1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a107f857b734a01cfeb6f8fc7894e60f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id. If packet_id is fully acquired, then wait until released.  <br /></td></tr>
 <tr class="separator:a107f857b734a01cfeb6f8fc7894e60f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbe876628df6963609eb6e9aa4a0729e" id="r_acbe876628df6963609eb6e9aa4a0729e"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:acbe876628df6963609eb6e9aa4a0729e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:acbe876628df6963609eb6e9aa4a0729e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:acbe876628df6963609eb6e9aa4a0729e"><td class="mdescLeft">&#160;</td><td class="mdescRight">register packet_id.  <br /></td></tr>
 <tr class="separator:acbe876628df6963609eb6e9aa4a0729e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2574049a028672d01dcb4a49d80dec27" id="r_a2574049a028672d01dcb4a49d80dec27"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
-<tr class="memitem:a2574049a028672d01dcb4a49d80dec27"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</td></tr>
+<tr class="memitem:a2574049a028672d01dcb4a49d80dec27"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a> (<a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a2574049a028672d01dcb4a49d80dec27"><td class="mdescLeft">&#160;</td><td class="mdescRight">release packet_id.  <br /></td></tr>
 <tr class="separator:a2574049a028672d01dcb4a49d80dec27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab160ebb19bd7e51f8460e59a88deff86" id="r_ab160ebb19bd7e51f8460e59a88deff86"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a> ()</td></tr>
@@ -214,6 +249,73 @@ Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
 <li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md1"></a>
+Internal type aliases</h4>
+<ul>
+<li>connect_packet<ul>
+<li>connect_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connect__packet.html" title="MQTT CONNECT packet (v3.1.1)">v3_1_1::connect_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1connect__packet.html" title="MQTT CONNECT packet (v5)">v5::connect_packet</a></li>
+</ul>
+</li>
+<li>connack_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connack__packet.html" title="MQTT CONNACK packet (v3.1.1)">v3_1_1::connack_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
+</ul>
+</li>
+<li>subscribe_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">v3_1_1::subscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">v5::subscribe_packet</a></li>
+</ul>
+</li>
+<li>suback_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html">v3_1_1::suback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html">v5::suback_packet</a></li>
+</ul>
+</li>
+<li>unsubscribe_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">v3_1_1::unsubscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html">v5::unsubscribe_packet</a></li>
+</ul>
+</li>
+<li>unsuback_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html">v3_1_1::unsuback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html">v5::unsuback_packet</a></li>
+</ul>
+</li>
+<li>publish_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
+</ul>
+</li>
+<li>puback_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__puback__packet.html">v3_1_1::puback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">v5::puback_packet</a></li>
+</ul>
+</li>
+<li>pubrec_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html">v3_1_1::pubrec_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">v5::pubrec_packet</a></li>
+</ul>
+</li>
+<li>pubrel_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html">v3_1_1::pubrel_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html">v5::pubrel_packet</a></li>
+</ul>
+</li>
+<li>pubcomp_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubcomp__packet.html">v3_1_1::pubcomp_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubcomp__packet.html">v5::pubcomp_packet</a></li>
+</ul>
+</li>
+<li>disconnect_packet of the Version<ul>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v3.1.1)">v3_1_1::disconnect_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -348,7 +450,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_acquire_unique_packet_id </td>
           <td>(</td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -385,7 +487,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_acquire_unique_packet_id_wait_until </td>
           <td>(</td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -422,7 +524,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_close </td>
           <td>(</td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -512,8 +614,8 @@ template&lt;typename... Args&gt; </div>
     <tr><td class="paramname">args</td><td><ul>
 <li>the preceding arguments<ul>
 <li>PUBLISH packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v3.1.1)">v3_1_1::basic_publish_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">v5::basic_publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
 </ul>
 </li>
 </ul>
@@ -551,7 +653,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_recv </td>
           <td>(</td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span></td><td>)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -564,8 +666,8 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <li>CompletionToken<ul>
 <li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
 <li>publish_packet<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v3.1.1)">v3_1_1::basic_publish_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">v5::basic_publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
 </ul>
 </li>
 <li>disconnect_packet<ul>
@@ -604,7 +706,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -649,7 +751,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;executor_type&#160;&gt;{}</span></span>&#160;)</td>
+          <td class="paramtype">CompletionToken &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>token</em><span class="paramdefsep"> = </span><span class="paramdefval">as::default_completion_token_t&lt;&#160;<a class="el" href="#ae7073390c763e22c35ed86134a8952ea">executor_type</a>&#160;&gt;{}</span></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -750,8 +852,8 @@ template&lt;typename... Args&gt; </div>
     <tr><td class="paramname">args</td><td><ul>
 <li>the preceding arguments<ul>
 <li>SUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v3.1.1)">v3_1_1::basic_subscribe_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v5)">v5::basic_subscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__subscribe__packet.html">v3_1_1::subscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">v5::subscribe_packet</a></li>
 </ul>
 </li>
 </ul>
@@ -759,8 +861,8 @@ template&lt;typename... Args&gt; </div>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
 <li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html" title="MQTT SUBACK packet (v3.1.1)">v3_1_1::basic_suback_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html" title="MQTT SUBACK packet (v5)">v5::basic_suback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html">v3_1_1::suback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html">v5::suback_packet</a></li>
 </ul>
 </li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
@@ -802,8 +904,8 @@ template&lt;typename... Args&gt; </div>
     <tr><td class="paramname">args</td><td><ul>
 <li>the preceding arguments<ul>
 <li>UNSUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v3.1.1)">v3_1_1::basic_unsubscribe_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v5)">v5::basic_unsubscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">v3_1_1::unsubscribe_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html">v5::unsubscribe_packet</a></li>
 </ul>
 </li>
 </ul>
@@ -811,8 +913,8 @@ template&lt;typename... Args&gt; </div>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
 <li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
-<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html" title="MQTT UNSUBACK packet (v3.1.1)">v3_1_1::basic_unsuback_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html" title="MQTT UNSUBACK packet (v5)">v5::basic_unsuback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html">v3_1_1::unsuback_packet</a></li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html">v5::unsuback_packet</a></li>
 </ul>
 </li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
@@ -860,7 +962,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">lowest_layer_type &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::lowest_layer </td>
+          <td class="memname"><a class="el" href="#af9d3d1dd77a060b5a8bcd1fb9baa0012">lowest_layer_type</a> &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::lowest_layer </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -882,7 +984,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">lowest_layer_type const  &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::lowest_layer </td>
+          <td class="memname"><a class="el" href="#af9d3d1dd77a060b5a8bcd1fb9baa0012">lowest_layer_type</a> const  &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::lowest_layer </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>
@@ -904,7 +1006,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">next_layer_type &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::next_layer </td>
+          <td class="memname"><a class="el" href="#a1962646334611746d9ecd4263edba3ea">next_layer_type</a> &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::next_layer </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -926,7 +1028,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">next_layer_type const  &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::next_layer </td>
+          <td class="memname"><a class="el" href="#a1962646334611746d9ecd4263edba3ea">next_layer_type</a> const  &amp; <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::next_layer </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td> const</td>

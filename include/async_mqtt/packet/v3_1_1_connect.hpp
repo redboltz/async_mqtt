@@ -63,7 +63,7 @@ public:
      * @param password       MQTT Password. It is often used for authentication.
      *                       \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349246
      */
-    connect_packet(
+    explicit connect_packet(
         bool clean_session,
         std::uint16_t keep_alive_sec,
         std::string client_id,
@@ -99,7 +99,7 @@ public:
      * @param password       MQTT Password. It is often used for authentication.
      *                       \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349246
      */
-    connect_packet(
+    explicit connect_packet(
         bool clean_session,
         std::uint16_t keep_alive_sec,
         std::string client_id,
@@ -180,7 +180,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    connect_packet(buffer buf);
+    explicit connect_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                 BOOST_TEST(!*se);
                 yield ep().async_recv({am::control_packet_type::connack}, *this);
                 BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
-                ep().set_pingreq_send_interval_ms_for_test(10000);
+                ep().set_pingreq_send_interval_ms(10000);
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(!*pv); // error as expected
                 set_finish();
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                 BOOST_TEST(!*se);
                 yield ep().async_recv({am::control_packet_type::connack}, *this);
                 BOOST_TEST(pv->get_if<am::v5::connack_packet>());
-                ep().set_pingreq_send_interval_ms_for_test(10000);
+                ep().set_pingreq_send_interval_ms(10000);
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(pv->get_if<am::v5::disconnect_packet>());
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);

@@ -71,7 +71,7 @@ namespace detail {
 
 struct null_log {
     template <typename... Params>
-    constexpr null_log(Params&&...) {}
+    explicit constexpr null_log(Params&&...) {}
 };
 
 template <typename T>

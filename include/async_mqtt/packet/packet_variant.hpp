@@ -66,8 +66,9 @@ public:
             !std::is_same_v<
                 std::decay_t<Packet>,
                 basic_packet_variant<PacketIdBytes>
-            >
-        >* = nullptr
+            >,
+            std::nullptr_t
+        > = nullptr
     >
     basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
     {}

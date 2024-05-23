@@ -1,7 +1,0 @@
-<map id="async_mqtt::property::assigned_client_identifier" name="async_mqtt::property::assigned_client_identifier">
-<area shape="rect" id="Node000001" title="assigned_client_identifier property" alt="" coords="5,191,201,235"/>
-<area shape="rect" id="Node000002" href="$structasync__mqtt_1_1property_1_1detail_1_1string__property.html" title="string_property" alt="" coords="16,98,190,143"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,158,106,190,100,190,100,158"/>
-<area shape="rect" id="Node000003" href="$structasync__mqtt_1_1property_1_1detail_1_1binary__property.html" title="binary_property" alt="" coords="14,5,192,50"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="106,66,106,98,100,98,100,66"/>
-</map>
