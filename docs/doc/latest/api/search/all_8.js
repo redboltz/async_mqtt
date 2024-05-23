@@ -9,5 +9,5 @@ var searchData=
   ['error_5fcode_6',['error_code',['../group__error.html#gaa100a3fca173f12e33f3b5711710033d',1,'async_mqtt']]],
   ['exactly_5fonce_7',['exactly_once',['../group__qos.html#gga38e773082414bb272ab22275c56eb4dfa64d245cf1d119a993a586e60738513a9',1,'async_mqtt']]],
   ['except_8',['except',['../group__endpoint.html#ggaed6ebca93cac28c67f2b4fb8641e775aad1cc652b86b9858fe78058511716e92f',1,'async_mqtt']]],
-  ['executor_5ftype_9',['executor_type',['../classasync__mqtt_1_1basic__endpoint.html#a631e1e2d54cfc10767b1d8c29639441d',1,'async_mqtt::basic_endpoint']]]
+  ['executor_5ftype_9',['executor_type',['../classasync__mqtt_1_1client.html#ae7073390c763e22c35ed86134a8952ea',1,'async_mqtt::client::executor_type'],['../classasync__mqtt_1_1basic__endpoint.html#a631e1e2d54cfc10767b1d8c29639441d',1,'async_mqtt::basic_endpoint::executor_type']]]
 ];

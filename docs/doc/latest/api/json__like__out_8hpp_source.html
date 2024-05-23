@@ -124,7 +124,7 @@ $(function(){initNavTree('json__like__out_8hpp_source.html',''); initResizable()
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            std::nullptr_t</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        &gt; = <span class="keyword">nullptr</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    &gt;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    json_like_out_t(StringViewLike <span class="keyword">const</span>&amp; sv): sv {sv} {}</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">explicit</span> json_like_out_t(StringViewLike <span class="keyword">const</span>&amp; sv): sv {sv} {}</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; o, json_like_out_t <span class="keyword">const</span>&amp; v) {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keywordflow">for</span> (<span class="keywordtype">char</span> c : v.sv) {</div>

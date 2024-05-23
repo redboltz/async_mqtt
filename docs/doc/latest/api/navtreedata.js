@@ -29,7 +29,6 @@ var NAVTREE =
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
@@ -47,11 +46,11 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "all_8hpp_source.html",
-"classasync__mqtt_1_1property_1_1wildcard__subscription__available.html",
-"classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a6e680db726a453aba52aab2ca72148b5",
-"group__mqtt.html#gaf85e0e1bf4a3ffa4862091ea286b0fb7",
-"group__suback__v5.html#ga85d7159f30a3ed88c9950e2b31574622",
-"v5__publish_8hpp_source.html"
+"classasync__mqtt_1_1property_1_1reason__string.html",
+"classasync__mqtt_1_1v5_1_1basic__pubcomp__packet.html#ae45ee1b9fbec8ce80dd00d0e934546ee",
+"group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a13e6bd4b354254f7db3cc8b739940636",
+"group__pubrec__v5.html#gacd2bd0951db1235ee3c026bcb016329a",
+"structasync__mqtt_1_1sub_1_1opts.html#a52ed20127beec8c3fdaf9895f769530f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

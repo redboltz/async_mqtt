@@ -172,7 +172,7 @@ Related Symbols</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v3_1_1::basic_publish_packet&lt; PacketIdBytes &gt;</div><p>MQTT PUBLISH packet (v3.1.1) </p>
-<h4><a class="anchor" id="autotoc_md40"></a>
+<h4><a class="anchor" id="autotoc_md41"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
@@ -196,6 +196,9 @@ Thread Safety</h4>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">StringViewLike</a> , <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">Payload</a> , std::enable_if_t&lt; std::is_convertible_v&lt; std::decay_t&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">StringViewLike</a> &gt;, std::string_view &gt; &amp;&amp;detail::is_payload&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">Payload</a> &gt;(), std::nullptr_t &gt;  = nullptr&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">async_mqtt::v3_1_1::basic_publish_packet</a>&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">PacketIdBytes</a> &gt;::basic_publish_packet </td>
@@ -218,6 +221,11 @@ template&lt;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__
           <td class="paramtype"><a class="el" href="structasync__mqtt_1_1pub_1_1opts.html">pub::opts</a></td>          <td class="paramname"><span class="paramname"><em>pubopts</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>constructor </p>
@@ -256,6 +264,9 @@ template&lt;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">StringViewLike</a> , <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">typename</a> <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">Payload</a> , std::enable_if_t&lt; std::is_convertible_v&lt; std::decay_t&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">StringViewLike</a> &gt;, std::string_view &gt; &amp;&amp;detail::is_payload&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">Payload</a> &gt;(), std::nullptr_t &gt;  = nullptr&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">async_mqtt::v3_1_1::basic_publish_packet</a>&lt; <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">PacketIdBytes</a> &gt;::basic_publish_packet </td>
@@ -273,6 +284,11 @@ template&lt;<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__
           <td class="paramtype"><a class="el" href="structasync__mqtt_1_1pub_1_1opts.html">pub::opts</a></td>          <td class="paramname"><span class="paramname"><em>pubopts</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>constructor for QoS0 This constructor doesn't have packet_id parameter. The packet_id is set to 0 internally and not send actually. </p>
