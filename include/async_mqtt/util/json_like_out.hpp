@@ -22,7 +22,7 @@ struct json_like_out_t {
             std::nullptr_t
         > = nullptr
     >
-    json_like_out_t(StringViewLike const& sv): sv {sv} {}
+    explicit json_like_out_t(StringViewLike const& sv): sv {sv} {}
 
     friend std::ostream& operator<<(std::ostream& o, json_like_out_t const& v) {
         for (char c : v.sv) {

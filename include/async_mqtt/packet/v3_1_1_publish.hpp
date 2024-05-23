@@ -85,7 +85,7 @@ public:
             std::nullptr_t
         > = nullptr
     >
-    basic_publish_packet(
+    explicit basic_publish_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         StringViewLike&& topic_name,
         Payload&& payloads,
@@ -115,7 +115,7 @@ public:
             std::nullptr_t
         > = nullptr
     >
-    basic_publish_packet(
+    explicit basic_publish_packet(
         StringViewLike&& topic_name,
         Payload&& payloads,
         pub::opts pubopts
@@ -208,7 +208,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_publish_packet(buffer buf);
+    explicit basic_publish_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

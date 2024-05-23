@@ -45,7 +45,7 @@ public:
             std::nullptr_t
         > = nullptr
     >
-    will(
+    explicit will(
         StringViewLikeTopic&& topic,
         StringViewLikeMessage&& message,
         pub::opts pubopts = {},

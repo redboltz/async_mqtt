@@ -53,7 +53,7 @@ public:
      * @param props       properties.
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901209
      */
-    disconnect_packet(
+    explicit disconnect_packet(
         disconnect_reason_code reason_code,
         properties props
     );
@@ -61,7 +61,7 @@ public:
     /**
      * @brief constructor
      */
-    disconnect_packet(
+    explicit disconnect_packet(
     );
 
     /**
@@ -70,7 +70,7 @@ public:
      * @param reason_code DisonnectReasonCode
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
      */
-    disconnect_packet(
+    explicit disconnect_packet(
         disconnect_reason_code reason_code
     );
 
@@ -145,9 +145,9 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    disconnect_packet(buffer buf);
+    explicit disconnect_packet(buffer buf);
 
-    disconnect_packet(
+    explicit disconnect_packet(
         std::optional<disconnect_reason_code> reason_code,
         properties props
     );

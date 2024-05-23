@@ -22,14 +22,14 @@ namespace mi = boost::multi_index;
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::pid_tim_pv_res_col {
     struct elem_type {
-        elem_type(
+        explicit elem_type(
             packet_id_type pid,
             std::shared_ptr<as::steady_timer> tim
         ): pid{pid},
            tim{force_move(tim)}
         {
         }
-        elem_type(
+        explicit elem_type(
             std::shared_ptr<as::steady_timer> tim
         ): tim{force_move(tim)}
         {
@@ -68,15 +68,15 @@ struct client<Version, NextLayer>::pid_tim_pv_res_col {
 
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::recv_type {
-    recv_type(publish_packet packet)
+    explicit recv_type(publish_packet packet)
         :publish_opt{force_move(packet)}
     {
     }
-    recv_type(disconnect_packet packet)
+    explicit recv_type(disconnect_packet packet)
         :disconnect_opt{force_move(packet)}
     {
     }
-    recv_type(error_code ec)
+    explicit recv_type(error_code ec)
         :ec{ec}
     {
     }

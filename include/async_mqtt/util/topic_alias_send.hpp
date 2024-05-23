@@ -30,7 +30,7 @@ namespace mi = boost::multi_index;
 
 class topic_alias_send {
 public:
-    topic_alias_send(topic_alias_type max)
+    explicit topic_alias_send(topic_alias_type max)
         :max_{max}, va_{min_, max_} {}
 
     void insert_or_update(std::string_view topic, topic_alias_type alias) {

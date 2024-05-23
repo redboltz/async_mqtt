@@ -142,7 +142,7 @@ public:
      * @param life sv target's lifetime keeping object by shared ownership
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
      */
-    buffer(std::string_view sv, std::shared_ptr<void> life)
+    explicit buffer(std::string_view sv, std::shared_ptr<void> life)
         : view_{force_move(sv)},
           life_{force_move(life)}
     {}
@@ -154,7 +154,7 @@ public:
      * @param life sv target's lifetime keeping object by shared ownership
      * If user creates buffer via this constructor, sp's lifetime is held by the buffer.
      */
-    buffer(char const* s, std::size_t count,std::shared_ptr<void> life)
+    explicit buffer(char const* s, std::size_t count,std::shared_ptr<void> life)
         : view_{s, count},
           life_{force_move(life)}
     {}
@@ -174,7 +174,7 @@ public:
             detail::is_input_iterator<End>::value
         >* = nullptr
     >
-    buffer(It first, End last, std::shared_ptr<void> life)
+    explicit buffer(It first, End last, std::shared_ptr<void> life)
         : view_{&*first, static_cast<std::size_t>(std::distance(first, last))},
           life_{force_move(life)}
 

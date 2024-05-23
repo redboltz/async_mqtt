@@ -85,16 +85,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::is_publish_processing(typename b
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::cancel_all_timers_for_test() {
-    tim_pingreq_send_->cancel();
-    tim_pingreq_recv_->cancel();
-    tim_pingresp_recv_->cancel();
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms_for_test(std::size_t ms) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms(std::size_t ms) {
     pingreq_send_interval_ms_ = ms;
 }
 

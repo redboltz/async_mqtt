@@ -54,7 +54,7 @@ public:
     /**
      * @brief constructor
      */
-    disconnect_packet();
+    explicit disconnect_packet();
 
     /**
      * @brief Get MQTT control packet type
@@ -92,7 +92,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    disconnect_packet(buffer buf);
+    explicit disconnect_packet(buffer buf);
 
 private:
     static_vector<char, 2> all_;

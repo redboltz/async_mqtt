@@ -54,7 +54,7 @@ public:
      * @param packet_id MQTT PacketIdentifier that is corresponding to the SUBSCRIBE packet
      * @param params    suback entries.
      */
-    basic_suback_packet(
+    explicit basic_suback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::vector<suback_return_code> params
     );
@@ -108,7 +108,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_suback_packet(buffer buf);
+    explicit basic_suback_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

@@ -60,7 +60,7 @@ public:
      * @param props       properties.
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901125
      */
-    basic_puback_packet(
+    explicit basic_puback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         puback_reason_code reason_code,
         properties props
@@ -71,7 +71,7 @@ public:
      *
      * @param packet_id   MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS1) packet
      */
-    basic_puback_packet(
+    explicit basic_puback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
@@ -82,7 +82,7 @@ public:
      * @param reason_code PubackReasonCode
      *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901124
      */
-    basic_puback_packet(
+    explicit basic_puback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         puback_reason_code reason_code
     );
@@ -166,13 +166,13 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_puback_packet(
+    explicit basic_puback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         std::optional<puback_reason_code> reason_code,
         properties props
     );
 
-    basic_puback_packet(buffer buf);
+    explicit basic_puback_packet(buffer buf);
 
 private:
     std::uint8_t fixed_header_;

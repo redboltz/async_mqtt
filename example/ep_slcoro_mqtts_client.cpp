@@ -41,7 +41,7 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, {}, {});
+            proc({}, am::system_error{}, {});
         }
         void operator()(boost::system::error_code const& ec) const {
             proc(ec, {}, {});

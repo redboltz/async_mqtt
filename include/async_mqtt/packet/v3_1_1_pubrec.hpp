@@ -53,7 +53,7 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS2) packet
      */
-    basic_pubrec_packet(
+    explicit basic_pubrec_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id
     );
 
@@ -100,7 +100,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    basic_pubrec_packet(buffer buf);
+    explicit basic_pubrec_packet(buffer buf);
 
 private:
     static_vector<char, 2 + PacketIdBytes> all_;
