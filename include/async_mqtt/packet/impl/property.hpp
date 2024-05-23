@@ -36,8 +36,18 @@ payload_format payload_format_indicator::val() const {
 
 template <typename It, typename End>
 inline
-payload_format_indicator::payload_format_indicator(It b, End e)
-    : detail::n_bytes_property<1>{id::payload_format_indicator, b, e} {}
+payload_format_indicator::payload_format_indicator(It b, End e, error_code& ec)
+    : detail::n_bytes_property<1>{id::payload_format_indicator, b, e}
+{
+    if (buf_.front() == 0 || buf_.front() == 1) {
+        ec = error_code{};
+    }
+    else {
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+    }
+}
 
 
 inline
@@ -64,8 +74,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-content_type::content_type(Buffer&& val)
-    : detail::string_property{id::content_type, std::forward<Buffer>(val)} {}
+content_type::content_type(Buffer&& val, error_code& ec)
+    : detail::string_property{id::content_type, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -77,8 +87,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-response_topic::response_topic(Buffer&& val)
-    : detail::string_property{id::response_topic, std::forward<Buffer>(val)} {}
+response_topic::response_topic(Buffer&& val, error_code& ec)
+    : detail::string_property{id::response_topic, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -90,13 +100,34 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-correlation_data::correlation_data(Buffer&& val)
-    : detail::binary_property{id::correlation_data, std::forward<Buffer>(val)} {}
+correlation_data::correlation_data(Buffer&& val, error_code& ec)
+    : detail::binary_property{id::correlation_data, std::forward<Buffer>(val), ec} {}
 
 
 inline
 subscription_identifier::subscription_identifier(std::uint32_t val)
-    : detail::variable_property{id::subscription_identifier, val} {}
+    : detail::variable_property{id::subscription_identifier, val} {
+    if (val == 0) {
+        throw system_error(
+            make_error_code(
+                disconnect_reason_code::protocol_error
+            )
+        );
+    }
+}
+
+inline
+subscription_identifier::subscription_identifier(std::uint32_t val, error_code& ec)
+    : detail::variable_property{id::subscription_identifier, val} {
+    if (val == 0) {
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
+        );
+    }
+    else {
+        ec = error_code{};
+    }
+}
 
 
 inline
@@ -122,8 +153,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-assigned_client_identifier::assigned_client_identifier(Buffer&& val)
-    : detail::string_property{id::assigned_client_identifier, std::forward<Buffer>(val)} {}
+assigned_client_identifier::assigned_client_identifier(Buffer&& val, error_code& ec)
+    : detail::string_property{id::assigned_client_identifier, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -150,8 +181,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-authentication_method::authentication_method(Buffer&& val)
-    : detail::string_property{id::authentication_method, std::forward<Buffer>(val)} {}
+authentication_method::authentication_method(Buffer&& val, error_code& ec)
+    : detail::string_property{id::authentication_method, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -163,8 +194,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-authentication_data::authentication_data(Buffer&& val)
-    : detail::binary_property{id::authentication_data, std::forward<Buffer>(val)} {}
+authentication_data::authentication_data(Buffer&& val, error_code& ec)
+    : detail::binary_property{id::authentication_data, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -239,8 +270,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-response_information::response_information(Buffer&& val)
-    : detail::string_property{id::response_information, std::forward<Buffer>(val)} {}
+response_information::response_information(Buffer&& val, error_code& ec)
+    : detail::string_property{id::response_information, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -252,8 +283,8 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-server_reference::server_reference(Buffer&& val)
-    : detail::string_property{id::server_reference, std::forward<Buffer>(val)} {}
+server_reference::server_reference(Buffer&& val, error_code& ec)
+    : detail::string_property{id::server_reference, std::forward<Buffer>(val), ec} {}
 
 
 inline
@@ -265,18 +296,19 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-reason_string::reason_string(Buffer&& val)
-    : detail::string_property{id::reason_string, std::forward<Buffer>(val)} {}
+reason_string::reason_string(Buffer&& val, error_code& ec)
+    : detail::string_property{id::reason_string, std::forward<Buffer>(val), ec} {}
 
 
 inline
 receive_maximum::receive_maximum(std::uint16_t val)
     : detail::n_bytes_property<2>{id::receive_maximum, endian_static_vector(val)} {
     if (val == 0) {
-        throw make_error(
-            errc::bad_message,
-            "property::receive_maximum value is invalid"
-        );
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::protocol_error
+            )
+        };
     }
 }
 
@@ -287,13 +319,15 @@ std::uint16_t receive_maximum::val() const {
 
 template <typename It, typename End>
 inline
-receive_maximum::receive_maximum(It b, End e)
+receive_maximum::receive_maximum(It b, End e, error_code& ec)
     : detail::n_bytes_property<2>{id::receive_maximum, b, e} {
     if (val() == 0) {
-        throw make_error(
-            errc::bad_message,
-            "property::receive_maximum value is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
         );
+    }
+    else {
+        ec = error_code{};
     }
 }
 
@@ -333,22 +367,33 @@ maximum_qos::maximum_qos(qos value)
     : detail::n_bytes_property<1>{id::maximum_qos, {static_cast<char>(value)}} {
     if (value != qos::at_most_once &&
         value != qos::at_least_once) {
-        throw make_error(
-            errc::bad_message,
-            "property::maximum_qos value is invalid"
-        );
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::protocol_error
+            )
+        };
     }
 }
 
 inline
-std::uint8_t maximum_qos::val() const {
-    return static_cast<std::uint8_t>(buf_.front());
+qos maximum_qos::val() const {
+    return static_cast<qos>(buf_.front());
 }
 
 template <typename It, typename End>
 inline
-maximum_qos::maximum_qos(It b, End e)
-    : detail::n_bytes_property<1>{id::maximum_qos, b, e} {}
+maximum_qos::maximum_qos(It b, End e, error_code& ec)
+    : detail::n_bytes_property<1>{id::maximum_qos, b, e} {
+    if (val() != qos::at_most_once &&
+        val() != qos::at_least_once) {
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
+        );
+    }
+    else {
+        ec = error_code{};
+    }
+}
 
 
 inline
@@ -376,7 +421,7 @@ retain_available::retain_available(It b, End e)
 
 inline
 user_property::user_property(std::string key, std::string val)
-    : user_property{buffer{force_move(key)}, buffer{force_move(val)}}
+    : key_{buffer{force_move(key)}}, val_{buffer{force_move(val)}}
 {}
 
 inline
@@ -437,21 +482,22 @@ template <
     std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t>
 >
 inline
-user_property::user_property(Buffer&& key, Buffer&& val)
-    : key_{std::forward<Buffer>(key)}, val_{std::forward<Buffer>(val)}
+user_property::user_property(Buffer&& key, Buffer&& val, error_code& ec)
+    : key_{std::forward<Buffer>(key), ec}, val_{std::forward<Buffer>(val), ec}
 {
     if (key_.size() > 0xffff) {
-        throw make_error(
-            errc::bad_message,
-            "property::user_property key length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     if (val_.size() > 0xffff) {
-        throw make_error(
-            errc::bad_message,
-            "property::user_property val length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
+    ec = error_code{};
 }
 
 
@@ -459,10 +505,11 @@ inline
 maximum_packet_size::maximum_packet_size(std::uint32_t val)
     : detail::n_bytes_property<4>{id::maximum_packet_size, endian_static_vector(val)} {
     if (val == 0) {
-        throw make_error(
-            errc::bad_message,
-            "property::maximum_packet_size value is invalid"
-        );
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::protocol_error
+            )
+        };
     }
 }
 
@@ -473,13 +520,15 @@ std::uint32_t maximum_packet_size::val() const {
 
 template <typename It, typename End>
 inline
-maximum_packet_size::maximum_packet_size(It b, End e)
+maximum_packet_size::maximum_packet_size(It b, End e, error_code& ec)
     : detail::n_bytes_property<4>{id::maximum_packet_size, b, e} {
     if (val() == 0) {
-        throw make_error(
-            errc::bad_message,
-            "property::maximum_packet_size value is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
         );
+    }
+    else {
+        ec = error_code{};
     }
 }
 

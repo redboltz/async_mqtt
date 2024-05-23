@@ -64,28 +64,34 @@ struct app {
                     "Password1"
                 },
                 [this]
-                (am::system_error const& se) {
-                    handle_send_connect(se);
+                (am::error_code const& ec) {
+                    handle_send_connect(ec);
                 }
             );
     }
 
-    void handle_send_connect(am::system_error const& se) {
-        if (se) {
-            std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+    void handle_send_connect(am::error_code const& ec) {
+        if (ec) {
+            std::cout << "MQTT CONNECT send error:" << ec.message() << std::endl;
             return;
         }
         // Recv MQTT CONNACK
         amep->async_recv(
             [this]
-            (am::packet_variant pv) {
-                handle_recv_connack(am::force_move(pv));
+            (am::error_code const& ec, am::packet_variant pv) {
+                handle_recv_connack(ec, am::force_move(pv));
             }
         );
     }
 
-    void handle_recv_connack(am::packet_variant pv) {
-        if (pv) {
+    void handle_recv_connack(am::error_code const& ec, am::packet_variant pv) {
+        if (ec) {
+            std::cout
+                << "MQTT CONNACK recv error:"
+                << ec.message()
+                << std::endl;
+        }
+        else {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
@@ -100,8 +106,8 @@ struct app {
                                 { {"topic1", am::qos::at_most_once} }
                             },
                             [this]
-                            (am::system_error const& se) {
-                                handle_send_subscribe(se);
+                            (am::error_code const& ec) {
+                                handle_send_subscribe(ec);
                             }
                         );
                     },
@@ -109,31 +115,30 @@ struct app {
                 }
             );
         }
-        else {
-            std::cout
-                << "MQTT CONNACK recv error:"
-                << pv.get<am::system_error>().what()
-                << std::endl;
-            return;
-        }
     }
 
-    void handle_send_subscribe(am::system_error const& se) {
-        if (se) {
-            std::cout << "MQTT SUBSCRIBE send error:" << se.what() << std::endl;
+    void handle_send_subscribe(am::error_code const& ec) {
+        if (ec) {
+            std::cout << "MQTT SUBSCRIBE send error:" << ec.message() << std::endl;
             return;
         }
         // Recv MQTT SUBACK
         amep->async_recv(
             [this]
-            (am::packet_variant pv) {
-                handle_recv_suback(am::force_move(pv));
+            (am::error_code const& ec, am::packet_variant pv) {
+                handle_recv_suback(ec, am::force_move(pv));
             }
         );
     }
 
-    void handle_recv_suback(am::packet_variant pv) {
-        if (pv) {
+    void handle_recv_suback(am::error_code const& ec, am::packet_variant pv) {
+        if (ec) {
+            std::cout
+                << "MQTT SUBACK recv error:"
+                << ec.message()
+                << std::endl;
+        }
+        else {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
@@ -154,8 +159,8 @@ struct app {
                                 am::qos::at_least_once
                             },
                             [this]
-                            (am::system_error const& se) {
-                                handle_send_publish(se);
+                            (am::error_code const& ec) {
+                                handle_send_publish(ec);
                             }
                         );
                     },
@@ -163,31 +168,30 @@ struct app {
                 }
             );
         }
-        else {
-            std::cout
-                << "MQTT SUBACK recv error:"
-                << pv.get<am::system_error>().what()
-                << std::endl;
-            return;
-        }
     }
 
-    void handle_send_publish(am::system_error const& se) {
-        if (se) {
-            std::cout << "MQTT PUBLISH send error:" << se.what() << std::endl;
+    void handle_send_publish(am::error_code const& ec) {
+        if (ec) {
+            std::cout << "MQTT PUBLISH send error:" << ec.message() << std::endl;
             return;
         }
         // Recv MQTT PUBACK or (echobacked) PUBLISH
         amep->async_recv(
             [this]
-            (am::packet_variant pv) {
-                handle_recv_puback_or_publish(am::force_move(pv));
+            (am::error_code const& ec, am::packet_variant pv) {
+                handle_recv_puback_or_publish(ec, am::force_move(pv));
             }
         );
     }
 
-    void handle_recv_puback_or_publish(am::packet_variant pv) {
-        if (pv) {
+    void handle_recv_puback_or_publish(am::error_code const& ec, am::packet_variant pv) {
+        if (ec) {
+            std::cout
+                << "MQTT recv error:"
+                << ec.message()
+                << std::endl;
+        }
+        else {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::publish_packet const& p) {
@@ -213,22 +217,15 @@ struct app {
             if (++count < 2) {
                 amep->async_recv(
                     [this]
-                    (am::packet_variant pv) {
-                        handle_recv_puback_or_publish(am::force_move(pv));
+                    (am::error_code const& ec, am::packet_variant pv) {
+                        handle_recv_puback_or_publish(ec, am::force_move(pv));
                     }
                 );
             }
             else {
                 std::cout << "close" << std::endl;
-                amep->async_close([]{});
+                amep->async_close(as::detached);
             }
-        }
-        else {
-            std::cout
-                << "MQTT recv error:"
-                << pv.get<am::system_error>().what()
-                << std::endl;
-            return;
         }
     }
 

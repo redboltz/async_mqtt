@@ -41,7 +41,9 @@ BOOST_AUTO_TEST_CASE(v311_pingreq) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::pingreq_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::pingreq_packet{buf, ec};
+        BOOST_TEST(!ec);
 
         auto cbs2 = p.const_buffer_sequence();
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());

@@ -15,9 +15,9 @@
 #include <boost/operators.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/packet/property_id.hpp>
 
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/move.hpp>
@@ -44,17 +44,17 @@ enum class ostream_format {
  */
 template <std::size_t N>
 struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
-    n_bytes_property(property::id id, static_vector<char, N> const& buf)
+    explicit n_bytes_property(property::id id, static_vector<char, N> const& buf)
         : id_{id},
           buf_{buf} // very small size copy
     {
     }
 
     template <typename It, typename End>
-    n_bytes_property(property::id id, It b, End e)
+    explicit n_bytes_property(property::id id, It b, End e)
         :id_{id}, buf_(b, e) {}
 
-    n_bytes_property(property::id id, buffer const& buf)
+    explicit n_bytes_property(property::id id, buffer const& buf)
         :id_{id} {
         BOOST_ASSERT(buf.size() >= N);
         buf_.insert(buf_.end(), (buf.begin(), std::next(buf.begin(), N)));
@@ -114,17 +114,23 @@ struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
  * @brief binary_property
  */
 struct binary_property : private boost::totally_ordered<binary_property> {
-    binary_property(property::id id, buffer buf)
+    explicit binary_property(property::id id, buffer buf)
         :id_{id},
          buf_{force_move(buf)},
          length_(2) // size 2
     {
-        if (buf_.size() > 0xffff) {
-            throw make_error(
-                errc::bad_message,
-                "property::binary_property length is invalid"
-            );
-        }
+        error_code ec = check();
+        if (ec) throw system_error{ec};
+        endian_store(boost::numeric_cast<std::uint16_t>(buf_.size()), length_.data());
+    }
+
+    binary_property(property::id id, buffer buf, error_code& ec)
+        :id_{id},
+         buf_{force_move(buf)},
+         length_(2) // size 2
+    {
+        ec = check();
+        if (ec) return;
         endian_store(boost::numeric_cast<std::uint16_t>(buf_.size()), length_.data());
     }
 
@@ -201,6 +207,17 @@ struct binary_property : private boost::totally_ordered<binary_property> {
         return std::tie(lhs.id_, lhs.buf_) == std::tie(rhs.id_, rhs.buf_);
     }
 
+    error_code check() const{
+        if (buf_.size() > 0xffff) {
+            return make_error_code(
+                disconnect_reason_code::malformed_packet
+            );
+        }
+        else {
+            return error_code{};
+        }
+    }
+
     static constexpr ostream_format const of_ = ostream_format::json_like;
     property::id id_;
     buffer buf_;
@@ -212,12 +229,25 @@ struct binary_property : private boost::totally_ordered<binary_property> {
  * @brief string_property
  */
 struct string_property : binary_property {
-    string_property(property::id id, buffer buf)
+    explicit string_property(property::id id, buffer buf)
         :binary_property{id, force_move(buf)} {
-        if (!utf8string_check(this->val())) {
-            throw make_error(
-                errc::bad_message,
-                "string property invalid utf8"
+        error_code ec = this->check();
+        if (ec) throw system_error(ec);
+    }
+
+    explicit string_property(property::id id, buffer buf, error_code& ec)
+        :binary_property{id, force_move(buf), ec} {
+        if (ec) return;
+        ec = check();
+    }
+
+    error_code check() const {
+        if (utf8string_check(this->val())) {
+            return error_code{};
+        }
+        else {
+            return make_error_code(
+                disconnect_reason_code::protocol_error
             );
         }
     }
@@ -230,7 +260,7 @@ struct string_property : binary_property {
  * The length is 1 to 4.
  */
 struct variable_property : private boost::totally_ordered<variable_property> {
-    variable_property(property::id id, std::uint32_t value)
+    explicit variable_property(property::id id, std::uint32_t value)
         :id_{id}  {
         value_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(value));
     }
@@ -304,16 +334,33 @@ struct len_str {
         : buf{force_move(b)},
           len{endian_static_vector(boost::numeric_cast<std::uint16_t>(buf.size()))}
     {
-        if (!utf8string_check(buf)) {
-            throw make_error(
-                errc::bad_message,
-                "string property invalid utf8"
-            );
+        error_code ec = check();
+        if (ec) throw system_error(ec);
+    }
+
+    explicit len_str(buffer b, error_code& ec)
+        : buf{force_move(b)},
+          len{endian_static_vector(boost::numeric_cast<std::uint16_t>(buf.size()))}
+    {
+        // inherit previous error for user_property
+        if (!ec) {
+            ec = check();
         }
     }
 
     std::size_t size() const {
         return len.size() + buf.size();
+    }
+
+    error_code check() const {
+        if (utf8string_check(buf)) {
+            return error_code{};
+        }
+        else {
+            return make_error_code(
+                disconnect_reason_code::protocol_error
+            );
+        }
     }
 
     buffer buf;

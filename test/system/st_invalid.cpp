@@ -33,10 +33,9 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> /*se*/,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant /*pv*/,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -51,15 +50,15 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield as::async_write(
                     ep().next_layer(),
                     as::buffer(invalid_remaining_length_packet),
                     *this
                 );
-                BOOST_TEST(!*ec);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                BOOST_TEST(!*pv); // auto close if receive error
+                BOOST_TEST(ec); // closed by the broker
                 set_finish();
                 guard.reset();
             }

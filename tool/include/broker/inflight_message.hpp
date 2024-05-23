@@ -67,11 +67,11 @@ public:
         epsp.register_packet_id(packet_id());
         epsp.async_send(
             packet_opt ? *packet_opt : packet_,
-            [epsp](system_error const& ec) {
+            [epsp](error_code const& ec) {
                 if (ec) {
                     ASYNC_MQTT_LOG("mqtt_broker", trace)
                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                        << ec.what();
+                        << ec.message();
                 }
             }
         );

@@ -16,7 +16,6 @@
 #include <boost/hana/unpack.hpp>
 
 #include <async_mqtt/impl/client_impl.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
@@ -44,10 +43,10 @@ start_op {
     template <typename Self>
     void operator()(
         Self& self,
-        system_error const& se
+        error_code const& ec
     ) {
-        if (se) {
-            self.complete(se.code(), std::nullopt);
+        if (ec) {
+            self.complete(ec, std::nullopt);
             return;
         }
 
@@ -122,11 +121,44 @@ client<Version, NextLayer>::async_start_impl(
 }
 
 template <protocol_version Version, typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code, std::optional<connack_packet>)
+)
+client<Version, NextLayer>::async_start_impl(
+    error_code ec,
+    CompletionToken&& token
+) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "start: " << ec.message();
+    return
+        as::async_compose<
+            CompletionToken,
+            void(error_code, std::optional<connack_packet>)
+        >(
+            [ec](auto& self) {
+                self.complete(ec, std::nullopt);
+            },
+            token,
+            get_executor()
+        );
+}
+
+template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 auto
 client<Version, NextLayer>::async_start(Args&&... args) {
     if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
-        return async_start_impl(connect_packet{std::forward<Args>(args)...});
+        try {
+            return async_start_impl(connect_packet{std::forward<Args>(args)...});
+        }
+        catch (system_error const& se) {
+            return async_start_impl(
+                se.code()
+            );
+        }
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -142,10 +174,18 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                     >,
                     "connect_packet is not constructible"
                 );
-                return async_start_impl(
-                    connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
-                    std::forward<decltype(back)>(back)
-                );
+                try {
+                    return async_start_impl(
+                        connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+                catch (system_error const& se) {
+                    return async_start_impl(
+                        se.code(),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
             }
         );
     }

@@ -13,7 +13,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_connect.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
@@ -89,19 +88,21 @@ connect_packet::connect_packet(
     endian_store(boost::numeric_cast<std::uint16_t>(client_id_.size()), client_id_length_buf_.data());
 
     if (!utf8string_check(client_id_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet client_id invalid utf8"
-        );
+        throw system_error{
+            make_error_code(
+                connect_reason_code::client_identifier_not_valid
+            )
+        };
     }
 
     if (clean_start) connect_flags_ |= connect_flags::mask_clean_start;
     if (user_name) {
         if (!utf8string_check(*user_name)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet user name invalid utf8"
-            );
+            throw system_error{
+                make_error_code(
+                    connect_reason_code::bad_user_name_or_password
+                )
+            };
         }
         connect_flags_ |= connect_flags::mask_user_name_flag;
         user_name_ = buffer{force_move(*user_name)};
@@ -123,10 +124,11 @@ connect_packet::connect_packet(
     for (auto const& prop : props_) {
         auto id = prop.id();
         if (!validate_property(property_location::connect, id)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet property "s + id_to_str(id) + " is not allowed"
-            );
+            throw system_error{
+                make_error_code(
+                    connect_reason_code::protocol_error
+                )
+            };
         }
     }
 
@@ -137,18 +139,20 @@ connect_packet::connect_packet(
         if (w->get_retain() == pub::retain::yes) connect_flags_ |= connect_flags::mask_will_retain;
         connect_flags::set_will_qos(connect_flags_, w->get_qos());
         if (!utf8string_check(w->topic())) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will topic invalid utf8"
-            );
+            throw system_error{
+                make_error_code(
+                    connect_reason_code::topic_name_invalid
+                )
+            };
         }
         will_topic_ = force_move(w->topic_as_buffer());
         will_topic_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_topic_.size()));
         if (w->message().size() > 0xffffL) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will message too long"
-            );
+            throw system_error{
+                make_error_code(
+                    connect_reason_code::malformed_packet
+                )
+            };
         }
         will_message_ = force_move(w->message_as_buffer());
         will_message_length_buf_ = endian_static_vector(boost::numeric_cast<std::uint16_t>(will_message_.size()));
@@ -162,10 +166,11 @@ connect_packet::connect_packet(
         for (auto const& prop : will_props_) {
             auto id = prop.id();
             if (!validate_property(property_location::will, id)) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::connect_packet will_property "s + id_to_str(id) + " is not allowed"
-                );
+                throw system_error{
+                    make_error_code(
+                        connect_reason_code::protocol_error
+                    )
+                };
             }
         }
 
@@ -332,22 +337,22 @@ properties const& connect_packet::props() const {
 }
 
 inline
-connect_packet::connect_packet(buffer buf) {
+connect_packet::connect_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     fixed_header_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
     auto cpt_opt = get_control_packet_type_with_check(fixed_header_);
     if (!cpt_opt || *cpt_opt != control_packet_type::connect) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet fixed_header is invalid"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
 
     // remaining_length
@@ -355,51 +360,57 @@ connect_packet::connect_packet(buffer buf) {
         remaining_length_ = *vl_opt;
     }
     else {
-        throw make_error(errc::bad_message, "v5::connect_packet remaining length is invalid");
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
+        );
+        return;
     }
     if (remaining_length_ != buf.size()) {
-        throw make_error(errc::bad_message, "v5::connect_packet remaining length doesn't match buf.size()");
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
+        );
+        return;
     }
 
     // protocol name and level
     if (!insert_advance(buf, protocol_name_and_level_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet length of protocol_name or level is invalid"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     static_vector<char, 7> expected_protocol_name_and_level {
         0, 4, 'M', 'Q', 'T', 'T', 5
     };
     if (protocol_name_and_level_ != expected_protocol_name_and_level) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet contents of protocol_name or level is invalid"
+        ec = make_error_code(
+            connect_reason_code::unsupported_protocol_version
         );
+        return;
     }
 
     // connect_flags
     if (buf.size() < 1) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet connect_flags doesn't exist"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     connect_flags_ = buf.front();
     if (connect_flags_ & 0b00000001) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet connect_flags reserved bit0 is 1 (must be 0)"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     buf.remove_prefix(1);
 
     // keep_alive
     if (!insert_advance(buf, keep_alive_buf_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet keep_alive is invalid"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
 
     // property
@@ -409,44 +420,45 @@ connect_packet::connect_packet(buffer buf) {
         std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
         buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
         if (buf.size() < property_length_) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet properties_don't match its length"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         auto prop_buf = buf.substr(0, property_length_);
-        props_ = make_properties(prop_buf, property_location::connect);
+        props_ = make_properties(prop_buf, property_location::connect, ec);
+        if (ec) return;
         buf.remove_prefix(property_length_);
     }
     else {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet property_length is invalid"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
 
     // client_id_length
     if (!insert_advance(buf, client_id_length_buf_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet length of client_id is invalid"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     auto client_id_length = endian_load<std::uint16_t>(client_id_length_buf_.data());
 
     // client_id
     if (buf.size() < client_id_length) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet client_id doesn't match its length"
+        ec = make_error_code(
+            connect_reason_code::malformed_packet
         );
+        return;
     }
     client_id_ = buf.substr(0, client_id_length);
     if (!utf8string_check(client_id_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connect_packet client_id invalid utf8"
+        ec = make_error_code(
+            connect_reason_code::client_identifier_not_valid
         );
+        return;
     }
     buf.remove_prefix(client_id_length);
 
@@ -457,10 +469,10 @@ connect_packet::connect_packet(buffer buf) {
         if (will_qos != qos::at_most_once &&
             will_qos != qos::at_least_once &&
             will_qos != qos::exactly_once) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will_qos is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
 
         // will_property
@@ -470,62 +482,63 @@ connect_packet::connect_packet(buffer buf) {
             std::copy(buf.begin(), it, std::back_inserter(will_property_length_buf_));
             buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
             if (buf.size() < will_property_length_) {
-                throw make_error(
-                    errc::bad_message,
-                    "v5::connect_packet properties_don't match its length"
+                ec = make_error_code(
+                    connect_reason_code::malformed_packet
                 );
+                return;
             }
             auto prop_buf = buf.substr(0, will_property_length_);
-            will_props_ = make_properties(prop_buf, property_location::will);
+            will_props_ = make_properties(prop_buf, property_location::will, ec);
+            if (ec) return;
             buf.remove_prefix(will_property_length_);
         }
         else {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet property_length is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
 
         // will_topic_length
         if (!insert_advance(buf, will_topic_length_buf_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet length of will_topic is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         auto will_topic_length = endian_load<std::uint16_t>(will_topic_length_buf_.data());
 
         // will_topic
         if (buf.size() < will_topic_length) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will_topic doesn't match its length"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         will_topic_ = buf.substr(0, will_topic_length);
         if (!utf8string_check(will_topic_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will topic invalid utf8"
+            ec = make_error_code(
+                connect_reason_code::topic_name_invalid
             );
+            return;
         }
         buf.remove_prefix(will_topic_length);
 
         // will_message_length
         if (!insert_advance(buf, will_message_length_buf_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet length of will_message is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         auto will_message_length = endian_load<std::uint16_t>(will_message_length_buf_.data());
 
         // will_message
         if (buf.size() < will_message_length) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet will_message doesn't match its length"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         will_message_ = buf.substr(0, will_message_length);
         buf.remove_prefix(will_message_length);
@@ -534,42 +547,42 @@ connect_packet::connect_packet(buffer buf) {
         auto will_retain = connect_flags::will_retain(connect_flags_);
         auto will_qos = connect_flags::will_qos(connect_flags_);
         if (will_retain == pub::retain::yes) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet combination of will_flag and will_retain is invalid"
+            ec = make_error_code(
+                connect_reason_code::protocol_error
             );
+            return;
         }
         if (will_qos != qos::at_most_once) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet combination of will_flag and will_qos is invalid"
+            ec = make_error_code(
+                connect_reason_code::protocol_error
             );
+            return;
         }
     }
     // user_name
     if (connect_flags::has_user_name_flag(connect_flags_)) {
         // user_name_topic_name_length
         if (!insert_advance(buf, user_name_length_buf_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet length of user_name is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         auto user_name_length = endian_load<std::uint16_t>(user_name_length_buf_.data());
 
         // user_name
         if (buf.size() < user_name_length) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet user_name doesn't match its length"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         user_name_ = buf.substr(0, user_name_length);
         if (!utf8string_check(user_name_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet user name invalid utf8"
+            ec = make_error_code(
+                connect_reason_code::bad_user_name_or_password
             );
+            return;
         }
         buf.remove_prefix(user_name_length);
     }
@@ -578,19 +591,19 @@ connect_packet::connect_packet(buffer buf) {
     if (connect_flags::has_password_flag(connect_flags_)) {
         // password_topic_name_length
         if (!insert_advance(buf, password_length_buf_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet length of password is invalid"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         auto password_length = endian_load<std::uint16_t>(password_length_buf_.data());
 
         // password
         if (buf.size() != password_length) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connect_packet password doesn't match its length"
+            ec = make_error_code(
+                connect_reason_code::malformed_packet
             );
+            return;
         }
         password_ = buf.substr(0, password_length);
         buf.remove_prefix(password_length);

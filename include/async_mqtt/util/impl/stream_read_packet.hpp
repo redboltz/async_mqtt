@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP)
 #define ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 
@@ -116,7 +117,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                         << ASYNC_MQTT_ADD_VALUE(address, this)
                         << "out of size remaining length";
                     self.complete(
-                        sys::errc::make_error_code(sys::errc::protocol_error),
+                        make_error_code(disconnect_reason_code::packet_too_large),
                         buffer{}
                     );
                     return;

@@ -179,7 +179,13 @@ void
 client<Version, NextLayer>::recv_loop() {
     ep_->async_recv(
         [this]
-        (packet_variant pv) mutable {
+        (error_code const& ec, packet_variant pv) mutable {
+            if (ec) {
+                recv_queue_.emplace_back(ec);
+                recv_queue_inserted_  = true;
+                tim_notify_publish_recv_.cancel();
+                return;
+            }
             pv.visit(
                 overload {
                     [&](connack_packet& p) {
@@ -251,11 +257,6 @@ client<Version, NextLayer>::recv_loop() {
                         recv_queue_inserted_  = true;
                         tim_notify_publish_recv_.cancel();
                         recv_loop();
-                    },
-                    [&](system_error const& se) {
-                        recv_queue_.emplace_back(se.code());
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
                     },
                     [&](auto const&) {
                         recv_loop();

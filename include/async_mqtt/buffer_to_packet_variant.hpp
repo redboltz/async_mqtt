@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP)
 #define ASYNC_MQTT_BUFFER_TO_PACKET_VARIANT_HPP
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/packet/packet_variant_fwd.hpp>
 #include <async_mqtt/util/buffer.hpp>
@@ -21,7 +22,7 @@ namespace async_mqtt {
  * @return created basic_packet_variant
  */
 template <std::size_t PacketIdBytes>
-basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, protocol_version ver, error_code& ec);
 
 /**
  * @ingroup packet_variant
@@ -30,7 +31,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
  * @param ver protocol version to create packet
  * @return created packet_variant
  */
-packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver);
+packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver, error_code& ec);
 
 } // namespace async_mqtt
 

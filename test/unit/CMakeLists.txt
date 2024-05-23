@@ -25,7 +25,6 @@ list(APPEND check_PROGRAMS
     ut_ep_topic_alias.cpp
     ut_ep_recv_filter.cpp
     ut_ep_recv_max.cpp
-    ut_ep_send_rt_chk.cpp
     ut_ep_size_max.cpp
     ut_ep_store.cpp
     ut_host_port.cpp
@@ -66,13 +65,13 @@ list(APPEND check_PROGRAMS
     ut_strm.cpp
     ut_subscription_map.cpp
     ut_subscription_map_broker.cpp
-    ut_system_error.cpp
     ut_topic_alias.cpp
     ut_topic_sharename.cpp
     ut_topic_subopts.cpp
     ut_unique_scope_guard.cpp
     ut_utf8validate.cpp
     ut_value_allocator.cpp
+    ut_error.cpp
 )
 
 list(APPEND check_ce_PROGRAMS

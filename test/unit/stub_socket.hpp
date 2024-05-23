@@ -25,9 +25,27 @@ template <std::size_t PacketIdBytes>
 struct basic_stub_socket {
     using this_type = basic_stub_socket<PacketIdBytes>;
     using executor_type = as::any_io_executor;
-    using pv_queue_t = std::deque<basic_packet_variant<PacketIdBytes>>;
+    using packet_variant_type = basic_packet_variant<PacketIdBytes>;
+
+    struct error_pv {
+        error_pv(
+            packet_variant_type pv
+        ):pv{force_move(pv)}
+        {}
+
+        error_pv(
+            error_code ec
+        ):ec{ec}
+        {}
+
+        error_code ec;
+        packet_variant_type pv;
+    };
+
+    using pv_queue_t = std::deque<error_pv>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
+
 
     basic_stub_socket(
         protocol_version version,
@@ -42,7 +60,7 @@ struct basic_stub_socket {
         write_packet_checker_ = force_move(c);
     }
 
-    void set_recv_packets(std::deque<basic_packet_variant<PacketIdBytes>> recv_pvs) {
+    void set_recv_packets(pv_queue_t recv_pvs) {
         recv_pvs_ = force_move(recv_pvs);
         recv_pvs_it_ = recv_pvs_.begin();
         pv_r_ = std::nullopt;
@@ -122,7 +140,8 @@ struct basic_stub_socket {
                 if (auto remlen_opt = variable_bytes_to_val(it, end)) {
                     auto packet_end = std::next(it, *remlen_opt);
                     auto buf = allocate_buffer(packet_begin, packet_end);
-                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_);
+                    error_code ec;
+                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_, ec);
                     if (socket.write_packet_checker_) socket.write_packet_checker_(pv);
                     it = packet_end;
                     packet_begin = packet_end;
@@ -165,9 +184,13 @@ struct basic_stub_socket {
                 self.complete(errc::make_error_code(errc::no_message), 0);
                 return;
             }
-            if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+            auto ec = socket.recv_pvs_it_->ec;
+            if (ec) {
                 ++socket.recv_pvs_it_;
-                self.complete(ec->code(), 0);
+                self.complete(
+                    ec,
+                    0
+                );
                 return;
             }
 
@@ -185,7 +208,7 @@ struct basic_stub_socket {
             }
 
             if (!socket.pv_r_) {
-                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.cbs_ = socket.recv_pvs_it_->pv.const_buffer_sequence();
                 socket.pv_r_ = make_packet_range(socket.cbs_);
             }
             while (socket.pv_r_->first == socket.pv_r_->second) {
@@ -195,12 +218,16 @@ struct basic_stub_socket {
                     self.complete(errc::make_error_code(errc::no_message), 0);
                     return;
                 }
-                if (auto* ec = socket.recv_pvs_it_->template get_if<system_error>()) {
+                auto ec = socket.recv_pvs_it_->ec;
+                if (ec) {
                     ++socket.recv_pvs_it_;
-                    self.complete(ec->code(), 0);
+                    self.complete(
+                        ec,
+                        0
+                    );
                     return;
                 }
-                socket.cbs_ = socket.recv_pvs_it_->const_buffer_sequence();
+                socket.cbs_ = socket.recv_pvs_it_->pv.const_buffer_sequence();
                 socket.pv_r_ = make_packet_range(socket.cbs_);
             }
 
@@ -428,7 +455,6 @@ struct layer_customize<basic_stub_socket<4>> {
         );
     }
 };
-
 
 } // namespace async_mqtt
 

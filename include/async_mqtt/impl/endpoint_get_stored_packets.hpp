@@ -33,7 +33,7 @@ get_stored_packets_op {
         } break;
         case complete:
             packets = ep.get_stored_packets();
-            self.complete(force_move(packets));
+            self.complete(error_code{}, force_move(packets));
             break;
         }
     }
@@ -54,7 +54,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
     return
         as::async_compose<
             CompletionToken,
-            void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+            void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
         >(
             get_stored_packets_op{
                 *this

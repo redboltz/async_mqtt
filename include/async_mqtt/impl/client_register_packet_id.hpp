@@ -15,7 +15,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(bool)
+    void(error_code)
 )
 client<Version, NextLayer>::async_register_packet_id(
     packet_id_type pid,

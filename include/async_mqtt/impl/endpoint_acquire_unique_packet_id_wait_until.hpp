@@ -39,7 +39,7 @@ acquire_unique_packet_id_wait_until_op {
                 [&] {
                     pid_opt = ep.pid_man_.acquire_unique_id();
                     if (pid_opt) {
-                        self.complete(*pid_opt);
+                        self.complete(error_code{}, *pid_opt);
                     }
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", warning)
@@ -53,7 +53,7 @@ acquire_unique_packet_id_wait_until_op {
                     }
                 };
 
-            if (ec == errc::operation_canceled) {
+            if (ec == as::error::operation_aborted) {
                 ep.complete_retry_one();
                 acq_proc();
             }
@@ -87,7 +87,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id_w
     return
         as::async_compose<
             CompletionToken,
-            void(typename basic_packet_id_type<PacketIdBytes>::type)
+            void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
         >(
             acquire_unique_packet_id_wait_until_op{
                 *this

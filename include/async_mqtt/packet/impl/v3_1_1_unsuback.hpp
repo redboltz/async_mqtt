@@ -13,7 +13,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_unsuback.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -74,46 +73,46 @@ typename basic_packet_id_type<PacketIdBytes>::type basic_unsuback_packet<PacketI
 
 template <std::size_t PacketIdBytes>
 inline
-basic_unsuback_packet<PacketIdBytes>::basic_unsuback_packet(buffer buf) {
+basic_unsuback_packet<PacketIdBytes>::basic_unsuback_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::unsuback_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     all_.push_back(buf.front());
     buf.remove_prefix(1);
     auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(all_.back()));
     if (!cpt_opt || *cpt_opt != control_packet_type::unsuback) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::unsuback_packet fixed_header is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // remaining_length
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::unsuback_packet remaining_length doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     all_.push_back(buf.front());
     buf.remove_prefix(1);
     if (static_cast<std::uint8_t>(all_.back()) != PacketIdBytes) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::unsuback_packet remaining_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // variable header
     if (buf.size() != PacketIdBytes) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::unsuback_packet variable header doesn't match its length"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     std::copy(buf.begin(), buf.end(), std::back_inserter(all_));
 }

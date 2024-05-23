@@ -37,21 +37,17 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, {}, {});
+            proc({}, am::packet_variant{});
         }
-        void operator()(boost::system::error_code const& ec) const {
-            proc(ec, {}, {});
+        void operator()(am::error_code const& ec) const {
+            proc(ec, am::packet_variant{});
         }
-        void operator()(am::system_error const& se) const {
-            proc({}, se, {});
-        }
-        void operator()(am::packet_variant pv) const {
-            proc({}, {}, am::force_move(pv));
+        void operator()(am::error_code const& ec, am::packet_variant pv) const {
+            proc(ec, am::force_move(pv));
         }
     private:
         void proc(
             boost::system::error_code const& ec,
-            am::system_error const& se,
             am::packet_variant pv
         ) const {
 
@@ -85,33 +81,29 @@ private:
                     },
                     *this
                 );
-                if (se) {
-                    std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+                if (ec) {
+                    std::cout << "MQTT CONNECT send error:" << ec.message() << std::endl;
                     return;
                 }
 
                 // Recv MQTT CONNACK
                 yield app_.amep_->async_recv(*this);
-                if (pv) {
-                    pv.visit(
-                        am::overload {
-                            [&](am::v3_1_1::connack_packet const& p) {
-                                std::cout
-                                    << "MQTT CONNACK recv"
-                                    << " sp:" << p.session_present()
-                                    << std::endl;
-                            },
-                            [](auto const&) {}
-                        }
-                    );
-                }
-                else {
-                    std::cout
-                        << "MQTT CONNACK recv error:"
-                        << pv.get<am::system_error>().what()
-                        << std::endl;
+                if (ec) {
+                    std::cout << "MQTT CONNACK recv error:" << ec.message() << std::endl;
                     return;
                 }
+                BOOST_ASSERT(pv);
+                pv.visit(
+                    am::overload {
+                        [&](am::v3_1_1::connack_packet const& p) {
+                            std::cout
+                                << "MQTT CONNACK recv"
+                                << " sp:" << p.session_present()
+                                << std::endl;
+                        },
+                        [](auto const&) {}
+                    }
+                );
 
                 // Send MQTT SUBSCRIBE
                 yield app_.amep_->async_send(
@@ -121,36 +113,33 @@ private:
                     },
                     *this
                 );
-                if (se) {
-                    std::cout << "MQTT SUBSCRIBE send error:" << se.what() << std::endl;
+                if (ec) {
+                    std::cout << "MQTT SUBSCRIBE send error:" << ec.message() << std::endl;
                     return;
                 }
                 // Recv MQTT SUBACK
                 yield app_.amep_->async_recv(*this);
-                if (pv) {
-                    pv.visit(
-                        am::overload {
-                            [&](am::v3_1_1::suback_packet const& p) {
-                                std::cout
-                                    << "MQTT SUBACK recv"
-                                    << " pid:" << p.packet_id()
-                                    << " entries:";
-                                for (auto const& e : p.entries()) {
-                                    std::cout << e << " ";
-                                }
-                                std::cout << std::endl;
-                            },
-                            [](auto const&) {}
-                        }
-                    );
-                }
-                else {
-                    std::cout
-                        << "MQTT SUBACK recv error:"
-                        << pv.get<am::system_error>().what()
-                        << std::endl;
+                if (ec) {
+                    std::cout << "MQTT SUBACK recv error:" << ec.message() << std::endl;
                     return;
                 }
+                BOOST_ASSERT(pv);
+                pv.visit(
+                    am::overload {
+                        [&](am::v3_1_1::suback_packet const& p) {
+                            std::cout
+                                << "MQTT SUBACK recv"
+                                << " pid:" << p.packet_id()
+                                << " entries:";
+                            for (auto const& e : p.entries()) {
+                                std::cout << e << " ";
+                            }
+                            std::cout << std::endl;
+                        },
+                        [](auto const&) {}
+                    }
+                );
+
                 // Send MQTT PUBLISH
                 yield app_.amep_->async_send(
                     am::v3_1_1::publish_packet{
@@ -161,44 +150,40 @@ private:
                     },
                     *this
                 );
-                if (se) {
-                    std::cout << "MQTT PUBLISH send error:" << se.what() << std::endl;
+                if (ec) {
+                    std::cout << "MQTT PUBLISH send error:" << ec.message() << std::endl;
                     return;
                 }
                 // Recv MQTT PUBLISH and PUBACK (order depends on broker)
                 for (app_.count_ = 0; app_.count_ != 2; ++app_.count_) {
                     yield app_.amep_->async_recv(*this);
-                    if (pv) {
-                        pv.visit(
-                            am::overload {
-                                [&](am::v3_1_1::publish_packet const& p) {
-                                    std::cout
-                                        << "MQTT PUBLISH recv"
-                                        << " pid:" << p.packet_id()
-                                        << " topic:" << p.topic()
-                                        << " payload:" << p.payload()
-                                        << " qos:" << p.opts().get_qos()
-                                        << " retain:" << p.opts().get_retain()
-                                        << " dup:" << p.opts().get_dup()
-                                        << std::endl;
-                                },
-                                [&](am::v3_1_1::puback_packet const& p) {
-                                    std::cout
-                                        << "MQTT PUBACK recv"
-                                        << " pid:" << p.packet_id()
-                                        << std::endl;
-                                },
-                                [](auto const&) {}
-                            }
-                        );
-                    }
-                    else {
-                        std::cout
-                            << "MQTT recv error:"
-                            << pv.get<am::system_error>().what()
-                            << std::endl;
+                    if (ec) {
+                        std::cout << "MQTT recv error:" << ec.message() << std::endl;
                         return;
                     }
+                    BOOST_ASSERT(pv);
+                    pv.visit(
+                        am::overload {
+                            [&](am::v3_1_1::publish_packet const& p) {
+                                std::cout
+                                    << "MQTT PUBLISH recv"
+                                    << " pid:" << p.packet_id()
+                                    << " topic:" << p.topic()
+                                    << " payload:" << p.payload()
+                                    << " qos:" << p.opts().get_qos()
+                                    << " retain:" << p.opts().get_retain()
+                                    << " dup:" << p.opts().get_dup()
+                                    << std::endl;
+                            },
+                            [&](am::v3_1_1::puback_packet const& p) {
+                                std::cout
+                                    << "MQTT PUBACK recv"
+                                    << " pid:" << p.packet_id()
+                                    << std::endl;
+                            },
+                            [](auto const&) {}
+                        }
+                    );
                 }
                 std::cout << "close" << std::endl;
                 yield app_.amep_->async_close(*this);

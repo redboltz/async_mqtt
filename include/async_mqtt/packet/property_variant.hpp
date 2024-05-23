@@ -11,7 +11,6 @@
 
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/packet/property.hpp>
-#include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
@@ -68,6 +67,12 @@ public:
         >* = nullptr
     >
     property_variant(Property&& property);
+
+    /**
+     * @brief constructor
+     *        property variant value is std::monostate
+     */
+    explicit property_variant() = default;
 
     /**
      * @brief visit to variant
@@ -155,7 +160,7 @@ public:
 
 private:
     using variant_t = std::variant<
-        system_error,
+        std::monostate,
         property::payload_format_indicator,
         property::message_expiry_interval,
         property::content_type,

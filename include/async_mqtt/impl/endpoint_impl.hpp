@@ -200,26 +200,26 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::send_stored() {
                     [&](v3_1_1::basic_publish_packet<PacketIdBytes> p) {
                         async_send(
                             p,
-                            [](system_error const&){}
+                            as::detached
                         );
                     },
                     [&](v5::basic_publish_packet<PacketIdBytes> p) {
                         if (enqueue_publish(p)) return;
                         async_send(
                             p,
-                            [](system_error const&){}
+                            as::detached
                         );
                     },
                     [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> p) {
                         async_send(
                             p,
-                            [](system_error const&){}
+                            as::detached
                         );
                     },
                     [&](v5::basic_pubrel_packet<PacketIdBytes> p) {
                         async_send(
                             p,
-                            [](system_error const&){}
+                            as::detached
                         );
                     }
                 }
@@ -267,13 +267,13 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer() {
                         case protocol_version::v3_1_1:
                             async_send(
                                 v3_1_1::pingreq_packet(),
-                                [](system_error const&){}
+                                as::detached
                             );
                             break;
                         case protocol_version::v5:
                             async_send(
                                 v5::pingreq_packet(),
-                                [](system_error const&){}
+                                as::detached
                             );
                             break;
                         default:
@@ -309,7 +309,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
                                 << ASYNC_MQTT_ADD_VALUE(address, this)
                                 << "pingreq recv timeout. close.";
                             async_close(
-                                []{}
+                                as::detached
                             );
                             break;
                         case protocol_version::v5:
@@ -321,9 +321,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
                                     disconnect_reason_code::keep_alive_timeout,
                                     properties{}
                                 },
-                                [this](system_error const&){
+                                [this](error_code const&){
                                     async_close(
-                                        []{}
+                                        as::detached
                                     );
                                 }
                             );
@@ -361,7 +361,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                 << ASYNC_MQTT_ADD_VALUE(address, this)
                                 << "pingresp recv timeout. close.";
                             async_close(
-                                []{}
+                                as::detached
                             );
                             break;
                         case protocol_version::v5:
@@ -374,16 +374,16 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
                                         disconnect_reason_code::keep_alive_timeout,
                                         properties{}
                                     },
-                                    [this](system_error const&){
+                                    [this](error_code const&){
                                         async_close(
-                                            []{}
+                                            as::detached
                                         );
                                     }
                                 );
                             }
                             else {
                                 async_close(
-                                    []{}
+                                    as::detached
                                 );
                             }
                             break;

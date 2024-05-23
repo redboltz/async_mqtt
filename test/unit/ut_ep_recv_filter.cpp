@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack,
+            {connack},
         }
     );
 
@@ -71,17 +71,18 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
         }
     );
     {
-        auto ec = ep->async_send(connect, as::use_future).get();
+        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->async_recv(am::filter::match, {am::control_packet_type::connack}, as::use_future).get();
+        auto [ec, pv] = ep->async_recv(am::filter::match, {am::control_packet_type::connack}, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(connack == pv);
     }
 
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }

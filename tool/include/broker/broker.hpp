@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_BROKER_BROKER_HPP)
 #define ASYNC_MQTT_BROKER_BROKER_HPP
 
-#include <async_mqtt/util/scope_guard.hpp>
+#include <async_mqtt/all.hpp>
 #include <broker/endpoint_variant.hpp>
 #include <broker/security.hpp>
 #include <broker/mutex.hpp>
@@ -55,7 +55,18 @@ private:
     void async_read_packet(epsp_type epsp) {
         epsp.async_recv(
             [this, epsp]
-            (packet_variant pv) mutable {
+            (error_code const& ec, packet_variant pv) mutable {
+                if (ec) {
+                    ASYNC_MQTT_LOG("mqtt_broker", info)
+                        << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
+                        << ec.message();
+                    close_proc(
+                        force_move(epsp),
+                        true // send_will
+                    );
+                    return;
+                }
+                BOOST_ASSERT(pv);
                 pv.visit(
                     overload {
                         [&](v3_1_1::connect_packet& p) {
@@ -235,16 +246,6 @@ private:
                                 p.props()
                             );
                         },
-                        [&](system_error const& se) {
-                            // TBD connack or disconnect send on error
-                            ASYNC_MQTT_LOG("mqtt_broker", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                << se.what();
-                            close_proc(
-                                force_move(epsp),
-                                true // send_will
-                            );
-                        },
                         [&](auto const&) {
                             ASYNC_MQTT_LOG("mqtt_broker", fatal)
                                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -341,7 +342,7 @@ private:
                 false, // session present
                 false, // authenticated
                 force_move(connack_props),
-                [epsp, version](system_error) mutable {
+                [epsp, version](error_code) mutable {
                     disconnect_and_close(
                         epsp,
                         version,
@@ -416,7 +417,7 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [this, epsp](system_error) mutable {
+                [this, epsp](error_code) mutable {
                     async_read_packet(force_move(epsp));
                 }
             );
@@ -497,7 +498,7 @@ private:
                             false, // session present
                             true,  // authenticated
                             force_move(connack_props),
-                            [this, epsp](system_error) mutable {
+                            [this, epsp](error_code) mutable {
                                 async_read_packet(force_move(epsp));
                             }
                         );
@@ -566,7 +567,7 @@ private:
                 [
                     this,
                     epsp
-                ](system_error) mutable {
+                ](error_code) mutable {
                     async_read_packet(force_move(epsp));
                 }
             );
@@ -618,11 +619,11 @@ private:
                             &idx,
                             it
                         ]
-                        (system_error const& ec) mutable {
+                        (error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", trace)
                                     << ASYNC_MQTT_ADD_VALUE(address, this)
-                                    << ec.what();
+                                    << ec.message();
                                 return;
                             }
                             idx.modify(
@@ -708,11 +709,11 @@ private:
                                 connect_return_code::identifier_rejected
                             },
                             [epsp]
-                            (system_error const& ec) mutable {
+                            (error_code const& ec) mutable {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
+                                        << ec.message();
                                 }
                                 epsp.async_close(
                                     as::bind_executor(
@@ -823,7 +824,7 @@ private:
         }
 
         template <typename Self>
-        void operator()(Self& self, system_error se) {
+        void operator()(Self& self, error_code se) {
             self.complete(se);
         }
     };
@@ -839,7 +840,7 @@ private:
         auto exe = epsp.get_executor();
         return as::async_compose<
             CompletionToken,
-            void(system_error const&)
+            void(error_code const&)
         >(
             send_connack_op{
                 *this,
@@ -889,11 +890,11 @@ private:
                                 packet_id
                             },
                             [epsp]
-                            (system_error const& ec) {
+                            (error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << ec.what();
+                                    << ec.message();
                                 }
                             }
                         );
@@ -949,11 +950,11 @@ private:
                         epsp.async_send(
                             force_move(packet),
                             [epsp]
-                            (system_error const& ec) {
+                            (error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
+                                        << ec.message();
                                 }
                             }
                         );
@@ -971,11 +972,11 @@ private:
                                 packet_id
                             },
                             [epsp]
-                            (system_error const& ec) {
+                            (error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
+                                        << ec.message();
                                 }
                             }
                         );
@@ -1031,11 +1032,11 @@ private:
                         epsp.async_send(
                             force_move(packet),
                             [epsp]
-                            (system_error const& ec) {
+                            (error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                        << ec.what();
+                                        << ec.message();
                                 }
                             }
                         );
@@ -1341,11 +1342,11 @@ private:
                     packet_id
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1386,11 +1387,11 @@ private:
             epsp.async_send(
                 force_move(packet),
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1431,11 +1432,11 @@ private:
                     packet_id
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1474,11 +1475,11 @@ private:
             epsp.async_send(
                 force_move(packet),
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1640,11 +1641,11 @@ private:
                     force_move(res)
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1714,11 +1715,11 @@ private:
                     suback_props_
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1784,11 +1785,11 @@ private:
                     packet_id
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1805,11 +1806,11 @@ private:
                     unsuback_props_
                 },
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1836,11 +1837,11 @@ private:
             epsp.async_send(
                 v3_1_1::pingresp_packet{},
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -1849,11 +1850,11 @@ private:
             epsp.async_send(
                 v5::pingresp_packet{},
                 [epsp]
-                (system_error const& ec) {
+                (error_code const& ec) {
                     if (ec) {
                         ASYNC_MQTT_LOG("mqtt_broker", info)
                             << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                            << ec.what();
+                            << ec.message();
                     }
                 }
             );
@@ -2128,7 +2129,7 @@ private:
         template <typename Self>
         void operator()(
             Self& self,
-            system_error = {}) {
+            error_code = {}) {
             switch (state) {
             case disconnect: {
                 state = close;

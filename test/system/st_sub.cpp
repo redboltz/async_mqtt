@@ -31,10 +31,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -49,7 +48,7 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
@@ -61,9 +60,9 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
+                BOOST_TEST(pv.get_if<am::v3_1_1::connack_packet>());
 
                 // subscribe
                 pid = *ep().acquire_unique_packet_id();
@@ -78,10 +77,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == (am::v3_1_1::suback_packet{
+                    pv == (am::v3_1_1::suback_packet{
                         pid,
                         {
                             am::suback_return_code::success_maximum_qos_0,
@@ -104,10 +103,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == (am::v3_1_1::suback_packet{
+                    pv == (am::v3_1_1::suback_packet{
                         pid,
                         {
                             am::suback_return_code::success_maximum_qos_1,
@@ -130,10 +129,10 @@ BOOST_AUTO_TEST_CASE(v311_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == am::v3_1_1::unsuback_packet{
+                    pv == am::v3_1_1::unsuback_packet{
                         pid
                     }
                 );
@@ -165,10 +164,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -183,7 +181,7 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_session
@@ -196,9 +194,9 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v5::connack_packet>());
+                BOOST_TEST(pv.get_if<am::v5::connack_packet>());
 
                 // subscribe
                 pid = *ep().acquire_unique_packet_id();
@@ -230,10 +228,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == (am::v5::suback_packet{
+                    pv == (am::v5::suback_packet{
                         pid,
                         {
                             am::suback_reason_code::granted_qos_0,
@@ -258,10 +256,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == (am::v5::suback_packet{
+                    pv == (am::v5::suback_packet{
                         pid,
                         {
                             am::suback_reason_code::granted_qos_1,
@@ -286,10 +284,10 @@ BOOST_AUTO_TEST_CASE(v5_sub) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
                 BOOST_TEST(
-                    *pv == (am::v5::unsuback_packet{
+                    pv == (am::v5::unsuback_packet{
                         pid,
                         {
                             am::unsuback_reason_code::success,

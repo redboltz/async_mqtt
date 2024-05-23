@@ -31,10 +31,9 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -51,7 +50,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -67,9 +66,9 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
                             BOOST_TEST(!p.session_present());
@@ -100,7 +99,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         false,   // clean_start
@@ -116,9 +115,9 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
                             BOOST_TEST(p.session_present());
@@ -150,7 +149,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -165,9 +164,9 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet& p) {
                             BOOST_TEST(!p.session_present());

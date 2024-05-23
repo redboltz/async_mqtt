@@ -16,7 +16,6 @@
 #include <async_mqtt/packet/v3_1_1_pubrel.hpp>
 #include <async_mqtt/packet/v5_publish.hpp>
 #include <async_mqtt/packet/v5_pubrel.hpp>
-#include <async_mqtt/exception.hpp>
 
 namespace async_mqtt {
 
@@ -50,10 +49,11 @@ public:
                  case qos::exactly_once:
                      return response_packet::v3_1_1_pubrec;
                  default:
-                     throw make_error(
-                         errc::bad_message,
-                         "qos::at_most_once cannot store"
-                     );
+                     throw system_error{
+                         make_error_code(
+                             mqtt_error::packet_not_allowed_to_store
+                         )
+                     };
                  }
              }()
          },
@@ -82,10 +82,11 @@ public:
                  case qos::exactly_once:
                      return response_packet::v5_pubrec;
                  default:
-                     throw make_error(
-                         errc::bad_message,
-                         "qos::at_most_once cannot store"
-                     );
+                     throw system_error{
+                         make_error_code(
+                             mqtt_error::packet_not_allowed_to_store
+                         )
+                     };
                  }
              }()
          },
@@ -151,7 +152,7 @@ public:
                 [] (auto const& p) {
                     return p.const_buffer_sequence();
                 },
-                [] (system_error const&) {
+                [] (error_code const&) {
                     BOOST_ASSERT(false);
                     return std::vector<as::const_buffer>{};
                 }

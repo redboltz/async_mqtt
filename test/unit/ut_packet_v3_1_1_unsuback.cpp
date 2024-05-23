@@ -47,7 +47,9 @@ BOOST_AUTO_TEST_CASE(v311_unsuback) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::unsuback_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::unsuback_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
 
         auto cbs2 = p.const_buffer_sequence();
@@ -80,7 +82,9 @@ BOOST_AUTO_TEST_CASE(v311_unsuback_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::basic_unsuback_packet<4>{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::basic_unsuback_packet<4>{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x12345678);
 
         auto cbs2 = p.const_buffer_sequence();

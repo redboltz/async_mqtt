@@ -78,17 +78,13 @@ int main(int argc, char* argv[]) {
                 },
                 as::use_future
             );
-            auto se = fut.get(); // get am::system_error
-            if (se) {
-                std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
-                return -1;
-            }
+            fut.get(); // throw if error_code is not success
         }
 
         // Recv MQTT CONNACK
         {
             auto fut = amep->async_recv(as::use_future);
-            auto pv = fut.get(); // get am::packet_variant
+            auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
             if (pv) {
                 pv.visit(
                     am::overload {
@@ -103,37 +99,26 @@ int main(int argc, char* argv[]) {
                 );
                 std::cout << am::hex_dump(pv) << std::endl;
             }
-            else {
-                std::cout
-                    << "MQTT CONNACK recv error:"
-                    << pv.get<am::system_error>().what()
-                    << std::endl;
-                return -1;
-            }
         }
 
         // Send MQTT SUBSCRIBE
         {
             auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
-            auto pid = fut_id.get();
+            auto pid = fut_id.get(); // throw if error_code is not success
             auto fut = amep->async_send(
                 am::v3_1_1::subscribe_packet{
-                    *pid,
+                    pid,
                     { {"topic1", am::qos::at_most_once} }
                 },
                 as::use_future
             );
-            auto se = fut.get();
-            if (se) {
-                std::cout << "MQTT SUBSCRIBE send error:" << se.what() << std::endl;
-                return -1;
-            }
+            fut.get(); // throw if error_code is not success
         }
 
         // Recv MQTT SUBACK
         {
             auto fut = amep->async_recv(as::use_future);
-            auto pv = fut.get();
+            auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
             if (pv) {
                 pv.visit(
                     am::overload {
@@ -151,40 +136,29 @@ int main(int argc, char* argv[]) {
                     }
                 );
             }
-            else {
-                std::cout
-                    << "MQTT SUBACK recv error:"
-                    << pv.get<am::system_error>().what()
-                    << std::endl;
-                return -1;
-            }
         }
 
         // Send MQTT PUBLISH
         {
             auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
-            auto pid = fut_id.get();
+            auto pid = fut_id.get(); // throw if error_code is not success
             auto fut = amep->async_send(
                 am::v3_1_1::publish_packet{
-                    *pid,
+                    pid,
                     "topic1",
                     "payload1",
                     am::qos::at_least_once
                 },
                 as::use_future
             );
-            auto se = fut.get();
-            if (se) {
-                std::cout << "MQTT PUBLISH send error:" << se.what() << std::endl;
-                return -1;
-            }
+            fut.get(); // throw if error_code is not success
         }
 
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         {
             for (std::size_t count = 0; count != 2; ++count) {
                 auto fut =  amep->async_recv(as::use_future);
-                auto pv = fut.get();
+                auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
                 if (pv) {
                     pv.visit(
                         am::overload {
@@ -208,13 +182,6 @@ int main(int argc, char* argv[]) {
                             [](auto const&) {}
                         }
                     );
-                }
-                else {
-                    std::cout
-                        << "MQTT recv error:"
-                        << pv.get<am::system_error>().what()
-                        << std::endl;
-                    return -1;
                 }
             }
         }

@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack,
+            {connack},
         }
     );
 
@@ -88,20 +88,22 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(connect, as::use_future).get();
+        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(connack == pv);
     }
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_reg_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -110,10 +112,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -122,10 +125,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_reg_t2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -134,10 +138,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt4 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt4.has_value());
+    auto [ec4, pid4] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec4);
+    BOOST_TEST(pid4 != 0);
     auto publish_use_ta2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -146,10 +151,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt5 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt5.has_value());
+    auto [ec5, pid5] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec5);
+    BOOST_TEST(pid5 != 0);
     auto publish_reg_t3 = am::v5::publish_packet(
-        *pid_opt5,
+        pid5,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -158,10 +164,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt6 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt6.has_value());
+    auto [ec6, pid6] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec6);
+    BOOST_TEST(pid6 != 0);
     auto publish_use_ta3 = am::v5::publish_packet(
-        *pid_opt6,
+        pid6,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -170,10 +177,11 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
-    auto pid_opt7 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt7.has_value());
+    auto [ec7, pid7] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec7);
+    BOOST_TEST(pid7 != 0);
     auto publish_upd_t3 = am::v5::publish_packet(
-        *pid_opt7,
+        pid7,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -189,18 +197,20 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_reg_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
     {   // check regulate
-        auto p = publish_reg_t1;
-        auto rp = ep->async_regulate_for_store(p, as::use_future).get();
-        BOOST_TEST(rp.topic() == "topic1");
-        BOOST_TEST(!get_topic_alias(rp.props()));
+        auto p1 = publish_reg_t1;
+        auto [ec1, rp1] = ep->async_regulate_for_store(p1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec1);
+        BOOST_TEST(rp1.topic() == "topic1");
+        BOOST_TEST(!get_topic_alias(rp1.props()));
 
         // idempotence
-        auto p2 = p;
-        auto rp2 = ep->async_regulate_for_store(p2, as::use_future).get();
+        auto p2 = p1;
+        auto [ec2, rp2] = ep->async_regulate_for_store(p2, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec2);
         BOOST_TEST(rp2.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp2.props()));
     }
@@ -212,12 +222,13 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_use_ta1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
     {   // check regulate
         auto p = publish_use_ta1;
-        auto rp = ep->async_regulate_for_store(p, as::use_future).get();
+        auto [ec, rp] = ep->async_regulate_for_store(p, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(rp.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp.props()));
     }
@@ -229,7 +240,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_reg_t2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -240,7 +251,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_use_ta2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -251,8 +262,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t3, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::bad_message);
+        auto [ec] = ep->async_send(publish_reg_t3, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
     // send publish_use_ta3
@@ -262,8 +273,8 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta3, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::bad_message);
+        auto [ec] = ep->async_send(publish_use_ta3, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
     // send publish_upd_t3
@@ -273,10 +284,10 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
     {
-        auto ec = ep->async_send(publish_upd_t3, as::use_future).get();
+        auto [ec] = ep->async_send(publish_upd_t3, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }
@@ -320,13 +331,14 @@ BOOST_AUTO_TEST_CASE(send_server) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connect,
+            {connect},
         }
     );
 
     // recv connect
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(connect == pv);
     }
 
@@ -337,14 +349,15 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(connack, as::use_future).get();
+        auto [ec] = ep->async_send(connack, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_reg_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -353,10 +366,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -365,10 +379,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_reg_t2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -377,10 +392,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt4 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt4.has_value());
+    auto [ec4, pid4] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec4);
+    BOOST_TEST(pid4 != 0);
     auto publish_use_ta2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -389,10 +405,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt5 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt5.has_value());
+    auto [ec5, pid5] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec5);
+    BOOST_TEST(pid5 != 0);
     auto publish_reg_t3 = am::v5::publish_packet(
-        *pid_opt5,
+        pid5,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -401,10 +418,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt6 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt6.has_value());
+    auto [ec6, pid6] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec6);
+    BOOST_TEST(pid6 != 0);
     auto publish_use_ta3 = am::v5::publish_packet(
-        *pid_opt6,
+        pid6,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -413,10 +431,11 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
-    auto pid_opt7 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt7.has_value());
+    auto [ec7, pid7] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec7);
+    BOOST_TEST(pid7 != 0);
     auto publish_upd_t3 = am::v5::publish_packet(
-        *pid_opt7,
+        pid7,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -432,7 +451,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_reg_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -443,7 +462,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_use_ta1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -454,7 +473,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_reg_t2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -465,7 +484,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_use_ta2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -476,8 +495,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_reg_t3, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::bad_message);
+        auto [ec] = ep->async_send(publish_reg_t3, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
     // send publish_use_ta3
@@ -487,8 +506,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta3, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::bad_message);
+        auto [ec] = ep->async_send(publish_use_ta3, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
     // send publish_upd_t3
@@ -498,10 +517,10 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
     {
-        auto ec = ep->async_send(publish_upd_t3, as::use_future).get();
+        auto [ec] = ep->async_send(publish_upd_t3, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }
@@ -545,7 +564,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack,
+            {connack},
         }
     );
 
@@ -558,20 +577,22 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(connect, as::use_future).get();
+        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(connack == pv);
     }
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -579,7 +600,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_mapped_ta1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -589,7 +610,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -598,10 +619,11 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_t2 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -609,7 +631,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_mapped_ta2 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -619,7 +641,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_use_ta2 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -628,10 +650,11 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_t3 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -639,7 +662,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_mapped_ta1_2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -649,7 +672,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     );
 
     auto publish_use_ta1_2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -665,7 +688,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -676,7 +699,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -687,7 +710,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -698,7 +721,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -709,7 +732,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t3, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t3, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -720,10 +743,10 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t3, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t3, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }
@@ -767,7 +790,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack,
+            {connack},
         }
     );
 
@@ -780,30 +803,34 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
     {
-        auto ec = ep->async_send(connect, as::use_future).get();
+        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+
         BOOST_TEST(connack == pv);
     }
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
         am::properties{}
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_map_ta1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -812,10 +839,11 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -824,10 +852,11 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
 
-    auto pid_opt4 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt4.has_value());
+    auto [ec4, pid4] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec4);
+    BOOST_TEST(pid4 != 0);
     auto publish_t1_2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -835,7 +864,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
     );
 
     auto publish_exp_ta1 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -851,7 +880,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -862,8 +891,8 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
     {
-        auto ec = ep->async_send(publish_use_ta1, as::use_future).get();
-        BOOST_TEST(ec.code() == am::errc::bad_message);
+        auto [ec] = ep->async_send(publish_use_ta1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
     // send publish_map_ta1
@@ -873,7 +902,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
     {
-        auto ec = ep->async_send(publish_map_ta1, as::use_future).get();
+        auto [ec] = ep->async_send(publish_map_ta1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
@@ -885,10 +914,10 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         }
     );
     {
-        auto ec = ep->async_send(publish_t1_2, as::use_future).get();
+        auto [ec] = ep->async_send(publish_t1_2, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }
@@ -934,12 +963,10 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         am::disconnect_reason_code::topic_alias_invalid
     };
 
-    auto close = am::make_error(am::errc::network_reset, "pseudo close");
-
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack,
+            {connack},
         }
     );
 
@@ -952,23 +979,26 @@ BOOST_AUTO_TEST_CASE(recv_client) {
                 }
             );
             {
-                auto ec = ep->async_send(connect, as::use_future).get();
+                auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
                 BOOST_TEST(!ec);
             }
 
             // recv connack
             {
-                auto pv = ep->async_recv(as::use_future).get();
+                auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+                BOOST_TEST(!ec);
+
                 BOOST_TEST(connack == pv);
             }
         };
 
     init();
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_reg_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -977,10 +1007,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -990,7 +1021,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     );
 
     auto publish_exp_t1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -999,10 +1030,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_reg_t2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1011,10 +1043,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt4 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt4.has_value());
+    auto [ec4, pid4] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec4);
+    BOOST_TEST(pid4 != 0);
     auto publish_use_ta2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1024,7 +1057,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     );
 
     auto publish_exp_t2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1033,10 +1066,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt5 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt5.has_value());
+    auto [ec5, pid5] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec5);
+    BOOST_TEST(pid5 != 0);
     auto publish_reg_t3 = am::v5::publish_packet(
-        *pid_opt5,
+        pid5,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1045,10 +1079,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt6 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt6.has_value());
+    auto [ec6, pid6] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec6);
+    BOOST_TEST(pid6 != 0);
     auto publish_use_ta3 = am::v5::publish_packet(
-        *pid_opt6,
+        pid6,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1057,10 +1092,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt7 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt7.has_value());
+    auto [ec7, pid7] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec7);
+    BOOST_TEST(pid7 != 0);
     auto publish_upd_t3 = am::v5::publish_packet(
-        *pid_opt7,
+        pid7,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1069,10 +1105,11 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
-    auto pid_opt8 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt8.has_value());
+    auto [ec8, pid8] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec8);
+    BOOST_TEST(pid8 != 0);
     auto publish_use_ta1_t3 = am::v5::publish_packet(
-        *pid_opt8,
+        pid8,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1082,7 +1119,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     );
 
     auto publish_exp_t3 = am::v5::publish_packet(
-        *pid_opt8,
+        pid8,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1094,42 +1131,50 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            publish_reg_t1,
-            publish_use_ta1,
-            publish_reg_t2,
-            publish_use_ta2,
-            publish_reg_t3,  // error and disconnect
-            close,
-            connack,
-            publish_use_ta3, // error and disconnect
-            close,
-            connack,
-            publish_upd_t3,
-            publish_use_ta1_t3,
+            {publish_reg_t1},
+            {publish_use_ta1},
+            {publish_reg_t2},
+            {publish_use_ta2},
+            {publish_reg_t3},  // error and disconnect
+            {am::errc::make_error_code(am::errc::connection_reset)},
+            {connack},
+            {publish_use_ta3}, // error and disconnect
+            {am::errc::make_error_code(am::errc::connection_reset)},
+            {connack},
+            {publish_upd_t3},
+            {publish_use_ta1_t3},
         }
     );
 
     // recv publish_reg_t1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+
         BOOST_TEST(publish_reg_t1 == pv);
     }
 
     // recv publish_use_ta1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+
         BOOST_TEST(publish_exp_t1 == pv);
     }
 
     // recv publish_reg_t2
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+
         BOOST_TEST(publish_reg_t2 == pv);
     }
 
     // recv publish_use_ta2
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+
         BOOST_TEST(publish_exp_t2 == pv);
     }
 
@@ -1147,16 +1192,17 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     );
     // recv publish_reg_t3 (invalid)
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
-        BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
 
     // recv close
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::errc::connection_reset);
     }
 
     init();
@@ -1174,31 +1220,34 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     );
     // recv publish_use_ta3
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
-        BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
 
     // recv close
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::errc::connection_reset);
     }
 
     init();
     // recv publish_upd_t3
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_upd_t3 == pv);
     }
 
     // recv publish_use_ta1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_exp_t3 == pv);
     }
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }
@@ -1244,12 +1293,10 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         am::disconnect_reason_code::topic_alias_invalid
     };
 
-    auto close = am::make_error(am::errc::network_reset, "pseudo close");
-
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connect,
+            {connect},
         }
     );
 
@@ -1257,7 +1304,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         [&] {
             // recv connect
             {
-                auto pv = ep->async_recv(as::use_future).get();
+                auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+                BOOST_TEST(!ec);
                 BOOST_TEST(connect == pv);
             }
 
@@ -1268,7 +1316,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
                 }
             );
             {
-                auto ec = ep->async_send(connack, as::use_future).get();
+                auto [ec] = ep->async_send(connack, as::as_tuple(as::use_future)).get();
                 BOOST_TEST(!ec);
             }
 
@@ -1276,10 +1324,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     init();
 
-    auto pid_opt1 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt1.has_value());
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    BOOST_TEST(pid1 != 0);
     auto publish_reg_t1 = am::v5::publish_packet(
-        *pid_opt1,
+        pid1,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1288,10 +1337,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt2 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt2.has_value());
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    BOOST_TEST(pid2 != 0);
     auto publish_use_ta1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1301,7 +1351,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     );
 
     auto publish_exp_t1 = am::v5::publish_packet(
-        *pid_opt2,
+        pid2,
         "topic1",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1310,10 +1360,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt3 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt3.has_value());
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 != 0);
     auto publish_reg_t2 = am::v5::publish_packet(
-        *pid_opt3,
+        pid3,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1322,10 +1373,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt4 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt4.has_value());
+    auto [ec4, pid4] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec4);
+    BOOST_TEST(pid4 != 0);
     auto publish_use_ta2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1335,7 +1387,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     );
 
     auto publish_exp_t2 = am::v5::publish_packet(
-        *pid_opt4,
+        pid4,
         "topic2",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1344,10 +1396,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt5 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt5.has_value());
+    auto [ec5, pid5] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec5);
+    BOOST_TEST(pid5 != 0);
     auto publish_reg_t3 = am::v5::publish_packet(
-        *pid_opt5,
+        pid5,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1356,10 +1409,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt6 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt6.has_value());
+    auto [ec6, pid6] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec6);
+    BOOST_TEST(pid6 != 0);
     auto publish_use_ta3 = am::v5::publish_packet(
-        *pid_opt6,
+        pid6,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1368,10 +1422,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt7 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt7.has_value());
+    auto [ec7, pid7] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec7);
+    BOOST_TEST(pid7 != 0);
     auto publish_upd_t3 = am::v5::publish_packet(
-        *pid_opt7,
+        pid7,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1380,10 +1435,11 @@ BOOST_AUTO_TEST_CASE(recv_server) {
         }
     );
 
-    auto pid_opt8 = ep->async_acquire_unique_packet_id(as::use_future).get();
-    BOOST_TEST(pid_opt8.has_value());
+    auto [ec8, pid8] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec8);
+    BOOST_TEST(pid8 != 0);
     auto publish_use_ta1_t3 = am::v5::publish_packet(
-        *pid_opt8,
+        pid8,
         "",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1393,7 +1449,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     );
 
     auto publish_exp_t3 = am::v5::publish_packet(
-        *pid_opt8,
+        pid8,
         "topic3",
         "payload1",
         am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
@@ -1405,42 +1461,46 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            publish_reg_t1,
-            publish_use_ta1,
-            publish_reg_t2,
-            publish_use_ta2,
-            publish_reg_t3,  // error and disconnect
-            close,
-            connect,
-            publish_use_ta3, // error and disconnect
-            close,
-            connect,
-            publish_upd_t3,
-            publish_use_ta1_t3,
+            {publish_reg_t1},
+            {publish_use_ta1},
+            {publish_reg_t2},
+            {publish_use_ta2},
+            {publish_reg_t3},  // error and disconnect
+            {am::errc::make_error_code(am::errc::connection_reset)},
+            {connect},
+            {publish_use_ta3}, // error and disconnect
+            {am::errc::make_error_code(am::errc::connection_reset)},
+            {connect},
+            {publish_upd_t3},
+            {publish_use_ta1_t3},
         }
     );
 
     // recv publish_reg_t1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_reg_t1 == pv);
     }
 
     // recv publish_use_ta1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_exp_t1 == pv);
     }
 
     // recv publish_reg_t2
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_reg_t2 == pv);
     }
 
     // recv publish_use_ta2
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_exp_t2 == pv);
     }
 
@@ -1457,15 +1517,16 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     );
     // recv publish_reg_t3 (invalid)
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
-        BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
     // recv close
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::errc::connection_reset);
     }
 
     init();
@@ -1482,31 +1543,34 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     );
     // recv publish_use_ta3
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
-        BOOST_TEST(pv.get_if<am::system_error>()->code() == am::errc::bad_message);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
     // recv close
     {
-        auto pv = ep->async_recv(as::use_future).get();
-        BOOST_TEST(pv.get_if<am::system_error>() != nullptr);
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(ec == am::errc::connection_reset);
     }
 
     init();
     // recv publish_upd_t3
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_upd_t3 == pv);
     }
 
     // recv publish_use_ta1
     {
-        auto pv = ep->async_recv(as::use_future).get();
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
         BOOST_TEST(publish_exp_t3 == pv);
     }
 
-    ep->async_close(as::use_future).get();
+    ep->async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
     th.join();
 }

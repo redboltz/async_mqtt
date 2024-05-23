@@ -48,7 +48,9 @@ BOOST_AUTO_TEST_CASE(v311_connack) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::connack_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::connack_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.session_present());
         BOOST_TEST(p.code() == am::connect_return_code::not_authorized);
 

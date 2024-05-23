@@ -13,7 +13,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
@@ -96,9 +95,10 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     }
 
     if (!utf8string_check(topic_name_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet topic name invalid utf8"
+        throw system_error(
+            make_error_code(
+                disconnect_reason_code::topic_name_invalid
+            )
         );
     }
 
@@ -110,9 +110,10 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     for (auto const& prop : props_) {
         auto id = prop.id();
         if (!validate_property(property_location::publish, id)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::publish_packet property "s + id_to_str(id) + " is not allowed"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
             );
         }
     }
@@ -127,18 +128,20 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     if (pubopts.get_qos() == qos::at_least_once ||
         pubopts.get_qos() == qos::exactly_once) {
         if (packet_id == 0) {
-            throw make_error(
-                errc::bad_message,
-                "v5::publish_packet qos not 0 but packet_id is 0"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
             );
         }
         endian_store(packet_id, packet_id_.data());
     }
     else {
         if (packet_id != 0) {
-            throw make_error(
-                errc::bad_message,
-                "v5::publish_packet qos0 but non 0 packet_id"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
             );
         }
         endian_store(typename basic_packet_id_type<PacketIdBytes>::type{0}, packet_id_.data());
@@ -442,14 +445,14 @@ void basic_publish_packet<PacketIdBytes>::add_topic_impl(std::string topic) {
 
 template <std::size_t PacketIdBytes>
 inline
-basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf)
+basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf, error_code& ec)
     : packet_id_(PacketIdBytes) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     fixed_header_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
@@ -459,32 +462,35 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf)
         remaining_length_ = *vl_opt;
     }
     else {
-        throw make_error(errc::bad_message, "v5::publish_packet remaining length is invalid");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
 
     // topic_name_length
     if (!insert_advance(buf, topic_name_length_buf_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet length of topic_name is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     auto topic_name_length = endian_load<std::uint16_t>(topic_name_length_buf_.data());
 
     // topic_name
     if (buf.size() < topic_name_length) {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet topic_name doesn't match its length"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     topic_name_ = buf.substr(0, topic_name_length);
 
     if (!utf8string_check(topic_name_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet topic name invalid utf8"
+        ec = make_error_code(
+            disconnect_reason_code::topic_name_invalid
         );
+        return;
     }
 
     buf.remove_prefix(topic_name_length);
@@ -497,18 +503,17 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf)
     case qos::at_least_once:
     case qos::exactly_once:
         if (!copy_advance(buf, packet_id_)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::publish_packet packet_id doesn't exist"
+            ec = make_error_code(
+                disconnect_reason_code::protocol_error
             );
+            return;
         }
         break;
     default:
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet qos is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
         );
-        break;
+        return;
     };
 
     // property
@@ -518,20 +523,21 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf)
         std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
         buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
         if (buf.size() < property_length_) {
-            throw make_error(
-                errc::bad_message,
-                "v5::publish_packet properties_don't match its length"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto prop_buf = buf.substr(0, property_length_);
-        props_ = make_properties(prop_buf, property_location::publish);
+        props_ = make_properties(prop_buf, property_location::publish, ec);
+        if (ec) return;
         buf.remove_prefix(property_length_);
     }
     else {
-        throw make_error(
-            errc::bad_message,
-            "v5::publish_packet property_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // payload

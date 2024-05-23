@@ -34,7 +34,15 @@ acquire_unique_packet_id_op {
         case complete:
             pid_opt = ep.pid_man_.acquire_unique_id();
             state = complete;
-            self.complete(pid_opt);
+            if (pid_opt) {
+                self.complete(error_code{}, *pid_opt);
+            }
+            else {
+                self.complete(
+                    make_error_code(mqtt_error::packet_identifier_fully_used),
+                    0
+                );
+            }
             break;
         }
     }
@@ -44,7 +52,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(std::optional<packet_id_t>)
+    void(error_code, packet_id_t)
 )
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id(
     CompletionToken&& token
@@ -55,7 +63,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id(
     return
         as::async_compose<
             CompletionToken,
-            void(std::optional<typename basic_packet_id_type<PacketIdBytes>::type>)
+        void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
         >(
             acquire_unique_packet_id_op{
                 *this
