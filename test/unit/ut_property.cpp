@@ -143,6 +143,12 @@ BOOST_AUTO_TEST_CASE( correlation_data ) {
     BOOST_TEST(v1.val() == "a\0bc"sv);
 }
 
+BOOST_AUTO_TEST_CASE( correlation_data_json_escape ) {
+    am::property::correlation_data v1 { std::string{"\\\"/\b\f\n\r\t"} };
+    BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:correlation_data,val:\\\\\\\"\\/\\b\\f\\n\\r\\t}"sv);
+    BOOST_TEST(v1.val() == "\\\"/\b\f\n\r\t"sv);
+}
+
 BOOST_AUTO_TEST_CASE( assigned_client_identifier ) {
     am::property::assigned_client_identifier v1 { "abc" };
     BOOST_TEST(boost::lexical_cast<std::string>(v1) == "{id:assigned_client_identifier,val:abc}");

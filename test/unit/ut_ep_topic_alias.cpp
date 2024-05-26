@@ -1128,6 +1128,19 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         }
     );
 
+    auto [ec9, pid9] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec9);
+    BOOST_TEST(pid9 != 0);
+    auto publish_reg_t1_again = am::v5::publish_packet(
+        pid9,
+        "topic1",
+        "payload1",
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::yes,
+        am::properties{
+            am::property::topic_alias{1}
+        }
+    );
+
     ep->next_layer().set_recv_packets(
         {
             // receive packets
@@ -1141,6 +1154,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
             {publish_use_ta3}, // error and disconnect
             {am::errc::make_error_code(am::errc::connection_reset)},
             {connack},
+            {publish_reg_t1_again},
             {publish_upd_t3},
             {publish_use_ta1_t3},
         }
@@ -1234,6 +1248,14 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     }
 
     init();
+
+    // recv publish_reg_t1
+    {
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+        BOOST_TEST(publish_reg_t1_again == pv);
+    }
+
     // recv publish_upd_t3
     {
         auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
