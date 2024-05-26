@@ -58,6 +58,7 @@ list(APPEND check_PROGRAMS
     ut_packet_v5_pingresp.cpp
     ut_packet_v5_disconnect.cpp
     ut_packet_v5_auth.cpp
+    ut_packet_variant.cpp
     ut_property.cpp
     ut_prop_variant.cpp
     ut_retained_topic_map.cpp
@@ -89,9 +90,6 @@ foreach(source_file ${check_PROGRAMS})
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
     target_include_directories(${source_file_we} PRIVATE ../../tool/include)
-    if(${source_file} MATCHES "ut_packet_v.*")
-        target_compile_definitions(${source_file_we} PRIVATE ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
-    endif()
     target_link_libraries(${source_file_we} async_mqtt_iface)
     target_compile_definitions(
         ${source_file_we}

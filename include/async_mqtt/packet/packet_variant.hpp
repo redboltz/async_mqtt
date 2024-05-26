@@ -11,7 +11,6 @@
 
 #include <boost/asio/buffer.hpp>
 
-
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_variant_fwd.hpp>
 #include <async_mqtt/packet/packet_fwd.hpp>
