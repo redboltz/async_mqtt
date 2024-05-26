@@ -160,6 +160,7 @@ BOOST_AUTO_TEST_CASE(v311) {
             // close
             co_await amcl.async_close(
             );
+            co_return;
         },
         as::detached
     );
@@ -321,6 +322,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             // close
             co_await amcl.async_close(
             );
+            co_return;
         },
         as::detached
     );

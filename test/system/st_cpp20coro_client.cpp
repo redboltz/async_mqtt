@@ -181,6 +181,7 @@ BOOST_AUTO_TEST_CASE(v311) {
             co_await amcl.async_close(
                 as::as_tuple(as::use_awaitable)
             );
+            co_return;
         },
         as::detached
     );
@@ -362,6 +363,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             co_await amcl.async_close(
                 as::as_tuple(as::use_awaitable)
             );
+            co_return;
         },
         as::detached
     );

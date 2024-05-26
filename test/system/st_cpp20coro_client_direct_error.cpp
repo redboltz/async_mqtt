@@ -89,6 +89,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                 as::as_tuple(as::use_awaitable)
             );
             BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
+            co_return;
         },
         as::detached
     );
@@ -173,6 +174,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 as::as_tuple(as::use_awaitable)
             );
             BOOST_TEST(ec_disconnect == am::disconnect_reason_code::protocol_error);
+            co_return;
         },
         as::detached
     );
