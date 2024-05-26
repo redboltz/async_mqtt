@@ -34,7 +34,7 @@ var group__endpoint =
       [ "operator=", "classasync__mqtt_1_1basic__endpoint.html#aaebbab4159eb127b6fad36d35fef8f0b", null ],
       [ "operator=", "classasync__mqtt_1_1basic__endpoint.html#ae3d2098ffbe958479234ab7874e81511", null ],
       [ "register_packet_id", "classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01", null ],
-      [ "regulate_for_store", "classasync__mqtt_1_1basic__endpoint.html#a2e65de9df8df56eb3dca5b09a8c04d00", null ],
+      [ "regulate_for_store", "classasync__mqtt_1_1basic__endpoint.html#a60da2cf90573114b7a0bfb720cf30a9b", null ],
       [ "release_packet_id", "classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b", null ],
       [ "restore_packets", "classasync__mqtt_1_1basic__endpoint.html#a6dfe47bd9ab1590e66f110e3dbe1087e", null ],
       [ "restore_qos2_publish_handled_pids", "classasync__mqtt_1_1basic__endpoint.html#abcfa56073b24d3efa6c8ed881295e45e", null ],

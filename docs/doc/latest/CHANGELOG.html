@@ -5,6 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
+<meta name="author" content="== 7.0.0">
 <title>History</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
@@ -61,8 +62,37 @@ div#navigation table {
 <body class="article">
 <div id="header">
 <h1>History</h1>
+<div class="details">
+<span id="author" class="author">== 7.0.0</span><br>
+<span id="revdate">=== breaking changes</span>
+</div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Re-designed error_code handling respect to Boost.Asio way. #266</p>
+<div class="ulist">
+<ul>
+<li>
+<p>All async functions has the Completion Handler signature as <code>void(async_mqtt::error_code, &#8230;&#8203;)</code>, except <code>void()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>It works well with other Boost.Asio based libraries, and Boost.Asio itself.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_6_0_0">6.0.0</h2>
 <div class="sectionbody">

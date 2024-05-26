@@ -1,6 +1,5 @@
 var dir_cce41e6148f04805f4e76e6a36ba88d6 =
 [
-    [ "connect_return_code.hpp", "connect__return__code_8hpp_source.html", null ],
     [ "control_packet_type.hpp", "control__packet__type_8hpp_source.html", null ],
     [ "packet_fwd.hpp", "packet__fwd_8hpp_source.html", null ],
     [ "packet_helper.hpp", "packet__helper_8hpp_source.html", null ],
@@ -14,10 +13,9 @@ var dir_cce41e6148f04805f4e76e6a36ba88d6 =
     [ "property_variant.hpp", "property__variant_8hpp_source.html", null ],
     [ "pubopts.hpp", "pubopts_8hpp_source.html", null ],
     [ "qos.hpp", "qos_8hpp_source.html", null ],
-    [ "reason_code.hpp", "reason__code_8hpp_source.html", null ],
+    [ "qos_util.hpp", "qos__util_8hpp_source.html", null ],
     [ "store_packet_variant.hpp", "store__packet__variant_8hpp_source.html", null ],
     [ "store_packet_variant_fwd.hpp", "store__packet__variant__fwd_8hpp_source.html", null ],
-    [ "suback_return_code.hpp", "suback__return__code_8hpp_source.html", null ],
     [ "subopts.hpp", "subopts_8hpp_source.html", null ],
     [ "topic_sharename.hpp", "topic__sharename_8hpp_source.html", null ],
     [ "topic_subopts.hpp", "topic__subopts_8hpp_source.html", null ],

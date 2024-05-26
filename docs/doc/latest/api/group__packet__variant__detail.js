@@ -1,6 +1,7 @@
 var group__packet__variant__detail =
 [
     [ "async_mqtt::basic_packet_variant< PacketIdBytes >", "classasync__mqtt_1_1basic__packet__variant.html", [
+      [ "basic_packet_variant", "classasync__mqtt_1_1basic__packet__variant.html#a17a23fa4a26ad3fe67a831da41527ad2", null ],
       [ "basic_packet_variant", "classasync__mqtt_1_1basic__packet__variant.html#a8f9c3e84ebae1e4eb0955988ceb11450", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1basic__packet__variant.html#afad06fb4c9dfdb90a0c83db0a35fad80", null ],
       [ "get", "classasync__mqtt_1_1basic__packet__variant.html#a3f90cc46b76386824fdcd74732014c94", null ],

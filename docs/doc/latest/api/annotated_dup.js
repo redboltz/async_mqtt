@@ -80,7 +80,6 @@ var annotated_dup =
       [ "layer_customize< as::ssl::stream< NextLayer > >", "structasync__mqtt_1_1layer__customize_3_01as_1_1ssl_1_1stream_3_01NextLayer_01_4_01_4.html", null ],
       [ "layer_customize< bs::websocket::stream< NextLayer > >", "structasync__mqtt_1_1layer__customize_3_01bs_1_1websocket_1_1stream_3_01NextLayer_01_4_01_4.html", null ],
       [ "property_variant", "classasync__mqtt_1_1property__variant.html", "classasync__mqtt_1_1property__variant" ],
-      [ "system_error", "structasync__mqtt_1_1system__error.html", "structasync__mqtt_1_1system__error" ],
       [ "topic_sharename", "classasync__mqtt_1_1topic__sharename.html", "classasync__mqtt_1_1topic__sharename" ],
       [ "topic_subopts", "classasync__mqtt_1_1topic__subopts.html", "classasync__mqtt_1_1topic__subopts" ],
       [ "will", "classasync__mqtt_1_1will.html", "classasync__mqtt_1_1will" ]
