@@ -290,7 +290,7 @@ Here is a code example that sending QoS1 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS1 and wait response (puback receive)
-auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+auto pid_pub1 = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
 auto pubres1 = co_await amcl.async_publish(
     am::v5::publish_packet{
         *pid_pub1_opt,
@@ -303,7 +303,7 @@ auto pubres1 = co_await amcl.async_publish(
 ```
 
 
-To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23++[async_acquire_unique_packet_id()], which is the asynchronous version. You can call it from anywhere you want. If all packet IDs are acquired, the `CompletionToken` parameter will be `nullopt`. For convenience, a synchronous version, {api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id()], also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.
+To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses {api-base}/++classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23++[async_acquire_unique_packet_id()], which is the asynchronous version. You can call it from anywhere you want. The parameters of `CompletionToken` are `error_code` and `packet_id_type`. If all packet IDs have already been acquired, the `error_code` parameter will be `mqtt_error::packet_identifier_fully_used`. For convenience, a synchronous version, {api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id()], also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.
 
 After `async_publish()` completes, the `puback_opt` of {api-base}/++structasync__mqtt_1_1client_1_1pubres__t.html++[pubres_t] is set. You can then retrieve the PUBACK packet.
 
@@ -323,7 +323,7 @@ auto pubres2 = co_await amcl.async_publish(
 );
 ```
 
-To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, {api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_acquire_unique_packet_id_wait_until()] is used. The `CompletionToken` parameter is a packet identifier that is not optional. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the `CompletionToken`. This helps keep the user code simple.
+To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, {api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_acquire_unique_packet_id_wait_until()] is used. The `CompletionToken` parameter is an error_code and a packet identifier. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the `CompletionToken`. This helps keep the user code simple.
 
 
 After `async_publish()` completes, the `pubrec_opt` and `pubcomp_opt` of {api-base}/++structasync__mqtt_1_1client_1_1pubres__t.html++[pubres_t] are set. You can then retrieve the PUBREC and PUBCOMP packets.

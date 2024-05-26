@@ -12,7 +12,7 @@ ifndef::env-github[:api-base: link:../api]
 
 == {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2++[async_recv()] funtion
 
-You need to call the {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2++[async_recv()] function when you want to receive MQTT packets. It is similar to Boost.Asio's `read()` function, allowing you to control packet receiving timing. `async_mqtt` does not use handler registering style APIs such as `set_publish_handler()`. If you need handler registering APIs, you can create them using `async_recv()`.
+You need to call the {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2++[async_recv()] function when you want to receive MQTT packets. It is similar to Boost.Asio's `async_read()` function, allowing you to control packet receiving timing. `async_mqtt` does not use handler registering style APIs such as `set_publish_handler()`. If you need handler registering APIs, you can create them using `async_recv()`.
 
 The `async_recv()` function is more flexible than handler registering APIs. Additionally, it works well with the link:https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html[Completion Token] model.
 
@@ -20,46 +20,45 @@ You cannot call the `async_recv()` function continuously. You can call the next 
 
 === {api-base}/++group__packet__variant.html++[packet_variant]
 
-async_recv()'s CompletionToken parameter is {api-base}/++classasync__mqtt_1_1basic__packet__variant.html++[packet_variant].
+async_recv()'s CompletionToken parameters are error_code and  {api-base}/++classasync__mqtt_1_1basic__packet__variant.html++[packet_variant].
 
-
-It is a variant type of all MQTT packets and errors.
+`packet_variant` is a variant type of all MQTT packets and `std::monostate`. `std::monostate` is only used if error_conde is not `success`.
 
 NOTE: `async_mqtt` has `basic_foobar` type and `foobar` type if the type contains MQTT's Packet Identifier. `basic_foobar` takes a `PacketIdBytes` parameter. `basic_foobar<2>` is the same as `foobar`. The MQTT spec defines the size of the Packet Identifier as 2. However, some clustering brokers use an expanded Packet Identifier for inter-broker communication. General users don't need to worry about `basic_foobar` types; simply use `foobar`.
 
-You can access `packet_variant` as follows:
 
+You can access `packet_variant` as follows:
 
 ```cpp
 namespace am = async_mqtt; // always use this namespace alias in this document
 ```
 
 ```cpp
-am::packet_variant pv = ...; // from CompletionToken
-if (pv) { // pv is packet_variant
-     pv.visit(
-         am::overload {
-              [&](am::v3_1_1::connack_packet const& p) {
-                  std::cout
-                      << "MQTT CONNACK recv "
-                      << "sp:" << p.session_present()
-                      << std::endl;
-              },
-              // other packets handling code here
-              [](auto const&) {}
-         }
-    );
-}
-else {
+// Let's say the completion token arguments are `error_code ec, packet_variant pv`.
+if (ec) {
     std::cout
          << "MQTT CONNACK recv error:"
-         << pv.get<am::system_error>().what()
+         << ec.message()
          << std::endl;
 }
+else {
+    // `pv` can be converted to boolean. If `pv` contains a valid packet, it converts to `true`;
+    // otherwise (`std::monostate`) , it converts to `false`.
+    BOOST_ASSERT(pv); // if ec is not an error, then pv is always converted to true
+    pv.visit(
+        am::overload {
+             [&](am::v3_1_1::connack_packet const& p) {
+                 std::cout
+                     << "MQTT CONNACK recv "
+                     << "sp:" << p.session_present()
+                     << std::endl;
+             },
+             // other packets handling code here
+             [](auto const&) {}
+        }
+    );
+}
 ```
-
-
-`pv` can be evaluated as a boolean. If `pv` contains a valid packet, it converts to `true`; otherwise, it converts to `false`. Typically, when the underlying socket is disconnected, `pv` contains an error and evaluates to `false`.
 
 === Control Packet Type filter
 

@@ -35,21 +35,17 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, {}, {});
+            proc({}, am::packet_variant{});
         }
-        void operator()(boost::system::error_code const& ec) const {
-            proc(ec, {}, {});
+        void operator()(am::error_code const& ec) const {
+            proc(ec, am::packet_variant{});
         }
-        void operator()(am::system_error const& se) const {
-            proc({}, se, {});
-        }
-        void operator()(am::packet_variant pv) const {
-            proc({}, {}, am::force_move(pv));
+        void operator()(am::error_code const& ec, am::packet_variant pv) const {
+            proc(ec, am::force_move(pv));
         }
     private:
         void proc(
-            boost::system::error_code const& ec,
-            am::system_error const& se,
+            am::error_code const& ec,
             am::packet_variant pv
         ) const {
 
@@ -85,8 +81,7 @@ Next, add the app's constructor as follows. The endpoint is created here. In the
 
 private:
     void proc(
-        boost::system::error_code const& ec,
-        am::system_error const& se,
+        am::error_code const& ec,
         am::packet_variant pv
     ) {
         reenter (coro) {
@@ -131,8 +126,7 @@ When you execute the program, you will see the `start` output message. This indi
 
 ```cpp
         void proc(
-            boost::system::error_code const& ec,
-            am::system_error const& se,
+            am::error_code const& ec,
             am::packet_variant pv
         ) const {
 
@@ -148,8 +142,7 @@ This is the basics of the stackless coroutine approach. Now, let's add a more me
 
 ```cpp
         void proc(
-            boost::system::error_code const& ec,
-            am::system_error const& se,
+            am::error_code const& ec,
             am::packet_variant pv
         ) const {
 
@@ -187,8 +180,8 @@ The fourth argument of `underlying_handshake` is `CompletionToken`. When using a
 
 
 ```cpp
-        void operator()(boost::system::error_code const& ec) const {
-            proc(ec, {}, {});
+        void operator()(am::error_code const& ec) const {
+            proc(ec, am::packet_variant{});
         }
 ```
 
@@ -245,13 +238,13 @@ Create MQTT CONNECT packet and send it as follows:
 When the async process is finished, the function resumes at the following line:
 
 ```cpp
-                if (se) {
-                    std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+                if (ec) {
+                    std::cout << "MQTT CONNECT send error:" << ec.message() << std::endl;
                     return;
                 }
 ```
 
-The parameter of the completion token is `system_error const& se`.
+The parameter of the completion token is `error_code const& ec`.
 See {api-base}/++classasync__mqtt_1_1basic__endpoint.html++[API reference].
 
 == Recv MQTT CONNACK packet
@@ -266,7 +259,15 @@ Receive MQTT packet as follows:
 When a packet is received then the function resumes at the following line:
 
 ```cpp
-                if (pv) {
+                if (ec) {
+                    std::cout
+                        << "MQTT CONNACK recv error:"
+                        << ec.message()
+                        << std::endl;
+                    return;
+                }
+                else {
+                    BOOST_ASSERT(pv); // if ec is not error, then pv is always valid.
                     pv.visit(
                         am::overload {
                             [&](am::v3_1_1::connack_packet const& p) {
@@ -278,13 +279,6 @@ When a packet is received then the function resumes at the following line:
                             [](auto const&) {}
                         }
                     );
-                }
-                else {
-                    std::cout
-                        << "MQTT CONNACK recv error:"
-                        << pv.get<am::system_error>().what()
-                        << std::endl;
-                    return;
                 }
 ```
 
