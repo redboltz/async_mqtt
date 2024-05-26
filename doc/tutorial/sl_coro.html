@@ -456,7 +456,10 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 </div>
 </div>
 <div class="paragraph">
-<p>The parameter of the completion token is <code>packet_variant pv</code>. You can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type. <code>pv</code> can be evaluated as a boolean. If any receive error occurs, <code>pv</code> evaluates to <code>false</code>; otherwise, it evaluates to <code>true</code>.</p>
+<p>The parameters of the completion token are <code>error_code const&amp; ec</code> and <code>packet_variant pv</code>. The <code>ec</code> can be converted to a boolean. If <code>ec</code> evaluates to true, an error has occurred. For detailed information about errors, refer to <a href="../api/group__error__reporting.html">Errors for APIs</a>.</p>
+</div>
+<div class="paragraph">
+<p>If there is no error, you can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.</p>
 </div>
 </div>
 </div>

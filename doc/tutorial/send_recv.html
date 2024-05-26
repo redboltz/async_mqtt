@@ -164,6 +164,9 @@ pre.rouge .ss {
 <p>async_recv()'s CompletionToken parameters are error_code and  <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.</p>
 </div>
 <div class="paragraph">
+<p>If there is no error, you can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.</p>
+</div>
+<div class="paragraph">
 <p><code>packet_variant</code> is a variant type of all MQTT packets and <code>std::monostate</code>. <code>std::monostate</code> is only used if error_conde is not <code>success</code>.</p>
 </div>
 <div class="admonitionblock note">
@@ -230,7 +233,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>When you set <code>filter::match</code> as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, the <code>completion_token</code> isn&#8217;t invoked, but the received packets are appropriately processed. If an error occurs, the <code>completion_token</code> is invoked with a <code>packet_variant</code> that contains the error.</p>
+<p>When you set <code>filter::match</code> as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, the <code>completion_token</code> isn&#8217;t invoked, but the received packets are appropriately processed. If an error occurs, the <code>completion_token</code> is invoked with a <code>ec</code> that contains the error.</p>
 </div>
 <div class="listingblock">
 <div class="content">

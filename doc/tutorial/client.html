@@ -401,6 +401,9 @@ pre.rouge .ss {
 <div class="paragraph">
 <p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and (optionally) <code>connack_packet</code>. The <code>connack_packet</code> will have a value only if <code>error_code</code> indicates success. When using <code>CompletionToken</code> with mechanisms like <code>as::use_awaitable</code>, <code>as::use_future</code>, or <code>as::deferred</code>, the initial <code>error_code</code> is converted into an exception. If you prefer to receive the <code>error_code</code> as a return value, you can proceed as follows:</p>
 </div>
+<div class="paragraph">
+<p>For detailed information about errors, refer to <a href="../api/group__error__reporting.html">Errors for APIs</a>.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT connect and receive loop start</span>

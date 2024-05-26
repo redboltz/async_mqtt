@@ -102,9 +102,6 @@ $(function(){initNavTree('group__error__reporting.html',''); initResizable(true)
   <div class="headertitle"><div class="title">Errors for APIs<div class="ingroups"><a class="el" href="group__error.html">Error</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>errc is a namespace alias of <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">boost::sytem::errc</a>.  
-<a href="#details">More...</a></p>
 <div class="dynheader">
 Collaboration diagram for Errors for APIs:</div>
 <div class="dyncontent">
@@ -113,7 +110,7 @@ Collaboration diagram for Errors for APIs:</div>
 <area shape="rect" href="group__connect__reason__code.html" title=" " alt="" coords="277,5,438,33"/>
 <area shape="rect" href="group__disconnect__reason__code.html" title=" " alt="" coords="267,57,447,85"/>
 <area shape="rect" href="group__error.html" title=" " alt="" coords="5,57,58,85"/>
-<area shape="rect" title="errc is a namespace alias of boost::sytem::errc." alt="" coords="106,57,219,85"/>
+<area shape="rect" title=" " alt="" coords="106,57,219,85"/>
 <area shape="rect" href="group__mqtt__error.html" title=" " alt="" coords="312,109,402,137"/>
 </map>
 </div>
@@ -128,8 +125,35 @@ Topics</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>errc is a namespace alias of <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">boost::sytem::errc</a>. </p>
-<p>These errors are used for CompletionHandler's error_code parameter, and am::system_error exception's error_code. </p>
+<h4><a class="anchor" id="autotoc_md3"></a>
+Errors</h4>
+<p>The following errors could be reported as CompletionHander's error code or exception <a class="el" href="group__error.html#gaad563eceb8ce08b31fc1d5d61ad9811f">system_error</a> 's code().</p>
+<h5><a class="anchor" id="autotoc_md4"></a>
+Underlying errors</h5>
+<ul>
+<li>Boost.System Error</li>
+<li>Boost.Asio Error</li>
+<li>Boost.Beast Error </li>
+</ul>
+<h5><a class="anchor" id="autotoc_md5"></a>
+MQTT reason code based errors</h5>
+<ul>
+<li><a class="el" href="group__connect__reason__code.html">connect_reason_code</a><ul>
+<li>Error on MQTT handshaking</li>
+<li>connect_reason_code is used not only for error reporting but also as the field of <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
+</ul>
+</li>
+<li><a class="el" href="group__disconnect__reason__code.html">disconnect_reason_code</a><ul>
+<li>Error on after MQTT connection is established</li>
+<li>disconnect_reason_code is used not only for error reporting but also as the field of <a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a> </li>
+</ul>
+</li>
+</ul>
+<h5><a class="anchor" id="autotoc_md6"></a>
+MQTT related error but not directly mapping to MQTT packets</h5>
+<ul>
+<li><a class="el" href="group__mqtt__error.html">mqtt_error</a> </li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

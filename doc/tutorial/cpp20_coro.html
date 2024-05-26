@@ -266,7 +266,10 @@ pre.rouge .ss {
 <p>When you call async functions, add the <code>co_await</code> keyword before the function call and pass <code>as::use_awaitable</code> as the <code>CompletionToken</code>. This is the C++20 coroutine way.</p>
 </div>
 <div class="paragraph">
-<p>For example, sending a CONNECT packet is done as follows. When <code>send()</code> is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value <code>se</code>. If <code>se</code> evaluates to true, it means an error occurred, so the code prints an error message and uses <code>co_return</code>. When you want to return from a function that has an <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
+<p>For example, sending a CONNECT packet is done as follows. When <code>send()</code> is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value <code>ec</code>. If <code>ec</code> evaluates to true, it means an error occurred, so the code prints an error message and uses <code>co_return</code>. When you want to return from a function that has an <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
+</div>
+<div class="paragraph">
+<p>For detailed information about errors, refer to <a href="../api/group__error__reporting.html">Errors for APIs</a>.</p>
 </div>
 </div>
 </div>

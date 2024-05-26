@@ -30,6 +30,12 @@ namespace sys = boost::system;
 
 /**
  * @ingroup error
+ * @brief errc is a namespace alias of [boost::sytem::errc](https://www.boost.org/libs/system/doc/html/system.html#ref_errc).
+ */
+namespace errc = sys::errc;
+
+/**
+ * @ingroup error
  * @brief error_code is a type alias of [boost::sytem::error_code](https://www.boost.org/libs/system/doc/html/system.html#ref_error_code).
  */
 using error_code = sys::error_code;
@@ -40,18 +46,32 @@ using error_code = sys::error_code;
  */
 using system_error = sys::system_error;
 
-/**
- * @ingroup error
- * @brief errc is a namespace alias of [boost::sytem::errc](https://www.boost.org/libs/system/doc/html/system.html#ref_errc).
- */
-namespace errc = sys::errc;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @defgroup error_reporting Errors for APIs
- *           These errors are used for CompletionHandler's error_code parameter,
- *           and am::system_error exception's error_code.
+ *
+ *  #### Errors
+ *  The following errors could be reported as CompletionHander's error code
+ *  or exception @link system_error @endlink 's code().
+ *
+ *  ##### Underlying errors
+ *  - Boost.System Error
+ *  - Boost.Asio Error
+ *  - Boost.Beast Error
+ *  ##### MQTT reason code based errors
+ *  - @link connect_reason_code @endlink
+ *    - Error on MQTT handshaking
+ *    - connect_reason_code is used not only for error reporting but also as
+ *      the field of v5::connack_packet
+ *  - @link disconnect_reason_code @endlink
+ *    - Error on after MQTT connection is established
+ *    - disconnect_reason_code is used not only for error reporting but also as
+ *      the field of v5::disconnect_packet
+ *  ##### MQTT related error but not directly mapping to MQTT packets
+ *  - @link mqtt_error @endlink
+ *
  * @ingroup error
  */
 

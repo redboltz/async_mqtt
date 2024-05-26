@@ -85,6 +85,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                 am::qos::at_most_once
             );
             BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
+            co_return;
         },
         as::detached
     );
@@ -159,11 +160,13 @@ BOOST_AUTO_TEST_CASE(v5) {
             );
             BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
 
+            am::properties props{property::content_type{"test"}}; // invalid property
             auto [ec_disconnect] = co_await amcl.async_disconnect(
                 am::disconnect_reason_code::normal_disconnection,
-                am::properties{property::content_type{"test"}} // invalid property
+                force_move(props)
             );
             BOOST_TEST(ec_disconnect == am::disconnect_reason_code::protocol_error);
+            co_return;
         },
         as::detached
     );
