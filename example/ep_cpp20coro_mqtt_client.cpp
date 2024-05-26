@@ -40,21 +40,17 @@ proc(
         };
 
         // Send MQTT CONNECT
-        if (auto se = co_await amep->async_send(
-                am::v3_1_1::connect_packet{
-                    true,   // clean_session
-                    0x1234, // keep_alive
-                    "ClientIdentifier1",
-                    will,   // you can pass std::nullopt if you don't want to set the will message
-                    "UserName1",
-                    "Password1"
-                },
-                as::use_awaitable
-            )
-        ) {
-            std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
-            co_return;
-        }
+        co_await amep->async_send(
+            am::v3_1_1::connect_packet{
+                true,   // clean_session
+                0x1234, // keep_alive
+                "ClientIdentifier1",
+                will,   // you can pass std::nullopt if you don't want to set the will message
+                "UserName1",
+                "Password1"
+            },
+            as::use_awaitable
+        );
 
         // Recv MQTT CONNACK
         if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
@@ -70,29 +66,19 @@ proc(
                 }
             );
         }
-        else {
-            std::cout
-                << "MQTT CONNACK recv error:"
-                << pv.get<am::system_error>().what()
-                << std::endl;
-            co_return;
-        }
 
         // Send MQTT SUBSCRIBE
         std::vector<am::topic_subopts> sub_entry{
             {"topic1", am::qos::at_most_once}
         };
-        if (auto se = co_await amep->async_send(
-                am::v3_1_1::subscribe_packet{
-                    *amep->acquire_unique_packet_id(), // sync version only works thread safe context
-                    am::force_move(sub_entry)
-                },
-                as::use_awaitable
-            )
-        ) {
-            std::cout << "MQTT SUBSCRIBE send error:" << se.what() << std::endl;
-            co_return;
-        }
+        co_await amep->async_send(
+            am::v3_1_1::subscribe_packet{
+                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                am::force_move(sub_entry)
+            },
+            as::use_awaitable
+        );
+
         // Recv MQTT SUBACK
         if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
             pv.visit(
@@ -111,27 +97,18 @@ proc(
                 }
             );
         }
-        else {
-            std::cout
-                << "MQTT SUBACK recv error:"
-                << pv.get<am::system_error>().what()
-                << std::endl;
-            co_return;
-        }
+
         // Send MQTT PUBLISH
-        if (auto se = co_await amep->async_send(
-                am::v3_1_1::publish_packet{
-                    *amep->acquire_unique_packet_id(), // sync version only works thread safe context
-                    "topic1",
-                    "payload1",
-                    am::qos::at_least_once
-                },
-                as::use_awaitable
-            )
-        ) {
-            std::cout << "MQTT PUBLISH send error:" << se.what() << std::endl;
-            co_return;
-        }
+        co_await amep->async_send(
+            am::v3_1_1::publish_packet{
+                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                "topic1",
+                "payload1",
+                am::qos::at_least_once
+            },
+            as::use_awaitable
+        );
+
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         for (std::size_t count = 0; count != 2; ++count) {
             if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
@@ -157,13 +134,6 @@ proc(
                         [](auto const&) {}
                     }
                 );
-            }
-            else {
-                std::cout
-                    << "MQTT recv error:"
-                    << pv.get<am::system_error>().what()
-                    << std::endl;
-                co_return;
             }
         }
         std::cout << "close" << std::endl;

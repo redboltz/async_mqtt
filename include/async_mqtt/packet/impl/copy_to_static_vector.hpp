@@ -12,7 +12,6 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <optional>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
 namespace async_mqtt {

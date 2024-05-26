@@ -13,7 +13,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_pubrec.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -23,7 +22,6 @@
 
 #include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
 #include <async_mqtt/packet/impl/validate_property.hpp>
@@ -190,9 +188,10 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(
     for (auto const& prop : props_) {
         auto id = prop.id();
         if (!validate_property(property_location::pubrec, id)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::pubrec_packet property "s + id_to_str(id) + " is not allowed"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
             );
         }
     }
@@ -203,13 +202,13 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(
 // private constructor for internal use
 template <std::size_t PacketIdBytes>
 inline
-basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf) {
+basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::pubrec_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     fixed_header_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
@@ -219,20 +218,26 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf) {
         remaining_length_ = *vl_opt;
     }
     else {
-        throw make_error(errc::bad_message, "v5::pubrec_packet remaining length is invalid");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
 
     // packet_id
     if (!insert_advance(buf, packet_id_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::pubrec_packet packet_id doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     if (remaining_length_ == PacketIdBytes) {
         if (!buf.empty()) {
-            throw make_error(errc::bad_message, "v5::pubrec_packet remaining length is invalid");
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
+            );
+            return;
         }
         return;
     }
@@ -252,16 +257,18 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf) {
     case pubrec_reason_code::payload_format_invalid:
         break;
     default:
-        throw make_error(
-            errc::bad_message,
-            "v5::pubrec_packet connect reason_code is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
         );
-        break;
+        return;
     }
 
     if (remaining_length_ == 3) {
         if (!buf.empty()) {
-            throw make_error(errc::bad_message, "v5::pubrec_packet remaining length is invalid");
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
+            );
+            return;
         }
         return;
     }
@@ -273,27 +280,28 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf) {
         std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
         buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
         if (buf.size() < property_length_) {
-            throw make_error(
-                errc::bad_message,
-                "v5::pubrec_packet properties_don't match its length"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto prop_buf = buf.substr(0, property_length_);
-        props_ = make_properties(prop_buf, property_location::pubrec);
+        props_ = make_properties(prop_buf, property_location::pubrec, ec);
+        if (ec) return;
         buf.remove_prefix(property_length_);
     }
     else {
-        throw make_error(
-            errc::bad_message,
-            "v5::pubrec_packet property_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     if (!buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::pubrec_packet properties don't match its length"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 }
 

@@ -55,7 +55,9 @@ BOOST_AUTO_TEST_CASE(v5_auth) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::auth_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::auth_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::auth_reason_code::continue_authentication);
         BOOST_TEST(p.props() == props);
 
@@ -86,7 +88,9 @@ BOOST_AUTO_TEST_CASE(v5_auth_no_arg) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::auth_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::auth_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::auth_reason_code::success);
         BOOST_TEST(p.props().empty());
 
@@ -120,7 +124,9 @@ BOOST_AUTO_TEST_CASE(v5_auth_pid_rc) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::auth_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::auth_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::auth_reason_code::success);
         BOOST_TEST(p.props().empty());
 
@@ -143,7 +149,9 @@ BOOST_AUTO_TEST_CASE(v5_auth_prop_len_last) {
         0x00,                               // property_length
     };
     am::buffer buf{std::begin(expected), std::end(expected)};
-    auto p = am::v5::auth_packet{buf};
+    am::error_code ec;
+    auto p = am::v5::auth_packet{buf, ec};
+    BOOST_TEST(!ec);
     BOOST_TEST(p.code() == am::auth_reason_code::success);
     BOOST_TEST(p.props().empty());
 

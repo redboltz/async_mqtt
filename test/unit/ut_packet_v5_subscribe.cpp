@@ -64,7 +64,9 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::subscribe_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::subscribe_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST((p.entries() == args));
         BOOST_TEST(p.props() == props);
@@ -115,7 +117,9 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::basic_subscribe_packet<4>{buf};
+        am::error_code ec;
+        auto p = am::v5::basic_subscribe_packet<4>{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST((p.entries() == args));
 

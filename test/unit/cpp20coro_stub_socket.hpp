@@ -27,6 +27,23 @@ struct cpp20coro_basic_stub_socket {
     using executor_type = as::any_io_executor;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
+    using packet_variant_type = basic_packet_variant<PacketIdBytes>;
+
+    struct error_pv {
+        error_pv() = default;
+        error_pv(
+            packet_variant_type pv
+        ):pv{force_move(pv)}
+        {}
+
+        error_pv(
+            error_code ec
+        ):ec{ec}
+        {}
+
+        error_code ec;
+        packet_variant_type pv;
+    };
 
     cpp20coro_basic_stub_socket(
         protocol_version version,
@@ -36,9 +53,9 @@ struct cpp20coro_basic_stub_socket {
          exe_{force_move(exe)}
     {}
 
-    template <typename CompletionToken>
+    template <typename T, typename CompletionToken>
     auto emulate_recv(
-        basic_packet_variant<PacketIdBytes> pv,
+        T&& t,
         CompletionToken&& token
     ) {
         return as::async_compose<
@@ -47,7 +64,31 @@ struct cpp20coro_basic_stub_socket {
         > (
             emulate_recv_impl{
                 *this,
-                force_move(pv)
+                error_pv{std::forward<T>(t)}
+            },
+            token,
+            get_executor()
+        );
+    }
+
+    template <typename CompletionToken>
+    auto emulate_close(CompletionToken&& token) {
+        return emulate_recv(
+            errc::make_error_code(
+                errc::connection_reset
+            ),
+            std::forward<CompletionToken>(token)
+        );
+    }
+
+    template <typename CompletionToken>
+    auto wait_response(CompletionToken&& token) {
+        return as::async_compose<
+            CompletionToken,
+            void(error_code, packet_variant_type)
+        > (
+            wait_response_impl{
+                *this
             },
             token,
             get_executor()
@@ -56,14 +97,14 @@ struct cpp20coro_basic_stub_socket {
 
     struct emulate_recv_impl {
         this_type& socket;
-        basic_packet_variant<PacketIdBytes> pv;
+        error_pv epv;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
             socket.ch_recv_.async_send(
-                force_move(pv),
+                force_move(epv),
                 force_move(self)
             );
         }
@@ -76,28 +117,6 @@ struct cpp20coro_basic_stub_socket {
             self.complete();
         }
     };
-
-    template <typename CompletionToken>
-    auto emulate_close(CompletionToken&& token) {
-        return emulate_recv(
-            errc::make_error_code(errc::connection_reset),
-            std::forward<CompletionToken>(token)
-        );
-    }
-
-    template <typename CompletionToken>
-    auto wait_response(CompletionToken&& token) {
-        return as::async_compose<
-            CompletionToken,
-            void(basic_packet_variant<PacketIdBytes>)
-        > (
-            wait_response_impl{
-                *this
-            },
-            token,
-            get_executor()
-        );
-    }
 
     struct wait_response_impl {
         this_type& socket;
@@ -114,9 +133,9 @@ struct cpp20coro_basic_stub_socket {
         template <typename Self>
         void operator()(
             Self& self,
-            basic_packet_variant<PacketIdBytes> pv
+            error_pv epv
         ) {
-            self.complete(force_move(pv));
+            self.complete(epv.ec, force_move(epv.pv));
         }
     };
 
@@ -131,7 +150,7 @@ struct cpp20coro_basic_stub_socket {
     void close(error_code&) {
         open_ = false;
         ch_send_.async_send(
-            basic_packet_variant<PacketIdBytes>{errc::make_error_code(errc::connection_reset)},
+            errc::make_error_code(errc::connection_reset),
             as::detached
         );
     }
@@ -173,7 +192,8 @@ struct cpp20coro_basic_stub_socket {
                 if (auto remlen_opt = variable_bytes_to_val(it, end)) {
                     auto packet_end = std::next(it, *remlen_opt);
                     auto buf = allocate_buffer(packet_begin, packet_end);
-                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_);
+                    error_code ec;
+                    auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_, ec);
                     socket.ch_send_.async_send(
                         pv,
                         as::detached
@@ -248,28 +268,28 @@ struct cpp20coro_basic_stub_socket {
         template <typename Self>
         void operator()(
             Self& self,
-            basic_packet_variant<PacketIdBytes> pv
+            error_pv epv
         ) {
-            if (pv) {
-                socket.pv_ = pv;
-                socket.cbs_ = socket.pv_.const_buffer_sequence();
+            if (epv.ec) {
+                self.complete(epv.ec, 0);
+            }
+            else {
+                socket.epv_ = epv;
+                socket.cbs_ = socket.epv_.pv.const_buffer_sequence();
                 socket.pv_r_ = make_packet_range(socket.cbs_);
                 state = complete;
                 as::dispatch(
                     force_move(self)
                 );
             }
-            else {
-                self.complete(pv.template get<system_error>().code(), 0);
-            }
         }
     };
 
 private:
-    using channel_t = as::experimental::channel<void(basic_packet_variant<PacketIdBytes>)>;
+    using channel_t = as::experimental::channel<void(error_pv)>;
     protocol_version version_;
     as::any_io_executor exe_;
-    basic_packet_variant<PacketIdBytes> pv_;
+    error_pv epv_;
     std::vector<as::const_buffer> cbs_;
     std::optional<packet_range> pv_r_;
     bool open_ = true;
@@ -454,23 +474,6 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
         );
     }
 };
-
-
-inline bool is_close(packet_variant const& pv) {
-    if (pv) {
-        BOOST_TEST_MESSAGE("close expected but receive packet: " << pv);
-        return false; // pv is packet
-    }
-    return pv.get<system_error>().code() == errc::make_error_code(errc::connection_reset);
-}
-
-inline bool is_close(basic_packet_variant<4> const& pv) {
-    if (pv) {
-        BOOST_TEST_MESSAGE("close expected but receive packet: " << pv);
-        return false; // pv is packet
-    }
-    return pv.get<system_error>().code() == errc::make_error_code(errc::connection_reset);
-}
 
 } // namespace async_mqtt
 

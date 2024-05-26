@@ -78,7 +78,9 @@ BOOST_AUTO_TEST_CASE(v311_connect) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::connect_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.clean_session());
         BOOST_TEST(p.keep_alive() == 0x1234);
         BOOST_TEST(p.client_id() == "cid1");

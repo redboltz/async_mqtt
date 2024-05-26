@@ -8,11 +8,10 @@
 #define ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
 
 #include <async_mqtt/buffer_to_packet_variant.hpp>
-#include <async_mqtt/exception.hpp>
+#include <async_mqtt/error.hpp>
 
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
@@ -108,7 +107,7 @@ private:
 
     template <std::size_t PacketIdBytesArg>
     friend basic_packet_variant<PacketIdBytesArg>
-    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver, error_code& ec);
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_unsuback;
@@ -116,7 +115,7 @@ private:
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    explicit basic_unsuback_packet(buffer buf);
+    explicit basic_unsuback_packet(buffer buf, error_code& ec);
 
 private:
     std::uint8_t fixed_header_;

@@ -517,9 +517,9 @@ private:
                     am::force_move(payload),
                     opts
                 },
-                [](am::system_error const& se) {
+                [](am::error_code const& ec) {
                     std::cout << color_red << "\n";
-                    std::cout << se.message() << std::endl;
+                    std::cout << ec.message() << std::endl;
                     std::cout << color_none;
                 }
             );
@@ -567,9 +567,9 @@ private:
                     opts,
                     am::force_move(props)
                 },
-                [](am::system_error const& se) {
+                [](am::error_code const& ec) {
                     std::cout << color_red << "\n";
-                    std::cout << se.message() << std::endl;
+                    std::cout << ec.message() << std::endl;
                     std::cout << color_none;
                 }
             );
@@ -590,19 +590,19 @@ private:
                     payload = am::force_move(payload),
                     opts
                 ]
-                (std::optional<am::packet_id_type> pid_opt) mutable {
-                    if (pid_opt) {
+                (am::error_code const& ec, am::packet_id_type pid) mutable {
+                    if (ec) {
+                        std::cout << color_red;
+                        std::cout << ec.message() << std::endl;
+                        std::cout << color_none;
+                    }
+                    else {
                         publish(
-                            *pid_opt,
+                            pid,
                             am::force_move(topic),
                             am::force_move(payload),
                             opts
                         );
-                    }
-                    else {
-                        std::cout << color_red;
-                        std::cout << "packet_id exhausted" << std::endl;
-                        std::cout << color_none;
                     }
                 }
             );
@@ -627,17 +627,22 @@ private:
                 topic = am::force_move(topic),
                 opts
             ]
-            (std::optional<am::packet_id_type> pid_opt) mutable {
-                if (pid_opt) {
+            (am::error_code const& ec, am::packet_id_type pid) mutable {
+                if (ec) {
+                    std::cout << color_red;
+                    std::cout << ec.message() << std::endl;
+                    std::cout << color_none;
+                }
+                else {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.async_send(
                             am::v3_1_1::subscribe_packet{
-                                *pid_opt,
+                                pid,
                                 { {am::force_move(topic), opts} }
                             },
-                            [](am::system_error const& se) {
+                            [](am::error_code const& ec) {
                                 std::cout << color_red << "\n";
-                                std::cout << se.message() << std::endl;
+                                std::cout << ec.message() << std::endl;
                                 std::cout << color_none;
                             }
                         );
@@ -654,22 +659,17 @@ private:
                         }
                         ep_.async_send(
                             am::v5::subscribe_packet{
-                                *pid_opt,
+                                pid,
                                 { {am::force_move(topic), opts} },
                                 force_move(props)
                             },
-                            [](am::system_error const& se) {
+                            [](am::error_code const& ec) {
                                 std::cout << color_red << "\n";
-                                std::cout << se.message() << std::endl;
+                                std::cout << ec.message() << std::endl;
                                 std::cout << color_none;
                             }
                         );
                     }
-                }
-                else {
-                    std::cout << color_red;
-                    std::cout << "packet_id exhausted" << std::endl;
-                    std::cout << color_none;
                 }
             }
         );
@@ -683,17 +683,22 @@ private:
                 this,
                 topic = am::force_move(topic)
             ]
-            (std::optional<am::packet_id_type> pid_opt) mutable {
-                if (pid_opt) {
+            (am::error_code const& ec, am::packet_id_type pid) mutable {
+                if (ec) {
+                    std::cout << color_red;
+                    std::cout << ec.message() << std::endl;
+                    std::cout << color_none;
+                }
+                else {
                     if (version_ == am::protocol_version::v3_1_1) {
                         ep_.async_send(
                             am::v3_1_1::unsubscribe_packet{
-                                *pid_opt,
+                                pid,
                                 { am::force_move(topic) }
                             },
-                            [](am::system_error const& se) {
+                            [](am::error_code const& ec) {
                                 std::cout << color_red << "\n";
-                                std::cout << se.message() << std::endl;
+                                std::cout << ec.message() << std::endl;
                                 std::cout << color_none;
                             }
                         );
@@ -701,21 +706,16 @@ private:
                     else {
                         ep_.async_send(
                             am::v5::unsubscribe_packet{
-                                *pid_opt,
+                                pid,
                                 { am::force_move(topic) }
                             },
-                            [](am::system_error const& se) {
+                            [](am::error_code const& ec) {
                                 std::cout << color_red << "\n";
-                                std::cout << se.message() << std::endl;
+                                std::cout << ec.message() << std::endl;
                                 std::cout << color_none;
                             }
                         );
                     }
-                }
-                else {
-                    std::cout << color_red;
-                    std::cout << "packet_id exhausted" << std::endl;
-                    std::cout << color_none;
                 }
             }
         );
@@ -767,30 +767,13 @@ public:
     }
 
     // forwarding callbacks
-    void operator()() {
-        proc({}, {}, {}, {});
-    }
-    void operator()(boost::system::error_code ec) {
-        proc(ec, {}, {}, {});
-    }
-    void operator()(boost::system::error_code ec, as::ip::tcp::endpoint /*unused*/) {
-        proc(ec, {}, {}, {});
-    }
-    void operator()(am::system_error const& se) {
-        proc({}, se, {}, {});
-    }
-    void operator()(std::optional<am::packet_id_type> pid_opt) {
-        proc({}, {}, pid_opt, {});
-    }
-    void operator()(am::packet_variant pv) {
-        proc({}, {}, {}, am::force_move(pv));
+    void operator()(am::error_code const& ec = am::error_code{}, am::packet_variant pv = am::packet_variant{}) {
+        proc(ec, am::force_move(pv));
     }
 
 private:
     void proc(
         am::error_code const& ec,
-        am::system_error const& se,
-        std::optional<am::packet_id_type> /*pid_opt*/,
         am::packet_variant pv
     ) {
         reenter (coro_) {
@@ -874,50 +857,50 @@ private:
                     );
                 }
             }
-            if (se) {
-                std::cout << "MQTT CONNECT send error:" << se.what() << std::endl;
+            if (ec) {
+                std::cout << "MQTT CONNECT send error:" << ec.message() << std::endl;
                 return;
             }
 
             // Recv loop
             while (true) {
                 yield ep_.async_recv(*this);
-                if (pv) {
-                    pv.visit(
-                        am::overload {
-                            [&](am::v3_1_1::publish_packet const& p) {
-                                std::cout << color_recv;
-                                std::cout << p << std::endl;
-                                std::cout << "  payload:";
-                                std::cout << am::json_like_out(p.payload());
-                                std::cout << std::endl;
-                                std::cout << color_none;
-                            },
-                            [&](am::v5::publish_packet const& p) {
-                                std::cout << color_recv;
-                                std::cout << p << std::endl;
-                                std::cout << "  payload:";
-                                std::cout << am::json_like_out(p.payload());
-                                std::cout << std::endl;
-                                std::cout << color_none;
-                            },
-                            [](auto const& p) {
-                                std::cout << color_recv;
-                                std::cout << p << std::endl;
-                                std::cout << color_none;
-                            }
-                        }
-                    );
-                }
-                else {
+                if (ec) {
                     std::cout << color_recv;
                     std::cout
                         << "recv error:"
-                        << pv.get<am::system_error>().what()
+                        << ec.message()
                         << std::endl;
                     std::cout << color_none;
                     return;
                 }
+                pv.visit(
+                    am::overload {
+                        [&](am::v3_1_1::publish_packet const& p) {
+                            std::cout << color_recv;
+                            std::cout << p << std::endl;
+                            std::cout << "  payload:";
+                            std::cout << am::json_like_out(p.payload());
+                            std::cout << std::endl;
+                            std::cout << color_none;
+                        },
+                        [&](am::v5::publish_packet const& p) {
+                            std::cout << color_recv;
+                            std::cout << p << std::endl;
+                            std::cout << "  payload:";
+                            std::cout << am::json_like_out(p.payload());
+                            std::cout << std::endl;
+                            std::cout << color_none;
+                        },
+                        [](auto const& p) {
+                            std::cout << color_recv;
+                            std::cout << p << std::endl;
+                            std::cout << color_none;
+                        },
+                        [](std::monostate&) {
+                        }
+                    }
+                );
             }
         }
     }

@@ -29,95 +29,125 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -131,95 +161,125 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -233,95 +293,125 @@ BOOST_AUTO_TEST_CASE(content_type) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -335,95 +425,125 @@ BOOST_AUTO_TEST_CASE(response_topic) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -437,95 +557,125 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -539,95 +689,125 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::subscribe)
+            !!am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -641,95 +821,125 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::disconnect)
+            !!am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -743,95 +953,125 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -845,95 +1085,125 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -947,95 +1217,125 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::auth)
+            !!am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1049,95 +1349,125 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::auth)
+            !!am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1151,95 +1481,125 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1253,95 +1613,125 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::will);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::will, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1355,95 +1745,125 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1457,95 +1877,125 @@ BOOST_AUTO_TEST_CASE(response_information) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1559,95 +2009,125 @@ BOOST_AUTO_TEST_CASE(server_reference) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
+    }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::disconnect)
+            !!am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-    }
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1661,95 +2141,125 @@ BOOST_AUTO_TEST_CASE(reason_string) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::puback)
+            !!am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubrec)
+            !!am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubrel)
+            !!am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !!am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::suback)
+            !!am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::unsuback)
+            !!am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::disconnect)
+            !!am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::auth)
+            !!am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1763,95 +2273,125 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1865,95 +2405,125 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -1967,95 +2537,125 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connack)
+            !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2069,95 +2669,125 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2171,95 +2801,125 @@ BOOST_AUTO_TEST_CASE(retain_available) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2273,93 +2933,123 @@ BOOST_AUTO_TEST_CASE(user_property) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::publish)
+            !!am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::will)
+            !!am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::puback)
+            !!am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubrec)
+            !!am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubrel)
+            !!am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !!am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::subscribe)
+            !!am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::suback)
+            !!am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !!am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::unsuback)
+            !!am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::disconnect)
+            !!am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::auth)
+            !!am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
@@ -2375,95 +3065,125 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connect, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connect)
+            !!am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(!ec);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2477,95 +3197,125 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2579,95 +3329,125 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2681,95 +3461,125 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
     );
     am::buffer buf{am::to_string(pv1.const_buffer_sequence())};
     auto wbuf{buf};
-    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack);
+    am::error_code ec;
+    auto pv2 = am::make_property_variant(wbuf, am::property_location::connack, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(pv1 == pv2);
 
     // success
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !!am::make_property_variant(wbuf, am::property_location::connack)
+            !!am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
+        BOOST_TEST(!ec);
     }
 
     // fail
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::connect)
+            !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::publish)
+            !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::will)
+            !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::puback)
+            !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrec)
+            !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubrel)
+            !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::pubcomp)
+            !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::subscribe)
+            !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::suback)
+            !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsubscribe)
+            !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::unsuback)
+            !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::disconnect)
+            !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
     {
         auto wbuf{buf};
+        am::error_code ec;
         BOOST_TEST(
-            !am::make_property_variant(wbuf, am::property_location::auth)
+            !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -2785,7 +3595,9 @@ BOOST_AUTO_TEST_CASE(props) {
         "[{id:payload_format_indicator,val:binary},{id:message_expiry_interval,val:4294967295}]"
     );
     am::buffer buf{am::to_string(am::const_buffer_sequence(ps1))};
-    auto ps2 = am::make_properties(buf, am::property_location::publish);
+    am::error_code ec;
+    auto ps2 = am::make_properties(buf, am::property_location::publish, ec);
+    BOOST_TEST(!ec);
     BOOST_TEST(ps1 == ps2);
 }
 

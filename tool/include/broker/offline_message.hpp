@@ -66,11 +66,11 @@ public:
                             payload_,
                             pubopts_
                         },
-                        [epsp](system_error const& ec) {
+                        [epsp](error_code const& ec) {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", warning)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << ec.what();
+                                    << ec.message();
                             }
                         }
                     );
@@ -94,11 +94,11 @@ public:
                     }
                     epsp.async_send(
                         force_move(packet),
-                        [epsp](system_error const& ec) {
+                        [epsp](error_code const& ec) {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", warning)
                                     << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
-                                    << ec.what();
+                                    << ec.message();
                             }
                         }
                     );

@@ -11,11 +11,10 @@
 #include <async_mqtt/client.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
-#include <async_mqtt/exception.hpp>
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/setup_log.hpp>
-#include <async_mqtt/packet/connect_return_code.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_fwd.hpp>
 #include <async_mqtt/packet/packet_helper.hpp>
@@ -29,10 +28,9 @@
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/pubopts.hpp>
 #include <async_mqtt/packet/qos.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
+#include <async_mqtt/packet/qos_util.hpp>
 #include <async_mqtt/packet/store_packet_variant.hpp>
 #include <async_mqtt/packet/store_packet_variant_fwd.hpp>
-#include <async_mqtt/packet/suback_return_code.hpp>
 #include <async_mqtt/packet/subopts.hpp>
 #include <async_mqtt/packet/topic_sharename.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>

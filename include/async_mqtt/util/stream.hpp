@@ -19,7 +19,7 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/exception.hpp>
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
@@ -92,7 +92,7 @@ public:
     >
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(system_error)
+        void(error_code)
     )
     async_write_packet(
         Packet packet,

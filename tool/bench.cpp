@@ -220,28 +220,24 @@ struct bench {
 
     // forwarding callbacks
     void operator()(ClientInfo* pci = nullptr) {
-        proc({}, {}, {}, {}, pci);
+        proc({}, am::packet_variant{}, {}, pci);
     }
     void operator()(boost::system::error_code ec, ClientInfo* pci = nullptr) {
-        proc(ec, {}, {}, {}, pci);
+        proc(ec, am::packet_variant{}, {}, pci);
     }
-    void operator()(am::system_error const& se, ClientInfo* pci = nullptr) {
-        proc({}, se, {}, {}, pci);
+    void operator()(am::error_code const& ec, am::packet_variant pv, ClientInfo* pci = nullptr) {
+        proc(ec, am::force_move(pv), {}, pci);
     }
-    void operator()(am::packet_variant pv, ClientInfo* pci = nullptr) {
-        proc({}, {}, am::force_move(pv), {}, pci);
-    }
-    void operator()(std::optional<am::packet_id_type> pid_opt, ClientInfo* pci = nullptr) {
-        pci->pid_opt = pid_opt;
-        proc({}, {}, {}, am::force_move(pid_opt), pci);
+    void operator()(am::error_code const& ec, am::packet_id_type pid, ClientInfo* pci = nullptr) {
+        pci->pid = pid;
+        proc(ec, am::packet_variant{}, pid, pci);
     }
 
 private:
     void proc(
         std::optional<boost::system::error_code> ec,
-        std::optional<am::system_error> se,
         am::packet_variant pv,
-        std::optional<am::packet_id_type> pid_opt,
+        am::packet_id_type pid,
         ClientInfo* pci
     ) {
         reenter (coro_) {
@@ -355,8 +351,8 @@ private:
                 }
                 pci->init_timer(pci->c->get_executor());
             }
-            if (*se) {
-                locked_cout() << "connect send error:" << se->what() << std::endl;
+            if (*ec) {
+                locked_cout() << "connect send error:" << ec->message() << std::endl;
                 exit(-1);
             }
 
@@ -437,13 +433,13 @@ private:
                         pci
                     )
                 );
-                BOOST_ASSERT(pid_opt);
+                BOOST_ASSERT(!ec && *ec);
                 yield {
                     switch (bc_.version) {
                     case am::protocol_version::v5: {
                         pci->c->async_send(
                             am::v5::subscribe_packet{
-                                *pid_opt,
+                                pid,
                                 {
                                     { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 },
@@ -458,7 +454,7 @@ private:
                     case am::protocol_version::v3_1_1: {
                         pci->c->async_send(
                             am::v3_1_1::subscribe_packet{
-                                *pid_opt,
+                                pid,
                                 {
                                     { bc_.topic_prefix + pci->index_str, bc_.qos }
                                 }
@@ -475,8 +471,8 @@ private:
                     }
                     pci->init_timer(pci->c->get_executor());
                 }
-                if (*se) {
-                    locked_cout() << "subscribe send error:" << se->what() << std::endl;
+                if (*ec) {
+                    locked_cout() << "subscribe send error:" << ec->message() << std::endl;
                     exit(-1);
                 }
 
@@ -643,7 +639,7 @@ private:
                         case am::protocol_version::v5: {
                             pci->c->async_send(
                                 am::v5::publish_packet{
-                                    *pci->pid_opt,
+                                    pci->pid,
                                     bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts,
@@ -659,7 +655,7 @@ private:
                         case am::protocol_version::v3_1_1: {
                             pci->c->async_send(
                                 am::v3_1_1::publish_packet{
-                                    *pci->pid_opt,
+                                    pci->pid,
                                     bc_.topic_prefix + pci->index_str,
                                     pci->send_payload(bc_.md),
                                     opts
@@ -689,7 +685,7 @@ private:
                                             pci
                                         )
                                     );
-                                    BOOST_ASSERT(pci->pid_opt);
+                                    BOOST_ASSERT(!ec && *ec);
                                     am::pub::opts opts = bc_.qos | bc_.retain;
                                     pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
                                     send_publish(opts);
@@ -697,7 +693,7 @@ private:
                                     --pci->send_times;
                                 }
                                 else {
-                                    pci->pid_opt.emplace(0);
+                                    pci->pid = 0;
                                     am::pub::opts opts = bc_.qos | bc_.retain;
                                     pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
                                     send_publish(opts);
@@ -796,10 +792,10 @@ private:
                         }
                     }
                 }
-                else if (se) {
+                else if (ec) {
                     // pub send result
-                    if (*se) {
-                        locked_cout() << "subscribe send error:" << se->what() << std::endl;
+                    if (*ec) {
+                        locked_cout() << "subscribe send error:" << ec->message() << std::endl;
                         exit(-1);
                     }
                 }
@@ -1732,7 +1728,7 @@ int main(int argc, char *argv[]) {
             std::shared_ptr<as::steady_timer> tim;
             std::string host;
             std::string port;
-            std::optional<am::packet_id_type> pid_opt;
+            am::packet_id_type pid = 0;
         };
 
         as::io_context ioc_timer;

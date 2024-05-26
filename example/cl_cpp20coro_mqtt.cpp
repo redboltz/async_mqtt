@@ -103,10 +103,10 @@ proc(
         print_pubres(pubres0);
 
         // MQTT publish QoS1 and wait response (puback receive)
-        auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+        auto pid_pub1 = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
         auto pubres1 = co_await amcl.async_publish(
             // you can pass v5::publish_packet constructor's args directly
-            *pid_pub1_opt,
+            pid_pub1,
             "topic2",
             "payload2",
             am::qos::at_least_once,

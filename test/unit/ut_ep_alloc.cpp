@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(custom_read) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack
+            {connack}
         }
     );
     ep->next_layer().set_associated_cheker_for_read(check_digit_read);
@@ -90,12 +90,13 @@ BOOST_AUTO_TEST_CASE(custom_read) {
     BOOST_CHECK(!deallocate_called_read);
     ep->async_send(
         connect,
-        [&](auto se) {
-            BOOST_CHECK(!se);
+        [&](auto ec) {
+            BOOST_CHECK(!ec);
             ep->async_recv(
                 as::bind_allocator(
                     ma,
-                    [&](auto pv) {
+                    [&](auto ec, auto pv) {
+                        BOOST_TEST(!ec);
                         BOOST_TEST(pv == connack);
                     }
                 )
@@ -163,7 +164,7 @@ BOOST_AUTO_TEST_CASE(custom_write) {
     ep->next_layer().set_recv_packets(
         {
             // receive packets
-            connack
+            {connack}
         }
     );
     ep->next_layer().set_associated_cheker_for_write(check_digit_write);
@@ -174,10 +175,11 @@ BOOST_AUTO_TEST_CASE(custom_write) {
         connect,
         as::bind_allocator(
             ma,
-            [&](auto se) {
-                BOOST_CHECK(!se);
+            [&](auto ec) {
+                BOOST_CHECK(!ec);
                 ep->async_recv(
-                    [&](auto pv) {
+                    [&](auto ec, auto pv) {
+                        BOOST_TEST(!ec);
                         BOOST_TEST(pv == connack);
                     }
                 );

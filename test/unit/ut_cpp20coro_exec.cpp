@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(different) {
             };
 
             auto exe = ep->get_executor();
-            auto se = co_await ep->async_send(
+            co_await ep->async_send(
                 connect,
                 as::bind_executor(
                     exe,
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(different) {
             ep->next_layer().set_recv_packets(
                 {
                     // receive packets
-                    connack,
+                    {connack},
                 }
             );
 
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(different) {
             );
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto pid_opt = co_await ep->async_acquire_unique_packet_id(
+            auto pid = co_await ep->async_acquire_unique_packet_id(
                 as::bind_executor(
                     exe,
                     as::deferred
@@ -100,17 +100,22 @@ BOOST_AUTO_TEST_CASE(different) {
             );
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->async_register_packet_id(
-                *pid_opt,
-                as::bind_executor(
-                    exe,
-                    as::deferred
-                )
-            );
+            {
+                auto [ec] = co_await ep->async_register_packet_id(
+                    pid,
+                    as::bind_executor(
+                        exe,
+                        as::as_tuple(
+                        as::deferred
+                        )
+                    )
+                );
+                BOOST_TEST(ec == am::mqtt_error::packet_identifier_conflict);
+            }
             BOOST_TEST(str_ep.running_in_this_thread());
 
             co_await ep->async_release_packet_id(
-                *pid_opt,
+                pid,
                 as::bind_executor(
                     exe,
                     as::deferred
@@ -217,25 +222,28 @@ BOOST_AUTO_TEST_CASE(bind) {
                 am::connect_return_code::accepted
             };
 
-            auto se = co_await ep->async_send(connect, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_send(connect, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
                     // receive packets
-                    connack,
+                    {connack},
                 }
             );
 
             auto pv = co_await ep->async_recv(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            auto pid_opt = co_await ep->async_acquire_unique_packet_id(as::bind_executor(str_ep, as::deferred));
+            auto pid = co_await ep->async_acquire_unique_packet_id(as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
-            co_await ep->async_register_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
-            BOOST_TEST(str_ep.running_in_this_thread());
+            {
+                auto [ec] = co_await ep->async_register_packet_id(pid, as::bind_executor(str_ep, as::as_tuple(as::deferred)));
+                BOOST_TEST(ec == am::mqtt_error::packet_identifier_conflict);
+                BOOST_TEST(str_ep.running_in_this_thread());
+            }
 
-            co_await ep->async_release_packet_id(*pid_opt, as::bind_executor(str_ep, as::deferred));
+            co_await ep->async_release_packet_id(pid, as::bind_executor(str_ep, as::deferred));
             BOOST_TEST(str_ep.running_in_this_thread());
 
             auto packets = co_await ep->async_get_stored_packets(as::bind_executor(str_ep, as::deferred));
@@ -309,25 +317,28 @@ BOOST_AUTO_TEST_CASE(same) {
                 am::connect_return_code::accepted
             };
 
-            auto se = co_await ep->async_send(connect, as::deferred);
+            co_await ep->async_send(connect, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
             ep->next_layer().set_recv_packets(
                 {
                     // receive packets
-                    connack,
+                    {connack},
                 }
             );
 
             auto pv = co_await ep->async_recv(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            auto pid_opt = co_await ep->async_acquire_unique_packet_id(as::deferred);
+            auto pid = co_await ep->async_acquire_unique_packet_id(as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
-            co_await ep->async_register_packet_id(*pid_opt, as::deferred);
-            BOOST_TEST(str.running_in_this_thread());
+            {
+                auto [ec] = co_await ep->async_register_packet_id(pid, as::as_tuple(as::deferred));
+                BOOST_TEST(ec == am::mqtt_error::packet_identifier_conflict);
+                BOOST_TEST(str.running_in_this_thread());
+            }
 
-            co_await ep->async_release_packet_id(*pid_opt, as::deferred);
+            co_await ep->async_release_packet_id(pid, as::deferred);
             BOOST_TEST(str.running_in_this_thread());
 
             auto packets = co_await ep->async_get_stored_packets(as::deferred);

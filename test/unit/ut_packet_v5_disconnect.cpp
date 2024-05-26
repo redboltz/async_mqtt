@@ -55,7 +55,9 @@ BOOST_AUTO_TEST_CASE(v5_disconnect) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::disconnect_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::disconnect_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::disconnect_reason_code::protocol_error);
         BOOST_TEST(p.props() == props);
 
@@ -86,7 +88,9 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_no_arg) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::disconnect_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::disconnect_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
         BOOST_TEST(p.props().empty());
 
@@ -120,7 +124,9 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_pid_rc) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::disconnect_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::disconnect_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
         BOOST_TEST(p.props().empty());
 
@@ -143,7 +149,9 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_prop_len_last) {
         0x00,                               // property_length
     };
     am::buffer buf{std::begin(expected), std::end(expected)};
-    auto p = am::v5::disconnect_packet{buf};
+    am::error_code ec;
+    auto p = am::v5::disconnect_packet{buf, ec};
+    BOOST_TEST(!ec);
     BOOST_TEST(p.code() == am::disconnect_reason_code::normal_disconnection);
     BOOST_TEST(p.props().empty());
 

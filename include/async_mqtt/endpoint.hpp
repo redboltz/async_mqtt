@@ -10,6 +10,7 @@
 #include <set>
 #include <deque>
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/make_shared_helper.hpp>
@@ -262,7 +263,7 @@ public:
      * @brief acuire unique packet_id.
      * @param token
      * - CompletionToken
-     *    - Signature: void(std::optional<basic_packet_id_type<PacketIdBytes>>)
+     *    - Signature: void(error_code, basic_packet_id_type<PacketIdBytes>)
      * @return deduced by token
      */
     template <
@@ -271,7 +272,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(std::optional<basic_packet_id_type<PacketIdBytes>>)
+        void(error_code, basic_packet_id_type<PacketIdBytes>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id(
@@ -283,7 +284,7 @@ public:
      * If packet_id is fully acquired, then wait until released.
      * @param token
      * - CompletionToken
-     *    - Signature: void(basic_packet_id_type<PacketIdBytes>)
+     *    - Signature: void(error_code, basic_packet_id_type<PacketIdBytes>)
      * @return deduced by token
      */
     template <
@@ -292,7 +293,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(basic_packet_id_type<PacketIdBytes>)
+        void(error_code, basic_packet_id_type<PacketIdBytes>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id_wait_until(
@@ -304,8 +305,8 @@ public:
      * @param packet_id packet_id to register
      * @param token
      * - CompletionToken
-     *    - Signature: void(bool)
-     *    - the param is bool. If true, success, otherwise the packet_id has already been used.
+     *    - Signature: void(error_code)
+     *    - success if packet is acquired, otherwise packet_identifier_fully_used
      * @return deduced by token
      */
     template <
@@ -314,7 +315,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(bool)
+        void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_register_packet_id(
@@ -350,7 +351,7 @@ public:
      * @param packet packet to send
      * @param token
      * - CompletionToken
-     *    - Signature: void(system_error)
+     *    - Signature: void(error_code)
      * @return deduced by token
      */
     template <
@@ -360,7 +361,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(system_error)
+        void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_send(
@@ -373,7 +374,7 @@ public:
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      * @param token
      * - CompletionToken
-     *    - Signature: void(packet_variant_type)
+     *    - Signature: void(error_code, packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -382,7 +383,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_variant_type)
+        void(error_code, packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_recv(
@@ -397,7 +398,7 @@ public:
      * @param types target control_packet_types
      * @param token
      * - CompletionToken
-     *    - Signature: void(packet_variant_type)
+     *    - Signature: void(error_code, packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -406,7 +407,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_variant_type)
+        void(error_code, packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_recv(
@@ -423,7 +424,7 @@ public:
      * @param types target control_packet_types
      * @param token
      * - CompletionToken
-     *    - Signature: void(packet_variant_type)
+     *    - Signature: void(error_code, packet_variant_type)
      * @return deduced by token
      */
     template <
@@ -432,7 +433,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_variant_type)
+        void(error_code, packet_variant_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_recv(
@@ -493,7 +494,7 @@ public:
      *
      * @param token
      * - CompletionToken
-     *    - Signature: void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+     *    - Signature: void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
      * @return deduced by token
      */
     template <
@@ -502,7 +503,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
+        void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_get_stored_packets(
@@ -515,7 +516,7 @@ public:
      * @param packet target packet to regulate
      * @param token
      * - CompletionToken
-     *    - Signature: void(v5::basic_publish_packet<PacketIdBytes>)
+     *    - Signature: void(error_code, v5::basic_publish_packet<PacketIdBytes>)
      * @return deduced by token
      */
     template <
@@ -524,7 +525,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(v5::basic_publish_packet<PacketIdBytes>)
+        void(error_code, v5::basic_publish_packet<PacketIdBytes>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_regulate_for_store(
@@ -605,8 +606,12 @@ public:
      *        If topic is empty, extract topic from topic alias, and remove topic alias
      *        Otherwise, remove topic alias if exists.
      * @param packet packet to regulate
+     * @param ec     error_code for repoting error
      */
-    void regulate_for_store(v5::basic_publish_packet<PacketIdBytes>& packet) const;
+    void regulate_for_store(
+        v5::basic_publish_packet<PacketIdBytes>& packet,
+        error_code& ec
+    ) const;
 
     /**
      * @brief Set PINGREQ packet sending interval.
@@ -683,7 +688,7 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(system_error)
+        void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_send(

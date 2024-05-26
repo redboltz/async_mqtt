@@ -31,10 +31,9 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -49,7 +48,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
@@ -61,9 +60,9 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -100,10 +99,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -118,7 +116,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -130,9 +128,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -170,10 +168,9 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -188,7 +185,7 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -201,9 +198,9 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -255,10 +252,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -273,7 +269,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -286,9 +282,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -312,13 +308,12 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                 yield ep().async_close(*this);
 
                 yield am::async_underlying_handshake(
-
                     ep().next_layer(),
                     "127.0.0.1",
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v5::connect_packet{
                         false,   // clean_start
@@ -330,9 +325,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(p.session_present());

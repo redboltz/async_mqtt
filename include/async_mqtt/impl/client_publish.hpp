@@ -13,7 +13,6 @@
 #include <boost/hana/unpack.hpp>
 
 #include <async_mqtt/impl/client_impl.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
@@ -45,16 +44,16 @@ publish_op {
     template <typename Self>
     void operator()(
         Self& self,
-        system_error const& se,
+        error_code const& ec,
         packet_id_type pid
     ) {
-        if (se) {
-            self.complete(se.code(), pubres_t{});
+        if (ec) {
+            self.complete(ec, pubres_t{});
             return;
         }
         if (pid == 0) {
             // QoS: at_most_once
-            self.complete(se.code(), pubres_t{});
+            self.complete(ec, pubres_t{});
             return;
         }
         auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
@@ -118,11 +117,44 @@ client<Version, NextLayer>::async_publish_impl(
 }
 
 template <protocol_version Version, typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code, pubres_t)
+)
+client<Version, NextLayer>::async_publish_impl(
+    error_code ec,
+    CompletionToken&& token
+) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "publish: " << ec.message();
+    return
+        as::async_compose<
+            CompletionToken,
+            void(error_code, pubres_t)
+        >(
+            [ec](auto& self) {
+                self.complete(ec, pubres_t{});
+            },
+            token,
+            get_executor()
+        );
+}
+
+template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 auto
 client<Version, NextLayer>::async_publish(Args&&... args) {
     if constexpr (std::is_constructible_v<publish_packet, decltype(std::forward<Args>(args))...>) {
-        return async_publish_impl(publish_packet{std::forward<Args>(args)...});
+        try {
+            return async_publish_impl(publish_packet{std::forward<Args>(args)...});
+        }
+        catch (system_error const& se) {
+            return async_publish_impl(
+                se.code()
+            );
+        }
     }
     else {
         auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
@@ -138,10 +170,18 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
                     >,
                     "publish_packet is not constructible"
                 );
-                return async_publish_impl(
-                    publish_packet{std::forward<decltype(rest_args)>(rest_args)...},
-                    std::forward<decltype(back)>(back)
-                );
+                try {
+                    return async_publish_impl(
+                        publish_packet{std::forward<decltype(rest_args)>(rest_args)...},
+                        std::forward<decltype(back)>(back)
+                    );
+                }
+                catch (system_error const& se) {
+                    return async_publish_impl(
+                        se.code(),
+                        std::forward<decltype(back)>(back)
+                    );
+                }
             }
         );
     }

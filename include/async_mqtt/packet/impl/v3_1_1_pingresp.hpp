@@ -13,7 +13,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_pingresp.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -58,38 +57,38 @@ constexpr std::size_t pingresp_packet::num_of_const_buffer_sequence() {
 }
 
 inline
-pingresp_packet::pingresp_packet(buffer buf) {
+pingresp_packet::pingresp_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::pingresp_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     all_.push_back(buf.front());
     buf.remove_prefix(1);
     auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(all_.back()));
     if (!cpt_opt || *cpt_opt != control_packet_type::pingresp) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::pingresp_packet fixed_header is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // remaining_length
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::pingresp_packet remaining_length doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     all_.push_back(buf.front());
 
     if (static_cast<std::uint8_t>(all_.back()) != 0) {
-        throw make_error(
-            errc::bad_message,
-            "v3_1_1::pingresp_packet remaining_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 }
 

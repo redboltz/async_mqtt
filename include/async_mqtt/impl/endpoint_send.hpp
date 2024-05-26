@@ -67,7 +67,7 @@ send_op {
                                 }
                             }
                         },
-                        [&](system_error&) {}
+                        [&](std::monostate const&) {}
                     }
                 );
             }
@@ -105,9 +105,8 @@ send_op {
             )
         ) {
             self.complete(
-                make_error(
-                    errc::protocol_error,
-                    "packet cannot be send by MQTT protocol"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return false;
@@ -128,18 +127,16 @@ send_op {
         if constexpr(is_connect<ActualPacket>()) {
             if (ep.status_ != connection_status::closed) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "connect_packet can only be send on connection_status::closed"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
             }
             if (!version_check()) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "protocol version mismatch"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
@@ -148,18 +145,16 @@ send_op {
         else if constexpr(is_connack<ActualPacket>()) {
             if (ep.status_ != connection_status::connecting) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "connack_packet can only be send on connection_status::connecting"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
             }
             if (!version_check()) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "protocol version mismatch"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
@@ -169,18 +164,16 @@ send_op {
             if (ep.status_ != connection_status::connected &&
                 ep.status_ != connection_status::connecting) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "auth packet can only be send on connection_status::connecting or status::connected"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
             }
             if (!version_check()) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "protocol version mismatch"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
@@ -190,9 +183,8 @@ send_op {
             if (ep.status_ != connection_status::connected) {
                 if constexpr(!is_publish<std::decay_t<ActualPacket>>()) {
                     self.complete(
-                        make_error(
-                            errc::protocol_error,
-                            "packet can only be send on connection_status::connected"
+                        make_error_code(
+                            mqtt_error::packet_not_allowed_to_send
                         )
                     );
                     return false;
@@ -200,9 +192,8 @@ send_op {
             }
             if (!version_check()) {
                 self.complete(
-                    make_error(
-                        errc::protocol_error,
-                        "protocol version mismatch"
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 return false;
@@ -472,10 +463,7 @@ send_op {
             // receive_maximum for sending
             if (!from_queue && ep.enqueue_publish(actual_packet)) {
                 self.complete(
-                    make_error(
-                        errc::success,
-                        "publish_packet is enqueued due to receive_maximum for sending"
-                    )
+                    error_code{}
                 );
                 return false;
             }
@@ -533,11 +521,11 @@ send_op {
         if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
             if (ep.status_ != connection_status::connected) {
                 // offline publish
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                    << "publish message is not sent but stored";
                 self.complete(
-                    make_error(
-                        errc::success,
-                        "packet is stored but not sent"
-                    )
+                    error_code{}
                 );
                 return false;
             }
@@ -548,19 +536,23 @@ send_op {
     template <typename Self>
     bool validate_topic_alias_range(Self& self, topic_alias_type ta) {
         if (!ep.topic_alias_send_) {
+            ASYNC_MQTT_LOG("mqtt_impl", error)
+                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << "topic_alias is set but topic_alias_maximum is 0";
             self.complete(
-                make_error(
-                    errc::bad_message,
-                    "topic_alias is set but topic_alias_maximum is 0"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return false;
         }
         if (ta == 0 || ta > ep.topic_alias_send_->max()) {
+            ASYNC_MQTT_LOG("mqtt_impl", error)
+                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << "topic_alias is set but out of range";
             self.complete(
-                make_error(
-                    errc::bad_message,
-                    "topic_alias is set but out of range"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return false;
@@ -571,10 +563,12 @@ send_op {
     template <typename Self>
     std::optional<std::string> validate_topic_alias(Self& self, std::optional<topic_alias_type> ta_opt) {
         if (!ta_opt) {
+            ASYNC_MQTT_LOG("mqtt_impl", error)
+                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << "topic is empty but topic_alias isn't set";
             self.complete(
-                make_error(
-                    errc::bad_message,
-                    "topic is empty but topic_alias isn't set"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return std::nullopt;
@@ -586,10 +580,12 @@ send_op {
 
         auto topic = ep.topic_alias_send_->find(*ta_opt);
         if (topic.empty()) {
+            ASYNC_MQTT_LOG("mqtt_impl", error)
+                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << "topic is empty but topic_alias is not registered";
             self.complete(
-                make_error(
-                    errc::bad_message,
-                    "topic is empty but topic_alias is not registered"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return std::nullopt;
@@ -604,9 +600,8 @@ send_op {
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "packet size over maximum_packet_size for sending";
             self.complete(
-                make_error(
-                    errc::bad_message,
-                    "packet size is over maximum_packet_size for sending"
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
                 )
             );
             return false;
@@ -619,7 +614,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet, typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(system_error)
+    void(error_code)
 )
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
     Packet packet,
@@ -660,7 +655,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
     return
         as::async_compose<
             CompletionToken,
-            void(system_error)
+            void(error_code)
         >(
             send_op<Packet>{
                 *this,

@@ -8,13 +8,13 @@
 #define ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
 
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/static_vector.hpp>
 
 #include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/connect_return_code.hpp>
 
 /**
  * @defgroup connack_v3_1_1 CONNACK packet (v3.1.1)
@@ -92,14 +92,14 @@ private:
 
     template <std::size_t PacketIdBytesArg>
     friend basic_packet_variant<PacketIdBytesArg>
-    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver);
+    async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver, error_code& ec);
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v311_connack;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
-    explicit connack_packet(buffer buf);
+    explicit connack_packet(buffer buf, error_code& ec);
 
 private:
     static_vector<char, 4> all_;

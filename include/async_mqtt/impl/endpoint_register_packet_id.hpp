@@ -16,7 +16,6 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
 register_packet_id_op {
     this_type& ep;
     typename basic_packet_id_type<PacketIdBytes>::type packet_id;
-    bool result = false;
     enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
@@ -33,8 +32,16 @@ register_packet_id_op {
             );
         } break;
         case complete:
-            result = ep.pid_man_.register_id(packet_id);
-            self.complete(result);
+            if (ep.pid_man_.register_id(packet_id)) {
+                self.complete(error_code{});
+            }
+            else {
+                self.complete(
+                    make_error_code(
+                        mqtt_error::packet_identifier_conflict
+                    )
+                );
+            }
             break;
         }
     }
@@ -44,7 +51,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(bool)
+    void(error_code)
 )
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -56,7 +63,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
     return
         as::async_compose<
             CompletionToken,
-            void(bool)
+            void(error_code)
         >(
             register_packet_id_op{
                 *this,

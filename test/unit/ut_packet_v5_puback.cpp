@@ -59,7 +59,9 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::puback_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::puback_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::puback_reason_code::packet_identifier_in_use);
         BOOST_TEST(p.props() == props);
@@ -105,7 +107,9 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::basic_puback_packet<4>{buf};
+        am::error_code ec;
+        auto p = am::v5::basic_puback_packet<4>{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.code() == am::puback_reason_code::packet_identifier_in_use);
         BOOST_TEST(p.props() == props);
@@ -141,7 +145,9 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_only) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::puback_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::puback_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::puback_reason_code::success);
         BOOST_TEST(p.props().empty());
@@ -179,7 +185,9 @@ BOOST_AUTO_TEST_CASE(v5_puback_pid_rc) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v5::puback_packet{buf};
+        am::error_code ec;
+        auto p = am::v5::puback_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.code() == am::puback_reason_code::success);
         BOOST_TEST(p.props().empty());
@@ -204,7 +212,9 @@ BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
         0x00,                               // property_length
     };
     am::buffer buf{std::begin(expected), std::end(expected)};
-    auto p = am::v5::puback_packet{buf};
+    am::error_code ec;
+    auto p = am::v5::puback_packet{buf, ec};
+    BOOST_TEST(!ec);
     BOOST_TEST(p.packet_id() == 0x1234);
     BOOST_TEST(p.code() == am::puback_reason_code::success);
     BOOST_TEST(p.props().empty());

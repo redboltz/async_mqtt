@@ -252,12 +252,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                                 force_move(payload),
                                 pubopts
                             },
-                            [this, epsp](system_error const& ec) {
+                            [this, epsp](error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, this)
                                         << "epsp:" << epsp.get_address() << " "
-                                        << ec.what();
+                                        << ec.message();
                                 }
                             }
                         );
@@ -271,12 +271,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                                 pubopts,
                                 force_move(props)
                             },
-                            [this, epsp](system_error const& ec) {
+                            [this, epsp](error_code const& ec) {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, this)
                                         << "epsp:" << epsp.get_address() << " "
-                                        << ec.what();
+                                        << ec.message();
                                 }
                             }
                         );
@@ -295,9 +295,9 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 qos_value == qos::exactly_once) {
                 epsp.async_acquire_unique_packet_id(
                     [send_publish = force_move(send_publish)]
-                    (auto pid_opt) mutable {
-                        if (pid_opt) {
-                            send_publish(*pid_opt);
+                    (error_code const&  ec, auto pid) mutable {
+                        if (!ec) {
+                            send_publish(pid);
                             return;
                         }
                     }

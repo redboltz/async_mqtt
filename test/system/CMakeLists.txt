@@ -11,6 +11,8 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
         st_cpp20coro_client.cpp
         st_cpp20coro_client_direct.cpp
         st_cpp20coro_client_direct_default.cpp
+        st_cpp20coro_client_direct_error.cpp
+        st_cpp20coro_client_direct_default_error.cpp
     )
 endif()
 

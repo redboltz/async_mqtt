@@ -42,7 +42,7 @@ namespace as = boost::asio;
 // forward declarations
 class property_variant;
 enum class property_location;
-property_variant make_property_variant(buffer& buf, property_location loc);
+property_variant make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
 /**
  * @ingroup property
@@ -126,11 +126,11 @@ public:
 
 private:
 
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
-    explicit payload_format_indicator(It b, End e);
+    explicit payload_format_indicator(It b, End e, error_code& ec);
 };
 
 
@@ -157,7 +157,7 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -237,14 +237,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit content_type(Buffer&& val);
+    explicit content_type(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -320,14 +320,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit response_topic(Buffer&& val);
+    explicit response_topic(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -403,14 +403,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit correlation_data(Buffer&& val);
+    explicit correlation_data(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -428,6 +428,11 @@ public:
      * @param val subscription_identifier
      */
     explicit subscription_identifier(std::uint32_t val);
+
+private:
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+
+    explicit subscription_identifier(std::uint32_t val, error_code& ec);
 };
 
 /**
@@ -453,7 +458,7 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It>
@@ -533,14 +538,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit assigned_client_identifier(Buffer&& val);
+    explicit assigned_client_identifier(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -566,7 +571,7 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -646,14 +651,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit authentication_method(Buffer&& val);
+    explicit authentication_method(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -729,14 +734,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit authentication_data(Buffer&& val);
+    explicit authentication_data(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -762,7 +767,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -792,7 +797,7 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -822,7 +827,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -902,14 +907,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit response_information(Buffer&& val);
+    explicit response_information(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -985,14 +990,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit server_reference(Buffer&& val);
+    explicit server_reference(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -1068,14 +1073,14 @@ public:
 #endif // defined(GENERATING_DOCUMENTATION)
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit reason_string(Buffer&& val);
+    explicit reason_string(Buffer&& val, error_code& ec);
 };
 
 /**
@@ -1101,11 +1106,11 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
-    explicit receive_maximum(It b, End e);
+    explicit receive_maximum(It b, End e, error_code& ec);
 };
 
 
@@ -1132,7 +1137,7 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1163,7 +1168,7 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1190,16 +1195,16 @@ public:
      * @brief Get value
      * @return value
      */
-    std::uint8_t val() const;
+    qos val() const;
 
     static constexpr const detail::ostream_format of_ = detail::ostream_format::int_cast;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
-    explicit maximum_qos(It b, End e);
+    explicit maximum_qos(It b, End e, error_code& ec);
 };
 
 /**
@@ -1225,7 +1230,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1309,14 +1314,14 @@ public:
     static constexpr detail::ostream_format const of_ = detail::ostream_format::key_val;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
         typename Buffer,
         std::enable_if_t<std::is_same_v<Buffer, buffer>, std::nullptr_t> = nullptr
     >
-    explicit user_property(Buffer&& key, Buffer&& val);
+    explicit user_property(Buffer&& key, Buffer&& val, error_code& ec);
 
 private:
     property::id id_ = id::user_property;
@@ -1347,11 +1352,11 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
-    explicit maximum_packet_size(It b, End e);
+    explicit maximum_packet_size(It b, End e, error_code& ec);
 };
 
 
@@ -1378,7 +1383,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1409,7 +1414,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1440,7 +1445,7 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc);
+    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1459,7 +1464,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::direct,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1473,7 +1478,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::int_cast,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1487,7 +1492,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::key_val,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1501,7 +1506,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::binary_string,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1515,7 +1520,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::json_like,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 } // namespace property
 

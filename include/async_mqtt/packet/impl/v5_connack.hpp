@@ -11,14 +11,12 @@
 #include <numeric>
 
 #include <async_mqtt/packet/v5_connack.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
 #include <async_mqtt/packet/detail/fixed_header.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
 #include <async_mqtt/packet/impl/session_present.hpp>
@@ -57,10 +55,11 @@ connack_packet::connack_packet(
     for (auto const& prop : props_) {
         auto id = prop.id();
         if (!validate_property(property_location::connack, id)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connack_packet property "s + id_to_str(id) + " is not allowed"
-            );
+            throw system_error{
+                make_error_code(
+                    connect_reason_code::protocol_error
+                )
+            };
         }
     }
 
@@ -128,22 +127,22 @@ properties const& connack_packet::props() const {
 }
 
 inline
-connack_packet::connack_packet(buffer buf) {
+connack_packet::connack_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     fixed_header_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
     auto cpt_opt = get_control_packet_type_with_check(fixed_header_);
     if (!cpt_opt || *cpt_opt != control_packet_type::connack) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet fixed_header is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // remaining_length
@@ -151,26 +150,32 @@ connack_packet::connack_packet(buffer buf) {
         remaining_length_ = *vl_opt;
     }
     else {
-        throw make_error(errc::bad_message, "v5::connack_packet remaining length is invalid");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
     if (remaining_length_ != buf.size()) {
-        throw make_error(errc::bad_message, "v5::connack_packet remaining length doesn't match buf.size()");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
 
     // connect_acknowledge_flags
     if (buf.size() < 1) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet connect acknowledge flags don't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     connect_acknowledge_flags_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
     if ((connect_acknowledge_flags_ & 0b11111110)!= 0) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet connect acknowledge flags is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     // reason_code
     reason_code_ = static_cast<connect_reason_code>(buf.front());
@@ -200,11 +205,10 @@ connack_packet::connack_packet(buffer buf) {
     case connect_reason_code::connection_rate_exceeded:
         break;
     default:
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet connect reason_code is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::protocol_error
         );
-        break;
+        return;
     }
 
     // property
@@ -214,27 +218,28 @@ connack_packet::connack_packet(buffer buf) {
         std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
         buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
         if (buf.size() < property_length_) {
-            throw make_error(
-                errc::bad_message,
-                "v5::connack_packet properties_don't match its length"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto prop_buf = buf.substr(0, property_length_);
-        props_ = make_properties(prop_buf, property_location::connack);
+        props_ = make_properties(prop_buf, property_location::connack, ec);
+        if (ec) return;
         buf.remove_prefix(property_length_);
     }
     else {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet property_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     if (!buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::connack_packet properties don't match its length"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 }
 

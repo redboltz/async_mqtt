@@ -43,27 +43,29 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                     0x1234, // keep_alive
                     "cid1"
                 };
-                auto se = co_await ep->async_send(connect, as::deferred);
-                BOOST_TEST(!se);
-                co_await ep->next_layer().wait_response(as::deferred);
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
 
                 auto connack = am::v3_1_1::connack_packet{
                     false,   // session_present
                     am::connect_return_code::accepted
                 };
-                co_await ep->next_layer().emulate_recv(connack, as::deferred);
-                co_await ep->async_recv(as::deferred);
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
             }
             // test scenario
             {
-                auto se = co_await ep->async_send(am::v3_1_1::pingreq_packet{}, as::deferred);
-                BOOST_TEST(!se);
-                co_await ep->next_layer().wait_response(as::deferred);
+                auto [ec] = co_await ep->async_send(am::v3_1_1::pingreq_packet{}, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
 
                 as::steady_timer tim{ioc.get_executor(), std::chrono::milliseconds(20)};
-                co_await tim.async_wait(as::deferred);
-                auto close = co_await ep->next_layer().wait_response(as::deferred);
-                BOOST_TEST(am::is_close(close));
+                co_await tim.async_wait(as::as_tuple(as::deferred));
+                {
+                    auto [ec, close] = co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+                    BOOST_TEST(ec == am::errc::connection_reset);
+                }
             }
 
             co_return;
@@ -94,33 +96,38 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                     0x1234, // keep_alive
                     "cid1"
                 };
-                auto se = co_await ep->async_send(connect, as::deferred);
-                BOOST_TEST(!se);
-                co_await ep->next_layer().wait_response(as::deferred);
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
 
                 auto connack = am::v5::connack_packet{
                     false,   // session_present
                     am::connect_reason_code::success
                 };
-                co_await ep->next_layer().emulate_recv(connack, as::deferred);
-                co_await ep->async_recv(as::deferred);
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
             }
             // test scenario
             {
-                auto se = co_await ep->async_send(am::v5::pingreq_packet{}, as::deferred);
-                BOOST_TEST(!se);
-                co_await ep->next_layer().wait_response(as::deferred);
+                auto [ec] = co_await ep->async_send(am::v5::pingreq_packet{}, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
 
                 as::steady_timer tim{ioc.get_executor(), std::chrono::milliseconds(20)};
-                co_await tim.async_wait(as::deferred);
+                co_await tim.async_wait(as::as_tuple(as::deferred));
                 auto exp = am::v5::disconnect_packet{
                     am::disconnect_reason_code::keep_alive_timeout,
                     am::properties{}
                 };
-                auto disconnect = co_await ep->next_layer().wait_response(as::deferred);
-                BOOST_TEST(disconnect == exp);
-                auto close = co_await ep->next_layer().wait_response(as::deferred);
-                BOOST_TEST(am::is_close(close));
+                {
+                    auto [ec, disconnect] = co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+                    BOOST_TEST(!ec);
+                    BOOST_TEST(disconnect == exp);
+                }
+                {
+                    auto [ec, close] = co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+                    BOOST_TEST(ec == am::errc::connection_reset);
+                }
             }
 
             co_return;

@@ -14,7 +14,7 @@
 #include <boost/asio/any_completion_handler.hpp>
 #include <boost/asio/any_io_executor.hpp>
 
-#include <async_mqtt/exception.hpp>
+#include <async_mqtt/error.hpp>
 
 namespace async_mqtt {
 

@@ -11,7 +11,6 @@
 
 #include <boost/asio/buffer.hpp>
 
-#include <async_mqtt/exception.hpp>
 
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_variant_fwd.hpp>
@@ -54,7 +53,12 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 class basic_packet_variant {
 public:
-    basic_packet_variant() = default;
+
+    /**
+     * @brief constructor
+     *        the variant value is monostate
+     */
+    explicit basic_packet_variant() = default;
 
     /**
      * @brief constructor
@@ -158,7 +162,7 @@ public:
                 [] (auto const& p) -> std::optional<control_packet_type>{
                     return p.type();
                 },
-                [] (system_error const&) -> std::optional<control_packet_type>{
+                [] (std::monostate const&) -> std::optional<control_packet_type>{
                     return std::nullopt;
                 }
             }
@@ -176,7 +180,7 @@ public:
                 [] (auto const& p) {
                     return p.const_buffer_sequence();
                 },
-                [] (system_error const&) {
+                [] (std::monostate const&) {
                     return std::vector<as::const_buffer>{};
                 }
             }
@@ -189,7 +193,7 @@ public:
 
 private:
     using variant_t = std::variant<
-        system_error,
+        std::monostate,
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,
         v3_1_1::basic_publish_packet<PacketIdBytes>,
@@ -238,8 +242,7 @@ inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBy
             [&] (auto const& p) {
                 o << p;
             },
-            [&] (system_error const& se) {
-                o << se.message();
+            [&] (std::monostate const&) {
             }
         }
     );

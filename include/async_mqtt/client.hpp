@@ -14,6 +14,7 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/steady_timer.hpp>
 
+#include <async_mqtt/error.hpp>
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
@@ -380,7 +381,7 @@ public:
      * @brief acuire unique packet_id.
      * @param token
      *  - CompletionToken
-     *     - Signature: void(std::optional<packet_id_type>)
+     *     - Signature: void(error_code, packet_id_type)
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -390,7 +391,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(std::optional<packet_id_type>)
+        void(error_code, packet_id_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id(
@@ -402,7 +403,7 @@ public:
      * If packet_id is fully acquired, then wait until released.
      * @param token
      *  - CompletionToken
-     *     - Signature: void(packet_id_type)
+     *     - Signature: void(error_code, packet_id_type)
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -412,7 +413,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(packet_id_type)
+        void(error_code, packet_id_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id_wait_until(
@@ -424,7 +425,7 @@ public:
      * @param packet_id packet_id to register
      * @param token
      *  - CompletionToken
-     *     - Signature: void(bool)
+     *     - Signature: void(error_code)
      *        - If true, success, otherwise the packet_id has already been used.
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
@@ -435,7 +436,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(bool)
+        void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_register_packet_id(
@@ -518,11 +519,39 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
+        void(error_code, std::optional<connack_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_start_impl(
+        error_code ec,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
         void(error_code, std::optional<suback_packet>)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_subscribe_impl(
         subscribe_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, std::optional<suback_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_subscribe_impl(
+        error_code ec,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -546,6 +575,20 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
+        void(error_code, std::optional<suback_packet>)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_unsubscribe_impl(
+        error_code ec,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
         void(error_code, pubres_t)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
@@ -560,11 +603,39 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
+        void(error_code, pubres_t)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_publish_impl(
+        error_code ec,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
         void(error_code)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_disconnect_impl(
         disconnect_packet packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_disconnect_impl(
+        error_code ec,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 

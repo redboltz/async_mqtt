@@ -27,14 +27,14 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
         ioc.get_executor()
     );
 
+    static int count = 0;
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS1
                 yield ep().async_send(
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS2
                 yield ep().async_send(
@@ -78,16 +78,15 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield am::async_underlying_handshake(
-
                     ep().next_layer(),
                     "127.0.0.1",
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
@@ -99,10 +98,10 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -126,15 +125,15 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     );
                 }
                 yield { // this yield is called twice
-                    if (ec) {
+                    if (count++ == 0) {
                         // 1st
+                        BOOST_TEST(ec == am::errc::success); // timeout
                         BOOST_TEST(!pv); // not recv
-                        BOOST_TEST(*ec == am::errc::success); // timeout
                         ep().async_close(*this);
                     }
                     else {
                         // 2nd
-                        BOOST_TEST(!*pv); // recv error due to close
+                        BOOST_TEST(!pv); // recv error due to close
                     }
                 }
                 set_finish();
@@ -159,14 +158,14 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
         ioc.get_executor()
     );
 
+    static int count = 0;
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -185,7 +184,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS1
                 yield ep().async_send(
@@ -197,7 +196,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS2
                 yield ep().async_send(
@@ -209,7 +208,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield am::async_underlying_handshake(
 
@@ -218,7 +217,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -230,10 +229,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -258,15 +257,15 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     );
                 }
                 yield { // this yield is called twice
-                    if (ec) {
+                    if (count++ == 0) {
                         // 1st
+                        BOOST_TEST(ec == am::errc::success); // timeout
                         BOOST_TEST(!pv); // not recv
-                        BOOST_TEST(*ec == am::errc::success); // timeout
                         ep().async_close(*this);
                     }
                     else {
                         // 2nd
-                        BOOST_TEST(!*pv); // recv error due to close
+                        BOOST_TEST(!pv); // recv error due to close
                     }
                 }
                 set_finish();
@@ -295,10 +294,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
         using coro_base<ep_t>::coro_base;
     private:
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -315,7 +313,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -327,10 +325,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -351,7 +349,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS1
                 yield ep().async_send(
@@ -363,7 +361,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS2
                 yield ep().async_send(
@@ -375,7 +373,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield am::async_underlying_handshake(
 
@@ -384,7 +382,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep().async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -396,10 +394,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 yield ep().async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(p.session_present());
@@ -412,10 +410,10 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
 
                 // recv puback
                 yield ep().async_recv(*this);
-                BOOST_TEST(*pv == am::v3_1_1::puback_packet{1});
+                BOOST_TEST(pv == am::v3_1_1::puback_packet{1});
                 // recv pubrec
                 yield ep().async_recv(*this);
-                BOOST_TEST(*pv == am::v3_1_1::pubrec_packet{2});
+                BOOST_TEST(pv == am::v3_1_1::pubrec_packet{2});
                 yield ep().async_close(*this);
                 set_finish();
                 guard.reset();
@@ -451,10 +449,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
             sub
         };
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -471,7 +468,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(sub).async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -483,9 +480,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -505,13 +502,13 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v3_1_1::suback_packet>());
+                BOOST_TEST(pv.get_if<am::v3_1_1::suback_packet>());
                 yield ep(sub).async_send(am::v3_1_1::disconnect_packet{}, *this);
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                BOOST_TEST(!*pv); // wait and check close by broker
+                BOOST_TEST(!pv); // wait and check close by broker
 
                 yield as::dispatch(
                     as::bind_executor(
@@ -527,7 +524,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(pub).async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
@@ -539,9 +536,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v3_1_1::connack_packet>());
+                BOOST_TEST(pv.get_if<am::v3_1_1::connack_packet>());
 
                 // publish QoS0
                 yield ep(pub).async_send(
@@ -552,7 +549,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS1
                 yield ep(pub).async_send(
@@ -564,7 +561,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS2
                 yield ep(pub).async_send(
@@ -576,11 +573,11 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_send(am::v3_1_1::disconnect_packet{}, *this);
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_recv(am::filter::match, {}, *this);
-                BOOST_TEST(!*pv); // wait and check close by broker
+                BOOST_TEST(!pv); // wait and check close by broker
 
                 yield as::dispatch(
                     as::bind_executor(
@@ -596,7 +593,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(sub).async_send(
                     am::v3_1_1::connect_packet{
                         false,   // clean_session
@@ -608,9 +605,9 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(p.session_present());
@@ -623,7 +620,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
 
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
-                    *pv
+                    pv
                     ==
                     (am::v3_1_1::publish_packet{
                         "topic1",
@@ -633,7 +630,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
-                    *pv
+                    pv
                     ==
                     (am::v3_1_1::publish_packet{
                         1,
@@ -644,7 +641,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
-                    *pv
+                    pv
                     ==
                     (am::v3_1_1::publish_packet{
                         2,
@@ -688,10 +685,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
             sub
         };
         void proc(
-            std::optional<am::error_code> ec,
-            std::optional<am::system_error> se,
-            std::optional<am::packet_variant> pv,
-            std::optional<am::packet_id_type> /*pid*/
+            am::error_code ec,
+            am::packet_variant pv,
+            am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
                 yield as::dispatch(
@@ -708,7 +704,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(sub).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -721,9 +717,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -743,13 +739,13 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v5::suback_packet>());
+                BOOST_TEST(pv.get_if<am::v5::suback_packet>());
                 yield ep(sub).async_send(am::v5::disconnect_packet{}, *this);
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                BOOST_TEST(!*pv); // wait and check close by broker
+                BOOST_TEST(!pv); // wait and check close by broker
 
                 yield as::dispatch(
                     as::bind_executor(
@@ -765,7 +761,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(pub).async_send(
                     am::v5::connect_packet{
                         true,   // clean_start
@@ -777,9 +773,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_recv(*this);
-                BOOST_TEST(pv->get_if<am::v5::connack_packet>());
+                BOOST_TEST(pv.get_if<am::v5::connack_packet>());
 
                 // publish QoS0
                 yield ep(pub).async_send(
@@ -790,7 +786,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS1
                 yield ep(pub).async_send(
@@ -803,7 +799,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
 
                 // publish QoS2
                 yield ep(pub).async_send(
@@ -816,11 +812,11 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_send(am::v5::disconnect_packet{}, *this);
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(pub).async_recv(am::filter::match, {}, *this);
-                BOOST_TEST(!*pv); // wait and check close by broker
+                BOOST_TEST(!pv); // wait and check close by broker
 
                 yield as::dispatch(
                     as::bind_executor(
@@ -839,7 +835,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     "1883",
                     *this
                 );
-                BOOST_TEST(*ec == am::error_code{});
+                BOOST_TEST(ec == am::error_code{});
                 yield ep(sub).async_send(
                     am::v5::connect_packet{
                         false,   // clean_start
@@ -851,9 +847,9 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                     },
                     *this
                 );
-                BOOST_TEST(!*se);
+                BOOST_TEST(!ec);
                 yield ep(sub).async_recv(*this);
-                pv->visit(
+                pv.visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(p.session_present());
@@ -866,7 +862,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
 
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
-                    *pv
+                    pv
                     ==
                     (am::v5::publish_packet{
                         "topic1",
@@ -876,7 +872,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 );
                 yield ep(sub).async_recv(*this);
                 BOOST_TEST(
-                    *pv
+                    pv
                     ==
                     (am::v5::publish_packet{
                         1,

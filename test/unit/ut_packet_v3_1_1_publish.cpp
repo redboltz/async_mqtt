@@ -67,7 +67,9 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::publish_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x1234);
         BOOST_TEST(p.topic() == "topic1");
         {
@@ -133,7 +135,9 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::publish_packet{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0);
         BOOST_TEST(p.topic() == "topic1");
         {
@@ -174,7 +178,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::errc::bad_message);
+        BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
     }
     try {
         auto p = am::v3_1_1::publish_packet{
@@ -186,7 +190,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::errc::bad_message);
+        BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
     }
 }
 
@@ -227,7 +231,9 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         BOOST_TEST(std::equal(b, e, std::begin(expected)));
 
         am::buffer buf{std::begin(expected), std::end(expected)};
-        auto p = am::v3_1_1::basic_publish_packet<4>{buf};
+        am::error_code ec;
+        auto p = am::v3_1_1::basic_publish_packet<4>{buf, ec};
+        BOOST_TEST(!ec);
         BOOST_TEST(p.packet_id() == 0x12345678);
         BOOST_TEST(p.topic() == "topic1");
         {

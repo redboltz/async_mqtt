@@ -184,7 +184,7 @@ template <typename NextLayer>
 template <typename Packet, typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(system_error)
+    void(error_code)
 )
 stream<NextLayer>::async_write_packet(
     Packet packet,

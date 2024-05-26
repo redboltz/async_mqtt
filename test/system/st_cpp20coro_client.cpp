@@ -104,10 +104,11 @@ BOOST_AUTO_TEST_CASE(v311) {
             BOOST_CHECK(!pubres0.pubcomp_opt);
 
             // MQTT publish QoS1 and wait response (puback receive)
-            auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+            auto [ec_pid1, pid_pub1] = co_await amcl.async_acquire_unique_packet_id(as::as_tuple(as::use_awaitable)); // async version
+            BOOST_TEST(!ec_pid1);
             auto [ec_pub1, pubres1] = co_await amcl.async_publish(
                 am::v3_1_1::publish_packet{
-                    *pid_pub1_opt,
+                    pid_pub1,
                     "topic1",
                     "payload1",
                     am::qos::at_least_once
@@ -115,7 +116,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                 as::as_tuple(as::use_awaitable)
             );
             BOOST_TEST(!ec_pub1);
-            am::packet_variant exp_puback1 = am::v3_1_1::puback_packet{*pid_pub1_opt};
+            am::packet_variant exp_puback1 = am::v3_1_1::puback_packet{pid_pub1};
             BOOST_CHECK(pubres1.puback_opt);
             BOOST_CHECK(!pubres1.pubrec_opt);
             BOOST_CHECK(!pubres1.pubcomp_opt);
@@ -123,7 +124,8 @@ BOOST_AUTO_TEST_CASE(v311) {
             BOOST_TEST(puback1 == exp_puback1);
 
             // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
-            auto pid_pub2 = co_await amcl.async_acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
+            auto [ec_pid2, pid_pub2] = co_await amcl.async_acquire_unique_packet_id_wait_until(as::as_tuple(as::use_awaitable)); // async version
+            BOOST_TEST(!ec_pid2);
             auto [ec_pub2, pubres2] = co_await amcl.async_publish(
                 am::v3_1_1::publish_packet{
                     pid_pub2,
@@ -179,6 +181,7 @@ BOOST_AUTO_TEST_CASE(v311) {
             co_await amcl.async_close(
                 as::as_tuple(as::use_awaitable)
             );
+            co_return;
         },
         as::detached
     );
@@ -278,10 +281,11 @@ BOOST_AUTO_TEST_CASE(v5) {
             BOOST_CHECK(!pubres0.pubcomp_opt);
 
             // MQTT publish QoS1 and wait response (puback receive)
-            auto pid_pub1_opt = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+            auto [ec_pid1, pid_pub1] = co_await amcl.async_acquire_unique_packet_id(as::as_tuple(as::use_awaitable)); // async version
+            BOOST_TEST(!ec_pid1);
             auto [ec_pub1, pubres1] = co_await amcl.async_publish(
                 am::v5::publish_packet{
-                    *pid_pub1_opt,
+                    pid_pub1,
                     "topic2",
                     "payload2",
                     am::qos::at_least_once
@@ -289,7 +293,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 as::as_tuple(as::use_awaitable)
             );
             BOOST_TEST(!ec_pub1);
-            am::packet_variant exp_puback1 = am::v5::puback_packet{*pid_pub1_opt};
+            am::packet_variant exp_puback1 = am::v5::puback_packet{pid_pub1};
             BOOST_CHECK(pubres1.puback_opt);
             BOOST_CHECK(!pubres1.pubrec_opt);
             BOOST_CHECK(!pubres1.pubcomp_opt);
@@ -297,7 +301,8 @@ BOOST_AUTO_TEST_CASE(v5) {
             BOOST_TEST(puback1 == exp_puback1);
 
             // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
-            auto pid_pub2 = co_await amcl.async_acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
+            auto [ec_pid2, pid_pub2] = co_await amcl.async_acquire_unique_packet_id_wait_until(as::as_tuple(as::use_awaitable)); // async version
+            BOOST_TEST(!ec_pid2);
             auto [ec_pub2, pubres2] = co_await amcl.async_publish(
                 am::v5::publish_packet{
                     pid_pub2,
@@ -358,6 +363,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             co_await amcl.async_close(
                 as::as_tuple(as::use_awaitable)
             );
+            co_return;
         },
         as::detached
     );

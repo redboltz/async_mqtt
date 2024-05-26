@@ -10,7 +10,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_subscribe.hpp>
-#include <async_mqtt/exception.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -21,7 +20,6 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/packet/detail/fixed_header.hpp>
 #include <async_mqtt/packet/topic_subopts.hpp>
-#include <async_mqtt/packet/reason_code.hpp>
 #include <async_mqtt/packet/property_variant.hpp>
 #include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
 #include <async_mqtt/packet/impl/validate_property.hpp>
@@ -63,9 +61,10 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
     for (auto const& prop : props_) {
         auto id = prop.id();
         if (!validate_property(property_location::subscribe, id)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet property "s + id_to_str(id) + " is not allowed"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
             );
         }
     }
@@ -75,9 +74,10 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
     for (auto const& e : entries_) {
         // reserved bits check
         if (static_cast<std::uint8_t>(e.opts()) & 0b11000000) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet subopts is invalid"
+            throw system_error(
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
             );
         }
         switch (e.opts().get_qos()) {
@@ -86,10 +86,11 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
         case qos::exactly_once:
             break;
         default:
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet qos is invalid"
-            );
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
+            };
             break;
         }
         switch (e.opts().get_retain_handling()) {
@@ -98,19 +99,21 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
         case sub::retain_handling::not_send:
             break;
         default:
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet retain_handling is invalid"
-            );
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
+            };
             break;
         }
 
         auto size = e.all_topic().size();
         if (size > 0xffff) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet length of topic is invalid"
-            );
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
+            };
         }
         remaining_length_ +=
             2 +                     // topic name length
@@ -118,10 +121,11 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
             1;                      // opts
 
         if (!utf8string_check(e.all_topic())) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet topic filter invalid utf8"
-            );
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::topic_filter_invalid
+                )
+            };
         }
     }
 
@@ -207,22 +211,22 @@ properties const& basic_subscribe_packet<PacketIdBytes>::props() const {
 
 template <std::size_t PacketIdBytes>
 inline
-basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf) {
+basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_code& ec) {
     // fixed_header
     if (buf.empty()) {
-        throw make_error(
-            errc::bad_message,
-            "v5::subscribe_packet fixed_header doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
     fixed_header_ = static_cast<std::uint8_t>(buf.front());
     buf.remove_prefix(1);
     auto cpt_opt = get_control_packet_type_with_check(static_cast<std::uint8_t>(fixed_header_));
     if (!cpt_opt || *cpt_opt != control_packet_type::subscribe) {
-        throw make_error(
-            errc::bad_message,
-            "v5::subscribe_packet fixed_header is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // remaining_length
@@ -230,18 +234,24 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf) {
         remaining_length_ = *vl_opt;
     }
     else {
-        throw make_error(errc::bad_message, "v5::subscribe_packet remaining length is invalid");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
     if (remaining_length_ != buf.size()) {
-        throw make_error(errc::bad_message, "v5::subscribe_packet remaining length doesn't match buf.size()");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
 
     // packet_id
     if (!copy_advance(buf, packet_id_)) {
-        throw make_error(
-            errc::bad_message,
-            "v5::subscribe_packet packet_id doesn't exist"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     // property
@@ -251,70 +261,74 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf) {
         std::copy(buf.begin(), it, std::back_inserter(property_length_buf_));
         buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
         if (buf.size() < property_length_) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet properties_don't match its length"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto prop_buf = buf.substr(0, property_length_);
-        props_ = make_properties(prop_buf, property_location::subscribe);
+        props_ = make_properties(prop_buf, property_location::subscribe, ec);
+        if (ec) return;
         buf.remove_prefix(property_length_);
     }
     else {
-        throw make_error(
-            errc::bad_message,
-            "v5::subscribe_packet property_length is invalid"
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
         );
+        return;
     }
 
     if (remaining_length_ == 0) {
-        throw make_error(errc::bad_message, "v5::subscribe_packet doesn't have entries");
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
     }
 
     while (!buf.empty()) {
         // topic_length
         static_vector<char, 2> topic_length_buf;
         if (!insert_advance(buf, topic_length_buf)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet length of topic is invalid"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto topic_length = endian_load<std::uint16_t>(topic_length_buf.data());
         topic_length_buf_entries_.push_back(topic_length_buf);
 
         // topic
         if (buf.size() < topic_length) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet topic doesn't match its length"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto topic = buf.substr(0, topic_length);
 
         if (!utf8string_check(topic)) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet topic filter invalid utf8"
+            ec = make_error_code(
+                disconnect_reason_code::topic_filter_invalid
             );
+            return;
         }
 
         buf.remove_prefix(topic_length);
 
         // opts
         if (buf.empty()) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet subscribe options  doesn't exist"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         auto opts = static_cast<sub::opts>(std::uint8_t(buf.front()));
         // reserved bits check
         if (static_cast<std::uint8_t>(opts) & 0b11000000) {
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet subopts is invalid"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
+            return;
         }
         switch (opts.get_qos()) {
         case qos::at_most_once:
@@ -322,11 +336,10 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf) {
         case qos::exactly_once:
             break;
         default:
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet qos is invalid"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
-            break;
+            return;
         }
         switch (opts.get_retain_handling()) {
         case sub::retain_handling::send:
@@ -334,11 +347,10 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf) {
         case sub::retain_handling::not_send:
             break;
         default:
-            throw make_error(
-                errc::bad_message,
-                "v5::subscribe_packet retain_handling is invalid"
+            ec = make_error_code(
+                disconnect_reason_code::malformed_packet
             );
-            break;
+            return;
         }
         entries_.emplace_back(std::string{topic}, opts);
         buf.remove_prefix(1);
