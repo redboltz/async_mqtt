@@ -577,52 +577,52 @@ sys::error_category const& get_auth_reason_code_category() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-inline error_code make_error_code(mqtt_error e) {
-    return {static_cast<int>(e), get_mqtt_error_category()};
+inline error_code make_error_code(mqtt_error v) {
+    return {static_cast<int>(v), get_mqtt_error_category()};
 }
 
-inline error_code make_error_code(connect_return_code e) {
-    return {static_cast<int>(e), get_connect_return_code_category()};
+inline error_code make_error_code(connect_return_code v) {
+    return {static_cast<int>(v), get_connect_return_code_category()};
 }
 
-inline error_code make_error_code(suback_return_code e) {
-    return {static_cast<int>(e), get_suback_return_code_category()};
+inline error_code make_error_code(suback_return_code v) {
+    return {static_cast<int>(v), get_suback_return_code_category()};
 }
 
-inline error_code make_error_code(connect_reason_code e) {
-    return {static_cast<int>(e), get_connect_reason_code_category()};
+inline error_code make_error_code(connect_reason_code v) {
+    return {static_cast<int>(v), get_connect_reason_code_category()};
 }
 
-inline error_code make_error_code(disconnect_reason_code e) {
-    return {static_cast<int>(e), get_disconnect_reason_code_category()};
+inline error_code make_error_code(disconnect_reason_code v) {
+    return {static_cast<int>(v), get_disconnect_reason_code_category()};
 }
 
-inline error_code make_error_code(suback_reason_code e) {
-    return {static_cast<int>(e), get_suback_reason_code_category()};
+inline error_code make_error_code(suback_reason_code v) {
+    return {static_cast<int>(v), get_suback_reason_code_category()};
 }
 
-inline error_code make_error_code(unsuback_reason_code e) {
-    return {static_cast<int>(e), get_unsuback_reason_code_category()};
+inline error_code make_error_code(unsuback_reason_code v) {
+    return {static_cast<int>(v), get_unsuback_reason_code_category()};
 }
 
-inline error_code make_error_code(puback_reason_code e) {
-    return {static_cast<int>(e), get_puback_reason_code_category()};
+inline error_code make_error_code(puback_reason_code v) {
+    return {static_cast<int>(v), get_puback_reason_code_category()};
 }
 
-inline error_code make_error_code(pubrec_reason_code e) {
-    return {static_cast<int>(e), get_pubrec_reason_code_category()};
+inline error_code make_error_code(pubrec_reason_code v) {
+    return {static_cast<int>(v), get_pubrec_reason_code_category()};
 }
 
-inline error_code make_error_code(pubrel_reason_code e) {
-    return {static_cast<int>(e), get_pubrel_reason_code_category()};
+inline error_code make_error_code(pubrel_reason_code v) {
+    return {static_cast<int>(v), get_pubrel_reason_code_category()};
 }
 
-inline error_code make_error_code(pubcomp_reason_code e) {
-    return {static_cast<int>(e), get_pubcomp_reason_code_category()};
+inline error_code make_error_code(pubcomp_reason_code v) {
+    return {static_cast<int>(v), get_pubcomp_reason_code_category()};
 }
 
-inline error_code make_error_code(auth_reason_code e) {
-    return {static_cast<int>(e), get_auth_reason_code_category()};
+inline error_code make_error_code(auth_reason_code v) {
+    return {static_cast<int>(v), get_auth_reason_code_category()};
 }
 
 ////////////////////////////////////////////////////////////////////////////////

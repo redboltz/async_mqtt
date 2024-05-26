@@ -17,7 +17,7 @@
 #include <boost/operators.hpp>
 
 /**
- * @defgroup error Common error
+ * @defgroup error Error
  */
 
 namespace async_mqtt {
@@ -49,7 +49,21 @@ namespace errc = sys::errc;
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @defgroup error_reporting Errors for APIs
+ *           These errors are used for CompletionHandler's error_code parameter,
+ *           and am::system_error exception's error_code.
  * @ingroup error
+ */
+
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @defgroup mqtt_error mqtt_error
+ * @ingroup error_reporting
+ */
+
+/**
+ * @ingroup mqtt_error
  * @brief general error code
  */
 enum class mqtt_error {
@@ -62,15 +76,15 @@ enum class mqtt_error {
 };
 
 /**
- * @ingroup error
+ * @ingroup mqtt_error
  * @brief make error code
  * @param v target
  * @return mqtt_error string
  */
-error_code make_error_code(mqtt_error e);
+error_code make_error_code(mqtt_error v);
 
 /**
- * @ingroup error
+ * @ingroup mqtt_error
  * @brief stringize mqtt_error
  * @param v target
  * @return mqtt_error string
@@ -78,7 +92,7 @@ error_code make_error_code(mqtt_error e);
 constexpr char const* mqtt_error_to_string(mqtt_error v);
 
 /**
- * @ingroup error
+ * @ingroup mqtt_error
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -87,7 +101,7 @@ constexpr char const* mqtt_error_to_string(mqtt_error v);
 std::ostream& operator<<(std::ostream& o, mqtt_error v);
 
 /**
- * @ingroup error
+ * @ingroup mqtt_error
  * @brief   get gategory of mqtt_error
  * @return  category
  */
@@ -96,7 +110,12 @@ sys::error_category const& get_mqtt_error_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @defgroup connect_return_code connect_return_code
  * @ingroup connack_v3_1_1
+ */
+
+/**
+ * @ingroup connect_return_code
  * @brief connect return code
  * See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
  */
@@ -110,16 +129,15 @@ enum class connect_return_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup connect_return_code
  * @brief make error code
  * @param v target
  * @return connect_return_code string
  */
-error_code make_error_code(connect_return_code e);
+error_code make_error_code(connect_return_code v);
 
 /**
- * @ingroup connack_v5
- * @ingroup error
+ * @ingroup connect_return_code
  * @brief stringize connect_return_code
  * @param v target
  * @return connect_return_code string
@@ -127,8 +145,7 @@ error_code make_error_code(connect_return_code e);
 constexpr char const* connect_return_code_to_string(connect_return_code v);
 
 /**
- * @ingroup connect_v5
- * @ingroup error
+ * @ingroup connect_return_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -137,7 +154,7 @@ constexpr char const* connect_return_code_to_string(connect_return_code v);
 std::ostream& operator<<(std::ostream& o, connect_return_code v);
 
 /**
- * @ingroup error
+ * @ingroup connect_return_code
  * @brief   get gategory of connect_return_code
  * @return  category
  */
@@ -146,7 +163,12 @@ sys::error_category const& get_connect_return_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @defgroup suback_return_code suback_return_code
  * @ingroup suback_v3_1_1
+ */
+
+/**
+ * @ingroup suback_return_code
  * @brief MQTT suback_return_code
  *
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
@@ -159,16 +181,15 @@ enum class suback_return_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup suback_return_code
  * @brief make error code
  * @param v target
  * @return suback_return_code string
  */
-error_code make_error_code(suback_return_code e);
+error_code make_error_code(suback_return_code v);
 
 /**
- * @ingroup suback_v3_1_1
- * @ingroup error
+ * @ingroup suback_return_code
  * @brief stringize suback_return_code
  * @param v target
  * @return suback_return_code string
@@ -176,8 +197,7 @@ error_code make_error_code(suback_return_code e);
 constexpr char const* suback_return_code_to_string(suback_return_code v);
 
 /**
- * @ingroup suback_v3_1_1
- * @ingroup error
+ * @ingroup suback_return_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -186,7 +206,7 @@ constexpr char const* suback_return_code_to_string(suback_return_code v);
 std::ostream& operator<<(std::ostream& o, suback_return_code v);
 
 /**
- * @ingroup error
+ * @ingroup suback_return_code
  * @brief   get gategory of suback_return_code
  * @return  category
  */
@@ -195,8 +215,13 @@ sys::error_category const& get_suback_return_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup connect_reason_code connect_reason_code
+ * @ingroup error_reporting
  * @ingroup connack_v5
+ */
+
+/**
+ * @ingroup connect_reason_code
  * @brief connect reason code
  * It is reported as CONNECT response via CONNACK packet
  */
@@ -226,16 +251,15 @@ enum class connect_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup connect_reason_code
  * @brief make error code
  * @param v target
  * @return connect_reason_code string
  */
-error_code make_error_code(connect_reason_code e);
+error_code make_error_code(connect_reason_code v);
 
 /**
- * @ingroup connack_v5
- * @ingroup error
+ * @ingroup connect_reason_code
  * @brief stringize connect_reason_code
  * @param v target
  * @return connect_reason_code string
@@ -243,8 +267,7 @@ error_code make_error_code(connect_reason_code e);
 constexpr char const* connect_reason_code_to_string(connect_reason_code v);
 
 /**
- * @ingroup connack_v5
- * @ingroup error
+ * @ingroup connect_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -253,7 +276,7 @@ constexpr char const* connect_reason_code_to_string(connect_reason_code v);
 std::ostream& operator<<(std::ostream& o, connect_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup connect_reason_code
  * @brief   get gategory of connect_reason_code
  * @return  category
  */
@@ -262,8 +285,13 @@ sys::error_category const& get_connect_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup disconnect_reason_code disconnect_reason_code
+ * @ingroup error_reporting
  * @ingroup disconnect_v5
+ */
+
+/**
+ * @ingroup disconnect_reason_code
  * @brief disconnect reason code
  * It is reported via DISCONNECT
  */
@@ -300,16 +328,15 @@ enum class disconnect_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup disconnect_reason_code
  * @brief make error code
  * @param v target
  * @return disconnect_reason_code string
  */
-error_code make_error_code(disconnect_reason_code e);
+error_code make_error_code(disconnect_reason_code v);
 
 /**
- * @ingroup disconnect_v5
- * @ingroup error
+ * @ingroup disconnect_reason_code
  * @brief stringize disconnect_reason_code
  * @param v target
  * @return disconnect_reason_code string
@@ -317,8 +344,7 @@ error_code make_error_code(disconnect_reason_code e);
 constexpr char const* disconnect_reason_code_to_string(disconnect_reason_code v);
 
 /**
- * @ingroup disconnect_v5
- * @ingroup error
+ * @ingroup disconnect_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -327,7 +353,7 @@ constexpr char const* disconnect_reason_code_to_string(disconnect_reason_code v)
 std::ostream& operator<<(std::ostream& o, disconnect_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup disconnect_reason_code
  * @brief   get gategory of disconnect_reason_code
  * @return  category
  */
@@ -336,8 +362,12 @@ sys::error_category const& get_disconnect_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup suback_reason_code suback_reason_code
  * @ingroup suback_v5
+ */
+
+/**
+ * @ingroup suback_reason_code
  * @brief suback reason code
  * It is reported as SUBSCRIBE response via SUBNACK packet
  */
@@ -357,16 +387,15 @@ enum class suback_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup suback_reason_code
  * @brief make error code
  * @param v target
  * @return suback_reason_code string
  */
-error_code make_error_code(suback_reason_code e);
+error_code make_error_code(suback_reason_code v);
 
 /**
- * @ingroup suback_v5
- * @ingroup error
+ * @ingroup suback_reason_code
  * @brief stringize suback_reason_code
  * @param v target
  * @return suback_reason_code string
@@ -374,8 +403,7 @@ error_code make_error_code(suback_reason_code e);
 constexpr char const* suback_reason_code_to_string(suback_reason_code v);
 
 /**
- * @ingroup suback_v5
- * @ingroup error
+ * @ingroup suback_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -384,7 +412,7 @@ constexpr char const* suback_reason_code_to_string(suback_reason_code v);
 std::ostream& operator<<(std::ostream& o, suback_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup suback_reason_code
  * @brief   get gategory of suback_reason_code
  * @return  category
  */
@@ -393,8 +421,12 @@ sys::error_category const& get_suback_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup unsuback_reason_code unsuback_reason_code
  * @ingroup unsuback_v5
+ */
+
+/**
+ * @ingroup unsuback_reason_code
  * @brief unsuback reason code
  * It is reported as UNSUBSCRIBE response via UNSUBNACK packet
  */
@@ -409,16 +441,15 @@ enum class unsuback_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup unsuback_reason_code
  * @brief make error code
  * @param v target
  * @return unsuback_reason_code string
  */
-error_code make_error_code(unsuback_reason_code e);
+error_code make_error_code(unsuback_reason_code v);
 
 /**
- * @ingroup unsuback_v5
- * @ingroup error
+ * @ingroup unsuback_reason_code
  * @brief stringize unsuback_reason_code
  * @param v target
  * @return unsuback_reason_code string
@@ -426,8 +457,7 @@ error_code make_error_code(unsuback_reason_code e);
 constexpr char const* unsuback_reason_code_to_string(unsuback_reason_code v);
 
 /**
- * @ingroup unsuback_v5
- * @ingroup error
+ * @ingroup unsuback_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -436,7 +466,7 @@ constexpr char const* unsuback_reason_code_to_string(unsuback_reason_code v);
 std::ostream& operator<<(std::ostream& o, unsuback_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup unsuback_reason_code
  * @brief   get gategory of unsuback_reason_code
  * @return  category
  */
@@ -445,8 +475,12 @@ sys::error_category const& get_unsuback_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup puback_reason_code puback_reason_code
  * @ingroup puback_v5
+ */
+
+/**
+ * @ingroup puback_reason_code
  * @brief puback reason code
  * It is reported as PUBLISH (QoS1) response via PUBACK packet
  */
@@ -463,16 +497,15 @@ enum class puback_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup puback_reason_code
  * @brief make error code
  * @param v target
  * @return puback_reason_code string
  */
-error_code make_error_code(puback_reason_code e);
+error_code make_error_code(puback_reason_code v);
 
 /**
- * @ingroup puback_v5
- * @ingroup error
+ * @ingroup puback_reason_code
  * @brief stringize puback_reason_code
  * @param v target
  * @return puback_reason_code string
@@ -480,8 +513,7 @@ error_code make_error_code(puback_reason_code e);
 constexpr char const* puback_reason_code_to_string(puback_reason_code v);
 
 /**
- * @ingroup puback_v5
- * @ingroup error
+ * @ingroup puback_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -490,15 +522,14 @@ constexpr char const* puback_reason_code_to_string(puback_reason_code v);
 std::ostream& operator<<(std::ostream& o, puback_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup puback_reason_code
  * @brief   get gategory of puback_reason_code
  * @return  category
  */
 sys::error_category const& get_puback_reason_code_category();
 
 /**
- * @ingroup puback_v5
- * @ingroup error
+ * @ingroup puback_reason_code
  * @brief check reason code error
  * @param v  target
  * @return true if the reason code is error, otherwise false
@@ -509,8 +540,12 @@ bool is_error(puback_reason_code v);
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup pubrec_reason_code pubrec_reason_code
  * @ingroup pubrec_v5
+ */
+
+/**
+ * @ingroup pubrec_reason_code
  * @brief pubrec reason code
  * It is reported as PUBLISH (QoS2) response via PUBREC packet
  */
@@ -527,16 +562,15 @@ enum class pubrec_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup pubrec_reason_code
  * @brief make error code
  * @param v target
  * @return pubrec_reason_code string
  */
-error_code make_error_code(pubrec_reason_code e);
+error_code make_error_code(pubrec_reason_code v);
 
 /**
- * @ingroup pubrec_v5
- * @ingroup error
+ * @ingroup pubrec_reason_code
  * @brief stringize pubrec_reason_code
  * @param v target
  * @return pubrec_reason_code string
@@ -544,8 +578,7 @@ error_code make_error_code(pubrec_reason_code e);
 constexpr char const* pubrec_reason_code_to_string(pubrec_reason_code v);
 
 /**
- * @ingroup pubrec_v5
- * @ingroup error
+ * @ingroup pubrec_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -554,15 +587,14 @@ constexpr char const* pubrec_reason_code_to_string(pubrec_reason_code v);
 std::ostream& operator<<(std::ostream& o, pubrec_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup pubrec_reason_code
  * @brief   get gategory of pubrec_reason_code
  * @return  category
  */
 sys::error_category const& get_pubrec_reason_code_category();
 
 /**
- * @ingroup pubrec_v5
- * @ingroup error
+ * @ingroup pubrec_reason_code
  * @brief check reason code error
  * @param v  target
  * @return true if the reason code is error, otherwise false
@@ -573,8 +605,12 @@ bool is_error(pubrec_reason_code v);
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup pubrel_reason_code pubrel_reason_code
  * @ingroup pubrel_v5
+ */
+
+/**
+ * @ingroup pubrel_reason_code
  * @brief pubrel reason code
  * It is reported as PUBREC response via PUBREL packet
  */
@@ -584,16 +620,15 @@ enum class pubrel_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup pubrel_reason_code
  * @brief make error code
  * @param v target
  * @return pubrel_reason_code string
  */
-error_code make_error_code(pubrel_reason_code e);
+error_code make_error_code(pubrel_reason_code v);
 
 /**
- * @ingroup pubrel_v5
- * @ingroup error
+ * @ingroup pubrel_reason_code
  * @brief stringize pubrel_reason_code
  * @param v target
  * @return pubrel_reason_code string
@@ -601,8 +636,7 @@ error_code make_error_code(pubrel_reason_code e);
 constexpr char const* pubrel_reason_code_to_string(pubrel_reason_code v);
 
 /**
- * @ingroup pubrel_v5
- * @ingroup error
+ * @ingroup pubrel_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -611,7 +645,7 @@ constexpr char const* pubrel_reason_code_to_string(pubrel_reason_code v);
 std::ostream& operator<<(std::ostream& o, pubrel_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup pubrel_reason_code
  * @brief   get gategory of pubrel_reason_code
  * @return  category
  */
@@ -620,8 +654,12 @@ sys::error_category const& get_pubrel_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup pubcomp_reason_code pubcomp_reason_code
  * @ingroup pubcomp_v5
+ */
+
+/**
+ * @ingroup pubcomp_reason_code
  * @brief pubcomp reason code
  * It is reported as PUBREL response via PUBCOMP packet
  */
@@ -631,16 +669,15 @@ enum class pubcomp_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup pubcomp_reason_code
  * @brief make error code
  * @param v target
  * @return pubcomp_reason_code string
  */
-error_code make_error_code(pubcomp_reason_code e);
+error_code make_error_code(pubcomp_reason_code v);
 
 /**
- * @ingroup pubcomp_v5
- * @ingroup error
+ * @ingroup pubcomp_reason_code
  * @brief stringize pubcomp_reason_code
  * @param v target
  * @return pubcomp_reason_code string
@@ -648,8 +685,7 @@ error_code make_error_code(pubcomp_reason_code e);
 constexpr char const* pubcomp_reason_code_to_string(pubcomp_reason_code v);
 
 /**
- * @ingroup pubcomp_v5
- * @ingroup error
+ * @ingroup pubcomp_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -658,7 +694,7 @@ constexpr char const* pubcomp_reason_code_to_string(pubcomp_reason_code v);
 std::ostream& operator<<(std::ostream& o, pubcomp_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup pubcomp_reason_code
  * @brief   get gategory of pubcomp_reason_code
  * @return  category
  */
@@ -667,8 +703,12 @@ sys::error_category const& get_pubcomp_reason_code_category();
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @ingroup error
+ * @defgroup auth_reason_code auth_reason_code
  * @ingroup auth_v5
+ */
+
+/**
+ * @ingroup auth_reason_code
  * @brief auth reason code
  * It is reported via AUTH packet
  */
@@ -679,16 +719,15 @@ enum class auth_reason_code : std::uint8_t {
 };
 
 /**
- * @ingroup error
+ * @ingroup auth_reason_code
  * @brief make error code
  * @param v target
  * @return auth_reason_code string
  */
-error_code make_error_code(auth_reason_code e);
+error_code make_error_code(auth_reason_code v);
 
 /**
- * @ingroup auth_v5
- * @ingroup error
+ * @ingroup auth_reason_code
  * @brief stringize auth_reason_code
  * @param v target
  * @return auth_reason_code string
@@ -696,8 +735,7 @@ error_code make_error_code(auth_reason_code e);
 constexpr char const* auth_reason_code_to_string(auth_reason_code v);
 
 /**
- * @ingroup auth_v5
- * @ingroup error
+ * @ingroup auth_reason_code
  * @brief output to the stream
  * @param o output stream
  * @param v  target
@@ -706,7 +744,7 @@ constexpr char const* auth_reason_code_to_string(auth_reason_code v);
 std::ostream& operator<<(std::ostream& o, auth_reason_code v);
 
 /**
- * @ingroup error
+ * @ingroup auth_reason_code
  * @brief   get gategory of auth_reason_code
  * @return  category
  */

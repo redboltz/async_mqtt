@@ -19,6 +19,7 @@ namespace async_mqtt {
  * @brief create basic_packet_variant from the buffer
  * @param buf buffer contains packet bytes
  * @param ver protocol version to create packet
+ * @param ec  error_code for reporting error
  * @return created basic_packet_variant
  */
 template <std::size_t PacketIdBytes>
@@ -29,6 +30,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(buffer buf, p
  * @brief create packet_variant from the buffer
  * @param buf buffer contains packet bytes
  * @param ver protocol version to create packet
+ * @param ec  error_code for reporting error
  * @return created packet_variant
  */
 packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver, error_code& ec);

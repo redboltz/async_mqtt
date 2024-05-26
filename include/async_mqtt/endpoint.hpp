@@ -606,6 +606,7 @@ public:
      *        If topic is empty, extract topic from topic alias, and remove topic alias
      *        Otherwise, remove topic alias if exists.
      * @param packet packet to regulate
+     * @param ec     error_code for repoting error
      */
     void regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes>& packet,

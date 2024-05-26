@@ -1464,7 +1464,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::direct,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1478,7 +1478,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::int_cast,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1492,7 +1492,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::key_val,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1506,7 +1506,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::binary_string,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 /**
  * @ingroup property
@@ -1520,7 +1520,7 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::json_like,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p);
+operator<<(std::ostream& o, Property const& v);
 
 } // namespace property
 

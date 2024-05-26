@@ -626,11 +626,11 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::int_cast,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p) {
+operator<<(std::ostream& o, Property const& v) {
     o <<
         "{" <<
-        "id:" << p.id() << "," <<
-        "val:" << static_cast<int>(p.val()) <<
+        "id:" << v.id() << "," <<
+        "val:" << static_cast<int>(v.val()) <<
         "}";
     return o;
 }
@@ -641,12 +641,12 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::key_val,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p) {
+operator<<(std::ostream& o, Property const& v) {
     o <<
         "{" <<
-        "id:" << p.id() << "," <<
-        "key:" << p.key() << "," <<
-        "val:" << p.val() <<
+        "id:" << v.id() << "," <<
+        "key:" << v.key() << "," <<
+        "val:" << v.val() <<
         "}";
     return o;
 }
@@ -657,14 +657,14 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::binary_string,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p) {
+operator<<(std::ostream& o, Property const& v) {
     // Note this only compiles because both strings below are the same length.
     o <<
         "{" <<
-        "id:" << p.id() << "," <<
+        "id:" << v.id() << "," <<
         "val:" <<
         [&] {
-            if (p.val() == payload_format::binary) return "binary";
+            if (v.val() == payload_format::binary) return "binary";
             return "string";
         }() <<
         "}";
@@ -677,11 +677,11 @@ std::enable_if_t<
     Property::of_ == detail::ostream_format::json_like,
     std::ostream&
 >
-operator<<(std::ostream& o, Property const& p) {
+operator<<(std::ostream& o, Property const& v) {
     o <<
         "{" <<
-        "id:" << p.id() << "," <<
-        "val:" << json_like_out(p.val()) <<
+        "id:" << v.id() << "," <<
+        "val:" << json_like_out(v.val()) <<
         "}";
     return o;
 }
