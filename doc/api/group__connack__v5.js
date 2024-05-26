@@ -33,7 +33,5 @@ var group__connack__v5 =
       [ "async_mqtt::connect_reason_code::use_another_server", "group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a91f5261461d3a38aa7618af58b4f1f90", null ],
       [ "async_mqtt::connect_reason_code::server_moved", "group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a1cc996700ec51fd0ec81843f6ec50aaf", null ],
       [ "async_mqtt::connect_reason_code::connection_rate_exceeded", "group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a13e6bd4b354254f7db3cc8b739940636", null ]
-    ] ],
-    [ "async_mqtt::connect_reason_code_to_str", "group__connack__v5.html#gaa60a041288f18e18d707fd34f336d9fb", null ],
-    [ "async_mqtt::operator<<", "group__connack__v5.html#ga64f8b89bfcde2f6e4f9cb4e76474f8b0", null ]
+    ] ]
 ];

@@ -10,7 +10,5 @@ var group__unsuback__v5 =
       [ "async_mqtt::unsuback_reason_code::not_authorized", "group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfea89a15d5a10ea1b37e1719c52c3507c0a", null ],
       [ "async_mqtt::unsuback_reason_code::topic_filter_invalid", "group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfea4ad1d90f650e6afaedb4e935b67d33d9", null ],
       [ "async_mqtt::unsuback_reason_code::packet_identifier_in_use", "group__unsuback__v5.html#gga1c1aad570b8382ff16971161cad17cfead15ceac1cec853ec096e09728823691e", null ]
-    ] ],
-    [ "async_mqtt::operator<<", "group__unsuback__v5.html#ga428c1580045bfd3a214e29deef0e93c7", null ],
-    [ "async_mqtt::unsuback_reason_code_to_str", "group__unsuback__v5.html#gaba976f95fe6010cbe6a082dad065f4ce", null ]
+    ] ]
 ];

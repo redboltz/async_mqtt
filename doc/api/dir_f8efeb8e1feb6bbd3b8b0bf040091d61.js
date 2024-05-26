@@ -8,7 +8,7 @@ var dir_f8efeb8e1feb6bbd3b8b0bf040091d61 =
     [ "client.hpp", "client_8hpp_source.html", null ],
     [ "endpoint.hpp", "endpoint_8hpp_source.html", null ],
     [ "endpoint_fwd.hpp", "endpoint__fwd_8hpp_source.html", null ],
-    [ "exception.hpp", "exception_8hpp_source.html", null ],
+    [ "error.hpp", "error_8hpp_source.html", null ],
     [ "protocol_version.hpp", "protocol__version_8hpp_source.html", null ],
     [ "role.hpp", "role_8hpp_source.html", null ],
     [ "setup_log.hpp", "setup__log_8hpp_source.html", null ]

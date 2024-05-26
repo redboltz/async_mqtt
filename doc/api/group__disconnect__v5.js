@@ -41,7 +41,5 @@ var group__disconnect__v5 =
       [ "async_mqtt::disconnect_reason_code::maximum_connect_time", "group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a29a53c5d92cc8a480d690d6525d6b3cf", null ],
       [ "async_mqtt::disconnect_reason_code::subscription_identifiers_not_supported", "group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a1b6c87b6571eaaf58e2c6a5ebd5056ef", null ],
       [ "async_mqtt::disconnect_reason_code::wildcard_subscriptions_not_supported", "group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a3568f64000f9940631ebc59cf38d2184", null ]
-    ] ],
-    [ "async_mqtt::disconnect_reason_code_to_str", "group__disconnect__v5.html#gaea6908a9aa4732db8acb01595dc6f9b0", null ],
-    [ "async_mqtt::operator<<", "group__disconnect__v5.html#gade17ec215b10bd1187de1340937bf26f", null ]
+    ] ]
 ];

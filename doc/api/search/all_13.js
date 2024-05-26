@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['qos_0',['qos',['../group__qos.html#ga38e773082414bb272ab22275c56eb4df',1,'async_mqtt']]],
-  ['qos_1',['QoS',['../group__qos.html',1,'']]],
+  ['qos_0',['QoS',['../group__qos.html',1,'']]],
+  ['qos_1',['qos',['../group__qos.html#ga38e773082414bb272ab22275c56eb4df',1,'async_mqtt']]],
   ['qos_5fnot_5fsupported_2',['qos_not_supported',['../group__connack__v5.html#gga24f7ddcada0b756be2b7fd352820bbb1a9dec14362bd41a43beb8d673756daaad',1,'qos_not_supportedasync_mqtt'],['../group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565a9dec14362bd41a43beb8d673756daaad',1,'qos_not_supportedasync_mqtt']]],
   ['qos_5fto_5fstr_3',['qos_to_str',['../group__qos.html#gad858b3dc3d6733e6ec7b1ff497f90583',1,'async_mqtt']]],
   ['qos_5fto_5fsuback_5freason_5fcode_4',['qos_to_suback_reason_code',['../group__suback__v5.html#ga87ead9aec9e50f1900cc09dc5a7f94f7',1,'async_mqtt']]],

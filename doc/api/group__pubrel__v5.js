@@ -5,7 +5,5 @@ var group__pubrel__v5 =
     [ "async_mqtt::pubrel_reason_code", "group__pubrel__v5.html#gad13254b0b2f5e7baa414cbd15c552736", [
       [ "async_mqtt::pubrel_reason_code::success", "group__pubrel__v5.html#ggad13254b0b2f5e7baa414cbd15c552736a260ca9dd8a4577fc00b7bd5810298076", null ],
       [ "async_mqtt::pubrel_reason_code::packet_identifier_not_found", "group__pubrel__v5.html#ggad13254b0b2f5e7baa414cbd15c552736ae09945f286cd7f1a45987d9dee2688dd", null ]
-    ] ],
-    [ "async_mqtt::operator<<", "group__pubrel__v5.html#ga6bdba5b1728f66466d0e305bf3b51999", null ],
-    [ "async_mqtt::pubrel_reason_code_to_str", "group__pubrel__v5.html#ga69df82f25b6bc7dc8196562fa1d817cf", null ]
+    ] ]
 ];

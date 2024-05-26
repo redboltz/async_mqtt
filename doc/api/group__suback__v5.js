@@ -16,7 +16,5 @@ var group__suback__v5 =
       [ "async_mqtt::suback_reason_code::subscription_identifiers_not_supported", "group__suback__v5.html#ggac1d8426ede60ae4e6c723a7687542fc6a1b6c87b6571eaaf58e2c6a5ebd5056ef", null ],
       [ "async_mqtt::suback_reason_code::wildcard_subscriptions_not_supported", "group__suback__v5.html#ggac1d8426ede60ae4e6c723a7687542fc6a3568f64000f9940631ebc59cf38d2184", null ]
     ] ],
-    [ "async_mqtt::operator<<", "group__suback__v5.html#ga4f97d2790718d0458c5dcba0bd7ec63a", null ],
-    [ "async_mqtt::qos_to_suback_reason_code", "group__suback__v5.html#ga87ead9aec9e50f1900cc09dc5a7f94f7", null ],
-    [ "async_mqtt::suback_reason_code_to_str", "group__suback__v5.html#ga85d7159f30a3ed88c9950e2b31574622", null ]
+    [ "async_mqtt::qos_to_suback_reason_code", "group__suback__v5.html#ga87ead9aec9e50f1900cc09dc5a7f94f7", null ]
 ];

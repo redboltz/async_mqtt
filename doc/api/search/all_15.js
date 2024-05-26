@@ -38,9 +38,9 @@ var searchData=
   ['suback_20packet_20v5_200_35',['SUBACK packet (v5.0)',['../group__suback__v5.html',1,'']]],
   ['suback_5fpacket_36',['suback_packet',['../group__suback__v3__1__1.html#gafc473899d1e3780edad734c763201c00',1,'async_mqtt::v3_1_1::basic_suback_packet::suback_packet'],['../group__suback__v5.html#gafc473899d1e3780edad734c763201c00',1,'async_mqtt::v5::basic_suback_packet::suback_packet']]],
   ['suback_5freason_5fcode_37',['suback_reason_code',['../group__suback__v5.html#gac1d8426ede60ae4e6c723a7687542fc6',1,'async_mqtt']]],
-  ['suback_5freason_5fcode_5fto_5fstr_38',['suback_reason_code_to_str',['../group__suback__v5.html#ga85d7159f30a3ed88c9950e2b31574622',1,'async_mqtt']]],
+  ['suback_5freason_5fcode_5fto_5fstring_38',['suback_reason_code_to_string',['../group__error.html#gaeebdff12f467564db95e0df1e548d0be',1,'async_mqtt']]],
   ['suback_5freturn_5fcode_39',['suback_return_code',['../group__suback__v3__1__1.html#gad3470deb20130512c7ad76c4314f1816',1,'async_mqtt']]],
-  ['suback_5freturn_5fcode_5fto_5fstr_40',['suback_return_code_to_str',['../group__suback__v3__1__1.html#ga661223c247984054b2c92a4ec4f4b406',1,'async_mqtt']]],
+  ['suback_5freturn_5fcode_5fto_5fstring_40',['suback_return_code_to_string',['../group__error.html#ga9e9325a6a973921f5174f322b7c7c203',1,'async_mqtt']]],
   ['subscribe_41',['subscribe',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a4f893ee24950069dd823e083338a456d',1,'async_mqtt']]],
   ['subscribe_20packet_20flags_42',['SUBSCRIBE packet flags',['../group__subscribe__options.html',1,'']]],
   ['subscribe_20packet_20v3_201_201_43',['SUBSCRIBE packet (v3.1.1)',['../group__subscribe__v3__1__1.html',1,'']]],
@@ -55,5 +55,5 @@ var searchData=
   ['success_5fmaximum_5fqos_5f1_52',['success_maximum_qos_1',['../group__suback__v3__1__1.html#ggad3470deb20130512c7ad76c4314f1816a2a2dd80c791d8aa3ec91e053485a0cfc',1,'async_mqtt']]],
   ['success_5fmaximum_5fqos_5f2_53',['success_maximum_qos_2',['../group__suback__v3__1__1.html#ggad3470deb20130512c7ad76c4314f1816a6eb6acedcc588743c4552c8d629e5c52',1,'async_mqtt']]],
   ['swap_54',['swap',['../classasync__mqtt_1_1buffer.html#a5d5d131740b5cb75e29f174db8c08218',1,'async_mqtt::buffer']]],
-  ['system_5ferror_55',['system_error',['../structasync__mqtt_1_1system__error.html',1,'async_mqtt::system_error'],['../structasync__mqtt_1_1system__error.html#a2f691933af71ba2765eccf42db1f99be',1,'async_mqtt::system_error::system_error()']]]
+  ['system_5ferror_55',['system_error',['../group__error.html#gaad563eceb8ce08b31fc1d5d61ad9811f',1,'async_mqtt']]]
 ];

@@ -16,7 +16,7 @@ var searchData=
   ['unsuback_20packet_20v5_200_13',['UNSUBACK packet (v5.0)',['../group__unsuback__v5.html',1,'']]],
   ['unsuback_5fpacket_14',['unsuback_packet',['../group__unsuback__v3__1__1.html#gad698dd5c294b42da124a7cb89a3acba0',1,'async_mqtt::v3_1_1::basic_unsuback_packet::unsuback_packet'],['../group__unsuback__v5.html#gad698dd5c294b42da124a7cb89a3acba0',1,'async_mqtt::v5::basic_unsuback_packet::unsuback_packet']]],
   ['unsuback_5freason_5fcode_15',['unsuback_reason_code',['../group__unsuback__v5.html#ga1c1aad570b8382ff16971161cad17cfe',1,'async_mqtt']]],
-  ['unsuback_5freason_5fcode_5fto_5fstr_16',['unsuback_reason_code_to_str',['../group__unsuback__v5.html#gaba976f95fe6010cbe6a082dad065f4ce',1,'async_mqtt']]],
+  ['unsuback_5freason_5fcode_5fto_5fstring_16',['unsuback_reason_code_to_string',['../group__error.html#gaf7291ad046727c574e63ff0245f2d68c',1,'async_mqtt']]],
   ['unsubscribe_17',['unsubscribe',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4aa013658e30387f7a60cdaf0acf26850d',1,'async_mqtt']]],
   ['unsubscribe_20packet_20v3_201_201_18',['UNSUBSCRIBE packet (v3.1.1)',['../group__unsubscribe__v3__1__1.html',1,'']]],
   ['unsubscribe_20packet_20v5_200_19',['UNSUBSCRIBE packet (v5.0)',['../group__unsubscribe__v5.html',1,'']]],

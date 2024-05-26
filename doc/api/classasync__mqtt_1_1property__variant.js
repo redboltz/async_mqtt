@@ -1,6 +1,7 @@
 var classasync__mqtt_1_1property__variant =
 [
     [ "property_variant", "classasync__mqtt_1_1property__variant.html#ac21afd285e44ae2b0382a42be9dcc94b", null ],
+    [ "property_variant", "classasync__mqtt_1_1property__variant.html#a1e98c76c7318ed588541bf50b01f3245", null ],
     [ "const_buffer_sequence", "classasync__mqtt_1_1property__variant.html#ab3fb2c723adcfacc89d7187dcf5d75a0", null ],
     [ "get", "classasync__mqtt_1_1property__variant.html#a184345bb26a238db254f102e8b20d450", null ],
     [ "get", "classasync__mqtt_1_1property__variant.html#ad6b55fe5e94cf34de5146a5ddbe4ca5e", null ],

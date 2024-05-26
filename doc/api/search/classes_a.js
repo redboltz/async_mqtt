@@ -5,6 +5,5 @@ var searchData=
   ['session_5fexpiry_5finterval_2',['session_expiry_interval',['../classasync__mqtt_1_1property_1_1session__expiry__interval.html',1,'async_mqtt::property']]],
   ['shared_5fsubscription_5favailable_3',['shared_subscription_available',['../classasync__mqtt_1_1property_1_1shared__subscription__available.html',1,'async_mqtt::property']]],
   ['subscription_5fidentifier_4',['subscription_identifier',['../classasync__mqtt_1_1property_1_1subscription__identifier.html',1,'async_mqtt::property']]],
-  ['subscription_5fidentifier_5favailable_5',['subscription_identifier_available',['../classasync__mqtt_1_1property_1_1subscription__identifier__available.html',1,'async_mqtt::property']]],
-  ['system_5ferror_6',['system_error',['../structasync__mqtt_1_1system__error.html',1,'async_mqtt']]]
+  ['subscription_5fidentifier_5favailable_5',['subscription_identifier_available',['../classasync__mqtt_1_1property_1_1subscription__identifier__available.html',1,'async_mqtt::property']]]
 ];

@@ -137,7 +137,7 @@ var group__property =
     ] ],
     [ "async_mqtt::property::maximum_qos", "classasync__mqtt_1_1property_1_1maximum__qos.html", [
       [ "maximum_qos", "classasync__mqtt_1_1property_1_1maximum__qos.html#ac0b48992952a2c87d7b8b9c182725427", null ],
-      [ "val", "classasync__mqtt_1_1property_1_1maximum__qos.html#a46a3aa8ae2bdec9c6b8b275ce2409015", null ]
+      [ "val", "classasync__mqtt_1_1property_1_1maximum__qos.html#a9b06ebeadc1ba6c6ed0a965c81ba2b70", null ]
     ] ],
     [ "async_mqtt::property::retain_available", "classasync__mqtt_1_1property_1_1retain__available.html", [
       [ "retain_available", "classasync__mqtt_1_1property_1_1retain__available.html#a9070b255f3c00b0cea225d2713738921", null ],
