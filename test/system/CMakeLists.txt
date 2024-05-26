@@ -18,6 +18,7 @@ endif()
 
 list(APPEND check_PROGRAMS
     st_auth.cpp
+    st_cancel.cpp
     st_conflict_cid.cpp
     st_gencid.cpp
     st_mqtt_connect.cpp
