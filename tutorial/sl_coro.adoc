@@ -282,7 +282,9 @@ When a packet is received then the function resumes at the following line:
                 }
 ```
 
-The parameter of the completion token is `packet_variant pv`. You can access the `pv` using the `visit` function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type. `pv` can be evaluated as a boolean. If any receive error occurs, `pv` evaluates to `false`; otherwise, it evaluates to `true`.
+The parameters of the completion token are `error_code const& ec` and `packet_variant pv`. The `ec` can be converted to a boolean. If `ec` evaluates to true, an error has occurred. For detailed information about errors, refer to {api-base}/++group__error__reporting.html++[Errors for APIs].
+
+If there is no error, you can access the `pv` using the `visit` function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.
 
 
 == Send/Recv packets

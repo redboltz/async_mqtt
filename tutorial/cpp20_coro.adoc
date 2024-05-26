@@ -111,8 +111,9 @@ pv.visit(
 
 When you call async functions, add the `co_await` keyword before the function call and pass `as::use_awaitable` as the `CompletionToken`. This is the C++20 coroutine way.
 
-For example, sending a CONNECT packet is done as follows. When `send()` is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value `se`. If `se` evaluates to true, it means an error occurred, so the code prints an error message and uses `co_return`. When you want to return from a function that has an `as::awaitable<>` return value, you need to call `co_return` instead of `return`.
+For example, sending a CONNECT packet is done as follows. When `send()` is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value `ec`. If `ec` evaluates to true, it means an error occurred, so the code prints an error message and uses `co_return`. When you want to return from a function that has an `as::awaitable<>` return value, you need to call `co_return` instead of `return`.
 
+For detailed information about errors, refer to {api-base}/++group__error__reporting.html++[Errors for APIs].
 
 == whole code (example)
 

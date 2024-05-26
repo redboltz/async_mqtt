@@ -22,6 +22,8 @@ You cannot call the `async_recv()` function continuously. You can call the next 
 
 async_recv()'s CompletionToken parameters are error_code and  {api-base}/++classasync__mqtt_1_1basic__packet__variant.html++[packet_variant].
 
+If there is no error, you can access the `pv` using the `visit` function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.
+
 `packet_variant` is a variant type of all MQTT packets and `std::monostate`. `std::monostate` is only used if error_conde is not `success`.
 
 NOTE: `async_mqtt` has `basic_foobar` type and `foobar` type if the type contains MQTT's Packet Identifier. `basic_foobar` takes a `PacketIdBytes` parameter. `basic_foobar<2>` is the same as `foobar`. The MQTT spec defines the size of the Packet Identifier as 2. However, some clustering brokers use an expanded Packet Identifier for inter-broker communication. General users don't need to worry about `basic_foobar` types; simply use `foobar`.
@@ -71,7 +73,7 @@ You can filter packets as follows:
 ep->async_recv(am::filter::match, {am::control_packet_type::publish}, completion_token);
 ```
 
-When you set `filter::match` as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, the `completion_token` isn't invoked, but the received packets are appropriately processed. If an error occurs, the `completion_token` is invoked with a `packet_variant` that contains the error.
+When you set `filter::match` as the first argument, the second parameter is a list of matching MQTT Control Packet types. If unmatched packets are received, the `completion_token` isn't invoked, but the received packets are appropriately processed. If an error occurs, the `completion_token` is invoked with a `ec` that contains the error.
 
 
 ```cpp

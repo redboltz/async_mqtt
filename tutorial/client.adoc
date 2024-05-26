@@ -179,6 +179,7 @@ if (connack_opt) {
 
 The parameters of `CompletionToken` are `error_code` and (optionally) `connack_packet`. The `connack_packet` will have a value only if `error_code` indicates success. When using `CompletionToken` with mechanisms like `as::use_awaitable`, `as::use_future`, or `as::deferred`, the initial `error_code` is converted into an exception. If you prefer to receive the `error_code` as a return value, you can proceed as follows:
 
+For detailed information about errors, refer to {api-base}/++group__error__reporting.html++[Errors for APIs].
 
 ```cpp
 // MQTT connect and receive loop start
