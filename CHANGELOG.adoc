@@ -3,9 +3,12 @@
 = History
 == 7.0.0
 === breaking changes
-* Re-designed error_code handling respect to Boost.Asio way. #266
+* Re-designed error_code handling respect to Boost.Asio way. #266, #270
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
+
+=== other updates
+* Added bind_cancellation_slot test #268
 
 == 6.0.0
 === breaking changes

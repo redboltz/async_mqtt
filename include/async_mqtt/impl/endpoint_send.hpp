@@ -474,7 +474,7 @@ send_op {
         }
 
         if constexpr(is_instance_of<v5::basic_pubrec_packet, std::decay_t<ActualPacket>>::value) {
-            if (is_error(actual_packet.code())) {
+            if (make_error_code(actual_packet.code())) {
                 ep.publish_recv_.erase(actual_packet.packet_id());
                 ep.qos2_publish_handled_.erase(actual_packet.packet_id());
             }

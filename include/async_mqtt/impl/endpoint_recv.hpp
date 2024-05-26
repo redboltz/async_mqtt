@@ -469,7 +469,7 @@ recv_op {
                             auto packet_id = p.packet_id();
                             if (ep.pid_pubrec_.erase(packet_id)) {
                                 ep.store_.erase(response_packet::v5_pubrec, packet_id);
-                                if (is_error(p.code())) {
+                                if (make_error_code(p.code())) {
                                     ep.release_pid(packet_id);
                                     ep.qos2_publish_processing_.erase(packet_id);
                                     --ep.publish_send_count_;

@@ -236,7 +236,7 @@ client<Version, NextLayer>::recv_loop() {
                         if (it != idx.end()) {
                             const_cast<std::optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
                             if constexpr (Version == protocol_version::v5) {
-                                if (is_error(p.code())) {
+                                if (make_error_code(p.code())) {
                                     it->tim->cancel();
                                 }
                             }
