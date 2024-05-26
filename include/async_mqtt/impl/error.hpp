@@ -350,6 +350,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class connect_reason_code_category : public sys::error_category {
@@ -364,6 +368,10 @@ public:
 
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
+    }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
     }
 };
 
@@ -380,6 +388,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class suback_reason_code_category : public sys::error_category {
@@ -395,6 +407,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class unsuback_reason_code_category : public sys::error_category {
@@ -409,6 +425,10 @@ public:
 
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
+    }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
     }
 };
 
@@ -426,6 +446,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class pubrec_reason_code_category : public sys::error_category {
@@ -440,6 +464,10 @@ public:
 
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
+    }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
     }
 };
 
@@ -456,6 +484,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class pubcomp_reason_code_category : public sys::error_category {
@@ -471,6 +503,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class auth_reason_code_category : public sys::error_category {
@@ -485,6 +521,10 @@ public:
 
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
+    }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
     }
 };
 
@@ -626,16 +666,6 @@ inline error_code make_error_code(auth_reason_code v) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-constexpr
-bool is_error(puback_reason_code v) {
-    return static_cast<std::uint8_t>(v) >= 0x80;
-}
-
-constexpr
-bool is_error(pubrec_reason_code v) {
-    return static_cast<std::uint8_t>(v) >= 0x80;
-}
 
 } // namespace async_mqtt
 

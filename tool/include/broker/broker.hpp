@@ -1323,7 +1323,7 @@ private:
         // See https://github.com/boostorg/multi_index/issues/50
         auto& ss = const_cast<session_state<epsp_type>&>(**it);
 
-        if (is_error(reason_code)) return;
+        if (make_error_code(reason_code)) return;
         auto rc =
             [&] {
                 ss.erase_inflight_message_by_packet_id(packet_id);
