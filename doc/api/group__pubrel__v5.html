@@ -99,8 +99,7 @@ $(function(){initNavTree('group__pubrel__v5.html',''); initResizable(true); });
 <div class="header">
   <div class="summary">
 <a href="#groups">Topics</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">PUBREL packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
@@ -109,14 +108,17 @@ Collaboration diagram for PUBREL packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__pubrel__v5.png" border="0" usemap="#agroup____pubrel____v5" alt=""/></div>
 <map name="agroup____pubrel____v5" id="agroup____pubrel____v5">
-<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
-<area shape="rect" title=" " alt="" coords="204,5,365,33"/>
-<area shape="rect" href="group__pubrel__v5__detail.html" title=" " alt="" coords="413,5,575,33"/>
+<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,32,156,60"/>
+<area shape="rect" title=" " alt="" coords="204,32,365,60"/>
+<area shape="rect" href="group__pubrel__reason__code.html" title=" " alt="" coords="419,5,570,33"/>
+<area shape="rect" href="group__pubrel__v5__detail.html" title=" " alt="" coords="413,57,575,85"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Topics</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrel__reason__code.html">pubrel_reason_code</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrel__v5__detail.html">implementation class</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -126,47 +128,8 @@ Typedefs</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>pubrel_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html">basic_pubrel_packet</a>&lt;2&gt;</td></tr>
 <tr class="memdesc:gac621c1b7011518ff60a9fbedde43b367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html" title="MQTT PUBREL packet (v5)">basic_pubrel_packet</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:gac621c1b7011518ff60a9fbedde43b367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:gad13254b0b2f5e7baa414cbd15c552736" id="r_gad13254b0b2f5e7baa414cbd15c552736"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad13254b0b2f5e7baa414cbd15c552736">async_mqtt::pubrel_reason_code</a> : std::uint8_t { <a class="el" href="#ggad13254b0b2f5e7baa414cbd15c552736a260ca9dd8a4577fc00b7bd5810298076">pubrel_reason_code::success</a> = 0x00
-, <a class="el" href="#ggad13254b0b2f5e7baa414cbd15c552736ae09945f286cd7f1a45987d9dee2688dd">pubrel_reason_code::packet_identifier_not_found</a> = 0x92
- }</td></tr>
-<tr class="memdesc:gad13254b0b2f5e7baa414cbd15c552736"><td class="mdescLeft">&#160;</td><td class="mdescRight">pubrel reason code It is reported as PUBREC response via PUBREL packet  <a href="#gad13254b0b2f5e7baa414cbd15c552736">More...</a><br /></td></tr>
-<tr class="separator:gad13254b0b2f5e7baa414cbd15c552736"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="gad13254b0b2f5e7baa414cbd15c552736" name="gad13254b0b2f5e7baa414cbd15c552736"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad13254b0b2f5e7baa414cbd15c552736">&#9670;&#160;</a></span>pubrel_reason_code</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#gad13254b0b2f5e7baa414cbd15c552736">async_mqtt::pubrel_reason_code</a> : std::uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>pubrel reason code It is reported as PUBREC response via PUBREL packet </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggad13254b0b2f5e7baa414cbd15c552736a260ca9dd8a4577fc00b7bd5810298076" name="ggad13254b0b2f5e7baa414cbd15c552736a260ca9dd8a4577fc00b7bd5810298076"></a>success&#160;</td><td class="fielddoc"><p>Success. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggad13254b0b2f5e7baa414cbd15c552736ae09945f286cd7f1a45987d9dee2688dd" name="ggad13254b0b2f5e7baa414cbd15c552736ae09945f286cd7f1a45987d9dee2688dd"></a>packet_identifier_not_found&#160;</td><td class="fielddoc"><p>Packet Identifier not found. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

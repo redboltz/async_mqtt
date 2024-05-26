@@ -98,8 +98,8 @@ $(function(){initNavTree('group__connack__v5.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#groups">Topics</a> &#124;
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle"><div class="title">CONNACK packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
@@ -109,123 +109,23 @@ Collaboration diagram for CONNACK packet (v5.0):</div>
 <div class="center"><img src="group__connack__v5.png" border="0" usemap="#agroup____connack____v5" alt=""/></div>
 <map name="agroup____connack____v5" id="agroup____connack____v5">
 <area shape="rect" title=" " alt="" coords="204,5,380,33"/>
+<area shape="rect" href="group__connect__reason__code.html" title=" " alt="" coords="428,5,589,33"/>
 <area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
 </map>
 </div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
+Topics</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__connect__reason__code.html">connect_reason_code</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">async_mqtt::v5::connack_packet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT CONNACK packet (v5)  <a href="classasync__mqtt_1_1v5_1_1connack__packet.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:ga24f7ddcada0b756be2b7fd352820bbb1" id="r_ga24f7ddcada0b756be2b7fd352820bbb1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga24f7ddcada0b756be2b7fd352820bbb1">async_mqtt::connect_reason_code</a> : std::uint8_t { <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a260ca9dd8a4577fc00b7bd5810298076">connect_reason_code::success</a> = 0x00
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1af600018ed73dbdd02272ae2397394429">connect_reason_code::unspecified_error</a> = 0x80
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a2aa5596a637d08720add08ff58072e77">connect_reason_code::malformed_packet</a> = 0x81
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a9665c745d0a9132d8da6ed55e89a0564">connect_reason_code::protocol_error</a> = 0x82
-, <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a9a520b1f5df6f2b995bd2272184cdfa7">connect_reason_code::implementation_specific_error</a> = 0x83
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a2bbaf48a16a288cf5d683a6db0d6c972">connect_reason_code::unsupported_protocol_version</a> = 0x84
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a44f4bb5239131103b80eed1e979eee7f">connect_reason_code::client_identifier_not_valid</a> = 0x85
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1abe32e8f8c93b3707303fb6cf9eb1a8b8">connect_reason_code::bad_user_name_or_password</a> = 0x86
-, <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a89a15d5a10ea1b37e1719c52c3507c0a">connect_reason_code::not_authorized</a> = 0x87
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1aeb0efb9a7b59231e85e53bfba6b60ec4">connect_reason_code::server_unavailable</a> = 0x88
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a28305906bb08a2df4e3ef2b0d522dedf">connect_reason_code::server_busy</a> = 0x89
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a0dd544ca4ccb44f6ed5cf12555859eb7">connect_reason_code::banned</a> = 0x8a
-, <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a8174d6e415531206adb47ac821c3c099">connect_reason_code::bad_authentication_method</a> = 0x8c
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1ac5281174b5e556161f2aef0b6c84fa7e">connect_reason_code::topic_name_invalid</a> = 0x90
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1ab0ea4571270a5faae9e13edf8b2a4859">connect_reason_code::packet_too_large</a> = 0x95
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a038d1f877daecfdfafd2fc3992f0e8bc">connect_reason_code::quota_exceeded</a> = 0x97
-, <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1af897d0fef94c20148d17243124f7d1ca">connect_reason_code::payload_format_invalid</a> = 0x99
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a56d405a06363897d4b0b09e1605d6d54">connect_reason_code::retain_not_supported</a> = 0x9a
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a9dec14362bd41a43beb8d673756daaad">connect_reason_code::qos_not_supported</a> = 0x9b
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a91f5261461d3a38aa7618af58b4f1f90">connect_reason_code::use_another_server</a> = 0x9c
-, <br />
-&#160;&#160;<a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a1cc996700ec51fd0ec81843f6ec50aaf">connect_reason_code::server_moved</a> = 0x9d
-, <a class="el" href="#gga24f7ddcada0b756be2b7fd352820bbb1a13e6bd4b354254f7db3cc8b739940636">connect_reason_code::connection_rate_exceeded</a> = 0x9f
-<br />
- }</td></tr>
-<tr class="memdesc:ga24f7ddcada0b756be2b7fd352820bbb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">connect reason code It is reported as CONNECT response via CONNACK packet  <a href="#ga24f7ddcada0b756be2b7fd352820bbb1">More...</a><br /></td></tr>
-<tr class="separator:ga24f7ddcada0b756be2b7fd352820bbb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ga24f7ddcada0b756be2b7fd352820bbb1" name="ga24f7ddcada0b756be2b7fd352820bbb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga24f7ddcada0b756be2b7fd352820bbb1">&#9670;&#160;</a></span>connect_reason_code</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#ga24f7ddcada0b756be2b7fd352820bbb1">async_mqtt::connect_reason_code</a> : std::uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>connect reason code It is reported as CONNECT response via CONNACK packet </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a260ca9dd8a4577fc00b7bd5810298076" name="gga24f7ddcada0b756be2b7fd352820bbb1a260ca9dd8a4577fc00b7bd5810298076"></a>success&#160;</td><td class="fielddoc"><p>Success. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1af600018ed73dbdd02272ae2397394429" name="gga24f7ddcada0b756be2b7fd352820bbb1af600018ed73dbdd02272ae2397394429"></a>unspecified_error&#160;</td><td class="fielddoc"><p>Unspecified error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a2aa5596a637d08720add08ff58072e77" name="gga24f7ddcada0b756be2b7fd352820bbb1a2aa5596a637d08720add08ff58072e77"></a>malformed_packet&#160;</td><td class="fielddoc"><p>Malformed Packet. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a9665c745d0a9132d8da6ed55e89a0564" name="gga24f7ddcada0b756be2b7fd352820bbb1a9665c745d0a9132d8da6ed55e89a0564"></a>protocol_error&#160;</td><td class="fielddoc"><p>Protocol Error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a9a520b1f5df6f2b995bd2272184cdfa7" name="gga24f7ddcada0b756be2b7fd352820bbb1a9a520b1f5df6f2b995bd2272184cdfa7"></a>implementation_specific_error&#160;</td><td class="fielddoc"><p>Implementation specific error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a2bbaf48a16a288cf5d683a6db0d6c972" name="gga24f7ddcada0b756be2b7fd352820bbb1a2bbaf48a16a288cf5d683a6db0d6c972"></a>unsupported_protocol_version&#160;</td><td class="fielddoc"><p>Unsupported Protocol Version. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a44f4bb5239131103b80eed1e979eee7f" name="gga24f7ddcada0b756be2b7fd352820bbb1a44f4bb5239131103b80eed1e979eee7f"></a>client_identifier_not_valid&#160;</td><td class="fielddoc"><p>Client Identifier not valid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1abe32e8f8c93b3707303fb6cf9eb1a8b8" name="gga24f7ddcada0b756be2b7fd352820bbb1abe32e8f8c93b3707303fb6cf9eb1a8b8"></a>bad_user_name_or_password&#160;</td><td class="fielddoc"><p>Bad User Name or Password. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a89a15d5a10ea1b37e1719c52c3507c0a" name="gga24f7ddcada0b756be2b7fd352820bbb1a89a15d5a10ea1b37e1719c52c3507c0a"></a>not_authorized&#160;</td><td class="fielddoc"><p>Not authorized. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1aeb0efb9a7b59231e85e53bfba6b60ec4" name="gga24f7ddcada0b756be2b7fd352820bbb1aeb0efb9a7b59231e85e53bfba6b60ec4"></a>server_unavailable&#160;</td><td class="fielddoc"><p>Server unavailable. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a28305906bb08a2df4e3ef2b0d522dedf" name="gga24f7ddcada0b756be2b7fd352820bbb1a28305906bb08a2df4e3ef2b0d522dedf"></a>server_busy&#160;</td><td class="fielddoc"><p>Server busy. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a0dd544ca4ccb44f6ed5cf12555859eb7" name="gga24f7ddcada0b756be2b7fd352820bbb1a0dd544ca4ccb44f6ed5cf12555859eb7"></a>banned&#160;</td><td class="fielddoc"><p>Banned. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a8174d6e415531206adb47ac821c3c099" name="gga24f7ddcada0b756be2b7fd352820bbb1a8174d6e415531206adb47ac821c3c099"></a>bad_authentication_method&#160;</td><td class="fielddoc"><p>Bad authentication method. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1ac5281174b5e556161f2aef0b6c84fa7e" name="gga24f7ddcada0b756be2b7fd352820bbb1ac5281174b5e556161f2aef0b6c84fa7e"></a>topic_name_invalid&#160;</td><td class="fielddoc"><p>Topic Name invalid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1ab0ea4571270a5faae9e13edf8b2a4859" name="gga24f7ddcada0b756be2b7fd352820bbb1ab0ea4571270a5faae9e13edf8b2a4859"></a>packet_too_large&#160;</td><td class="fielddoc"><p>Packet too large. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a038d1f877daecfdfafd2fc3992f0e8bc" name="gga24f7ddcada0b756be2b7fd352820bbb1a038d1f877daecfdfafd2fc3992f0e8bc"></a>quota_exceeded&#160;</td><td class="fielddoc"><p>Quota exceeded. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1af897d0fef94c20148d17243124f7d1ca" name="gga24f7ddcada0b756be2b7fd352820bbb1af897d0fef94c20148d17243124f7d1ca"></a>payload_format_invalid&#160;</td><td class="fielddoc"><p>Payload format invalid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a56d405a06363897d4b0b09e1605d6d54" name="gga24f7ddcada0b756be2b7fd352820bbb1a56d405a06363897d4b0b09e1605d6d54"></a>retain_not_supported&#160;</td><td class="fielddoc"><p>Retain not supported. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a9dec14362bd41a43beb8d673756daaad" name="gga24f7ddcada0b756be2b7fd352820bbb1a9dec14362bd41a43beb8d673756daaad"></a>qos_not_supported&#160;</td><td class="fielddoc"><p>QoS not supported. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a91f5261461d3a38aa7618af58b4f1f90" name="gga24f7ddcada0b756be2b7fd352820bbb1a91f5261461d3a38aa7618af58b4f1f90"></a>use_another_server&#160;</td><td class="fielddoc"><p>Use another server. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a1cc996700ec51fd0ec81843f6ec50aaf" name="gga24f7ddcada0b756be2b7fd352820bbb1a1cc996700ec51fd0ec81843f6ec50aaf"></a>server_moved&#160;</td><td class="fielddoc"><p>Server moved. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga24f7ddcada0b756be2b7fd352820bbb1a13e6bd4b354254f7db3cc8b739940636" name="gga24f7ddcada0b756be2b7fd352820bbb1a13e6bd4b354254f7db3cc8b739940636"></a>connection_rate_exceeded&#160;</td><td class="fielddoc"><p>Connection rate exceeded. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

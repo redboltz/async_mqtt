@@ -100,7 +100,6 @@ $(function(){initNavTree('group__suback__v5.html',''); initResizable(true); });
   <div class="summary">
 <a href="#groups">Topics</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">SUBACK packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
@@ -110,14 +109,17 @@ Collaboration diagram for SUBACK packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__suback__v5.png" border="0" usemap="#agroup____suback____v5" alt=""/></div>
 <map name="agroup____suback____v5" id="agroup____suback____v5">
-<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
-<area shape="rect" title=" " alt="" coords="204,5,368,33"/>
-<area shape="rect" href="group__suback__v5__detail.html" title=" " alt="" coords="416,5,578,33"/>
+<area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,32,156,60"/>
+<area shape="rect" title=" " alt="" coords="204,32,368,60"/>
+<area shape="rect" href="group__suback__reason__code.html" title=" " alt="" coords="419,5,575,33"/>
+<area shape="rect" href="group__suback__v5__detail.html" title=" " alt="" coords="416,57,578,85"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
 Topics</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__suback__reason__code.html">suback_reason_code</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__suback__v5__detail.html">implementation class</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -128,86 +130,13 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>suback_packet</b> = 
 <tr class="memdesc:gafc473899d1e3780edad734c763201c00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html" title="MQTT SUBACK packet (v5)">basic_suback_packet</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:gafc473899d1e3780edad734c763201c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:gac1d8426ede60ae4e6c723a7687542fc6" id="r_gac1d8426ede60ae4e6c723a7687542fc6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac1d8426ede60ae4e6c723a7687542fc6">async_mqtt::suback_reason_code</a> : std::uint8_t { <br />
-&#160;&#160;<a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a962dbfbb0d3e0a94876334eb1eb3ec7b">suback_reason_code::granted_qos_0</a> = 0x00
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6adeac27349e0f25f9d8bd11baaa725519">suback_reason_code::granted_qos_1</a> = 0x01
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a43bf56a606cf216715524b1f8cafcba8">suback_reason_code::granted_qos_2</a> = 0x02
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6af600018ed73dbdd02272ae2397394429">suback_reason_code::unspecified_error</a> = 0x80
-, <br />
-&#160;&#160;<a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a9a520b1f5df6f2b995bd2272184cdfa7">suback_reason_code::implementation_specific_error</a> = 0x83
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a89a15d5a10ea1b37e1719c52c3507c0a">suback_reason_code::not_authorized</a> = 0x87
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a4ad1d90f650e6afaedb4e935b67d33d9">suback_reason_code::topic_filter_invalid</a> = 0x8f
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6ad15ceac1cec853ec096e09728823691e">suback_reason_code::packet_identifier_in_use</a> = 0x91
-, <br />
-&#160;&#160;<a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a038d1f877daecfdfafd2fc3992f0e8bc">suback_reason_code::quota_exceeded</a> = 0x97
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a608608c7ce5d694b9d50e94c007d5123">suback_reason_code::shared_subscriptions_not_supported</a> = 0x9e
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a1b6c87b6571eaaf58e2c6a5ebd5056ef">suback_reason_code::subscription_identifiers_not_supported</a> = 0xa1
-, <a class="el" href="#ggac1d8426ede60ae4e6c723a7687542fc6a3568f64000f9940631ebc59cf38d2184">suback_reason_code::wildcard_subscriptions_not_supported</a> = 0xa2
-<br />
- }</td></tr>
-<tr class="memdesc:gac1d8426ede60ae4e6c723a7687542fc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">suback reason code It is reported as SUBSCRIBE response via SUBNACK packet  <a href="#gac1d8426ede60ae4e6c723a7687542fc6">More...</a><br /></td></tr>
-<tr class="separator:gac1d8426ede60ae4e6c723a7687542fc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga87ead9aec9e50f1900cc09dc5a7f94f7" id="r_ga87ead9aec9e50f1900cc09dc5a7f94f7"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="#gac1d8426ede60ae4e6c723a7687542fc6">suback_reason_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga87ead9aec9e50f1900cc09dc5a7f94f7">async_mqtt::qos_to_suback_reason_code</a> (<a class="el" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> q)</td></tr>
+<tr class="memitem:ga87ead9aec9e50f1900cc09dc5a7f94f7" id="r_ga87ead9aec9e50f1900cc09dc5a7f94f7"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__suback__reason__code.html#gac1d8426ede60ae4e6c723a7687542fc6">suback_reason_code</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga87ead9aec9e50f1900cc09dc5a7f94f7">async_mqtt::qos_to_suback_reason_code</a> (<a class="el" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a> q)</td></tr>
 <tr class="memdesc:ga87ead9aec9e50f1900cc09dc5a7f94f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">create suback_reason_code corresponding to the QoS  <br /></td></tr>
 <tr class="separator:ga87ead9aec9e50f1900cc09dc5a7f94f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="gac1d8426ede60ae4e6c723a7687542fc6" name="gac1d8426ede60ae4e6c723a7687542fc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac1d8426ede60ae4e6c723a7687542fc6">&#9670;&#160;</a></span>suback_reason_code</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#gac1d8426ede60ae4e6c723a7687542fc6">async_mqtt::suback_reason_code</a> : std::uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>suback reason code It is reported as SUBSCRIBE response via SUBNACK packet </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a962dbfbb0d3e0a94876334eb1eb3ec7b" name="ggac1d8426ede60ae4e6c723a7687542fc6a962dbfbb0d3e0a94876334eb1eb3ec7b"></a>granted_qos_0&#160;</td><td class="fielddoc"><p>Granted QoS 0. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6adeac27349e0f25f9d8bd11baaa725519" name="ggac1d8426ede60ae4e6c723a7687542fc6adeac27349e0f25f9d8bd11baaa725519"></a>granted_qos_1&#160;</td><td class="fielddoc"><p>Granted QoS 1. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a43bf56a606cf216715524b1f8cafcba8" name="ggac1d8426ede60ae4e6c723a7687542fc6a43bf56a606cf216715524b1f8cafcba8"></a>granted_qos_2&#160;</td><td class="fielddoc"><p>Granted QoS 2. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6af600018ed73dbdd02272ae2397394429" name="ggac1d8426ede60ae4e6c723a7687542fc6af600018ed73dbdd02272ae2397394429"></a>unspecified_error&#160;</td><td class="fielddoc"><p>Unspecified error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a9a520b1f5df6f2b995bd2272184cdfa7" name="ggac1d8426ede60ae4e6c723a7687542fc6a9a520b1f5df6f2b995bd2272184cdfa7"></a>implementation_specific_error&#160;</td><td class="fielddoc"><p>Implementation specific error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a89a15d5a10ea1b37e1719c52c3507c0a" name="ggac1d8426ede60ae4e6c723a7687542fc6a89a15d5a10ea1b37e1719c52c3507c0a"></a>not_authorized&#160;</td><td class="fielddoc"><p>Not authorized. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a4ad1d90f650e6afaedb4e935b67d33d9" name="ggac1d8426ede60ae4e6c723a7687542fc6a4ad1d90f650e6afaedb4e935b67d33d9"></a>topic_filter_invalid&#160;</td><td class="fielddoc"><p>Topic Filter invalid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6ad15ceac1cec853ec096e09728823691e" name="ggac1d8426ede60ae4e6c723a7687542fc6ad15ceac1cec853ec096e09728823691e"></a>packet_identifier_in_use&#160;</td><td class="fielddoc"><p>Packet Identifier in use. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a038d1f877daecfdfafd2fc3992f0e8bc" name="ggac1d8426ede60ae4e6c723a7687542fc6a038d1f877daecfdfafd2fc3992f0e8bc"></a>quota_exceeded&#160;</td><td class="fielddoc"><p>Quota exceeded. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a608608c7ce5d694b9d50e94c007d5123" name="ggac1d8426ede60ae4e6c723a7687542fc6a608608c7ce5d694b9d50e94c007d5123"></a>shared_subscriptions_not_supported&#160;</td><td class="fielddoc"><p>Shared Subscriptions not supported. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a1b6c87b6571eaaf58e2c6a5ebd5056ef" name="ggac1d8426ede60ae4e6c723a7687542fc6a1b6c87b6571eaaf58e2c6a5ebd5056ef"></a>subscription_identifiers_not_supported&#160;</td><td class="fielddoc"><p>Subscription Identifiers not supported. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggac1d8426ede60ae4e6c723a7687542fc6a3568f64000f9940631ebc59cf38d2184" name="ggac1d8426ede60ae4e6c723a7687542fc6a3568f64000f9940631ebc59cf38d2184"></a>wildcard_subscriptions_not_supported&#160;</td><td class="fielddoc"><p>Wildcard Subscriptions not supported. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ga87ead9aec9e50f1900cc09dc5a7f94f7" name="ga87ead9aec9e50f1900cc09dc5a7f94f7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga87ead9aec9e50f1900cc09dc5a7f94f7">&#9670;&#160;</a></span>qos_to_suback_reason_code()</h2>
@@ -219,7 +148,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#gac1d8426ede60ae4e6c723a7687542fc6">suback_reason_code</a> async_mqtt::qos_to_suback_reason_code </td>
+          <td class="memname"><a class="el" href="group__suback__reason__code.html#gac1d8426ede60ae4e6c723a7687542fc6">suback_reason_code</a> async_mqtt::qos_to_suback_reason_code </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group__qos.html#ga38e773082414bb272ab22275c56eb4df">qos</a></td>          <td class="paramname"><span class="paramname"><em>q</em></span></td><td>)</td>
           <td></td>

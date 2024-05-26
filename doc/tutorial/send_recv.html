@@ -150,7 +150,7 @@ pre.rouge .ss {
 <h2 id="_async_recv_funtion"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2">async_recv()</a> funtion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You need to call the <a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2">async_recv()</a> function when you want to receive MQTT packets. It is similar to Boost.Asio&#8217;s <code>read()</code> function, allowing you to control packet receiving timing. <code>async_mqtt</code> does not use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using <code>async_recv()</code>.</p>
+<p>You need to call the <a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ab51bf538fefaad7792f90813d33fc2">async_recv()</a> function when you want to receive MQTT packets. It is similar to Boost.Asio&#8217;s <code>async_read()</code> function, allowing you to control packet receiving timing. <code>async_mqtt</code> does not use handler registering style APIs such as <code>set_publish_handler()</code>. If you need handler registering APIs, you can create them using <code>async_recv()</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>async_recv()</code> function is more flexible than handler registering APIs. Additionally, it works well with the <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a> model.</p>
@@ -161,10 +161,10 @@ pre.rouge .ss {
 <div class="sect2">
 <h3 id="_packet_variant"><a href="../api/group__packet__variant.html">packet_variant</a></h3>
 <div class="paragraph">
-<p>async_recv()'s CompletionToken parameter is <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.</p>
+<p>async_recv()'s CompletionToken parameters are error_code and  <a href="../api/classasync__mqtt_1_1basic__packet__variant.html">packet_variant</a>.</p>
 </div>
 <div class="paragraph">
-<p>It is a variant type of all MQTT packets and errors.</p>
+<p><code>packet_variant</code> is a variant type of all MQTT packets and <code>std::monostate</code>. <code>std::monostate</code> is only used if error_conde is not <code>success</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -188,31 +188,31 @@ pre.rouge .ss {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="p">...;</span> <span class="c1">// from CompletionToken</span>
-<span class="k">if</span> <span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// pv is packet_variant</span>
-     <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
-         <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
-              <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                      <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv "</span>
-                      <span class="o">&lt;&lt;</span> <span class="s">"sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
-                      <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-              <span class="p">},</span>
-              <span class="c1">// other packets handling code here</span>
-              <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
-         <span class="p">}</span>
-    <span class="p">);</span>
-<span class="p">}</span>
-<span class="k">else</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// Let's say the completion token arguments are `error_code ec, packet_variant pv`.</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
          <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
-         <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
+         <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
          <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// `pv` can be converted to boolean. If `pv` contains a valid packet, it converts to `true`;</span>
+    <span class="c1">// otherwise (`std::monostate`) , it converts to `false`.</span>
+    <span class="n">BOOST_ASSERT</span><span class="p">(</span><span class="n">pv</span><span class="p">);</span> <span class="c1">// if ec is not an error, then pv is always converted to true</span>
+    <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+             <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+                 <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                     <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv "</span>
+                     <span class="o">&lt;&lt;</span> <span class="s">"sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                     <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+             <span class="p">},</span>
+             <span class="c1">// other packets handling code here</span>
+             <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">);</span>
 <span class="p">}</span></code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p><code>pv</code> can be evaluated as a boolean. If <code>pv</code> contains a valid packet, it converts to <code>true</code>; otherwise, it converts to <code>false</code>. Typically, when the underlying socket is disconnected, <code>pv</code> contains an error and evaluates to <code>false</code>.</p>
 </div>
 </div>
 <div class="sect2">

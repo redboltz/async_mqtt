@@ -532,7 +532,7 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS1 and wait response (puback receive)</span>
-<span class="k">auto</span> <span class="n">pid_pub1_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
+<span class="k">auto</span> <span class="n">pid_pub1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
 <span class="k">auto</span> <span class="n">pubres1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="o">*</span><span class="n">pid_pub1_opt</span><span class="p">,</span>
@@ -545,7 +545,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id()</a>, which is the asynchronous version. You can call it from anywhere you want. If all packet IDs are acquired, the <code>CompletionToken</code> parameter will be <code>nullopt</code>. For convenience, a synchronous version, <a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id()</a>, also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.</p>
+<p>To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses <a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id()</a>, which is the asynchronous version. You can call it from anywhere you want. The parameters of <code>CompletionToken</code> are <code>error_code</code> and <code>packet_id_type</code>. If all packet IDs have already been acquired, the <code>error_code</code> parameter will be <code>mqtt_error::packet_identifier_fully_used</code>. For convenience, a synchronous version, <a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id()</a>, also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.</p>
 </div>
 <div class="paragraph">
 <p>After <code>async_publish()</code> completes, the <code>puback_opt</code> of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> is set. You can then retrieve the PUBACK packet.</p>
@@ -569,7 +569,7 @@ pre.rouge .ss {
 </div>
 </div>
 <div class="paragraph">
-<p>To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, <a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until()</a> is used. The <code>CompletionToken</code> parameter is a packet identifier that is not optional. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the <code>CompletionToken</code>. This helps keep the user code simple.</p>
+<p>To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, <a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until()</a> is used. The <code>CompletionToken</code> parameter is an error_code and a packet identifier. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the <code>CompletionToken</code>. This helps keep the user code simple.</p>
 </div>
 <div class="paragraph">
 <p>After <code>async_publish()</code> completes, the <code>pubrec_opt</code> and <code>pubcomp_opt</code> of <a href="../api/structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a> are set. You can then retrieve the PUBREC and PUBCOMP packets.</p>

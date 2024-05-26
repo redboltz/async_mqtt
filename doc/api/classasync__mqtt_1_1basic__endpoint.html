@@ -192,7 +192,7 @@ Public Member Functions</h2></td></tr>
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:a70f40da2602fb6b22049aafa815782e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc5ad61f8f5490ef59836a3dcbdeccf0" id="r_adc5ad61f8f5490ef59836a3dcbdeccf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc5ad61f8f5490ef59836a3dcbdeccf0">set_pingresp_recv_timeout_ms</a> (std::size_t ms)</td></tr>
-<tr class="memdesc:adc5ad61f8f5490ef59836a3dcbdeccf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
+<tr class="memdesc:adc5ad61f8f5490ef59836a3dcbdeccf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:adc5ad61f8f5490ef59836a3dcbdeccf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2259505ae9d0272321f9cabd7b6f45e1" id="r_a2259505ae9d0272321f9cabd7b6f45e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2259505ae9d0272321f9cabd7b6f45e1">set_bulk_write</a> (bool val)</td></tr>
@@ -1179,6 +1179,7 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">packet</td><td>packet to regulate </td></tr>
+    <tr><td class="paramname">ec</td><td>error_code for repoting error </td></tr>
   </table>
   </dd>
 </dl>
@@ -1502,7 +1503,7 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 </table>
 </div><div class="memdoc">
 
-<p>Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__v5.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
+<p>Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
  This function should be called before send() call. </p>
 <dl class="section note"><dt>Note</dt><dd>By default timeout is not set. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>

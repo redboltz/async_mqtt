@@ -98,8 +98,8 @@ $(function(){initNavTree('group__auth__v5.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#groups">Topics</a> &#124;
+<a href="#nested-classes">Classes</a>  </div>
   <div class="headertitle"><div class="title">AUTH packet (v5.0)<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v5.html">protocol version 5.0</a></div></div></div>
 </div><!--header-->
 <div class="contents">
@@ -108,60 +108,24 @@ Collaboration diagram for AUTH packet (v5.0):</div>
 <div class="dyncontent">
 <div class="center"><img src="group__auth__v5.png" border="0" usemap="#agroup____auth____v5" alt=""/></div>
 <map name="agroup____auth____v5" id="agroup____auth____v5">
+<area shape="rect" href="group__auth__reason__code.html" title=" " alt="" coords="399,5,538,33"/>
 <area shape="rect" title=" " alt="" coords="204,5,351,33"/>
 <area shape="rect" href="group__packet__v5.html" title=" " alt="" coords="5,5,156,33"/>
 </map>
 </div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="groups" name="groups"></a>
+Topics</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__auth__reason__code.html">auth_reason_code</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classasync__mqtt_1_1v5_1_1auth__packet.html">async_mqtt::v5::auth_packet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">MQTT AUTH packet (v35)  <a href="classasync__mqtt_1_1v5_1_1auth__packet.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:ga90f5a0229709aaa4257d01db383f9763" id="r_ga90f5a0229709aaa4257d01db383f9763"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">async_mqtt::auth_reason_code</a> : std::uint8_t { <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076">auth_reason_code::success</a> = 0x00
-, <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e">auth_reason_code::continue_authentication</a> = 0x18
-, <a class="el" href="#gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2">auth_reason_code::re_authenticate</a> = 0x19
- }</td></tr>
-<tr class="memdesc:ga90f5a0229709aaa4257d01db383f9763"><td class="mdescLeft">&#160;</td><td class="mdescRight">auth reason code It is reported via AUTH packet  <a href="#ga90f5a0229709aaa4257d01db383f9763">More...</a><br /></td></tr>
-<tr class="separator:ga90f5a0229709aaa4257d01db383f9763"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ga90f5a0229709aaa4257d01db383f9763" name="ga90f5a0229709aaa4257d01db383f9763"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga90f5a0229709aaa4257d01db383f9763">&#9670;&#160;</a></span>auth_reason_code</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#ga90f5a0229709aaa4257d01db383f9763">async_mqtt::auth_reason_code</a> : std::uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>auth reason code It is reported via AUTH packet </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076" name="gga90f5a0229709aaa4257d01db383f9763a260ca9dd8a4577fc00b7bd5810298076"></a>success&#160;</td><td class="fielddoc"><p>Success. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e" name="gga90f5a0229709aaa4257d01db383f9763a62e30971691a27574a5185c86814662e"></a>continue_authentication&#160;</td><td class="fielddoc"><p>Continue authentication. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2" name="gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2"></a>re_authenticate&#160;</td><td class="fielddoc"><p>Re-authenticate. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

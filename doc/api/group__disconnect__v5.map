@@ -1,4 +1,5 @@
 <map id="DISCONNECT packet (v5.0)" name="DISCONNECT packet (v5.0)">
+<area shape="rect" id="Node000003" href="$group__disconnect__reason__code.html" title=" " alt="" coords="410,14,590,42"/>
 <area shape="rect" id="Node000001" title=" " alt="" coords="204,5,362,50"/>
 <area shape="rect" id="Node000002" href="$group__packet__v5.html" title=" " alt="" coords="5,14,156,42"/>
 </map>

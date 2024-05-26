@@ -181,21 +181,17 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
         <span class="p">}</span>
         <span class="c1">// forwarding callbacks</span>
         <span class="kt">void</span> <span class="nf">operator</span><span class="p">()()</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="p">{});</span>
+            <span class="n">proc</span><span class="p">({},</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
         <span class="p">}</span>
-        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{});</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
         <span class="p">}</span>
-        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="n">proc</span><span class="p">({},</span> <span class="n">se</span><span class="p">,</span> <span class="p">{});</span>
-        <span class="p">}</span>
-        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="n">proc</span><span class="p">({},</span> <span class="p">{},</span> <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">pv</span><span class="p">));</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">pv</span><span class="p">));</span>
         <span class="p">}</span>
     <span class="k">private</span><span class="o">:</span>
         <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
             <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
         <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
@@ -232,8 +228,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 
 <span class="k">private</span><span class="o">:</span>
     <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-        <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-        <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
         <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
     <span class="p">)</span> <span class="p">{</span>
         <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
@@ -281,8 +276,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
             <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
         <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
@@ -301,8 +295,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
-            <span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
-            <span class="n">am</span><span class="o">::</span><span class="n">system_error</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">se</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
             <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
         <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
@@ -343,8 +336,8 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">boost</span><span class="o">::</span><span class="n">system</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{});</span>
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
         <span class="p">}</span></code></pre>
 </div>
 </div>
@@ -410,14 +403,14 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">se</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The parameter of the completion token is <code>system_error const&amp; se</code>.
+<p>The parameter of the completion token is <code>error_code const&amp; ec</code>.
 See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.</p>
 </div>
 </div>
@@ -439,7 +432,15 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="p">{</span>
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                        <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">BOOST_ASSERT</span><span class="p">(</span><span class="n">pv</span><span class="p">);</span> <span class="c1">// if ec is not error, then pv is always valid.</span>
                     <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
                         <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
                             <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
@@ -451,13 +452,6 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
                             <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
                         <span class="p">}</span>
                     <span class="p">);</span>
-                <span class="p">}</span>
-                <span class="k">else</span> <span class="p">{</span>
-                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
-                        <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
-                        <span class="o">&lt;&lt;</span> <span class="n">pv</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">system_error</span><span class="o">&gt;</span><span class="p">().</span><span class="n">what</span><span class="p">()</span>
-                        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-                    <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span></code></pre>
 </div>
 </div>
