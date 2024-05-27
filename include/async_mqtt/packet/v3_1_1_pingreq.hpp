@@ -80,6 +80,7 @@ private:
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v311_pingreq;
+    friend struct ::ut_packet::v311_pingreq_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use

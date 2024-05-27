@@ -141,24 +141,29 @@ basic_suback_packet<PacketIdBytes>::basic_suback_packet(buffer buf, error_code& 
         return;
     }
 
-    if (remaining_length_ == 0) {
+    if (buf.empty()) {
         ec = make_error_code(
-            disconnect_reason_code::malformed_packet
+            disconnect_reason_code::protocol_error // no entry
         );
         return;
     }
-
     while (!buf.empty()) {
         // suback_return_code
-        if (buf.empty()) {
+        auto rc = static_cast<suback_return_code>(buf.front());
+        entries_.emplace_back(rc);
+        buf.remove_prefix(1);
+        switch (rc) {
+        case suback_return_code::success_maximum_qos_0:
+        case suback_return_code::success_maximum_qos_1:
+        case suback_return_code::success_maximum_qos_2:
+        case suback_return_code::failure:
+            break;
+        default:
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
             return;
         }
-        auto rc = static_cast<suback_return_code>(buf.front());
-        entries_.emplace_back(rc);
-        buf.remove_prefix(1);
     }
 }
 

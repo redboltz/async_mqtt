@@ -45,9 +45,16 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
     using namespace std::literals;
     topic_length_buf_entries_.reserve(entries_.size());
     for (auto const& e : entries_) {
+        if (e.all_topic().size() > 0xffff) {
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
+            };
+        }
         topic_length_buf_entries_.push_back(
             endian_static_vector(
-                boost::numeric_cast<std::uint16_t>(e.all_topic().size())
+                static_cast<std::uint16_t>(e.all_topic().size())
             )
         );
     }
@@ -64,7 +71,7 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
         if (!validate_property(property_location::unsubscribe, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -74,13 +81,6 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
 
     for (auto const& e : entries_) {
         auto size = e.all_topic().size();
-        if (size > 0xffff) {
-            throw system_error(
-                make_error_code(
-                    disconnect_reason_code::malformed_packet
-                )
-            );
-        }
         remaining_length_ +=
             2 +                     // topic filter length
             size;                   // topic filter
@@ -243,13 +243,12 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(buffer buf, er
         return;
     }
 
-    if (remaining_length_ == 0) {
+    if (buf.empty()) {
         ec = make_error_code(
-            disconnect_reason_code::malformed_packet
+            disconnect_reason_code::protocol_error // no entry
         );
         return;
     }
-
     while (!buf.empty()) {
         // topic_length
         static_vector<char, 2> topic_length_buf;

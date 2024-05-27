@@ -195,7 +195,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
     auto id = static_cast<property::id>(buf.front());
     if (!validate_property(loc, id)) {
         ec = make_error_code(
-            disconnect_reason_code::protocol_error
+            disconnect_reason_code::malformed_packet
         );
         return property_variant{};
      }

@@ -17,17 +17,17 @@ struct v5_puback_pid4;
 struct v5_puback_pid_only;
 struct v5_puback_pid_rc;
 struct v5_puback_prop_len_last;
+struct v5_puback_error;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v5_puback.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-#define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
-
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE(v5_puback) {
     BOOST_TEST(am::is_puback<am::v5::puback_packet>());
@@ -74,11 +74,42 @@ BOOST_AUTO_TEST_CASE(v5_puback) {
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
+        BOOST_TEST(p.type() == am::control_packet_type::puback);
     }
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v5::puback{pid:4660,rc:packet_identifier_in_use,ps:[{id:reason_string,val:some reason}]}"
     );
+
+    auto p2 = am::v5::puback_packet{
+        0x1234, // packet_id
+        am::puback_reason_code::packet_identifier_in_use,
+        props
+    };
+    auto p3 = am::v5::puback_packet{
+        0x1235, // packet_id
+        am::puback_reason_code::packet_identifier_in_use,
+        props
+    };
+    BOOST_CHECK(p == p2);
+    BOOST_CHECK(!(p < p2));
+    BOOST_CHECK(!(p2< p));
+    BOOST_CHECK(p < p3 || p3 < p);
+
+    try {
+        auto p = am::v5::puback_packet{
+            0x1234, // packet_id
+            am::puback_reason_code::packet_identifier_in_use,
+            am::properties{
+                am::property::will_delay_interval{1}
+            }
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(v5_puback_pid4) {
@@ -231,6 +262,106 @@ BOOST_AUTO_TEST_CASE(v5_puback_prop_len_last) {
         boost::lexical_cast<std::string>(p) ==
         "v5::puback{pid:4660,rc:success}"
     );
+}
+
+BOOST_AUTO_TEST_CASE(v5_puback_error) {
+    {
+        am::buffer buf; // empty
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x00"sv}; // invalid type
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x40"sv}; // short
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x40\x01"sv}; // remaining length buf mismatch
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x40\x03"sv}; // invalid remaining length
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID
+        am::buffer buf{"\x40\x02\x12\x34"sv}; // valid
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::errc::success);
+    }
+    {
+        //                CP  RL  PID
+        am::buffer buf{"\x40\x02\x12\x34\x00"sv}; // remaining length mismatch
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     RC
+        am::buffer buf{"\x40\x03\x12\x34\x00"sv}; // valid
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::errc::success);
+    }
+    {
+        //                CP  RL  PID     RC
+        am::buffer buf{"\x40\x03\x12\x34\x84"sv}; // invalid rc
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     RC
+        am::buffer buf{"\x40\x03\x12\x34\x00\x00"sv}; // remaining length mismatch
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     RC  PL
+        am::buffer buf{"\x40\x04\x12\x34\x00\x00"sv}; // valid
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::errc::success);
+    }
+    {
+        //                CP  RL  PID     RC  PL
+        am::buffer buf{"\x40\x05\x12\x34\x00\x00\x00"sv}; // property length mismatch
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     RC  PL
+        am::buffer buf{"\x40\x05\x12\x34\x00\x02\x00"sv}; // property length mismatch
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     RC  PL
+        am::buffer buf{"\x40\x07\x12\x34\x00\xff\xff\xff\x80"sv}; // over property length
+        am::error_code ec;
+        am::v5::puback_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

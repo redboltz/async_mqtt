@@ -126,6 +126,7 @@ connack_packet::connack_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+    ec = error_code{};
 }
 
 inline

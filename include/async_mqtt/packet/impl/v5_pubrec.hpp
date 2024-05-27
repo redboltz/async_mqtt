@@ -191,7 +191,7 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(
         if (!validate_property(property_location::pubrec, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -240,6 +240,7 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf, error_code& 
             );
             return;
         }
+        ec = error_code{};
         return;
     }
 
@@ -259,7 +260,7 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf, error_code& 
         break;
     default:
         ec = make_error_code(
-            disconnect_reason_code::protocol_error
+            disconnect_reason_code::malformed_packet
         );
         return;
     }
@@ -271,6 +272,7 @@ basic_pubrec_packet<PacketIdBytes>::basic_pubrec_packet(buffer buf, error_code& 
             );
             return;
         }
+        ec = error_code{};
         return;
     }
 

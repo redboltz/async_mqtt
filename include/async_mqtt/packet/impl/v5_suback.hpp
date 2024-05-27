@@ -52,7 +52,7 @@ basic_suback_packet<PacketIdBytes>::basic_suback_packet(
         if (!validate_property(property_location::suback, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -201,24 +201,37 @@ basic_suback_packet<PacketIdBytes>::basic_suback_packet(buffer buf, error_code& 
         return;
     }
 
-    if (remaining_length_ == 0) {
+    if (buf.empty()) {
         ec = make_error_code(
-            disconnect_reason_code::malformed_packet
+            disconnect_reason_code::protocol_error // no entry
         );
         return;
     }
-
     while (!buf.empty()) {
         // reason_code
-        if (buf.empty()) {
+        auto rc = static_cast<suback_reason_code>(buf.front());
+        entries_.emplace_back(rc);
+        buf.remove_prefix(1);
+        switch (rc) {
+        case suback_reason_code::granted_qos_0:
+        case suback_reason_code::granted_qos_1:
+        case suback_reason_code::granted_qos_2:
+        case suback_reason_code::unspecified_error:
+        case suback_reason_code::implementation_specific_error:
+        case suback_reason_code::not_authorized:
+        case suback_reason_code::topic_filter_invalid:
+        case suback_reason_code::packet_identifier_in_use:
+        case suback_reason_code::quota_exceeded:
+        case suback_reason_code::shared_subscriptions_not_supported:
+        case suback_reason_code::subscription_identifiers_not_supported:
+        case suback_reason_code::wildcard_subscriptions_not_supported:
+            break;
+        default:
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
             return;
         }
-        auto rc = static_cast<suback_reason_code>(buf.front());
-        entries_.emplace_back(rc);
-        buf.remove_prefix(1);
     }
 }
 

@@ -162,7 +162,7 @@ disconnect_packet::disconnect_packet(
         if (!validate_property(property_location::disconnect, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -202,6 +202,7 @@ disconnect_packet::disconnect_packet(buffer buf, error_code& ec) {
             );
             return;
         }
+        ec = error_code{};
         return;
     }
 
@@ -241,7 +242,7 @@ disconnect_packet::disconnect_packet(buffer buf, error_code& ec) {
         break;
     default:
         ec = make_error_code(
-            disconnect_reason_code::protocol_error
+            disconnect_reason_code::malformed_packet
         );
         return;
     }
@@ -286,6 +287,7 @@ disconnect_packet::disconnect_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+    ec = error_code{};
 }
 
 inline
