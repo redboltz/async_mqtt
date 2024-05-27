@@ -12,5 +12,7 @@ var classasync__mqtt_1_1v5_1_1connect__packet =
     [ "props", "classasync__mqtt_1_1v5_1_1connect__packet.html#a51109f6b366c746a8d7862968568136f", null ],
     [ "size", "classasync__mqtt_1_1v5_1_1connect__packet.html#a2f670df73b1aca8415a92404c759413c", null ],
     [ "user_name", "classasync__mqtt_1_1v5_1_1connect__packet.html#a5683dabcaa472bf3bee0ae5a99690440", null ],
-    [ "operator<<", "classasync__mqtt_1_1v5_1_1connect__packet.html#ace621bafbe046cc352dbc355202408a0", null ]
+    [ "operator<", "classasync__mqtt_1_1v5_1_1connect__packet.html#a11bea57563e26011cfd6a9bb93f615cd", null ],
+    [ "operator<<", "classasync__mqtt_1_1v5_1_1connect__packet.html#ace621bafbe046cc352dbc355202408a0", null ],
+    [ "operator==", "classasync__mqtt_1_1v5_1_1connect__packet.html#a93ac9a83b769462b73be68e3336275d5", null ]
 ];

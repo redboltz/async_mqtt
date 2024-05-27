@@ -185,6 +185,26 @@ private:
 };
 
 /**
+ * @related basic_pubcomp_packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs less than the rhs, otherwise false.
+ */
+template <std::size_t PacketIdBytes>
+bool operator<(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs);
+
+/**
+ * @related basic_pubcomp_packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs equal to the rhs, otherwise false.
+ */
+template <std::size_t PacketIdBytes>
+bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs);
+
+/**
  * @ingroup pubcomp_v5
  * @related basic_pubcomp_packet
  * @brief Type alias of basic_pubcomp_packet (PacketIdBytes=2).

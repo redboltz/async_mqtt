@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_connect.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
@@ -608,6 +609,16 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
         password_ = buf.substr(0, password_length);
         buf.remove_prefix(password_length);
     }
+}
+
+inline
+bool operator==(connect_packet const& lhs, connect_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(connect_packet const& lhs, connect_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 inline

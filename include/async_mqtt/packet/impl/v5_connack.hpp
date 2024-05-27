@@ -11,6 +11,7 @@
 #include <numeric>
 
 #include <async_mqtt/packet/v5_connack.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -243,13 +244,16 @@ connack_packet::connack_packet(buffer buf, error_code& ec) {
     }
 }
 
-/**
- * @related connack_packet
- * @brief stream output operator
- * @param o output stream
- * @param v target
- * @return  output stream
- */
+inline
+bool operator==(connack_packet const& lhs, connack_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(connack_packet const& lhs, connack_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
+}
+
 inline
 std::ostream& operator<<(std::ostream& o, connack_packet const& v) {
     o <<

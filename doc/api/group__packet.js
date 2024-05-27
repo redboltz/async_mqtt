@@ -46,10 +46,6 @@ var group__packet =
     [ "async_mqtt::control_packet_type_to_str", "group__packet.html#ga3a62fe7e9ea30aeb0f7634103696509d", null ],
     [ "async_mqtt::hex_dump", "group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925", null ],
     [ "async_mqtt::make_packet_range", "group__packet.html#ga73b3c0be05e9d700fb02dc5bab135c73", null ],
-    [ "async_mqtt::v3_1_1::operator<", "group__packet.html#ga03e4830acc4f4130597841abf7a3fc12", null ],
-    [ "async_mqtt::v5::operator<", "group__packet.html#ga23b9978de0e97ab830ac3444d53e6135", null ],
     [ "async_mqtt::operator<<", "group__packet.html#ga5d9341938c76e76c4cfe62b8f356953e", null ],
-    [ "async_mqtt::v3_1_1::operator==", "group__packet.html#gaabf11f71a7120801c7382d8aa369eace", null ],
-    [ "async_mqtt::v5::operator==", "group__packet.html#ga3e920d2ca9a66eae643b715f57cfbdeb", null ],
     [ "async_mqtt::to_string", "group__packet.html#gafee13aa0c1d5f6dd67880b852f6c361f", null ]
 ];

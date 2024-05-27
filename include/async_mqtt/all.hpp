@@ -75,7 +75,6 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/util/packet_id_manager.hpp>
-#include <async_mqtt/util/packet_variant_operator.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/static_vector.hpp>

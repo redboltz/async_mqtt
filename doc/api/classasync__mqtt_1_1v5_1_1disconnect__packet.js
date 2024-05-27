@@ -8,5 +8,7 @@ var classasync__mqtt_1_1v5_1_1disconnect__packet =
     [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a7cb2a9e1485ff0cdfcc2abcc09294481", null ],
     [ "props", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a0094fc80ca62d4c3bdfc4563cfb76978", null ],
     [ "size", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a3f23c165387d5273fe4a029a77a7b092", null ],
-    [ "operator<<", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#af325a03bd1419c64dd7cfc8b72b15fa4", null ]
+    [ "operator<", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#a905d82938a86424ed2abbf4d4cea0a45", null ],
+    [ "operator<<", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#af325a03bd1419c64dd7cfc8b72b15fa4", null ],
+    [ "operator==", "classasync__mqtt_1_1v5_1_1disconnect__packet.html#ae071a34ed8e7958ade24752c6fac8e59", null ]
 ];

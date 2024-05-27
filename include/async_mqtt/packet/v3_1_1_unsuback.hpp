@@ -104,6 +104,26 @@ private:
 
 /**
  * @related basic_unsuback_packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs less than the rhs, otherwise false.
+ */
+template <std::size_t PacketIdBytes>
+bool operator<(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_packet<PacketIdBytes> const& rhs);
+
+/**
+ * @related basic_unsuback_packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs equal to the rhs, otherwise false.
+ */
+template <std::size_t PacketIdBytes>
+bool operator==(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_packet<PacketIdBytes> const& rhs);
+
+/**
+ * @related basic_unsuback_packet
  * @brief stream output operator
  * @param o output stream
  * @param v target

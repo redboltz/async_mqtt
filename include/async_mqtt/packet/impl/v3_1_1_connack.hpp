@@ -11,6 +11,7 @@
 #include <numeric>
 
 #include <async_mqtt/packet/v3_1_1_connack.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -125,6 +126,16 @@ connack_packet::connack_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+}
+
+inline
+bool operator==(connack_packet const& lhs, connack_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(connack_packet const& lhs, connack_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 inline

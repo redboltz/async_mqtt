@@ -145,6 +145,12 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
+<tr class="memitem:a87ec1dc658eb36e44cd51fa6d5e753ce" id="r_a87ec1dc658eb36e44cd51fa6d5e753ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87ec1dc658eb36e44cd51fa6d5e753ce">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:a87ec1dc658eb36e44cd51fa6d5e753ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">less than operator  <br /></td></tr>
+<tr class="separator:a87ec1dc658eb36e44cd51fa6d5e753ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf7b30b5d4a302dfea3aada937202431" id="r_aaf7b30b5d4a302dfea3aada937202431"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf7b30b5d4a302dfea3aada937202431">operator==</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:aaf7b30b5d4a302dfea3aada937202431"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <br /></td></tr>
+<tr class="separator:aaf7b30b5d4a302dfea3aada937202431"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae25c99c7067f346b64f652b880959f12" id="r_ae25c99c7067f346b64f652b880959f12"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae25c99c7067f346b64f652b880959f12">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;v)</td></tr>
 <tr class="memdesc:ae25c99c7067f346b64f652b880959f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
 <tr class="separator:ae25c99c7067f346b64f652b880959f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -356,6 +362,45 @@ Thread Safety</h4>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a87ec1dc658eb36e44cd51fa6d5e753ce" name="a87ec1dc658eb36e44cd51fa6d5e753ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ec1dc658eb36e44cd51fa6d5e753ce">&#9670;&#160;</a></span>operator&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>less than operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+
+</div>
+</div>
 <a id="ae25c99c7067f346b64f652b880959f12" name="ae25c99c7067f346b64f652b880959f12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae25c99c7067f346b64f652b880959f12">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
 
@@ -392,6 +437,45 @@ Thread Safety</h4>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="aaf7b30b5d4a302dfea3aada937202431" name="aaf7b30b5d4a302dfea3aada937202431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf7b30b5d4a302dfea3aada937202431">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html">connack_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>equal operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
 
 </div>
 </div>

@@ -14,7 +14,9 @@ var group__publish__v3__1__1__detail =
       [ "size", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#ac86167ea3b7a64434feb0c50dabb3130", null ],
       [ "topic", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#ad6a9207d4560aa73023351bffbf93b0f", null ],
       [ "topic_as_buffer", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a5fd261ae1d9caa0f154e7235b284adb2", null ],
+      [ "operator<", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a9f3f29c29c6d7cb107aefd73a70b4a37", null ],
       [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#aea417c58c69bf5378f7ab14c5446e0c0", null ],
+      [ "operator==", "classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html#a1c62dc2e5b0ff1c48f2c720e4fffe859", null ],
       [ "publish_packet", "group__publish__v3__1__1.html#ga9db7a5336b9296dd1f7413b5c2f5290a", null ]
     ] ]
 ];

@@ -14,66 +14,6 @@
 
 namespace async_mqtt {
 
-namespace v3_1_1 {
-
-/**
- * @ingroup packet
- * @brief equal operator
- * @param lhs compare target
- * @param rhs compare target
- * @return true if the lhs packet equal to the rhs packet, otherwise false.
- */
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator==(Lhs const& lhs, Rhs const& rhs);
-
-} // namespace v3_1_1
-
-namespace v5 {
-
-/**
- * @ingroup packet
- * @brief equal operator
- * @param lhs compare target
- * @param rhs compare target
- * @return true if the lhs packet equal to the rhs packet, otherwise false.
- */
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator==(Lhs const& lhs, Rhs const& rhs);
-
-} // namespace v5
-
-namespace v3_1_1 {
-
-/**
- * @ingroup packet
- * @brief less than operator
- * @param lhs compare target
- * @param rhs compare target
- * @return true if the lhs packet less than the rhs packet, otherwise false.
- */
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator<(Lhs const& lhs, Rhs const& rhs);
-
-} // namespace v3_1_1
-
-namespace v5 {
-
-/**
- * @ingroup packet
- * @brief less than operator
- * @param lhs compare target
- * @param rhs compare target
- * @return true if the lhs packet less than the rhs packet, otherwise false.
- */
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator<(Lhs const& lhs, Rhs const& rhs);
-
-} // namespace v5
-
 template <typename Packet>
 struct hex_dump_t {
     hex_dump_t(Packet const& p):p{p} {}
@@ -83,7 +23,6 @@ struct hex_dump_t {
 
 template <typename Packet>
 std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
-
 
 /**
  * @ingroup packet

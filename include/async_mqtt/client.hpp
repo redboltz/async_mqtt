@@ -185,6 +185,13 @@ public:
      *        - Signature:  void(@ref error_reporting "error_code", std::optional<connack_packet>)
      *           - v3_1_1::connack_packet
      *           - v5::connack_packet
+     *           - error_code
+     *              - Underlying error
+     *                 - TCP, TLS, Websocket related errors
+     *              - mqtt_error, connect_reason_code, disconnect_reason_code
+     *                 - send packet related errors
+     *              - connect_return_code (v3.1.1), connect_reason_code (v5)
+     *                 - CONNACK packet response
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -203,6 +210,18 @@ public:
      *        - Signature: void(@ref error_reporting "error_code", std::optional<suback_packet>)
      *           - @ref v3_1_1::basic_suback_packet "v3_1_1::suback_packet"
      *           - @ref v5::basic_suback_packet "v5::suback_packet"
+     *           - error_code
+     *              - Underlying error
+     *                 - TCP, TLS, Websocket related errors
+     *              - mqtt_error, disconnect_reason_code
+     *                 - send packet related errors
+     *                 - if subscribe has multiple entries, and not all of them has error,
+     *                   mqtt_error::partial_error_detected is returned. It is not an error.
+     *                 - if subscribe has multiple entries, and all of them has error,
+     *                   mqtt_error::all_error_detected is returned. It is an error.
+     *              - suback_return_code (v3.1.1), suback_reason_code (v5)
+     *                 - if subscribe has single entry, suback_return_code (v3.1.1)  or suback_reason_code (v5) is set.
+     *                 - SUBACK packet response
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -221,6 +240,18 @@ public:
      *        - Signature: void(@ref error_reporting "error_code", std::optional<unsuback_packet>)
      *           - @ref v3_1_1::basic_unsuback_packet "v3_1_1::unsuback_packet"
      *           - @ref v5::basic_unsuback_packet "v5::unsuback_packet"
+     *           - error_code
+     *              - Underlying error
+     *                 - TCP, TLS, Websocket related errors
+     *              - mqtt_error, disconnect_reason_code
+     *                 - send packet related errors
+     *                 - if unsubscribe has multiple entries, and not all of them has error,
+     *                   mqtt_error::partial_error_detected is returned. It is not an error.
+     *                 - if unsubscribe has multiple entries, and all of them has error,
+     *                   mqtt_error::all_error_detected is returned. It is an error.
+     *              - unsuback_reason_code (v5)
+     *                 - if subscribe has single entry, suback_return_code (v3.1.1)  or suback_reason_code (v5) is set.
+     *                 - UNSUBACK packet response
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -241,6 +272,17 @@ public:
      *        - When sending QoS0 packet, all members of pubres_t are std::nullopt.
      *        - When sending QoS1 packet, only pubres_t::puback_opt is set.
      *        - When sending QoS2 packet, only pubres_t::pubrec_opt and pubres_t::pubcomp are set.
+     *        - error_code
+     *           - Underlying error
+     *              - TCP, TLS, Websocket related errors
+     *           - mqtt_error, disconnect_reason_code
+     *              - send packet related errors
+     *           - puback_reason_code (v5) QoS1
+     *              - PUBACK packet response
+     *           - pubrec_reason_code (v5) QoS2
+     *              - PUBREC packet response if failed
+     *           - pubcomp_reason_code (v5) QoS2
+     *              - PUBCOMP packet response
      * @return deduced by token
      */
     template <typename... Args>

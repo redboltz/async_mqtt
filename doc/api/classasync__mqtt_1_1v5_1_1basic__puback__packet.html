@@ -162,6 +162,14 @@ Related Symbols</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>puback_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt;2&gt;</td></tr>
 <tr class="memdesc:gad1ac458a5a1912a4c6bdfaedd407b8f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html" title="MQTT PUBACK packet (v5)">basic_puback_packet</a> (PacketIdBytes=2). <br /></td></tr>
 <tr class="separator:gad1ac458a5a1912a4c6bdfaedd407b8f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a143baf5b1b8562eb09aef69f6309c490" id="r_a143baf5b1b8562eb09aef69f6309c490"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
+<tr class="memitem:a143baf5b1b8562eb09aef69f6309c490"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a143baf5b1b8562eb09aef69f6309c490">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
+<tr class="memdesc:a143baf5b1b8562eb09aef69f6309c490"><td class="mdescLeft">&#160;</td><td class="mdescRight">less than operator  <br /></td></tr>
+<tr class="separator:a143baf5b1b8562eb09aef69f6309c490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adca1e01d0a7a24be94756a1b74fbcdf6" id="r_adca1e01d0a7a24be94756a1b74fbcdf6"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
+<tr class="memitem:adca1e01d0a7a24be94756a1b74fbcdf6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adca1e01d0a7a24be94756a1b74fbcdf6">operator==</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
+<tr class="memdesc:adca1e01d0a7a24be94756a1b74fbcdf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <br /></td></tr>
+<tr class="separator:adca1e01d0a7a24be94756a1b74fbcdf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
@@ -478,6 +486,47 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a143baf5b1b8562eb09aef69f6309c490" name="a143baf5b1b8562eb09aef69f6309c490"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a143baf5b1b8562eb09aef69f6309c490">&#9670;&#160;</a></span>operator&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t PacketIdBytes&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>less than operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+
+</div>
+</div>
 <a id="a9c9b9bd5ec4809e777a67dcc787867a7" name="a9c9b9bd5ec4809e777a67dcc787867a7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9c9b9bd5ec4809e777a67dcc787867a7">&#9670;&#160;</a></span>operator&lt;&lt;</h2>
 
@@ -516,6 +565,47 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="adca1e01d0a7a24be94756a1b74fbcdf6" name="adca1e01d0a7a24be94756a1b74fbcdf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adca1e01d0a7a24be94756a1b74fbcdf6">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t PacketIdBytes&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v5_1_1basic__puback__packet.html">basic_puback_packet</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>equal operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
 
 </div>
 </div>

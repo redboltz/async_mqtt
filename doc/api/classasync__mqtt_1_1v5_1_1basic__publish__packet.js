@@ -20,6 +20,8 @@ var classasync__mqtt_1_1v5_1_1basic__publish__packet =
     [ "topic", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#ae0faf57b5cb3a694e36435e294ad5ed5", null ],
     [ "topic_as_buffer", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a0a8fcebfafefb475f645c83c0276919a", null ],
     [ "update_message_expiry_interval", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#adc382cefdc9478e7cbddb0368bc8cd83", null ],
+    [ "operator<", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a9f3f29c29c6d7cb107aefd73a70b4a37", null ],
     [ "operator<<", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#aea417c58c69bf5378f7ab14c5446e0c0", null ],
+    [ "operator==", "classasync__mqtt_1_1v5_1_1basic__publish__packet.html#a1c62dc2e5b0ff1c48f2c720e4fffe859", null ],
     [ "publish_packet", "group__publish__v5.html#ga9db7a5336b9296dd1f7413b5c2f5290a", null ]
 ];

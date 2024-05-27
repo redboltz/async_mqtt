@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_pingreq.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -88,6 +89,16 @@ pingreq_packet::pingreq_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+}
+
+inline
+bool operator==(pingreq_packet const& lhs, pingreq_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(pingreq_packet const& lhs, pingreq_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 inline

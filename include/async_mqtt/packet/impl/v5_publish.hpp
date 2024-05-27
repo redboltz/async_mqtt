@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_publish.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
@@ -545,6 +546,19 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf, error_code
         payloads_.emplace_back(force_move(buf));
     }
 }
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator==(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_packet<PacketIdBytes> const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_packet<PacketIdBytes> const& rhs) {
+    return detail::less_than(lhs, rhs);
+}
+
 template <std::size_t PacketIdBytes>
 inline
 std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v) {

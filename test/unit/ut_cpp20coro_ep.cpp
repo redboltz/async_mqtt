@@ -12,11 +12,10 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/util/packet_variant_operator.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 
-BOOST_AUTO_TEST_SUITE(ut_broker)
+BOOST_AUTO_TEST_SUITE(ut_cpp20coro_ep)
 
 namespace am = async_mqtt;
 namespace as = boost::asio;

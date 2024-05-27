@@ -35,71 +35,30 @@ bool lexicographical_compare(
     return (first1 == last1) && (first2 != last2);
 }
 
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+less_than(Lhs const& lhs, Rhs const& rhs) {
+    auto lcbs = lhs.const_buffer_sequence();
+    auto [lb, le] = make_packet_range(lcbs);
+    auto rcbs = rhs.const_buffer_sequence();
+    auto [rb, re] = make_packet_range(rcbs);
+    return async_mqtt::detail::lexicographical_compare(
+        lb, le, rb, re
+    );
+}
+
+template <typename Lhs, typename Rhs>
+std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
+equal(Lhs const& lhs, Rhs const& rhs) {
+    auto lcbs = lhs.const_buffer_sequence();
+    auto [lb, le] = make_packet_range(lcbs);
+    auto rcbs = rhs.const_buffer_sequence();
+    auto [rb, re] = make_packet_range(rcbs);
+    if (std::distance(lb, le) != std::distance(rb, re)) return false;
+    return std::equal(lb, le, rb);
+}
+
 } // namespace detail
-
-namespace v3_1_1 {
-
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator==(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    if (std::distance(lb, le) != std::distance(rb, re)) return false;
-    return std::equal(lb, le, rb);
-}
-
-} // namespace v3_1_1
-
-namespace v5 {
-
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator==(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    if (std::distance(lb, le) != std::distance(rb, re)) return false;
-    return std::equal(lb, le, rb);
-}
-
-} // namespace v5
-
-namespace v3_1_1 {
-
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator<(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    return
-        detail::lexicographical_compare(
-            lb, le, rb, re
-        );
-}
-
-} // namespace v3_1_1
-
-namespace v5 {
-
-template <typename Lhs, typename Rhs>
-std::enable_if_t<is_packet<Lhs>() && is_packet<Rhs>(), bool>
-operator<(Lhs const& lhs, Rhs const& rhs) {
-    auto lcbs = lhs.const_buffer_sequence();
-    auto [lb, le] = make_packet_range(lcbs);
-    auto rcbs = rhs.const_buffer_sequence();
-    auto [rb, re] = make_packet_range(rcbs);
-    return
-        detail::lexicographical_compare(
-            lb, le, rb, re
-        );
-}
-
-} // namespace v5
 
 template <typename Packet>
 inline std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v) {
