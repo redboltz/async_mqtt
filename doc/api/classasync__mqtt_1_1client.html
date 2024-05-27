@@ -579,7 +579,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</li>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>)</li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
 </ul>
 </li>
@@ -627,7 +627,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>)</li>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>)</li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported</li>
 <li>When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> are std::nullopt.</li>
 <li>When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a">pubres_t::puback_opt</a> is set.</li>
@@ -669,7 +669,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">token</td><td>the params are<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
 <li>publish_packet<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
@@ -813,7 +813,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;connack_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;connack_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connack__packet.html" title="MQTT CONNACK packet (v3.1.1)">v3_1_1::connack_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
 </ul>
@@ -865,7 +865,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html">v3_1_1::suback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html">v5::suback_packet</a></li>
 </ul>
@@ -917,7 +917,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html">v3_1_1::unsuback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html">v5::unsuback_packet</a></li>
 </ul>

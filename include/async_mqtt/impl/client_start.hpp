@@ -80,11 +80,11 @@ start_op {
             auto pv = it->pv;
             idx.erase(it);
             if (auto *p = pv->template get_if<connack_packet>()) {
-                self.complete(error_code{}, *p);
+                self.complete(make_error_code(p->code()), *p);
             }
             else {
                 self.complete(
-                    errc::make_error_code(sys::errc::protocol_error),
+                    make_error_code(disconnect_reason_code::protocol_error),
                     std::nullopt
                 );
             }

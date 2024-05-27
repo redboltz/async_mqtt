@@ -182,7 +182,7 @@ public:
      *        - v5::connect_packet
      *  - the last argument
      *     - CompletionToken
-     *        - Signature:  void(@link error_code @endlink, std::optional<connack_packet>)
+     *        - Signature:  void(@ref error_reporting "error_code", std::optional<connack_packet>)
      *           - v3_1_1::connack_packet
      *           - v5::connack_packet
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
@@ -200,7 +200,7 @@ public:
      *        - @ref v5::basic_subscribe_packet "v5::subscribe_packet"
      *  - the last argument
      *     - CompletionToken
-     *        - Signature: void(@link error_code @endlink, std::optional<suback_packet>)
+     *        - Signature: void(@ref error_reporting "error_code", std::optional<suback_packet>)
      *           - @ref v3_1_1::basic_suback_packet "v3_1_1::suback_packet"
      *           - @ref v5::basic_suback_packet "v5::suback_packet"
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
@@ -218,7 +218,7 @@ public:
      *        - @ref v5::basic_unsubscribe_packet "v5::unsubscribe_packet"
      *  - the last argument
      *     - CompletionToken
-     *        - Signature: void(@link error_code @endlink, std::optional<unsuback_packet>)
+     *        - Signature: void(@ref error_reporting "error_code", std::optional<unsuback_packet>)
      *           - @ref v3_1_1::basic_unsuback_packet "v3_1_1::unsuback_packet"
      *           - @ref v5::basic_unsuback_packet "v5::unsuback_packet"
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
@@ -236,7 +236,7 @@ public:
      *        - @ref v5::basic_publish_packet "v5::publish_packet"
      *  - the last argument
      *     - CompletionToken
-     *        - Signature: void(@link error_code @endlink, @link pubres_t @endlink)
+     *        - Signature: void(@ref error_reporting "error_code", @link pubres_t @endlink)
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      *        - When sending QoS0 packet, all members of pubres_t are std::nullopt.
      *        - When sending QoS1 packet, only pubres_t::puback_opt is set.
@@ -255,7 +255,7 @@ public:
      *        - v5::disconnect_packet
      *  - the last argument
      *     - CompletionToken
-     *        - Signature: void(@link error_code @endlink)
+     *        - Signature: void(@ref error_reporting "error_code")
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -285,7 +285,7 @@ public:
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      * @param token the params are
      *     - CompletionToken
-     *        - Signature: void(@link error_code @endlink, std::optional<publish_packet>, std::optional<disconnect_packet>)
+     *        - Signature: void(@ref error_reporting "error_code", std::optional<publish_packet>, std::optional<disconnect_packet>)
      *           - publish_packet
      *              - @ref v3_1_1::basic_publish_packet "v3_1_1::publish_packet"
      *              - @ref v5::basic_publish_packet "v5::publish_packet"
