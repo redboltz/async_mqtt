@@ -81,11 +81,32 @@ subscribe_op {
             auto pv = it->pv;
             idx.erase(it);
             if (auto *p = pv->template get_if<suback_packet>()) {
-                self.complete(error_code{}, *p);
+                auto ec =
+                    [&] {
+                        switch (p->entries().size()) {
+                        case 0:
+                            return make_error_code(disconnect_reason_code::protocol_error);
+                        case 1:
+                            return make_error_code(p->entries().back());
+                        default: {
+                            bool all_error = true;
+                            bool any_error = false;
+                            for (auto code : p->entries()) {
+                                auto ec = make_error_code(code);
+                                all_error = all_error && ec;
+                                any_error = any_error || ec;
+                            }
+                            if (all_error) return make_error_code(mqtt_error::all_error_detected);
+                            if (any_error) return make_error_code(mqtt_error::partial_error_detected);
+                            return error_code{};
+                        } break;
+                        }
+                    }();
+                self.complete(ec, *p);
             }
             else {
                 self.complete(
-                    errc::make_error_code(sys::errc::protocol_error),
+                    make_error_code(disconnect_reason_code::protocol_error),
                     std::nullopt
                 );
             }

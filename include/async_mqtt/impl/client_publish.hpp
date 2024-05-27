@@ -84,7 +84,26 @@ publish_op {
         else {
             auto res = it->res;
             idx.erase(it);
-            self.complete(error_code{}, force_move(res));
+            auto ec =
+                [&] {
+                    if constexpr(Version == protocol_version::v5) {
+                        if (res.puback_opt) {
+                            return make_error_code(res.puback_opt->code());
+                        }
+                        else if (res.pubrec_opt) {
+                            auto ec = make_error_code(res.pubrec_opt->code());
+                            if (ec) return ec;
+                            if (res.pubcomp_opt) {
+                                return make_error_code(res.pubcomp_opt->code());
+                            }
+                        }
+                        return make_error_code(disconnect_reason_code::protocol_error);
+                    }
+                    else {
+                        return error_code{};
+                    }
+                }();
+            self.complete(ec, force_move(res));
         }
     }
 };

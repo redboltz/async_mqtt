@@ -87,12 +87,14 @@ using system_error = sys::system_error;
  * @brief general error code
  */
 enum class mqtt_error {
-    packet_identifier_fully_used  = 0x01, ///< Packet Identifier fully used
-    packet_identifier_conflict    = 0x02, ///< Packet Identifier conflict
-    packet_not_allowed_to_send    = 0x03, ///< Packet is not allowd to be sent
-    packet_too_large              = 0x04, ///< Packet is too large
-    packet_not_allowed_to_store   = 0x05, ///< Packet is not allowd to be stored
-    packet_not_regulated          = 0x06, ///< Packet is not regulated
+    partial_error_detected        = 0x01, ///< Some entries have error on suback/unsuback (not an error)
+    all_error_detected            = 0x80, ///< All entries have error on suback/unsuback
+    packet_identifier_fully_used  = 0x81, ///< Packet Identifier fully used
+    packet_identifier_conflict    = 0x82, ///< Packet Identifier conflict
+    packet_not_allowed_to_send    = 0x83, ///< Packet is not allowd to be sent
+    packet_too_large              = 0x84, ///< Packet is too large
+    packet_not_allowed_to_store   = 0x85, ///< Packet is not allowd to be stored
+    packet_not_regulated          = 0x86, ///< Packet is not regulated
 };
 
 /**
@@ -131,6 +133,7 @@ sys::error_category const& get_mqtt_error_category();
 
 /**
  * @defgroup connect_return_code connect_return_code
+ * @ingroup error_reporting
  * @ingroup connack_v3_1_1
  */
 
@@ -140,7 +143,7 @@ sys::error_category const& get_mqtt_error_category();
  * See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
  */
 enum class connect_return_code : std::uint8_t {
-    accepted                      = 0, ///< Connection accepted
+    accepted                      = 0, ///< Connection accepted (not an error)
     unacceptable_protocol_version = 1, ///< The Server does not support the level of the MQTT protocol requested by the Client
     identifier_rejected           = 2, ///< The Client identifier is correct UTF-8 but not allowed by the Server
     server_unavailable            = 3, ///< The Network Connection has been made but the MQTT service is unavailable
@@ -184,6 +187,7 @@ sys::error_category const& get_connect_return_code_category();
 
 /**
  * @defgroup suback_return_code suback_return_code
+ * @ingroup error_reporting
  * @ingroup suback_v3_1_1
  */
 
@@ -194,9 +198,9 @@ sys::error_category const& get_connect_return_code_category();
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
  */
 enum class suback_return_code : std::uint8_t {
-    success_maximum_qos_0                  = 0x00, ///< Success with QoS0
-    success_maximum_qos_1                  = 0x01, ///< Success with QoS1
-    success_maximum_qos_2                  = 0x02, ///< Success with QoS2
+    success_maximum_qos_0                  = 0x00, ///< Success with QoS0 (not an error)
+    success_maximum_qos_1                  = 0x01, ///< Success with QoS1 (not an error)
+    success_maximum_qos_2                  = 0x02, ///< Success with QoS2 (not an error)
     failure                                = 0x80, ///< Failure
 };
 
@@ -246,7 +250,7 @@ sys::error_category const& get_suback_return_code_category();
  * It is reported as CONNECT response via CONNACK packet
  */
 enum class connect_reason_code : std::uint8_t {
-    success                       = 0x00, ///< Success
+    success                       = 0x00, ///< Success (not an error)
     unspecified_error             = 0x80, ///< Unspecified error
     malformed_packet              = 0x81, ///< Malformed Packet
     protocol_error                = 0x82, ///< Protocol Error
@@ -316,8 +320,8 @@ sys::error_category const& get_connect_reason_code_category();
  * It is reported via DISCONNECT
  */
 enum class disconnect_reason_code : std::uint8_t {
-    normal_disconnection                   = 0x00, ///< Normal disconnection
-    disconnect_with_will_message           = 0x04, ///< Disconnect with Will Message
+    normal_disconnection                   = 0x00, ///< Normal disconnection (not an error)
+    disconnect_with_will_message           = 0x04, ///< Disconnect with Will Message (not an error)
     unspecified_error                      = 0x80, ///< Unspecified error
     malformed_packet                       = 0x81, ///< Malformed Packet
     protocol_error                         = 0x82, ///< Protocol Error
@@ -383,6 +387,7 @@ sys::error_category const& get_disconnect_reason_code_category();
 
 /**
  * @defgroup suback_reason_code suback_reason_code
+ * @ingroup error_reporting
  * @ingroup suback_v5
  */
 
@@ -392,9 +397,9 @@ sys::error_category const& get_disconnect_reason_code_category();
  * It is reported as SUBSCRIBE response via SUBNACK packet
  */
 enum class suback_reason_code : std::uint8_t {
-    granted_qos_0                          = 0x00, ///< Granted QoS 0
-    granted_qos_1                          = 0x01, ///< Granted QoS 1
-    granted_qos_2                          = 0x02, ///< Granted QoS 2
+    granted_qos_0                          = 0x00, ///< Granted QoS 0 (not an error)
+    granted_qos_1                          = 0x01, ///< Granted QoS 1 (not an error)
+    granted_qos_2                          = 0x02, ///< Granted QoS 2 (not an error)
     unspecified_error                      = 0x80, ///< Unspecified error
     implementation_specific_error          = 0x83, ///< Implementation specific error
     not_authorized                         = 0x87, ///< Not authorized
@@ -442,6 +447,7 @@ sys::error_category const& get_suback_reason_code_category();
 
 /**
  * @defgroup unsuback_reason_code unsuback_reason_code
+ * @ingroup error_reporting
  * @ingroup unsuback_v5
  */
 
@@ -451,8 +457,8 @@ sys::error_category const& get_suback_reason_code_category();
  * It is reported as UNSUBSCRIBE response via UNSUBNACK packet
  */
 enum class unsuback_reason_code : std::uint8_t {
-    success                       = 0x00, ///< Success
-    no_subscription_existed       = 0x11, ///< No subscription existed
+    success                       = 0x00, ///< Success (not an error)
+    no_subscription_existed       = 0x11, ///< No subscription existed (not an error)
     unspecified_error             = 0x80, ///< Unspecified error
     implementation_specific_error = 0x83, ///< Implementation specific error
     not_authorized                = 0x87, ///< Not authorized
@@ -496,6 +502,7 @@ sys::error_category const& get_unsuback_reason_code_category();
 
 /**
  * @defgroup puback_reason_code puback_reason_code
+ * @ingroup error_reporting
  * @ingroup puback_v5
  */
 
@@ -505,8 +512,8 @@ sys::error_category const& get_unsuback_reason_code_category();
  * It is reported as PUBLISH (QoS1) response via PUBACK packet
  */
 enum class puback_reason_code : std::uint8_t {
-    success                       = 0x00, ///< Success
-    no_matching_subscribers       = 0x10, ///< No matching subscribers
+    success                       = 0x00, ///< Success (not an error)
+    no_matching_subscribers       = 0x10, ///< No matching subscribers (not an error)
     unspecified_error             = 0x80, ///< Unspecified error
     implementation_specific_error = 0x83, ///< Implementation specific error
     not_authorized                = 0x87, ///< Not authorized
@@ -561,6 +568,7 @@ bool is_error(puback_reason_code v);
 
 /**
  * @defgroup pubrec_reason_code pubrec_reason_code
+ * @ingroup error_reporting
  * @ingroup pubrec_v5
  */
 
@@ -570,8 +578,8 @@ bool is_error(puback_reason_code v);
  * It is reported as PUBLISH (QoS2) response via PUBREC packet
  */
 enum class pubrec_reason_code : std::uint8_t {
-    success                       = 0x00, ///< Success
-    no_matching_subscribers       = 0x10, ///< No matching subscribers
+    success                       = 0x00, ///< Success (not an error)
+    no_matching_subscribers       = 0x10, ///< No matching subscribers (not an error)
     unspecified_error             = 0x80, ///< Unspecified error
     implementation_specific_error = 0x83, ///< Implementation specific error
     not_authorized                = 0x87, ///< Not authorized
@@ -635,7 +643,7 @@ bool is_error(pubrec_reason_code v);
  * It is reported as PUBREC response via PUBREL packet
  */
 enum class pubrel_reason_code : std::uint8_t {
-    success                     = 0x00, ///< Success
+    success                     = 0x00, ///< Success (not an error)
     packet_identifier_not_found = 0x92, ///< Packet Identifier not found
 };
 
@@ -675,6 +683,7 @@ sys::error_category const& get_pubrel_reason_code_category();
 
 /**
  * @defgroup pubcomp_reason_code pubcomp_reason_code
+ * @ingroup error_reporting
  * @ingroup pubcomp_v5
  */
 
@@ -684,7 +693,7 @@ sys::error_category const& get_pubrel_reason_code_category();
  * It is reported as PUBREL response via PUBCOMP packet
  */
 enum class pubcomp_reason_code : std::uint8_t {
-    success                     = 0x00, ///< Success
+    success                     = 0x00, ///< Success (not an error)
     packet_identifier_not_found = 0x92, ///< Packet Identifier not found
 };
 
@@ -733,9 +742,9 @@ sys::error_category const& get_pubcomp_reason_code_category();
  * It is reported via AUTH packet
  */
 enum class auth_reason_code : std::uint8_t {
-    success                 = 0x00, ///< Success
-    continue_authentication = 0x18, ///< Continue authentication
-    re_authenticate         = 0x19, ///< Re-authenticate
+    success                 = 0x00, ///< Success (not an error)
+    continue_authentication = 0x18, ///< Continue authentication (not an error)
+    re_authenticate         = 0x19, ///< Re-authenticate (not an error)
 };
 
 /**

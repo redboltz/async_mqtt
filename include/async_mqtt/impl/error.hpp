@@ -25,6 +25,8 @@ namespace async_mqtt {
 constexpr
 char const* mqtt_error_to_string(mqtt_error v) {
     switch (v) {
+    case mqtt_error::partial_error_detected:        return "partial_error_detected";
+    case mqtt_error::all_error_detected:            return "all_error_detected";
     case mqtt_error::packet_identifier_fully_used:  return "packet_identifier_fully_used";
     case mqtt_error::packet_identifier_conflict:    return "packet_identifier_conflict";
     case mqtt_error::packet_not_allowed_to_send:    return "packet_not_allowed_to_send";
@@ -320,6 +322,10 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    bool failed(int v) const noexcept override {
+        return v >= 0x80;
+    }
 };
 
 class connect_return_code_category : public sys::error_category {
@@ -335,6 +341,11 @@ public:
     sys::error_condition default_error_condition(int v) const noexcept override {
         return sys::error_condition(v, *this);
     }
+
+    // MQTT v3.1.1 CONNACK packet code
+    // no failed overload here
+    // only connect_return_code has different way on numbering
+    // 0 is success, otherwise failed
 };
 
 class suback_return_code_category : public sys::error_category {
