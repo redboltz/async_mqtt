@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_disconnect.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -89,6 +90,16 @@ disconnect_packet::disconnect_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+}
+
+inline
+bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 inline

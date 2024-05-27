@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_pubcomp.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -115,6 +116,18 @@ basic_pubcomp_packet<PacketIdBytes>::basic_pubcomp_packet(buffer buf, error_code
         return;
     }
     std::copy(buf.begin(), buf.end(), std::back_inserter(all_));
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator<(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 template <std::size_t PacketIdBytes>

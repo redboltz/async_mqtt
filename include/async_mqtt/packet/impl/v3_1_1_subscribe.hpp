@@ -10,6 +10,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v3_1_1_subscribe.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -267,6 +268,18 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_
         entries_.emplace_back(std::string{topic}, opts);
         buf.remove_prefix(1);
     }
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator==(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe_packet<PacketIdBytes> const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator<(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe_packet<PacketIdBytes> const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 template <std::size_t PacketIdBytes>

@@ -159,6 +159,24 @@ private:
     properties props_;
 };
 
+/**
+ * @related auth_packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs less than the rhs, otherwise false.
+ */
+bool operator<(auth_packet const& lhs, auth_packet const& rhs);
+
+/**
+ * @related auth_packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs equal to the rhs, otherwise false.
+ */
+bool operator==(auth_packet const& lhs, auth_packet const& rhs);
+
 } // namespace async_mqtt::v5
 
 #include <async_mqtt/packet/impl/v5_auth.hpp>

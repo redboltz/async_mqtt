@@ -233,6 +233,24 @@ private:
 
 /**
  * @related connect_packet
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs less than the rhs, otherwise false.
+ */
+bool operator<(connect_packet const& lhs, connect_packet const& rhs);
+
+/**
+ * @related connect_packet
+ * @brief equal operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs equal to the rhs, otherwise false.
+ */
+bool operator==(connect_packet const& lhs, connect_packet const& rhs);
+
+/**
+ * @related connect_packet
  * @brief stream output operator
  * @param o output stream
  * @param v target

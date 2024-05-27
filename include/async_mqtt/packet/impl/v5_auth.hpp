@@ -13,6 +13,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/packet/v5_auth.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -258,6 +259,16 @@ auth_packet::auth_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+}
+
+inline
+bool operator==(auth_packet const& lhs, auth_packet const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+inline
+bool operator<(auth_packet const& lhs, auth_packet const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 } // namespace async_mqtt::v5

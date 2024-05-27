@@ -13,11 +13,9 @@
 
 #include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
-
-#include <async_mqtt/packet/v3_1_1_pingreq.hpp>
+#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
 
 #include "stub_socket.hpp"
-#include <async_mqtt/util/packet_variant_operator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_strm)
 

@@ -12,7 +12,6 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/util/packet_variant_operator.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 

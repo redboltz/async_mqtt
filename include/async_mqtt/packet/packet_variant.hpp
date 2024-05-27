@@ -73,124 +73,94 @@ public:
             std::nullptr_t
         > = nullptr
     >
-    basic_packet_variant(Packet&& packet):var_{std::forward<Packet>(packet)}
-    {}
+    basic_packet_variant(Packet&& packet);
 
     /**
      * @brief visit to variant
      * @param func Visitor function
      */
     template <typename Func>
-    auto visit(Func&& func) const& {
-        return
-            std::visit(
-                std::forward<Func>(func),
-                var_
-            );
-    }
+    auto visit(Func&& func) const&;
 
     /**
      * @brief visit to variant
      * @param func Visitor function
      */
     template <typename Func>
-    auto visit(Func&& func) & {
-        return
-            std::visit(
-                std::forward<Func>(func),
-                var_
-            );
-    }
+    auto visit(Func&& func) &;
 
     /**
      * @brief visit to variant
      * @param func Visitor function
      */
     template <typename Func>
-    auto visit(Func&& func) && {
-        return
-            std::visit(
-                std::forward<Func>(func),
-                force_move(var_)
-            );
-    }
+    auto visit(Func&& func) &&;
 
     /**
      * @brief Get by type. If not match, then throw std::bad_variant_access exception.
      * @return actual packet
      */
     template <typename T>
-    decltype(auto) get() {
-        return std::get<T>(var_);
-    }
+    decltype(auto) get();
 
     /**
      * @brief Get by type. If not match, then throw std::bad_variant_access exception.
      * @return actual packet
      */
     template <typename T>
-    decltype(auto) get() const {
-        return std::get<T>(var_);
-    }
+    decltype(auto) get() const;
 
     /**
      * @brief Get by type pointer
      * @return actual packet pointer. If not match then return nullptr.
      */
     template <typename T>
-    decltype(auto) get_if() {
-        return std::get_if<T>(&var_);
-    }
+    decltype(auto) get_if();
 
     /**
      * @brief Get by type pointer
      * @return actual packet pointer. If not match then return nullptr.
      */
     template <typename T>
-    decltype(auto) get_if() const {
-        return std::get_if<T>(&var_);
-    }
+    decltype(auto) get_if() const;
 
     /**
      * @brief Get control_packet_type.
      * @return If packet is stored then return its control_packet_type, If error then return std::nullopt.
      */
-    std::optional<control_packet_type> type() const {
-        return visit(
-            overload {
-                [] (auto const& p) -> std::optional<control_packet_type>{
-                    return p.type();
-                },
-                [] (std::monostate const&) -> std::optional<control_packet_type>{
-                    return std::nullopt;
-                }
-            }
-        );
-    }
+    std::optional<control_packet_type> type() const;
 
     /**
      * @brief Create const buffer sequence
      *        it is for boost asio APIs
      * @return const buffer sequence
      */
-    std::vector<as::const_buffer> const_buffer_sequence() const {
-        return visit(
-            overload {
-                [] (auto const& p) {
-                    return p.const_buffer_sequence();
-                },
-                [] (std::monostate const&) {
-                    return std::vector<as::const_buffer>{};
-                }
-            }
-        );
-    }
+    std::vector<as::const_buffer> const_buffer_sequence() const;
 
-    operator bool() const {
-        return var_.index() != 0;
-    }
+    operator bool() const;
 
 private:
+
+    /**
+     * @brief less than operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than the rhs, otherwise false.
+     */
+    friend bool operator<(basic_packet_variant<PacketIdBytes> const& lhs, basic_packet_variant<PacketIdBytes> const& rhs) {
+        return lhs.var_ < rhs.var_;
+    }
+
+    /**
+     * @brief equal operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs equal to the rhs, otherwise false.
+     */
+    friend bool operator==(basic_packet_variant<PacketIdBytes> const& lhs, basic_packet_variant<PacketIdBytes> const& rhs) {
+        return lhs.var_ == rhs.var_;
+    }
+
     using variant_t = std::variant<
         std::monostate,
         v3_1_1::connect_packet,
@@ -235,21 +205,10 @@ private:
  * @return  output stream
  */
 template <std::size_t PacketIdBytes>
-inline std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> const& v) {
-    v.visit(
-        overload {
-            [&] (auto const& p) {
-                o << p;
-            },
-            [&] (std::monostate const&) {
-            }
-        }
-    );
-    return o;
-}
+std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> const& v);
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
+#include <async_mqtt/packet/impl/packet_variant.hpp>
 
 #endif // ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP

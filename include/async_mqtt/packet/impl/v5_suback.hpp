@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_PACKET_IMPL_V5_SUBACK_HPP
 
 #include <async_mqtt/packet/v5_suback.hpp>
+#include <async_mqtt/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/move.hpp>
@@ -219,6 +220,18 @@ basic_suback_packet<PacketIdBytes>::basic_suback_packet(buffer buf, error_code& 
         entries_.emplace_back(rc);
         buf.remove_prefix(1);
     }
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator==(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_packet<PacketIdBytes> const& rhs) {
+    return detail::equal(lhs, rhs);
+}
+
+template <std::size_t PacketIdBytes>
+inline
+bool operator<(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_packet<PacketIdBytes> const& rhs) {
+    return detail::less_than(lhs, rhs);
 }
 
 template <std::size_t PacketIdBytes>
