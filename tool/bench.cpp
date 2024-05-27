@@ -50,6 +50,12 @@ enum class mode {
     recv
 };
 
+enum class ev_type {
+    recv_packet,
+    sent_result,
+    other
+};
+
 #include <boost/asio/yield.hpp>
 struct bench_context {
     bench_context(
@@ -61,6 +67,7 @@ struct bench_context {
         std::optional<std::string> const& username,
         std::optional<std::string> const& password,
         std::string const& topic_prefix,
+        std::string const& fixed_topic,
         am::qos qos,
         am::pub::retain retain,
         std::atomic<phase>& ph,
@@ -112,6 +119,7 @@ struct bench_context {
      username{username},
      password{password},
      topic_prefix{topic_prefix},
+     fixed_topic{fixed_topic},
      qos{qos},
      retain{retain},
      ph{ph},
@@ -161,6 +169,7 @@ struct bench_context {
     std::optional<std::string> const& username;
     std::optional<std::string> const& password;
     std::string const& topic_prefix;
+    std::string const& fixed_topic;
     am::qos qos;
     am::pub::retain retain;
     std::atomic<phase>& ph;
@@ -220,25 +229,26 @@ struct bench {
 
     // forwarding callbacks
     void operator()(ClientInfo* pci = nullptr) {
-        proc({}, am::packet_variant{}, {}, pci);
+        proc(am::error_code{}, am::packet_variant{}, {}, pci, ev_type::other);
     }
-    void operator()(boost::system::error_code ec, ClientInfo* pci = nullptr) {
-        proc(ec, am::packet_variant{}, {}, pci);
+    void operator()(am::error_code ec, ClientInfo* pci = nullptr, ev_type ect = ev_type::other) {
+        proc(ec, am::packet_variant{}, {}, pci, ect);
     }
     void operator()(am::error_code const& ec, am::packet_variant pv, ClientInfo* pci = nullptr) {
-        proc(ec, am::force_move(pv), {}, pci);
+        proc(ec, am::force_move(pv), {}, pci, ev_type::recv_packet);
     }
     void operator()(am::error_code const& ec, am::packet_id_type pid, ClientInfo* pci = nullptr) {
         pci->pid = pid;
-        proc(ec, am::packet_variant{}, pid, pci);
+        proc(ec, am::packet_variant{}, pid, pci, ev_type::other);
     }
 
 private:
     void proc(
-        std::optional<boost::system::error_code> ec,
+        boost::system::error_code ec,
         am::packet_variant pv,
         am::packet_id_type pid,
-        ClientInfo* pci
+        ClientInfo* pci,
+        ev_type evt
     ) {
         reenter (coro_) {
             tp_con_ = std::chrono::steady_clock::now();
@@ -261,8 +271,8 @@ private:
                     );
                 }
             }
-            if (*ec) {
-                locked_cout() << "async_connect interval timer error:" << ec->message() << std::endl;
+            if (ec) {
+                locked_cout() << "async_connect interval timer error:" << ec.message() << std::endl;
                 exit(-1);
             }
 
@@ -276,8 +286,8 @@ private:
                     pci
                 )
             );
-            if (*ec) {
-                locked_cout() << "underlying handshake error:" << ec->message() << std::endl;
+            if (ec) {
+                locked_cout() << "underlying handshake error:" << ec.message() << std::endl;
                 exit(-1);
             }
 
@@ -325,7 +335,8 @@ private:
                         },
                         as::append(
                             *this,
-                            pci
+                            pci,
+                            ev_type::sent_result
                         )
                     );
                 } break;
@@ -341,7 +352,8 @@ private:
                         },
                         as::append(
                             *this,
-                            pci
+                            pci,
+                            ev_type::sent_result
                         )
                     );
                 } break;
@@ -351,8 +363,8 @@ private:
                 }
                 pci->init_timer(pci->c->get_executor());
             }
-            if (*ec) {
-                locked_cout() << "connect send error:" << ec->message() << std::endl;
+            if (ec) {
+                locked_cout() << "connect send error:" << ec.message() << std::endl;
                 exit(-1);
             }
 
@@ -399,10 +411,13 @@ private:
                 bc_.tp_sub_delay = std::chrono::steady_clock::now();
                 bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.sub_delay_ms));
                 yield bc_.tim_delay.async_wait(
-                    *this
+                    as::append(
+                        *this,
+                        pci
+                    )
                 );
-                if (*ec) {
-                    locked_cout() << "sub delay timer error:" << ec->message() << std::endl;
+                if (ec) {
+                    locked_cout() << "sub delay timer error:" << ec.message() << std::endl;
                     exit(-1);
                 }
                 locked_cout() << "sub_delay finished" << std::endl;
@@ -422,8 +437,8 @@ private:
                         );
                     }
                 }
-                if (*ec) {
-                    locked_cout() << "sub interval timer error:" << ec->message() << std::endl;
+                if (ec) {
+                    locked_cout() << "sub interval timer error:" << ec.message() << std::endl;
                     exit(-1);
                 }
 
@@ -433,7 +448,7 @@ private:
                         pci
                     )
                 );
-                BOOST_ASSERT(!ec && *ec);
+                BOOST_ASSERT(!ec);
                 yield {
                     switch (bc_.version) {
                     case am::protocol_version::v5: {
@@ -441,13 +456,20 @@ private:
                             am::v5::subscribe_packet{
                                 pid,
                                 {
-                                    { bc_.topic_prefix + pci->index_str, bc_.qos }
+                                    {
+                                        [&] {
+                                            if (!bc_.fixed_topic.empty()) return bc_.fixed_topic;
+                                            return bc_.topic_prefix + pci->index_str;
+                                        }(),
+                                        bc_.qos
+                                    }
                                 },
                                 am::properties{}
                             },
                             as::append(
                                 *this,
-                                pci
+                                pci,
+                                ev_type::sent_result
                             )
                         );
                     } break;
@@ -456,12 +478,19 @@ private:
                             am::v3_1_1::subscribe_packet{
                                 pid,
                                 {
-                                    { bc_.topic_prefix + pci->index_str, bc_.qos }
+                                    {
+                                        [&] {
+                                            if (!bc_.fixed_topic.empty()) return bc_.fixed_topic;
+                                            return bc_.topic_prefix + pci->index_str;
+                                        }(),
+                                        bc_.qos
+                                    }
                                 }
                             },
                             as::append(
                                 *this,
-                                pci
+                                pci,
+                                ev_type::sent_result
                             )
                         );
                     } break;
@@ -471,8 +500,8 @@ private:
                     }
                     pci->init_timer(pci->c->get_executor());
                 }
-                if (*ec) {
-                    locked_cout() << "subscribe send error:" << ec->message() << std::endl;
+                if (ec) {
+                    locked_cout() << "subscribe send error:" << ec.message() << std::endl;
                     exit(-1);
                 }
 
@@ -545,7 +574,12 @@ private:
                         >(std::chrono::nanoseconds(ts_val));
                         std::chrono::system_clock::time_point tp(ts);
                         bc_.tim_sync.expires_at(tp);
-                        bc_.tim_sync.async_wait(*this);
+                        bc_.tim_sync.async_wait(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
                     }
                     else if (bc_.workers.size() != 0) {
                         locked_cout() << "work as manager" << std::endl;
@@ -565,10 +599,20 @@ private:
                             as::write(*bc_.workers[i], as::buffer(ts_str));
                         }
                         bc_.tim_sync.expires_at(base);
-                        bc_.tim_sync.async_wait(*this);
+                        bc_.tim_sync.async_wait(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
                     }
                     else {
-                        as::dispatch(*this);
+                        as::dispatch(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
                     }
                 }
 
@@ -577,18 +621,28 @@ private:
                         bc_.ph.store(phase::pub_after_idle_delay);
                         bc_.tp_pub_delay = std::chrono::steady_clock::now();
                         bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
-                        bc_.tim_delay.async_wait(*this);
+                        bc_.tim_delay.async_wait(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
                     }
                     else {
                         bc_.ph.store(phase::pub_delay);
                         bc_.tp_pub_delay = std::chrono::steady_clock::now();
                         bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_delay_ms));
-                        bc_.tim_delay.async_wait(*this);
+                        bc_.tim_delay.async_wait(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
                     }
                 }
                 if (bc_.ph.load() == phase::pub_delay) {
-                    if (*ec) {
-                        locked_cout() << "pub idle delay timer error:" << ec->message();
+                    if (ec) {
+                        locked_cout() << "pub idle delay timer error:" << ec.message();
                         exit(-1);
                     }
                     else {
@@ -597,8 +651,8 @@ private:
                     }
                 }
                 else {
-                    if (*ec) {
-                        locked_cout() << "pub after idle delay timer error:" << ec->message();
+                    if (ec) {
+                        locked_cout() << "pub after idle delay timer error:" << ec.message();
                         exit(-1);
                     }
                     else {
@@ -622,13 +676,15 @@ private:
                             )
                         );
                     }
-                    // pub recv
-                    ci.c->async_recv(
-                        as::append(
-                            *this,
-                            &ci
-                        )
-                    );
+                    if (bc_.md == mode::single || bc_.md == mode::recv) {
+                        // pub recv
+                        ci.c->async_recv(
+                            as::append(
+                                *this,
+                                &ci
+                            )
+                        );
+                    }
                 }
             }
 
@@ -640,14 +696,18 @@ private:
                             pci->c->async_send(
                                 am::v5::publish_packet{
                                     pci->pid,
-                                    bc_.topic_prefix + pci->index_str,
+                                    [&] {
+                                        if (!bc_.fixed_topic.empty()) return bc_.fixed_topic;
+                                        return bc_.topic_prefix + pci->index_str;
+                                    }(),
                                     pci->send_payload(bc_.md),
                                     opts,
                                     am::properties{}
                                 },
                                 as::append(
                                     *this,
-                                    pci
+                                    pci,
+                                    ev_type::sent_result
                                 )
                             );
                             return;
@@ -656,13 +716,17 @@ private:
                             pci->c->async_send(
                                 am::v3_1_1::publish_packet{
                                     pci->pid,
-                                    bc_.topic_prefix + pci->index_str,
+                                    [&] {
+                                        if (!bc_.fixed_topic.empty()) return bc_.fixed_topic;
+                                        return bc_.topic_prefix + pci->index_str;
+                                    }(),
                                     pci->send_payload(bc_.md),
                                     opts
                                 },
                                 as::append(
                                     *this,
-                                    pci
+                                    pci,
+                                    ev_type::sent_result
                                 )
                             );
                             return;
@@ -674,133 +738,12 @@ private:
                     };
 
                 if (ec) {
-                    if (bc_.md == mode::single || bc_.md == mode::send) {
-                        auto trigger_pub =
-                            [&] {
-                                if (bc_.qos == am::qos::at_least_once ||
-                                    bc_.qos == am::qos::exactly_once) {
-                                    pci->c->async_acquire_unique_packet_id(
-                                        as::append(
-                                            *this,
-                                            pci
-                                        )
-                                    );
-                                    BOOST_ASSERT(!ec && *ec);
-                                    am::pub::opts opts = bc_.qos | bc_.retain;
-                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                                    send_publish(opts);
-                                    BOOST_ASSERT(pci->send_times != 0);
-                                    --pci->send_times;
-                                }
-                                else {
-                                    pci->pid = 0;
-                                    am::pub::opts opts = bc_.qos | bc_.retain;
-                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                                    send_publish(opts);
-                                    BOOST_ASSERT(pci->send_times != 0);
-                                    --pci->send_times;
-                                }
-                            };
-
-
-                        switch (bc_.ph.load()) {
-                        case phase::idle:
-                            // pub interval (idle) timer fired
-                            if (*ec) {
-                                locked_cout() << "pub interval (idle) timer error:" << ec->message() << std::endl;
-                                exit(-1);
-                            }
-                            trigger_pub();
-                            BOOST_ASSERT(pci->send_idle_count != 0);
-
-                            if (bc_.md == mode::send) {
-                                BOOST_ASSERT(bc_.rest_times > 0);
-                                --bc_.rest_times;
-                                if (bc_.rest_idle > 0) {
-                                    if (--bc_.rest_idle == 0) {
-                                        bc_.ph.store(phase::pub_after_idle_delay);
-                                        // use system clock for multi node synchronization
-                                        bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
-                                        locked_cout() << "Publish (measure) delay" << std::endl;
-                                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
-                                        bc_.tim_delay.async_wait(*this);
-                                    }
-                                }
-                            }
-                            if (--pci->send_idle_count != 0) {
-                                pci->tim->expires_at(
-                                    pci->tim->expiry() +
-                                    std::chrono::milliseconds(bc_.pub_interval_ms)
-                                );
-                                pci->tim->async_wait(
-                                    as::append(
-                                        *this,
-                                        pci
-                                    )
-                                );
-                            }
-                            break;
-                        case phase::publish:
-                            // pub interval timer fired
-                            if (*ec) {
-                                locked_cout() << "pub interval timer error:" << ec->message() << std::endl;
-                                exit(-1);
-                            }
-                            trigger_pub();
-                            if (pci->send_times != 0) {
-                                pci->tim->expires_at(
-                                    pci->tim->expiry() +
-                                    std::chrono::milliseconds(bc_.pub_interval_ms)
-                                );
-                                pci->tim->async_wait(
-                                    as::append(
-                                        *this,
-                                        pci
-                                    )
-                                );
-                            }
-                            if (bc_.md == mode::send) {
-                                BOOST_ASSERT(bc_.rest_times > 0);
-                                --bc_.rest_times;
-                                if (bc_.rest_times == 0) {
-                                    locked_cout() << "all publish finished. after measured Ctrl-C to stop the program" << std::endl;
-                                    bc_.tim_progress->cancel();
-                                }
-                            }
-                            break;
-                        case phase::pub_after_idle_delay: {
-                            bc_.ph.store(phase::publish);
-                            bc_.tp_publish = std::chrono::steady_clock::now();
-                            locked_cout() << "Publish (measure)" << std::endl;
-                            std::size_t index = 0;
-                            for (auto& ci : cis_) {
-                                // pub interval
-                                auto tp =
-                                    std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
-                                ci.tim->expires_after(tp);
-                                ci.tim->async_wait(
-                                    as::append(
-                                        *this,
-                                        &ci
-                                    )
-                                );
-                            }
-                        } break;
-                        default:
-                            BOOST_ASSERT(false);
-                            break;
-                        }
-                    }
+                    locked_cout() << "publish send error:" << ec.message() << std::endl;
+                    exit(-1);
                 }
-                else if (ec) {
-                    // pub send result
-                    if (*ec) {
-                        locked_cout() << "subscribe send error:" << ec->message() << std::endl;
-                        exit(-1);
-                    }
-                }
-                else if (pv) {
+                else if (evt == ev_type::recv_packet) {
                     // pub received
+                    BOOST_ASSERT(pv);
                     pub_recv ret = pub_recv::cont;
                     pv.visit(
                         am::overload {
@@ -839,7 +782,12 @@ private:
                             bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
                             locked_cout() << "Publish (measure) delay" << std::endl;
                             bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
-                            bc_.tim_delay.async_wait(*this);
+                            bc_.tim_delay.async_wait(
+                                as::append(
+                                    *this,
+                                    pci
+                                )
+                            );
                         }
                         break;
                     case pub_recv::pub_finish: {
@@ -924,6 +872,132 @@ private:
                         )
                     );
                 }
+                else if (evt == ev_type::other) {
+                    if (bc_.md == mode::single || bc_.md == mode::send) {
+                        auto trigger_pub =
+                            [&] {
+                                if (bc_.qos == am::qos::at_least_once ||
+                                    bc_.qos == am::qos::exactly_once) {
+                                    pci->c->async_acquire_unique_packet_id(
+                                        as::append(
+                                            *this,
+                                            pci
+                                        )
+                                    );
+                                    BOOST_ASSERT(!ec);
+                                    am::pub::opts opts = bc_.qos | bc_.retain;
+                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                    send_publish(opts);
+                                    BOOST_ASSERT(pci->send_times != 0);
+                                    --pci->send_times;
+                                }
+                                else {
+                                    pci->pid = 0;
+                                    am::pub::opts opts = bc_.qos | bc_.retain;
+                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                    send_publish(opts);
+                                    BOOST_ASSERT(pci->send_times != 0);
+                                    --pci->send_times;
+                                }
+                            };
+
+
+                        switch (bc_.ph.load()) {
+                        case phase::idle:
+                            // pub interval (idle) timer fired
+                            if (ec) {
+                                locked_cout() << "pub interval (idle) timer error:" << ec.message() << std::endl;
+                                exit(-1);
+                            }
+                            trigger_pub();
+                            BOOST_ASSERT(pci->send_idle_count != 0);
+
+                            if (bc_.md == mode::send) {
+                                BOOST_ASSERT(bc_.rest_times > 0);
+                                --bc_.rest_times;
+                                if (bc_.rest_idle > 0) {
+                                    if (--bc_.rest_idle == 0) {
+                                        bc_.ph.store(phase::pub_after_idle_delay);
+                                        // use system clock for multi node synchronization
+                                        bc_.tp_pub_after_idle_delay = std::chrono::steady_clock::now();
+                                        locked_cout() << "Publish (measure) delay" << std::endl;
+                                        bc_.tim_delay.expires_after(std::chrono::milliseconds(bc_.pub_after_idle_delay_ms));
+                                        bc_.tim_delay.async_wait(
+                                            as::append(
+                                                *this,
+                                                pci
+                                            )
+                                        );
+                                    }
+                                }
+                            }
+                            if (--pci->send_idle_count != 0) {
+                                pci->tim->expires_at(
+                                    pci->tim->expiry() +
+                                    std::chrono::milliseconds(bc_.pub_interval_ms)
+                                );
+                                pci->tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                            }
+                            break;
+                        case phase::publish:
+                            // pub interval timer fired
+                            if (ec) {
+                                locked_cout() << "pub interval timer error:" << ec.message() << std::endl;
+                                exit(-1);
+                            }
+                            trigger_pub();
+                            if (pci->send_times != 0) {
+                                pci->tim->expires_at(
+                                    pci->tim->expiry() +
+                                    std::chrono::milliseconds(bc_.pub_interval_ms)
+                                );
+                                pci->tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                            }
+                            if (bc_.md == mode::send) {
+                                BOOST_ASSERT(bc_.rest_times > 0);
+                                --bc_.rest_times;
+                                if (bc_.rest_times == 0) {
+                                    locked_cout() << "all publish finished. after measured Ctrl-C to stop the program" << std::endl;
+                                    bc_.tim_progress->cancel();
+                                    std::promise<void> p;
+                                    p.get_future().wait(); // infinity wait
+                                }
+                            }
+                            break;
+                        case phase::pub_after_idle_delay: {
+                            bc_.ph.store(phase::publish);
+                            bc_.tp_publish = std::chrono::steady_clock::now();
+                            locked_cout() << "Publish (measure)" << std::endl;
+                            std::size_t index = 0;
+                            for (auto& ci : cis_) {
+                                // pub interval
+                                auto tp =
+                                    std::chrono::nanoseconds(bc_.all_interval_ns) * index++;
+                                ci.tim->expires_after(tp);
+                                ci.tim->async_wait(
+                                    as::append(
+                                        *this,
+                                        &ci
+                                    )
+                                );
+                            }
+                        } break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -991,7 +1065,7 @@ private:
                     locked_cout() << "  received: " << payload << std::endl;;
                 }
             }
-            if (topic_name != std::string_view(bc_.topic_prefix + ci.index_str)) {
+            if (bc_.fixed_topic.empty() && topic_name != std::string_view(bc_.topic_prefix + ci.index_str)) {
                 locked_cout() << "topic doesn't match" << std::endl;
                 locked_cout() << "  expected: " << bc_.topic_prefix + ci.index_str << std::endl;
                 locked_cout() << "  received: " << topic_name << std::endl;
@@ -1132,6 +1206,11 @@ int main(int argc, char *argv[]) {
                 "topic_prefix",
                 boost::program_options::value<std::string>()->default_value(""),
                 "topic_id prefix. topic is topic_prefix00000000 topic_prefix00000001 ..."
+            )
+            (
+                "fixed_topic",
+                boost::program_options::value<std::string>()->default_value(""),
+                "all publish/subscribe topic is fixed as fixed_topic. Can't set with topic_prefix"
             )
             (
                 "limit_ms",
@@ -1471,6 +1550,16 @@ int main(int argc, char *argv[]) {
             } ();
         auto cid_prefix = vm["cid_prefix"].as<std::string>();
         auto topic_prefix = vm["topic_prefix"].as<std::string>();
+        auto fixed_topic = vm["fixed_topic"].as<std::string>();
+
+        if (!topic_prefix.empty() && !fixed_topic.empty()) {
+            std::cout
+                << "You can't set both "
+                << "topic_prefix:" << topic_prefix << " and "
+                << "fixed_topic:" << fixed_topic
+                << std::endl;
+            return -1;
+        }
 
         auto cacert =
             [&] () -> std::optional<std::string> {
@@ -1893,6 +1982,7 @@ int main(int argc, char *argv[]) {
             username,
             password,
             topic_prefix,
+            fixed_topic,
             qos,
             retain,
             ph,
