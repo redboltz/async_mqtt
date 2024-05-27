@@ -15,7 +15,7 @@
 
 #include "cpp20coro_stub_socket.hpp"
 
-BOOST_AUTO_TEST_SUITE(ut_broker)
+BOOST_AUTO_TEST_SUITE(ut_cpp20coro_ep)
 
 namespace am = async_mqtt;
 namespace as = boost::asio;
