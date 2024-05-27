@@ -39,18 +39,18 @@ variable_bytes_to_val(It& it, End e) {
     std::size_t val = 0;
     std::size_t mul = 1;
     for (; it != e; ++it) {
-        val += (*it & 0b01111111) * mul;
-        mul *= 128;
-        if (mul > 128 * 128 * 128 * 128) {
+        if (mul == 128 * 128 * 128 * 128) {
             ++it;
             return std::nullopt;
         }
+        val += (*it & 0b01111111) * mul;
+        mul *= 128;
         if (!(*it & 0b10000000)) {
             ++it;
-            break;
+            return std::uint32_t(val);
         }
     }
-    return std::uint32_t(val);
+    return std::nullopt;
 }
 
 } // namespace async_mqtt

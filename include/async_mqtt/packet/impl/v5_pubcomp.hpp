@@ -263,6 +263,7 @@ basic_pubcomp_packet<PacketIdBytes>::basic_pubcomp_packet(buffer buf, error_code
             );
             return;
         }
+        return;
     }
 
     // property

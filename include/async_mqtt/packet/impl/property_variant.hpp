@@ -601,9 +601,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
         return property_variant(p);
     } break;
     }
-    ec = make_error_code(
-        disconnect_reason_code::unspecified_error
-    );
+    BOOST_ASSERT(false);
     return property_variant{};
 }
 
@@ -611,12 +609,9 @@ inline
 properties make_properties(buffer buf, property_location loc, error_code& ec) {
     properties props;
     while (!buf.empty()) {
-        if (auto pv = make_property_variant(buf, loc, ec)) {
-            props.push_back(force_move(pv));
-        }
-        else {
-            throw pv;
-        }
+        auto pv = make_property_variant(buf, loc, ec);
+        if (ec) return properties{};
+        props.push_back(force_move(pv));
     }
 
     return props;
