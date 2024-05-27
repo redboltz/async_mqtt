@@ -579,7 +579,7 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</li>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>)</li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
 </ul>
 </li>
@@ -627,11 +627,34 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>)</li>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html">pubres_t</a>)</li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported</li>
 <li>When sending QoS0 packet, all members of <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html" title="publish completion handler parameter class">pubres_t</a> are std::nullopt.</li>
 <li>When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a">pubres_t::puback_opt</a> is set.</li>
-<li>When sending QoS2 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440">pubres_t::pubrec_opt</a> and pubres_t::pubcomp are set. </li>
+<li>When sending QoS2 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440">pubres_t::pubrec_opt</a> and pubres_t::pubcomp are set.</li>
+<li>error_code<ul>
+<li>Underlying error<ul>
+<li>TCP, TLS, Websocket related errors</li>
+</ul>
+</li>
+<li>mqtt_error, disconnect_reason_code<ul>
+<li>send packet related errors</li>
+</ul>
+</li>
+<li>puback_reason_code (v5) QoS1<ul>
+<li>PUBACK packet response</li>
+</ul>
+</li>
+<li>pubrec_reason_code (v5) QoS2<ul>
+<li>PUBREC packet response if failed</li>
+</ul>
+</li>
+<li>pubcomp_reason_code (v5) QoS2<ul>
+<li>PUBCOMP packet response </li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -669,7 +692,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">token</td><td>the params are<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
 <li>publish_packet<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
@@ -813,9 +836,24 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;connack_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;connack_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connack__packet.html" title="MQTT CONNACK packet (v3.1.1)">v3_1_1::connack_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
+<li>error_code<ul>
+<li>Underlying error<ul>
+<li>TCP, TLS, Websocket related errors</li>
+</ul>
+</li>
+<li>mqtt_error, connect_reason_code, disconnect_reason_code<ul>
+<li>send packet related errors</li>
+</ul>
+</li>
+<li>connect_return_code (v3.1.1), connect_reason_code (v5)<ul>
+<li>CONNACK packet response</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
@@ -865,9 +903,27 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;suback_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html">v3_1_1::suback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html">v5::suback_packet</a></li>
+<li>error_code<ul>
+<li>Underlying error<ul>
+<li>TCP, TLS, Websocket related errors</li>
+</ul>
+</li>
+<li>mqtt_error, disconnect_reason_code<ul>
+<li>send packet related errors</li>
+<li>if subscribe has multiple entries, and not all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is returned. It is not an error.</li>
+<li>if subscribe has multiple entries, and all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is returned. It is an error.</li>
+</ul>
+</li>
+<li>suback_return_code (v3.1.1), suback_reason_code (v5)<ul>
+<li>if subscribe has single entry, suback_return_code (v3.1.1) or suback_reason_code (v5) is set.</li>
+<li>SUBACK packet response</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
@@ -917,9 +973,27 @@ template&lt;typename... Args&gt; </div>
 </li>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;unsuback_packet&gt;)<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html">v3_1_1::unsuback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html">v5::unsuback_packet</a></li>
+<li>error_code<ul>
+<li>Underlying error<ul>
+<li>TCP, TLS, Websocket related errors</li>
+</ul>
+</li>
+<li>mqtt_error, disconnect_reason_code<ul>
+<li>send packet related errors</li>
+<li>if unsubscribe has multiple entries, and not all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is returned. It is not an error.</li>
+<li>if unsubscribe has multiple entries, and all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is returned. It is an error.</li>
+</ul>
+</li>
+<li>unsuback_reason_code (v5)<ul>
+<li>if subscribe has single entry, suback_return_code (v3.1.1) or suback_reason_code (v5) is set.</li>
+<li>UNSUBACK packet response</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>

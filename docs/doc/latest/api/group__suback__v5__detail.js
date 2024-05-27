@@ -8,7 +8,9 @@ var group__suback__v5__detail =
       [ "packet_id", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#abca6b8d79dd429439f9f880d9edb61b5", null ],
       [ "props", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#ab5ba77ea5455e2e3db21c278b8aeb240", null ],
       [ "size", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#a809103b035f0c882965a1fbe6cd5d6a0", null ],
+      [ "operator<", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#a0423f80f3ed8b8ebfb639df887c0240c", null ],
       [ "operator<<", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#aae58d5ae7d00a9e8904720da7ee15020", null ],
+      [ "operator==", "classasync__mqtt_1_1v5_1_1basic__suback__packet.html#a2bb18874bc1123938406a1f2315bf6a0", null ],
       [ "suback_packet", "group__suback__v5.html#gafc473899d1e3780edad734c763201c00", null ]
     ] ]
 ];

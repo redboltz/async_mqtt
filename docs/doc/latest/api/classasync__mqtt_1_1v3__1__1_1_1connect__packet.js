@@ -11,5 +11,7 @@ var classasync__mqtt_1_1v3__1__1_1_1connect__packet =
     [ "password", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a0b2fc596c4da3265296628bb379d3246", null ],
     [ "size", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a2d37a0b8e09a6ef1897f76f44c0cbb06", null ],
     [ "user_name", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ab3d1f7068ff84c3a1e7f07a125c89538", null ],
-    [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ace621bafbe046cc352dbc355202408a0", null ]
+    [ "operator<", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a11bea57563e26011cfd6a9bb93f615cd", null ],
+    [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#ace621bafbe046cc352dbc355202408a0", null ],
+    [ "operator==", "classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a93ac9a83b769462b73be68e3336275d5", null ]
 ];

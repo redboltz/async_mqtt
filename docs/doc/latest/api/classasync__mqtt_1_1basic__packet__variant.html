@@ -99,6 +99,7 @@ $(function(){initNavTree('classasync__mqtt_1_1basic__packet__variant.html',''); 
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="#related">Related Symbols</a> &#124;
 <a href="classasync__mqtt_1_1basic__packet__variant-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">async_mqtt::basic_packet_variant&lt; PacketIdBytes &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__variant.html">variant class for all packets</a> &raquo; <a class="el" href="group__packet__variant__detail.html">implementation class</a></div></div></div>
@@ -153,6 +154,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:afad06fb4c9dfdb90a0c83db0a35fad80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create const buffer sequence it is for boost asio APIs.  <br /></td></tr>
 <tr class="separator:afad06fb4c9dfdb90a0c83db0a35fad80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a5a06dad94d15e6d9c0e1dc64a59a19bf" id="r_a5a06dad94d15e6d9c0e1dc64a59a19bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a06dad94d15e6d9c0e1dc64a59a19bf">operator==</a> (<a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
+<tr class="memdesc:a5a06dad94d15e6d9c0e1dc64a59a19bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <br /></td></tr>
+<tr class="separator:a5a06dad94d15e6d9c0e1dc64a59a19bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="related" name="related"></a>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
@@ -185,9 +192,6 @@ Thread Safety</h4>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::decay_t&lt; Packet &gt;, <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; &gt;, std::nullptr_t &gt;  = nullptr&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::basic_packet_variant </td>
@@ -196,11 +200,6 @@ template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::deca
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>constructor </p>
@@ -221,9 +220,6 @@ template&lt;typename Packet , std::enable_if_t&lt; !std::is_same_v&lt; std::deca
 <div class="memproto">
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt; as::const_buffer &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::const_buffer_sequence </td>
@@ -232,11 +228,6 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Create const buffer sequence it is for boost asio APIs. </p>
@@ -253,9 +244,6 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get </td>
@@ -264,11 +252,6 @@ template&lt;typename T &gt; </div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type. If not match, then throw std::bad_variant_access exception. </p>
@@ -285,9 +268,6 @@ template&lt;typename T &gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get </td>
@@ -296,11 +276,6 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type. If not match, then throw std::bad_variant_access exception. </p>
@@ -317,9 +292,6 @@ template&lt;typename T &gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get_if </td>
@@ -328,11 +300,6 @@ template&lt;typename T &gt; </div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type pointer. </p>
@@ -349,9 +316,6 @@ template&lt;typename T &gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">decltype(auto) <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::get_if </td>
@@ -360,11 +324,6 @@ template&lt;typename T &gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get by type pointer. </p>
@@ -379,9 +338,6 @@ template&lt;typename T &gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;std::size_t PacketIdBytes&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::optional&lt; <a class="el" href="group__packet.html#gad751afab4b1771811a82fcc3f34938b4">control_packet_type</a> &gt; <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::type </td>
@@ -390,11 +346,6 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Get control_packet_type. </p>
@@ -411,9 +362,6 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
@@ -422,11 +370,6 @@ template&lt;typename Func &gt; </div>
           <td> &amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -448,9 +391,6 @@ template&lt;typename Func &gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
@@ -459,11 +399,6 @@ template&lt;typename Func &gt; </div>
           <td> &amp;&amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -485,9 +420,6 @@ template&lt;typename Func &gt; </div>
 template&lt;std::size_t PacketIdBytes&gt; </div>
 <div class="memtemplate">
 template&lt;typename Func &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">async_mqtt::basic_packet_variant</a>&lt; PacketIdBytes &gt;::visit </td>
@@ -496,11 +428,6 @@ template&lt;typename Func &gt; </div>
           <td> const &amp;</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>visit to variant </p>
@@ -552,6 +479,47 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="a5a06dad94d15e6d9c0e1dc64a59a19bf" name="a5a06dad94d15e6d9c0e1dc64a59a19bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a06dad94d15e6d9c0e1dc64a59a19bf">&#9670;&#160;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t PacketIdBytes&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1basic__packet__variant.html">basic_packet_variant</a>&lt; PacketIdBytes &gt; const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>equal operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
 
 </div>
 </div>

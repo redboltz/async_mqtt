@@ -100,7 +100,7 @@ $(function(){initNavTree('group__connect__return__code.html',''); initResizable(
   <div class="summary">
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">connect_return_code<div class="ingroups"><a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">protocol version 3.1.1</a> &raquo; <a class="el" href="group__connack__v3__1__1.html">CONNACK packet (v3.1.1)</a></div></div></div>
+  <div class="headertitle"><div class="title">connect_return_code<div class="ingroups"><a class="el" href="group__error.html">Error</a> &raquo; <a class="el" href="group__error__reporting.html">Errors for APIs</a> &#124; <a class="el" href="group__packet.html">MQTT packets</a> &raquo; <a class="el" href="group__packet__v3__1__1.html">protocol version 3.1.1</a> &raquo; <a class="el" href="group__connack__v3__1__1.html">CONNACK packet (v3.1.1)</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <div class="dynheader">
@@ -109,7 +109,8 @@ Collaboration diagram for connect_return_code:</div>
 <div class="center"><img src="group__connect__return__code.png" border="0" usemap="#agroup____connect____return____code" alt=""/></div>
 <map name="agroup____connect____return____code" id="agroup____connect____return____code">
 <area shape="rect" href="group__connack__v3__1__1.html" title=" " alt="" coords="5,5,194,33"/>
-<area shape="rect" title=" " alt="" coords="242,5,398,33"/>
+<area shape="rect" title=" " alt="" coords="242,32,398,60"/>
+<area shape="rect" href="group__error__reporting.html" title=" " alt="" coords="43,57,156,85"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -167,7 +168,7 @@ Functions</h2></td></tr>
 
 <p>connect return code See <a href="https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256">https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256</a> </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470" name="gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470"></a>accepted&#160;</td><td class="fielddoc"><p>Connection accepted. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470" name="gga8342d3b4108d9bb325b95dbd9c0c6109a3e4d891a5df3d6d0d7dd9432a1bc6470"></a>accepted&#160;</td><td class="fielddoc"><p>Connection accepted (not an error) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga8342d3b4108d9bb325b95dbd9c0c6109aa9b8a4c21e2b1fa3780625fe15465bca" name="gga8342d3b4108d9bb325b95dbd9c0c6109aa9b8a4c21e2b1fa3780625fe15465bca"></a>unacceptable_protocol_version&#160;</td><td class="fielddoc"><p>The Server does not support the level of the MQTT protocol requested by the Client. </p>
 </td></tr>

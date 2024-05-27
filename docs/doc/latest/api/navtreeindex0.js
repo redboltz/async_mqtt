@@ -57,6 +57,7 @@ var NAVTREEINDEX0 =
 "classasync__mqtt_1_1basic__packet__variant.html#a48155169ae2078aceaeda629a07cd50f":[0,2,3,0,0,6],
 "classasync__mqtt_1_1basic__packet__variant.html#a49e90a15eb050e18d1c28e1787154d7f":[0,2,3,0,0,5],
 "classasync__mqtt_1_1basic__packet__variant.html#a568b174cb52b49a5fbb1f95bbcd7f7f9":[0,2,3,0,0,11],
+"classasync__mqtt_1_1basic__packet__variant.html#a5a06dad94d15e6d9c0e1dc64a59a19bf":[0,2,3,0,0,12],
 "classasync__mqtt_1_1basic__packet__variant.html#a8f9c3e84ebae1e4eb0955988ceb11450":[0,2,3,0,0,1],
 "classasync__mqtt_1_1basic__packet__variant.html#ac10d54ec16155155a5322d6ded45cf48":[0,2,3,0,0,8],
 "classasync__mqtt_1_1basic__packet__variant.html#ae697446c3aee2b0ef593bd11a9580107":[0,2,3,0,0,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html":[0,2,1,0,3],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html#a599ad258dabd588cda82ace5d95394ac":[0,2,1,0,3,0],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html#a9973ecd3494f980fbebc433891cd10d4":[0,2,1,0,3,1],
-"classasync__mqtt_1_1property_1_1payload__format__indicator.html":[0,2,1,0,2],
-"classasync__mqtt_1_1property_1_1payload__format__indicator.html#ad09953ffd432f1fea04d22d39464398d":[0,2,1,0,2,1]
+"classasync__mqtt_1_1property_1_1payload__format__indicator.html":[0,2,1,0,2]
 };

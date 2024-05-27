@@ -10,7 +10,9 @@ var group__pubrel__v5__detail =
       [ "packet_id", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#a78acb64fed940b625d630114ea12d23e", null ],
       [ "props", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#a45a240dee046412a9d289c0b316dc936", null ],
       [ "size", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#a20eabefbe61aa64d44b572644502e630", null ],
+      [ "operator<", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#ab5fa3f32c0a7ba10a6a93ace11be2087", null ],
       [ "operator<<", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#a240e29c6cbee7821bf93e8c67693f695", null ],
+      [ "operator==", "classasync__mqtt_1_1v5_1_1basic__pubrel__packet.html#a2c32fe29cd179d6577954be0e08aba7a", null ],
       [ "pubrel_packet", "group__pubrel__v5.html#gac621c1b7011518ff60a9fbedde43b367", null ]
     ] ]
 ];
