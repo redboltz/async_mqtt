@@ -21,6 +21,7 @@ list(APPEND check_PROGRAMS
     ut_code.cpp
     ut_ep_alloc.cpp
     ut_ep_con_discon.cpp
+    ut_ep_keep_alive.cpp
     ut_ep_pid.cpp
     ut_ep_topic_alias.cpp
     ut_ep_recv_filter.cpp
