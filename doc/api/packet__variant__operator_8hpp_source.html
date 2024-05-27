@@ -140,14 +140,14 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> PacketIdBytes&gt;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__packet.html#gaabf11f71a7120801c7382d8aa369eace">operator==</a>(</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> operator==(</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>) {</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">return</span> basic_packet_variant_equal&lt;PacketIdBytes&gt;(lhs, rhs);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__packet.html#gaabf11f71a7120801c7382d8aa369eace">operator==</a>(</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> operator==(</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    packet_variant <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    packet_variant <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>) {</div>
@@ -176,14 +176,14 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> PacketIdBytes&gt;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__packet.html#ga03e4830acc4f4130597841abf7a3fc12">operator&lt;</a>(</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> operator&lt;(</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    basic_packet_variant&lt;PacketIdBytes&gt; <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>) {</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keywordflow">return</span> basic_packet_variant_less_than&lt;PacketIdBytes&gt;(lhs, rhs);</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>}</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__packet.html#ga03e4830acc4f4130597841abf7a3fc12">operator&lt;</a>(</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> operator&lt;(</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    packet_variant <span class="keyword">const</span>&amp; lhs,</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    packet_variant <span class="keyword">const</span>&amp; rhs</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>) {</div>
@@ -193,9 +193,7 @@ $(function(){initNavTree('packet__variant__operator_8hpp_source.html',''); initR
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>} <span class="comment">// namespace async_mqtt</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_PACKET_VARIANT_OPERATOR_HPP</span></div>
-<div class="ttc" id="agroup__packet_html_ga03e4830acc4f4130597841abf7a3fc12"><div class="ttname"><a href="group__packet.html#ga03e4830acc4f4130597841abf7a3fc12">async_mqtt::v3_1_1::operator&lt;</a></div><div class="ttdeci">std::enable_if_t&lt; is_packet&lt; Lhs &gt;() &amp;&amp;is_packet&lt; Rhs &gt;(), bool &gt; operator&lt;(Lhs const &amp;lhs, Rhs const &amp;rhs)</div><div class="ttdoc">less than operator</div></div>
 <div class="ttc" id="agroup__packet_html_ga73b3c0be05e9d700fb02dc5bab135c73"><div class="ttname"><a href="group__packet.html#ga73b3c0be05e9d700fb02dc5bab135c73">async_mqtt::make_packet_range</a></div><div class="ttdeci">std::pair&lt; packet_iterator&lt; Container, Buffer &gt;, packet_iterator&lt; Container, Buffer &gt; &gt; make_packet_range(Container&lt; Buffer &gt; const &amp;cbs)</div><div class="ttdoc">create packet iterator range</div><div class="ttdef"><b>Definition</b> packet_iterator.hpp:38</div></div>
-<div class="ttc" id="agroup__packet_html_gaabf11f71a7120801c7382d8aa369eace"><div class="ttname"><a href="group__packet.html#gaabf11f71a7120801c7382d8aa369eace">async_mqtt::v3_1_1::operator==</a></div><div class="ttdeci">std::enable_if_t&lt; is_packet&lt; Lhs &gt;() &amp;&amp;is_packet&lt; Rhs &gt;(), bool &gt; operator==(Lhs const &amp;lhs, Rhs const &amp;rhs)</div><div class="ttdoc">equal operator</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

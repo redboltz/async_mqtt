@@ -6,6 +6,8 @@ var classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet =
     [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#a0b779ea8ece0fc8a85a80fb8ff311541", null ],
     [ "packet_id", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#a369e8e7d80c7fc69a1c8fb7252dd5fe4", null ],
     [ "size", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#a886a07c56a61e5de253dfc9cbf24b5ea", null ],
+    [ "operator<", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#ae62093d0c2ab3389e5c3d0669a711e03", null ],
     [ "operator<<", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#a84913b89d154d78600e67d8de535414e", null ],
+    [ "operator==", "classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html#a9c3616152af50a1ef0c95e186c423185", null ],
     [ "unsubscribe_packet", "group__unsubscribe__v3__1__1.html#ga0366c5a1e09f36f76a1e6792fbe6bcf1", null ]
 ];

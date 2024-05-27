@@ -8,7 +8,9 @@ var group__unsubscribe__v5__detail =
       [ "packet_id", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a6e680db726a453aba52aab2ca72148b5", null ],
       [ "props", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#ab366dcd503fb69c61e834e34a7c6c96b", null ],
       [ "size", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a55301bcaa6044b38ccb5a754a24452dc", null ],
+      [ "operator<", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#ae62093d0c2ab3389e5c3d0669a711e03", null ],
       [ "operator<<", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a84913b89d154d78600e67d8de535414e", null ],
+      [ "operator==", "classasync__mqtt_1_1v5_1_1basic__unsubscribe__packet.html#a9c3616152af50a1ef0c95e186c423185", null ],
       [ "unsubscribe_packet", "group__unsubscribe__v5.html#ga0366c5a1e09f36f76a1e6792fbe6bcf1", null ]
     ] ]
 ];

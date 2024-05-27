@@ -137,6 +137,12 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
+<tr class="memitem:a9f11886f803744fe5c1b45ae300dc1fe" id="r_a9f11886f803744fe5c1b45ae300dc1fe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f11886f803744fe5c1b45ae300dc1fe">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:a9f11886f803744fe5c1b45ae300dc1fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">less than operator  <br /></td></tr>
+<tr class="separator:a9f11886f803744fe5c1b45ae300dc1fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a397538a3b282631e0e61f32c32e0cb2a" id="r_a397538a3b282631e0e61f32c32e0cb2a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a397538a3b282631e0e61f32c32e0cb2a">operator==</a> (<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;rhs)</td></tr>
+<tr class="memdesc:a397538a3b282631e0e61f32c32e0cb2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">equal operator  <br /></td></tr>
+<tr class="separator:a397538a3b282631e0e61f32c32e0cb2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8b47870d486af93440f26159bf419c5" id="r_ab8b47870d486af93440f26159bf419c5"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8b47870d486af93440f26159bf419c5">operator&lt;&lt;</a> (std::ostream &amp;o, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;v)</td></tr>
 <tr class="memdesc:ab8b47870d486af93440f26159bf419c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">stream output operator  <br /></td></tr>
 <tr class="separator:ab8b47870d486af93440f26159bf419c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -249,6 +255,45 @@ Thread Safety</h4>
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a9f11886f803744fe5c1b45ae300dc1fe" name="a9f11886f803744fe5c1b45ae300dc1fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f11886f803744fe5c1b45ae300dc1fe">&#9670;&#160;</a></span>operator&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>less than operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+
+</div>
+</div>
 <a id="ab8b47870d486af93440f26159bf419c5" name="ab8b47870d486af93440f26159bf419c5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab8b47870d486af93440f26159bf419c5">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
 
@@ -285,6 +330,45 @@ Thread Safety</h4>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+
+</div>
+</div>
+<a id="a397538a3b282631e0e61f32c32e0cb2a" name="a397538a3b282631e0e61f32c32e0cb2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a397538a3b282631e0e61f32c32e0cb2a">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>lhs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html">pingresp_packet</a> const &amp;</td>          <td class="paramname"><span class="paramname"><em>rhs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">related</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>equal operator </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lhs</td><td>compare target </td></tr>
+    <tr><td class="paramname">rhs</td><td>compare target </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
 
 </div>
 </div>
