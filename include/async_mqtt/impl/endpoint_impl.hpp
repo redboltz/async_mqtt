@@ -87,6 +87,12 @@ inline
 void
 basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms(std::size_t ms) {
     pingreq_send_interval_ms_ = ms;
+    if (pingreq_send_interval_ms_ == 0) {
+        tim_pingreq_send_->cancel();
+    }
+    else {
+        reset_pingreq_send_timer();
+    }
 }
 
 // private

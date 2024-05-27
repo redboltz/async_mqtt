@@ -204,6 +204,11 @@ recv_op {
                                                 BOOST_ASSERT(p.val() != 0);
                                                 ep.maximum_packet_size_send_ = p.val();
                                             },
+                                            [&](property::server_keep_alive const& p) {
+                                                if constexpr (can_send_as_client(Role)) {
+                                                    ep.set_pingreq_send_interval_ms(p.val() * 1000);
+                                                }
+                                            },
                                             [](auto const&) {
                                             }
                                         }
