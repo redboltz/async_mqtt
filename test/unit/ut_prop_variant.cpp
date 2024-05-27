@@ -681,7 +681,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
 
 BOOST_AUTO_TEST_CASE(subscription_identifier) {
     am::property_variant pv1{
-        am::property::subscription_identifier{0x0f'ff'ff'ff}
+        am::property::subscription_identifier{0x0f'ff'ff'ff} // 0xff, 0xff, 0xff, 0x7f (encoded array)
     };
     BOOST_TEST(
         boost::lexical_cast<std::string>(pv1) ==
@@ -3599,6 +3599,277 @@ BOOST_AUTO_TEST_CASE(props) {
     auto ps2 = am::make_properties(buf, am::property_location::publish, ec);
     BOOST_TEST(!ec);
     BOOST_TEST(ps1 == ps2);
+}
+
+
+BOOST_AUTO_TEST_CASE(empty) {
+    am::buffer buf;
+    am::error_code ec;
+    am::make_property_variant(buf, am::property_location::connect, ec);
+    BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+}
+
+BOOST_AUTO_TEST_CASE(error) {
+    using namespace am::property;
+    using am::property_location;
+    {
+        am::buffer buf{std::string{static_cast<char>(id::payload_format_indicator)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::message_expiry_interval)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::content_type)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::content_type), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::response_topic)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::response_topic), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::correlation_data)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::correlation_data), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{
+            std::string{
+                static_cast<char>(id::subscription_identifier),
+                static_cast<char>(0xff),
+                static_cast<char>(0xff),
+                static_cast<char>(0xff),
+                static_cast<char>(0x80), // 7f is limit
+            }
+        };
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::subscribe, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::session_expiry_interval)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::assigned_client_identifier)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::assigned_client_identifier), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::server_keep_alive)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::authentication_method)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::authentication_method), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::authentication_data)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::authentication_data), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::request_problem_information)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::will_delay_interval)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::will, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::request_response_information)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connect, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::response_information)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::response_information), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::server_reference)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::server_reference), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::reason_string)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::reason_string), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::receive_maximum)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::topic_alias_maximum)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::topic_alias)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::maximum_qos)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::retain_available)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::user_property)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::user_property), 'c', 'c'}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{
+            std::string{
+                static_cast<char>(id::user_property),
+                static_cast<char>(0),
+                static_cast<char>(1),
+                'c',
+            }
+        };
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{
+            std::string{
+                static_cast<char>(id::user_property),
+                static_cast<char>(0),
+                static_cast<char>(1),
+                'c',
+                static_cast<char>(0),
+                static_cast<char>(1),
+            }
+        };
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::publish, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::maximum_packet_size)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::wildcard_subscription_available)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::subscription_identifier_available)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{std::string{static_cast<char>(id::shared_subscription_available)}};
+        am::error_code ec;
+        am::make_property_variant(buf, am::property_location::connack, ec);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
