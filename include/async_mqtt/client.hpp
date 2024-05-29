@@ -186,6 +186,20 @@ public:
      *           - v3_1_1::connack_packet
      *           - v5::connack_packet
      *           - error_code
+     *              - If an error occurs during packet construction
+     *                 - If the is CONNECT packet specific error
+     *                    - connect_reason_code is set
+     *                 - Otherwise
+     *                    - disconnect_reason_code is set
+     *              - If an error occurs while checking the packet for sending
+     *                 - disconnect_reason_code is set
+     *              - If an error occurs at an underlying layer while sending a packet
+     *                 - underlying error is set. e.g. system, asio, beast, ...
+     *              - If the corresponding CONNACK packet is received, you can access connack_packet even if an error is set
+     *                 - If the protocol version is v3.1.1
+     *                    - connect_return_code is set
+     *                 - If the protocol version is v5
+     *                    - connect_reason_code is set
      *              - Underlying error
      *                 - TCP, TLS, Websocket related errors
      *              - mqtt_error, connect_reason_code, disconnect_reason_code
@@ -211,17 +225,26 @@ public:
      *           - @ref v3_1_1::basic_suback_packet "v3_1_1::suback_packet"
      *           - @ref v5::basic_suback_packet "v5::suback_packet"
      *           - error_code
-     *              - Underlying error
-     *                 - TCP, TLS, Websocket related errors
-     *              - mqtt_error, disconnect_reason_code
-     *                 - send packet related errors
-     *                 - if subscribe has multiple entries, and not all of them has error,
-     *                   mqtt_error::partial_error_detected is returned. It is not an error.
-     *                 - if subscribe has multiple entries, and all of them has error,
-     *                   mqtt_error::all_error_detected is returned. It is an error.
-     *              - suback_return_code (v3.1.1), suback_reason_code (v5)
-     *                 - if subscribe has single entry, suback_return_code (v3.1.1)  or suback_reason_code (v5) is set.
-     *                 - SUBACK packet response
+     *              - If an error occurs during packet construction
+     *                 - disconnect_reason_code is set
+     *              - If an error occurs while checking the packet for sending
+     *                 - disconnect_reason_code is set
+     *              - If an error occurs at an underlying layer while sending a packet
+     *                 - underlying error is set. e.g. system, asio, beast, ...
+     *              - If the corresponding SUBACK packet is received, you can access suback_packet even if an error is set
+     *                 - If the sent SUBSCRIBE packet has a single entry
+     *                    - If the protocol version is v3.1.1
+     *                       - suback_return_code is set
+     *                    - If the protocol version is v5
+     *                       - suback_reason_code is set
+     *                 - If the sent SUBSCRIBE packet has multiple entries
+     *                    - If all entries of the SUBACK packet are errors
+     *                       - mqtt_error::all_error_detected is set
+     *                    - If some of the entries in the SUBACK packet are errors
+     *                       - mqtt_error::partial_error_detected is set
+     *                    - If there are no errors in the SUBACK packet
+     *                       - errc::success is set
+     *
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -241,17 +264,26 @@ public:
      *           - @ref v3_1_1::basic_unsuback_packet "v3_1_1::unsuback_packet"
      *           - @ref v5::basic_unsuback_packet "v5::unsuback_packet"
      *           - error_code
-     *              - Underlying error
-     *                 - TCP, TLS, Websocket related errors
-     *              - mqtt_error, disconnect_reason_code
-     *                 - send packet related errors
-     *                 - if unsubscribe has multiple entries, and not all of them has error,
-     *                   mqtt_error::partial_error_detected is returned. It is not an error.
-     *                 - if unsubscribe has multiple entries, and all of them has error,
-     *                   mqtt_error::all_error_detected is returned. It is an error.
-     *              - unsuback_reason_code (v5)
-     *                 - if subscribe has single entry, suback_return_code (v3.1.1)  or suback_reason_code (v5) is set.
-     *                 - UNSUBACK packet response
+     *              - If an error occurs during packet construction
+     *                 - disconnect_reason_code is set
+     *              - If an error occurs while checking the packet for sending
+     *                 - disconnect_reason_code is set
+     *              - If an error occurs at an underlying layer while sending a packet
+     *                 - underlying error is set. e.g. system, asio, beast, ...
+     *              - If the corresponding UNSUBACK packet is received, you can access unsuback_packet even if an error is set
+     *                 - If the protocol version is v3.1.1 (UNSUBACK packet has no error field)
+     *                    - errc::success is set
+     *                 - If the protocol version is v5
+     *                    - If the sent UNSUBSCRIBE packet has a single entry
+     *                       - unsuback_reason_code is set
+     *                 - If the sent UNSUBSCRIBE packet has multiple entries
+     *                    - If all entries of the UNSUBACK packet are errors
+     *                       - mqtt_error::all_error_detected is set
+     *                    - If some of the entries in the UNSUBACK packet are errors
+     *                       - mqtt_error::partial_error_detected is set
+     *                    - If there are no errors in the UNSUBACK packet
+     *                       - errc::success is set
+     *
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
      */
@@ -273,16 +305,27 @@ public:
      *        - When sending QoS1 packet, only pubres_t::puback_opt is set.
      *        - When sending QoS2 packet, only pubres_t::pubrec_opt and pubres_t::pubcomp are set.
      *        - error_code
-     *           - Underlying error
-     *              - TCP, TLS, Websocket related errors
-     *           - mqtt_error, disconnect_reason_code
-     *              - send packet related errors
-     *           - puback_reason_code (v5) QoS1
-     *              - PUBACK packet response
-     *           - pubrec_reason_code (v5) QoS2
-     *              - PUBREC packet response if failed
-     *           - pubcomp_reason_code (v5) QoS2
-     *              - PUBCOMP packet response
+     *           - If an error occurs during packet construction
+     *              - disconnect_reason_code is set
+     *           - If an error occurs while checking the packet for sending
+     *              - disconnect_reason_code is set
+     *           - If an error occurs at an underlying layer while sending a packet
+     *              - underlying error is set. e.g. system, asio, beast, ...
+     *           - If sent PUBLISH packet is QoS0
+     *              - errc::success is set
+     *           - If sent PUBLISH packet is QoS1 or QoS2
+     *              - If the corresponding response packet is received, you can access the response packet even if an error is set
+     *                 - If the protocol version is v3.1.1 (PUBACK, PUBREC, PUBCOMP packet has no error field)
+     *                    - errc::success is set
+     *                 - If the protocol version is v5
+     *                    - If sent PUBLISH packet is QoS1
+     *                       - puback_reason_code is set
+     *                    - If sent PUBLISH packet is QoS2
+     *                       - If PUBREC is error
+     *                          - pubrec_reason_code is set
+     *                       - Otherwise (after PUBCOMP packet is received)
+     *                          - pubcomp_reason_code is set
+     *
      * @return deduced by token
      */
     template <typename... Args>
@@ -299,6 +342,13 @@ public:
      *     - CompletionToken
      *        - Signature: void(@ref error_reporting "error_code")
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     *        - error_code
+     *           - If an error occurs during packet construction
+     *              - disconnect_reason_code is set
+     *           - If an error occurs while checking the packet for sending
+     *              - disconnect_reason_code is set
+     *           - If an error occurs at an underlying layer while sending a packet
+     *              - underlying error is set. e.g. system, asio, beast, ...
      * @return deduced by token
      */
     template <typename... Args>
