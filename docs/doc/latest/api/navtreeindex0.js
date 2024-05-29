@@ -52,12 +52,13 @@ var NAVTREEINDEX0 =
 "classasync__mqtt_1_1basic__packet__variant.html#a17a23fa4a26ad3fe67a831da41527ad2":[0,2,3,0,0,0],
 "classasync__mqtt_1_1basic__packet__variant.html#a1a88fc79bea790ffb1ab99c9d4ea73af":[0,2,3,0,0,4],
 "classasync__mqtt_1_1basic__packet__variant.html#a21b5fec4cbbcfcb34cd23d7b85f94bb0":[0,2,3,0,0,10],
+"classasync__mqtt_1_1basic__packet__variant.html#a2762c6054cff7607d48d6e8731579c74":[0,2,3,0,0,11],
 "classasync__mqtt_1_1basic__packet__variant.html#a2de33b13e6a41b200ec153ff90e15aec":[0,2,3,0,0,7],
 "classasync__mqtt_1_1basic__packet__variant.html#a3f90cc46b76386824fdcd74732014c94":[0,2,3,0,0,3],
 "classasync__mqtt_1_1basic__packet__variant.html#a48155169ae2078aceaeda629a07cd50f":[0,2,3,0,0,6],
 "classasync__mqtt_1_1basic__packet__variant.html#a49e90a15eb050e18d1c28e1787154d7f":[0,2,3,0,0,5],
-"classasync__mqtt_1_1basic__packet__variant.html#a568b174cb52b49a5fbb1f95bbcd7f7f9":[0,2,3,0,0,11],
-"classasync__mqtt_1_1basic__packet__variant.html#a5a06dad94d15e6d9c0e1dc64a59a19bf":[0,2,3,0,0,12],
+"classasync__mqtt_1_1basic__packet__variant.html#a568b174cb52b49a5fbb1f95bbcd7f7f9":[0,2,3,0,0,12],
+"classasync__mqtt_1_1basic__packet__variant.html#a5a06dad94d15e6d9c0e1dc64a59a19bf":[0,2,3,0,0,13],
 "classasync__mqtt_1_1basic__packet__variant.html#a8f9c3e84ebae1e4eb0955988ceb11450":[0,2,3,0,0,1],
 "classasync__mqtt_1_1basic__packet__variant.html#ac10d54ec16155155a5322d6ded45cf48":[0,2,3,0,0,8],
 "classasync__mqtt_1_1basic__packet__variant.html#ae697446c3aee2b0ef593bd11a9580107":[0,2,3,0,0,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "classasync__mqtt_1_1property_1_1maximum__qos.html#ac0b48992952a2c87d7b8b9c182725427":[0,2,1,0,22,0],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html":[0,2,1,0,3],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html#a599ad258dabd588cda82ace5d95394ac":[0,2,1,0,3,0],
-"classasync__mqtt_1_1property_1_1message__expiry__interval.html#a9973ecd3494f980fbebc433891cd10d4":[0,2,1,0,3,1],
-"classasync__mqtt_1_1property_1_1payload__format__indicator.html":[0,2,1,0,2]
+"classasync__mqtt_1_1property_1_1message__expiry__interval.html#a9973ecd3494f980fbebc433891cd10d4":[0,2,1,0,3,1]
 };

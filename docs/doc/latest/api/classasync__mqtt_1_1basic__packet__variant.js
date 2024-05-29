@@ -11,6 +11,7 @@ var classasync__mqtt_1_1basic__packet__variant =
     [ "visit", "classasync__mqtt_1_1basic__packet__variant.html#ac10d54ec16155155a5322d6ded45cf48", null ],
     [ "visit", "classasync__mqtt_1_1basic__packet__variant.html#ae697446c3aee2b0ef593bd11a9580107", null ],
     [ "visit", "classasync__mqtt_1_1basic__packet__variant.html#a21b5fec4cbbcfcb34cd23d7b85f94bb0", null ],
+    [ "operator<", "classasync__mqtt_1_1basic__packet__variant.html#a2762c6054cff7607d48d6e8731579c74", null ],
     [ "operator<<", "classasync__mqtt_1_1basic__packet__variant.html#a568b174cb52b49a5fbb1f95bbcd7f7f9", null ],
     [ "operator==", "classasync__mqtt_1_1basic__packet__variant.html#a5a06dad94d15e6d9c0e1dc64a59a19bf", null ],
     [ "packet_variant", "group__packet__variant.html#ga56df875fd46e22c7dfc411481a2369c2", null ]

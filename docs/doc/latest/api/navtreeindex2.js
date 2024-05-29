@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab8b47870d486af93440f26159bf419c5":[0,2,0,4,0,4],
 "classasync__mqtt_1_1v5_1_1auth__packet.html":[0,2,1,1,1],
 "classasync__mqtt_1_1v5_1_1auth__packet.html#a0179a7be66635fc87a74c26013a1a0b9":[0,2,1,1,1,5],
 "classasync__mqtt_1_1v5_1_1auth__packet.html#a0285b192c7a1d04db056c0ecb42a1e26":[0,2,1,1,1,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "functions_func_e.html":[1,2,1,4],
 "functions_func_f.html":[1,2,1,5],
 "functions_func_g.html":[1,2,1,6],
-"functions_func_h.html":[1,2,1,7],
-"functions_func_i.html":[1,2,1,8]
+"functions_func_h.html":[1,2,1,7]
 };

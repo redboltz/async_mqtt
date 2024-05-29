@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"classasync__mqtt_1_1property_1_1payload__format__indicator.html":[0,2,1,0,2],
 "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ad09953ffd432f1fea04d22d39464398d":[0,2,1,0,2,1],
 "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ae2f1b455c358120b2358e4361b31fda6":[0,2,1,0,2,0],
 "classasync__mqtt_1_1property_1_1reason__string.html":[0,2,1,0,18],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a397538a3b282631e0e61f32c32e0cb2a":[0,2,0,4,0,5],
 "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a80978bf35695f7e535020a12a4d32a04":[0,2,0,4,0,2],
 "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a9f11886f803744fe5c1b45ae300dc1fe":[0,2,0,4,0,3],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab074b326b3d3a2b1d1a2d98b3781a316":[0,2,0,4,0,1],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab8b47870d486af93440f26159bf419c5":[0,2,0,4,0,4]
+"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab074b326b3d3a2b1d1a2d98b3781a316":[0,2,0,4,0,1]
 };
