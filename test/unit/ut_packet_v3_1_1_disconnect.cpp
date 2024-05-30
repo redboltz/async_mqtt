@@ -13,17 +13,17 @@
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 struct v311_disconnect;
+struct v311_disconnect_error;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v3_1_1_disconnect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-#define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
-
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE(v311_disconnect) {
     BOOST_TEST(am::is_disconnect<am::v3_1_1::disconnect_packet>());
@@ -53,11 +53,48 @@ BOOST_AUTO_TEST_CASE(v311_disconnect) {
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
+        BOOST_TEST(p.type() == am::control_packet_type::disconnect);
     }
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v3_1_1::disconnect{}"
     );
+
+    BOOST_TEST(p.type() == am::control_packet_type::disconnect);
+
+    auto p2 = am::v3_1_1::disconnect_packet();
+    BOOST_CHECK(p == p2);
+    BOOST_CHECK(!(p < p2));
+    BOOST_CHECK(!(p2 < p));
+
+}
+
+BOOST_AUTO_TEST_CASE(v311_disconnect_error) {
+    {
+        am::buffer buf; // empty
+        am::error_code ec;
+        am::v3_1_1::disconnect_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{"\x00"sv}; // invalid type
+        am::error_code ec;
+        am::v3_1_1::disconnect_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{"\xe0"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::disconnect_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{"\xe0\x01"sv}; // invalid remaining length
+        am::error_code ec;
+        am::v3_1_1::disconnect_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

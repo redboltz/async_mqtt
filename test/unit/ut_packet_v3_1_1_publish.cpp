@@ -16,17 +16,17 @@ struct v311_publish;
 struct v311_publish_qos0;
 struct v311_publish_invalid;
 struct v311_publish_pid4;
+struct v311_publish_error;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-#define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
-
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE(v311_publish) {
     BOOST_TEST(am::is_publish<am::v3_1_1::publish_packet>());
@@ -90,6 +90,8 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
+        BOOST_TEST(p.type() == am::control_packet_type::publish);
     }
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
     BOOST_TEST(
@@ -102,6 +104,52 @@ BOOST_AUTO_TEST_CASE(v311_publish) {
         "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:4660}"
     );
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
+
+    auto p2 = am::v3_1_1::publish_packet{
+        0x1234, // packet_id
+        "topic1",
+        "payload1",
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::no
+    };
+
+    auto p3 = am::v3_1_1::publish_packet{
+        0x1235, // packet_id
+        "topic1",
+        "payload1",
+        am::qos::exactly_once | am::pub::retain::yes | am::pub::dup::no
+    };
+
+    BOOST_CHECK(p == p2);
+    BOOST_CHECK(!(p < p2));
+    BOOST_CHECK(!(p2< p));
+    BOOST_CHECK(p < p3 || p3 < p);
+
+    try {
+        auto p = am::v3_1_1::publish_packet{
+            0x1234, // packet_id
+            "topic1",
+            "payload1",
+            static_cast<am::pub::opts>(0x06) // QoS3 ?
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
+    try {
+        auto p = am::v3_1_1::publish_packet{
+            0x1234, // packet_id
+            std::string(0x10000, 'w'), // too long
+            "payload1",
+            static_cast<am::pub::opts>(0x03) // QoS3 ?
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
 }
 
 BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
@@ -182,7 +230,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
     }
     try {
         auto p = am::v3_1_1::publish_packet{
@@ -194,7 +242,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_invalid) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -266,6 +314,113 @@ BOOST_AUTO_TEST_CASE(v311_publish_pid4) {
         "v3_1_1::publish{topic:topic1,qos:exactly_once,retain:yes,dup:no,pid:305419896}"
     );
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
+}
+
+BOOST_AUTO_TEST_CASE(v311_publish_error) {
+    {
+        am::buffer buf; // empty
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x00"sv}; // invalid type
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x32"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x32\x01"sv}; // remaining length buf mismatch
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x32\x03"sv}; // invalid remaining length
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x32\x01\x00"sv}; // short topic name length
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x32\x02\x02T"sv}; // mismatch topic name length
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x32\x00\x00\x00"sv}; // zero remaining length
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x30\x02\x00\x00"sv}; // no pid QoS0 valid
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x36\x02\x00\x00"sv}; // QoS3 invalid
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL
+        am::buffer buf{"\x32\x02\x00\x00"sv}; // no pid QoS1 invalid
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL   TP PID
+        am::buffer buf{"\x32\x05\x00\x01T\x12\x34"sv}; // no payload (valid)
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        //                CP  RL  TPL     TP      PID
+        am::buffer buf{"\x32\x06\x00\x02\xc2\xc0\x12\x34"sv}; // invalid topic
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_name_invalid);
+    }
+    {
+        //                CP  RL  TPL   TP PID
+        am::buffer buf{"\x32\x04\x00\x01T\x12"sv}; // invalid pid
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  TPL   TP PID
+        am::buffer buf{"\x32\x05\x00\x01T\x12\x34\x00"sv}; // too long
+        am::error_code ec;
+        am::v3_1_1::publish_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

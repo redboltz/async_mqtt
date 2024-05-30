@@ -104,6 +104,7 @@ private:
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v311_subscribe;
     friend struct ::ut_packet::v311_subscribe_pid4;
+    friend struct ::ut_packet::v311_subscribe_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use

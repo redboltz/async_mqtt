@@ -13,17 +13,17 @@
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 struct v311_connect;
+struct v311_connect_error;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-#define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
-
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE(v311_connect) {
     BOOST_TEST(am::is_connect<am::v3_1_1::connect_packet>());
@@ -99,11 +99,309 @@ BOOST_AUTO_TEST_CASE(v311_connect) {
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
+        BOOST_TEST(p.type() == am::control_packet_type::connect);
     }
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v3_1_1::connect{cid:cid1,ka:4660,cs:1,un:user1,pw:*****,will:{topic:topic1,message:payload1,qos:at_least_once,retain:yes}}"
     );
+
+    auto p2 = am::v3_1_1::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        "cid1",
+        w,
+        "user1",
+        "pass1"
+    };
+    auto p3 = am::v3_1_1::connect_packet{
+        false,  // clean_session
+        0x1234, // keep_alive
+        "cid1",
+        w,
+        "user1",
+        "pass1"
+    };
+    BOOST_CHECK(p == p2);
+    BOOST_CHECK(!(p < p2));
+    BOOST_CHECK(!(p2< p));
+    BOOST_CHECK(p < p3 || p3 < p);
+
+
+    try {
+        auto p = am::v3_1_1::connect_packet{
+            true,   // clean_session
+            0x1234, // keep_alive
+            "\xc2\xc0", // invalid_utf8,
+            std::nullopt,
+            "user1",
+            "pass1"
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::connect_reason_code::client_identifier_not_valid);
+    }
+
+    try {
+        auto p = am::v3_1_1::connect_packet{
+            true,   // clean_session
+            0x1234, // keep_alive
+            "cid1",
+            std::nullopt,
+            "\xc2\xc0", // invalid_utf8,
+            "pass1"
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::connect_reason_code::bad_user_name_or_password);
+    }
+
+    try {
+        auto badw = am::will{
+            "\xc2\xc0", // invalid_utf8,
+            "payload",
+            am::pub::retain::yes | am::qos::at_least_once
+        };
+        auto p = am::v3_1_1::connect_packet{
+            true,   // clean_session
+            0x1234, // keep_alive
+            "cid1",
+            badw,
+            "user1",
+            "pass1"
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::connect_reason_code::topic_name_invalid);
+    }
+
+    try {
+        auto badw = am::will{
+            "topic1",
+            std::string(0x10000, 'w'), // too long
+            am::pub::retain::yes | am::qos::at_least_once
+        };
+        auto p = am::v3_1_1::connect_packet{
+            true,   // clean_session
+            0x1234, // keep_alive
+            "cid1",
+            badw,
+            "user1",
+            "pass1"
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::connect_reason_code::malformed_packet);
+    }
 }
+
+BOOST_AUTO_TEST_CASE(v311_connect_error) {
+    {
+        am::buffer buf; // empty
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x00"sv}; // invalid type
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        am::buffer buf{"\x10"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x10\x01"sv}; // invalid reserved
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\x10\x01\x00"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V
+        am::buffer buf{"\x10\x07\x00\x04MQTT\x05"sv}; // invalid version
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::unsupported_protocol_version);
+    }
+    {
+        //                CP  RL  FIXED        V
+        am::buffer buf{"\x10\x07\x00\x04MQTT\x04"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF
+        am::buffer buf{"\x10\x08\x00\x04MQTT\x04\x01"sv}; // invalid reserved flags
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF
+        am::buffer buf{"\x10\x08\x00\x04MQTT\x04\x00"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE
+        am::buffer buf{"\x10\x0a\x00\x04MQTT\x04\x00\x11\x22"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL
+        am::buffer buf{"\x10\x0c\x00\x04MQTT\x04\x00\x11\x22\x00\x02"sv}; // short
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02\xc2\xc0"sv}; // invalid client identifier
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::client_identifier_not_valid);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02II"sv}; // valid
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x1c\x11\x22\x00\x02II"sv}; // invalid will qos
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x04\x11\x22\x00\x02II"sv}; // no will topic length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL
+        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02"sv}; // no will topic
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT
+        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid will topic
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::topic_name_invalid);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT
+        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT"sv}; // no will message length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT  WML
+        am::buffer buf{"\x10\x14\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x01"sv}; // no will message
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT  WML   WM
+        am::buffer buf{"\x10\x16\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x02WM"sv}; // valid
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x20\x11\x22\x00\x02II"sv}; // invalid will retain
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
+        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x08\x11\x22\x00\x02II"sv}; // invalid will qos
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
+        am::buffer buf{"\x10\x0f\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x01"sv}; // invalid username length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
+        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x00"sv}; // zero username length (valid)
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
+        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x01"sv}; // short username length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL   UN
+        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid username length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::bad_user_name_or_password);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
+        am::buffer buf{"\x10\x0f\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x01"sv}; // invalid password length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
+        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x00"sv}; // zero password length (valid)
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::error_code{});
+    }
+    {
+        //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
+        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x01"sv}; // short password length
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

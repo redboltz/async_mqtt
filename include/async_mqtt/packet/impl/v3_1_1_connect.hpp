@@ -435,13 +435,13 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
         auto will_qos = connect_flags::will_qos(connect_flags_);
         if (will_retain == pub::retain::yes) {
             ec = make_error_code(
-                connect_reason_code::protocol_error
+                connect_reason_code::malformed_packet
             );
             return;
         }
-        if (will_qos != qos::at_most_once) {
+        if (will_qos != qos::at_most_once) { // will flag false, qos field should be 0
             ec = make_error_code(
-                connect_reason_code::protocol_error
+                connect_reason_code::malformed_packet
             );
             return;
         }
@@ -495,6 +495,7 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
         password_ = buf.substr(0, password_length);
         buf.remove_prefix(password_length);
     }
+    ec = error_code{};
 }
 
 inline

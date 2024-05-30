@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 force_move(props),
                 as::as_tuple(as::use_awaitable)
             );
-            BOOST_TEST(ec_disconnect == am::disconnect_reason_code::protocol_error);
+            BOOST_TEST(ec_disconnect == am::disconnect_reason_code::malformed_packet);
             co_return;
         },
         as::detached

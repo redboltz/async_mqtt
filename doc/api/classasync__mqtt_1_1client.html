@@ -580,7 +580,22 @@ template&lt;typename... Args&gt; </div>
 <li>the last argument<ul>
 <li>CompletionToken<ul>
 <li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>)</li>
-<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported </li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported</li>
+<li>error_code<ul>
+<li>If an error occurs during packet construction<ul>
+<li>disconnect_reason_code is set</li>
+</ul>
+</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>disconnect_reason_code is set</li>
+</ul>
+</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ... </li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -633,24 +648,48 @@ template&lt;typename... Args&gt; </div>
 <li>When sending QoS1 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a">pubres_t::puback_opt</a> is set.</li>
 <li>When sending QoS2 packet, only <a class="el" href="structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440">pubres_t::pubrec_opt</a> and pubres_t::pubcomp are set.</li>
 <li>error_code<ul>
-<li>Underlying error<ul>
-<li>TCP, TLS, Websocket related errors</li>
+<li>If an error occurs during packet construction<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>mqtt_error, disconnect_reason_code<ul>
-<li>send packet related errors</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>puback_reason_code (v5) QoS1<ul>
-<li>PUBACK packet response</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ...</li>
 </ul>
 </li>
-<li>pubrec_reason_code (v5) QoS2<ul>
-<li>PUBREC packet response if failed</li>
+<li>If sent PUBLISH packet is QoS0<ul>
+<li>errc::success is set</li>
 </ul>
 </li>
-<li>pubcomp_reason_code (v5) QoS2<ul>
-<li>PUBCOMP packet response </li>
+<li>If sent PUBLISH packet is QoS1 or QoS2<ul>
+<li>If the corresponding response packet is received, you can access the response packet even if an error is set<ul>
+<li>If the protocol version is v3.1.1 (PUBACK, PUBREC, PUBCOMP packet has no error field)<ul>
+<li>errc::success is set</li>
+</ul>
+</li>
+<li>If the protocol version is v5<ul>
+<li>If sent PUBLISH packet is QoS1<ul>
+<li>puback_reason_code is set</li>
+</ul>
+</li>
+<li>If sent PUBLISH packet is QoS2<ul>
+<li>If PUBREC is error<ul>
+<li>pubrec_reason_code is set</li>
+</ul>
+</li>
+<li>Otherwise (after PUBCOMP packet is received)<ul>
+<li>pubcomp_reason_code is set</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -840,6 +879,36 @@ template&lt;typename... Args&gt; </div>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1connack__packet.html" title="MQTT CONNACK packet (v3.1.1)">v3_1_1::connack_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1connack__packet.html" title="MQTT CONNACK packet (v5)">v5::connack_packet</a></li>
 <li>error_code<ul>
+<li>If an error occurs during packet construction<ul>
+<li>If the is CONNECT packet specific error<ul>
+<li>connect_reason_code is set</li>
+</ul>
+</li>
+<li>Otherwise<ul>
+<li>disconnect_reason_code is set</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>disconnect_reason_code is set</li>
+</ul>
+</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ...</li>
+</ul>
+</li>
+<li>If the corresponding CONNACK packet is received, you can access connack_packet even if an error is set<ul>
+<li>If the protocol version is v3.1.1<ul>
+<li>connect_return_code is set</li>
+</ul>
+</li>
+<li>If the protocol version is v5<ul>
+<li>connect_reason_code is set</li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Underlying error<ul>
 <li>TCP, TLS, Websocket related errors</li>
 </ul>
@@ -907,19 +976,45 @@ template&lt;typename... Args&gt; </div>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__suback__packet.html">v3_1_1::suback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__suback__packet.html">v5::suback_packet</a></li>
 <li>error_code<ul>
-<li>Underlying error<ul>
-<li>TCP, TLS, Websocket related errors</li>
+<li>If an error occurs during packet construction<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>mqtt_error, disconnect_reason_code<ul>
-<li>send packet related errors</li>
-<li>if subscribe has multiple entries, and not all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is returned. It is not an error.</li>
-<li>if subscribe has multiple entries, and all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is returned. It is an error.</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>suback_return_code (v3.1.1), suback_reason_code (v5)<ul>
-<li>if subscribe has single entry, suback_return_code (v3.1.1) or suback_reason_code (v5) is set.</li>
-<li>SUBACK packet response</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ...</li>
+</ul>
+</li>
+<li>If the corresponding SUBACK packet is received, you can access suback_packet even if an error is set<ul>
+<li>If the sent SUBSCRIBE packet has a single entry<ul>
+<li>If the protocol version is v3.1.1<ul>
+<li>suback_return_code is set</li>
+</ul>
+</li>
+<li>If the protocol version is v5<ul>
+<li>suback_reason_code is set</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If the sent SUBSCRIBE packet has multiple entries<ul>
+<li>If all entries of the SUBACK packet are errors<ul>
+<li><a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is set</li>
+</ul>
+</li>
+<li>If some of the entries in the SUBACK packet are errors<ul>
+<li><a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is set</li>
+</ul>
+</li>
+<li>If there are no errors in the SUBACK packet<ul>
+<li>errc::success is set</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -977,19 +1072,45 @@ template&lt;typename... Args&gt; </div>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsuback__packet.html">v3_1_1::unsuback_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__unsuback__packet.html">v5::unsuback_packet</a></li>
 <li>error_code<ul>
-<li>Underlying error<ul>
-<li>TCP, TLS, Websocket related errors</li>
+<li>If an error occurs during packet construction<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>mqtt_error, disconnect_reason_code<ul>
-<li>send packet related errors</li>
-<li>if unsubscribe has multiple entries, and not all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is returned. It is not an error.</li>
-<li>if unsubscribe has multiple entries, and all of them has error, <a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is returned. It is an error.</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>disconnect_reason_code is set</li>
 </ul>
 </li>
-<li>unsuback_reason_code (v5)<ul>
-<li>if subscribe has single entry, suback_return_code (v3.1.1) or suback_reason_code (v5) is set.</li>
-<li>UNSUBACK packet response</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ...</li>
+</ul>
+</li>
+<li>If the corresponding UNSUBACK packet is received, you can access unsuback_packet even if an error is set<ul>
+<li>If the protocol version is v3.1.1 (UNSUBACK packet has no error field)<ul>
+<li>errc::success is set</li>
+</ul>
+</li>
+<li>If the protocol version is v5<ul>
+<li>If the sent UNSUBSCRIBE packet has a single entry<ul>
+<li>unsuback_reason_code is set</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If the sent UNSUBSCRIBE packet has multiple entries<ul>
+<li>If all entries of the UNSUBACK packet are errors<ul>
+<li><a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e" title="All entries have error on suback/unsuback.">mqtt_error::all_error_detected</a> is set</li>
+</ul>
+</li>
+<li>If some of the entries in the UNSUBACK packet are errors<ul>
+<li><a class="el" href="group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584" title="Some entries have error on suback/unsuback (not an error)">mqtt_error::partial_error_detected</a> is set</li>
+</ul>
+</li>
+<li>If there are no errors in the UNSUBACK packet<ul>
+<li>errc::success is set</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

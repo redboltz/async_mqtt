@@ -93,6 +93,7 @@ private:
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v311_unsuback;
     friend struct ::ut_packet::v311_unsuback_pid4;
+    friend struct ::ut_packet::v311_unsuback_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use

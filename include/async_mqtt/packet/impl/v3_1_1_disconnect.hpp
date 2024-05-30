@@ -90,6 +90,7 @@ disconnect_packet::disconnect_packet(buffer buf, error_code& ec) {
         );
         return;
     }
+    ec = error_code{};
 }
 
 inline

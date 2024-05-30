@@ -141,6 +141,7 @@ private:
     friend struct ::ut_packet::v5_disconnect_no_arg;
     friend struct ::ut_packet::v5_disconnect_pid_rc;
     friend struct ::ut_packet::v5_disconnect_prop_len_last;
+    friend struct ::ut_packet::v5_disconnect_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use

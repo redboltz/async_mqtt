@@ -72,7 +72,14 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
                : 0)
       )
 {
-    using namespace std::literals;
+    if (topic_name_.size() > 0xffff) {
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::malformed_packet
+            )
+        };
+    }
+
     topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
     endian_store(
         boost::numeric_cast<std::uint16_t>(topic_name_.size()),
@@ -113,7 +120,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
         if (!validate_property(property_location::publish, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -384,8 +391,8 @@ void basic_publish_packet<PacketIdBytes>::update_message_expiry_interval(std::ui
                     p = property::message_expiry_interval(val);
                     updated = true;
                 },
-                    [&](auto&){}
-                    }
+                [&](auto&){}
+                }
         );
         if (updated) return;
     }
@@ -505,14 +512,14 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf, error_code
     case qos::exactly_once:
         if (!copy_advance(buf, packet_id_)) {
             ec = make_error_code(
-                disconnect_reason_code::protocol_error
+                disconnect_reason_code::malformed_packet
             );
             return;
         }
         break;
     default:
         ec = make_error_code(
-            disconnect_reason_code::protocol_error
+            disconnect_reason_code::malformed_packet
         );
         return;
     };

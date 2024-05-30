@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 am::disconnect_reason_code::normal_disconnection,
                 force_move(props)
             );
-            BOOST_TEST(ec_disconnect == am::disconnect_reason_code::protocol_error);
+            BOOST_TEST(ec_disconnect == am::disconnect_reason_code::malformed_packet);
             co_return;
         },
         as::detached

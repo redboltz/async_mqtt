@@ -7,8 +7,6 @@
 #if !defined(ASYNC_MQTT_PACKET_TOPIC_SHARENAME_HPP)
 #define ASYNC_MQTT_PACKET_TOPIC_SHARENAME_HPP
 
-#include <boost/assert.hpp>
-
 #include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {
@@ -34,7 +32,6 @@ public:
     topic_sharename(
         AllTopic&& all_topic
     ): all_topic_{std::forward<AllTopic>(all_topic)} {
-        BOOST_ASSERT(all_topic_.size() <= 0xffff);
         auto const shared_prefix = std::string_view("$share/");
         if (all_topic_.substr(0, shared_prefix.size()) == shared_prefix) {
             // must have sharename

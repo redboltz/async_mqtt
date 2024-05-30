@@ -46,10 +46,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "all_8hpp_source.html",
-"classasync__mqtt_1_1property_1_1payload__format__indicator.html#ad09953ffd432f1fea04d22d39464398d",
-"classasync__mqtt_1_1v5_1_1auth__packet.html",
-"functions_func_k.html",
-"group__packet.html#gac92751864e0dd29699b7844345ac7162",
+"classasync__mqtt_1_1property_1_1payload__format__indicator.html",
+"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab8b47870d486af93440f26159bf419c5",
+"functions_func_i.html",
+"group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925",
 "group__qos.html#gga38e773082414bb272ab22275c56eb4dfa64d245cf1d119a993a586e60738513a9",
 "structasync__mqtt_1_1pub_1_1opts.html#af5796c98ffb5098ee1ced7d5012fff6c"
 ];

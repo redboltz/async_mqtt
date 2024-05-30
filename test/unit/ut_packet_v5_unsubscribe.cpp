@@ -14,17 +14,17 @@
 BOOST_AUTO_TEST_SUITE(ut_packet)
 struct v5_unsubscribe;
 struct v5_unsubscribe_pid4;
+struct v5_unsubscribe_error;
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <async_mqtt/packet/v5_unsubscribe.hpp>
 #include <async_mqtt/packet/packet_iterator.hpp>
 #include <async_mqtt/packet/packet_traits.hpp>
 
-#define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
-
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
 namespace am = async_mqtt;
+using namespace std::literals::string_view_literals;
 
 BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
     BOOST_TEST(am::is_unsubscribe<am::v5::unsubscribe_packet>());
@@ -79,11 +79,76 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
         BOOST_TEST(cbs2.size() == p.num_of_const_buffer_sequence());
         auto [b2, e2] = am::make_packet_range(cbs2);
         BOOST_TEST(std::equal(b2, e2, std::begin(expected)));
+
+        BOOST_TEST(p.type() == am::control_packet_type::unsubscribe);
     }
     BOOST_TEST(
         boost::lexical_cast<std::string>(p) ==
         "v5::unsubscribe{pid:4660,[{topic:topic1,sn:},{topic:topic2,sn:}],ps:[{id:user_property,key:mykey,val:myval}]}"
     );
+
+    auto p2 = am::v5::unsubscribe_packet{
+        0x1234,         // packet_id
+        args,
+        props
+    };
+
+    auto p3 = am::v5::unsubscribe_packet{
+        0x1235,         // packet_id
+        args,
+        props
+    };
+
+    BOOST_CHECK(p == p2);
+    BOOST_CHECK(!(p < p2));
+    BOOST_CHECK(!(p2< p));
+    BOOST_CHECK(p < p3 || p3 < p);
+
+    try {
+        std::vector<am::topic_sharename> args {
+            {
+                std::string(0x10000, 'w') // too long
+            }
+        };
+
+        auto p = am::v5::unsubscribe_packet{
+            0x1234,         // packet_id
+            args,
+            props
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
+    try {
+        auto props = am::properties{
+            am::property::will_delay_interval{1}
+        };
+        auto p = am::v5::unsubscribe_packet{
+            0x1234,         // packet_id
+            args,
+            props
+        };
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
+    try {
+        auto p = am::v5::unsubscribe_packet{
+            0x1234,         // packet_id
+            args,
+            am::properties{
+                am::property::will_delay_interval{1}
+            }
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(v5_unsubscribe_pid4) {
@@ -136,6 +201,106 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_pid4) {
         boost::lexical_cast<std::string>(p) ==
         "v5::unsubscribe{pid:305419896,[{topic:topic1,sn:},{topic:topic2,sn:}],ps:[{id:user_property,key:mykey,val:myval}]}"
     );
+}
+
+BOOST_AUTO_TEST_CASE(v5_unsubscribe_error) {
+    {
+        am::buffer buf; // empty
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\x00"sv}; // invalid type
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP
+        am::buffer buf{"\xa2"sv}; // short
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\xa2\x01"sv}; // remaining length buf mismatch
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        am::buffer buf{"\xa2\x03"sv}; // invalid remaining length
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID
+        am::buffer buf{"\xa2\x01\x12"sv}; // short pid
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID
+        am::buffer buf{"\xa2\x00\x12\x34"sv}; // zero remaining length
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID
+        am::buffer buf{"\xa2\x02\x12\x34"sv}; // no property elngth
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL
+        am::buffer buf{"\xa2\x03\x12\x34\x80"sv}; // property length short
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL
+        am::buffer buf{"\xa2\x03\x12\x34\x01"sv}; // property length mismatch
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL
+        am::buffer buf{"\xa2\x03\x12\x34\x00"sv}; // no entry
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+    }
+    {
+        //                CP  RL  PID     PL TPL
+        am::buffer buf{"\xa2\x04\x12\x34\x00\x00"sv}; // invalid topic len
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL  TPL
+        am::buffer buf{"\xa2\x05\x12\x34\x00\x00\x01"sv}; // topic len but mismatch
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL  TPL    TP
+        am::buffer buf{"\xa2\x07\x12\x34\x00\x00\x02\xc0\x00"sv}; // invalid topic
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::topic_filter_invalid);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

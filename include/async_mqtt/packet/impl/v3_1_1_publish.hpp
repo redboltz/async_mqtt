@@ -68,6 +68,14 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
                : 0)
       )
 {
+    if (topic_name_.size() > 0xffff) {
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::malformed_packet
+            )
+        };
+    }
+
     topic_name_length_buf_.resize(topic_name_length_buf_.capacity());
     endian_store(
         boost::numeric_cast<std::uint16_t>(topic_name_.size()),
@@ -107,7 +115,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
         if (packet_id != 0) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -118,7 +126,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
         if (packet_id == 0) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -329,7 +337,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf, error_code
     case qos::exactly_once:
         if (!copy_advance(buf, packet_id_)) {
             ec = make_error_code(
-                disconnect_reason_code::protocol_error
+                disconnect_reason_code::malformed_packet
             );
             return;
         }

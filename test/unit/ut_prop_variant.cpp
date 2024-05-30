@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(payload_format_indicator) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE(message_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -371,7 +371,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -379,7 +379,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE(content_type) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -455,7 +455,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -471,7 +471,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -479,7 +479,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -487,7 +487,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -495,7 +495,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -511,7 +511,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -527,7 +527,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -543,7 +543,7 @@ BOOST_AUTO_TEST_CASE(response_topic) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -587,7 +587,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -595,7 +595,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -603,7 +603,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -611,7 +611,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -619,7 +619,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -627,7 +627,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -635,7 +635,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -643,7 +643,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -651,7 +651,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -659,7 +659,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -667,7 +667,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -675,7 +675,7 @@ BOOST_AUTO_TEST_CASE(correlation_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -719,7 +719,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -727,7 +727,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -735,7 +735,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -743,7 +743,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -751,7 +751,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -759,7 +759,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -767,7 +767,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -775,7 +775,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -783,7 +783,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -791,7 +791,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -799,7 +799,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -807,7 +807,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -859,7 +859,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -867,7 +867,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -875,7 +875,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -883,7 +883,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -891,7 +891,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -899,7 +899,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -907,7 +907,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -915,7 +915,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -923,7 +923,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -931,7 +931,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -939,7 +939,7 @@ BOOST_AUTO_TEST_CASE(session_expiry_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -975,7 +975,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -983,7 +983,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -991,7 +991,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -999,7 +999,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1007,7 +1007,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1015,7 +1015,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1023,7 +1023,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1031,7 +1031,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1039,7 +1039,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1047,7 +1047,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1055,7 +1055,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1063,7 +1063,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1071,7 +1071,7 @@ BOOST_AUTO_TEST_CASE(assigned_client_identifier) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1107,7 +1107,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1115,7 +1115,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1123,7 +1123,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1131,7 +1131,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1139,7 +1139,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1147,7 +1147,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1155,7 +1155,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1163,7 +1163,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1171,7 +1171,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1179,7 +1179,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1187,7 +1187,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1195,7 +1195,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1203,7 +1203,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1255,7 +1255,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1263,7 +1263,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1271,7 +1271,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1279,7 +1279,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1287,7 +1287,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1295,7 +1295,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1303,7 +1303,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1311,7 +1311,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1319,7 +1319,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1327,7 +1327,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1335,7 +1335,7 @@ BOOST_AUTO_TEST_CASE(authentication_method) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1387,7 +1387,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1395,7 +1395,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1403,7 +1403,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1411,7 +1411,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1419,7 +1419,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1427,7 +1427,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1435,7 +1435,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1443,7 +1443,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1451,7 +1451,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1459,7 +1459,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1467,7 +1467,7 @@ BOOST_AUTO_TEST_CASE(authentication_data) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1503,7 +1503,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1511,7 +1511,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1519,7 +1519,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1527,7 +1527,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1535,7 +1535,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1543,7 +1543,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1551,7 +1551,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1559,7 +1559,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1567,7 +1567,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1575,7 +1575,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1583,7 +1583,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1591,7 +1591,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1599,7 +1599,7 @@ BOOST_AUTO_TEST_CASE(request_problem_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1635,7 +1635,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1643,7 +1643,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1651,7 +1651,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1659,7 +1659,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1667,7 +1667,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1675,7 +1675,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1683,7 +1683,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1691,7 +1691,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1699,7 +1699,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1707,7 +1707,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1715,7 +1715,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1723,7 +1723,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1731,7 +1731,7 @@ BOOST_AUTO_TEST_CASE(will_delay_interval) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1767,7 +1767,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1775,7 +1775,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1783,7 +1783,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1791,7 +1791,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1799,7 +1799,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1807,7 +1807,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1815,7 +1815,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1823,7 +1823,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1831,7 +1831,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1839,7 +1839,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1847,7 +1847,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1855,7 +1855,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1863,7 +1863,7 @@ BOOST_AUTO_TEST_CASE(request_response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -1899,7 +1899,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1907,7 +1907,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1915,7 +1915,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1923,7 +1923,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1931,7 +1931,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1939,7 +1939,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1947,7 +1947,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1955,7 +1955,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1963,7 +1963,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1971,7 +1971,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1979,7 +1979,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1987,7 +1987,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -1995,7 +1995,7 @@ BOOST_AUTO_TEST_CASE(response_information) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2039,7 +2039,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2047,7 +2047,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2055,7 +2055,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2063,7 +2063,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2071,7 +2071,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2079,7 +2079,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2087,7 +2087,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2095,7 +2095,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2103,7 +2103,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2111,7 +2111,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2119,7 +2119,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2127,7 +2127,7 @@ BOOST_AUTO_TEST_CASE(server_reference) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2227,7 +2227,7 @@ BOOST_AUTO_TEST_CASE(reason_string) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2235,7 +2235,7 @@ BOOST_AUTO_TEST_CASE(reason_string) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2243,7 +2243,7 @@ BOOST_AUTO_TEST_CASE(reason_string) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2251,7 +2251,7 @@ BOOST_AUTO_TEST_CASE(reason_string) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2259,7 +2259,7 @@ BOOST_AUTO_TEST_CASE(reason_string) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2303,7 +2303,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2311,7 +2311,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2319,7 +2319,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2327,7 +2327,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2335,7 +2335,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2343,7 +2343,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2351,7 +2351,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2359,7 +2359,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2367,7 +2367,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2375,7 +2375,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2383,7 +2383,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2391,7 +2391,7 @@ BOOST_AUTO_TEST_CASE(receive_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2435,7 +2435,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2443,7 +2443,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2451,7 +2451,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2459,7 +2459,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2467,7 +2467,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2475,7 +2475,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2483,7 +2483,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2491,7 +2491,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2499,7 +2499,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2507,7 +2507,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2515,7 +2515,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2523,7 +2523,7 @@ BOOST_AUTO_TEST_CASE(topic_alias_maximum) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2559,7 +2559,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2567,7 +2567,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connack, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2575,7 +2575,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2583,7 +2583,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2591,7 +2591,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2599,7 +2599,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2607,7 +2607,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2615,7 +2615,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2623,7 +2623,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2631,7 +2631,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2639,7 +2639,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2647,7 +2647,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2655,7 +2655,7 @@ BOOST_AUTO_TEST_CASE(topic_alias) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2691,7 +2691,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2699,7 +2699,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2707,7 +2707,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2715,7 +2715,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2723,7 +2723,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2731,7 +2731,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2739,7 +2739,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2747,7 +2747,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2755,7 +2755,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2763,7 +2763,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2771,7 +2771,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2779,7 +2779,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2787,7 +2787,7 @@ BOOST_AUTO_TEST_CASE(maximum_qos) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -2823,7 +2823,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2831,7 +2831,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2839,7 +2839,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2847,7 +2847,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2855,7 +2855,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2863,7 +2863,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2871,7 +2871,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2879,7 +2879,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2887,7 +2887,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2895,7 +2895,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2903,7 +2903,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2911,7 +2911,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -2919,7 +2919,7 @@ BOOST_AUTO_TEST_CASE(retain_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -3095,7 +3095,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3103,7 +3103,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3111,7 +3111,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3119,7 +3119,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3127,7 +3127,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3135,7 +3135,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3143,7 +3143,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3151,7 +3151,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3159,7 +3159,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3167,7 +3167,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3175,7 +3175,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3183,7 +3183,7 @@ BOOST_AUTO_TEST_CASE(maximum_packet_size) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -3219,7 +3219,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3227,7 +3227,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3235,7 +3235,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3243,7 +3243,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3251,7 +3251,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3259,7 +3259,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3267,7 +3267,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3275,7 +3275,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3283,7 +3283,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3291,7 +3291,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3299,7 +3299,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3307,7 +3307,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3315,7 +3315,7 @@ BOOST_AUTO_TEST_CASE(wildcard_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -3351,7 +3351,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3359,7 +3359,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3367,7 +3367,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3375,7 +3375,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3383,7 +3383,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3391,7 +3391,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3399,7 +3399,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3407,7 +3407,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3415,7 +3415,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3423,7 +3423,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3431,7 +3431,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3439,7 +3439,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3447,7 +3447,7 @@ BOOST_AUTO_TEST_CASE(subscription_identifier_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
@@ -3483,7 +3483,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::connect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3491,7 +3491,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::publish, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3499,7 +3499,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::will, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3507,7 +3507,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::puback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3515,7 +3515,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrec, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3523,7 +3523,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubrel, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3531,7 +3531,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::pubcomp, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3539,7 +3539,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::subscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3547,7 +3547,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::suback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3555,7 +3555,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsubscribe, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3563,7 +3563,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::unsuback, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3571,7 +3571,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::disconnect, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         auto wbuf{buf};
@@ -3579,7 +3579,7 @@ BOOST_AUTO_TEST_CASE(shared_subscription_available) {
         BOOST_TEST(
             !am::make_property_variant(wbuf, am::property_location::auth, ec)
         );
-        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 

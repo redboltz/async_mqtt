@@ -82,7 +82,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::connack_packet(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -93,7 +93,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_publish_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -104,7 +104,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_puback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -115,7 +115,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_pubrec_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -126,7 +126,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_pubrel_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -137,7 +137,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_pubcomp_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -148,7 +148,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_subscribe_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -159,7 +159,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_suback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -170,7 +170,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_unsubscribe_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -181,7 +181,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::basic_unsuback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -192,7 +192,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::pingreq_packet(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -203,7 +203,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::pingresp_packet(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -214,7 +214,7 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::disconnect_packet(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
@@ -223,14 +223,14 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         case protocol_version::v5:
             return v5::auth_packet(force_move(buf), ec);
         default:
-            ec = make_error_code(connect_reason_code::protocol_error);
+            ec = make_error_code(disconnect_reason_code::protocol_error);
             return basic_packet_variant<PacketIdBytes>{};
         }
         break;
     default:
         break;
     }
-    ec = make_error_code(connect_reason_code::malformed_packet);
+    ec = make_error_code(disconnect_reason_code::malformed_packet);
     return basic_packet_variant<PacketIdBytes>{};
 }
 

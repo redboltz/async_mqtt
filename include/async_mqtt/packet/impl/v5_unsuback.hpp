@@ -51,7 +51,7 @@ basic_unsuback_packet<PacketIdBytes>::basic_unsuback_packet(
         if (!validate_property(property_location::unsuback, id)) {
             throw system_error(
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             );
         }
@@ -200,24 +200,32 @@ basic_unsuback_packet<PacketIdBytes>::basic_unsuback_packet(buffer buf, error_co
         return;
     }
 
-    if (remaining_length_ == 0) {
+    if (buf.empty()) {
         ec = make_error_code(
-            disconnect_reason_code::malformed_packet
+            disconnect_reason_code::protocol_error // no entry
         );
         return;
     }
-
     while (!buf.empty()) {
         // reason_code
-        if (buf.empty()) {
+        auto rc = static_cast<unsuback_reason_code>(buf.front());
+        entries_.emplace_back(rc);
+        buf.remove_prefix(1);
+        switch (rc) {
+        case unsuback_reason_code::success:
+        case unsuback_reason_code::no_subscription_existed:
+        case unsuback_reason_code::unspecified_error:
+        case unsuback_reason_code::implementation_specific_error:
+        case unsuback_reason_code::not_authorized:
+        case unsuback_reason_code::topic_filter_invalid:
+        case unsuback_reason_code::packet_identifier_in_use:
+            break;
+        default:
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
             return;
         }
-        auto rc = static_cast<unsuback_reason_code>(buf.front());
-        entries_.emplace_back(rc);
-        buf.remove_prefix(1);
     }
 }
 

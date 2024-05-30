@@ -195,6 +195,7 @@ private:
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
     friend struct ::ut_packet::v5_connect;
+    friend struct ::ut_packet::v5_connect_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use

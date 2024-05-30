@@ -10,7 +10,6 @@ var dir_df0bffcb61356486763cc61cf65485e2 =
     [ "move.hpp", "move_8hpp_source.html", null ],
     [ "overload.hpp", "overload_8hpp_source.html", null ],
     [ "packet_id_manager.hpp", "packet__id__manager_8hpp_source.html", null ],
-    [ "packet_variant_operator.hpp", "packet__variant__operator_8hpp_source.html", null ],
     [ "scope_guard.hpp", "scope__guard_8hpp_source.html", null ],
     [ "shared_ptr_array.hpp", "shared__ptr__array_8hpp_source.html", null ],
     [ "static_vector.hpp", "static__vector_8hpp_source.html", null ],

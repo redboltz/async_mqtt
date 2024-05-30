@@ -40,21 +40,36 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
 {
     topic_length_buf_entries_.reserve(entries_.size());
     for (auto const& e : entries_) {
+        if (e.all_topic().size() > 0xffff) {
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::malformed_packet
+                )
+            };
+        }
         topic_length_buf_entries_.push_back(
             endian_static_vector(
-                boost::numeric_cast<std::uint16_t>(e.all_topic().size())
+                static_cast<std::uint16_t>(e.all_topic().size())
             )
         );
     }
 
     endian_store(packet_id, packet_id_.data());
 
+    if (entries_.empty()) {
+        throw system_error{
+            make_error_code(
+                disconnect_reason_code::protocol_error
+            )
+        };
+    }
+
     for (auto const& e : entries_) {
         // reserved bits check
         if (static_cast<std::uint8_t>(e.opts()) & 0b11111100) {
             throw system_error{
                 make_error_code(
-                    disconnect_reason_code::protocol_error
+                    disconnect_reason_code::malformed_packet
                 )
             };
         }
@@ -73,13 +88,6 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
         }
 
         auto size = e.all_topic().size();
-        if (size > 0xffff) {
-            throw system_error{
-                make_error_code(
-                    disconnect_reason_code::malformed_packet
-                )
-            };
-        }
         remaining_length_ +=
             2 +                     // topic filter length
             size +                  // topic filter
@@ -203,13 +211,13 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_
         return;
     }
 
-    if (remaining_length_ == 0) {
+    if (buf.empty()) {
         ec = make_error_code(
-            disconnect_reason_code::malformed_packet
+            // https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718066
+            disconnect_reason_code::protocol_error // no entry
         );
         return;
     }
-
     while (!buf.empty()) {
         // topic_length
         static_vector<char, 2> topic_length_buf;

@@ -167,6 +167,7 @@ private:
     friend struct ::ut_packet::v5_pubrel_pid_only;
     friend struct ::ut_packet::v5_pubrel_pid_rc;
     friend struct ::ut_packet::v5_pubrel_prop_len_last;
+    friend struct ::ut_packet::v5_pubrel_error;
 #endif // defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)
 
     // private constructor for internal use
