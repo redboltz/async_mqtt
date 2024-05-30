@@ -112,7 +112,7 @@ public:
     /**
      * @brief publish completion handler parameter class
      */
-    struct pubres_t {
+    struct pubres_type {
         /// puback_packet as the response when you send QoS1 publish
         /// - @ref v3_1_1::basic_puback_packet "v3_1_1::puback_packet"
         /// - @ref v5::basic_puback_packet "v5::puback_packet"
@@ -300,11 +300,11 @@ public:
      *        - @ref v5::basic_publish_packet "v5::publish_packet"
      *  - the last argument
      *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", @link pubres_t @endlink)
+     *        - Signature: void(@ref error_reporting "error_code", @link pubres_type @endlink)
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
-     *        - When sending QoS0 packet, all members of pubres_t are std::nullopt.
-     *        - When sending QoS1 packet, only pubres_t::puback_opt is set.
-     *        - When sending QoS2 packet, only pubres_t::pubrec_opt and pubres_t::pubcomp are set.
+     *        - When sending QoS0 packet, all members of pubres_type are std::nullopt.
+     *        - When sending QoS1 packet, only pubres_type::puback_opt is set.
+     *        - When sending QoS2 packet, only pubres_type::pubrec_opt and pubres_type::pubcomp are set.
      *        - error_code
      *           - If an error occurs during packet construction
      *              - disconnect_reason_code is set
@@ -696,7 +696,7 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(error_code, pubres_t)
+        void(error_code, pubres_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_publish_impl(
@@ -710,7 +710,7 @@ private:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(error_code, pubres_t)
+        void(error_code, pubres_type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_publish_impl(

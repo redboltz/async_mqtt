@@ -38,7 +38,7 @@ struct client<Version, NextLayer>::pid_tim_pv_res_col {
         packet_id_type pid = 0;
         std::shared_ptr<as::steady_timer> tim;
         std::optional<packet_variant> pv;
-        pubres_t res;
+        pubres_type res;
     };
 
     struct tag_pid {};
