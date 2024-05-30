@@ -1,10 +1,10 @@
 var group__client =
 [
     [ "async_mqtt::client< Version, NextLayer >", "classasync__mqtt_1_1client.html", [
-      [ "pubres_t", "structasync__mqtt_1_1client_1_1pubres__t.html", [
-        [ "puback_opt", "structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a", null ],
-        [ "pubcomp_opt", "structasync__mqtt_1_1client_1_1pubres__t.html#ad8619b87284f9ce36674766904abe1f5", null ],
-        [ "pubrec_opt", "structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440", null ]
+      [ "pubres_type", "structasync__mqtt_1_1client_1_1pubres__type.html", [
+        [ "puback_opt", "structasync__mqtt_1_1client_1_1pubres__type.html#adbf276995037034b6a8ea247bd35b53a", null ],
+        [ "pubcomp_opt", "structasync__mqtt_1_1client_1_1pubres__type.html#ac421d7d122a64ae87537f85dc9faaf15", null ],
+        [ "pubrec_opt", "structasync__mqtt_1_1client_1_1pubres__type.html#a2236be9c48a3a879ceb1fc3b36e14ffc", null ]
       ] ],
       [ "rebind_executor", "structasync__mqtt_1_1client_1_1rebind__executor.html", null ],
       [ "endpoint_type", "classasync__mqtt_1_1client.html#a4eaa1645f73cbdc77125db56b09bd309", null ],

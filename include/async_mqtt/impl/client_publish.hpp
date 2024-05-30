@@ -48,12 +48,12 @@ publish_op {
         packet_id_type pid
     ) {
         if (ec) {
-            self.complete(ec, pubres_t{});
+            self.complete(ec, pubres_type{});
             return;
         }
         if (pid == 0) {
             // QoS: at_most_once
-            self.complete(ec, pubres_t{});
+            self.complete(ec, pubres_type{});
             return;
         }
         auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
@@ -78,7 +78,7 @@ publish_op {
         if (it == idx.end()) {
             self.complete(
                 errc::make_error_code(sys::errc::operation_canceled),
-                pubres_t{}
+                pubres_type{}
             );
         }
         else {
@@ -112,7 +112,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(error_code, pubres_t)
+    void(error_code, pubres_type)
 )
 client<Version, NextLayer>::async_publish_impl(
     publish_packet packet,
@@ -124,7 +124,7 @@ client<Version, NextLayer>::async_publish_impl(
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, pubres_t)
+            void(error_code, pubres_type)
         >(
             publish_op{
                 *this,
@@ -139,7 +139,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(error_code, pubres_t)
+    void(error_code, pubres_type)
 )
 client<Version, NextLayer>::async_publish_impl(
     error_code ec,
@@ -151,10 +151,10 @@ client<Version, NextLayer>::async_publish_impl(
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, pubres_t)
+            void(error_code, pubres_type)
         >(
             [ec](auto& self) {
-                self.complete(ec, pubres_t{});
+                self.complete(ec, pubres_type{});
             },
             token,
             get_executor()

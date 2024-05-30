@@ -1,6 +1,6 @@
 var classasync__mqtt_1_1client =
 [
-    [ "pubres_t", "structasync__mqtt_1_1client_1_1pubres__t.html", "structasync__mqtt_1_1client_1_1pubres__t" ],
+    [ "pubres_type", "structasync__mqtt_1_1client_1_1pubres__type.html", "structasync__mqtt_1_1client_1_1pubres__type" ],
     [ "rebind_executor", "structasync__mqtt_1_1client_1_1rebind__executor.html", null ],
     [ "endpoint_type", "classasync__mqtt_1_1client.html#a4eaa1645f73cbdc77125db56b09bd309", null ],
     [ "executor_type", "classasync__mqtt_1_1client.html#a93814f9dcc11fb4295897ac5317c276d", null ],

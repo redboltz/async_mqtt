@@ -78,7 +78,7 @@ proc(
             std::cout << *suback_opt << std::endl;
         }
         auto print_pubres =
-            [](client_t::pubres_t const& pubres) {
+            [](client_t::pubres_type const& pubres) {
                 if (pubres.puback_opt) {
                     std::cout << *pubres.puback_opt << std::endl;
                 }

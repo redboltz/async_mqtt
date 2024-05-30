@@ -103,7 +103,7 @@ private:
 
     void handle_publish_response(
         am::error_code ec,
-        client_t::pubres_t pubres
+        client_t::pubres_type pubres
     ) {
         std::cout << "publish:" << ec.message() << std::endl;
         if (ec) return;
