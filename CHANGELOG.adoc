@@ -11,6 +11,8 @@
 * Supported PINGREQ overriding by ServerKeepAlive. #271
 * Refined tests. #269, #274, #275
 * Refined documents. #276
+* Refined tools (bench) #278
+* Added endpoint getter to client. #279
 
 == 6.0.0
 === breaking changes
