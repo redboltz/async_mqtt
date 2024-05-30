@@ -1,5 +1,8 @@
 var NAVTREEINDEX6 =
 {
+"structasync__mqtt_1_1pub_1_1opts.html#aed9d362ea52a3e9e8a581bfdb6bad2bd":[0,2,1,9,0,0,10],
+"structasync__mqtt_1_1pub_1_1opts.html#aee108281dd64f85e4845e49f4fbbb6d0":[0,2,0,7,0,0,13],
+"structasync__mqtt_1_1pub_1_1opts.html#aee108281dd64f85e4845e49f4fbbb6d0":[0,2,1,9,0,0,13],
 "structasync__mqtt_1_1pub_1_1opts.html#af5796c98ffb5098ee1ced7d5012fff6c":[0,2,0,7,0,0,15],
 "structasync__mqtt_1_1pub_1_1opts.html#af5796c98ffb5098ee1ced7d5012fff6c":[0,2,1,9,0,0,15],
 "structasync__mqtt_1_1sub_1_1opts.html":[0,2,1,13,1,0],

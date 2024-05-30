@@ -92,7 +92,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 client<Version, NextLayer>::client(
     Args&&... args
-): ep_{ep_type::create(Version, std::forward<Args>(args)...)},
+): ep_{endpoint_type::create(Version, std::forward<Args>(args)...)},
    tim_notify_publish_recv_{ep_->get_executor()}
 {
     ep_->set_auto_pub_response(true);
@@ -103,7 +103,7 @@ template <protocol_version Version, typename NextLayer>
 template <typename Other>
 client<Version, NextLayer>::client(
     client<Version, Other>&& other
-): ep_{ep_type::create(Version, force_move(other.next_layer()))},
+): ep_{endpoint_type::create(Version, force_move(other.next_layer()))},
    tim_notify_publish_recv_{ep_->get_executor()}
 {
     ep_->set_auto_pub_response(true);
@@ -143,6 +143,20 @@ inline
 typename client<Version, NextLayer>::lowest_layer_type&
 client<Version, NextLayer>::lowest_layer() {
     return ep_->lowest_layer();
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+typename client<Version, NextLayer>::endpoint_type const&
+client<Version, NextLayer>::get_endpoint() const {
+    return *ep_;
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+typename client<Version, NextLayer>::endpoint_type&
+client<Version, NextLayer>::get_endpoint() {
+    return *ep_;
 }
 
 template <protocol_version Version, typename NextLayer>
