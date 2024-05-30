@@ -80,18 +80,19 @@ namespace as = boost::asio;
 template <protocol_version Version, typename NextLayer>
 class client {
     using this_type = client<Version, NextLayer>;
-    using ep_type = basic_endpoint<role::client, 2, NextLayer>;
-    using ep_type_sp = std::shared_ptr<ep_type>;
 
 public:
+    /// @brief type of endpoint
+    using endpoint_type = basic_endpoint<role::client, 2, NextLayer>;
+
     /// @brief type of the given NextLayer
-    using next_layer_type = typename ep_type::next_layer_type;
+    using next_layer_type = typename endpoint_type::next_layer_type;
 
     /// @brief lowest_layer_type of the given NextLayer
-    using lowest_layer_type = typename ep_type::lowest_layer_type;
+    using lowest_layer_type = typename endpoint_type::lowest_layer_type;
 
     /// @brief executor_type of the given NextLayer
-    using executor_type = typename ep_type::executor_type;
+    using executor_type = typename endpoint_type::executor_type;
 
     ASYNC_MQTT_PACKET_TYPE(Version, connect)
     ASYNC_MQTT_PACKET_TYPE(Version, connack)
@@ -430,6 +431,20 @@ public:
     lowest_layer_type& lowest_layer();
 
     /**
+     * @brief get endpoint
+     *        This is for detail operation
+     * @return endpoint
+     */
+    endpoint_type const& get_endpoint() const;
+
+    /**
+     * @brief get endpoint
+     *        This is for detail operation
+     * @return endpoint
+     */
+    endpoint_type& get_endpoint();
+
+    /**
      * @brief auto map (allocate) topic alias on send PUBLISH packet.
      * If all topic aliases are used, then overwrite by LRU algorithm.
      * \n This function should be called before send() call.
@@ -745,7 +760,9 @@ private:
     struct pid_tim_pv_res_col;
     struct recv_type;
 
-    ep_type_sp ep_;
+    using endpoint_type_sp = std::shared_ptr<endpoint_type>;
+
+    endpoint_type_sp ep_;
     pid_tim_pv_res_col pid_tim_pv_res_col_;
     std::deque<recv_type> recv_queue_;
     bool recv_queue_inserted_ = false;

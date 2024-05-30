@@ -281,7 +281,9 @@ BOOST_AUTO_TEST_CASE(v5) {
             BOOST_CHECK(!pubres0.pubcomp_opt);
 
             // MQTT publish QoS1 and wait response (puback receive)
-            auto [ec_pid1, pid_pub1] = co_await amcl.async_acquire_unique_packet_id(as::as_tuple(as::use_awaitable)); // async version
+            auto [ec_pid1, pid_pub1] = co_await amcl.get_endpoint().async_acquire_unique_packet_id(
+                as::as_tuple(as::use_awaitable)
+            ); // async version via endpoint
             BOOST_TEST(!ec_pid1);
             auto [ec_pub1, pubres1] = co_await amcl.async_publish(
                 am::v5::publish_packet{
