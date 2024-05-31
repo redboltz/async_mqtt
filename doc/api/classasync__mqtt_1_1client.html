@@ -741,7 +741,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">token</td><td>the params are<ul>
 <li>CompletionToken<ul>
-<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, std::optional&lt;publish_packet&gt;, std::optional&lt;disconnect_packet&gt;)<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>, packet_variant) he packet_variant can be one of the following:<ul>
 <li>publish_packet<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__publish__packet.html">v3_1_1::publish_packet</a></li>
 <li><a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">v5::publish_packet</a></li>
@@ -749,9 +749,10 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 </li>
 <li>disconnect_packet<ul>
 <li><a class="el" href="classasync__mqtt_1_1v3__1__1_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v3.1.1)">v3_1_1::disconnect_packet</a></li>
-<li><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a> </li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1disconnect__packet.html" title="MQTT DISCONNECT packet (v5)">v5::disconnect_packet</a></li>
 </ul>
 </li>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1auth__packet.html" title="MQTT AUTH packet (v35)">v5::auth_packet</a> </li>
 </ul>
 </li>
 </ul>

@@ -378,13 +378,15 @@ public:
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      * @param token the params are
      *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", std::optional<publish_packet>, std::optional<disconnect_packet>)
+     *        - Signature: void(@ref error_reporting "error_code", packet_variant)
+     *          he packet_variant can be one of the following:
      *           - publish_packet
      *              - @ref v3_1_1::basic_publish_packet "v3_1_1::publish_packet"
      *              - @ref v5::basic_publish_packet "v5::publish_packet"
      *           - disconnect_packet
      *              - v3_1_1::disconnect_packet
      *              - v5::disconnect_packet
+     *           - v5::auth_packet
      * @return deduced by token
      */
     template <
@@ -393,7 +395,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(error_code, std::optional<publish_packet>, std::optional<disconnect_packet>)
+        void(error_code, packet_variant)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_recv(

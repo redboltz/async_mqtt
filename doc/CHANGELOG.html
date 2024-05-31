@@ -73,6 +73,16 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
+<p>client::async_recv() CompletionHandler signature is updated to <code>void(error_code, packet_variant)</code>. #281.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>packet_variant</code> has one of <code>std::monostate</code>, <code>[v3_1_1|v5]::publish_packet</code>, <code>[v3_1_1|v5]::disconnect_packet</code>, or <code>v5::auth_packet</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Renamed the typename from <code>pubres_t</code>  to <code>pubres_type</code> for consistency. #280</p>
 </li>
 <li>

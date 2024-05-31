@@ -3,6 +3,8 @@
 = History
 == 7.0.0
 === breaking changes
+* client::async_recv() CompletionHandler signature is updated to `void(error_code, packet_variant)`. #281.
+** `packet_variant` has one of `std::monostate`, `[v3_1_1|v5]::publish_packet`, `[v3_1_1|v5]::disconnect_packet`, or `v5::auth_packet`.
 * Renamed the typename from `pubres_t`  to `pubres_type` for consistency. #280
 * Re-designed error_code handling respect to Boost.Asio way. #266, #270, 271, #272, #273
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
