@@ -63,7 +63,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::unsubscribe;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -159,6 +161,8 @@ using unsubscribe_packet = basic_unsubscribe_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#include <async_mqtt/packet/impl/v3_1_1_unsubscribe.hpp>
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v3_1_1_unsubscribe.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_UNSUBSCRIBE_HPP

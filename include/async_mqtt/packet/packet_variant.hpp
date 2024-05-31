@@ -211,4 +211,8 @@ std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> co
 
 #include <async_mqtt/packet/impl/packet_variant.hpp>
 
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/packet_variant.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+
 #endif // ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP

@@ -60,7 +60,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::pubrec;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -79,7 +81,9 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    static constexpr std::size_t num_of_const_buffer_sequence();
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
 
     /**
      * @brief Get packet_id.
@@ -145,6 +149,8 @@ using pubrec_packet = basic_pubrec_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#include <async_mqtt/packet/impl/v3_1_1_pubrec.hpp>
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v3_1_1_pubrec.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_PUBREC_HPP

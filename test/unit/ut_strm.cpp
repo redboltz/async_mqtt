@@ -13,7 +13,7 @@
 
 #include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
-#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
+#include <async_mqtt/impl/buffer_to_packet_variant.ipp>
 
 #include "stub_socket.hpp"
 

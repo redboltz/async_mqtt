@@ -20,6 +20,8 @@ print(
 for file in sorted(files, key=lambda file: (file.count('/'), file)):
     if file.find("/all.hpp") != -1:
         continue
+    if file.find("/src.hpp") != -1:
+        continue
     if file.find("/broker/") != -1:
         continue
     if file.find("/impl/") != -1:
