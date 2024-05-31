@@ -73,16 +73,21 @@ proc(
 
         // recv (coroutine)
         while (true) {
-            auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
-            if (publish_opt) {
-                std::cout << *publish_opt << std::endl;
-                std::cout << "topic   : " << publish_opt->topic() << std::endl;
-                std::cout << "payload : " << publish_opt->payload() << std::endl;
-            }
-            if (disconnect_opt) {
-                std::cout << *disconnect_opt << std::endl;
-                break;
-            }
+            auto pv = co_await amcl.async_recv(as::use_awaitable);
+            pv.visit(
+                am::overload{
+                    [&](awaitable_client::publish_packet& p) {
+                        std::cout << p << std::endl;
+                        std::cout << "topic   : " << p.topic() << std::endl;
+                        std::cout << "payload : " << p.payload() << std::endl;
+                    },
+                    [&](awaitable_client::disconnect_packet& p) {
+                        std::cout << p << std::endl;
+                    },
+                    [](auto&) {
+                    }
+                }
+            );
         }
         std::cout << "finished" << std::endl;
     }

@@ -106,17 +106,12 @@ private:
 
     void handle_recv(
         am::error_code ec,
-        std::optional<client_t::publish_packet> publish_opt,
-        std::optional<client_t::disconnect_packet> disconnect_opt
+        am::packet_variant pv
     ) {
         std::cout << "recv:" << ec.message() << std::endl;
         if (ec) return;
-        if (publish_opt) {
-            std::cout << *publish_opt << std::endl;
-        }
-        if (disconnect_opt) {
-            std::cout << *disconnect_opt << std::endl;
-        }
+        BOOST_ASSERT(pv);
+        std::cout << pv << std::endl;
         // next receive
         cli_.async_recv(
             [this](auto&&... args) {

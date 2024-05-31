@@ -68,12 +68,8 @@ struct client<Version, NextLayer>::pid_tim_pv_res_col {
 
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::recv_type {
-    explicit recv_type(publish_packet packet)
-        :publish_opt{force_move(packet)}
-    {
-    }
-    explicit recv_type(disconnect_packet packet)
-        :disconnect_opt{force_move(packet)}
+    explicit recv_type(packet_variant packet)
+        :pv{force_move(packet)}
     {
     }
     explicit recv_type(error_code ec)
@@ -81,8 +77,7 @@ struct client<Version, NextLayer>::recv_type {
     {
     }
     error_code ec = error_code{};
-    std::optional<publish_packet> publish_opt;
-    std::optional<disconnect_packet> disconnect_opt;
+    packet_variant pv;
 };
 
 
@@ -208,7 +203,6 @@ client<Version, NextLayer>::recv_loop() {
                         if (it != idx.end()) {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
-                            recv_loop();
                         }
                     },
                     [&](suback_packet& p) {
@@ -218,7 +212,6 @@ client<Version, NextLayer>::recv_loop() {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
                         }
-                        recv_loop();
                     },
                     [&](unsuback_packet& p) {
                         auto& idx = pid_tim_pv_res_col_.get_pid_idx();
@@ -227,13 +220,11 @@ client<Version, NextLayer>::recv_loop() {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
                         }
-                        recv_loop();
                     },
                     [&](publish_packet& p) {
                         recv_queue_.emplace_back(force_move(p));
                         recv_queue_inserted_  = true;
                         tim_notify_publish_recv_.cancel();
-                        recv_loop();
                     },
                     [&](puback_packet& p) {
                         auto& idx = pid_tim_pv_res_col_.get_pid_idx();
@@ -242,7 +233,6 @@ client<Version, NextLayer>::recv_loop() {
                             const_cast<std::optional<puback_packet>&>(it->res.puback_opt).emplace(p);
                             it->tim->cancel();
                         }
-                        recv_loop();
                     },
                     [&](pubrec_packet& p) {
                         auto& idx = pid_tim_pv_res_col_.get_pid_idx();
@@ -255,7 +245,6 @@ client<Version, NextLayer>::recv_loop() {
                                 }
                             }
                         }
-                        recv_loop();
                     },
                     [&](pubcomp_packet& p) {
                         auto& idx = pid_tim_pv_res_col_.get_pid_idx();
@@ -264,19 +253,22 @@ client<Version, NextLayer>::recv_loop() {
                             const_cast<std::optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
                             it->tim->cancel();
                         }
-                        recv_loop();
                     },
                     [&](disconnect_packet& p) {
                         recv_queue_.emplace_back(force_move(p));
                         recv_queue_inserted_  = true;
                         tim_notify_publish_recv_.cancel();
-                        recv_loop();
+                    },
+                    [&](v5::auth_packet& p) {
+                        recv_queue_.emplace_back(force_move(p));
+                        recv_queue_inserted_  = true;
+                        tim_notify_publish_recv_.cancel();
                     },
                     [&](auto const&) {
-                        recv_loop();
                     }
                 }
             );
+            recv_loop();
         }
     );
 }

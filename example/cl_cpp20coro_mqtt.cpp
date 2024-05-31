@@ -116,28 +116,40 @@ proc(
 
         // recv (coroutine)
         for (int i = 0; i != 2; ++i) {
-            auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
-            if (publish_opt) {
-                std::cout << *publish_opt << std::endl;
-                std::cout << "topic   : " << publish_opt->topic() << std::endl;
-                std::cout << "payload : " << publish_opt->payload() << std::endl;
-            }
-            if (disconnect_opt) {
-                std::cout << *disconnect_opt << std::endl;
-            }
+            auto pv = co_await amcl.async_recv(as::use_awaitable);
+            pv.visit(
+                am::overload{
+                    [&](client_t::publish_packet& p) {
+                        std::cout << p << std::endl;
+                        std::cout << "topic   : " << p.topic() << std::endl;
+                        std::cout << "payload : " << p.payload() << std::endl;
+                    },
+                    [&](client_t::disconnect_packet& p) {
+                        std::cout << p << std::endl;
+                    },
+                    [](auto&) {
+                    }
+                }
+            );
         }
         // recv (callback) before sending
         amcl.async_recv(
-            [] (auto ec, auto publish_opt, auto disconnect_opt) {
+            [] (am::error_code ec, am::packet_variant pv) {
                 std::cout << ec.message() << std::endl;
-                if (publish_opt) {
-                    std::cout << *publish_opt << std::endl;
-                    std::cout << "topic   : " << publish_opt->topic() << std::endl;
-                    std::cout << "payload : " << publish_opt->payload() << std::endl;
-                }
-                if (disconnect_opt) {
-                    std::cout << *disconnect_opt << std::endl;
-                }
+                pv.visit(
+                    am::overload{
+                        [&](client_t::publish_packet& p) {
+                            std::cout << p << std::endl;
+                            std::cout << "topic   : " << p.topic() << std::endl;
+                            std::cout << "payload : " << p.payload() << std::endl;
+                        },
+                        [&](client_t::disconnect_packet& p) {
+                            std::cout << p << std::endl;
+                        },
+                        [](auto&) {
+                        }
+                    }
+                );
             }
         );
 

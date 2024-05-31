@@ -9,6 +9,7 @@
 
 #include <boost/asio/dispatch.hpp>
 
+#include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 
@@ -48,12 +49,11 @@ recv_op {
                 );
             }
             else {
-                auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
+                auto [ec, pv] = force_move(cl.recv_queue_.front());
                 cl.recv_queue_.pop_front();
                 self.complete(
                     ec,
-                    force_move(publish_opt),
-                    force_move(disconnect_opt)
+                    force_move(pv)
                 );
             }
         }
@@ -66,19 +66,17 @@ recv_op {
     ) {
         BOOST_ASSERT(state == complete);
         if (cl.recv_queue_inserted_) {
-            auto [ec, publish_opt, disconnect_opt] = cl.recv_queue_.front();
+            auto [ec, pv] = force_move(cl.recv_queue_.front());
             cl.recv_queue_.pop_front();
             self.complete(
                 ec,
-                force_move(publish_opt),
-                force_move(disconnect_opt)
+                force_move(pv)
             );
         }
         else {
             self.complete(
                 errc::make_error_code(sys::errc::operation_canceled),
-                std::nullopt,
-                std::nullopt
+                packet_variant{}
             );
         }
     }
@@ -99,7 +97,7 @@ client<Version, NextLayer>::async_recv(
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, std::optional<publish_packet>, std::optional<disconnect_packet>)
+            void(error_code, packet_variant)
         >(
             recv_op{
                 *this
