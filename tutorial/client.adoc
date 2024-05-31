@@ -58,8 +58,9 @@ namespace tls = as::ssl;
 
 
 ```cpp
+    using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt;
     as::io_context ioc;
-    am::client<am::protocol_version::v3_1_1, am::protocol::mqtt> amcl{
+    client_t amcl{
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     );
@@ -70,6 +71,7 @@ namespace tls = as::ssl;
 == mqtts
 
 ```cpp
+    using client_t = am::client<am::protocol_version::v5, am::protocol::mqtts>;
     as::io_context ioc;
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
@@ -84,7 +86,7 @@ namespace tls = as::ssl;
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
 
-    am::client<am::protocol_version::v5, am::protocol::mqtts> amcl{
+    client_t amcl{
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
         ctx
     );
@@ -95,9 +97,9 @@ namespace tls = as::ssl;
 == ws
 
 ```cpp
+    using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::ws>;
     as::io_context ioc;
-    am::client<am::protocol_version::v3_1_1, am::protocol::ws> amcl{
-    auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
+    client_t amcl{
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     );
     // handshake underlying layers
@@ -108,6 +110,7 @@ namespace tls = as::ssl;
 == wss
 
 ```cpp
+    using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::wss>;
     as::io_context ioc;
     am::tls::context ctx{am::tls::context::tlsv12};
     ctx.set_verify_mode(am::tls::verify_none);
@@ -121,7 +124,7 @@ namespace tls = as::ssl;
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
 
-    am::client<am::protocol_version::v3_1_1, am::protocol::wss> amcl{
+    client_t amcl{
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
         ctx                  // mqtts is as::ssl::stream<mqtt>
     );
@@ -334,18 +337,26 @@ After `async_publish()` completes, the `pubrec_opt` and `pubcomp_opt` of {api-ba
 === {api-base}/++classasync__mqtt_1_1client.html#a825c14790ca009436f20c1b2c7952204++[async_recv()] funtion
 
 ```cpp
-auto [publish_opt, disconnect_opt] = co_await amcl.async_recv(as::use_awaitable);
-if (publish_opt) {
-    std::cout << *publish_opt << std::endl;
-}
-else if (disconnect_opt) {
-    std::cout << *disconnect_opt << std::endl;
-}
+auto pv = co_await amcl.async_recv(as::use_awaitable);
+pv.visit(
+    am::overload{
+        [&](awaitable_client::publish_packet& p) {
+            std::cout << p << std::endl;
+            std::cout << "topic   : " << p.topic() << std::endl;
+            std::cout << "payload : " << p.payload() << std::endl;
+        },
+        [&](awaitable_client::disconnect_packet& p) {
+            std::cout << p << std::endl;
+        },
+        [](auto&) {
+        }
+    }
+);
 ```
 
-After you call the `async_start()` function, the received PUBLISH packets are stored in the client. You can retrieve them using the `async_recv()` function. If no packets are stored, `async_recv()` waits until a PUBLISH packet is received.
+After you call the `async_start()` function, the received PUBLISH packets are stored in the client. You can retrieve them using the `async_recv()` function. If no packets are stored, `async_recv()` waits until a PUBLISH, DISCONNECT, or AUTH packet is received.
 
-The parameters of `CompletionToken` are `error_code`, `publish_packet` (optional), and `disconnect_packet` (optional). `publish_packet` or `disconnect_packet` will have a value only if `error_code` indicates success.
+The parameters of `CompletionToken` are `error_code` and `packet_variant`. If `error_code` indicates success, `packet_variant` contains a packet; otherwise, `packet_variant` is set to `std::monostate`.
 
 == Send DISCONNECT packet
 
