@@ -62,7 +62,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::suback;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -81,7 +83,13 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    static constexpr std::size_t num_of_const_buffer_sequence();
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return
+            1 +                   // fixed header
+            1 +                   // remaining length
+            1 +                   // packet id
+            1;                    // suback_return_code vector
+    }
 
     /**
      * @brief Get packet_id.
@@ -157,7 +165,8 @@ using suback_packet = basic_suback_packet<2>;
 
 } // namespace async_mqtt::v3_1_1
 
-#include <async_mqtt/packet/impl/v3_1_1_suback.hpp>
-
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v3_1_1_suback.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_SUBACK_HPP

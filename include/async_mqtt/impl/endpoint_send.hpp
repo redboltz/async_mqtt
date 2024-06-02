@@ -307,8 +307,13 @@ send_op {
                     if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
                         auto ta_opt = get_topic_alias(actual_packet.props());
                         if (actual_packet.topic().empty()) {
-                            auto topic_opt = validate_topic_alias(self, ta_opt);
+                            auto topic_opt = validate_topic_alias(ta_opt);
                             if (!topic_opt) {
+                                self.complete(
+                                    make_error_code(
+                                        mqtt_error::packet_not_allowed_to_send
+                                    )
+                                );
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
@@ -334,7 +339,12 @@ send_op {
                                     actual_packet.opts(),
                                     force_move(props)
                                 );
-                            if (!validate_maximum_packet_size(self, store_packet)) {
+                            if (!validate_maximum_packet_size(store_packet.size())) {
+                                self.complete(
+                                    make_error_code(
+                                        mqtt_error::packet_not_allowed_to_send
+                                    )
+                                );
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
@@ -365,7 +375,12 @@ send_op {
                                     actual_packet.opts(),
                                     force_move(props)
                                 );
-                            if (!validate_maximum_packet_size(self, store_packet)) {
+                            if (!validate_maximum_packet_size(store_packet.size())) {
+                                self.complete(
+                                    make_error_code(
+                                        mqtt_error::packet_not_allowed_to_send
+                                    )
+                                );
                                 auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
@@ -377,7 +392,12 @@ send_op {
                         }
                     }
                     else {
-                        if (!validate_maximum_packet_size(self, actual_packet)) {
+                        if (!validate_maximum_packet_size(actual_packet.size())) {
+                            self.complete(
+                                make_error_code(
+                                    mqtt_error::packet_not_allowed_to_send
+                                )
+                            );
                             auto packet_id = actual_packet.packet_id();
                             if (packet_id != 0) {
                                 ep.release_pid(packet_id);
@@ -404,7 +424,12 @@ send_op {
             auto ta_opt = get_topic_alias(actual_packet.props());
             if (actual_packet.topic().empty()) {
                 if (!topic_alias_validated &&
-                    !validate_topic_alias(self, ta_opt)) {
+                    !validate_topic_alias(ta_opt)) {
+                    self.complete(
+                        make_error_code(
+                            mqtt_error::packet_not_allowed_to_send
+                        )
+                    );
                     auto packet_id = actual_packet.packet_id();
                     if (packet_id != 0) {
                         ep.release_pid(packet_id);
@@ -415,7 +440,7 @@ send_op {
             }
             else {
                 if (ta_opt) {
-                    if (validate_topic_alias_range(self, *ta_opt)) {
+                    if (validate_topic_alias_range(*ta_opt)) {
                         ASYNC_MQTT_LOG("mqtt_impl", trace)
                             << ASYNC_MQTT_ADD_VALUE(address, &ep)
                             << "topia alias : "
@@ -424,6 +449,11 @@ send_op {
                         ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
                     }
                     else {
+                        self.complete(
+                            make_error_code(
+                                mqtt_error::packet_not_allowed_to_send
+                            )
+                        );
                         auto packet_id = actual_packet.packet_id();
                         if (packet_id != 0) {
                             ep.release_pid(packet_id);
@@ -508,7 +538,12 @@ send_op {
             ep.status_ = connection_status::disconnecting;
         }
 
-        if (!validate_maximum_packet_size(self, actual_packet)) {
+        if (!validate_maximum_packet_size(actual_packet.size())) {
+            self.complete(
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
+                )
+            );
             if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
                 auto packet_id = actual_packet.packet_id();
                 if (packet_id != 0) {
@@ -533,81 +568,9 @@ send_op {
         return true;
     }
 
-    template <typename Self>
-    bool validate_topic_alias_range(Self& self, topic_alias_type ta) {
-        if (!ep.topic_alias_send_) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                << "topic_alias is set but topic_alias_maximum is 0";
-            self.complete(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            return false;
-        }
-        if (ta == 0 || ta > ep.topic_alias_send_->max()) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                << "topic_alias is set but out of range";
-            self.complete(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            return false;
-        }
-        return true;
-    }
-
-    template <typename Self>
-    std::optional<std::string> validate_topic_alias(Self& self, std::optional<topic_alias_type> ta_opt) {
-        if (!ta_opt) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                << "topic is empty but topic_alias isn't set";
-            self.complete(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            return std::nullopt;
-        }
-
-        if (!validate_topic_alias_range(self, *ta_opt)) {
-            return std::nullopt;
-        }
-
-        auto topic = ep.topic_alias_send_->find(*ta_opt);
-        if (topic.empty()) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                << "topic is empty but topic_alias is not registered";
-            self.complete(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            return std::nullopt;
-        }
-        return topic;
-    }
-
-    template <typename Self, typename PacketArg>
-    bool validate_maximum_packet_size(Self& self, PacketArg const& packet_arg) {
-        if (packet_arg.size() > ep.maximum_packet_size_send_) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
-                << "packet size over maximum_packet_size for sending";
-            self.complete(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            return false;
-        }
-        return true;
-    }
+    bool validate_topic_alias_range(topic_alias_type ta);
+    std::optional<std::string> validate_topic_alias(std::optional<topic_alias_type> ta_opt);
+    bool validate_maximum_packet_size(std::size_t size);
 };
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -668,5 +631,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
 }
 
 } // namespace async_mqtt
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/endpoint_send.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_SEND_HPP

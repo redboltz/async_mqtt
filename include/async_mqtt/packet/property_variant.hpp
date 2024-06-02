@@ -208,6 +208,33 @@ using properties = std::vector<property_variant>;
  */
 std::ostream& operator<<(std::ostream& o, properties const& props);
 
+/**
+ * @related property_variant
+ * @brief less than operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs less than the rhs, otherwise false.
+ */
+bool operator<(property_variant const& lhs, property_variant const& rhs);
+
+/**
+ * @related property_variant
+ * @brief equal to operator
+ * @param lhs compare target
+ * @param rhs compare target
+ * @return true if the lhs equal to the rhs, otherwise false.
+ */
+bool operator==(property_variant const& lhs, property_variant const& rhs);
+
+/**
+ * @related property_variant
+ * @brief stream output operator
+ * @param o output stream
+ * @param v target
+ * @return  output stream
+ */
+std::ostream& operator<<(std::ostream& o, property_variant const& v);
+
 } // namespace async_mqtt
 
 #include <async_mqtt/packet/impl/property_variant.hpp>

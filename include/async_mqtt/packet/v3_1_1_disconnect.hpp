@@ -59,7 +59,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::disconnect;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -78,7 +80,9 @@ public:
      * @brief Get number of element of const_buffer_sequence
      * @return number of element of const_buffer_sequence
      */
-    static constexpr std::size_t num_of_const_buffer_sequence();
+    static constexpr std::size_t num_of_const_buffer_sequence() {
+        return 1; // all
+    }
 
 private:
 
@@ -127,6 +131,8 @@ std::ostream& operator<<(std::ostream& o, disconnect_packet const& v);
 
 } // namespace async_mqtt::v3_1_1
 
-#include <async_mqtt/packet/impl/v3_1_1_disconnect.hpp>
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v3_1_1_disconnect.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_DISCONNECT_HPP

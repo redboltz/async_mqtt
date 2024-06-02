@@ -131,7 +131,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::publish;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -162,7 +164,9 @@ public:
      * @brief Get publish_options
      * @return publish_options.
      */
-    constexpr pub::opts opts() const;
+    constexpr pub::opts opts() const {
+        return pub::opts(fixed_header_);
+    }
 
     /**
      * @brief Get topic name
@@ -198,7 +202,9 @@ public:
      * @brief Set dup flag
      * @param dup flag value to set
      */
-    constexpr void set_dup(bool dup);
+    constexpr void set_dup(bool dup) {
+        pub::set_dup(fixed_header_, dup);
+    }
 
     /**
      * @brief Get properties
@@ -273,6 +279,14 @@ private:
     // private constructor for internal use
     explicit basic_publish_packet(buffer buf, error_code& ec);
 
+    explicit basic_publish_packet(
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
+        buffer&& topic_name,
+        std::vector<buffer>&& payloads,
+        pub::opts pubopts,
+        properties props
+    );
+
 private:
     std::uint8_t fixed_header_;
     buffer topic_name_;
@@ -326,5 +340,9 @@ using publish_packet = basic_publish_packet<2>;
 } // namespace async_mqtt::v5
 
 #include <async_mqtt/packet/impl/v5_publish.hpp>
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v5_publish.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_PUBLISH_HPP

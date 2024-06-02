@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Resend message</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Resend message</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_division_of_roles_between_mqtt_and_the_underlying_layer">Division of roles between MQTT and the underlying layer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the MQTT protocol, retransmission is only permitted immediately after reconnection when both the client and server sessions are maintained following a disconnection. MQTT assumes that the underlying layer, such as TCP, guarantees delivery and order.
+See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901233" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901233</a></p>
+</div>
+<div class="paragraph">
+<p>Therefore, retransmission during an active MQTT connection can lead to inconsistencies with the underlying layer, which the MQTT protocol prohibits. If retransmission is not possible at the lower layer due to congestion or other conditions, the lower layer will return an error code and disconnect. MQTT detects this disconnection and, if necessary, will reconnect and retransmit the messages. In other words, MQTT ensures message delivery across disconnections.
+See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901238" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901238</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_points_to_note_when_resending_message">Points to note when resending message</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The communication constraints in MQTT can vary depending on the broker. For instance, the Maximum Packet Size  might differ between brokers. This information can be found in the <code>MaximumPacketSize</code> property of the <code>CONNACK</code> packet, which is the response to the <code>CONNECT</code> packet. Even if a client believes it is reconnecting to the same broker, it might actually be redirected to a different broker with different settings. Therefore, when reconnecting, it is crucial to carefully check the contents of the CONNACK packet to avoid protocol violations.
+In <code>async_mqtt</code>, if there are messages that cannot be retransmitted due to changes in broker conditions during reconnection, the messages will not be retransmitted, and an error will be notified to the user.</p>
+</div>
+<div class="paragraph">
+<p>When you detect a disconnection using <code>async_mqtt</code>, you can simply call <code>async_underlying_handshake()</code>, wait for the result, and then send a <code>CONNECT</code> packet. Check the received <code>CONNACK</code> packet. Resending messages are automatically done after receiving the <code>CONNACK</code> packet. To avoid rapid repeated reconnections, it is a good convention to wait several seconds before calling <code>async_underlying_handshake()</code>.</p>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="keep_session.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="topic_alias.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>

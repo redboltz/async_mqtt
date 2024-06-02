@@ -68,6 +68,7 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/host_port.hpp>
+#include <async_mqtt/util/inline.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/util/json_like_out.hpp>
 #include <async_mqtt/util/log.hpp>

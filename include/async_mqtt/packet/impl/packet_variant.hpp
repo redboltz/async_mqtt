@@ -87,57 +87,6 @@ decltype(auto) basic_packet_variant<PacketIdBytes>::get_if() const {
     return std::get_if<T>(&var_);
 }
 
-template <std::size_t PacketIdBytes>
-inline
-std::optional<control_packet_type> basic_packet_variant<PacketIdBytes>::type() const {
-    return visit(
-        overload {
-            [] (auto const& p) -> std::optional<control_packet_type>{
-                return p.type();
-            },
-                [] (std::monostate const&) -> std::optional<control_packet_type>{
-                    return std::nullopt;
-                }
-        }
-    );
-}
-
-template <std::size_t PacketIdBytes>
-inline
-std::vector<as::const_buffer> basic_packet_variant<PacketIdBytes>::const_buffer_sequence() const {
-    return visit(
-        overload {
-            [] (auto const& p) {
-                return p.const_buffer_sequence();
-            },
-            [] (std::monostate const&) {
-                return std::vector<as::const_buffer>{};
-            }
-        }
-    );
-}
-
-template <std::size_t PacketIdBytes>
-inline
-basic_packet_variant<PacketIdBytes>::operator bool() const {
-    return var_.index() != 0;
-}
-
-template <std::size_t PacketIdBytes>
-inline
-std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> const& v) {
-    v.visit(
-        overload {
-            [&] (auto const& p) {
-                o << p;
-            },
-            [&] (std::monostate const&) {
-            }
-        }
-    );
-    return o;
-}
-
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_HPP

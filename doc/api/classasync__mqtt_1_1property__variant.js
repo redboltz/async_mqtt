@@ -15,5 +15,8 @@ var classasync__mqtt_1_1property__variant =
     [ "visit", "classasync__mqtt_1_1property__variant.html#affe7d42f17c04cde94fb577786db828a", null ],
     [ "visit", "classasync__mqtt_1_1property__variant.html#ae7e6dd3e939f2dd9b229b600bd26008c", null ],
     [ "operator<", "classasync__mqtt_1_1property__variant.html#aebf6c6155b2bdaf01227df1bfc9b5892", null ],
+    [ "operator<", "classasync__mqtt_1_1property__variant.html#aebf6c6155b2bdaf01227df1bfc9b5892", null ],
+    [ "operator<<", "classasync__mqtt_1_1property__variant.html#a2acc800da1243b5b014562235bae0464", null ],
+    [ "operator==", "classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36", null ],
     [ "operator==", "classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36", null ]
 ];

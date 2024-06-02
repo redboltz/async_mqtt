@@ -15,6 +15,9 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
         cl_cpp20coro_mqtt_sub.cpp
         ep_cpp20coro_mqtt_client.cpp
     )
+
+    add_subdirectory(separate_client)
+    add_subdirectory(separate_endpoint)
 endif()
 
 if(ASYNC_MQTT_USE_TLS)

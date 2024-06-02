@@ -3,6 +3,7 @@ var dir_df0bffcb61356486763cc61cf65485e2 =
     [ "buffer.hpp", "buffer_8hpp_source.html", null ],
     [ "endian_convert.hpp", "endian__convert_8hpp_source.html", null ],
     [ "host_port.hpp", "host__port_8hpp_source.html", null ],
+    [ "inline.hpp", "inline_8hpp_source.html", null ],
     [ "ioc_queue.hpp", "ioc__queue_8hpp_source.html", null ],
     [ "json_like_out.hpp", "json__like__out_8hpp_source.html", null ],
     [ "log.hpp", "log_8hpp_source.html", null ],

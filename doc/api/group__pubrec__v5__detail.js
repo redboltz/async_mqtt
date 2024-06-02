@@ -6,7 +6,7 @@ var group__pubrec__v5__detail =
       [ "basic_pubrec_packet", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a6b56ed813933c6f5627c6e22cebb4000", null ],
       [ "code", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a18acb9fd8d4404d7ba64f2489630e84c", null ],
       [ "const_buffer_sequence", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a16df53bd4d88f9001b50b8cee76b6509", null ],
-      [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#ae08d04deab4ff91d195cfc667f2222b3", null ],
+      [ "num_of_const_buffer_sequence", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a8f42401813b5270383a1acdab9567c16", null ],
       [ "packet_id", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a8fa7c228c19426654226f057646734b3", null ],
       [ "props", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#a8f4563de29b8319b775e44bf048682c7", null ],
       [ "size", "classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html#aa5d1e29a3eee0f534f01bf46266aa68e", null ],

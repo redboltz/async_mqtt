@@ -112,7 +112,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::connect;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -236,6 +238,8 @@ std::ostream& operator<<(std::ostream& o, connect_packet const& v);
 
 } // namespace async_mqtt::v3_1_1
 
-#include <async_mqtt/packet/impl/v3_1_1_connect.hpp>
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v3_1_1_connect.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP

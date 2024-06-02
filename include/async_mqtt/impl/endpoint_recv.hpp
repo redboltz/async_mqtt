@@ -8,7 +8,10 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_RECV_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/buffer_to_packet_variant.hpp>
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/buffer_to_packet_variant.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 namespace async_mqtt {
 
@@ -124,105 +127,16 @@ recv_op {
                     // do internal protocol processing
                     overload {
                         [&](v3_1_1::connect_packet& p) {
-                            ep.initialize();
-                            ep.protocol_version_ = protocol_version::v3_1_1;
-                            ep.status_ = connection_status::connecting;
-                            auto keep_alive = p.keep_alive();
-                            if (keep_alive != 0) {
-                                ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
-                            }
-                            if (p.clean_session()) {
-                                ep.need_store_ = false;
-                            }
-                            else {
-                                ep.need_store_ = true;
-                            }
+                            handle_v3_1_1_connect(p);
                         },
                         [&](v5::connect_packet& p) {
-                            ep.initialize();
-                            ep.protocol_version_ = protocol_version::v5;
-                            ep.status_ = connection_status::connecting;
-                            auto keep_alive = p.keep_alive();
-                            if (keep_alive != 0) {
-                                ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
-                            }
-                            for (auto const& prop : p.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias_maximum const& p) {
-                                            if (p.val() > 0) {
-                                                ep.topic_alias_send_.emplace(p.val());
-                                            }
-                                        },
-                                        [&](property::receive_maximum const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            ep.publish_send_max_ = p.val();
-                                        },
-                                        [&](property::maximum_packet_size const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            ep.maximum_packet_size_send_ = p.val();
-                                        },
-                                        [&](property::session_expiry_interval const& p) {
-                                            if (p.val() != 0) {
-                                                ep.need_store_ = true;
-                                            }
-                                        },
-                                        [](auto const&) {
-                                        }
-                                    }
-                                );
-                            }
+                            handle_v5_connect(p);
                         },
                         [&](v3_1_1::connack_packet& p) {
-                            if (p.code() == connect_return_code::accepted) {
-                                ep.status_ = connection_status::connected;
-                                if (p.session_present()) {
-                                    ep.send_stored();
-                                }
-                                else {
-                                    ep.clear_pid_man();
-                                    ep.store_.clear();
-                                }
-                            }
+                            handle_v3_1_1_connack(p);
                         },
                         [&](v5::connack_packet& p) {
-                            if (p.code() == connect_reason_code::success) {
-                                ep.status_ = connection_status::connected;
-                                 for (auto const& prop : p.props()) {
-                                    prop.visit(
-                                        overload {
-                                            [&](property::topic_alias_maximum const& p) {
-                                                if (p.val() > 0) {
-                                                    ep.topic_alias_send_.emplace(p.val());
-                                                }
-                                            },
-                                            [&](property::receive_maximum const& p) {
-                                                BOOST_ASSERT(p.val() != 0);
-                                                ep.publish_send_max_ = p.val();
-                                            },
-                                            [&](property::maximum_packet_size const& p) {
-                                                BOOST_ASSERT(p.val() != 0);
-                                                ep.maximum_packet_size_send_ = p.val();
-                                            },
-                                            [&](property::server_keep_alive const& p) {
-                                                if constexpr (can_send_as_client(Role)) {
-                                                    ep.set_pingreq_send_interval_ms(p.val() * 1000);
-                                                }
-                                            },
-                                            [](auto const&) {
-                                            }
-                                        }
-                                    );
-                                }
-
-                                if (p.session_present()) {
-                                    ep.send_stored();
-                                }
-                                else {
-                                    ep.clear_pid_man();
-                                    ep.store_.clear();
-                                }
-                            }
+                            handle_v5_connack(p);
                         },
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
                             switch (p.opts().get_qos()) {
@@ -234,9 +148,16 @@ recv_op {
                                     );
                                 }
                             } break;
-                            case qos::exactly_once:
-                                call_complete = process_qos2_publish(self, protocol_version::v3_1_1, p.packet_id());
-                                break;
+                            case qos::exactly_once: {
+                                call_complete = process_qos2_publish(protocol_version::v3_1_1, p.packet_id());
+                                if (!call_complete) {
+                                    // do the next read
+                                    auto& a_ep{ep};
+                                    a_ep.stream_->async_read_packet(
+                                        force_move(self)
+                                    );
+                                }
+                            } break;
                             default:
                                 break;
                             }
@@ -288,7 +209,14 @@ recv_op {
                                 }
                                 auto packet_id = p.packet_id();
                                 ep.publish_recv_.insert(packet_id);
-                                call_complete = process_qos2_publish(self, protocol_version::v5, packet_id);
+                                call_complete = process_qos2_publish(protocol_version::v5, packet_id);
+                                if (!call_complete) {
+                                    // do the next read
+                                    auto& a_ep{ep};
+                                    a_ep.stream_->async_read_packet(
+                                        force_move(self)
+                                    );
+                                }
                             } break;
                             default:
                                 break;
@@ -712,65 +640,17 @@ recv_op {
         }
     }
 
-    void send_publish_from_queue() {
-        if (ep.status_ != connection_status::connected) return;
-        while (!ep.publish_queue_.empty() &&
-               ep.publish_send_count_ != ep.publish_send_max_) {
-            ep.async_send(
-                force_move(ep.publish_queue_.front()),
-                true, // from queue
-                as::detached
-            );
-            ep.publish_queue_.pop_front();
-        }
-    }
+    void send_publish_from_queue();
 
-    template <typename Self>
     bool process_qos2_publish(
-        Self& self,
         protocol_version ver,
         typename basic_packet_id_type<PacketIdBytes>::type packet_id
-    ) {
-        bool already_handled = false;
-        if (ep.qos2_publish_handled_.find(packet_id) == ep.qos2_publish_handled_.end()) {
-            ep.qos2_publish_handled_.emplace(packet_id);
-        }
-        else {
-            already_handled = true;
-        }
-        if (ep.status_ == connection_status::connected &&
-            (ep.auto_pub_response_ ||
-             already_handled) // already_handled is true only if the pubrec packet
-        ) {                   // corresponding to the publish packet has already
-                              // been sent as success
-            switch (ver) {
-            case protocol_version::v3_1_1:
-                ep.async_send(
-                    v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id),
-                    as::detached
-                );
-                break;
-            case protocol_version::v5:
-                ep.async_send(
-                    v5::basic_pubrec_packet<PacketIdBytes>(packet_id),
-                    as::detached
-                );
-                break;
-            default:
-                BOOST_ASSERT(false);
-                break;
-            }
-        }
-        if (already_handled) {
-            // do the next read
-            auto& a_ep{ep};
-            a_ep.stream_->async_read_packet(
-                force_move(self)
-            );
-            return false;
-        }
-        return true;
-    }
+    );
+
+    void handle_v3_1_1_connect(v3_1_1::connect_packet& p);
+    void handle_v5_connect(v5::connect_packet& p);
+    void handle_v3_1_1_connack(v3_1_1::connack_packet& p);
+    void handle_v5_connack(v5::connack_packet& p);
 };
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -862,5 +742,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
 }
 
 } // namespace async_mqtt
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/endpoint_recv.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RECV_HPP

@@ -64,7 +64,9 @@ public:
      * @brief Get MQTT control packet type
      * @return control packet type
      */
-    static constexpr control_packet_type type();
+    static constexpr control_packet_type type() {
+        return control_packet_type::unsuback;
+    }
 
     /**
      * @brief Create const buffer sequence
@@ -169,6 +171,8 @@ using unsuback_packet = basic_unsuback_packet<2>;
 
 } // namespace async_mqtt::v5
 
-#include <async_mqtt/packet/impl/v5_unsuback.hpp>
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/packet/impl/v5_unsuback.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
