@@ -73,6 +73,19 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
+<p>client::async_recv() CompletionHandler signature is updated to <code>void(error_code, packet_variant)</code>. #281.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>packet_variant</code> has one of <code>std::monostate</code>, <code>[v3_1_1|v5]::publish_packet</code>, <code>[v3_1_1|v5]::disconnect_packet</code>, or <code>v5::auth_packet</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Renamed the typename from <code>pubres_t</code>  to <code>pubres_type</code> for consistency. #280</p>
+</li>
+<li>
 <p>Re-designed error_code handling respect to Boost.Asio way. #266, #270, 271, #272, #273</p>
 <div class="ulist">
 <ul>
@@ -91,13 +104,32 @@ div#navigation table {
 </div>
 </li>
 <li>
+<p>Added separate compilation mode support. #282</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To enable separate compilation mode, define ASYNC_MQTT_SEPARATE_COMPILATION</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Added bind_cancellation_slot test #268</p>
 </li>
 <li>
 <p>Supported PINGREQ overriding by ServerKeepAlive. #271</p>
 </li>
 <li>
-<p>Refined tests. #269</p>
+<p>Refined tests. #269, #274, #275</p>
+</li>
+<li>
+<p>Refined documents. #276</p>
+</li>
+<li>
+<p>Refined tools (bench) #278</p>
+</li>
+<li>
+<p>Added endpoint getter to client. #279</p>
 </li>
 </ul>
 </div>

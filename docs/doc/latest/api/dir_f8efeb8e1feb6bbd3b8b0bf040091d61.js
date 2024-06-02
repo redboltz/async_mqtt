@@ -11,5 +11,6 @@ var dir_f8efeb8e1feb6bbd3b8b0bf040091d61 =
     [ "error.hpp", "error_8hpp_source.html", null ],
     [ "protocol_version.hpp", "protocol__version_8hpp_source.html", null ],
     [ "role.hpp", "role_8hpp_source.html", null ],
-    [ "setup_log.hpp", "setup__log_8hpp_source.html", null ]
+    [ "setup_log.hpp", "setup__log_8hpp_source.html", null ],
+    [ "src.hpp", "src_8hpp_source.html", null ]
 ];

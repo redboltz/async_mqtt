@@ -1,5 +1,8 @@
 var NAVTREEINDEX1 =
 {
+"classasync__mqtt_1_1property_1_1message__expiry__interval.html":[0,2,1,0,3],
+"classasync__mqtt_1_1property_1_1message__expiry__interval.html#a599ad258dabd588cda82ace5d95394ac":[0,2,1,0,3,0],
+"classasync__mqtt_1_1property_1_1message__expiry__interval.html#a9973ecd3494f980fbebc433891cd10d4":[0,2,1,0,3,1],
 "classasync__mqtt_1_1property_1_1payload__format__indicator.html":[0,2,1,0,2],
 "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ad09953ffd432f1fea04d22d39464398d":[0,2,1,0,2,1],
 "classasync__mqtt_1_1property_1_1payload__format__indicator.html#ae2f1b455c358120b2358e4361b31fda6":[0,2,1,0,2,0],
@@ -89,9 +92,11 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1property__variant.html":[0,2,1,0,1,0],
 "classasync__mqtt_1_1property__variant.html#a184345bb26a238db254f102e8b20d450":[0,2,1,0,1,0,3],
 "classasync__mqtt_1_1property__variant.html#a1e98c76c7318ed588541bf50b01f3245":[0,2,1,0,1,0,1],
+"classasync__mqtt_1_1property__variant.html#a2acc800da1243b5b014562235bae0464":[0,2,1,0,1,0,16],
 "classasync__mqtt_1_1property__variant.html#a5ad7efea2e2ee2ce25d094f4f991870d":[0,2,1,0,1,0,10],
 "classasync__mqtt_1_1property__variant.html#a85d0ab986a7adb6fe324a3f01939ee36":[0,2,1,0,1,0,9],
-"classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36":[0,2,1,0,1,0,15],
+"classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36":[0,2,1,0,1,0,17],
+"classasync__mqtt_1_1property__variant.html#a982c555e393598a51ae77acb1993ef36":[0,2,1,0,1,0,18],
 "classasync__mqtt_1_1property__variant.html#ab35cbdd80d44eba98e3f2cbe0b33967b":[0,2,1,0,1,0,7],
 "classasync__mqtt_1_1property__variant.html#ab3fb2c723adcfacc89d7187dcf5d75a0":[0,2,1,0,1,0,2],
 "classasync__mqtt_1_1property__variant.html#abb9835868c9b29d9b2ad963a9c92dc2d":[0,2,1,0,1,0,6],
@@ -102,6 +107,7 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1property__variant.html#ae392639bdd2fd8dbceec12975b488863":[0,2,1,0,1,0,8],
 "classasync__mqtt_1_1property__variant.html#ae7e6dd3e939f2dd9b229b600bd26008c":[0,2,1,0,1,0,13],
 "classasync__mqtt_1_1property__variant.html#aebf6c6155b2bdaf01227df1bfc9b5892":[0,2,1,0,1,0,14],
+"classasync__mqtt_1_1property__variant.html#aebf6c6155b2bdaf01227df1bfc9b5892":[0,2,1,0,1,0,15],
 "classasync__mqtt_1_1property__variant.html#affe7d42f17c04cde94fb577786db828a":[0,2,1,0,1,0,12],
 "classasync__mqtt_1_1topic__sharename.html":[0,2,5],
 "classasync__mqtt_1_1topic__sharename.html#a00a0a1e46153675cd9516f3548ca2c8a":[0,2,5,4],
@@ -243,11 +249,5 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a83cf6dc8b65e35c2414abbbe496f38db":[0,2,0,3,0,1],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a98c6e2957c22b01c57686ea97612c11b":[0,2,0,3,0,3],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#abf5558c0404c4e825a7ff7752b01e524":[0,2,0,3,0,5],
-"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#ae8f845776d61cced7df729f440a54830":[0,2,0,3,0,2],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html":[0,2,0,4,0],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a24bda6c6eb11a3ab3e86fb12034228da":[0,2,0,4,0,0],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a397538a3b282631e0e61f32c32e0cb2a":[0,2,0,4,0,5],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a80978bf35695f7e535020a12a4d32a04":[0,2,0,4,0,2],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#a9f11886f803744fe5c1b45ae300dc1fe":[0,2,0,4,0,3],
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab074b326b3d3a2b1d1a2d98b3781a316":[0,2,0,4,0,1]
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#ae8f845776d61cced7df729f440a54830":[0,2,0,3,0,2]
 };

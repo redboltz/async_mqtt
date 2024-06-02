@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<title>Run async_mqtt broker/client on the docker container</title>
+<title>Separate Compilation Mode</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
  *
@@ -143,92 +143,72 @@ pre.rouge .ss {
 </head>
 <body class="article">
 <div id="header">
-<h1>Run async_mqtt broker/client on the docker container</h1>
+<h1>Separate Compilation Mode</h1>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_header_only_mode">Header only mode</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can run async_mqtt broker, benchmarking tool, and CLI client using docker.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="https://github.com/redboltz/async_mqtt/tree/main/docker" class="bare">https://github.com/redboltz/async_mqtt/tree/main/docker</a></p>
+<p>By default, async_mqtt operates in header-only mode. Simply <code>#include &lt;async_mqtt/all.hpp&gt;</code> in your source file.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_preparation">Preparation</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>git clone https://github.com/redboltz/async_mqtt.git
-cd async_mqtt
-cd docker</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_run_broker">Run broker</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>./broker.sh</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you don&#8217;t have executing docker permission, then run as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>sudo ./broker.sh</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_run_client_cli">Run client_cli</h2>
+<h2 id="_separate_compilation_mode">Separate compilation mode</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>On another terminal:</p>
+<p>Header-only mode is simple but can significantly increase your project&#8217;s build times. In this case, using separate compilation mode could help resolve the issue.</p>
+</div>
+<div class="paragraph">
+<p>Set the compiler option to define the <code>ASYNC_MQTT_SEPARATE_COMPILATION</code> preprocessor macro for all translation units. This enables separate compilation mode.
+Then, prepare a source file <code>async_mqtt.cpp</code> as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code>./client_cli.sh --host host.docker.internal</code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;async_mqtt/src.hpp&gt;</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you don&#8217;t have executing docker permission, then run as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>sudo ./client_cli.sh --host host.docker.internal</code></pre>
-</div>
+<p>This is for building the library code.</p>
 </div>
 <div class="paragraph">
-<p>Then, you can communicate to the broker container on the same machine.</p>
+<p>Other source files remain unchanged from the header-only mode. Simply <code>#include &lt;async_mqtt/all.hpp&gt;</code>.
+Defining <code>ASYNC_MQTT_SEPARATE_COMPILATION</code> automatically removes the library code present in <code>async_mqtt.cpp</code> from <code>async_mqtt/all.hpp</code>.
+Therefore, once you compile <code>async_mqtt.cpp</code> (which takes a long time due to instantiation), subsequent builds will have faster compilation times.</p>
 </div>
-<div class="paragraph">
-<p>You can subscribe and publish as follows:</p>
+<div class="sect2">
+<h3 id="_examples">Examples</h3>
+<div class="sect3">
+<h4 id="_separate_compilation_mode_client">Separate compilation mode client</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_client/CMakeLists.txt">CMakeLists.txt</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_client/async_mqtt.cpp">async_mqtt.cpp</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_client/main.cpp">main.cpp</a></p>
+</li>
+</ul>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>cli&gt; sub t1 1
-cli&gt; pub t1 hello 1
-cli&gt; exit</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Red colored message is command response.
-Cyan colored message is received packet.</p>
-</div>
-<div class="paragraph">
-<p>Also you can connect mosquitto.org as follows.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>./client_cli --host test.mosquitto.rog</code></pre>
-</div>
+<div class="sect3">
+<h4 id="_separate_compilation_mode_endpoint">Separate compilation mode endpoint</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_endpoint/CMakeLists.txt">CMakeLists.txt</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_endpoint/async_mqtt.cpp">async_mqtt.cpp</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/separate_endpoint/main.cpp">main.cpp</a></p>
+</li>
+</ul>
 </div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
@@ -239,13 +219,15 @@ Cyan colored message is received packet.</p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-middle"><a href="../separate.html">Prev</a></th>
-<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
-<a href="../index.html">Home</a></th>
-<th class="tableblock halign-right valign-middle"><a href="trial.html">Next</a></th>
+<th class="tableblock halign-left valign-middle"><a href="config.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="index.html">Up</a><br>
+<a href="index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="tool/container.html">Next</a></th>
 </tr>
 </thead>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>

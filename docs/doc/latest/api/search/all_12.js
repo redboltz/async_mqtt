@@ -55,14 +55,14 @@ var searchData=
   ['puback_52',['puback',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a435085db69f4654e88b811b47cfef414',1,'async_mqtt']]],
   ['puback_20packet_20v3_201_201_53',['PUBACK packet (v3.1.1)',['../group__puback__v3__1__1.html',1,'']]],
   ['puback_20packet_20v5_200_54',['PUBACK packet (v5.0)',['../group__puback__v5.html',1,'']]],
-  ['puback_5fopt_55',['puback_opt',['../structasync__mqtt_1_1client_1_1pubres__t.html#aca5c91aede1691f224cd1feec406a05a',1,'async_mqtt::client::pubres_t']]],
+  ['puback_5fopt_55',['puback_opt',['../structasync__mqtt_1_1client_1_1pubres__type.html#adbf276995037034b6a8ea247bd35b53a',1,'async_mqtt::client::pubres_type']]],
   ['puback_5fpacket_56',['puback_packet',['../group__puback__v3__1__1.html#gad1ac458a5a1912a4c6bdfaedd407b8f3',1,'async_mqtt::v3_1_1::basic_puback_packet::puback_packet'],['../group__puback__v5.html#gad1ac458a5a1912a4c6bdfaedd407b8f3',1,'async_mqtt::v5::basic_puback_packet::puback_packet']]],
   ['puback_5freason_5fcode_57',['puback_reason_code',['../group__puback__reason__code.html#ga3129c11af64f00be426b3deae38158ee',1,'async_mqtt::puback_reason_code'],['../group__puback__reason__code.html',1,'puback_reason_code']]],
   ['puback_5freason_5fcode_5fto_5fstring_58',['puback_reason_code_to_string',['../group__puback__reason__code.html#ga9bc71afebe8f5cfbbea19d6aaddd5da3',1,'async_mqtt']]],
   ['pubcomp_59',['pubcomp',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a1759db7690c85cd9364289212d132e61',1,'async_mqtt']]],
   ['pubcomp_20packet_20v3_201_201_60',['PUBCOMP packet (v3.1.1)',['../group__pubcomp__v3__1__1.html',1,'']]],
   ['pubcomp_20packet_20v5_200_61',['PUBCOMP packet (v5.0)',['../group__pubcomp__v5.html',1,'']]],
-  ['pubcomp_5fopt_62',['pubcomp_opt',['../structasync__mqtt_1_1client_1_1pubres__t.html#ad8619b87284f9ce36674766904abe1f5',1,'async_mqtt::client::pubres_t']]],
+  ['pubcomp_5fopt_62',['pubcomp_opt',['../structasync__mqtt_1_1client_1_1pubres__type.html#ac421d7d122a64ae87537f85dc9faaf15',1,'async_mqtt::client::pubres_type']]],
   ['pubcomp_5fpacket_63',['pubcomp_packet',['../group__pubcomp__v3__1__1.html#gad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v3_1_1::basic_pubcomp_packet::pubcomp_packet'],['../group__pubcomp__v5.html#gad02d2fea79555fd40ad685cb6cda70fa',1,'async_mqtt::v5::basic_pubcomp_packet::pubcomp_packet']]],
   ['pubcomp_5freason_5fcode_64',['pubcomp_reason_code',['../group__pubcomp__reason__code.html#gabbdb3369a5f24b1df9d2a5f868210083',1,'async_mqtt::pubcomp_reason_code'],['../group__pubcomp__reason__code.html',1,'pubcomp_reason_code']]],
   ['pubcomp_5freason_5fcode_5fto_5fstring_65',['pubcomp_reason_code_to_string',['../group__pubcomp__reason__code.html#gabab71f65787aafc2cee6fdcae46461a7',1,'async_mqtt']]],
@@ -75,7 +75,7 @@ var searchData=
   ['pubrec_72',['pubrec',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4abf2cc1e95ca55f9ec0fc548be41acff2',1,'async_mqtt']]],
   ['pubrec_20packet_20v3_201_201_73',['PUBREC packet (v3.1.1)',['../group__pubrec__v3__1__1.html',1,'']]],
   ['pubrec_20packet_20v5_200_74',['PUBREC packet (v5.0)',['../group__pubrec__v5.html',1,'']]],
-  ['pubrec_5fopt_75',['pubrec_opt',['../structasync__mqtt_1_1client_1_1pubres__t.html#a4d89767cf9dc06c72577b2d5670f8440',1,'async_mqtt::client::pubres_t']]],
+  ['pubrec_5fopt_75',['pubrec_opt',['../structasync__mqtt_1_1client_1_1pubres__type.html#a2236be9c48a3a879ceb1fc3b36e14ffc',1,'async_mqtt::client::pubres_type']]],
   ['pubrec_5fpacket_76',['pubrec_packet',['../group__pubrec__v3__1__1.html#gacd2bd0951db1235ee3c026bcb016329a',1,'async_mqtt::v3_1_1::basic_pubrec_packet::pubrec_packet'],['../group__pubrec__v5.html#gacd2bd0951db1235ee3c026bcb016329a',1,'async_mqtt::v5::basic_pubrec_packet::pubrec_packet']]],
   ['pubrec_5freason_5fcode_77',['pubrec_reason_code',['../group__pubrec__reason__code.html#gab5231230a17ac40eda52d85e349b8339',1,'async_mqtt::pubrec_reason_code'],['../group__pubrec__reason__code.html',1,'pubrec_reason_code']]],
   ['pubrec_5freason_5fcode_5fto_5fstring_78',['pubrec_reason_code_to_string',['../group__pubrec__reason__code.html#ga173211d10e70cb555e880a39720a268d',1,'async_mqtt']]],
@@ -86,5 +86,5 @@ var searchData=
   ['pubrel_5fpacket_83',['pubrel_packet',['../group__pubrel__v3__1__1.html#gac621c1b7011518ff60a9fbedde43b367',1,'async_mqtt::v3_1_1::basic_pubrel_packet::pubrel_packet'],['../group__pubrel__v5.html#gac621c1b7011518ff60a9fbedde43b367',1,'async_mqtt::v5::basic_pubrel_packet::pubrel_packet']]],
   ['pubrel_5freason_5fcode_84',['pubrel_reason_code',['../group__pubrel__reason__code.html#gad13254b0b2f5e7baa414cbd15c552736',1,'async_mqtt::pubrel_reason_code'],['../group__pubrel__reason__code.html',1,'pubrel_reason_code']]],
   ['pubrel_5freason_5fcode_5fto_5fstring_85',['pubrel_reason_code_to_string',['../group__pubrel__reason__code.html#ga2ee096bfd82f3b72739f1f764e63aae4',1,'async_mqtt']]],
-  ['pubres_5ft_86',['pubres_t',['../structasync__mqtt_1_1client_1_1pubres__t.html',1,'async_mqtt::client']]]
+  ['pubres_5ftype_86',['pubres_type',['../structasync__mqtt_1_1client_1_1pubres__type.html',1,'async_mqtt::client']]]
 ];

@@ -46,12 +46,12 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "all_8hpp_source.html",
-"classasync__mqtt_1_1property_1_1payload__format__indicator.html",
-"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html#ab8b47870d486af93440f26159bf419c5",
-"functions_func_i.html",
-"group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925",
-"group__qos.html#gga38e773082414bb272ab22275c56eb4dfa64d245cf1d119a993a586e60738513a9",
-"structasync__mqtt_1_1pub_1_1opts.html#af5796c98ffb5098ee1ced7d5012fff6c"
+"classasync__mqtt_1_1property_1_1message__expiry__interval.html",
+"classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html",
+"functions_func_c.html",
+"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e",
+"group__qos.html#ga7e7341552a092506c39d7c2554b10423",
+"structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
