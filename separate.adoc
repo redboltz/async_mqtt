@@ -34,5 +34,12 @@ Therefore, once you compile `async_mqtt.cpp` (which takes a long time due to ins
 
 === Examples
 
-* xref:{am-base-path}/example/separate_client[Separate compilation mode client]
-* xref:{am-base-path}/example/separate_endpoint[Separate compilation mode endpoint]
+==== Separate compilation mode client
+* xref:{am-base-path}/example/separate_client/CMakeLists.txt[CMakeLists.txt]
+* xref:{am-base-path}/example/separate_client/async_mqtt.cpp[async_mqtt.cpp]
+* xref:{am-base-path}/example/separate_client/main.cpp[main.cpp]
+
+==== Separate compilation mode endpoint
+* xref:{am-base-path}/example/separate_endpoint/CMakeLists.txt[CMakeLists.txt]
+* xref:{am-base-path}/example/separate_endpoint/async_mqtt.cpp[async_mqtt.cpp]
+* xref:{am-base-path}/example/separate_endpoint/main.cpp[main.cpp]
