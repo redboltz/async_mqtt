@@ -1,0 +1,26 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../../main]
+ifndef::env-github[:am-base-path: ../..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:../api]
+
+= Resend message
+
+== Division of roles between MQTT and the underlying layer
+
+In the MQTT protocol, retransmission is only permitted immediately after reconnection when both the client and server sessions are maintained following a disconnection. MQTT assumes that the underlying layer, such as TCP, guarantees delivery and order.
+See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901233
+
+Therefore, retransmission during an active MQTT connection can lead to inconsistencies with the underlying layer, which the MQTT protocol prohibits. If retransmission is not possible at the lower layer due to congestion or other conditions, the lower layer will return an error code and disconnect. MQTT detects this disconnection and, if necessary, will reconnect and retransmit the messages. In other words, MQTT ensures message delivery across disconnections.
+See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901238
+
+== Points to note when resending message
+
+The communication constraints in MQTT can vary depending on the broker. For instance, the Maximum Packet Size  might differ between brokers. This information can be found in the `MaximumPacketSize` property of the `CONNACK` packet, which is the response to the `CONNECT` packet. Even if a client believes it is reconnecting to the same broker, it might actually be redirected to a different broker with different settings. Therefore, when reconnecting, it is crucial to carefully check the contents of the CONNACK packet to avoid protocol violations.
+In `async_mqtt`, if there are messages that cannot be retransmitted due to changes in broker conditions during reconnection, the messages will not be retransmitted, and an error will be notified to the user.
+
+When you detect a disconnection using `async_mqtt`, you can simply call `async_underlying_handshake()`, wait for the result, and then send a `CONNECT` packet. Check the received `CONNACK` packet. Resending messages are automatically done after receiving the `CONNACK` packet. To avoid rapid repeated reconnections, it is a good convention to wait several seconds before calling `async_underlying_handshake()`.

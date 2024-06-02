@@ -1,0 +1,33 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:api]
+
+= Separate Compilation Mode
+
+== Header only mode
+
+By default, async_mqtt operates in header-only mode. Simply `#include <async_mqtt/all.hpp>` in your source file.
+
+
+== Separate compilation mode
+
+Header-only mode is simple but can significantly increase your project's build times. In this case, using separate compilation mode could help resolve the issue.
+
+Set the compiler option to define the `ASYNC_MQTT_SEPARATE_COMPILATION` preprocessor macro for all translation units. This enables separate compilation mode.
+Then, prepare a source file `async_mqtt.cpp` as follows:
+
+```cpp
+#include <async_mqtt/src.hpp>
+```
+
+This is for building the library code.
+
+Other source files remain unchanged from the header-only mode. Simply `#include <async_mqtt/all.hpp>`.
+Defining `ASYNC_MQTT_SEPARATE_COMPILATION` automatically removes the library code present in `async_mqtt.cpp` from `async_mqtt/all.hpp`.
+Therefore, once you compile `async_mqtt.cpp` (which takes a long time due to instantiation), subsequent builds will have faster compilation times.
