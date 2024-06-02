@@ -10,6 +10,8 @@
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
 === other updates
+* Added separate compilation mode support. #282
+** To enable separate compilation mode, define ASYNC_MQTT_SEPARATE_COMPILATION
 * Added bind_cancellation_slot test #268
 * Supported PINGREQ overriding by ServerKeepAlive. #271
 * Refined tests. #269, #274, #275
