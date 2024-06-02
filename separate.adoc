@@ -31,3 +31,8 @@ This is for building the library code.
 Other source files remain unchanged from the header-only mode. Simply `#include <async_mqtt/all.hpp>`.
 Defining `ASYNC_MQTT_SEPARATE_COMPILATION` automatically removes the library code present in `async_mqtt.cpp` from `async_mqtt/all.hpp`.
 Therefore, once you compile `async_mqtt.cpp` (which takes a long time due to instantiation), subsequent builds will have faster compilation times.
+
+=== Examples
+
+* xref:{am-base-path}/example/separate_client[Separate compilation mode client]
+* xref:{am-base-path}/example/separate_endpoint[Separate compilation mode endpoint]
