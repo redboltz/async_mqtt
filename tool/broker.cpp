@@ -140,7 +140,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         am::broker<
             epv_type
-        > brk{timer_ioc};
+        > brk{timer_ioc, vm["recycling_allocator"].as<bool>()};
 
         auto num_of_iocs =
             [&] () -> std::size_t {
@@ -719,6 +719,11 @@ int main(int argc, char *argv[]) {
                 "bulk_write",
                 boost::program_options::value<bool>()->default_value(false),
                 "Set bulk write mode for all connections"
+            )
+            (
+                "recycling_allocator",
+                boost::program_options::value<bool>()->default_value(false),
+                "Use recyclinc allocator"
             )
             (
                 "verbose",

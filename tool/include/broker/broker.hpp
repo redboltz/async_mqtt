@@ -31,9 +31,10 @@ class broker {
     using this_type = broker<Epsp>;
 
 public:
-    broker(as::io_context& timer_ioc)
+    broker(as::io_context& timer_ioc, bool recycling_allocator = false)
         :timer_ioc_{timer_ioc},
-         tim_disconnect_{timer_ioc_} {
+         tim_disconnect_{timer_ioc_},
+         recycling_allocator_{recycling_allocator} {
         std::unique_lock<mutex> g_sec{mtx_security_};
         security_.default_config();
     }
@@ -53,7 +54,7 @@ public:
 
 private:
     void async_read_packet(epsp_type epsp) {
-        epsp.async_recv(
+        auto recv_proc =
             [this, epsp]
             (error_code const& ec, packet_variant pv) mutable {
                 if (ec) {
@@ -253,8 +254,21 @@ private:
                         }
                     }
                 );
-            }
-        );
+            };
+
+        if (recycling_allocator_) {
+            epsp.async_recv(
+                as::bind_allocator(
+                    as::recycling_allocator<char>(),
+                    recv_proc
+                )
+            );
+        }
+        else {
+            epsp.async_recv(
+                recv_proc
+            );
+        }
     }
 
     void connect_handler(
@@ -2224,6 +2238,7 @@ private:
     std::function<void(properties const&)> h_auth_props_;
     bool pingresp_ = true;
     bool connack_ = true;
+    bool recycling_allocator_;
 };
 
 } // namespace async_mqtt
