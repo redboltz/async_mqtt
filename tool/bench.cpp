@@ -1768,9 +1768,9 @@ int main(int argc, char *argv[]) {
         };
 
         std::atomic<phase> ph{phase::connect};
-        auto tim_progress = std::make_shared<as::steady_timer>(thread_pool->get_executor());
-        as::steady_timer tim_delay{thread_pool->get_executor()};
-        as::system_timer tim_sync{thread_pool->get_executor()};
+        auto tim_progress = std::make_shared<as::steady_timer>(as::make_strand(thread_pool->get_executor()));
+        as::steady_timer tim_delay{as::make_strand(thread_pool->get_executor())};
+        as::system_timer tim_sync{as::make_strand(thread_pool->get_executor())};
 
         std::atomic<std::size_t> rest_connect{clients};
         std::atomic<std::size_t> rest_sub{clients};
@@ -1848,10 +1848,10 @@ int main(int argc, char *argv[]) {
         if (num_of_workers != 0) {
             locked_cout() << "work as manager. num_of_workers:" << num_of_workers << std::endl;
 
-            as::ip::tcp::acceptor ac{thread_pool->get_executor(), as::ip::tcp::endpoint{as::ip::tcp::v4(), manager_port}};
+            as::ip::tcp::acceptor ac{as::make_strand(thread_pool->get_executor()), as::ip::tcp::endpoint{as::ip::tcp::v4(), manager_port}};
 
             for (std::size_t i = 0; i != num_of_workers; ++i) {
-                auto s = std::make_shared<as::ip::tcp::socket>(thread_pool->get_executor());
+                auto s = std::make_shared<as::ip::tcp::socket>(as::make_strand(thread_pool->get_executor()));
                 ac.accept(*s);
                 workers.emplace_back(am::force_move(s));
                 locked_cout() << "accepted" << std::endl;
@@ -1971,7 +1971,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        thread_pool->get_executor()
+                        as::make_strand(thread_pool->get_executor())
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2036,7 +2036,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        thread_pool->get_executor(),
+                        as::make_strand(thread_pool->get_executor()),
                         ctx
                     ),
                     cid_prefix,
@@ -2099,7 +2099,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        thread_pool->get_executor()
+                        as::make_strand(thread_pool->get_executor())
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2169,7 +2169,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        thread_pool->get_executor(),
+                        as::make_strand(thread_pool->get_executor()),
                         ctx
                     ),
                     cid_prefix,

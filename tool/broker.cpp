@@ -149,7 +149,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         am::broker<
             epv_type
-        > brk{thread_pool->get_executor(), vm["recycling_allocator"].as<bool>()};
+        > brk{as::make_strand(as::make_strand(thread_pool->get_executor())), vm["recycling_allocator"].as<bool>()};
 
         auto set_auth =
             [&] {
@@ -204,7 +204,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         if (vm.count("tcp.port")) {
             mqtt_endpoint.emplace(as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>());
-            mqtt_ac.emplace(thread_pool->get_executor(), *mqtt_endpoint);
+            mqtt_ac.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())), *mqtt_endpoint);
             mqtt_async_accept =
                 [&] {
                     auto epsp =
@@ -214,7 +214,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::mqtt
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(thread_pool->get_executor())
+                            as::make_strand(as::make_strand(as::make_strand(thread_pool->get_executor())))
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
@@ -245,7 +245,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         std::function<void()> ws_async_accept;
         if (vm.count("ws.port")) {
             ws_endpoint.emplace(as::ip::tcp::v4(), vm["ws.port"].as<std::uint16_t>());
-            ws_ac.emplace(thread_pool->get_executor(), *ws_endpoint);
+            ws_ac.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())), *ws_endpoint);
             ws_async_accept =
                 [&] {
                     auto epsp =
@@ -255,7 +255,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::ws
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(thread_pool->get_executor())
+                            as::make_strand(as::make_strand(as::make_strand(thread_pool->get_executor())))
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     auto& lowest_layer = epsp->lowest_layer();
@@ -299,7 +299,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         std::optional<as::ip::tcp::acceptor> mqtts_ac;
         std::function<void()> mqtts_async_accept;
         std::optional<as::steady_timer> mqtts_timer;
-        mqtts_timer.emplace(thread_pool->get_executor());
+        mqtts_timer.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())));
         auto mqtts_verify_field_obj =
             std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
                 OBJ_txt2obj(vm["verify_field"].as<std::string>().c_str(), 0),
@@ -313,7 +313,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         }
         if (vm.count("tls.port")) {
             mqtts_endpoint.emplace(as::ip::tcp::v4(), vm["tls.port"].as<std::uint16_t>());
-            mqtts_ac.emplace(thread_pool->get_executor(), *mqtts_endpoint);
+            mqtts_ac.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())), *mqtts_endpoint);
             mqtts_async_accept =
                 [&] {
                     std::optional<std::string> verify_file;
@@ -348,7 +348,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::mqtts
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(thread_pool->get_executor()),
+                            as::make_strand(as::make_strand(as::make_strand(thread_pool->get_executor()))),
                             *mqtts_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
@@ -392,7 +392,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         std::optional<as::ip::tcp::acceptor> wss_ac;
         std::function<void()> wss_async_accept;
         std::optional<as::steady_timer> wss_timer;
-        wss_timer.emplace(thread_pool->get_executor());
+        wss_timer.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())));
         auto wss_verify_field_obj =
             std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
                 OBJ_txt2obj(vm["verify_field"].as<std::string>().c_str(), 0),
@@ -406,7 +406,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         }
         if (vm.count("wss.port")) {
             wss_endpoint.emplace(as::ip::tcp::v4(), vm["wss.port"].as<std::uint16_t>());
-            wss_ac.emplace(thread_pool->get_executor(), *wss_endpoint);
+            wss_ac.emplace(as::make_strand(as::make_strand(thread_pool->get_executor())), *wss_endpoint);
             wss_async_accept =
                 [&] {
                     std::optional<std::string> verify_file;
@@ -441,7 +441,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::wss
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(thread_pool->get_executor()),
+                            as::make_strand(as::make_strand(as::make_strand(thread_pool->get_executor()))),
                             *wss_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
