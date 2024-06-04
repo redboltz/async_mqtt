@@ -71,9 +71,7 @@ struct bench_context {
         am::qos qos,
         am::pub::retain retain,
         std::atomic<phase>& ph,
-        as::io_context& ioc_timer,
         std::shared_ptr<as::steady_timer>& tim_progress,
-        as::executor_work_guard<as::io_context::executor_type>& guard_ioc_timer,
         as::steady_timer& tim_delay,
         as::system_timer& tim_sync,
         std::size_t pub_idle_count,
@@ -98,11 +96,6 @@ struct bench_context {
         std::chrono::steady_clock::time_point& tp_pub_after_idle_delay,
         std::chrono::steady_clock::time_point& tp_publish,
         bool detail_report,
-        std::vector<
-            as::executor_work_guard<
-                as::io_context::executor_type
-            >
-        >& guard_iocs,
         mode md,
         std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers,
         std::optional<am::host_port> const& manager_hp,
@@ -123,9 +116,7 @@ struct bench_context {
      qos{qos},
      retain{retain},
      ph{ph},
-     ioc_timer{ioc_timer},
      tim_progress{tim_progress},
-     guard_ioc_timer{guard_ioc_timer},
      tim_delay{tim_delay},
      tim_sync{tim_sync},
      pub_idle_count{pub_idle_count},
@@ -150,7 +141,6 @@ struct bench_context {
      tp_pub_after_idle_delay{tp_pub_after_idle_delay},
      tp_publish{tp_publish},
      detail_report{detail_report},
-     guard_iocs{guard_iocs},
      md{md},
      workers{workers},
      manager_hp{manager_hp},
@@ -173,9 +163,7 @@ struct bench_context {
     am::qos qos;
     am::pub::retain retain;
     std::atomic<phase>& ph;
-    as::io_context& ioc_timer;
     std::shared_ptr<as::steady_timer>& tim_progress;
-    as::executor_work_guard<as::io_context::executor_type>& guard_ioc_timer;
     as::steady_timer& tim_delay;
     as::system_timer& tim_sync;
     std::size_t pub_idle_count;
@@ -200,11 +188,6 @@ struct bench_context {
     std::chrono::steady_clock::time_point& tp_pub_after_idle_delay;
     std::chrono::steady_clock::time_point& tp_publish;
     bool detail_report;
-    std::vector<
-        as::executor_work_guard<
-            as::io_context::executor_type
-        >
-    >& guard_iocs;
     mode md;
     std::vector<std::shared_ptr<as::ip::tcp::socket>> const& workers;
     std::optional<am::host_port> const& manager_hp;
@@ -859,8 +842,6 @@ private:
                             for (auto& ci : cis_) {
                                 ci.c->async_close([]{});
                             }
-                            for (auto& guard_ioc : bc_.guard_iocs) guard_ioc.reset();
-                            bc_.guard_ioc_timer.reset();
                         }
                         return;
                     } break;
@@ -1109,7 +1090,7 @@ private:
 int main(int argc, char *argv[]) {
     try {
         boost::program_options::options_description desc;
-
+        std::optional<as::thread_pool> thread_pool;
         constexpr std::size_t min_payload = 15;
         std::string payload_size_desc =
             "payload bytes. must be greater than " + std::to_string(min_payload);
@@ -1220,14 +1201,9 @@ int main(int argc, char *argv[]) {
                 "Output time over message if round trip time is greater than limit_ms. 0 means no limit"
             )
             (
-                "iocs",
-                boost::program_options::value<std::size_t>()->default_value(1),
-                "Number of io_context. If set 0 then automatically decided by hardware_concurrency()."
-            )
-            (
-                "threads_per_ioc",
-                boost::program_options::value<std::size_t>()->default_value(1),
-                "Number of worker threads for each io_context."
+                "threads",
+                boost::program_options::value<std::size_t>()->default_value(0),
+                "Number of worker threads."
             )
             (
                 "tcp_no_delay",
@@ -1666,47 +1642,16 @@ int main(int argc, char *argv[]) {
                 return result;
             }();
         std::cout << pps_str_with_comma <<  " publish/sec" << std::endl;
-        auto num_of_iocs =
-            [&] () -> std::size_t {
-                if (vm.count("iocs")) {
-                    return vm["iocs"].as<std::size_t>();
-                }
-                return 1;
-            } ();
-        if (num_of_iocs == 0) {
-            num_of_iocs = std::thread::hardware_concurrency();
-            std::cout << "iocs set to auto decide (0). Automatically set to " << num_of_iocs << std::endl;;
+
+        std::optional<as::thread_pool> thread_pool_opt;
+        auto threads = vm["threads"].as<std::size_t>();
+        if (threads == 0) {
+            ASYNC_MQTT_LOG("mqtt_broker", info)
+                << "thread set to 0. Automatically set to " << std::thread::hardware_concurrency() << " (number of cores)";
+            thread_pool.emplace();
         }
-
-        auto threads_per_ioc =
-            [&] () -> std::size_t {
-                if (vm.count("threads_per_ioc")) {
-                    return vm["threads_per_ioc"].as<std::size_t>();
-                }
-                return 1;
-            } ();
-        if (threads_per_ioc == 0) {
-            threads_per_ioc = std::min(std::size_t(std::thread::hardware_concurrency()), std::size_t(4));
-            std::cout << "threads_per_ioc set to auto decide (0). Automatically set to " << threads_per_ioc << std::endl;
-        }
-
-        std::cout
-            << "iocs:" << num_of_iocs
-            << " threads_per_ioc:" << threads_per_ioc
-            << " total threads:" << num_of_iocs * threads_per_ioc
-            << std::endl;
-
-        std::vector<as::io_context> iocs(num_of_iocs);
-        BOOST_ASSERT(!iocs.empty());
-
-        std::vector<
-            as::executor_work_guard<
-                as::io_context::executor_type
-            >
-        > guard_iocs;
-        guard_iocs.reserve(iocs.size());
-        for (auto& ioc : iocs) {
-            guard_iocs.emplace_back(ioc.get_executor());
+        else {
+            thread_pool.emplace(threads);
         }
 
         am::protocol_version version =
@@ -1822,16 +1767,10 @@ int main(int argc, char *argv[]) {
             am::packet_id_type pid = 0;
         };
 
-        as::io_context ioc_timer;
-        as::io_context ioc_progress_timer;
-
-        as::io_context ioc_sync;
-
         std::atomic<phase> ph{phase::connect};
-        auto tim_progress = std::make_shared<as::steady_timer>(ioc_progress_timer);
-        as::executor_work_guard<as::io_context::executor_type> guard_ioc_timer(ioc_timer.get_executor());
-        as::steady_timer tim_delay{ioc_timer};
-        as::system_timer tim_sync{ioc_timer};
+        auto tim_progress = std::make_shared<as::steady_timer>(thread_pool->get_executor());
+        as::steady_timer tim_delay{thread_pool->get_executor()};
+        as::system_timer tim_sync{thread_pool->get_executor()};
 
         std::atomic<std::size_t> rest_connect{clients};
         std::atomic<std::size_t> rest_sub{clients};
@@ -1909,11 +1848,10 @@ int main(int argc, char *argv[]) {
         if (num_of_workers != 0) {
             locked_cout() << "work as manager. num_of_workers:" << num_of_workers << std::endl;
 
-            as::ip::tcp::acceptor ac{ioc_sync, as::ip::tcp::endpoint{as::ip::tcp::v4(), manager_port}};
+            as::ip::tcp::acceptor ac{thread_pool->get_executor(), as::ip::tcp::endpoint{as::ip::tcp::v4(), manager_port}};
 
-            // as::ip::tcp::acceptor ac{ioc_sync, manager_port};
             for (std::size_t i = 0; i != num_of_workers; ++i) {
-                auto s = std::make_shared<as::ip::tcp::socket>(ioc_sync);
+                auto s = std::make_shared<as::ip::tcp::socket>(thread_pool->get_executor());
                 ac.accept(*s);
                 workers.emplace_back(am::force_move(s));
                 locked_cout() << "accepted" << std::endl;
@@ -1924,27 +1862,6 @@ int main(int argc, char *argv[]) {
             [&] {
                 if (progress_timer_sec > 0) {
                     tim_progress_proc();
-                }
-                std::thread th_progress_timer {
-                    [&] {
-                        ioc_progress_timer.run();
-                    }
-                };
-                std::thread th_timer {
-                    [&] {
-                        ioc_timer.run();
-                    }
-                };
-                std::vector<std::thread> ths;
-                ths.reserve(num_of_iocs * threads_per_ioc);
-                for (auto& ioc : iocs) {
-                    for (std::size_t i = 0; i != threads_per_ioc; ++i) {
-                        ths.emplace_back(
-                            [&] {
-                                ioc.run();
-                            }
-                        );
-                    }
                 }
 
                 as::io_context ioc_signal;
@@ -1966,11 +1883,8 @@ int main(int argc, char *argv[]) {
                     }
                 };
 
-
-                for (auto& th : ths) th.join();
-                th_timer.join();
+                thread_pool->join();
                 tim_progress->cancel();
-                th_progress_timer.join();
                 signals.cancel();
                 th_signal.join();
             };
@@ -1988,9 +1902,7 @@ int main(int argc, char *argv[]) {
             qos,
             retain,
             ph,
-            ioc_timer,
             tim_progress,
-            guard_ioc_timer,
             tim_delay,
             tim_sync,
             pub_idle_count,
@@ -2015,7 +1927,6 @@ int main(int argc, char *argv[]) {
             tp_pub_after_idle_delay,
             tp_publish,
             detail_report,
-            guard_iocs,
             md,
             workers,
             manager_hp,
@@ -2060,7 +1971,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        as::make_strand(iocs.at(i % num_of_iocs).get_executor())
+                        thread_pool->get_executor()
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2125,7 +2036,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
+                        thread_pool->get_executor(),
                         ctx
                     ),
                     cid_prefix,
@@ -2188,7 +2099,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        as::make_strand(iocs.at(i % num_of_iocs).get_executor())
+                        thread_pool->get_executor()
                     ),
                     cid_prefix,
                     i + start_index,
@@ -2258,7 +2169,7 @@ int main(int argc, char *argv[]) {
                 cis.emplace_back(
                     client_info::client_type::create(
                         version,
-                        as::make_strand(iocs.at(i % num_of_iocs).get_executor()),
+                        thread_pool->get_executor(),
                         ctx
                     ),
                     cid_prefix,
