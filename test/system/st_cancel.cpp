@@ -67,6 +67,7 @@ BOOST_AUTO_TEST_CASE(cb) {
                                         BOOST_TEST(ec == am::errc::operation_canceled);
                                         BOOST_TEST(!pv);
                                         canceled = true;
+                                        amep->async_close(as::detached);
                                     }
                                 )
                             );

@@ -18,6 +18,7 @@ send_op {
     this_type& ep;
     Packet packet;
     bool from_queue = false;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type> release_pid_opt = std::nullopt;
     enum { dispatch, write, complete } state = dispatch;
 
     template <typename Self>
@@ -30,6 +31,9 @@ send_op {
             ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "send error:" << ec.message();
+            if (release_pid_opt) {
+                ep.release_pid(*release_pid_opt);
+            }
             self.complete(ec);
             return;
         }
@@ -302,7 +306,9 @@ send_op {
             if (actual_packet.opts().get_qos() == qos::at_least_once ||
                 actual_packet.opts().get_qos() == qos::exactly_once
             ) {
-                BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+                auto packet_id = actual_packet.packet_id();
+                BOOST_ASSERT(ep.pid_man_.is_used_id(packet_id));
+                release_pid_opt.emplace(packet_id);
                 if (ep.need_store_) {
                     if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
                         auto ta_opt = get_topic_alias(actual_packet.props());
@@ -314,7 +320,6 @@ send_op {
                                         mqtt_error::packet_not_allowed_to_send
                                     )
                                 );
-                                auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
                                 }
@@ -333,7 +338,7 @@ send_op {
 
                             auto store_packet =
                                 ActualPacket(
-                                    actual_packet.packet_id(),
+                                    packet_id,
                                     force_move(*topic_opt),
                                     actual_packet.payload_as_buffer(),
                                     actual_packet.opts(),
@@ -345,7 +350,6 @@ send_op {
                                         mqtt_error::packet_not_allowed_to_send
                                     )
                                 );
-                                auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
                                 }
@@ -355,6 +359,9 @@ send_op {
                             // the original packet still use topic alias to send
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
+                            // even if send error would happens
+                            // packet_id should be remained
+                            release_pid_opt.reset();
                         }
                         else {
                             auto props = actual_packet.props();
@@ -369,7 +376,7 @@ send_op {
 
                             auto store_packet =
                                 ActualPacket(
-                                    actual_packet.packet_id(),
+                                    packet_id,
                                     actual_packet.topic(),
                                     actual_packet.payload_as_buffer(),
                                     actual_packet.opts(),
@@ -381,7 +388,6 @@ send_op {
                                         mqtt_error::packet_not_allowed_to_send
                                     )
                                 );
-                                auto packet_id = actual_packet.packet_id();
                                 if (packet_id != 0) {
                                     ep.release_pid(packet_id);
                                 }
@@ -389,6 +395,9 @@ send_op {
                             }
                             store_packet.set_dup(true);
                             ep.store_.add(force_move(store_packet));
+                            // even if send error would happens
+                            // packet_id should be remained
+                            release_pid_opt.reset();
                         }
                     }
                     else {
@@ -398,7 +407,6 @@ send_op {
                                     mqtt_error::packet_not_allowed_to_send
                                 )
                             );
-                            auto packet_id = actual_packet.packet_id();
                             if (packet_id != 0) {
                                 ep.release_pid(packet_id);
                             }
@@ -407,14 +415,17 @@ send_op {
                         auto store_packet{actual_packet};
                         store_packet.set_dup(true);
                         ep.store_.add(force_move(store_packet));
+                        // even if send error would happens
+                        // packet_id should be remained
+                        release_pid_opt.reset();
                     }
                 }
                 if (actual_packet.opts().get_qos() == qos::exactly_once) {
-                    ep.qos2_publish_processing_.insert(actual_packet.packet_id());
-                    ep.pid_pubrec_.insert(actual_packet.packet_id());
+                    ep.qos2_publish_processing_.insert(packet_id);
+                    ep.pid_pubrec_.insert(packet_id);
                 }
                 else {
-                    ep.pid_puback_.insert(actual_packet.packet_id());
+                    ep.pid_puback_.insert(packet_id);
                 }
             }
         }
@@ -511,9 +522,10 @@ send_op {
         }
 
         if constexpr(is_pubrel<std::decay_t<ActualPacket>>()) {
-            BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
+            auto packet_id = actual_packet.packet_id();
+            BOOST_ASSERT(ep.pid_man_.is_used_id(packet_id));
             if (ep.need_store_) ep.store_.add(actual_packet);
-            ep.pid_pubcomp_.insert(actual_packet.packet_id());
+            ep.pid_pubcomp_.insert(packet_id);
         }
 
         if constexpr(is_instance_of<v5::basic_pubcomp_packet, std::decay_t<ActualPacket>>::value) {
@@ -521,13 +533,17 @@ send_op {
         }
 
         if constexpr(is_subscribe<std::decay_t<ActualPacket>>()) {
-            BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
-            ep.pid_suback_.insert(actual_packet.packet_id());
+            auto packet_id = actual_packet.packet_id();
+            BOOST_ASSERT(ep.pid_man_.is_used_id(packet_id));
+            ep.pid_suback_.insert(packet_id);
+            release_pid_opt.emplace(packet_id);
         }
 
         if constexpr(is_unsubscribe<std::decay_t<ActualPacket>>()) {
-            BOOST_ASSERT(ep.pid_man_.is_used_id(actual_packet.packet_id()));
-            ep.pid_unsuback_.insert(actual_packet.packet_id());
+            auto packet_id = actual_packet.packet_id();
+            BOOST_ASSERT(ep.pid_man_.is_used_id(packet_id));
+            ep.pid_unsuback_.insert(packet_id);
+            release_pid_opt.emplace(packet_id);
         }
 
         if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {

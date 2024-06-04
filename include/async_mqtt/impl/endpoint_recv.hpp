@@ -22,7 +22,7 @@ recv_op {
     std::optional<filter> fil = std::nullopt;
     std::set<control_packet_type> types = {};
     std::optional<error_code> decided_error = std::nullopt;
-    enum { initiate, disconnect, close, read, complete } state = initiate;
+    enum { initiate, disconnect, close, read } state = initiate;
 
     template <typename Self>
     void operator()(
@@ -34,13 +34,22 @@ recv_op {
             ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "recv error:" << ec.message();
-            decided_error.emplace(ec);
-            ep.recv_processing_ = false;
-            state = close;
-            auto& a_ep{ep};
-            a_ep.async_close(
-                force_move(self)
-            );
+            if (ec == as::error::operation_aborted) {
+                // on cancel, not close the connection
+                self.complete(
+                    ec,
+                    packet_variant_type{}
+                );
+            }
+            else {
+                decided_error.emplace(ec);
+                ep.recv_processing_ = false;
+                state = close;
+                auto& a_ep{ep};
+                a_ep.async_close(
+                    force_move(self)
+                );
+            }
             return;
         }
 
@@ -632,7 +641,6 @@ recv_op {
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "recv code triggers close:" << decided_error->message();
             self.complete(force_move(*decided_error), packet_variant_type{});
-            state = complete;
         } break;
         default:
             BOOST_ASSERT(false);
