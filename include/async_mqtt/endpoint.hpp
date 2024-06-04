@@ -263,7 +263,7 @@ public:
      * @brief acuire unique packet_id.
      * @param token
      * - CompletionToken
-     *    - Signature: void(error_code, basic_packet_id_type<PacketIdBytes>)
+     *    - Signature: void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
      * @return deduced by token
      */
     template <
@@ -272,7 +272,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(error_code, basic_packet_id_type<PacketIdBytes>)
+        void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id(
@@ -284,7 +284,7 @@ public:
      * If packet_id is fully acquired, then wait until released.
      * @param token
      * - CompletionToken
-     *    - Signature: void(error_code, basic_packet_id_type<PacketIdBytes>)
+     *    - Signature: void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
      * @return deduced by token
      */
     template <
@@ -293,7 +293,7 @@ public:
 #if !defined(GENERATING_DOCUMENTATION)
     BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
         CompletionToken,
-        void(error_code, basic_packet_id_type<PacketIdBytes>)
+        void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_acquire_unique_packet_id_wait_until(
