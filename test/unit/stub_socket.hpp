@@ -34,8 +34,8 @@ struct basic_stub_socket {
         {}
 
         error_packet(
-            std::string packet
-        ):packet{force_move(packet)}
+            std::string_view packet
+        ):packet{packet}
         {}
 
         error_packet(

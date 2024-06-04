@@ -91,6 +91,7 @@ recv_op {
                     auto& a_ep{ep};
                     if constexpr (can_send_as_server(Role)) {
                         if (ec.category() == get_connect_reason_code_category()) {
+                            a_ep.status_ = connection_status::connecting;
                             a_ep.async_send(
                                 v5::connack_packet{
                                     false,
@@ -103,29 +104,23 @@ recv_op {
                     }
                     if (ec.category() == get_disconnect_reason_code_category()) {
                         state = disconnect;
-                        auto& a_ep{ep};
-                        a_ep.async_send(
-                            v5::disconnect_packet{
-                                static_cast<disconnect_reason_code>(ec.value())
-                            },
-                            force_move(self)
-                        );
-                    }
-                    else {
-                        state = close;
-                        auto& a_ep{ep};
-                        a_ep.async_close(
-                            force_move(self)
-                        );
+                        if (ep.status_ == connection_status::connected) {
+                            auto& a_ep{ep};
+                            a_ep.async_send(
+                                v5::disconnect_packet{
+                                    static_cast<disconnect_reason_code>(ec.value())
+                                },
+                                force_move(self)
+                            );
+                            return;
+                        }
                     }
                 }
-                else {
-                    state = close;
-                    auto& a_ep{ep};
-                    a_ep.async_close(
-                        force_move(self)
-                    );
-                }
+                state = close;
+                auto& a_ep{ep};
+                a_ep.async_close(
+                    force_move(self)
+                );
                 return;
             }
             else {
