@@ -95,23 +95,19 @@ private:
                             );
                         },
                         [&](v3_1_1::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload_as_buffer(),
-                                properties{}
+                            epsp.async_send(
+                                p,
+                                [this, epsp](error_code) mutable {
+                                    async_read_packet(force_move(epsp));
+                                }
                             );
                         },
                         [&](v5::publish_packet& p) {
-                            publish_handler(
-                                force_move(epsp),
-                                p.packet_id(),
-                                p.opts(),
-                                p.topic(),
-                                p.payload_as_buffer(),
-                                p.props()
+                            epsp.async_send(
+                                p,
+                                [this, epsp](error_code) mutable {
+                                    async_read_packet(force_move(epsp));
+                                }
                             );
                         },
                         [&](v3_1_1::puback_packet& p) {
