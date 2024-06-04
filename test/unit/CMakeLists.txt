@@ -28,6 +28,7 @@ list(APPEND check_PROGRAMS
     ut_ep_recv_filter.cpp
     ut_ep_recv_max.cpp
     ut_ep_size_max.cpp
+    ut_ep_packet_error.cpp
     ut_ep_store.cpp
     ut_host_port.cpp
     ut_packet_id.cpp

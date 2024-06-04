@@ -27,22 +27,27 @@ struct basic_stub_socket {
     using executor_type = as::any_io_executor;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
-    struct error_pv {
-        error_pv(
+    struct error_packet {
+        error_packet(
             packet_variant_type pv
-        ):pv{force_move(pv)}
+        ): packet{ to_string(pv.const_buffer_sequence()) }
         {}
 
-        error_pv(
+        error_packet(
+            std::string_view packet
+        ):packet{packet}
+        {}
+
+        error_packet(
             error_code ec
         ):ec{ec}
         {}
 
         error_code ec;
-        packet_variant_type pv;
+        std::string packet;
     };
 
-    using pv_queue_t = std::deque<error_pv>;
+    using packet_queue_t = std::deque<error_packet>;
     using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
     using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
 
@@ -60,10 +65,10 @@ struct basic_stub_socket {
         write_packet_checker_ = force_move(c);
     }
 
-    void set_recv_packets(pv_queue_t recv_pvs) {
-        recv_pvs_ = force_move(recv_pvs);
-        recv_pvs_it_ = recv_pvs_.begin();
-        pv_r_ = std::nullopt;
+    void set_recv_packets(packet_queue_t recv_packets) {
+        recv_packets_ = force_move(recv_packets);
+        recv_packets_it_ = recv_packets_.begin();
+        packet_it_opt_.reset();
 
     }
 
@@ -180,13 +185,13 @@ struct basic_stub_socket {
             Self& self
         ) {
             // empty
-            if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
+            if (socket.recv_packets_it_ == socket.recv_packets_.end()) {
                 self.complete(errc::make_error_code(errc::no_message), 0);
                 return;
             }
-            auto ec = socket.recv_pvs_it_->ec;
+            auto ec = socket.recv_packets_it_->ec;
             if (ec) {
-                ++socket.recv_pvs_it_;
+                ++socket.recv_packets_it_;
                 self.complete(
                     ec,
                     0
@@ -207,40 +212,29 @@ struct basic_stub_socket {
                 );
             }
 
-            if (!socket.pv_r_) {
-                socket.cbs_ = socket.recv_pvs_it_->pv.const_buffer_sequence();
-                socket.pv_r_ = make_packet_range(socket.cbs_);
+            auto begin = socket.recv_packets_it_->packet.begin();
+            auto end = socket.recv_packets_it_->packet.end();
+            if (!socket.packet_it_opt_) {
+                socket.packet_it_opt_.emplace(begin);
             }
-            while (socket.pv_r_->first == socket.pv_r_->second) {
-                socket.pv_r_ = std::nullopt;
-                ++socket.recv_pvs_it_;
-                if (socket.recv_pvs_it_ == socket.recv_pvs_.end()) {
-                    self.complete(errc::make_error_code(errc::no_message), 0);
-                    return;
-                }
-                auto ec = socket.recv_pvs_it_->ec;
-                if (ec) {
-                    ++socket.recv_pvs_it_;
-                    self.complete(
-                        ec,
-                        0
-                    );
-                    return;
-                }
-                socket.cbs_ = socket.recv_pvs_it_->pv.const_buffer_sequence();
-                socket.pv_r_ = make_packet_range(socket.cbs_);
-            }
-
+            auto packet_it = *socket.packet_it_opt_;
             BOOST_ASSERT(
-                static_cast<std::size_t>(std::distance(socket.pv_r_->first, socket.pv_r_->second)) >= mb.size()
+                static_cast<std::size_t>(std::distance(packet_it, end)) >= mb.size()
             );
-            as::mutable_buffer mb_copy = mb;
-            std::copy(
-                socket.pv_r_->first,
-                std::next(socket.pv_r_->first, std::ptrdiff_t(mb.size())),
-                static_cast<char*>(mb_copy.data())
+            std::copy_n(
+                packet_it,
+                mb.size(),
+                static_cast<char*>(mb.data())
             );
-            std::advance(socket.pv_r_->first, mb.size());
+            std::advance(packet_it, static_cast<std::ptrdiff_t>(mb.size()));
+            if (packet_it == end) {
+                // all conttents have read
+                socket.packet_it_opt_.reset();
+                ++socket.recv_packets_it_;
+            }
+            else {
+                *socket.packet_it_opt_ = packet_it;
+            }
             self.complete(errc::make_error_code(errc::success), mb.size());
         }
     };
@@ -251,10 +245,9 @@ private:
     friend struct async_read_some_impl;
     protocol_version version_;
     as::any_io_executor exe_;
-    pv_queue_t recv_pvs_;
-    typename pv_queue_t::iterator recv_pvs_it_ = recv_pvs_.begin();
-    std::vector<as::const_buffer> cbs_;
-    std::optional<packet_range> pv_r_;
+    packet_queue_t recv_packets_;
+    typename packet_queue_t::iterator recv_packets_it_ = recv_packets_.begin();
+    std::optional<std::string::iterator> packet_it_opt_;
     std::function<void(basic_packet_variant<PacketIdBytes> const& pv)> write_packet_checker_;
     std::function<void()> close_checker_;
     bool open_ = true;
