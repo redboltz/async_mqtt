@@ -865,12 +865,14 @@ private:
                         return;
                     } break;
                     }
-                    pci->c->async_recv(
-                        as::append(
-                            *this,
-                            pci
-                        )
-                    );
+                    if (pci->recv_times != 0) {
+                        pci->c->async_recv(
+                            as::append(
+                                *this,
+                                pci
+                            )
+                        );
+                    }
                 }
                 else if (evt == ev_type::other) {
                     if (bc_.md == mode::single || bc_.md == mode::send) {
