@@ -34,6 +34,7 @@ recv_op {
             ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "recv error:" << ec.message();
+            ep.recv_processing_ = false;
             if (ec == as::error::operation_aborted) {
                 // on cancel, not close the connection
                 self.complete(
@@ -43,7 +44,6 @@ recv_op {
             }
             else {
                 decided_error.emplace(ec);
-                ep.recv_processing_ = false;
                 state = close;
                 auto& a_ep{ep};
                 a_ep.async_close(
