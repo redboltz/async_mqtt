@@ -361,7 +361,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">token</td><td><ul>
 <li>CompletionToken<ul>
-<li>Signature: void(error_code, basic_packet_id_type&lt;PacketIdBytes&gt;) </li>
+<li>Signature: void(error_code, typename basic_packet_id_type&lt;PacketIdBytes&gt;::type) </li>
 </ul>
 </li>
 </ul>
@@ -397,7 +397,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   <table class="params">
     <tr><td class="paramname">token</td><td><ul>
 <li>CompletionToken<ul>
-<li>Signature: void(error_code, basic_packet_id_type&lt;PacketIdBytes&gt;) </li>
+<li>Signature: void(error_code, typename basic_packet_id_type&lt;PacketIdBytes&gt;::type) </li>
 </ul>
 </li>
 </ul>
