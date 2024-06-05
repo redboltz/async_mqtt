@@ -48,8 +48,6 @@ struct basic_stub_socket {
     };
 
     using packet_queue_t = std::deque<error_packet>;
-    using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
-    using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
 
 
     basic_stub_socket(
