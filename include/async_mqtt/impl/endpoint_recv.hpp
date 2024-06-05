@@ -230,6 +230,7 @@ recv_op {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
                                     // extract topic from topic_alias
                                     if (*ta_opt == 0 ||
+                                        !ep.topic_alias_recv_ || // topic_alias_maximum is 0
                                         *ta_opt > ep.topic_alias_recv_->max()) {
                                         state = disconnect;
                                         decided_error.emplace(
@@ -247,6 +248,7 @@ recv_op {
                                         return;
                                     }
                                     else {
+                                        BOOST_ASSERT(ep.topic_alias_recv_);
                                         auto topic = ep.topic_alias_recv_->find(*ta_opt);
                                         if (topic.empty()) {
                                             ASYNC_MQTT_LOG("mqtt_impl", error)
@@ -296,6 +298,7 @@ recv_op {
                             else {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
                                     if (*ta_opt == 0 ||
+                                        !ep.topic_alias_recv_ || // topic_alias_maximum is 0
                                         *ta_opt > ep.topic_alias_recv_->max()) {
                                         state = disconnect;
                                         decided_error.emplace(
@@ -313,10 +316,9 @@ recv_op {
                                         return;
                                     }
                                     else {
+                                        BOOST_ASSERT(ep.topic_alias_recv_);
                                         // extract topic from topic_alias
-                                        if (ep.topic_alias_recv_) {
-                                            ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
-                                        }
+                                        ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
                                     }
                                 }
                             }

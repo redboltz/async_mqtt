@@ -457,6 +457,7 @@ send_op {
                             << "topia alias : "
                             << actual_packet.topic() << " - " << *ta_opt
                             << " is registered." ;
+                        BOOST_ASSERT(ep.topic_alias_send_);
                         ep.topic_alias_send_->insert_or_update(actual_packet.topic(), *ta_opt);
                     }
                     else {

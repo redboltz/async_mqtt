@@ -55,6 +55,10 @@ struct cpp20coro_basic_stub_socket {
          exe_{force_move(exe)}
     {}
 
+    void set_send_error_code(error_code ec) {
+        send_ec_ = ec;
+    }
+
     template <typename T, typename CompletionToken>
     auto emulate_recv(
         T&& t,
@@ -212,7 +216,12 @@ struct cpp20coro_basic_stub_socket {
                     packet_begin = packet_end;
                 }
             }
-            self.complete(error_code{}, std::size_t(dis));
+            if (socket.send_ec_) {
+                self.complete(socket.send_ec_, 0);
+            }
+            else {
+                self.complete(error_code{}, std::size_t(dis));
+            }
         }
     };
 
@@ -311,6 +320,7 @@ private:
     bool open_ = true;
     channel_t ch_recv_{exe_, 1};
     channel_t ch_send_{exe_, 1};
+    error_code send_ec_;
 };
 
 using cpp20coro_stub_socket = cpp20coro_basic_stub_socket<2>;
