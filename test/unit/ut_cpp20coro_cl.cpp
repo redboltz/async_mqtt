@@ -52,6 +52,7 @@ BOOST_AUTO_TEST_CASE(v311_start_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -95,6 +96,7 @@ BOOST_AUTO_TEST_CASE(v311_start_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
 
             co_return;
         },
@@ -155,6 +157,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_single_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -220,6 +223,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_single_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -283,6 +287,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_multi_all_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -350,6 +355,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_multi_partial_error) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -419,6 +425,7 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_multi_all_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -477,6 +484,7 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -530,6 +538,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos0) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -593,6 +602,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos1) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -662,6 +672,7 @@ BOOST_AUTO_TEST_CASE(v311_publish_qos2) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -703,6 +714,7 @@ BOOST_AUTO_TEST_CASE(v5_start_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -746,6 +758,7 @@ BOOST_AUTO_TEST_CASE(v5_start_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
 
             co_return;
         },
@@ -806,6 +819,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_single_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -871,6 +885,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_single_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -934,6 +949,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_multi_all_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1001,6 +1017,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_multi_partial_error) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1070,6 +1087,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_multi_all_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -1130,6 +1148,7 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_single_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1195,6 +1214,7 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_single_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -1258,6 +1278,7 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_multi_all_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1325,6 +1346,7 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_multi_partial_error) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1394,6 +1416,7 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_multi_all_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -1444,6 +1467,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos0) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1508,6 +1532,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos1_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1572,6 +1597,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos1_success_no_match) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1636,6 +1662,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos1_error) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -1703,6 +1730,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos2_success) {
 
                 co_await cl.next_layer().emulate_close(as::use_awaitable);
                 co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             }
             catch (am::system_error const& se) {
                 BOOST_TEST(false);
@@ -1767,6 +1795,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos2_success_error_pubrec) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached
@@ -1833,6 +1862,7 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos2_success_error_pubcomp) {
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
             co_return;
         },
         as::detached

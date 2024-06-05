@@ -74,11 +74,12 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms(std::size_t ms) {
-    pingreq_send_interval_ms_ = ms;
-    if (pingreq_send_interval_ms_ == 0) {
+    if (ms == 0) {
+        pingreq_send_interval_ms_.reset();
         tim_pingreq_send_->cancel();
     }
     else {
+        pingreq_send_interval_ms_.emplace(ms);
         reset_pingreq_send_timer();
     }
 }

@@ -47,11 +47,23 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         as::bind_executor(
             ep->get_executor(),
             [&] {
+                // sync version return nullopt
                 auto pid_opt = ep->acquire_unique_packet_id();
                 BOOST_CHECK(!pid_opt);
             }
         )
     );
+
+    {
+        // async version return nullopt
+        try {
+            auto pid_opt = ep->async_acquire_unique_packet_id(as::use_future).get();
+            (void)pid_opt;
+        }
+        catch (am::system_error const& se) {
+            BOOST_CHECK(se.code() == am::mqtt_error::packet_identifier_fully_used);
+        }
+    }
 
     std::promise<void> pro;
     auto fut = pro.get_future();
