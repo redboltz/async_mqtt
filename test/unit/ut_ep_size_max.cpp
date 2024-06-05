@@ -513,4 +513,125 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     th.join();
 }
 
+BOOST_AUTO_TEST_CASE(server_send) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    auto guard = as::make_work_guard(ioc.get_executor());
+    std::thread th {
+        [&] {
+            ioc.run();
+        }
+    };
+
+    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
+        version,
+        // for stub_socket args
+        version,
+        ioc.get_executor()
+    );
+
+    ep->next_layer().set_close_checker(
+        [&] { BOOST_TEST(false); }
+    );
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        "cid1",
+        std::nullopt, // will
+        "user1",
+        "pass1",
+        am::properties{
+            am::property::maximum_packet_size{21}
+        }
+    };
+
+    auto connack = am::v5::connack_packet{
+        false,   // session_present
+        am::connect_reason_code::success
+    };
+
+    auto disconnect = am::v5::disconnect_packet{
+        am::disconnect_reason_code::packet_too_large,
+        am::properties{}
+    };
+
+    ep->next_layer().set_recv_packets(
+        {
+            // receive packets
+            {connect},
+        }
+    );
+
+    // recv connect
+    {
+        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+        BOOST_TEST(connect == pv);
+    }
+
+    // send connack
+    ep->next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(connack == wp);
+        }
+    );
+    {
+        auto [ec] = ep->async_send(connack, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
+    // size: 21bytes
+    auto [ec1, pid1] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec1);
+    auto publish_1_q1 = am::v5::publish_packet(
+        pid1,
+        "topic1",
+        "payload1",
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    // size: 22bytes
+    auto [ec2, pid2] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec2);
+    auto publish_2_q1 = am::v5::publish_packet(
+        pid2,
+        "topic1",
+        "payload1+",
+        am::qos::at_least_once,
+        am::properties{}
+    );
+
+    // send publish_1
+    ep->next_layer().set_write_packet_checker(
+        [&](am::packet_variant wp) {
+            BOOST_TEST(publish_1_q1 == wp);
+        }
+    );
+    {
+        auto [ec] = ep->async_send(publish_1_q1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
+    // send publish_2
+    ep->next_layer().set_write_packet_checker(
+        [&](am::packet_variant) {
+            BOOST_TEST(false);
+        }
+    );
+    {
+        auto [ec] = ep->async_send(publish_2_q1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+    auto [ec3, pid3] = ep->async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
+    BOOST_TEST(!ec3);
+    BOOST_TEST(pid3 == 2); // 2 can be resused
+
+    ep->next_layer().set_close_checker({});
+    ep->async_close(as::as_tuple(as::use_future)).get();
+    guard.reset();
+    th.join();
+}
+
 BOOST_AUTO_TEST_SUITE_END()

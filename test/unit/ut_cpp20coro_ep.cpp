@@ -62,7 +62,8 @@ BOOST_AUTO_TEST_CASE(pingresp_v311) {
                 co_await ep->async_recv(as::as_tuple(as::deferred));
                 auto [ec, pingresp] = co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
                 BOOST_TEST(pingresp == am::v3_1_1::pingresp_packet{});
-                ep->async_close(as::detached);
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
             }
             co_return;
         },
@@ -109,8 +110,119 @@ BOOST_AUTO_TEST_CASE(pingresp_v5) {
                 co_await ep->async_recv(as::as_tuple(as::deferred));
                 auto [ec, pingresp] = co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
                 BOOST_TEST(pingresp == am::v5::pingresp_packet{});
-                ep->async_close(as::detached);
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
             }
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(pingresp_no_tout_v311) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_pingresp_recv_timeout_ms(10);
+            // prepare connect
+            {
+                auto connect = am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v3_1_1::connack_packet{
+                    false,   // session_present
+                    am::connect_return_code::accepted
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                auto [ec] = co_await ep->async_send(am::v3_1_1::pingreq_packet{}, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                co_await ep->next_layer().emulate_recv(am::v3_1_1::pingresp_packet{}, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+
+                as::steady_timer tim{ioc.get_executor(), std::chrono::milliseconds(20)};
+                co_await tim.async_wait(as::as_tuple(as::deferred));
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(pingresp_no_tout_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_pingresp_recv_timeout_ms(10);
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                auto [ec] = co_await ep->async_send(am::v5::pingreq_packet{}, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                co_await ep->next_layer().emulate_recv(am::v5::pingresp_packet{}, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+
+                as::steady_timer tim{ioc.get_executor(), std::chrono::milliseconds(20)};
+                co_await tim.async_wait(as::as_tuple(as::deferred));
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
             co_return;
         },
         as::detached
@@ -131,6 +243,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 version,
                 am::force_move(exe)
             );
+            ep->set_pingreq_send_interval_ms(0); // for coverage
             ep->set_pingresp_recv_timeout_ms(0); // for coverage
             ep->set_pingresp_recv_timeout_ms(10);
             // prepare connect
@@ -975,6 +1088,134 @@ BOOST_AUTO_TEST_CASE(pubcomp_recv_no_pid_v5) {
     );
     ioc.run();
 }
+
+// close
+
+BOOST_AUTO_TEST_CASE(close_close) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                co_await (
+                    ep->async_close(as::use_awaitable) &&
+                    ep->async_close(as::use_awaitable)
+                );
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+// invalid connect
+
+BOOST_AUTO_TEST_CASE(connect_bad_version_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_pingresp_recv_timeout_ms(10);
+            // prepare connect
+            {
+                auto connect = am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                {
+                    auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                    BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+                }
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(connect_bad_timing_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_pingresp_recv_timeout_ms(10);
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                {
+                    auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                    BOOST_TEST(!ec);
+                    co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+                }
+                {
+                    auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                    BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+                }
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+
+
+// invalid timing connack
 
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -381,7 +381,6 @@ struct layer_customize<cpp20coro_stub_socket> {
         }
     };
 
-
     template <
         typename CompletionToken
     >
@@ -394,7 +393,44 @@ struct layer_customize<cpp20coro_stub_socket> {
             CompletionToken,
             void(error_code const& ec)
         > (
-            [&stream](auto& self) {
+            async_close_impl{stream},
+            token,
+            stream
+        );
+    }
+
+    struct async_close_impl {
+        async_close_impl(
+            cpp20coro_stub_socket& stream
+        ):stream{stream}
+        {}
+
+        cpp20coro_stub_socket& stream;
+        enum {wait1, wait2, complete} state = wait1;
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case wait1:
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << "stub close wait1";
+                state = wait2;
+                as::post(
+                    stream.get_executor(),
+                    force_move(self)
+                );
+                break;
+            case wait2:
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << "stub close wait2";
+                state = complete;
+                as::post(
+                    stream.get_executor(),
+                    force_move(self)
+                );
+                break;
+            case complete: {
                 error_code ec;
                 if (stream.is_open()) {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -406,11 +442,10 @@ struct layer_customize<cpp20coro_stub_socket> {
                         << "stub already closed";
                 }
                 self.complete(ec);
-            },
-            token,
-            stream
-        );
-    }
+            } break;
+            }
+        }
+    };
 };
 
 template <>
