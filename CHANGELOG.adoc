@@ -10,6 +10,7 @@
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
 === other updates
+* Refined packet reading. Fixed Header and the first byte of Remaining Length are read all at once. #291
 * Fixed set_pingreq_send_interval_ms() value 0 treatment. #290
 * Fixed non exist topic alias treatment. #289
 * Fixed connack packet sending condition on error. #288

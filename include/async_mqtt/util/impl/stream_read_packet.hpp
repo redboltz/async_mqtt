@@ -23,9 +23,10 @@ struct stream<NextLayer>::stream_read_packet_op {
     std::size_t received = 0;
     std::uint32_t mul = 1;
     std::uint32_t rl = 0;
+    std::size_t rl_expected = 2;
     std::shared_ptr<char[]> spca = nullptr;
     stream_type_sp life_keeper = strm.shared_from_this();
-    enum { dispatch, header, remaining_length, complete } state = dispatch;
+    enum { dispatch, header_rl1, remaining_length, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
@@ -33,29 +34,30 @@ struct stream<NextLayer>::stream_read_packet_op {
     ) {
         switch (state) {
         case dispatch: {
-            state = header;
+            state = header_rl1;
             auto& a_strm{strm};
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
             );
         } break;
-        case header: {
-            // read fixed_header
+        case header_rl1: {
+            state = remaining_length;
+            // read fixed_header + first remaining_length
             auto address = &strm.header_remaining_length_buf_[received];
             auto& a_strm{strm};
             if constexpr (
                 has_async_read<next_layer_type>::value) {
                     layer_customize<next_layer_type>::async_read(
                         a_strm.nl_,
-                        as::buffer(address, 1),
+                        as::buffer(address, 2),
                         force_move(self)
                     );
                 }
             else {
                 async_read(
                     a_strm.nl_,
-                    as::buffer(address, 1),
+                    as::buffer(address, 2),
                     as::transfer_all(),
                     force_move(self)
                 );
@@ -81,35 +83,10 @@ struct stream<NextLayer>::stream_read_packet_op {
         }
 
         switch (state) {
-        case header:
-            BOOST_ASSERT(bytes_transferred == 1);
-            state = remaining_length;
-            ++received;
-            // read the first remaining_length
-            {
-                auto address = &strm.header_remaining_length_buf_[received];
-                auto& a_strm{strm};
-                if constexpr (
-                    has_async_read<next_layer_type>::value) {
-                        layer_customize<next_layer_type>::async_read(
-                            a_strm.nl_,
-                            as::buffer(address, 1),
-                            force_move(self)
-                        );
-                    }
-                else {
-                    async_read(
-                        a_strm.nl_,
-                        as::buffer(address, 1),
-                        as::transfer_all(),
-                        force_move(self)
-                    );
-                }
-            }
-            break;
         case remaining_length:
-            BOOST_ASSERT(bytes_transferred == 1);
-            ++received;
+            BOOST_ASSERT(bytes_transferred == rl_expected);
+            rl_expected = 1;
+            received += bytes_transferred;
             if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
                 // remaining_length continues
                 if (received == 5) {
