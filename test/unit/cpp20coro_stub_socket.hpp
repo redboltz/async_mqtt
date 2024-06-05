@@ -25,24 +25,26 @@ template <std::size_t PacketIdBytes>
 struct cpp20coro_basic_stub_socket {
     using this_type = cpp20coro_basic_stub_socket<PacketIdBytes>;
     using executor_type = as::any_io_executor;
-    using packet_iterator_t = packet_iterator<std::vector, as::const_buffer>;
-    using packet_range = std::pair<packet_iterator_t, packet_iterator_t>;
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
-    struct error_pv {
-        error_pv() = default;
-        error_pv(
+    struct error_packet {
+        error_packet(
             packet_variant_type pv
-        ):pv{force_move(pv)}
+        ): packet{ to_string(pv.const_buffer_sequence()) }
         {}
 
-        error_pv(
+        error_packet(
+            std::string_view packet
+        ):packet{packet}
+        {}
+
+        error_packet(
             error_code ec
         ):ec{ec}
         {}
 
         error_code ec;
-        packet_variant_type pv;
+        std::string packet;
     };
 
     cpp20coro_basic_stub_socket(
@@ -64,7 +66,7 @@ struct cpp20coro_basic_stub_socket {
         > (
             emulate_recv_impl{
                 *this,
-                error_pv{std::forward<T>(t)}
+                error_packet{std::forward<T>(t)}
             },
             token,
             get_executor()
@@ -97,14 +99,14 @@ struct cpp20coro_basic_stub_socket {
 
     struct emulate_recv_impl {
         this_type& socket;
-        error_pv epv;
+        error_packet epk;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
             socket.ch_recv_.async_send(
-                force_move(epv),
+                force_move(epk),
                 force_move(self)
             );
         }
@@ -133,9 +135,17 @@ struct cpp20coro_basic_stub_socket {
         template <typename Self>
         void operator()(
             Self& self,
-            error_pv epv
+            error_packet epk
         ) {
-            self.complete(epv.ec, force_move(epv.pv));
+            if (epk.ec) {
+                self.complete(epk.ec, packet_variant_type{});
+            }
+            else {
+                buffer buf{epk.packet};
+                error_code ec;
+                auto pv = buffer_to_packet_variant(buf, socket.version_, ec);
+                self.complete(ec, force_move(pv));
+            }
         }
     };
 
@@ -235,31 +245,39 @@ struct cpp20coro_basic_stub_socket {
             Self& self
         ) {
             if (state == read) {
-                if (socket.pv_r_) {
+                if (socket.epk_opt_) {
                     state = complete;
                 }
                 else {
-                    socket.ch_recv_.async_receive(
+                    auto& a_socket{socket};
+                    a_socket.ch_recv_.async_receive(
                         force_move(self)
                     );
                 }
             }
             if (state == complete) {
-                BOOST_ASSERT(socket.pv_r_);
+                BOOST_ASSERT(socket.epk_opt_);
+                BOOST_ASSERT(socket.packet_it_opt_);
+                auto packet_it = *socket.packet_it_opt_;
+                auto end = socket.epk_opt_->packet.end();
                 BOOST_ASSERT(
-                    static_cast<std::size_t>(std::distance(socket.pv_r_->first, socket.pv_r_->second))
+                    static_cast<std::size_t>(std::distance(packet_it, end))
                     >=
                     mb.size()
                 );
-                as::mutable_buffer mb_copy = mb;
-                std::copy(
-                    socket.pv_r_->first,
-                    std::next(socket.pv_r_->first, std::ptrdiff_t(mb.size())),
-                    static_cast<char*>(mb_copy.data())
+                std::copy_n(
+                    packet_it,
+                    mb.size(),
+                    static_cast<char*>(mb.data())
                 );
-                std::advance(socket.pv_r_->first, mb.size());
-                if (socket.pv_r_->first == socket.pv_r_->second) {
-                    socket.pv_r_ = std::nullopt;
+                std::advance(packet_it, static_cast<std::ptrdiff_t>(mb.size()));
+                if (packet_it == end) {
+                    // all conttents have read
+                    socket.packet_it_opt_.reset();
+                    socket.epk_opt_.reset();
+                }
+                else {
+                    socket.packet_it_opt_.emplace(packet_it);
                 }
                 self.complete(errc::make_error_code(errc::success), mb.size());
             }
@@ -268,15 +286,14 @@ struct cpp20coro_basic_stub_socket {
         template <typename Self>
         void operator()(
             Self& self,
-            error_pv epv
+            error_packet epk
         ) {
-            if (epv.ec) {
-                self.complete(epv.ec, 0);
+            if (epk.ec) {
+                self.complete(epk.ec, 0);
             }
             else {
-                socket.epv_ = epv;
-                socket.cbs_ = socket.epv_.pv.const_buffer_sequence();
-                socket.pv_r_ = make_packet_range(socket.cbs_);
+                socket.epk_opt_.emplace(force_move(epk));
+                socket.packet_it_opt_.emplace(socket.epk_opt_->packet.begin());
                 state = complete;
                 as::dispatch(
                     force_move(self)
@@ -286,12 +303,11 @@ struct cpp20coro_basic_stub_socket {
     };
 
 private:
-    using channel_t = as::experimental::channel<void(error_pv)>;
+    using channel_t = as::experimental::channel<void(error_packet)>;
     protocol_version version_;
     as::any_io_executor exe_;
-    error_pv epv_;
-    std::vector<as::const_buffer> cbs_;
-    std::optional<packet_range> pv_r_;
+    std::optional<error_packet> epk_opt_;
+    std::optional<std::string::iterator> packet_it_opt_;
     bool open_ = true;
     channel_t ch_recv_{exe_, 1};
     channel_t ch_send_{exe_, 1};
