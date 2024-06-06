@@ -266,6 +266,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             as::make_strand(con_ioc_getter())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
+                    epsp->set_read_buffer_size(vm["read_some_buf_size"].as<std::size_t>());
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtt_ac->async_accept(
                         lowest_layer,
@@ -307,6 +308,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             as::make_strand(con_ioc_getter())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
+                    epsp->set_read_buffer_size(vm["read_some_buf_size"].as<std::size_t>());
                     auto& lowest_layer = epsp->lowest_layer();
                     ws_ac->async_accept(
                         lowest_layer,
@@ -401,6 +403,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             *mqtts_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
+                    epsp->set_read_buffer_size(vm["read_some_buf_size"].as<std::size_t>());
                     auto& lowest_layer = epsp->lowest_layer();
                     mqtts_ac->async_accept(
                         lowest_layer,
@@ -494,6 +497,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             *wss_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
+                    epsp->set_read_buffer_size(vm["read_some_buf_size"].as<std::size_t>());
                     auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
@@ -683,6 +687,11 @@ int main(int argc, char *argv[]) {
                 "bulk_write",
                 boost::program_options::value<bool>()->default_value(false),
                 "Set bulk write mode for all connections"
+            )
+            (
+                "read_some_buf_size",
+                boost::program_options::value<std::size_t>()->default_value(4096),
+                "Set buffer size of internal async_read_some() call"
             )
             (
                 "recycling_allocator",
