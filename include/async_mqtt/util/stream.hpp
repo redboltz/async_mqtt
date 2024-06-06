@@ -7,8 +7,6 @@
 #if !defined(ASYNC_MQTT_UTIL_STREAM_HPP)
 #define ASYNC_MQTT_UTIL_STREAM_HPP
 
-#include <iostream>
-
 #include <utility>
 #include <type_traits>
 

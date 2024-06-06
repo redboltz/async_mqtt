@@ -398,6 +398,7 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint<Role, PacketIdBytes, NextLayer>::release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid) {
     pid_man_.release_id(pid);
+    packet_id_released_ = true;
     notify_retry_one();
 }
 

@@ -75,7 +75,7 @@ recv_op {
         }
         else {
             self.complete(
-                errc::make_error_code(sys::errc::operation_canceled),
+                make_error_code(as::error::operation_aborted),
                 packet_variant{}
             );
         }

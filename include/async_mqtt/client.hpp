@@ -209,6 +209,14 @@ public:
      *                 - CONNACK packet response
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_start(Args&&... args);
@@ -248,6 +256,14 @@ public:
      *
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_subscribe(Args&&... args);
@@ -287,6 +303,14 @@ public:
      *
      *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_unsubscribe(Args&&... args);
@@ -328,6 +352,14 @@ public:
      *                          - pubcomp_reason_code is set
      *
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_publish(Args&&... args);
@@ -351,6 +383,14 @@ public:
      *           - If an error occurs at an underlying layer while sending a packet
      *              - underlying error is set. e.g. system, asio, beast, ...
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_write_some operation.
      */
     template <typename... Args>
     auto async_disconnect(Args&&... args);
@@ -359,6 +399,12 @@ public:
      * @brief close the underlying connection
      * @param token  the param is void
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
@@ -388,6 +434,11 @@ public:
      *              - v5::disconnect_packet
      *           - v5::auth_packet
      * @return deduced by token
+     *
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some operation.
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
@@ -493,6 +544,13 @@ public:
      *     - Signature: void(error_code, packet_id_type)
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *  - cancellation_type::total
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
@@ -515,6 +573,13 @@ public:
      *     - Signature: void(error_code, packet_id_type)
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *  - cancellation_type::total
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
@@ -538,6 +603,13 @@ public:
      *        - If true, success, otherwise the packet_id has already been used.
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *  - cancellation_type::total
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
@@ -561,6 +633,13 @@ public:
      *     - Signature: void()
      *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
      * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *  - cancellation_type::total
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>

@@ -24,7 +24,10 @@ add_retry_op {
         tim->expires_at(std::chrono::steady_clock::time_point::max());
         auto& a_ep{ep};
         tim->async_wait(
-            force_move(self)
+            as::append(
+                force_move(self),
+                tim
+            )
         );
         a_ep.tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
     }
@@ -32,8 +35,22 @@ add_retry_op {
     template <typename Self>
     void operator()(
         Self& self,
-        error_code ec
+        error_code ec,
+        std::shared_ptr<as::steady_timer> tim
     ) {
+        if (!ep.packet_id_released_) {
+            // intentional cancel
+            auto it = std::find_if(
+                ep.tim_retry_acq_pid_queue_.begin(),
+                ep.tim_retry_acq_pid_queue_.end(),
+                [&](auto const& elem) {
+                    return elem.tim == tim;
+                }
+            );
+            if (it != ep.tim_retry_acq_pid_queue_.end()) {
+                ep.tim_retry_acq_pid_queue_.erase(it);
+            }
+        }
         self.complete(ec);
     }
 };

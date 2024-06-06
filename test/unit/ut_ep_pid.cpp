@@ -59,11 +59,37 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         try {
             auto pid_opt = ep->async_acquire_unique_packet_id(as::use_future).get();
             (void)pid_opt;
+            BOOST_CHECK(false);
         }
         catch (am::system_error const& se) {
             BOOST_CHECK(se.code() == am::mqtt_error::packet_identifier_fully_used);
         }
     }
+    as::cancellation_signal sig1;
+    {
+        // cancel
+        ep->async_acquire_unique_packet_id_wait_until(
+            as::bind_cancellation_slot(
+                sig1.slot(),
+                [&](am::error_code const& ec, am::packet_id_type pid) {
+                    BOOST_TEST(ec == as::error::operation_aborted);
+                    BOOST_TEST(pid == 0);
+                }
+            )
+        );
+        auto tim = std::make_shared<as::steady_timer>(
+            ioc.get_executor(),
+            std::chrono::milliseconds(10)
+        );
+        tim->async_wait(
+            [&, tim](am::error_code const& ec) {
+                BOOST_TEST(ec == am::errc::success);
+                sig1.emit(as::cancellation_type::terminal);
+            }
+        );
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds{1});
 
     std::promise<void> pro;
     auto fut = pro.get_future();
