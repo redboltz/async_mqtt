@@ -50,12 +50,32 @@ struct stream<NextLayer>::stream_read_packet_op {
         } break;
         case complete: {
             strm.read_queue_.start_work();
-            strm.read_some(self);
+            auto& a_strm{strm};
+            a_strm.async_read_some(
+                force_move(self)
+            );
         } break;
         default:
             BOOST_ASSERT(false);
             break;
         }
+    }
+
+    template <typename Self>
+    void operator()(
+        Self& self,
+        error_code const& ec,
+        buffer packet
+    ) {
+        strm.read_queue_.stop_work();
+        auto& a_strm{strm};
+        as::post(
+            a_strm.get_executor(),
+            [&a_strm, life_keeper = life_keeper] {
+                a_strm.read_queue_.poll_one();
+            }
+        );
+        self.complete(ec, force_move(packet));
     }
 
 #if 0
@@ -183,14 +203,14 @@ stream<NextLayer>::async_read_packet(
     return
         as::async_compose<
             CompletionToken,
-        void(error_code, buffer)
-    >(
-        stream_read_packet_op{
-            *this
-        },
-        token,
-        get_executor()
-    );
+            void(error_code, buffer)
+        >(
+            stream_read_packet_op{
+                *this
+            },
+            token,
+            get_executor()
+        );
 }
 
 template <typename NextLayer>
@@ -203,37 +223,77 @@ stream<NextLayer>::init_read() {
     multiplier_ = 1;
 }
 
-template <typename NextLayer>
-template <typename Self>
-inline
-void
-stream<NextLayer>::read_some(Self& self) {
-    if (read_packets_.empty()) {
-        nl_.async_read_some(
-            read_buf_.prepare(4096),
-            [this, &self, life_keeper = this->shared_from_this()]
-            (error_code const& ec, std::size_t bytes_transferred) {
-                if (ec) {
-                    init_read();
-                    read_packets_.emplace_back(ec);
-                }
-                else {
-                    read_buf_.commit(bytes_transferred);
-                    parse_packet(self);
-                    read_some(self);
-                }
-            }
-        );
-    }
-    else {
-        read_queue_.stop_work();
-        auto [ec, packet] = force_move(read_packets_.front());
-        read_packets_.pop_front();
-        self.complete(ec, force_move(packet));
-        read_queue_.poll_one();
-    }
-}
 
+template <typename NextLayer>
+struct stream<NextLayer>::stream_read_some_op {
+    using stream_type = this_type;
+    using stream_type_sp = std::shared_ptr<stream_type>;
+    using next_layer_type = stream_type::next_layer_type;
+
+    stream_type& strm;
+    stream_type_sp life_keeper = strm.shared_from_this();
+
+    template <typename Self>
+    void operator()(
+        Self& self
+    ) {
+        if (strm.read_packets_.empty()) {
+            auto& a_strm{strm};
+            a_strm.nl_.async_read_some(
+                a_strm.read_buf_.prepare(a_strm.read_buffer_size_),
+                force_move(self)
+            );
+        }
+        else {
+            auto [ec, packet] = force_move(strm.read_packets_.front());
+            strm.read_packets_.pop_front();
+            self.complete(ec, force_move(packet));
+        }
+    }
+
+    template <typename Self>
+    void operator()(
+        Self& self,
+        error_code const& ec,
+        std::size_t bytes_transferred
+    ) {
+        if (ec) {
+            strm.init_read();
+            strm.read_packets_.emplace_back(ec);
+        }
+        else {
+            strm.read_buf_.commit(bytes_transferred);
+            strm.parse_packet(self);
+            auto& a_strm{strm};
+            as::dispatch(
+                a_strm.get_executor(),
+                force_move(self)
+            );
+        }
+    }
+};
+
+template <typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code, buffer)
+)
+stream<NextLayer>::async_read_some(
+    CompletionToken&& token
+) {
+    return
+        as::async_compose<
+            CompletionToken,
+            void(error_code, buffer)
+        >(
+            stream_read_some_op{
+                *this
+            },
+            token,
+            get_executor()
+        );
+}
 
 template <typename NextLayer>
 template <typename Self>
@@ -297,6 +357,9 @@ stream<NextLayer>::parse_packet(Self& self) {
                 );
 
                 init_read();
+            }
+            else {
+                return;
             }
         } break;
         }

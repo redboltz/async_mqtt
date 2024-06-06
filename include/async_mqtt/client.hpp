@@ -487,6 +487,13 @@ public:
     void set_bulk_write(bool val);
 
     /**
+     * @brief Set read buffer size.
+     * Set buffer size of internal async_read_some().
+     * @param val buffer size
+     */
+    void set_read_buffer_size(std::size_t val);
+
+    /**
      * @brief acuire unique packet_id.
      * @param token
      *  - CompletionToken

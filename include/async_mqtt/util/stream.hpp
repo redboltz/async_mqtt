@@ -124,6 +124,10 @@ public:
         >;
     };
 
+    void set_read_buffer_size(std::size_t size) {
+        read_buffer_size_ = size;
+    }
+
 private:
 
     // constructor
@@ -161,8 +165,18 @@ private:
 
     // POC BEGIN
     void init_read();
-    template <typename Self>
-    void read_some(Self& self);
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code, buffer)
+    )
+    async_read_some(
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
     template <typename Self>
     void parse_packet(Self& self);
     // POC END
@@ -172,6 +186,7 @@ private:
     template <typename Packet>     struct stream_write_packet_op;
     struct stream_read_packet_op;
     struct stream_close_op;
+    struct stream_read_some_op;
 
 private:
     struct error_packet {
@@ -189,6 +204,7 @@ private:
     as::streambuf read_buf_;
     std::size_t remaining_length_ = 0;
     std::size_t multiplier_ = 1;
+    std::size_t read_buffer_size_ = 4096;
     enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
     ioc_queue write_queue_;
     std::deque<error_packet> read_packets_;
