@@ -26,7 +26,7 @@ struct stream<NextLayer>::stream_read_packet_op {
     std::size_t rl_expected = 2;
     std::shared_ptr<char[]> spca = nullptr;
     stream_type_sp life_keeper = strm.shared_from_this();
-    enum { dispatch, header_rl1, remaining_length, complete } state = dispatch;
+    enum { dispatch, post, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
@@ -34,34 +34,23 @@ struct stream<NextLayer>::stream_read_packet_op {
     ) {
         switch (state) {
         case dispatch: {
-            state = header_rl1;
+            state = post;
             auto& a_strm{strm};
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
             );
         } break;
-        case header_rl1: {
-            state = remaining_length;
-            // read fixed_header + first remaining_length
-            auto address = &strm.header_remaining_length_buf_[received];
+        case post: {
+            state = complete;
             auto& a_strm{strm};
-            if constexpr (
-                has_async_read<next_layer_type>::value) {
-                    layer_customize<next_layer_type>::async_read(
-                        a_strm.nl_,
-                        as::buffer(address, 2),
-                        force_move(self)
-                    );
-                }
-            else {
-                async_read(
-                    a_strm.nl_,
-                    as::buffer(address, 2),
-                    as::transfer_all(),
-                    force_move(self)
-                );
-            }
+            a_strm.read_queue_.post(
+                force_move(self)
+            );
+        } break;
+        case complete: {
+            strm.read_queue_.start_work();
+            strm.read_some(self);
         } break;
         default:
             BOOST_ASSERT(false);
@@ -69,6 +58,7 @@ struct stream<NextLayer>::stream_read_packet_op {
         }
     }
 
+#if 0
     template <typename Self>
     void operator()(
         Self& self,
@@ -177,6 +167,8 @@ struct stream<NextLayer>::stream_read_packet_op {
             break;
         }
     }
+#endif
+
 };
 
 template <typename NextLayer>
@@ -199,6 +191,116 @@ stream<NextLayer>::async_read_packet(
         token,
         get_executor()
     );
+}
+
+template <typename NextLayer>
+inline
+void
+stream<NextLayer>::init_read() {
+    read_state_ = read_state::fixed_header;
+    header_remaining_length_buf_.clear();
+    remaining_length_ = 0;
+    multiplier_ = 1;
+}
+
+template <typename NextLayer>
+template <typename Self>
+inline
+void
+stream<NextLayer>::read_some(Self& self) {
+    if (read_packets_.empty()) {
+        nl_.async_read_some(
+            read_buf_.prepare(4096),
+            [this, &self, life_keeper = this->shared_from_this()]
+            (error_code const& ec, std::size_t bytes_transferred) {
+                if (ec) {
+                    init_read();
+                    read_packets_.emplace_back(ec);
+                }
+                else {
+                    read_buf_.commit(bytes_transferred);
+                    parse_packet(self);
+                    read_some(self);
+                }
+            }
+        );
+    }
+    else {
+        read_queue_.stop_work();
+        auto [ec, packet] = force_move(read_packets_.front());
+        read_packets_.pop_front();
+        self.complete(ec, force_move(packet));
+        read_queue_.poll_one();
+    }
+}
+
+
+template <typename NextLayer>
+template <typename Self>
+inline
+void
+stream<NextLayer>::parse_packet(Self& self) {
+    while (read_buf_.size() != 0) {
+        switch (read_state_) {
+        case read_state::fixed_header: {
+            if (read_buf_.size() > 0) {
+                std::istream is{&read_buf_};
+                char fixed_header;
+                is.read(&fixed_header, 1);
+                header_remaining_length_buf_.push_back(fixed_header);
+                read_state_ = read_state::remaining_length;
+            }
+        } break;
+        case read_state::remaining_length: {
+            while (read_buf_.size() > 0) {
+                std::istream is{&read_buf_};
+                char encoded_byte;
+                is.read(&encoded_byte, 1);
+                header_remaining_length_buf_.push_back(encoded_byte);
+                remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
+                if (multiplier_ > 128 * 128 * 128) {
+                    read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
+                    init_read();
+                    return;
+                }
+                multiplier_ *= 128;
+                if ((encoded_byte & 0b1000'0000) == 0) {
+                    read_state_ = read_state::payload;
+                    break;
+                }
+            }
+            if (read_state_ != read_state::payload) {
+                return;
+            }
+        } break;
+        case read_state::payload: {
+            if (read_buf_.size() >= remaining_length_) {
+                BOOST_ASIO_REBIND_ALLOC(
+                    typename as::associated_allocator<Self>::type,
+                    char
+                )
+                alloc{
+                    as::get_associated_allocator(self)
+                };
+                std::size_t total_size = header_remaining_length_buf_.size() + remaining_length_;
+                auto spca = allocate_shared_ptr_char_array(alloc, total_size);
+                std::copy_n(
+                    header_remaining_length_buf_.data(),
+                    header_remaining_length_buf_.size(),
+                    spca.get()
+                );
+                std::istream is{&read_buf_};
+                auto ptr = spca.get();
+                is.read(ptr + header_remaining_length_buf_.size(), static_cast<std::streamsize>(remaining_length_));
+                read_packets_.emplace_back(
+                    buffer{ptr, total_size, force_move(spca)}
+                );
+
+                init_read();
+            }
+        } break;
+        }
+    }
 }
 
 } // namespace async_mqtt

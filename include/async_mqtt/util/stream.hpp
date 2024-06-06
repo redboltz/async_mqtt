@@ -7,10 +7,9 @@
 #if !defined(ASYNC_MQTT_UTIL_STREAM_HPP)
 #define ASYNC_MQTT_UTIL_STREAM_HPP
 
-#include <iostream>
-
 #include <utility>
 #include <type_traits>
+#include <deque>
 
 #include <boost/asio/async_result.hpp>
 
@@ -160,6 +159,14 @@ private:
         }
     }
 
+    // POC BEGIN
+    void init_read();
+    template <typename Self>
+    void read_some(Self& self);
+    template <typename Self>
+    void parse_packet(Self& self);
+    // POC END
+
     // async operations
 
     template <typename Packet>     struct stream_write_packet_op;
@@ -167,9 +174,25 @@ private:
     struct stream_close_op;
 
 private:
+    struct error_packet {
+        error_packet(error_code ec)
+            :ec{ec} {}
+        error_packet(buffer packet)
+            :packet{force_move(packet)} {}
+
+        error_code ec;
+        buffer packet;
+    };
+
     next_layer_type nl_;
-    ioc_queue queue_;
-    static_vector<char, 5> header_remaining_length_buf_ = static_vector<char, 5>(5);
+    ioc_queue read_queue_;
+    as::streambuf read_buf_;
+    std::size_t remaining_length_ = 0;
+    std::size_t multiplier_ = 1;
+    enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
+    ioc_queue write_queue_;
+    std::deque<error_packet> read_packets_;
+    static_vector<char, 5> header_remaining_length_buf_;
     std::vector<as::const_buffer> storing_cbs_;
     std::vector<as::const_buffer> sending_cbs_;
     bool bulk_write_ = false;
