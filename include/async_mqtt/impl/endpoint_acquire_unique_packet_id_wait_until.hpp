@@ -45,6 +45,7 @@ acquire_unique_packet_id_wait_until_op {
                         ASYNC_MQTT_LOG("mqtt_impl", warning)
                             << ASYNC_MQTT_ADD_VALUE(address, &ep)
                             << "packet_id is fully allocated. waiting release";
+                        ep.packet_id_released_ = false;
                         // infinity timer. cancel is retry trigger.
                         auto& a_ep{ep};
                         a_ep.async_add_retry(
@@ -54,8 +55,13 @@ acquire_unique_packet_id_wait_until_op {
                 };
 
             if (ec == as::error::operation_aborted) {
-                ep.complete_retry_one();
-                acq_proc();
+                if (ep.packet_id_released_) {
+                    ep.complete_retry_one();
+                    acq_proc();
+                }
+                else {
+                    self.complete(ec, 0);
+                }
             }
             else if (ep.has_retry()) {
                 ASYNC_MQTT_LOG("mqtt_impl", warning)
