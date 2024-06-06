@@ -486,6 +486,12 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+<li>cancellation_type::total </li>
+</ul>
 
 </div>
 </div>
@@ -523,6 +529,12 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+<li>cancellation_type::total </li>
+</ul>
 
 </div>
 </div>
@@ -553,6 +565,11 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial </li>
+</ul>
 
 </div>
 </div>
@@ -616,6 +633,12 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_write_some operation. </p>
 
 </div>
 </div>
@@ -714,6 +737,12 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_read_some and async_write_some operation. </p>
 
 </div>
 </div>
@@ -762,7 +791,12 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token</dd></dl>
+<ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_read_some operation. </p>
 
 </div>
 </div>
@@ -808,6 +842,12 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+<li>cancellation_type::total </li>
+</ul>
 
 </div>
 </div>
@@ -850,6 +890,12 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+<li>cancellation_type::total </li>
+</ul>
 
 </div>
 </div>
@@ -947,6 +993,12 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_read_some and async_write_some operation. </p>
 
 </div>
 </div>
@@ -1043,6 +1095,12 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_read_some and async_write_some operation. </p>
 
 </div>
 </div>
@@ -1139,6 +1197,12 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_read_some and async_write_some operation. </p>
 
 </div>
 </div>
