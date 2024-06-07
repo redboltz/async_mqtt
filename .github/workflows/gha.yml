@@ -138,7 +138,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: C:/vcpkg/installed/x64-windows
-        key: ${{ runner.os }}-vcpkg-2024-06-07
+        key: ${{ runner.os }}-vcpkg-2024-06-07_2
     - name: install boost
       if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       shell: powershell
