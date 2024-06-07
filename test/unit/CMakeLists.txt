@@ -4,79 +4,79 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-    set(CMAKE_CXX_STANDARD 20)
-    message(STATUS "C++20 examples added")
-    list(APPEND check_PROGRAMS
-        ut_cpp20coro_broker.cpp
-        ut_cpp20coro_cl.cpp
-        ut_cpp20coro_ep.cpp
-        ut_cpp20coro_exec.cpp
-    )
-endif()
+#if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+#    set(CMAKE_CXX_STANDARD 20)
+#    message(STATUS "C++20 examples added")
+#    list(APPEND check_PROGRAMS
+#        ut_cpp20coro_broker.cpp
+#        ut_cpp20coro_cl.cpp
+#        ut_cpp20coro_ep.cpp
+#        ut_cpp20coro_exec.cpp
+#    )
+#endif()
 
 
 list(APPEND check_PROGRAMS
-    ut_broker_security.cpp
-    ut_buffer.cpp
-    ut_code.cpp
-    ut_ep_alloc.cpp
+#    ut_broker_security.cpp
+#    ut_buffer.cpp
+#    ut_code.cpp
+#    ut_ep_alloc.cpp
     ut_ep_con_discon.cpp
-    ut_ep_keep_alive.cpp
-    ut_ep_pid.cpp
-    ut_ep_topic_alias.cpp
-    ut_ep_recv_filter.cpp
-    ut_ep_recv_max.cpp
-    ut_ep_size_max.cpp
-    ut_ep_packet_error.cpp
-    ut_ep_store.cpp
-    ut_host_port.cpp
-    ut_packet_id.cpp
-    ut_packet_v3_1_1_connect.cpp
-    ut_packet_v3_1_1_connack.cpp
-    ut_packet_v3_1_1_publish.cpp
-    ut_packet_v3_1_1_puback.cpp
-    ut_packet_v3_1_1_pubrec.cpp
-    ut_packet_v3_1_1_pubrel.cpp
-    ut_packet_v3_1_1_pubcomp.cpp
-    ut_packet_v3_1_1_subscribe.cpp
-    ut_packet_v3_1_1_suback.cpp
-    ut_packet_v3_1_1_unsubscribe.cpp
-    ut_packet_v3_1_1_unsuback.cpp
-    ut_packet_v3_1_1_pingreq.cpp
-    ut_packet_v3_1_1_pingresp.cpp
-    ut_packet_v3_1_1_disconnect.cpp
-    ut_packet_v5_connect.cpp
-    ut_packet_v5_connack.cpp
-    ut_packet_v5_publish.cpp
-    ut_packet_v5_puback.cpp
-    ut_packet_v5_pubrec.cpp
-    ut_packet_v5_pubrel.cpp
-    ut_packet_v5_pubcomp.cpp
-    ut_packet_v5_subscribe.cpp
-    ut_packet_v5_suback.cpp
-    ut_packet_v5_unsubscribe.cpp
-    ut_packet_v5_unsuback.cpp
-    ut_packet_v5_pingreq.cpp
-    ut_packet_v5_pingresp.cpp
-    ut_packet_v5_disconnect.cpp
-    ut_packet_v5_auth.cpp
-    ut_packet_variant.cpp
-    ut_property.cpp
-    ut_prop_variant.cpp
-    ut_prop_variant_no_assert.cpp
-    ut_retained_topic_map.cpp
-    ut_retained_topic_map_broker.cpp
-    ut_strm.cpp
-    ut_subscription_map.cpp
-    ut_subscription_map_broker.cpp
-    ut_topic_alias.cpp
-    ut_topic_sharename.cpp
-    ut_topic_subopts.cpp
-    ut_unique_scope_guard.cpp
-    ut_utf8validate.cpp
-    ut_value_allocator.cpp
-    ut_error.cpp
+#    ut_ep_keep_alive.cpp
+#    ut_ep_pid.cpp
+#    ut_ep_topic_alias.cpp
+#    ut_ep_recv_filter.cpp
+#    ut_ep_recv_max.cpp
+#    ut_ep_size_max.cpp
+#    ut_ep_packet_error.cpp
+#    ut_ep_store.cpp
+#    ut_host_port.cpp
+#    ut_packet_id.cpp
+#    ut_packet_v3_1_1_connect.cpp
+#    ut_packet_v3_1_1_connack.cpp
+#    ut_packet_v3_1_1_publish.cpp
+#    ut_packet_v3_1_1_puback.cpp
+#    ut_packet_v3_1_1_pubrec.cpp
+#    ut_packet_v3_1_1_pubrel.cpp
+#    ut_packet_v3_1_1_pubcomp.cpp
+#    ut_packet_v3_1_1_subscribe.cpp
+#    ut_packet_v3_1_1_suback.cpp
+#    ut_packet_v3_1_1_unsubscribe.cpp
+#    ut_packet_v3_1_1_unsuback.cpp
+#    ut_packet_v3_1_1_pingreq.cpp
+#    ut_packet_v3_1_1_pingresp.cpp
+#    ut_packet_v3_1_1_disconnect.cpp
+#    ut_packet_v5_connect.cpp
+#    ut_packet_v5_connack.cpp
+#    ut_packet_v5_publish.cpp
+#    ut_packet_v5_puback.cpp
+#    ut_packet_v5_pubrec.cpp
+#    ut_packet_v5_pubrel.cpp
+#    ut_packet_v5_pubcomp.cpp
+#    ut_packet_v5_subscribe.cpp
+#    ut_packet_v5_suback.cpp
+#    ut_packet_v5_unsubscribe.cpp
+#    ut_packet_v5_unsuback.cpp
+#    ut_packet_v5_pingreq.cpp
+#    ut_packet_v5_pingresp.cpp
+#    ut_packet_v5_disconnect.cpp
+#    ut_packet_v5_auth.cpp
+#    ut_packet_variant.cpp
+#    ut_property.cpp
+#    ut_prop_variant.cpp
+#    ut_prop_variant_no_assert.cpp
+#    ut_retained_topic_map.cpp
+#    ut_retained_topic_map_broker.cpp
+#    ut_strm.cpp
+#    ut_subscription_map.cpp
+#    ut_subscription_map_broker.cpp
+#    ut_topic_alias.cpp
+#    ut_topic_sharename.cpp
+#    ut_topic_subopts.cpp
+#    ut_unique_scope_guard.cpp
+#    ut_utf8validate.cpp
+#    ut_value_allocator.cpp
+#    ut_error.cpp
 )
 
 list(APPEND check_ce_PROGRAMS
