@@ -40,7 +40,7 @@ struct global_fixture {
                         return async_mqtt::severity_level::trace;
                     }
                 }
-                return async_mqtt::severity_level::warning;
+                return async_mqtt::severity_level::trace;
             } ();
         async_mqtt::setup_log(sev);
     }

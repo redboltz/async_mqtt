@@ -192,7 +192,7 @@ jobs:
             cp test\system\st_broker.conf .
             cp test\system\st_auth.json .
         }
-        ctest -V -C Release
+        ctest -V -C Release --retun-failed --output-on-failure
         if (!$?) {
           return Write-Error "ctest -V -C Release failed"
         }
