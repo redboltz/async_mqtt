@@ -133,33 +133,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Cache boost
-      id: cache-boost
+    - name: Cache vcpkg dependencies
+      id: cache-vcpkg
       uses: actions/cache@v3
       with:
-        path:  D:\a\async_mqtt\async_mqtt\boost
-        key: ${{ runner.os }}-boost-20240607
+        path: C:/vcpkg/installed/x64-windows
+        key: ${{ runner.os }}-vcpkg-2024-06-07
     - name: install boost
-      if: steps.cache-boost.outputs.cache-hit != 'true'
+      if: steps.cache-vcpkg.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-
-        $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
-         (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
-        7z.exe x "$env:TEMP\boost_1_85_0.7z"
-        cd boost_1_85_0
-        ECHO .\bootstrap.bat
-        .\bootstrap.bat
-        ECHO DIR
-        DIR
-        ECHO ".\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test"
-        ECHO ".\b2.exe --help"
-        .\b2.exe --help
-        ECHO ".\b2.exe --help"
-        .\b2.exe "toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test"
-        ECHO DIR
-        DIR
-        ECHO 0
+        vcpkg update
+        vcpkg install boost-assert:x64-windows boost-numeric-conversion:x64-windows boost-container:x64-windows boost-filesystem:x64-windows boost-log:x64-windows boost-container:x64-program-options boost-system:x64-windows  boost-utility:x64-windows boost-optional:x64-windows boost-predef:x64-windows boost-preprocessor:x64-windows boost-test:x64-windows
     - name: Build and test
       shell: powershell
       run: |
