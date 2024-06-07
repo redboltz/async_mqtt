@@ -174,7 +174,7 @@ jobs:
         mkdir build
         cd build
         $env:CL="/D_WIN32_WINNT#0x0A00 /DBOOST_THREAD_VERSION#3 /DBOOST_ASIO_NO_DEPRECATED /bigobj /EHsc /Zc:preprocessor"
-        $env:PATH="$env:BOOST_ROOT\lib;"+$env:PATH
+        $env:PATH="$env:BOOST_ROOT\lib;$env:BOOST_ROOT\bin;"+$env:PATH
         cmake -A x64 -G "Visual Studio 17 2022" -DASYNC_MQTT_USE_TLS=OFF -DASYNC_MQTT_USE_WS=OFF -DASYNC_MQTT_USE_LOG=ON -DASYNC_MQTT_PRINT_PAYLOAD=ON -DASYNC_MQTT_BUILD_SYSTEM_TESTS="$BUILD_SYSTEM_TESTS" -DASYNC_MQTT_BUILD_UNIT_TESTS="$BUILD_UNIT_TESTS" -DASYNC_MQTT_BUILD_EXAMPLES="$BUILD_EXAMPLES" -DASYNC_MQTT_BUILD_TOOLS="$BUILD_TOOLS" ..
         if (!$?) {
           return Write-Error "cmake failed"
