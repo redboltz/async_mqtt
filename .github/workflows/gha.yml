@@ -169,6 +169,8 @@ jobs:
           $BUILD_SYSTEM_TESTS = "OFF"
         }
         $env:BOOST_ROOT="C:/vcpkg/installed/x64-windows"
+        DIR C:/vcpkg/installed/x64-windows/bin
+        DIR C:/vcpkg/installed/x64-windows/lib
         mkdir build
         cd build
         $env:CL="/D_WIN32_WINNT#0x0A00 /DBOOST_THREAD_VERSION#3 /DBOOST_ASIO_NO_DEPRECATED /bigobj /EHsc /Zc:preprocessor"
