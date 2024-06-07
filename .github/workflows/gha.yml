@@ -152,7 +152,8 @@ jobs:
         .\bootstrap.bat
         ECHO DIR
         DIR
-        ECHO .\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
+        ECHO ".\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test"
+        .\b2.exe --help
         .\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
         ECHO DIR
         DIR
