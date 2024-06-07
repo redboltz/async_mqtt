@@ -38,7 +38,7 @@ recv_op {
             if (ec == as::error::operation_aborted) {
                 // on cancel, not close the connection
                 self.complete(
-                    ec,
+                    make_error_code(errc::operation_canceled),
                     packet_variant_type{}
                 );
             }

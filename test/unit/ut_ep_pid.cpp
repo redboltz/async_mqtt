@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
             as::bind_cancellation_slot(
                 sig1.slot(),
                 [&](am::error_code const& ec, am::packet_id_type pid) {
-                    BOOST_TEST(ec == as::error::operation_aborted);
+                    BOOST_TEST(ec == am::errc::operation_canceled);
                     BOOST_TEST(pid == 0);
                 }
             )

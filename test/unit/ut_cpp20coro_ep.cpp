@@ -382,7 +382,9 @@ BOOST_AUTO_TEST_CASE(sub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    am::errc::make_error_code(am::errc::operation_canceled)
+                );
                 std::vector<am::topic_subopts> entries {
                     {"topic1", am::qos::at_most_once},
                 };
@@ -394,7 +396,7 @@ BOOST_AUTO_TEST_CASE(sub_send_error_v5) {
                     },
                     as::as_tuple(as::use_awaitable)
                 );
-                BOOST_TEST(ec == as::error::operation_aborted);
+                BOOST_TEST(ec == am::errc::operation_canceled);
                 // check pid is released
                 BOOST_TEST(ep->register_packet_id(pid));
                 co_await ep->async_close(as::deferred);
@@ -441,7 +443,9 @@ BOOST_AUTO_TEST_CASE(unsub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    am::errc::make_error_code(am::errc::operation_canceled)
+                );
                 std::vector<am::topic_sharename> entries {
                     {"topic1"},
                 };
@@ -453,7 +457,7 @@ BOOST_AUTO_TEST_CASE(unsub_send_error_v5) {
                     },
                     as::as_tuple(as::use_awaitable)
                 );
-                BOOST_TEST(ec == as::error::operation_aborted);
+                BOOST_TEST(ec == am::errc::operation_canceled);
                 // check pid is released
                 BOOST_TEST(ep->register_packet_id(pid));
                 co_await ep->async_close(as::deferred);
@@ -500,7 +504,9 @@ BOOST_AUTO_TEST_CASE(pub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    am::errc::make_error_code(am::errc::operation_canceled)
+                );
                 auto pid = *ep->acquire_unique_packet_id();
                 auto [ec] = co_await ep->async_send(
                     am::v5::publish_packet{
@@ -512,7 +518,7 @@ BOOST_AUTO_TEST_CASE(pub_send_error_v5) {
                     },
                     as::as_tuple(as::use_awaitable)
                 );
-                BOOST_TEST(ec == as::error::operation_aborted);
+                BOOST_TEST(ec == am::errc::operation_canceled);
                 // check pid is released
                 BOOST_TEST(ep->register_packet_id(pid));
                 co_await ep->async_close(as::deferred);

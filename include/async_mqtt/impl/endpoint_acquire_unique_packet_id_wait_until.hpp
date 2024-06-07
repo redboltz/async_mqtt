@@ -60,7 +60,10 @@ acquire_unique_packet_id_wait_until_op {
                     acq_proc();
                 }
                 else {
-                    self.complete(ec, 0);
+                    self.complete(
+                        make_error_code(errc::operation_canceled),
+                        0
+                    );
                 }
             }
             else if (ep.has_retry()) {

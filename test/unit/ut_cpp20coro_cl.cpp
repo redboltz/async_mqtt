@@ -1870,4 +1870,187 @@ BOOST_AUTO_TEST_CASE(v5_publish_qos2_success_error_pubcomp) {
     ioc.run();
 }
 
+BOOST_AUTO_TEST_CASE(v5_recv_disconnect) {
+    static constexpr am::protocol_version version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
+
+                auto connack_opt = co_await cl.async_start(
+                    true,             // clean_start
+                    std::uint16_t(0), // keep_alive
+                    "cid1",
+                    as::use_awaitable
+                );
+                BOOST_CHECK(connack_opt);
+                BOOST_TEST(*connack_opt == connack);
+
+                // test scenario
+                auto disconnect = am::v5::disconnect_packet{};
+                auto pv = co_await(
+                    cl.async_recv(as::use_awaitable)
+                    &&
+                    cl.next_layer().emulate_recv(disconnect, as::use_awaitable)
+                );
+                BOOST_TEST(pv == disconnect);
+            }
+            catch (am::system_error const& se) {
+                BOOST_TEST(false);
+            }
+            co_await cl.next_layer().emulate_close(as::use_awaitable);
+            co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(v5_recv_auth) {
+    static constexpr am::protocol_version version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
+
+                auto connack_opt = co_await cl.async_start(
+                    true,             // clean_start
+                    std::uint16_t(0), // keep_alive
+                    "cid1",
+                    as::use_awaitable
+                );
+                BOOST_CHECK(connack_opt);
+                BOOST_TEST(*connack_opt == connack);
+
+                // test scenario
+                auto auth = am::v5::auth_packet{};
+                auto pv = co_await(
+                    cl.async_recv(as::use_awaitable)
+                    &&
+                    cl.next_layer().emulate_recv(auth, as::use_awaitable)
+                );
+                BOOST_TEST(pv == auth);
+            }
+            catch (am::system_error const& se) {
+                BOOST_TEST(false);
+            }
+            co_await cl.next_layer().emulate_close(as::use_awaitable);
+            co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(v5_pub_error) {
+    static constexpr am::protocol_version version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                // test scenario
+                auto pubres =
+                    co_await cl.async_publish(
+                        "", // empty but no topic alias
+                        "payload1",
+                        am::qos::at_most_once,
+                        as::use_awaitable
+                    );
+                BOOST_TEST(false);
+            }
+            catch (am::system_error const& se) {
+                BOOST_TEST(se.code() == am::mqtt_error::packet_not_allowed_to_send);
+            }
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(v5_recv_after) {
+    static constexpr am::protocol_version version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
+
+                auto connack_opt = co_await cl.async_start(
+                    true,             // clean_start
+                    std::uint16_t(0), // keep_alive
+                    "cid1",
+                    as::use_awaitable
+                );
+                BOOST_CHECK(connack_opt);
+                BOOST_TEST(*connack_opt == connack);
+
+                // test scenario
+                auto auth = am::v5::auth_packet{};
+                // first, packet arrived
+                co_await cl.next_layer().emulate_recv(auth, as::use_awaitable);
+                // then, recv
+                auto pv = co_await cl.async_recv(as::use_awaitable);
+                BOOST_TEST(pv == auth);
+            }
+            catch (am::system_error const& se) {
+                BOOST_TEST(false);
+            }
+            co_await cl.next_layer().emulate_close(as::use_awaitable);
+            co_await cl.async_close(as::use_awaitable);
+            co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
