@@ -144,7 +144,7 @@ jobs:
       shell: powershell
       run: |
         vcpkg update
-        vcpkg install boost-assert:x64-windows boost-numeric-conversion:x64-windows boost-container:x64-windows boost-filesystem:x64-windows boost-log:x64-windows boost-program-options:x64-windows boost-system:x64-windows  boost-utility:x64-windows boost-optional:x64-windows boost-predef:x64-windows boost-preprocessor:x64-windows boost-test:x64-windows
+        vcpkg install boost-assert:x64-windows boost-container:x64-windows boost-filesystem:x64-windows boost-format:x64-windows boost-log:x64-windows boost-numeric-conversion:x64-windows boost-optional:x64-windows boost-preprocessor:x64-windows boost-process:x64-windows boost-program-options:x64-windows boost-system:x64-windows boost-test:x64-windows boost-utility:x64-windows
         DIR C:/vcpkg/installed/x64-windows
     - name: Build and test
       shell: powershell
