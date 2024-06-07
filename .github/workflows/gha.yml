@@ -141,7 +141,7 @@ jobs:
         key: ${{ runner.os }}-boost-20240607
     - name: install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
-      shell: powershell
+      shell: bash
       run: |
 
         $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
