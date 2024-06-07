@@ -148,9 +148,13 @@ jobs:
          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
+        ECHO .\bootstrap.bat
         .\bootstrap.bat
+        ECHO DIR
         DIR
+        ECHO .\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
         .\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
+        ECHO DIR
         DIR
     - name: Build and test
       shell: powershell
