@@ -141,7 +141,7 @@ jobs:
         key: ${{ runner.os }}-boost-20240607
     - name: install boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
-      shell: bash
+      shell: powershell
       run: |
 
         $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
@@ -155,8 +155,8 @@ jobs:
         ECHO ".\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test"
         ECHO ".\b2.exe --help"
         .\b2.exe --help
-        ECHO ".\b2.exe --help end"
-        .\b2.exe toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
+        ECHO ".\b2.exe --help"
+        .\b2.exe "toolset=msvc link=static,shared install -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost --with-container --with-filesystem --with-log --with-program_options --with-system --with-test"
         ECHO DIR
         DIR
     - name: Build and test
