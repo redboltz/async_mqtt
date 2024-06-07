@@ -196,7 +196,8 @@ jobs:
             cp test\system\st_broker.conf .
             cp test\system\st_auth.json .
         }
-        ctest -V -C Release
+        Release\ut_ep_con_discon --log_level=all -- trace
+        #ctest -V -C Release
         if (!$?) {
           return Write-Error "ctest -V -C Release failed"
         }
