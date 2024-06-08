@@ -149,8 +149,9 @@ jobs:
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
         .\bootstrap.bat
-        New-Item -ItemType Directory -Force -Path D:\a\async_mqtt\async_mqtt\boost
-        Start-Process -FilePath .\b2.exe -ArgumentList "toolset=msvc link=static,shared address-model=64 -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost install --with-container --with-filesystem --with-log --with-program_options --with-system --with-test" -NoNewWindow -Wait -RedirectStandardOutput D:\a\async_mqtt\async_mqtt\boost\boost_build_log.txt
+        .\b2.exe
+#        New-Item -ItemType Directory -Force -Path D:\a\async_mqtt\async_mqtt\boost
+#        Start-Process -FilePath .\b2.exe -ArgumentList "toolset=msvc link=static,shared address-model=64 -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost install --with-container --with-filesystem --with-log --with-program_options --with-system --with-test" -NoNewWindow -Wait -RedirectStandardOutput D:\a\async_mqtt\async_mqtt\boost\boost_build_log.txt
 #        .\b2.exe toolset=msvc link=static,shared address-model=64 -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost install --with-container --with-filesystem --with-log --with-program_options --with-system --with-test > D:\a\async_mqtt\async_mqtt\boost\boost_build_log.txt
     - name: Output Boost Build Log
       if: always()
