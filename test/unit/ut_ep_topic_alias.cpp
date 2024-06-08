@@ -199,6 +199,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         auto [ec] = ep->async_send(publish_reg_t1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
+#if !defined(_MSC_VER) || _MSC_VER >= 1930
     {   // check regulate
         auto p1 = publish_reg_t1;
         auto [ec1, rp1] = ep->async_regulate_for_store(p1, as::as_tuple(as::use_future)).get();
@@ -213,6 +214,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         BOOST_TEST(rp2.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp2.props()));
     }
+#endif // !defined(_MSC_VER) || _MSC_VER >= 1930
 
     // send publish_use_ta1
     ep->next_layer().set_write_packet_checker(
@@ -224,6 +226,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         auto [ec] = ep->async_send(publish_use_ta1, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
+#if !defined(_MSC_VER) || _MSC_VER >= 1930
     {   // check regulate
         auto p = publish_use_ta1;
         auto [ec, rp] = ep->async_regulate_for_store(p, as::as_tuple(as::use_future)).get();
@@ -231,6 +234,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
         BOOST_TEST(rp.topic() == "topic1");
         BOOST_TEST(!get_topic_alias(rp.props()));
     }
+#endif // !defined(_MSC_VER) || _MSC_VER >= 1930
 
     // send publish_reg_t2
     ep->next_layer().set_write_packet_checker(
