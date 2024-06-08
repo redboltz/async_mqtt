@@ -149,7 +149,11 @@ jobs:
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
         .\bootstrap.bat
-        .\b2.exe toolset=msvc link=static,shared address-model=64 -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost install --with-container --with-filesystem --with-log --with-program_options --with-system --with-test
+        .\b2.exe toolset=msvc link=static,shared address-model=64 -j2 --prefix=D:\a\async_mqtt\async_mqtt\boost install --with-container --with-filesystem --with-log --with-program_options --with-system --with-test > D:\a\async_mqtt\async_mqtt\boost\boost_build_log.txt
+    - name: Output Boost Build Log
+      if: always()
+      shell: bash
+      run: cat D:\a\async_mqtt\async_mqtt\boost\boost_build_log.txt
     - name: Build and test
       shell: powershell
       run: |
