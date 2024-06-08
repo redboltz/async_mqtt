@@ -148,6 +148,7 @@ jobs:
          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat"
         .\bootstrap.bat
         DIR
         .\b2.exe --help
