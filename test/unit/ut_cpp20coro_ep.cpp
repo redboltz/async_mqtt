@@ -382,7 +382,9 @@ BOOST_AUTO_TEST_CASE(sub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    make_error_code(as::error::operation_aborted)
+                );
                 std::vector<am::topic_subopts> entries {
                     {"topic1", am::qos::at_most_once},
                 };
@@ -441,7 +443,9 @@ BOOST_AUTO_TEST_CASE(unsub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    make_error_code(as::error::operation_aborted)
+                );
                 std::vector<am::topic_sharename> entries {
                     {"topic1"},
                 };
@@ -500,7 +504,9 @@ BOOST_AUTO_TEST_CASE(pub_send_error_v5) {
             }
             // test scenario
             {
-                ep->next_layer().set_send_error_code(as::error::operation_aborted);
+                ep->next_layer().set_send_error_code(
+                    make_error_code(as::error::operation_aborted)
+                );
                 auto pid = *ep->acquire_unique_packet_id();
                 auto [ec] = co_await ep->async_send(
                     am::v5::publish_packet{

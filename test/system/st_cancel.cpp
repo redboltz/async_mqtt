@@ -64,14 +64,14 @@ BOOST_AUTO_TEST_CASE(ep) {
                                 as::bind_cancellation_slot(
                                     sig1.slot(),
                                     [&](am::error_code const& ec, am::packet_variant pv) {
-                                        BOOST_TEST(ec == am::errc::operation_canceled);
+                                        BOOST_TEST(ec == as::error::operation_aborted);
                                         BOOST_TEST(!pv);
                                         ++canceled;
                                         amep->async_recv(
                                             as::bind_cancellation_slot(
                                                 sig1.slot(),
                                                 [&](am::error_code const& ec, am::packet_variant pv) {
-                                                    BOOST_TEST(ec == am::errc::operation_canceled);
+                                                    BOOST_TEST(ec == as::error::operation_aborted);
                                                     BOOST_TEST(!pv);
                                                     ++canceled;
                                                     amep->async_close(as::detached);
@@ -145,14 +145,14 @@ BOOST_AUTO_TEST_CASE(cl) {
                         as::bind_cancellation_slot(
                             sig1.slot(),
                             [&](am::error_code const& ec, am::packet_variant pv) {
-                                BOOST_TEST(ec == am::errc::operation_canceled);
+                                BOOST_TEST(ec == as::error::operation_aborted);
                                 BOOST_TEST(!pv);
                                 ++canceled;
                                 amcl.async_recv(
                                     as::bind_cancellation_slot(
                                         sig1.slot(),
                                         [&](am::error_code const& ec, am::packet_variant pv) {
-                                            BOOST_TEST(ec == am::errc::operation_canceled);
+                                            BOOST_TEST(ec == as::error::operation_aborted);
                                             BOOST_TEST(!pv);
                                             ++canceled;
                                             amcl.async_close(as::detached);
