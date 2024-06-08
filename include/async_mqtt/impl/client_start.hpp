@@ -72,7 +72,7 @@ start_op {
         auto it = idx.find(tim);
         if (it == idx.end()) {
             self.complete(
-                errc::make_error_code(sys::errc::operation_canceled),
+                make_error_code(as::error::operation_aborted),
                 std::nullopt
             );
         }
