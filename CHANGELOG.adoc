@@ -10,6 +10,7 @@
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
 === other updates
+* Refined CI. #295
 * Fixed async_acquire_unique_packet_id_wait_until() cancel support. #292
 * Refined packet reading. Fixed Header and the first byte of Remaining Length are read all at once. #291
 * Fixed set_pingreq_send_interval_ms() value 0 treatment. #290
@@ -22,7 +23,7 @@
 ** To enable separate compilation mode, define ASYNC_MQTT_SEPARATE_COMPILATION
 * Added bind_cancellation_slot test #268
 * Supported PINGREQ overriding by ServerKeepAlive. #271
-* Refined tests. #269, #274, #275, #287, #288, #289, #290
+* Refined tests. #269, #274, #275, #287, #288, #289, #290, #296
 * Refined documents. #276, #292
 * Refined tools (bench) #278
 * Added endpoint getter to client. #279

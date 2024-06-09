@@ -382,6 +382,60 @@ struct layer_customize<cpp20coro_stub_socket> {
     };
 
     template <
+        typename ConstBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_write(
+        cpp20coro_stub_socket& stream,
+        ConstBufferSequence const& cbs,
+        CompletionToken&& token
+    ) {
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t)
+        > (
+            async_write_impl{
+                stream,
+                cbs
+            },
+            token,
+            stream
+        );
+    }
+
+    template <typename ConstBufferSequence>
+    struct async_write_impl {
+        async_write_impl(
+            cpp20coro_stub_socket& stream,
+            ConstBufferSequence const& cbs
+        ): stream{stream}, cbs{cbs}
+        {}
+
+        cpp20coro_stub_socket& stream;
+        ConstBufferSequence cbs;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            return stream.async_write_some(
+                cbs,
+                force_move(self)
+            );
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code const& ec,
+            std::size_t size
+        ) {
+            self.complete(ec, size);
+        }
+    };
+
+    template <
         typename CompletionToken
     >
     static auto
