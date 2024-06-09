@@ -25,15 +25,49 @@ namespace async_mqtt {
 constexpr
 char const* mqtt_error_to_string(mqtt_error v) {
     switch (v) {
-    case mqtt_error::partial_error_detected:        return "partial_error_detected";
-    case mqtt_error::all_error_detected:            return "all_error_detected";
-    case mqtt_error::packet_identifier_fully_used:  return "packet_identifier_fully_used";
-    case mqtt_error::packet_identifier_conflict:    return "packet_identifier_conflict";
-    case mqtt_error::packet_not_allowed_to_send:    return "packet_not_allowed_to_send";
-    case mqtt_error::packet_too_large:              return "packet_too_large";
-    case mqtt_error::packet_not_allowed_to_store:   return "packet_not_allowed_to_store";
-    case mqtt_error::packet_not_regulated:          return "packet_not_regulated";
-    default:                                           return "unknown_mqtt_error";
+    case mqtt_error::unspecified_error:                      return "unspecified_error";
+    case mqtt_error::malformed_packet:                       return "malformed_packet";
+    case mqtt_error::protocol_error:                         return "protocol_error";
+    case mqtt_error::implementation_specific_error:          return "implementation_specific_error";
+    case mqtt_error::unsupported_protocol_version:           return "unsupported_protocol_version";
+    case mqtt_error::client_identifier_not_valid:            return "client_identifier_not_valid";
+    case mqtt_error::bad_user_name_or_password:              return "bad_user_name_or_password";
+    case mqtt_error::not_authorized:                         return "not_authorized";
+    case mqtt_error::server_unavailable:                     return "server_unavailable";
+    case mqtt_error::server_busy:                            return "server_busy";
+    case mqtt_error::banned:                                 return "banned";
+    case mqtt_error::server_shutting_down:                   return "server_shutting_down";
+    case mqtt_error::bad_authentication_method:              return "bad_authentication_method";
+    case mqtt_error::keep_alive_timeout:                     return "keep_alive_timeout";
+    case mqtt_error::session_taken_over:                     return "session_taken_over";
+    case mqtt_error::topic_filter_invalid:                   return "topic_filter_invalid";
+    case mqtt_error::topic_name_invalid:                     return "topic_name_invalid";
+    case mqtt_error::packet_identifier_not_found:            return "packet_identifier_not_found";
+    case mqtt_error::packet_identifier_in_use:               return "packet_identifier_in_use";
+    case mqtt_error::receive_maximum_exceeded:               return "receive_maximum_exceeded";
+    case mqtt_error::topic_alias_invalid:                    return "topic_alias_invalid";
+    case mqtt_error::packet_too_large:                       return "packet_too_large";
+    case mqtt_error::message_rate_too_high:                  return "message_rate_too_high";
+    case mqtt_error::quota_exceeded:                         return "quota_exceeded";
+    case mqtt_error::administrative_action:                  return "administrative_action";
+    case mqtt_error::payload_format_invalid:                 return "payload_format_invalid";
+    case mqtt_error::retain_not_supported:                   return "retain_not_supported";
+    case mqtt_error::qos_not_supported:                      return "qos_not_supported";
+    case mqtt_error::use_another_server:                     return "use_another_server";
+    case mqtt_error::server_moved:                           return "server_moved";
+    case mqtt_error::shared_subscriptions_not_supported:     return "shared_subscriptions_not_supported";
+    case mqtt_error::connection_rate_exceeded:               return "connection_rate_exceeded";
+    case mqtt_error::maximum_connect_time:                   return "maximum_connect_time";
+    case mqtt_error::subscription_identifiers_not_supported: return "subscription_identifiers_not_supported";
+    case mqtt_error::wildcard_subscriptions_not_supported:   return "wildcard_subscriptions_not_supported";
+    case mqtt_error::partial_error_detected:                 return "partial_error_detected";
+    case mqtt_error::all_error_detected:                     return "all_error_detected";
+    case mqtt_error::packet_identifier_fully_used:           return "packet_identifier_fully_used";
+    case mqtt_error::packet_identifier_conflict:             return "packet_identifier_conflict";
+    case mqtt_error::packet_not_allowed_to_send:             return "packet_not_allowed_to_send";
+    case mqtt_error::packet_not_allowed_to_store:            return "packet_not_allowed_to_store";
+    case mqtt_error::packet_not_regulated:                   return "packet_not_regulated";
+    default:                                                 return "unknown_mqtt_error";
     }
 }
 
@@ -324,7 +358,7 @@ public:
     }
 
     bool failed(int v) const noexcept override {
-        return v >= 0x80;
+        return (v & 0x80) != 0;
     }
 };
 

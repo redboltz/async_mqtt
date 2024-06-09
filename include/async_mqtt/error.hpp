@@ -87,14 +87,48 @@ using system_error = sys::system_error;
  * @brief general error code
  */
 enum class mqtt_error {
-    partial_error_detected        = 0x01, ///< Some entries have error on suback/unsuback (not an error)
-    all_error_detected            = 0x80, ///< All entries have error on suback/unsuback
-    packet_identifier_fully_used  = 0x81, ///< Packet Identifier fully used
-    packet_identifier_conflict    = 0x82, ///< Packet Identifier conflict
-    packet_not_allowed_to_send    = 0x83, ///< Packet is not allowd to be sent
-    packet_too_large              = 0x84, ///< Packet is too large
-    packet_not_allowed_to_store   = 0x85, ///< Packet is not allowd to be stored
-    packet_not_regulated          = 0x86, ///< Packet is not regulated
+    unspecified_error                      = 0x0080, ///< Unspecified error
+    malformed_packet                       = 0x0081, ///< Malformed Packet
+    protocol_error                         = 0x0082, ///< Protocol Error
+    implementation_specific_error          = 0x0083, ///< Implementation specific error
+    unsupported_protocol_version           = 0x0084, ///< Unsupported Protocol Version
+    client_identifier_not_valid            = 0x0085, ///< Client Identifier not valid
+    bad_user_name_or_password              = 0x0086, ///< Bad User Name or Password
+    not_authorized                         = 0x0087, ///< Not authorized
+    server_unavailable                     = 0x0088, ///< Server unavailable
+    server_busy                            = 0x0089, ///< Server busy
+    banned                                 = 0x008a, ///< Banned
+    server_shutting_down                   = 0x008b, ///< Server shutting down
+    bad_authentication_method              = 0x008c, ///< Bad authentication method
+    keep_alive_timeout                     = 0x008d, ///< Keep Alive timeout
+    session_taken_over                     = 0x008e, ///< Session taken over
+    topic_filter_invalid                   = 0x008f, ///< Topic Filter invalid
+    topic_name_invalid                     = 0x0090, ///< Topic Name invalid
+    packet_identifier_not_found            = 0x0092, ///< Packet Identifier not found
+    packet_identifier_in_use               = 0x0091, ///< Packet Identifier in use
+    receive_maximum_exceeded               = 0x0093, ///< Receive Maximum exceeded
+    topic_alias_invalid                    = 0x0094, ///< Topic Alias invalid
+    packet_too_large                       = 0x0095, ///< Packet too large
+    message_rate_too_high                  = 0x0096, ///< Message rate too high
+    quota_exceeded                         = 0x0097, ///< Quota exceeded
+    administrative_action                  = 0x0098, ///< Administrative action
+    payload_format_invalid                 = 0x0099, ///< Payload format invalid
+    retain_not_supported                   = 0x009a, ///< Retain not supported
+    qos_not_supported                      = 0x009b, ///< QoS not supported
+    use_another_server                     = 0x009c, ///< Use another server
+    server_moved                           = 0x009d, ///< Server moved
+    shared_subscriptions_not_supported     = 0x009e, ///< Shared Subscriptions not supported
+    connection_rate_exceeded               = 0x009f, ///< Connection rate exceeded
+    maximum_connect_time                   = 0x00a0, ///< Maximum connect time
+    subscription_identifiers_not_supported = 0x00a1, ///< Subscription Identifiers not supported
+    wildcard_subscriptions_not_supported   = 0x00a2, ///< Wildcard Subscriptions not supported
+    partial_error_detected                 = 0x0101, ///< Some entries have error on suback/unsuback (not an error)
+    all_error_detected                     = 0x0180, ///< All entries have error on suback/unsuback
+    packet_identifier_fully_used           = 0x0181, ///< Packet Identifier fully used
+    packet_identifier_conflict             = 0x0182, ///< Packet Identifier conflict
+    packet_not_allowed_to_send             = 0x0183, ///< Packet is not allowd to be sent
+    packet_not_allowed_to_store            = 0x0185, ///< Packet is not allowd to be stored
+    packet_not_regulated                   = 0x0186, ///< Packet is not regulated
 };
 
 /**
