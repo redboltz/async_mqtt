@@ -247,6 +247,13 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_error) {
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
+        //                CP  RL
+        am::buffer buf{"\xe0\x80\x80\x80\x80\x00"sv}; // invalid remaining length
+        am::error_code ec;
+        am::v5::disconnect_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
         //                CP  RL  RC
         am::buffer buf{"\xe0\x01\x00"sv}; // valid
         am::error_code ec;
