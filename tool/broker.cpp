@@ -32,7 +32,6 @@
 #include <broker/endpoint_variant.hpp>
 #include <broker/broker.hpp>
 #include <broker/constant.hpp>
-#include <broker/fixed_core_map.hpp>
 
 namespace am = async_mqtt;
 namespace as = boost::asio;
@@ -209,29 +208,19 @@ void run_broker(boost::program_options::variables_map const& vm) {
             concurrency_hint = BOOST_ASIO_CONCURRENCY_HINT_UNSAFE_IO;
         }
         std::mutex mtx_con_iocs;
-        std::vector<std::shared_ptr<as::io_context>> con_iocs;
+        std::vector<std::shared_ptr<as::thread_pool>> con_iocs;
         con_iocs.reserve(num_of_iocs);
         for (std::size_t i = 0; i != num_of_iocs; ++i) {
-            con_iocs.emplace_back(std::make_shared<as::io_context>(concurrency_hint));
+            con_iocs.emplace_back(std::make_shared<as::thread_pool>(threads_per_ioc));
         }
         BOOST_ASSERT(!con_iocs.empty());
-
-        std::vector<
-            as::executor_work_guard<
-                as::io_context::executor_type
-            >
-        > guard_con_iocs;
-        guard_con_iocs.reserve(con_iocs.size());
-        for (auto& con_ioc : con_iocs) {
-            guard_con_iocs.emplace_back(con_ioc->get_executor());
-        }
 
         auto con_iocs_it = con_iocs.begin();
 
         auto con_ioc_getter =
-            [&mtx_con_iocs, &con_iocs, &con_iocs_it]() -> as::io_context& {
+            [&mtx_con_iocs, &con_iocs, &con_iocs_it]() -> as::any_io_executor {
                 std::lock_guard<std::mutex> g{mtx_con_iocs};
-                auto& ret = **con_iocs_it;
+                auto ret = (*con_iocs_it)->get_executor();
                 ++con_iocs_it;
                 if (con_iocs_it == con_iocs.end()) con_iocs_it = con_iocs.begin();
                 return ret;
@@ -274,7 +263,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::mqtt
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(con_ioc_getter().get_executor())
+                            as::make_strand(con_ioc_getter())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     epsp->set_bulk_read_buffer_size(vm["bulk_read_buf_size"].as<std::size_t>());
@@ -316,7 +305,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::ws
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(con_ioc_getter().get_executor())
+                            as::make_strand(con_ioc_getter())
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
                     epsp->set_bulk_read_buffer_size(vm["bulk_read_buf_size"].as<std::size_t>());
@@ -410,7 +399,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::mqtts
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(con_ioc_getter().get_executor()),
+                            as::make_strand(con_ioc_getter()),
                             *mqtts_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
@@ -504,7 +493,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             am::protocol::wss
                         >::create(
                             am::protocol_version::undetermined,
-                            as::make_strand(con_ioc_getter().get_executor()),
+                            as::make_strand(con_ioc_getter()),
                             *wss_ctx
                         );
                     epsp->set_bulk_write(vm["bulk_write"].as<bool>());
@@ -588,30 +577,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
                 ASYNC_MQTT_LOG("mqtt_broker", trace) << "timer_ioc.run() finished";
             }
         };
-        std::vector<std::thread> ts;
-        ts.reserve(num_of_iocs * threads_per_ioc);
-        auto fixed_core_map = vm["fixed_core_map"].as<bool>();
-        std::size_t ioc_index = 0;
-        for (auto& con_ioc : con_iocs) {
-            for (std::size_t i = 0; i != threads_per_ioc; ++i) {
-                ts.emplace_back(
-                    [&con_ioc, ioc_index, num_of_cores, fixed_core_map] {
-                        try {
-                            if (fixed_core_map) {
-                                am::map_core_to_this_thread(ioc_index % num_of_cores);
-                            }
-                            con_ioc->run();
-                        }
-                        catch (std::exception const& e) {
-                            ASYNC_MQTT_LOG("mqtt_broker", error)
-                                << "th con exception:" << e.what();
-                        }
-                        ASYNC_MQTT_LOG("mqtt_broker", trace) << "con_ioc->run() finished";
-                    }
-                );
-            }
-            ++ioc_index;
-        }
 
         as::io_context ioc_signal;
         as::signal_set signals{
@@ -660,8 +625,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         th_accept.join();
         ASYNC_MQTT_LOG("mqtt_broker", trace) << "th_accept joined";
 
-        for (auto& g : guard_con_iocs) g.reset();
-        for (auto& t : ts) t.join();
+        for (auto& con_ioc : con_iocs) con_ioc->join();
         ASYNC_MQTT_LOG("mqtt_broker", trace) << "ts joined";
 
         guard_timer_ioc.reset();
@@ -763,11 +727,6 @@ int main(int argc, char *argv[]) {
                 "auth_file",
                 boost::program_options::value<std::string>(),
                 "Authentication file"
-            )
-            (
-                "fixed_core_map",
-                boost::program_options::value<bool>()->default_value(false),
-                "Use the specific CPU core by ioc."
             )
             ;
 
