@@ -87,14 +87,13 @@ using system_error = sys::system_error;
  * @brief general error code
  */
 enum class mqtt_error {
-    partial_error_detected        = 0x01, ///< Some entries have error on suback/unsuback (not an error)
-    all_error_detected            = 0x80, ///< All entries have error on suback/unsuback
-    packet_identifier_fully_used  = 0x81, ///< Packet Identifier fully used
-    packet_identifier_conflict    = 0x82, ///< Packet Identifier conflict
-    packet_not_allowed_to_send    = 0x83, ///< Packet is not allowd to be sent
-    packet_too_large              = 0x84, ///< Packet is too large
-    packet_not_allowed_to_store   = 0x85, ///< Packet is not allowd to be stored
-    packet_not_regulated          = 0x86, ///< Packet is not regulated
+    partial_error_detected                 = 0x0101, ///< Some entries have error on suback/unsuback (not an error)
+    all_error_detected                     = 0x0180, ///< All entries have error on suback/unsuback
+    packet_identifier_fully_used           = 0x0181, ///< Packet Identifier fully used
+    packet_identifier_conflict             = 0x0182, ///< Packet Identifier conflict
+    packet_not_allowed_to_send             = 0x0183, ///< Packet is not allowd to be sent
+    packet_not_allowed_to_store            = 0x0185, ///< Packet is not allowd to be stored
+    packet_not_regulated                   = 0x0186, ///< Packet is not regulated
 };
 
 /**

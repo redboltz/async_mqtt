@@ -25,15 +25,14 @@ namespace async_mqtt {
 constexpr
 char const* mqtt_error_to_string(mqtt_error v) {
     switch (v) {
-    case mqtt_error::partial_error_detected:        return "partial_error_detected";
-    case mqtt_error::all_error_detected:            return "all_error_detected";
-    case mqtt_error::packet_identifier_fully_used:  return "packet_identifier_fully_used";
-    case mqtt_error::packet_identifier_conflict:    return "packet_identifier_conflict";
-    case mqtt_error::packet_not_allowed_to_send:    return "packet_not_allowed_to_send";
-    case mqtt_error::packet_too_large:              return "packet_too_large";
-    case mqtt_error::packet_not_allowed_to_store:   return "packet_not_allowed_to_store";
-    case mqtt_error::packet_not_regulated:          return "packet_not_regulated";
-    default:                                           return "unknown_mqtt_error";
+    case mqtt_error::partial_error_detected:                 return "partial_error_detected";
+    case mqtt_error::all_error_detected:                     return "all_error_detected";
+    case mqtt_error::packet_identifier_fully_used:           return "packet_identifier_fully_used";
+    case mqtt_error::packet_identifier_conflict:             return "packet_identifier_conflict";
+    case mqtt_error::packet_not_allowed_to_send:             return "packet_not_allowed_to_send";
+    case mqtt_error::packet_not_allowed_to_store:            return "packet_not_allowed_to_store";
+    case mqtt_error::packet_not_regulated:                   return "packet_not_regulated";
+    default:                                                 return "unknown_mqtt_error";
     }
 }
 
@@ -324,7 +323,7 @@ public:
     }
 
     bool failed(int v) const noexcept override {
-        return v >= 0x80;
+        return (v & 0x80) != 0;
     }
 };
 
