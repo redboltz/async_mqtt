@@ -42,6 +42,7 @@ var group__endpoint =
       [ "set_auto_ping_response", "classasync__mqtt_1_1basic__endpoint.html#a5e77ec0b180801e25279d35d225a7771", null ],
       [ "set_auto_pub_response", "classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f", null ],
       [ "set_auto_replace_topic_alias_send", "classasync__mqtt_1_1basic__endpoint.html#a70f40da2602fb6b22049aafa815782e0", null ],
+      [ "set_bulk_read_buffer_size", "classasync__mqtt_1_1basic__endpoint.html#acde955d86b34419c08075af7178fad12", null ],
       [ "set_bulk_write", "classasync__mqtt_1_1basic__endpoint.html#a2259505ae9d0272321f9cabd7b6f45e1", null ],
       [ "set_pingreq_send_interval_ms", "classasync__mqtt_1_1basic__endpoint.html#abc343e2fad88dabbcad10c2ece142fdc", null ],
       [ "set_pingresp_recv_timeout_ms", "classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0", null ],

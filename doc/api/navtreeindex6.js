@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"structasync__mqtt_1_1pub_1_1opts.html#ad406db591c5f28508143b9f885b12be1":[0,2,1,9,0,0,26],
 "structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1":[0,2,0,7,0,0,29],
 "structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1":[0,2,1,9,0,0,29],
 "structasync__mqtt_1_1pub_1_1opts.html#aeaaed644f437a45bbc25b74d4b4a87ab":[0,2,0,7,0,0,3],

@@ -40,7 +40,7 @@ struct stream<NextLayer>::stream_write_packet_op {
         case post: {
             auto& a_strm{strm};
             auto& a_packet{*packet};
-            if (!a_strm.bulk_write_ || a_strm.queue_.immediate_executable()) {
+            if (!a_strm.bulk_write_ || a_strm.write_queue_.immediate_executable()) {
                 state = write;
             }
             else {
@@ -48,12 +48,12 @@ struct stream<NextLayer>::stream_write_packet_op {
                 auto cbs = a_packet.const_buffer_sequence();
                 std::copy(cbs.begin(), cbs.end(), std::back_inserter(a_strm.storing_cbs_));
             }
-            a_strm.queue_.post(
+            a_strm.write_queue_.post(
                 force_move(self)
             );
         } break;
         case write: {
-            strm.queue_.start_work();
+            strm.write_queue_.start_work();
             if (strm.lowest_layer().is_open()) {
                 state = complete;
                 auto& a_strm{strm};
@@ -88,7 +88,7 @@ struct stream<NextLayer>::stream_write_packet_op {
             }
         } break;
         case bulk_write: {
-            strm.queue_.start_work();
+            strm.write_queue_.start_work();
             if (strm.lowest_layer().is_open()) {
                 state = complete;
                 auto& a_strm{strm};
@@ -149,12 +149,12 @@ struct stream<NextLayer>::stream_write_packet_op {
         std::size_t bytes_transferred
     ) {
         if (ec) {
-            strm.queue_.stop_work();
+            strm.write_queue_.stop_work();
             auto& a_strm{strm};
             as::post(
                 a_strm.get_executor(),
                 [&a_strm, life_keeper = life_keeper] {
-                    a_strm.queue_.poll_one();
+                    a_strm.write_queue_.poll_one();
                 }
             );
             self.complete(ec, bytes_transferred);
@@ -162,13 +162,13 @@ struct stream<NextLayer>::stream_write_packet_op {
         }
         switch (state) {
         case complete: {
-            strm.queue_.stop_work();
+            strm.write_queue_.stop_work();
             strm.sending_cbs_.clear();
             auto& a_strm{strm};
             as::post(
                 a_strm.get_executor(),
                 [&a_strm, life_keeper = life_keeper] {
-                    a_strm.queue_.poll_one();
+                    a_strm.write_queue_.poll_one();
                 }
             );
             self.complete(ec, size);

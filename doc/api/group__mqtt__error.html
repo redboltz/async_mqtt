@@ -116,15 +116,14 @@ Collaboration diagram for mqtt_error:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:gab680615570fddcfb9aab72ea9e9d2ace" id="r_gab680615570fddcfb9aab72ea9e9d2ace"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gab680615570fddcfb9aab72ea9e9d2ace">async_mqtt::mqtt_error</a> { <br />
-&#160;&#160;<a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584">mqtt_error::partial_error_detected</a> = 0x01
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e">mqtt_error::all_error_detected</a> = 0x80
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2aceaa03dac59fb47f7cd54f99f8bac913737">mqtt_error::packet_identifier_fully_used</a> = 0x81
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73">mqtt_error::packet_identifier_conflict</a> = 0x82
+&#160;&#160;<a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584">mqtt_error::partial_error_detected</a> = 0x0101
+, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e">mqtt_error::all_error_detected</a> = 0x0180
+, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2aceaa03dac59fb47f7cd54f99f8bac913737">mqtt_error::packet_identifier_fully_used</a> = 0x0181
+, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73">mqtt_error::packet_identifier_conflict</a> = 0x0182
 , <br />
-&#160;&#160;<a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e">mqtt_error::packet_not_allowed_to_send</a> = 0x83
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2aceab0ea4571270a5faae9e13edf8b2a4859">mqtt_error::packet_too_large</a> = 0x84
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f">mqtt_error::packet_not_allowed_to_store</a> = 0x85
-, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea782ea07bb660f81366046a7d883e7a10">mqtt_error::packet_not_regulated</a> = 0x86
+&#160;&#160;<a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e">mqtt_error::packet_not_allowed_to_send</a> = 0x0183
+, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f">mqtt_error::packet_not_allowed_to_store</a> = 0x0185
+, <a class="el" href="#ggab680615570fddcfb9aab72ea9e9d2acea782ea07bb660f81366046a7d883e7a10">mqtt_error::packet_not_regulated</a> = 0x0186
 <br />
  }</td></tr>
 <tr class="memdesc:gab680615570fddcfb9aab72ea9e9d2ace"><td class="mdescLeft">&#160;</td><td class="mdescRight">general error code  <a href="#gab680615570fddcfb9aab72ea9e9d2ace">More...</a><br /></td></tr>
@@ -178,8 +177,6 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73" name="ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73"></a>packet_identifier_conflict&#160;</td><td class="fielddoc"><p>Packet Identifier conflict. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e" name="ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e"></a>packet_not_allowed_to_send&#160;</td><td class="fielddoc"><p>Packet is not allowd to be sent. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggab680615570fddcfb9aab72ea9e9d2aceab0ea4571270a5faae9e13edf8b2a4859" name="ggab680615570fddcfb9aab72ea9e9d2aceab0ea4571270a5faae9e13edf8b2a4859"></a>packet_too_large&#160;</td><td class="fielddoc"><p>Packet is too large. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f" name="ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f"></a>packet_not_allowed_to_store&#160;</td><td class="fielddoc"><p>Packet is not allowd to be stored. </p>
 </td></tr>
