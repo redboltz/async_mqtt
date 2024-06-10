@@ -27,8 +27,8 @@ struct mqtt_handshake_op {
     {}
 
     as::basic_stream_socket<Socket, Executor>& layer;
-    std::string_view host;
-    std::string_view port;
+    std::string host;
+    std::string port;
     enum { dispatch, resolve, connect, complete } state = dispatch;
 
     template <typename Self>
@@ -47,9 +47,11 @@ struct mqtt_handshake_op {
             BOOST_ASSERT(state == resolve);
             state = connect;
             auto res = std::make_shared<as::ip::tcp::resolver>(layer.get_executor());
+            auto a_host{host};
+            auto a_port{port};
             res->async_resolve(
-                host,
-                port,
+                a_host,
+                a_port,
                 as::consign(
                     force_move(self),
                     res
