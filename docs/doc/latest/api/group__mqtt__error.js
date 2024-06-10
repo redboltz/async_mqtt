@@ -6,7 +6,6 @@ var group__mqtt__error =
       [ "async_mqtt::mqtt_error::packet_identifier_fully_used", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2aceaa03dac59fb47f7cd54f99f8bac913737", null ],
       [ "async_mqtt::mqtt_error::packet_identifier_conflict", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73", null ],
       [ "async_mqtt::mqtt_error::packet_not_allowed_to_send", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2aceab9946627146da7a2978d83ef72ec517e", null ],
-      [ "async_mqtt::mqtt_error::packet_too_large", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2aceab0ea4571270a5faae9e13edf8b2a4859", null ],
       [ "async_mqtt::mqtt_error::packet_not_allowed_to_store", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f", null ],
       [ "async_mqtt::mqtt_error::packet_not_regulated", "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea782ea07bb660f81366046a7d883e7a10", null ]
     ] ],

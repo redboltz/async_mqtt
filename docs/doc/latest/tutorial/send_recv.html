@@ -155,9 +155,6 @@ pre.rouge .ss {
 <div class="paragraph">
 <p>The <code>async_recv()</code> function is more flexible than handler registering APIs. Additionally, it works well with the <a href="https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html">Completion Token</a> model.</p>
 </div>
-<div class="paragraph">
-<p>You cannot call the <code>async_recv()</code> function continuously. You can call the next <code>async_recv()</code> function only after the previous <code>async_recv()</code> function&#8217;s <code>CompletionToken</code> is invoked or within the completion handler.</p>
-</div>
 <div class="sect2">
 <h3 id="_packet_variant"><a href="../api/group__packet__variant.html">packet_variant</a></h3>
 <div class="paragraph">

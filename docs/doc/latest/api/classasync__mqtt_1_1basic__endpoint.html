@@ -199,6 +199,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a2259505ae9d0272321f9cabd7b6f45e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one. <br  />
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:a2259505ae9d0272321f9cabd7b6f45e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acde955d86b34419c08075af7178fad12" id="r_acde955d86b34419c08075af7178fad12"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acde955d86b34419c08075af7178fad12">set_bulk_read_buffer_size</a> (std::size_t val)</td></tr>
+<tr class="memdesc:acde955d86b34419c08075af7178fad12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the bulk read buffer size. If bulk read is enabled, the <code>val</code> parameter specifies the size of the internal <code>async_read_some()</code> buffer. Enabling bulk read can improve throughput but may increase latency. Disabling bulk read can reduce latency but may lower throughput. By default, bulk read is disabled.  <br /></td></tr>
+<tr class="separator:acde955d86b34419c08075af7178fad12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7274b1d7f83634fd64fe616de1ff3e7f" id="r_a7274b1d7f83634fd64fe616de1ff3e7f"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a7274b1d7f83634fd64fe616de1ff3e7f"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7274b1d7f83634fd64fe616de1ff3e7f">async_acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a7274b1d7f83634fd64fe616de1ff3e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
@@ -221,15 +224,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a40082e1947ebe5f8c008f0696d18d6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ab51bf538fefaad7792f90813d33fc2" id="r_a5ab51bf538fefaad7792f90813d33fc2"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a5ab51bf538fefaad7792f90813d33fc2"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5ab51bf538fefaad7792f90813d33fc2">async_recv</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
-<tr class="memdesc:a5ab51bf538fefaad7792f90813d33fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked  <br /></td></tr>
+<tr class="memdesc:a5ab51bf538fefaad7792f90813d33fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet  <br /></td></tr>
 <tr class="separator:a5ab51bf538fefaad7792f90813d33fc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80e53802d53dfadcb483db978b9c14f8" id="r_a80e53802d53dfadcb483db978b9c14f8"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a80e53802d53dfadcb483db978b9c14f8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a80e53802d53dfadcb483db978b9c14f8">async_recv</a> (std::set&lt; <a class="el" href="group__packet.html#gad751afab4b1771811a82fcc3f34938b4">control_packet_type</a> &gt; types, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
-<tr class="memdesc:a80e53802d53dfadcb483db978b9c14f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked.  <br /></td></tr>
+<tr class="memdesc:a80e53802d53dfadcb483db978b9c14f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked.  <br /></td></tr>
 <tr class="separator:a80e53802d53dfadcb483db978b9c14f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14c2661e94a1f7f06832fe0d3604ba66" id="r_a14c2661e94a1f7f06832fe0d3604ba66"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a14c2661e94a1f7f06832fe0d3604ba66"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a14c2661e94a1f7f06832fe0d3604ba66">async_recv</a> (<a class="el" href="group__endpoint.html#gaed6ebca93cac28c67f2b4fb8641e775a">filter</a> fil, std::set&lt; <a class="el" href="group__packet.html#gad751afab4b1771811a82fcc3f34938b4">control_packet_type</a> &gt; types, CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
-<tr class="memdesc:a14c2661e94a1f7f06832fe0d3604ba66"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked.  <br /></td></tr>
+<tr class="memdesc:a14c2661e94a1f7f06832fe0d3604ba66"><td class="mdescLeft">&#160;</td><td class="mdescRight">receive packet if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked.  <br /></td></tr>
 <tr class="separator:a14c2661e94a1f7f06832fe0d3604ba66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75c200119c5728f566057bb43b96a952" id="r_a75c200119c5728f566057bb43b96a952"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a75c200119c5728f566057bb43b96a952"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a75c200119c5728f566057bb43b96a952">async_close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a631e1e2d54cfc10767b1d8c29639441d">executor_type</a> &gt;{})</td></tr>
@@ -531,7 +534,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
       </table>
 </div><div class="memdoc">
 
-<p>receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked </p>
+<p>receive packet </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">token</td><td><ul>
@@ -582,7 +585,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
       </table>
 </div><div class="memdoc">
 
-<p>receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked. </p>
+<p>receive packet if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">fil</td><td>if <code>match</code> then matched types are targets. if <code>except</code> then not matched types are targets. </td></tr>
@@ -630,7 +633,7 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
       </table>
 </div><div class="memdoc">
 
-<p>receive packet users CANNOT call recv() before the previous recv()'s CompletionToken is invoked if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked. </p>
+<p>receive packet if packet is not filterd, then next recv() starts automatically. if receive error happenes, then token would be invoked. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">types</td><td>target control_packet_types </td></tr>
@@ -1478,6 +1481,41 @@ template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">val</td><td>if true, enable auto replacing, otherwise disable. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acde955d86b34419c08075af7178fad12" name="acde955d86b34419c08075af7178fad12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acde955d86b34419c08075af7178fad12">&#9670;&#160;</a></span>set_bulk_read_buffer_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a">role</a> Role, std::size_t PacketIdBytes, typename NextLayer &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a>&lt; Role, PacketIdBytes, NextLayer &gt;::set_bulk_read_buffer_size </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the bulk read buffer size. If bulk read is enabled, the <code>val</code> parameter specifies the size of the internal <code>async_read_some()</code> buffer. Enabling bulk read can improve throughput but may increase latency. Disabling bulk read can reduce latency but may lower throughput. By default, bulk read is disabled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size. </td></tr>
   </table>
   </dd>
 </dl>
