@@ -185,8 +185,8 @@ client<Version, NextLayer>::set_bulk_write(bool val) {
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
-    ep_->set_read_buffer_size(val);
+client<Version, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
+    ep_->set_bulk_read_buffer_size(val);
 }
 
 } // namespace async_mqtt

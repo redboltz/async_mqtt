@@ -269,17 +269,14 @@ struct cpp20coro_basic_stub_socket {
                 BOOST_ASSERT(socket.packet_it_opt_);
                 auto packet_it = *socket.packet_it_opt_;
                 auto end = socket.epk_opt_->packet.end();
-                BOOST_ASSERT(
-                    static_cast<std::size_t>(std::distance(packet_it, end))
-                    >=
-                    mb.size()
-                );
+                auto rest_size = static_cast<std::size_t>(std::distance(packet_it, end));
+                auto copy_size = std::min(rest_size, mb.size());
                 std::copy_n(
                     packet_it,
-                    mb.size(),
+                    copy_size,
                     static_cast<char*>(mb.data())
                 );
-                std::advance(packet_it, static_cast<std::ptrdiff_t>(mb.size()));
+                std::advance(packet_it, static_cast<std::ptrdiff_t>(copy_size));
                 if (packet_it == end) {
                     // all conttents have read
                     socket.packet_it_opt_.reset();
@@ -288,7 +285,7 @@ struct cpp20coro_basic_stub_socket {
                 else {
                     socket.packet_it_opt_.emplace(packet_it);
                 }
-                self.complete(errc::make_error_code(errc::success), mb.size());
+                self.complete(errc::make_error_code(errc::success), copy_size);
             }
         }
 
@@ -318,7 +315,7 @@ private:
     std::optional<error_packet> epk_opt_;
     std::optional<std::string::iterator> packet_it_opt_;
     bool open_ = true;
-    channel_t ch_recv_{exe_, 1};
+    channel_t ch_recv_{exe_, 1024};
     channel_t ch_send_{exe_, 1};
     error_code send_ec_;
 };

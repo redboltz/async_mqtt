@@ -124,8 +124,8 @@ public:
         >;
     };
 
-    void set_read_buffer_size(std::size_t size) {
-        read_buffer_size_ = size;
+    void set_bulk_read_buffer_size(std::size_t size) {
+        bulk_read_buffer_size_ = size;
     }
 
 private:
@@ -204,7 +204,7 @@ private:
     as::streambuf read_buf_;
     std::size_t remaining_length_ = 0;
     std::size_t multiplier_ = 1;
-    std::size_t read_buffer_size_ = 4096;
+    std::size_t bulk_read_buffer_size_ = 0;
     enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
     ioc_queue write_queue_;
     std::deque<error_packet> read_packets_;

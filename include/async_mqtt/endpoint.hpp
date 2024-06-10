@@ -257,12 +257,17 @@ public:
     }
 
     /**
-     * @brief Set read buffer size.
-     * Set buffer size of internal async_read_some().
-     * @param val buffer size
+     * @brief Set the bulk read buffer size.
+     * If bulk read is enabled, the `val` parameter specifies the size of the internal
+     * `async_read_some()` buffer.
+     * Enabling bulk read can improve throughput but may increase latency.
+     * Disabling bulk read can reduce latency but may lower throughput.
+     * By default, bulk read is disabled.
+     *
+     * @param val If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size.
      */
-    void set_read_buffer_size(std::size_t val) {
-        stream_->set_read_buffer_size(val);
+    void set_bulk_read_buffer_size(std::size_t val) {
+        stream_->set_bulk_read_buffer_size(val);
     }
 
 
@@ -417,7 +422,6 @@ public:
 
     /**
      * @brief receive packet
-     *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      * @param token
      * - CompletionToken
      *    - Signature: void(error_code, packet_variant_type)
@@ -446,7 +450,6 @@ public:
 
     /**
      * @brief receive packet
-     *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
      * @param types target control_packet_types
@@ -479,7 +482,6 @@ public:
 
     /**
      * @brief receive packet
-     *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
      *        if packet is not filterd, then next recv() starts automatically.
      *        if receive error happenes, then token would be invoked.
      * @param fil  if `match` then matched types are targets. if `except` then not matched types are targets.
@@ -868,7 +870,6 @@ private:
 
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_handled_;
 
-    bool recv_processing_ = false;
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_processing_;
 
     struct tim_cancelled;

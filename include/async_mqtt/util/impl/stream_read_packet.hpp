@@ -26,7 +26,7 @@ struct stream<NextLayer>::stream_read_packet_op {
     std::size_t rl_expected = 2;
     std::shared_ptr<char[]> spca = nullptr;
     stream_type_sp life_keeper = strm.shared_from_this();
-    enum { dispatch, post, complete } state = dispatch;
+    enum { dispatch, post, work, remaining_length, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
@@ -42,18 +42,45 @@ struct stream<NextLayer>::stream_read_packet_op {
             );
         } break;
         case post: {
-            state = complete;
+            state = work;
             auto& a_strm{strm};
             a_strm.read_queue_.post(
                 force_move(self)
             );
         } break;
-        case complete: {
+        case work: {
             strm.read_queue_.start_work();
             auto& a_strm{strm};
-            a_strm.async_read_some(
-                force_move(self)
-            );
+            if (a_strm.bulk_read_buffer_size_ == 0) {
+                // start non bulk read
+                state = remaining_length;
+                // read fixed_header + first remaining_length
+                strm.header_remaining_length_buf_.resize(5);
+                auto address = &strm.header_remaining_length_buf_[received];
+                auto& a_strm{strm};
+                if constexpr (
+                    has_async_read<next_layer_type>::value) {
+                        layer_customize<next_layer_type>::async_read(
+                            a_strm.nl_,
+                            as::buffer(address, 2),
+                            force_move(self)
+                        );
+                    }
+                else {
+                    async_read(
+                        a_strm.nl_,
+                        as::buffer(address, 2),
+                        as::transfer_all(),
+                        force_move(self)
+                    );
+                }
+            }
+            else {
+                // start bulk read
+                a_strm.async_read_some(
+                    force_move(self)
+                );
+            }
         } break;
         default:
             BOOST_ASSERT(false);
@@ -61,24 +88,7 @@ struct stream<NextLayer>::stream_read_packet_op {
         }
     }
 
-    template <typename Self>
-    void operator()(
-        Self& self,
-        error_code const& ec,
-        buffer packet
-    ) {
-        strm.read_queue_.stop_work();
-        auto& a_strm{strm};
-        as::post(
-            a_strm.get_executor(),
-            [&a_strm, life_keeper = life_keeper] {
-                a_strm.read_queue_.poll_one();
-            }
-        );
-        self.complete(ec, force_move(packet));
-    }
-
-#if 0
+    // for non bulk read
     template <typename Self>
     void operator()(
         Self& self,
@@ -88,6 +98,7 @@ struct stream<NextLayer>::stream_read_packet_op {
         (void)bytes_transferred; // Ignore unused argument in release build
 
         if (ec) {
+            next();
             self.complete(ec, buffer{});
             return;
         }
@@ -100,6 +111,7 @@ struct stream<NextLayer>::stream_read_packet_op {
             if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
                 // remaining_length continues
                 if (received == 5) {
+                    next();
                     ASYNC_MQTT_LOG("mqtt_impl", warning)
                         << ASYNC_MQTT_ADD_VALUE(address, this)
                         << "out of size remaining length";
@@ -151,6 +163,7 @@ struct stream<NextLayer>::stream_read_packet_op {
                 );
 
                 if (rl == 0) {
+                    next();
                     auto ptr = spca.get();
                     self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spca)});
                     return;
@@ -179,6 +192,7 @@ struct stream<NextLayer>::stream_read_packet_op {
             }
             break;
         case complete: {
+            next();
             auto ptr = spca.get();
             self.complete(ec, buffer{ptr, ptr + received + rl, force_move(spca)});
         } break;
@@ -187,8 +201,28 @@ struct stream<NextLayer>::stream_read_packet_op {
             break;
         }
     }
-#endif
 
+    // finish bulk read
+    template <typename Self>
+    void operator()(
+        Self& self,
+        error_code const& ec,
+        buffer packet
+    ) {
+        next();
+        self.complete(ec, force_move(packet));
+    }
+
+    void next() {
+        strm.read_queue_.stop_work();
+        auto& a_strm{strm};
+        as::post(
+            a_strm.get_executor(),
+            [&a_strm, life_keeper = life_keeper] {
+                a_strm.read_queue_.poll_one();
+            }
+        );
+    }
 };
 
 template <typename NextLayer>
@@ -239,10 +273,20 @@ struct stream<NextLayer>::stream_read_some_op {
     ) {
         if (strm.read_packets_.empty()) {
             auto& a_strm{strm};
-            a_strm.nl_.async_read_some(
-                a_strm.read_buf_.prepare(a_strm.read_buffer_size_),
-                force_move(self)
-            );
+            if constexpr (
+                has_async_read_some<next_layer_type>::value) {
+                    layer_customize<next_layer_type>::async_read_some(
+                        a_strm.nl_,
+                        a_strm.read_buf_.prepare(a_strm.bulk_read_buffer_size_),
+                        force_move(self)
+                    );
+            }
+            else {
+                a_strm.nl_.async_read_some(
+                    a_strm.read_buf_.prepare(a_strm.bulk_read_buffer_size_),
+                    force_move(self)
+                );
+            }
         }
         else {
             auto [ec, packet] = force_move(strm.read_packets_.front());
@@ -318,15 +362,15 @@ stream<NextLayer>::parse_packet(Self& self) {
                 is.read(&encoded_byte, 1);
                 header_remaining_length_buf_.push_back(encoded_byte);
                 remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
-                if (multiplier_ > 128 * 128 * 128) {
-                    read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
-                    init_read();
-                    return;
-                }
                 multiplier_ *= 128;
                 if ((encoded_byte & 0b1000'0000) == 0) {
                     read_state_ = read_state::payload;
                     break;
+                }
+                if (multiplier_ == 128 * 128 * 128 * 128) {
+                    read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
+                    init_read();
+                    return;
                 }
             }
             if (read_state_ != read_state::payload) {

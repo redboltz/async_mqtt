@@ -435,6 +435,36 @@ BOOST_AUTO_TEST_CASE(remaining_length_error) {
     ioc.run();
 }
 
+BOOST_AUTO_TEST_CASE(remaining_length_error_bulk) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::server, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_bulk_read_buffer_size(4096);
+            // test scenario
+            {
+                co_await ep->next_layer().emulate_recv(
+                    "\xe0\x80\x80\x80\x80\x00"sv, // invalid remaining length
+                    as::as_tuple(as::deferred)
+                );
+                auto [ec, _] = co_await ep->async_recv(as::as_tuple(as::deferred));
+                BOOST_TEST(ec == am::disconnect_reason_code::packet_too_large);
+            }
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
 // async_send completion error
 
 BOOST_AUTO_TEST_CASE(sub_send_error_v5) {
@@ -1688,6 +1718,323 @@ BOOST_AUTO_TEST_CASE(pubrec_as_error_v5) {
     ioc.run();
 }
 
+// continuous recv
 
+BOOST_AUTO_TEST_CASE(publish_cont_recv_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_start
+                    0, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                auto publish1 =
+                    am::v5::publish_packet{
+                        "topic1",
+                        "payload1",
+                        am::qos::at_most_once
+                    };
+                auto publish2 =
+                    am::v5::publish_packet{
+                        "topic2",
+                        "payload2",
+                        am::qos::at_most_once
+                    };
+                auto publish3 =
+                    am::v5::publish_packet{
+                        "topic3",
+                        "payload3",
+                        am::qos::at_most_once
+                    };
+                auto publish4 =
+                    am::v5::publish_packet{
+                        "topic4",
+                        "payload4",
+                        am::qos::at_most_once
+                    };
+                auto publish5 =
+                    am::v5::publish_packet{
+                        "topic5",
+                        "payload5",
+                        am::qos::at_most_once
+                    };
+                co_await ep->next_layer().emulate_recv(publish1, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish2, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish3, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish4, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish5, as::as_tuple(as::deferred));
+                auto [ec1, pv1, t2, t3, t4, t5] = co_await (
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable))
+                );
+                BOOST_TEST(ec1 == am::error_code{});
+                BOOST_TEST(pv1 == publish1);
+                auto [ec2, pv2] = t2;
+                BOOST_TEST(ec2 == am::error_code{});
+                BOOST_TEST(pv2 == publish2);
+                auto [ec3, pv3] = t3;
+                BOOST_TEST(ec3 == am::error_code{});
+                BOOST_TEST(pv3 == publish3);
+                auto [ec4, pv4] = t4;
+                BOOST_TEST(ec4 == am::error_code{});
+                BOOST_TEST(pv4 == publish4);
+                auto [ec5, pv5] = t5;
+                BOOST_TEST(ec5 == am::error_code{});
+                BOOST_TEST(pv5 == publish5);
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(publish_cont_bulk_recv_v5) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_bulk_read_buffer_size(4096);
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_start
+                    0, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                auto publish1 =
+                    am::v5::publish_packet{
+                        "topic1",
+                        "payload1",
+                        am::qos::at_most_once
+                    };
+                auto publish2 =
+                    am::v5::publish_packet{
+                        "topic2",
+                        "payload2",
+                        am::qos::at_most_once
+                    };
+                auto publish3 =
+                    am::v5::publish_packet{
+                        "topic3",
+                        "payload3",
+                        am::qos::at_most_once
+                    };
+                auto publish4 =
+                    am::v5::publish_packet{
+                        "topic4",
+                        "payload4",
+                        am::qos::at_most_once
+                    };
+                auto publish5 =
+                    am::v5::publish_packet{
+                        "topic5",
+                        "payload5",
+                        am::qos::at_most_once
+                    };
+                co_await ep->next_layer().emulate_recv(publish1, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish2, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish3, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish4, as::as_tuple(as::deferred));
+                co_await ep->next_layer().emulate_recv(publish5, as::as_tuple(as::deferred));
+                auto [ec1, pv1, t2, t3, t4, t5] = co_await (
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->async_recv(as::as_tuple(as::use_awaitable))
+                );
+                BOOST_TEST(ec1 == am::error_code{});
+                BOOST_TEST(pv1 == publish1);
+                auto [ec2, pv2] = t2;
+                BOOST_TEST(ec2 == am::error_code{});
+                BOOST_TEST(pv2 == publish2);
+                auto [ec3, pv3] = t3;
+                BOOST_TEST(ec3 == am::error_code{});
+                BOOST_TEST(pv3 == publish3);
+                auto [ec4, pv4] = t4;
+                BOOST_TEST(ec4 == am::error_code{});
+                BOOST_TEST(pv4 == publish4);
+                auto [ec5, pv5] = t5;
+                BOOST_TEST(ec5 == am::error_code{});
+                BOOST_TEST(pv5 == publish5);
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(bulk_recv_chunked) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_bulk_read_buffer_size(4096);
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_start
+                    0, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                co_await ep->next_layer().emulate_recv(
+                    "\xe0\x80"sv, // invalid remaining length
+                    as::as_tuple(as::deferred)
+                );
+                co_await ep->next_layer().emulate_recv(
+                    am::errc::make_error_code(am::errc::connection_reset),
+                    as::as_tuple(as::deferred)
+                );
+                auto [ec, _] = co_await ep->async_recv(as::as_tuple(as::deferred));
+                BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(bulk_recv_chunked_halfway_payload) {
+    auto version = am::protocol_version::v5;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_bulk_read_buffer_size(4096);
+            // prepare connect
+            {
+                auto connect = am::v5::connect_packet{
+                    true,   // clean_start
+                    0, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                co_await ep->next_layer().emulate_recv(
+                    "\xe0\x02\x00"sv, // disconnect incomplete
+                    as::as_tuple(as::deferred)
+                );
+                auto [ec, pv, _] = co_await (
+                    ep->async_recv(as::as_tuple(as::use_awaitable)) &&
+                    ep->next_layer().emulate_recv(
+                        "\x00"sv, // disconnect complete (property_length)
+                        as::as_tuple(as::use_awaitable)
+                    )
+                );
+                BOOST_TEST(ec == am::error_code{});
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
 
 BOOST_AUTO_TEST_SUITE_END()

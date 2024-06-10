@@ -132,6 +132,25 @@ struct has_async_read<
     >
 > : std::true_type {};
 
+// async_read_some
+
+template <typename Layer, typename = void>
+struct has_async_read_some : std::false_type {};
+
+template <typename Layer>
+struct has_async_read_some<
+    Layer,
+    std::void_t<
+        decltype(
+            layer_customize<Layer>::async_read_some(
+                std::declval<Layer&>(),
+                std::declval<as::mutable_buffer const&>(),
+                std::declval<as::any_completion_handler<void(error_code const&, std::size_t)>>()
+            )
+        )
+    >
+> : std::true_type {};
+
 // async_write
 
 template <typename Layer, typename = void>

@@ -34,7 +34,6 @@ recv_op {
             ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "recv error:" << ec.message();
-            ep.recv_processing_ = false;
             if (ec == as::error::operation_aborted) {
                 // on cancel, not close the connection
                 self.complete(
@@ -587,7 +586,6 @@ recv_op {
                 );
             }
             ep.reset_pingreq_recv_timer();
-            ep.recv_processing_ = false;
 
             auto try_to_comp =
                 [&] {
@@ -633,7 +631,6 @@ recv_op {
         } break;
         case close: {
             BOOST_ASSERT(decided_error);
-            ep.recv_processing_ = false;
             ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &ep)
                 << "recv code triggers close:" << decided_error->message();
@@ -670,8 +667,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
-    BOOST_ASSERT(!recv_processing_);
-    recv_processing_ = true;
     return
         as::async_compose<
             CompletionToken,
@@ -698,8 +693,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
-    BOOST_ASSERT(!recv_processing_);
-    recv_processing_ = true;
     return
         as::async_compose<
             CompletionToken,
@@ -729,8 +722,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
-    BOOST_ASSERT(!recv_processing_);
-    recv_processing_ = true;
     return
         as::async_compose<
             CompletionToken,
