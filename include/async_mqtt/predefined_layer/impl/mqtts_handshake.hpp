@@ -24,8 +24,8 @@ struct mqtts_handshake_op {
     {}
 
     as::ssl::stream<NextLayer>& layer;
-    std::string_view host;
-    std::string_view port;
+    std::string host;
+    std::string port;
     enum { dispatch, under, handshake, complete } state = dispatch;
 
     template <typename Self>
@@ -44,10 +44,12 @@ struct mqtts_handshake_op {
             BOOST_ASSERT(state == under);
             state = handshake;
             auto& a_layer{layer};
+            auto a_host{host};
+            auto a_port{port};
             async_underlying_handshake(
                 a_layer.next_layer(),
-                host,
-                port,
+                a_host,
+                a_port,
                 force_move(self)
             );
         }
