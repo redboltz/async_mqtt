@@ -16,8 +16,6 @@ You need to call the {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a5ab5
 
 The `async_recv()` function is more flexible than handler registering APIs. Additionally, it works well with the link:https://www.boost.org/doc/html/boost_asio/overview/model/completion_tokens.html[Completion Token] model.
 
-You cannot call the `async_recv()` function continuously. You can call the next `async_recv()` function only after the previous `async_recv()` function's `CompletionToken` is invoked or within the completion handler.
-
 === {api-base}/++group__packet__variant.html++[packet_variant]
 
 async_recv()'s CompletionToken parameters are error_code and  {api-base}/++classasync__mqtt_1_1basic__packet__variant.html++[packet_variant].
