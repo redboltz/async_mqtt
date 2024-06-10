@@ -6,10 +6,11 @@
 * client::async_recv() CompletionHandler signature is updated to `void(error_code, packet_variant)`. #281.
 ** `packet_variant` has one of `std::monostate`, `[v3_1_1|v5]::publish_packet`, `[v3_1_1|v5]::disconnect_packet`, or `v5::auth_packet`.
 * Renamed the typename from `pubres_t`  to `pubres_type` for consistency. #280
-* Re-designed error_code handling respect to Boost.Asio way. #266, #270, 271, #272, #273
+* Re-designed error_code handling respect to Boost.Asio way. #266, #270, 271, #272, #273, #299
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
 === other updates
+* Added bulk read functionality. #300
 * Refined CI. #295
 * Fixed async_acquire_unique_packet_id_wait_until() cancel support. #292
 * Refined packet reading. Fixed Header and the first byte of Remaining Length are read all at once. #291
@@ -23,7 +24,7 @@
 ** To enable separate compilation mode, define ASYNC_MQTT_SEPARATE_COMPILATION
 * Added bind_cancellation_slot test #268
 * Supported PINGREQ overriding by ServerKeepAlive. #271
-* Refined tests. #269, #274, #275, #287, #288, #289, #290, #296
+* Refined tests. #269, #274, #275, #287, #288, #289, #290, #296, #297
 * Refined documents. #276, #292
 * Refined tools (bench) #278
 * Added endpoint getter to client. #279

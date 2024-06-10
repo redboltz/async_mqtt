@@ -230,6 +230,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aa56df38927dcfa249981a336cd14c649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one. <br  />
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:aa56df38927dcfa249981a336cd14c649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aece04b491b26e3484ce5125748b86adf" id="r_aece04b491b26e3484ce5125748b86adf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aece04b491b26e3484ce5125748b86adf">set_bulk_read_buffer_size</a> (std::size_t val)</td></tr>
+<tr class="memdesc:aece04b491b26e3484ce5125748b86adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the bulk read buffer size. If bulk read is enabled, the <code>val</code> parameter specifies the size of the internal <code>async_read_some()</code> buffer. Enabling bulk read can improve throughput but may increase latency. Disabling bulk read can reduce latency but may lower throughput. By default, bulk read is disabled.  <br /></td></tr>
+<tr class="separator:aece04b491b26e3484ce5125748b86adf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae866b887888316e02f14487ec2892a23" id="r_ae866b887888316e02f14487ec2892a23"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:ae866b887888316e02f14487ec2892a23"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a93814f9dcc11fb4295897ac5317c276d">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:ae866b887888316e02f14487ec2892a23"><td class="mdescLeft">&#160;</td><td class="mdescRight">acuire unique packet_id.  <br /></td></tr>
@@ -1467,6 +1470,33 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">val</td><td>if true, enable auto replacing, otherwise disable. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aece04b491b26e3484ce5125748b86adf" name="aece04b491b26e3484ce5125748b86adf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aece04b491b26e3484ce5125748b86adf">&#9670;&#160;</a></span>set_bulk_read_buffer_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::set_bulk_read_buffer_size </td>
+          <td>(</td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the bulk read buffer size. If bulk read is enabled, the <code>val</code> parameter specifies the size of the internal <code>async_read_some()</code> buffer. Enabling bulk read can improve throughput but may increase latency. Disabling bulk read can reduce latency but may lower throughput. By default, bulk read is disabled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">val</td><td>If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size. </td></tr>
   </table>
   </dd>
 </dl>
