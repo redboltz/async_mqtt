@@ -24,3 +24,10 @@ The communication constraints in MQTT can vary depending on the broker. For inst
 In `async_mqtt`, if there are messages that cannot be retransmitted due to changes in broker conditions during reconnection, the messages will not be retransmitted, and an error will be notified to the user.
 
 When you detect a disconnection using `async_mqtt`, you can simply call `async_underlying_handshake()`, wait for the result, and then send a `CONNECT` packet. Check the received `CONNACK` packet. Resending messages are automatically done after receiving the `CONNACK` packet. To avoid rapid repeated reconnections, it is a good convention to wait several seconds before calling `async_underlying_handshake()`.
+
+Here are examples for reconnection:
+
+* C++20 coroutine based
+** xref:{am-base-path}/example/cl_cpp20coro_mqtt_sub.cpp[cl_cpp20coro_mqtt_sub.cpp]
+* C++17 callback based
+** xref:{am-base-path}/example/cl_cpp17_mqtt_sub.cpp[cl_cpp17_mqtt_sub.cpp]
