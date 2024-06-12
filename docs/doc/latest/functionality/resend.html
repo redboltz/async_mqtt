@@ -86,6 +86,33 @@ In <code>async_mqtt</code>, if there are messages that cannot be retransmitted d
 <div class="paragraph">
 <p>When you detect a disconnection using <code>async_mqtt</code>, you can simply call <code>async_underlying_handshake()</code>, wait for the result, and then send a <code>CONNECT</code> packet. Check the received <code>CONNACK</code> packet. Resending messages are automatically done after receiving the <code>CONNACK</code> packet. To avoid rapid repeated reconnections, it is a good convention to wait several seconds before calling <code>async_underlying_handshake()</code>.</p>
 </div>
+<div class="paragraph">
+<p>Here are examples for reconnection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>C++20 coroutine based</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../example/cl_cpp20coro_mqtt_sub.cpp">cl_cpp20coro_mqtt_sub.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>C++17 callback based</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../example/cl_cpp17_mqtt_sub.cpp">cl_cpp17_mqtt_sub.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
