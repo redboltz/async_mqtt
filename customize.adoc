@@ -25,15 +25,19 @@ If you need some custom processes for `your_own_stream` at least one of the foll
 * initialize is called from the bottom layer to the top layer synchronously.
 * initialize is called when the endpoint is created.
 
-==== 2. async_read
-* Call Boost.Asio's `async_read()` with `your_own_stream` by default.
+==== 2. async_read_some
+* Call `your_own_stream.async_read_some()` by default.
+** See https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html
+
+==== 3. async_read
+* Call Boost.Asio's `async_read()` with `your_own_stream` by default. Boost.Asio's `async_read()` calls `your_own_stream.async_read_some()` internally.
 ** See https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html
 
-==== 3. async_write
+==== 4. async_write
 * Call Boost.Asio's `async_write()` with `your_own_stream` by default.
 ** See https://www.boost.org/doc/html/boost_asio/reference/async_write/overload1.html
 
-==== 4. async_close
+==== 5. async_close
 * Do nothing by default.
 * async_close is called from the top layer to the bottom layer asynchronously.
 * initialize is called when the endpoint is created.
@@ -52,6 +56,29 @@ struct layer_customize<your_own_stream<NextLayer>> {
     // define if you want to customize initialize process
     static void initialize(your_own_stream<NextLayer>& stream) {
         // Special initialization for your_own_stream
+    }
+
+    // define if you want to customize async_read_some process
+    template <
+        typename MutableBufferSequence,
+        typename CompletionToken
+    >
+    static auto
+    async_read_some(
+        your_own_stream<NextLayer>& stream,
+        MutableBufferSequence const& mbs,
+        CompletionToken&& token
+    ) {
+        return as::async_compose<
+            CompletionToken,
+            void(error_code const& ec, std::size_t size)
+        > (
+            async_read_some_impl<MutableBufferSequence>{
+                stream,
+                mbs
+            },
+            token
+        );
     }
 
     // define if you want to customize async_read process
