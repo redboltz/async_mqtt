@@ -12,8 +12,11 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/experimental/awaitable_operators.hpp>
+
+#if !defined(_MSC_VER)
 #include <boost/asio/experimental/promise.hpp>
 #include <boost/asio/experimental/use_promise.hpp>
+#endif // !defined(_MSC_VER)
 
 #include <async_mqtt/client.hpp>
 
@@ -2433,6 +2436,8 @@ BOOST_AUTO_TEST_CASE(v5_auth_error) {
     ioc.run();
 }
 
+#if !defined(_MSC_VER)
+
 BOOST_AUTO_TEST_CASE(v311_start_success_promise) {
     static constexpr am::protocol_version version = am::protocol_version::v3_1_1;
     as::io_context ioc;
@@ -2474,6 +2479,8 @@ BOOST_AUTO_TEST_CASE(v311_start_success_promise) {
     );
     ioc.run();
 }
+
+#endif // !defined(_MSC_VER)
 
 BOOST_AUTO_TEST_CASE(v311_start_success_deferred) {
     static constexpr am::protocol_version version = am::protocol_version::v3_1_1;
