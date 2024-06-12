@@ -8,9 +8,12 @@
 #include "../common/global_fixture.hpp"
 
 #include <thread>
+#include <tuple>
 
 #include <boost/asio.hpp>
 #include <boost/asio/experimental/awaitable_operators.hpp>
+#include <boost/asio/experimental/promise.hpp>
+#include <boost/asio/experimental/use_promise.hpp>
 
 #include <async_mqtt/client.hpp>
 
@@ -2406,11 +2409,13 @@ BOOST_AUTO_TEST_CASE(v5_auth_error) {
                 BOOST_CHECK(connack_opt);
                 BOOST_TEST(*connack_opt == connack);
 
+                auto props = am::properties{
+                    am::property::will_delay_interval{1}
+                };
+
                 co_await cl.async_auth(
                     am::auth_reason_code::success,
-                    am::properties{
-                        am::property::will_delay_interval{1}
-                    },
+                    props,
                     as::use_awaitable
                 );
                 BOOST_TEST(false);
@@ -2421,6 +2426,90 @@ BOOST_AUTO_TEST_CASE(v5_auth_error) {
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
             co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(v311_start_success_promise) {
+    static constexpr am::protocol_version version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                auto connack = am::v3_1_1::connack_packet{
+                    false,   // session_present
+                    am::connect_return_code::accepted
+                };
+                co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
+
+                auto connack_opt = co_await cl.async_start(
+                    true,             // clean_session
+                    std::uint16_t(0), // keep_alive
+                    "cid1",
+                    as::experimental::use_promise
+                );
+                BOOST_CHECK(connack_opt);
+                BOOST_TEST(*connack_opt == connack);
+
+                co_await cl.next_layer().emulate_close(as::use_awaitable);
+                co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+            catch (am::system_error const&) {
+                BOOST_TEST(false);
+            }
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(v311_start_success_deferred) {
+    static constexpr am::protocol_version version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto cl = am::client<version, am::cpp20coro_stub_socket>{
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            };
+            try {
+                auto connack = am::v3_1_1::connack_packet{
+                    false,   // session_present
+                    am::connect_return_code::accepted
+                };
+                co_await cl.next_layer().emulate_recv(connack, as::use_awaitable);
+
+                auto connack_opt = co_await cl.async_start(
+                    true,             // clean_session
+                    std::uint16_t(0), // keep_alive
+                    "cid1",
+                    as::deferred
+                );
+                BOOST_CHECK(connack_opt);
+                BOOST_TEST(*connack_opt == connack);
+
+                co_await cl.next_layer().emulate_close(as::use_awaitable);
+                co_await cl.async_close(as::use_awaitable);
+                co_await cl.next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+            catch (am::system_error const&) {
+                BOOST_TEST(false);
+            }
             co_return;
         },
         as::detached

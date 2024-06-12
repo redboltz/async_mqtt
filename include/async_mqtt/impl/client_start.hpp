@@ -26,14 +26,19 @@ template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
 start_op {
     this_type& cl;
-    connect_packet packet;
+    error_code ec;
+    std::optional<connect_packet> packet;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        if (ec) {
+            self.complete(ec, std::nullopt);
+            return;
+        }
         auto& a_cl{cl};
-        auto a_packet{packet};
+        auto a_packet{force_move(*packet)};
         a_cl.ep_->async_send(
             force_move(a_packet),
             force_move(self)
@@ -100,12 +105,15 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(error_code, std::optional<connack_packet>)
 )
 client<Version, NextLayer>::async_start_impl(
-    connect_packet packet,
+    error_code ec,
+    std::optional<connect_packet> packet,
     CompletionToken&& token
 ) {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "start: " << packet;
+    if (packet) {
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << *packet;
+    }
     return
         as::async_compose<
             CompletionToken,
@@ -113,33 +121,8 @@ client<Version, NextLayer>::async_start_impl(
         >(
             start_op{
                 *this,
+                ec,
                 force_move(packet)
-            },
-            token,
-            get_executor()
-        );
-}
-
-template <protocol_version Version, typename NextLayer>
-template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, std::optional<connack_packet>)
-)
-client<Version, NextLayer>::async_start_impl(
-    error_code ec,
-    CompletionToken&& token
-) {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "start: " << ec.message();
-    return
-        as::async_compose<
-            CompletionToken,
-            void(error_code, std::optional<connack_packet>)
-        >(
-            [ec](auto& self) {
-                self.complete(ec, std::nullopt);
             },
             token,
             get_executor()
@@ -152,11 +135,15 @@ auto
 client<Version, NextLayer>::async_start(Args&&... args) {
     if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return async_start_impl(connect_packet{std::forward<Args>(args)...});
+            return async_start_impl(
+                error_code{},
+                connect_packet{std::forward<Args>(args)...}
+            );
         }
         catch (system_error const& se) {
             return async_start_impl(
-                se.code()
+                se.code(),
+                std::nullopt
             );
         }
     }
@@ -176,6 +163,7 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                 );
                 try {
                     return async_start_impl(
+                        error_code{},
                         connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
                         std::forward<decltype(back)>(back)
                     );
@@ -183,6 +171,7 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                 catch (system_error const& se) {
                     return async_start_impl(
                         se.code(),
+                        std::nullopt,
                         std::forward<decltype(back)>(back)
                     );
                 }

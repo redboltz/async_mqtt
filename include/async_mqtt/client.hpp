@@ -739,35 +739,8 @@ private:
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_start_impl(
-        connect_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<connack_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_start_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_subscribe_impl(
-        subscribe_packet packet,
+        std::optional<connect_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -782,20 +755,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_subscribe_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_unsubscribe_impl(
-        unsubscribe_packet packet,
+        std::optional<subscribe_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -810,20 +770,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_unsubscribe_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, pubres_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_publish_impl(
-        publish_packet packet,
+        std::optional<unsubscribe_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -838,20 +785,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_publish_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_disconnect_impl(
-        disconnect_packet packet,
+        std::optional<publish_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -866,20 +800,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_disconnect_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_auth_impl(
-        v5::auth_packet packet,
+        std::optional<disconnect_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -894,6 +815,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_auth_impl(
         error_code ec,
+        std::optional<v5::auth_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 

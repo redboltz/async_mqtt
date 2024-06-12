@@ -23,15 +23,20 @@ template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
 subscribe_op {
     this_type& cl;
-    subscribe_packet packet;
+    error_code ec;
+    std::optional<subscribe_packet> packet;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        if (ec) {
+            self.complete(ec, std::nullopt);
+            return;
+        }
         auto& a_cl{cl};
-        auto pid = packet.packet_id();
-        auto a_packet{packet};
+        auto pid = packet->packet_id();
+        auto a_packet{force_move(*packet)};
         a_cl.ep_->async_send(
             force_move(a_packet),
             as::append(
@@ -121,12 +126,15 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     void(error_code, std::optional<suback_packet>)
 )
 client<Version, NextLayer>::async_subscribe_impl(
-    subscribe_packet packet,
+    error_code ec,
+    std::optional<subscribe_packet> packet,
     CompletionToken&& token
 ) {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << packet;
+    if (packet) {
+        ASYNC_MQTT_LOG("mqtt_api", info)
+            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << *packet;
+    }
     return
         as::async_compose<
             CompletionToken,
@@ -134,33 +142,8 @@ client<Version, NextLayer>::async_subscribe_impl(
         >(
             subscribe_op{
                 *this,
+                ec,
                 force_move(packet)
-            },
-            token,
-            get_executor()
-        );
-}
-
-template <protocol_version Version, typename NextLayer>
-template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, std::optional<suback_packet>)
-)
-client<Version, NextLayer>::async_subscribe_impl(
-    error_code ec,
-    CompletionToken&& token
-) {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "subscribe: " << ec.message();
-    return
-        as::async_compose<
-            CompletionToken,
-            void(error_code, std::optional<suback_packet>)
-        >(
-            [ec](auto& self) {
-                self.complete(ec, std::nullopt);
             },
             token,
             get_executor()
@@ -173,11 +156,15 @@ auto
 client<Version, NextLayer>::async_subscribe(Args&&... args) {
     if constexpr (std::is_constructible_v<subscribe_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return async_subscribe_impl(subscribe_packet{std::forward<Args>(args)...});
+            return async_subscribe_impl(
+                error_code{},
+                subscribe_packet{std::forward<Args>(args)...}
+            );
         }
         catch (system_error const& se) {
             return async_subscribe_impl(
-                se.code()
+                se.code(),
+                std::nullopt
             );
         }
     }
@@ -197,6 +184,7 @@ client<Version, NextLayer>::async_subscribe(Args&&... args) {
                 );
                 try {
                     return async_subscribe_impl(
+                        error_code{},
                         subscribe_packet{std::forward<decltype(rest_args)>(rest_args)...},
                         std::forward<decltype(back)>(back)
                     );
@@ -204,6 +192,7 @@ client<Version, NextLayer>::async_subscribe(Args&&... args) {
                 catch (system_error const& se) {
                     return async_subscribe_impl(
                         se.code(),
+                        std::nullopt,
                         std::forward<decltype(back)>(back)
                     );
                 }
