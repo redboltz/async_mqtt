@@ -396,6 +396,36 @@ public:
     auto async_disconnect(Args&&... args);
 
     /**
+     * @brief send AUTH packet
+     * @param args
+     *  - the preceding arguments
+     *     - AUTH packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     *        - v5::auth_packet
+     *  - the last argument
+     *     - CompletionToken
+     *        - Signature: void(@ref error_reporting "error_code")
+     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     *        - error_code
+     *           - If an error occurs during packet construction
+     *              - auth_reason_code is set
+     *           - If an error occurs while checking the packet for sending
+     *              - auth_reason_code is set
+     *           - If an error occurs at an underlying layer while sending a packet
+     *              - underlying error is set. e.g. system, asio, beast, ...
+     * @return deduced by token
+     * @par Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  - cancellation_type::terminal
+     *  - cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_write_some operation.
+     */
+    template <typename... Args>
+    auto async_auth(Args&&... args);
+
+    /**
      * @brief close the underlying connection
      * @param token  the param is void
      * @return deduced by token
@@ -709,35 +739,8 @@ private:
     )
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_start_impl(
-        connect_packet packet,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<connack_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_start_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_subscribe_impl(
-        subscribe_packet packet,
+        std::optional<connect_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -752,20 +755,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_subscribe_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_unsubscribe_impl(
-        unsubscribe_packet packet,
+        std::optional<subscribe_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -780,20 +770,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_unsubscribe_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, pubres_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_publish_impl(
-        publish_packet packet,
+        std::optional<unsubscribe_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -808,20 +785,7 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_publish_impl(
         error_code ec,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_disconnect_impl(
-        disconnect_packet packet,
+        std::optional<publish_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -836,6 +800,22 @@ private:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_disconnect_impl(
         error_code ec,
+        std::optional<disconnect_packet> packet,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+#if !defined(GENERATING_DOCUMENTATION)
+    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+        CompletionToken,
+        void(error_code)
+    )
+#endif // !defined(GENERATING_DOCUMENTATION)
+    async_auth_impl(
+        error_code ec,
+        std::optional<v5::auth_packet> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -847,6 +827,7 @@ private:
     struct unsubscribe_op;
     struct publish_op;
     struct disconnect_op;
+    struct auth_op;
     struct recv_op;
 
     // internal types
@@ -870,6 +851,7 @@ private:
 #include <async_mqtt/impl/client_unsubscribe.hpp>
 #include <async_mqtt/impl/client_publish.hpp>
 #include <async_mqtt/impl/client_disconnect.hpp>
+#include <async_mqtt/impl/client_auth.hpp>
 #include <async_mqtt/impl/client_close.hpp>
 #include <async_mqtt/impl/client_recv.hpp>
 #include <async_mqtt/impl/client_acquire_unique_packet_id.hpp>

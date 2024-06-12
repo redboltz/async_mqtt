@@ -221,6 +221,12 @@ BOOST_AUTO_TEST_CASE(v5) {
             am::packet_variant connack = *connack_opt;
             BOOST_TEST(connack == exp_connack);
 
+            // MQTT auth
+            auto [ec_auth] = co_await amcl.async_auth(
+                as::as_tuple(as::use_awaitable)
+            );
+            BOOST_TEST(!ec_auth);
+
             // MQTT send subscribe and wait suback
             std::vector<am::topic_subopts> sub_entry{
                 {"topic1", am::qos::at_most_once},

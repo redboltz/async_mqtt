@@ -178,11 +178,28 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_2_async_read">2. async_read</h4>
+<h4 id="_2_async_read_some">2. async_read_some</h4>
 <div class="ulist">
 <ul>
 <li>
-<p>Call Boost.Asio&#8217;s <code>async_read()</code> with <code>your_own_stream</code> by default.</p>
+<p>Call <code>your_own_stream.async_read_some()</code> by default.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html" class="bare">https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_async_read">3. async_read</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Call Boost.Asio&#8217;s <code>async_read()</code> with <code>your_own_stream</code> by default. Boost.Asio&#8217;s <code>async_read()</code> calls <code>your_own_stream.async_read_some()</code> internally.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -195,7 +212,7 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_3_async_write">3. async_write</h4>
+<h4 id="_4_async_write">4. async_write</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -212,7 +229,7 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
 </div>
 </div>
 <div class="sect3">
-<h4 id="_4_async_close">4. async_close</h4>
+<h4 id="_5_async_close">5. async_close</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -243,6 +260,29 @@ In order to use your own underlying layer with async_mqtt, you need to define a 
     <span class="c1">// define if you want to customize initialize process</span>
     <span class="k">static</span> <span class="kt">void</span> <span class="n">initialize</span><span class="p">(</span><span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Special initialization for your_own_stream</span>
+    <span class="p">}</span>
+
+    <span class="c1">// define if you want to customize async_read_some process</span>
+    <span class="k">template</span> <span class="o">&lt;</span>
+        <span class="k">typename</span> <span class="nc">MutableBufferSequence</span><span class="p">,</span>
+        <span class="k">typename</span> <span class="nc">CompletionToken</span>
+    <span class="p">&gt;</span>
+    <span class="k">static</span> <span class="k">auto</span>
+    <span class="nf">async_read_some</span><span class="p">(</span>
+        <span class="n">your_own_stream</span><span class="o">&lt;</span><span class="n">NextLayer</span><span class="o">&gt;&amp;</span> <span class="n">stream</span><span class="p">,</span>
+        <span class="n">MutableBufferSequence</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">mbs</span><span class="p">,</span>
+        <span class="n">CompletionToken</span><span class="o">&amp;&amp;</span> <span class="n">token</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">as</span><span class="o">::</span><span class="n">async_compose</span><span class="o">&lt;</span>
+            <span class="n">CompletionToken</span><span class="p">,</span>
+            <span class="kt">void</span><span class="p">(</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+        <span class="o">&gt;</span> <span class="p">(</span>
+            <span class="n">async_read_some_impl</span><span class="o">&lt;</span><span class="n">MutableBufferSequence</span><span class="o">&gt;</span><span class="p">{</span>
+                <span class="n">stream</span><span class="p">,</span>
+                <span class="n">mbs</span>
+            <span class="p">},</span>
+            <span class="n">token</span>
+        <span class="p">);</span>
     <span class="p">}</span>
 
     <span class="c1">// define if you want to customize async_read process</span>

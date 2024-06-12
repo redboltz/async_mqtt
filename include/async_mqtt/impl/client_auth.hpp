@@ -4,19 +4,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_START_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_START_HPP
-
-#include <boost/asio/append.hpp>
-#include <boost/asio/compose.hpp>
+#if !defined(ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP)
+#define ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP
 
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/back.hpp>
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/unpack.hpp>
 
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/client.hpp>
 #include <async_mqtt/util/log.hpp>
+#include <async_mqtt/packet/v5_auth.hpp>
 
 namespace async_mqtt {
 
@@ -24,17 +22,17 @@ namespace hana = boost::hana;
 
 template <protocol_version Version, typename NextLayer>
 struct client<Version, NextLayer>::
-start_op {
+auth_op {
     this_type& cl;
     error_code ec;
-    std::optional<connect_packet> packet;
+    std::optional<v5::auth_packet> packet;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
         if (ec) {
-            self.complete(ec, std::nullopt);
+            self.complete(ec);
             return;
         }
         auto& a_cl{cl};
@@ -50,63 +48,19 @@ start_op {
         Self& self,
         error_code const& ec
     ) {
-        if (ec) {
-            self.complete(ec, std::nullopt);
-            return;
-        }
-
-        auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
-        tim->expires_at(std::chrono::steady_clock::time_point::max());
-        cl.pid_tim_pv_res_col_.get_tim_idx().emplace(tim);
-        cl.recv_loop();
-        tim->async_wait(
-            as::append(
-                force_move(self),
-                tim
-            )
-        );
-    }
-
-    template <typename Self>
-    void operator()(
-        Self& self,
-        error_code /* ec */,
-        std::shared_ptr<as::steady_timer> tim
-    ) {
-        auto& idx = cl.pid_tim_pv_res_col_.get_tim_idx();
-        auto it = idx.find(tim);
-        if (it == idx.end()) {
-            self.complete(
-                make_error_code(as::error::operation_aborted),
-                std::nullopt
-            );
-        }
-        else {
-            auto pv = it->pv;
-            idx.erase(it);
-            if (auto *p = pv->template get_if<connack_packet>()) {
-                self.complete(make_error_code(p->code()), *p);
-            }
-            else {
-                self.complete(
-                    make_error_code(disconnect_reason_code::protocol_error),
-                    std::nullopt
-                );
-            }
-        }
+        self.complete(ec);
     }
 };
-
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(error_code, std::optional<connack_packet>)
+    void(error_code)
 )
-client<Version, NextLayer>::async_start_impl(
+client<Version, NextLayer>::async_auth_impl(
     error_code ec,
-    std::optional<connect_packet> packet,
+    std::optional<v5::auth_packet> packet,
     CompletionToken&& token
 ) {
     if (packet) {
@@ -117,9 +71,9 @@ client<Version, NextLayer>::async_start_impl(
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, std::optional<connack_packet>)
+            void(error_code)
         >(
-            start_op{
+            auth_op{
                 *this,
                 ec,
                 force_move(packet)
@@ -132,16 +86,16 @@ client<Version, NextLayer>::async_start_impl(
 template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 auto
-client<Version, NextLayer>::async_start(Args&&... args) {
-    if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
+client<Version, NextLayer>::async_auth(Args&&... args) {
+    if constexpr (std::is_constructible_v<v5::auth_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return async_start_impl(
+            return async_auth_impl(
                 error_code{},
-                connect_packet{std::forward<Args>(args)...}
+                v5::auth_packet{std::forward<Args>(args)...}
             );
         }
         catch (system_error const& se) {
-            return async_start_impl(
+            return async_auth_impl(
                 se.code(),
                 std::nullopt
             );
@@ -156,20 +110,20 @@ client<Version, NextLayer>::async_start(Args&&... args) {
             [&](auto&&... rest_args) {
                 static_assert(
                     std::is_constructible_v<
-                        connect_packet,
+                        v5::auth_packet,
                         decltype(rest_args)...
                     >,
-                    "connect_packet is not constructible"
+                    "v5::auth_packet is not constructible"
                 );
                 try {
-                    return async_start_impl(
+                    return async_auth_impl(
                         error_code{},
-                        connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
+                        v5::auth_packet{std::forward<decltype(rest_args)>(rest_args)...},
                         std::forward<decltype(back)>(back)
                     );
                 }
                 catch (system_error const& se) {
-                    return async_start_impl(
+                    return async_auth_impl(
                         se.code(),
                         std::nullopt,
                         std::forward<decltype(back)>(back)
@@ -182,4 +136,4 @@ client<Version, NextLayer>::async_start(Args&&... args) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_START_HPP
+#endif // ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP
