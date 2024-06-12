@@ -185,6 +185,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acd225df7e04770be801742bbbb437d9e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acd225df7e04770be801742bbbb437d9e">async_disconnect</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:acd225df7e04770be801742bbbb437d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">send DISCONNECT packet  <br /></td></tr>
 <tr class="separator:acd225df7e04770be801742bbbb437d9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9920aeeb283f6ff9a9eb164a52f1eb5c" id="r_a9920aeeb283f6ff9a9eb164a52f1eb5c"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a9920aeeb283f6ff9a9eb164a52f1eb5c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9920aeeb283f6ff9a9eb164a52f1eb5c">async_auth</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a9920aeeb283f6ff9a9eb164a52f1eb5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">send AUTH packet  <br /></td></tr>
+<tr class="separator:a9920aeeb283f6ff9a9eb164a52f1eb5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9dda4bdcebd220beb5392adb5da86110" id="r_a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplParams" colspan="2">template&lt;typename CompletionToken  = as::default_completion_token_t&lt;executor_type&gt;&gt; </td></tr>
 <tr class="memitem:a9dda4bdcebd220beb5392adb5da86110"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9dda4bdcebd220beb5392adb5da86110">async_close</a> (CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; <a class="el" href="#a93814f9dcc11fb4295897ac5317c276d">executor_type</a> &gt;{})</td></tr>
 <tr class="memdesc:a9dda4bdcebd220beb5392adb5da86110"><td class="mdescLeft">&#160;</td><td class="mdescRight">close the underlying connection  <br /></td></tr>
@@ -538,6 +542,74 @@ template&lt;typename CompletionToken  = as::default_completion_token_t&lt;execut
 <li>cancellation_type::partial</li>
 <li>cancellation_type::total </li>
 </ul>
+
+</div>
+</div>
+<a id="a9920aeeb283f6ff9a9eb164a52f1eb5c" name="a9920aeeb283f6ff9a9eb164a52f1eb5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9920aeeb283f6ff9a9eb164a52f1eb5c">&#9670;&#160;</a></span>async_auth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::async_auth </td>
+          <td>(</td>
+          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>send AUTH packet </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">args</td><td><ul>
+<li>the preceding arguments<ul>
+<li>AUTH packet of the Version or its constructor arguments (like std::vector::emplace_back())<ul>
+<li><a class="el" href="classasync__mqtt_1_1v5_1_1auth__packet.html" title="MQTT AUTH packet (v35)">v5::auth_packet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>the last argument<ul>
+<li>CompletionToken<ul>
+<li>Signature: void(<a class="el" href="group__error__reporting.html">error_code</a>)</li>
+<li><a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported</li>
+<li>error_code<ul>
+<li>If an error occurs during packet construction<ul>
+<li>auth_reason_code is set</li>
+</ul>
+</li>
+<li>If an error occurs while checking the packet for sending<ul>
+<li>auth_reason_code is set</li>
+</ul>
+</li>
+<li>If an error occurs at an underlying layer while sending a packet<ul>
+<li>underlying error is set. e.g. system, asio, beast, ... </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>deduced by token </dd></dl>
+<dl class="section user"><dt>Per-Operation Cancellation</dt><dd></dd></dl>
+<p>This asynchronous operation supports cancellation for the following <a href="https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html">boost::asio::cancellation_type</a> values:</p><ul>
+<li>cancellation_type::terminal</li>
+<li>cancellation_type::partial</li>
+</ul>
+<p>if they are also supported by the NextLayer type's async_write_some operation. </p>
 
 </div>
 </div>

@@ -10,6 +10,9 @@
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
 === other updates
+* Added async_auth() to client. #303
+* Added reconnect code to examples. #302
+* Fixed dangling reference on underlying_handshake. #301
 * Added bulk read functionality. #300
 * Refined CI. #295
 * Fixed async_acquire_unique_packet_id_wait_until() cancel support. #292
