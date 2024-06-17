@@ -50,22 +50,17 @@
 |functionality\library|async_mqtt|async-mqtt5|note
 
 |High level easy to use APIs  support|x|x|
-
-|Low level detailed operation APIs  support|x|-
-
+|Low level detailed operation APIs  support|x|-|
 |MQTT Client APIs support|x|x|
-
-|MQTT Server(broker) APIs support|x|Send CONNACK, SUBACK, etc
-|Auto adjust protocol behavior support|x|-|Receive Mamixum, Topic Alias, etc
-|Separate Compilation support|x|-|Once built the library, then next time faster complation
-|Auto reconnect support|-|x|See xref:resend.adoc[Resend message]
-|Multiple broker connect support|-|x|
-
-|Offline publish support|x|-|Out of MQTT spec
-|Footprint size optimize (-Os) |4,6600kb|4,324kb|
-
-|Compilation Time no optimize|28.9s|17.6s|15.6s (async_mqtt separate-compile application part)
-|Compilation Time size optimize (-Os)|32.9s|19.9s|16.8s (async_mqtt separate-compile application part)
+|MQTT Server(broker) APIs support|x|Send CONNACK, SUBACK, etc|
+|Auto adjust protocol behavior support|x|-|Receive Mamixum, Topic Alias, etc|
+|Separate Compilation support|x|-|Once built the library, then next time faster complation|
+|Auto reconnect support|-|x|See xref:resend.adoc[Resend message]|
+|Multiple broker connect support|-|x||
+|Offline publish support|x|-|Out of MQTT spec|
+|Footprint size optimize (-Os) |4,6600kb|4,324kb||
+|Compilation Time no optimize|28.9s|17.6s|15.6s (async_mqtt separate-compile application part)|
+|Compilation Time size optimize (-Os)|32.9s|19.9s|16.8s (async_mqtt separate-compile application part)|
 |===
 
 
