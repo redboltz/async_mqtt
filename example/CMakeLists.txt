@@ -10,6 +10,7 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
     set(CMAKE_CXX_STANDARD 20)
     message(STATUS "C++20 examples added")
     list(APPEND exec_PROGRAMS
+        footprint.cpp
         cl_cpp20coro_mqtt.cpp
         cl_cpp20coro_mqtt_pub.cpp
         cl_cpp20coro_mqtt_sub.cpp
