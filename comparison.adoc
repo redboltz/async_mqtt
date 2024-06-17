@@ -58,7 +58,7 @@
 |MQTT Server(broker) APIs support|x|-|Send CONNACK, SUBACK, etc
 |Auto adjust protocol behavior support|x|-|Receive Mamixum, Topic Alias, etc
 |Separate Compilation support|x|-|Once built the library, then next time faster complation
-|Auto reconnect support|-|x|See xref:resend.adoc[Resend message]
+|Auto reconnect support|-|x|See xref:functionality/resend.adoc[Resend message]
 |Multiple broker connect support|-|x|
 
 |Offline publish support|x|-|Out of MQTT spec
