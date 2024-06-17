@@ -108,7 +108,7 @@ make check_async_mqtt  27.70s user 1.08s system 99% cpu 28.867 total
 
 ==== async_mqtt (separate-compilation-mode) library part
 
-Separate compilation library pert (only once build required).
+Separate compilation library part (**only once build required**).
 
 ```
 time make async_mqtt
@@ -153,7 +153,7 @@ make check_async_mqtt  32.38s user 0.47s system 99% cpu 32.939 total
 
 ==== async_mqtt (separate-compilation-mode) library part
 
-Separate compilation library pert (only once build required).
+Separate compilation library part (**only once build required**).
 
 ```
 time make async_mqtt
