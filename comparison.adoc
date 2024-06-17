@@ -49,7 +49,9 @@
 |===
 |functionality\library|async_mqtt|async-mqtt5|note
 
-|High level easy to use APIs  support|x|x
+|High level easy to use APIs  support
+|x
+|x
 
 |Low level detailed operation APIs  support|x|-
 
