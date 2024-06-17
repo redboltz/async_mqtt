@@ -52,7 +52,7 @@
 |High level easy to use APIs  support|x|x|
 |Low level detailed operation APIs  support|x|-|
 |MQTT Client APIs support|x|x|
-|MQTT Server(broker) APIs support|x|Send CONNACK, SUBACK, etc|
+|MQTT Server(broker) APIs support|x|-|Send CONNACK, SUBACK, etc|
 |Auto adjust protocol behavior support|x|-|Receive Mamixum, Topic Alias, etc|
 |Separate Compilation support|x|-|Once built the library, then next time faster complation|
 |Auto reconnect support|-|x|See xref:resend.adoc[Resend message]|
