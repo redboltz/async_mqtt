@@ -27,6 +27,7 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 * Quick Look
 ** ${include("quicklook.adoc")}
 ** ${include("performance.adoc")}
+** ${include("comparison.adoc")}
 * Tutorial
 ** ${include("tutorial/client.adoc")} - For casual MQTT client operations
 ** endpoint - For more detailed MQTT operations
