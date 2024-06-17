@@ -64,8 +64,8 @@
 |Offline publish support|x|-|Out of MQTT spec
 |Footprint size optimize (-Os) |4,660kb|4,324kb|
 
-|Compilation Time no optimize|28.9s|17.6s|15.6s (async_mqtt separate-compile application part)
-|Compilation Time size optimize (-Os)|32.9s|19.9s|16.8s (async_mqtt separate-compile application part)
+|Compilation Time no optimize|28.9s|17.6s|15.6s (async_mqtt separate-compilation-mode application part)
+|Compilation Time size optimize (-Os)|32.9s|19.9s|16.8s (async_mqtt separate-compilation-mode application part)
 |===
 
 
