@@ -16,15 +16,32 @@ ifndef::env-github[:api-base: link:../api]
 
 === {api-base}/++classasync__mqtt_1_1v3__1__1_1_1connect__packet.html++[CONNECT Packet]
 
-==== Send
+==== Send (client only)
 
-* If `keep_alive` is set to a value greater than 0, `PINGREQ` packet sending is configured. A `PINGREQ` packet is sent if no other packet is sent within the `keep_alive` period.
-* If `clean_session` is set, the endpoint's Session State is cleared. See xref:keep_session.adoc[keeps session].
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` packet sending is configured. A `PINGREQ` packet is sent if no other packet is sent within the `keep_alive` seconds.
+* If `clean_session` is set to true, the endpoint's Session State is cleared. See xref:keep_session.adoc[keeps session].
+
+==== Receive (server only)
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` receiving timeout is configured. If no packet is received within `keep_alive` * 1.5 seconds after the last packet, the connection is disconnected.
+* If `clean_session` is set to false, the session state storage is configured. See xref:keep_session.adoc[keeps session].
 
 == MQTT v5.0
 
-=== {api-base}/++file:///home/kondo/work/async_mqtt/doc/api/classasync__mqtt_1_1v5_1_1connect__packet.html++[CONNECT Packet]
+=== {api-base}/++classasync__mqtt_1_1v5_1_1connect__packet.html++[CONNECT Packet]
 
-==== Send
+==== Send (client only)
+
 * If `clean_start` is set, the endpoint's Session State is cleared. See xref:keep_session.adoc[Keep session].
-* If {api-base}/++classasync__mqtt_1_1property_1_1topic__alias__maximum.html++[`topic_alias_maximum`] is set, prepare the topic name - topic alias map for sending. See xref:topic_alias.adoc[Topic Alias].
+* If {api-base}/++classasync__mqtt_1_1property_1_1topic__alias__maximum.html++[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for sending. See xref:topic_alias.adoc[Topic Alias].
+* If {api-base}/++classasync__mqtt_1_1property_1_1receive__maximum.html++[`receive_maximum`] is set, the receive maximum for incoming packets is configured. See xref:receive_maximum.adoc[Receive Maximum].
+* If {api-base}/++classasync__mqtt_1_1property_1_1maximum__packet__size.html++[`maximum_packet_size`] is set, the maximum packet size for incoming packets is configured. See xref:maximum_packet_size.adoc[Maximum Packet Size].
+* If {api-base}/++classasync__mqtt_1_1property_1_1session__expiry__interval.html++[`session_expiry_interval`] is set to a value greater than 0, session state storage is configured. See xref:keep_session.adoc[Keep session].
+
+==== Receive (server only)
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` receiving timeout is configured. If no packet is received within `keep_alive` * 1.5 seconds after the last packet, the connection is disconnected.
+* If {api-base}/++classasync__mqtt_1_1property_1_1topic__alias__maximum.html++[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for receiving. See xref:topic_alias.adoc[Topic Alias].
+* If {api-base}/++classasync__mqtt_1_1property_1_1receive__maximum.html++[`receive_maximum`] is set, the receive maximum for outgoing packets is configured. See xref:receive_maximum.adoc[Receive Maximum].
+* If {api-base}/++classasync__mqtt_1_1property_1_1maximum__packet__size.html++[`maximum_packet_size`] is set, the maximum packet size for outgoing packets is configured. See xref:maximum_packet_size.adoc[Maximum Packet Size].
+* If {api-base}/++classasync__mqtt_1_1property_1_1session__expiry__interval.html++[`session_expiry_interval`] is set to a value greater than 0, session state storage is configured. See xref:keep_session.adoc[Keep session].
