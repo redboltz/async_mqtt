@@ -34,8 +34,8 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 ** xref:performance.adoc[Performance]
 ** xref:comparison.adoc[Comparison]
 * Tutorial
-** xref:tutorial/client.adoc[Client] - For casual MQTT client operations
-** endpoint - For more detailed MQTT operations
+** xref:tutorial/client.adoc[Client] - For high-level MQTT client operations
+** endpoint - For detailed MQTT operations
 *** xref:tutorial/create_endpoint.adoc[Create Endpoint]
 *** xref:tutorial/cpp20_coro.adoc[C++20 Coroutine]
 *** xref:tutorial/sl_coro.adoc[Stackless Coroutine] if you don't have C++20 coroutine

@@ -12,6 +12,13 @@ ifndef::env-github[:api-base: link:../api]
 
 `async_mqtt` automatically updates the endpoint's internal state when sending and receiving packets.
 
+* client: For high-level MQTT client operations
+** The client contains an endpoint internally. The client sends and receives endpoint setting-related packets via `async_start()`. See xref:../tutorial/client.adoc[Client APIs]
+
+* endpoint: For detailed MQTT operations
+** To send and receive packets, use the async_send() and async_recv() member functions. See xref:../tutorial/send_recv.adoc[Send/Recv packets]
+
+
 == MQTT v3.1.1
 
 === {api-base}/++classasync__mqtt_1_1v3__1__1_1_1connect__packet.html++[CONNECT Packet]

@@ -29,8 +29,8 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 ** ${include("performance.adoc")}
 ** ${include("comparison.adoc")}
 * Tutorial
-** ${include("tutorial/client.adoc")} - For casual MQTT client operations
-** endpoint - For more detailed MQTT operations
+** ${include("tutorial/client.adoc")} - For high-level MQTT client operations
+** endpoint - For detailed MQTT operations
 *** ${include("tutorial/create_endpoint.adoc")}
 *** ${include("tutorial/cpp20_coro.adoc")}
 *** ${include("tutorial/sl_coro.adoc")}

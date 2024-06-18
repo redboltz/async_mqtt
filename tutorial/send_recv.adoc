@@ -89,4 +89,4 @@ You can call `async_send()` continuously. The `async_mqtt` endpoint has a queuin
 
 == Packet Based APIs
 
-`async_mqtt` automatically updates the endpoint's internal state when sending and receiving packets. For example, when you send a CONNECT packet with the `maximum_packet_size` property, the endpoint sets the maximum packet size for receiving. See the packet and property API reference and functionality documents for more details.
+`async_mqtt` automatically updates the endpoint's internal state when sending and receiving packets. See xref:../functionality/packet_based.adoc[Packet Based APIs].
