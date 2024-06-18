@@ -35,10 +35,9 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 *** ${include("tutorial/cpp20_coro.adoc")}
 *** ${include("tutorial/sl_coro.adoc")}
 *** ${include("tutorial/send_recv.adoc")}
-** ${include("tutorial/non_packet_based.adoc")}
 * Functionality
-** ${include("functionality/thread_safe.adoc")}
-** ${include("functionality/logging.adoc")}
+** ${include("functionality/packet_based.adoc")}
+** ${include("functionality/non_packet_based.adoc")}
 ** ${include("functionality/connect_timeout.adoc")}
 ** ${include("functionality/keep_session.adoc")}
 ** ${include("functionality/resend.adoc")}
@@ -46,6 +45,8 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 ** ${include("functionality/request_response.adoc")}
 ** ${include("functionality/receive_maximum.adoc")}
 ** ${include("functionality/maximum_packet_size.adoc")}
+** ${include("functionality/thread_safe.adoc")}
+** ${include("functionality/logging.adoc")}
 * Customize/Config
 ** ${include("customize.adoc")}
 ** ${include("config.adoc")}

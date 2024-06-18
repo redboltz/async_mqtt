@@ -1,0 +1,30 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../../main]
+ifndef::env-github[:am-base-path: ../..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:../api]
+
+= Packet-Based APIs
+
+`async_mqtt` automatically updates the endpoint's internal state when sending and receiving packets.
+
+== MQTT v3.1.1
+
+=== {api-base}/++classasync__mqtt_1_1v3__1__1_1_1connect__packet.html++[CONNECT Packet]
+
+==== Send
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` packet sending is configured. A `PINGREQ` packet is sent if no other packet is sent within the `keep_alive` period.
+* If `clean_session` is set, the endpoint's Session State is cleared. See xref:keep_session.adoc[keeps session].
+
+== MQTT v5.0
+
+=== {api-base}/++file:///home/kondo/work/async_mqtt/doc/api/classasync__mqtt_1_1v5_1_1connect__packet.html++[CONNECT Packet]
+
+==== Send
+* If `clean_start` is set, the endpoint's Session State is cleared. See xref:keep_session.adoc[Keep session].
+* If {api-base}/++classasync__mqtt_1_1property_1_1topic__alias__maximum.html++[`topic_alias_maximum`] is set, prepare the topic name - topic alias map for sending. See xref:topic_alias.adoc[Topic Alias].
