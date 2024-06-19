@@ -167,7 +167,7 @@ pre.rouge .ss {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_WS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websocket for tools (broker, bench, client_cli, &#8230;&#8203;) (compilation time becomes longer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websocket for tools (broker, bench, client_cli, &#8230;&#8203;) (compilation time becomes longer). See <a href="#faster-compile">make faster compilation time</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_LOG</p></td>
@@ -245,7 +245,7 @@ pre.rouge .ss {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_WS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websockets (compilation time becomes longer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables Websockets (compilation time becomes longer), See <a href="#faster-compile">make faster compilation time</a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_USE_LOG</p></td>
@@ -255,8 +255,20 @@ pre.rouge .ss {
 <td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_PRINT_PAYLOAD</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Output payload when publish packet is output</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASYNC_MQTT_SEPARATE_COMPILATION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables <a href="separate.html">Separate Compilation Mode</a></p></td>
+</tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="faster-compile">Make faster compilation time</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="separate.html">Separate Compilation Mode</a> for async_mqtt and <a href="https://www.boost.org/libs/beast/doc/html/beast/config/configuration_preprocessor_defin.html">Boost.Beast</a> would solve the long compilation time.</p>
+</div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>

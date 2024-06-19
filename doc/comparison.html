@@ -356,13 +356,12 @@ div#navigation table {
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>Detail information of Compilation Time and Footprint size:</p>
-</div>
+<div class="sect2">
+<h3 id="_detail_information_of_compilation_time_and_footprint_size">Detail information of Compilation Time and Footprint size</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Repository:</p>
+<p>Repository for measuring:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -372,11 +371,41 @@ div#navigation table {
 </div>
 </li>
 <li>
-<p>Commit:</p>
+<p>Commit hash:</p>
 <div class="ulist">
 <ul>
 <li>
 <p><a href="https://github.com/redboltz/footprint_m5/tree/32ec8cf7c545271e4dc3a0f780eb96b7d600c561" class="bare">https://github.com/redboltz/footprint_m5/tree/32ec8cf7c545271e4dc3a0f780eb96b7d600c561</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Operating system</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Linux 6.8.7-arch1-2 #1 SMP PREEMPT_DYNAMIC Fri, 19 Apr 2024 09:51:31 +0000 x86_64 GNU/Linux</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>CPU</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Intel&#174; Core&#8482; i7-6700 CPU @ 3.40GHz, 8 cores</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>RAM</p>
+<div class="ulist">
+<ul>
+<li>
+<p>64GB</p>
 </li>
 </ul>
 </div>
@@ -392,10 +421,10 @@ cd build
 cmake -DCMAKE_CXX_FLAGS="-std=c++20" ..</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_compilation_time_no_optimization">Compilation time (no optimization)</h3>
 <div class="sect3">
-<h4 id="_async_mqtt5_header_only">async-mqtt5 (header-only)</h4>
+<h4 id="_compilation_time_no_optimization">Compilation time (no optimization)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async-mqtt5
@@ -406,8 +435,8 @@ make check_async-mqtt5  16.81s user 0.74s system 99% cpu 17.598 total</code></pr
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_header_only">async_mqtt (header-only)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async_mqtt
@@ -418,8 +447,8 @@ make check_async_mqtt  27.70s user 1.08s system 99% cpu 28.867 total</code></pre
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_separate_compilation_mode_library_part">async_mqtt (separate-compilation-mode) library part</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_library_part">async_mqtt (separate-compilation-mode) library part</h5>
 <div class="paragraph">
 <p>Separate compilation library part (<strong>only once build required</strong>).</p>
 </div>
@@ -433,8 +462,8 @@ make async_mqtt  50.56s user 2.33s system 98% cpu 53.452 total</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_separate_compilation_mode_user_code_part">async_mqtt (separate-compilation-mode) user code part</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_user_code_part">async_mqtt (separate-compilation-mode) user code part</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async_mqtt_separate
@@ -447,10 +476,10 @@ make check_async_mqtt_separate  15.59s user 0.98s system 99% cpu 16.633 total</c
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_compilation_time_size_optimization_os">Compilation time (size optimization (-Os))</h3>
 <div class="sect3">
-<h4 id="_async_mqtt5_header_only_2">async-mqtt5 (header-only)</h4>
+<h4 id="_compilation_time_size_optimization_os">Compilation time (size optimization (-Os))</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only_2">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async-mqtt5
@@ -461,8 +490,8 @@ make check_async-mqtt5  19.45s user 0.40s system 99% cpu 19.898 total</code></pr
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_header_only_2">async_mqtt (header-only)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only_2">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async_mqtt
@@ -473,8 +502,8 @@ make check_async_mqtt  32.38s user 0.47s system 99% cpu 32.939 total</code></pre
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_separate_compilation_mode_library_part_2">async_mqtt (separate-compilation-mode) library part</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_library_part_2">async_mqtt (separate-compilation-mode) library part</h5>
 <div class="paragraph">
 <p>Separate compilation library part (<strong>only once build required</strong>).</p>
 </div>
@@ -488,8 +517,8 @@ make async_mqtt  68.22s user 0.78s system 99% cpu 1:09.23 total</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_separate_compilation_mode_user_code_part_2">async_mqtt (separate-compilation-mode) user code part</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_user_code_part_2">async_mqtt (separate-compilation-mode) user code part</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>time make check_async_mqtt_separate
@@ -502,10 +531,10 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_memory_consumption_size_optimization_os">Memory consumption size optimization (-Os)</h3>
 <div class="sect3">
-<h4 id="_async_mqtt5_header_only_3">async-mqtt5 (header-only)</h4>
+<h4 id="_memory_consumption_size_optimization_os">Memory consumption size optimization (-Os)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only_3">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>/usr/bin/time -v ./check_async-mqtt5
@@ -535,8 +564,8 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_header_only_3">async_mqtt (header-only)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only_3">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>/usr/bin/time -v ./check_async_mqtt
@@ -566,8 +595,8 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_async_mqtt_separate_compilation_mode">async_mqtt (separate-compilation-mode)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode">async_mqtt (separate-compilation-mode)</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code>/usr/bin/time -v ./check_async_mqtt_separate
@@ -618,9 +647,10 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-18 21:33:46 +0900
+Last updated 2024-06-19 10:06:10 +0900
 </div>
 </div>
 </body>
