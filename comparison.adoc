@@ -69,12 +69,19 @@
 |===
 
 
-Detail information of Compilation Time and Footprint size:
+=== Detail information of Compilation Time and Footprint size
 
-* Repository:
+* Repository for measuring:
 ** https://github.com/redboltz/footprint_m5
-* Commit:
+* Commit hash:
 ** https://github.com/redboltz/footprint_m5/tree/32ec8cf7c545271e4dc3a0f780eb96b7d600c561
+* Operating system
+** Linux 6.8.7-arch1-2 #1 SMP PREEMPT_DYNAMIC Fri, 19 Apr 2024 09:51:31 +0000 x86_64 GNU/Linux
+* CPU
+** Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz, 8 cores
+* RAM
+** 64GB
+
 
 ```sh
 git clone https://github.com/redboltz/footprint_m5.git
@@ -84,9 +91,9 @@ cd build
 cmake -DCMAKE_CXX_FLAGS="-std=c++20" ..
 ```
 
-=== Compilation time (no optimization)
+==== Compilation time (no optimization)
 
-==== async-mqtt5 (header-only)
+===== async-mqtt5 (header-only)
 
 ```
 time make check_async-mqtt5
@@ -96,7 +103,7 @@ time make check_async-mqtt5
 make check_async-mqtt5  16.81s user 0.74s system 99% cpu 17.598 total
 ```
 
-==== async_mqtt (header-only)
+===== async_mqtt (header-only)
 
 ```
 time make check_async_mqtt
@@ -106,7 +113,7 @@ time make check_async_mqtt
 make check_async_mqtt  27.70s user 1.08s system 99% cpu 28.867 total
 ```
 
-==== async_mqtt (separate-compilation-mode) library part
+===== async_mqtt (separate-compilation-mode) library part
 
 Separate compilation library part (**only once build required**).
 
@@ -118,7 +125,7 @@ time make async_mqtt
 make async_mqtt  50.56s user 2.33s system 98% cpu 53.452 total
 ```
 
-==== async_mqtt (separate-compilation-mode) user code part
+===== async_mqtt (separate-compilation-mode) user code part
 
 ```
 time make check_async_mqtt_separate
@@ -129,9 +136,9 @@ time make check_async_mqtt_separate
 make check_async_mqtt_separate  15.59s user 0.98s system 99% cpu 16.633 total
 ```
 
-=== Compilation time (size optimization (-Os))
+==== Compilation time (size optimization (-Os))
 
-==== async-mqtt5 (header-only)
+===== async-mqtt5 (header-only)
 
 ```
 time make check_async-mqtt5
@@ -141,7 +148,7 @@ time make check_async-mqtt5
 make check_async-mqtt5  19.45s user 0.40s system 99% cpu 19.898 total
 ```
 
-==== async_mqtt (header-only)
+===== async_mqtt (header-only)
 
 ```
 time make check_async_mqtt
@@ -151,7 +158,7 @@ time make check_async_mqtt
 make check_async_mqtt  32.38s user 0.47s system 99% cpu 32.939 total
 ```
 
-==== async_mqtt (separate-compilation-mode) library part
+===== async_mqtt (separate-compilation-mode) library part
 
 Separate compilation library part (**only once build required**).
 
@@ -163,7 +170,7 @@ time make async_mqtt
 make async_mqtt  68.22s user 0.78s system 99% cpu 1:09.23 total
 ```
 
-==== async_mqtt (separate-compilation-mode) user code part
+===== async_mqtt (separate-compilation-mode) user code part
 
 ```
 time make check_async_mqtt_separate
@@ -174,9 +181,9 @@ time make check_async_mqtt_separate
 make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total
 ```
 
-=== Memory consumption size optimization (-Os)
+==== Memory consumption size optimization (-Os)
 
-==== async-mqtt5 (header-only)
+===== async-mqtt5 (header-only)
 
 ```
 /usr/bin/time -v ./check_async-mqtt5
@@ -205,7 +212,7 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total
         Exit status: 0
 ```
 
-==== async_mqtt (header-only)
+===== async_mqtt (header-only)
 
 ```
 /usr/bin/time -v ./check_async_mqtt
@@ -234,7 +241,7 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total
         Exit status: 0
 ```
 
-==== async_mqtt (separate-compilation-mode)
+===== async_mqtt (separate-compilation-mode)
 
 ```
 /usr/bin/time -v ./check_async_mqtt_separate
