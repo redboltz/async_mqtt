@@ -58,4 +58,4 @@ For Websocket on TLS
 
 == Make faster compilation time [[faster-compile]]
 
-xref:separate.adoc[Separate Compilation Mode] for async_mqtt and [Boost.Beast](https://www.boost.org/libs/beast/doc/html/beast/config/configuration_preprocessor_defin.html) would solve the long compilation time.
+xref:separate.adoc[Separate Compilation Mode] for async_mqtt and https://www.boost.org/libs/beast/doc/html/beast/config/configuration_preprocessor_defin.html[Boost.Beast] would solve the long compilation time.
