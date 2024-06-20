@@ -61,6 +61,7 @@
 |Auto reconnect support|-|x|See xref:functionality/resend.adoc[Resend message]
 |Multiple broker connect support|-|x|
 
+|logging|x|-|define ASYNC_MQTT_USE_LOG to enable logging
 |Offline publish support|x|-|Out of MQTT spec
 |Footprint size optimize (-Os) |4,660kb|4,324kb|
 

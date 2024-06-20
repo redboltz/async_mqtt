@@ -38,6 +38,7 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 * Functionality
 ** ${include("functionality/packet_based.adoc")}
 ** ${include("functionality/non_packet_based.adoc")}
+** ${include("functionality/packet_id.adoc")}
 ** ${include("functionality/connect_timeout.adoc")}
 ** ${include("functionality/keep_session.adoc")}
 ** ${include("functionality/resend.adoc")}

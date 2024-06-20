@@ -1,0 +1,70 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../../main]
+ifndef::env-github[:am-base-path: ../..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:../api]
+
+= Packet Identifier Management
+
+SUBSCRIBE, UNSUBSCRIBE, and PUBLISH (QoS1, QoS2) packet require Packet Identifier. The Packet Identifier is used to distinguish the response packets. Users need to set a Packet Identifier to the following request packet.
+
+|===
+|Request Packet|Response Packet
+
+|SUBSCRIBE|SUBACK
+|UNSUBSCRIBE|UNSUBACK
+|PUBLISH(QoS1)|PUBACK
+|PUBLISH(QoS0)|PUBREC, PUBREL, PUBCOMP
+|===
+
+Packet Identifier is managed by `endpoint`.
+
+NOTE: `client` (High-level MQTT client) has `endpoint` internally.
+
+In order to set Packet Identifier to the request packet, users need to get a Packet Identifier from the `endpoint`.
+
+Here are member functions to get a Packet Identifier. There are two kinds of getting method. One is **acquire**, the other is **register**. For ordinaly use cases, **acquire** is good choice. If users want to manage Packet Identifier by theirselved, **register** is used.
+When you get the Packet Identifier, the ownership of the Packet Identifier is moved to the user side.
+
+|===
+|endpoint member function | effects
+
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a7274b1d7f83634fd64fe616de1ff3e7f++[async_acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a425e8172d00a1ace4274cf188d626de5++[async_acquire_unique_packet_id_wait_until]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#afae5c04121fb587cc76dfbba65d52dac++[async_register_packet_id]|Register the packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0++[acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01++[register_packet_id]|Register the packet_id
+|===
+
+
+|===
+|client member function | effects
+
+|{api-base}/++classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23++[async_acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_acquire_unique_packet_id_wait_until]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_register_packet_id]|Register the packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id]|Acquire the new unique packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc++[register_packet_id]|Register the packet_id
+|===
+
+When the user calls packet sending function with the packet that is set the Packet Identifier, the ownership of the Packet Identifier is moved to the library (async_mqtt `endpoint`). Once the ownership is moved, the Packet Identifier would automatically be reusable when the response packet is received, error is happend, or send process is cancelled. Therefore the user shouldn't call **release** APIs.
+
+If user want to **release** the got Packet Identifier before the ownership is moved, the following **release**, user can use the folliwng **release** APIs.
+
+|===
+|endpoint member function | effects
+
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#a3ad31451430f889136831229fbd89e63++[release_packet_id]|Release the packet_id
+|{api-base}/++classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b++[release_packet_id]|Release the packet_id
+|===
+
+|===
+|client member function | effects
+
+|{api-base}/++classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27++[async_release_packet_id]|Release the packet_id
+|{api-base}/++classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2++[release_packet_id]|Release the packet_id
+|===

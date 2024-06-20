@@ -43,6 +43,7 @@ https://redboltz.github.io/async_mqtt/[Older releases document]
 * Functionality
 ** xref:functionality/packet_based.adoc[Packet based APIs]
 ** xref:functionality/non_packet_based.adoc[Non Packet based APIs]
+** xref:functionality/packet_id.adoc[Packet Identifier Management]
 ** xref:functionality/connect_timeout.adoc[connect timeout]
 ** xref:functionality/keep_session.adoc[Keep session]
 ** xref:functionality/resend.adoc[Resend message]
