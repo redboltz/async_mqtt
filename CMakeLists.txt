@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required (VERSION 3.13.0)
-project(async_mqtt_iface VERSION 7.0.0)
+project(async_mqtt_iface VERSION 7.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -136,7 +136,7 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 7.0.0" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 7.0.1" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = GENERATING_DOCUMENTATION ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS ASYNC_MQTT_USE_LOG" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

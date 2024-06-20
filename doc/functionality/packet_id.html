@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Packet Identifier Management</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Packet Identifier Management</h1>
+</div>
+<div id="content">
+<div class="paragraph">
+<p>SUBSCRIBE, UNSUBSCRIBE, and PUBLISH (QoS 1, QoS 2) packets require a Packet Identifier. The Packet Identifier is used to distinguish the response packets. Users need to set a Packet Identifier for the following request packets.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Request Packet</th>
+<th class="tableblock halign-left valign-top">Response Packet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBSCRIBE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNSUBSCRIBE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNSUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLISH (QoS 1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLISH (QoS 2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBREC, PUBREL, PUBCOMP</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Packet Identifier is managed by <code>endpoint</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The <code>client</code> (high-level MQTT client) has an <code>endpoint</code> internally.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To set a Packet Identifier for the request packet, users need to get a Packet Identifier from the <code>endpoint</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here are member functions to get a Packet Identifier. There are two methods: <strong>acquire</strong> and <strong>register</strong>. For ordinary use cases, <strong>acquire</strong> is the preferred choice. If users want to manage the Packet Identifier themselves, they can use <strong>register</strong>. When you get the Packet Identifier, the ownership of the Packet Identifier is transferred to the user.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endpoint member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a7274b1d7f83634fd64fe616de1ff3e7f">async_acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a425e8172d00a1ace4274cf188d626de5">async_acquire_unique_packet_id_wait_until</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#afae5c04121fb587cc76dfbba65d52dac">async_register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>When the user calls a packet sending function with the packet that has the Packet Identifier set, the ownership of the Packet Identifier is transferred to the library (async_mqtt <code>endpoint</code>). Once the ownership is transferred, the Packet Identifier will automatically become reusable when the response packet is received, an error occurs, or the send process is canceled. Therefore, the user should not call the <strong>release</strong> APIs.</p>
+</div>
+<div class="paragraph">
+<p>If the user wants to <strong>release</strong> the obtained Packet Identifier before the ownership is transferred to the <code>endpoint</code>, they can use the following <strong>release</strong> APIs.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endpoint member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a3ad31451430f889136831229fbd89e63">async_release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="non_packet_based.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="connect_timeout.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
