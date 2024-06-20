@@ -1,6 +1,9 @@
 :last-update-label!:
 
 = History
+== 7.0.1
+* Refined documents. #308
+
 == 7.0.0
 === breaking changes
 * client::async_recv() CompletionHandler signature is updated to `void(error_code, packet_variant)`. #281.
