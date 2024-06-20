@@ -44,7 +44,7 @@ Here are member functions to get a Packet Identifier. There are two methods: **a
 
 | {api-base}/++classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23++[async_acquire_unique_packet_id] | Acquire a new unique packet_id
 | {api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_acquire_unique_packet_id_wait_until] | Acquire a new unique packet_id
-| {api-base}/++classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1++[async_register_packet_id] | Register the packet_id
+| {api-base}/++classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e++[async_register_packet_id] | Register the packet_id
 | {api-base}/++classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86++[acquire_unique_packet_id] | Acquire a new unique packet_id
 | {api-base}/++classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc++[register_packet_id] | Register the packet_id
 |===
@@ -56,7 +56,7 @@ If the user wants to **release** the obtained Packet Identifier before the owner
 |===
 | endpoint member function | effects
 
-| {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a3ad31451430f889136831229fbd89e63++[release_packet_id] | Release the packet_id
+| {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a3ad31451430f889136831229fbd89e63++[async_release_packet_id] | Release the packet_id
 | {api-base}/++classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b++[release_packet_id] | Release the packet_id
 |===
 
