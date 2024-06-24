@@ -27,7 +27,7 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 client<Version, NextLayer>::recv_loop() {
     ep_->async_recv(
-        [this]
+        [this, sp = this->shared_from_this()]
         (error_code const& ec, packet_variant pv) mutable {
             if (ec) {
                 recv_queue_.emplace_back(ec);

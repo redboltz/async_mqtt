@@ -23,6 +23,7 @@ recv_op {
     std::set<control_packet_type> types = {};
     std::optional<error_code> decided_error = std::nullopt;
     enum { initiate, disconnect, close, read } state = initiate;
+    this_type_sp life_keeper = ep.shared_from_this();
 
     template <typename Self>
     void operator()(

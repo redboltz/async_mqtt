@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.22">
-<meta name="author" content="== 7.0.1">
+<meta name="author" content="== 8.0.0">
 <title>History</title>
 <style>
 /*! Copyright (C) 2019, TomTom (http://tomtom.com).
@@ -63,9 +63,8 @@ div#navigation table {
 <div id="header">
 <h1>History</h1>
 <div class="details">
-<span id="author" class="author">== 7.0.1</span><br>
-<span id="revnumber">version 311,</span>
-<span id="revdate">#312</span>
+<span id="author" class="author">== 8.0.0</span><br>
+<span id="revdate">=== breaking changes</span>
 </div>
 </div>
 <div id="content">
@@ -73,6 +72,29 @@ div#navigation table {
 <div class="sectionbody">
 <div class="ulist">
 <ul>
+<li>
+<p><code>client</code> becomes <code>shared_ptr</code> similar as <code>endpoint</code>. #315</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To create <code>client</code> instance, <code>client&lt;&#8230;&#8203;&gt;::create(args)</code> similar as <code>endpoint</code>.</p>
+</li>
+<li>
+<p>This is required to keep client&#8217;s lifetime during async operation is working.</p>
+</li>
+<li>
+<p><code>client</code> and <code>endpoint</code> are consistent interface now.
+=== other updates</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Move endpoint definition (using) to endpoint_fwd.hpp #311, #312</p>
+</li>
+<li>
+<p>install <code>*.ipp</code> files along with other header files #309</p>
+</li>
 <li>
 <p>Refined documents. #308</p>
 </li>
@@ -853,7 +875,6 @@ Hence I categolize the fix to breaking changes.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 311<br>
 </div>
 </div>
 </body>

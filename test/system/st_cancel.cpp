@@ -116,19 +116,19 @@ BOOST_AUTO_TEST_CASE(cl) {
     broker_runner br;
     as::io_context ioc;
     using cl_t = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt>;
-    cl_t amcl{
+    auto amcl = cl_t::create(
         ioc.get_executor()
-    };
+    );
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
     am::async_underlying_handshake(
-        amcl.next_layer(),
+        amcl->next_layer(),
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amcl.async_start(
+            amcl->async_start(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -141,21 +141,21 @@ BOOST_AUTO_TEST_CASE(cl) {
                     BOOST_TEST(!ec);
                     BOOST_CHECK(connack_opt);
                     // test case
-                    amcl.async_recv(
+                    amcl->async_recv(
                         as::bind_cancellation_slot(
                             sig1.slot(),
                             [&](am::error_code const& ec, am::packet_variant pv) {
                                 BOOST_TEST(ec == as::error::operation_aborted);
                                 BOOST_TEST(!pv);
                                 ++canceled;
-                                amcl.async_recv(
+                                amcl->async_recv(
                                     as::bind_cancellation_slot(
                                         sig1.slot(),
                                         [&](am::error_code const& ec, am::packet_variant pv) {
                                             BOOST_TEST(ec == as::error::operation_aborted);
                                             BOOST_TEST(!pv);
                                             ++canceled;
-                                            amcl.async_close(as::detached);
+                                            amcl->async_close(as::detached);
                                         }
                                     )
                                 );

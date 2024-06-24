@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     as::io_context ioc;
-    awaitable_client amcl{ioc.get_executor()};
-    as::co_spawn(amcl.get_executor(), proc(amcl, argv[1], argv[2]), as::detached);
+    auto amcl = awaitable_client::create(ioc.get_executor());
+    as::co_spawn(amcl->get_executor(), proc(*amcl, argv[1], argv[2]), as::detached);
     ioc.run();
 }
