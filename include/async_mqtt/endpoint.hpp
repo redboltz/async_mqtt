@@ -10,6 +10,7 @@
 #include <set>
 #include <deque>
 
+#include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
@@ -44,17 +45,6 @@ enum class filter {
     except  ///< no matched control_packet_type is target
 };
 
-/**
- * @ingroup endpoint
- * @brief MQTT endpoint corresponding to the connection
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
- * @tparam Role          role for packet sendable checking
- * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>>{
     enum class connection_status {
@@ -876,17 +866,6 @@ private:
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
     bool packet_id_released_ = false;
 };
-
-/**
- * @ingroup endpoint
- * @related basic_endpoint
- * @brief Type alias of basic_endpoint (PacketIdBytes=2).
- *        This is for typical usecase.
- * @tparam Role          role for packet sendable checking
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
-template <role Role, typename NextLayer>
-using endpoint = basic_endpoint<Role, 2, NextLayer>;
 
 } // namespace async_mqtt
 
