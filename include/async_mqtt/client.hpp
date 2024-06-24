@@ -18,6 +18,7 @@
 #include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
+#include <async_mqtt/util/make_shared_helper.hpp>
 
 /**
  * @defgroup client client (High level MQTT client)
@@ -78,8 +79,12 @@ namespace as = boost::asio;
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */
 template <protocol_version Version, typename NextLayer>
-class client {
+class client : public std::enable_shared_from_this<client<Version, NextLayer>> {
     using this_type = client<Version, NextLayer>;
+    using this_type_sp = std::shared_ptr<this_type>;
+
+    template <typename T>
+    friend class make_shared_helper;
 
 public:
     /// @brief type of endpoint
@@ -128,7 +133,7 @@ public:
     };
 
     /**
-     * @brief constructor
+     * @brief create
      * @tparam Args Types for the next layer
      * @param  args args for the next layer.
      * - There are predefined next layer types:
@@ -136,23 +141,14 @@ public:
      *    - protocol::mqtts
      *    - protocol::ws
      *    - protocol::wss
+     * @return shared_ptr of client.
      */
     template <typename... Args>
-    explicit
-    client(
+    static std::shared_ptr<this_type> create(
         Args&&... args
-    );
-
-    /**
-     *  @brief Rebinding constructor
-     *         This constructor creates a client from the client with a different executor.
-     *  @param other The other client to construct from.
-     */
-    template <typename Other>
-    explicit
-    client(
-        client<Version, Other>&& other
-    );
+    ) {
+        return make_shared_helper<this_type>::make_shared(std::forward<Args>(args)...);
+    }
 
     /**
      * @brief copy constructor **deleted**
@@ -728,6 +724,33 @@ public:
     };
 
 private:
+
+    /**
+     * @brief constructor
+     * @tparam Args Types for the next layer
+     * @param  args args for the next layer.
+     * - There are predefined next layer types:
+     *    - protocol::mqtt
+     *    - protocol::mqtts
+     *    - protocol::ws
+     *    - protocol::wss
+     */
+    template <typename... Args>
+    explicit
+    client(
+        Args&&... args
+    );
+
+    /**
+     *  @brief Rebinding constructor
+     *         This constructor creates a client from the client with a different executor.
+     *  @param other The other client to construct from.
+     */
+    template <typename Other>
+    explicit
+    client(
+        client<Version, Other>&& other
+    );
 
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>

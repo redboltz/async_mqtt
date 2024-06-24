@@ -46,7 +46,7 @@ enum class filter {
 };
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>>{
+class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>> {
     enum class connection_status {
         connecting,
         connected,
