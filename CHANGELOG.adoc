@@ -2,6 +2,7 @@
 
 = History
 == 7.0.1
+* install *.ipp files along with other header files #309
 * Refined documents. #308
 
 == 7.0.0
