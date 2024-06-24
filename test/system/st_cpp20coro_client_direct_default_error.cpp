@@ -24,20 +24,20 @@ BOOST_AUTO_TEST_CASE(v311) {
     broker_runner br;
     as::io_context ioc;
     auto exe = ioc.get_executor();
-    auto amcl = client(exe);
+    auto amcl = client::create(exe);
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
             co_await as::dispatch(
                 as::bind_executor(
-                    amcl.get_executor(),
+                    amcl->get_executor(),
                     as::as_tuple(as::use_awaitable)
                 )
             );
 
             // Handshake undlerying layer (Name resolution and TCP handshaking)
             auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl.next_layer(),
+                amcl->next_layer(),
                 "127.0.0.1",
                 "1883"
             );
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(v311) {
 
             std::string ng_str{static_cast<char>(0b1100'0010u), static_cast<char>(0b1100'0000u)}; // invalid utf8
             // MQTT connect and receive loop start
-            auto [ec_con, connack_opt] = co_await amcl.async_start(
+            auto [ec_con, connack_opt] = co_await amcl->async_start(
                 true,   // clean_session
                 std::uint16_t(0),      // keep_alive
                 ng_str,
@@ -59,9 +59,9 @@ BOOST_AUTO_TEST_CASE(v311) {
             std::vector<am::topic_subopts> sub_entry{
                 {ng_str, am::qos::at_most_once},
             };
-            auto pid_sub_opt = amcl.acquire_unique_packet_id();
+            auto pid_sub_opt = amcl->acquire_unique_packet_id();
             BOOST_CHECK(pid_sub_opt);
-            auto [ec_sub, suback_opt] = co_await amcl.async_subscribe(
+            auto [ec_sub, suback_opt] = co_await amcl->async_subscribe(
                 *pid_sub_opt,
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
             );
@@ -71,15 +71,15 @@ BOOST_AUTO_TEST_CASE(v311) {
             std::vector<am::topic_sharename> unsub_entry{
                 {ng_str},
             };
-            auto pid_unsub_opt = amcl.acquire_unique_packet_id();
+            auto pid_unsub_opt = amcl->acquire_unique_packet_id();
             BOOST_CHECK(pid_unsub_opt);
-            auto [ec_unsub, unsuback_opt] = co_await amcl.async_unsubscribe(
+            auto [ec_unsub, unsuback_opt] = co_await amcl->async_unsubscribe(
                 *pid_unsub_opt,
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
             );
             BOOST_TEST(ec_unsub == am::disconnect_reason_code::topic_filter_invalid);
 
-            auto [ec_pub0, pubres0] = co_await amcl.async_publish(
+            auto [ec_pub0, pubres0] = co_await amcl->async_publish(
                 ng_str,
                 "payload1",
                 am::qos::at_most_once
@@ -98,20 +98,20 @@ BOOST_AUTO_TEST_CASE(v5) {
     broker_runner br;
     as::io_context ioc;
     auto exe = ioc.get_executor();
-    auto amcl = client(exe);
+    auto amcl = client::create(exe);
     as::co_spawn(
         exe,
         [&] () -> as::awaitable<void> {
             co_await as::dispatch(
                 as::bind_executor(
-                    amcl.get_executor(),
+                    amcl->get_executor(),
                     as::as_tuple(as::use_awaitable)
                 )
             );
 
             // Handshake undlerying layer (Name resolution and TCP handshaking)
             auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl.next_layer(),
+                amcl->next_layer(),
                 "127.0.0.1",
                 "1883"
             );
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(v5) {
 
             std::string ng_str{static_cast<char>(0b1100'0010u), static_cast<char>(0b1100'0000u)}; // invalid utf8
             // MQTT connect and receive loop start
-            auto [ec_con, connack_opt] = co_await amcl.async_start(
+            auto [ec_con, connack_opt] = co_await amcl->async_start(
                 true,   // clean_session
                 std::uint16_t(0),      // keep_alive
                 ng_str,
@@ -133,9 +133,9 @@ BOOST_AUTO_TEST_CASE(v5) {
             std::vector<am::topic_subopts> sub_entry{
                 {ng_str, am::qos::at_most_once},
             };
-            auto pid_sub_opt = amcl.acquire_unique_packet_id();
+            auto pid_sub_opt = amcl->acquire_unique_packet_id();
             BOOST_CHECK(pid_sub_opt);
-            auto [ec_sub, suback_opt] = co_await amcl.async_subscribe(
+            auto [ec_sub, suback_opt] = co_await amcl->async_subscribe(
                 *pid_sub_opt,
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
             );
@@ -145,15 +145,15 @@ BOOST_AUTO_TEST_CASE(v5) {
             std::vector<am::topic_sharename> unsub_entry{
                 {ng_str},
             };
-            auto pid_unsub_opt = amcl.acquire_unique_packet_id();
+            auto pid_unsub_opt = amcl->acquire_unique_packet_id();
             BOOST_CHECK(pid_unsub_opt);
-            auto [ec_unsub, unsuback_opt] = co_await amcl.async_unsubscribe(
+            auto [ec_unsub, unsuback_opt] = co_await amcl->async_unsubscribe(
                 *pid_unsub_opt,
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
             );
             BOOST_TEST(ec_unsub == am::disconnect_reason_code::topic_filter_invalid);
 
-            auto [ec_pub0, pubres0] = co_await amcl.async_publish(
+            auto [ec_pub0, pubres0] = co_await amcl->async_publish(
                 ng_str,
                 "payload1",
                 am::qos::at_most_once
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
 
             am::properties props{property::content_type{"test"}}; // invalid property
-            auto [ec_disconnect] = co_await amcl.async_disconnect(
+            auto [ec_disconnect] = co_await amcl->async_disconnect(
                 am::disconnect_reason_code::normal_disconnection,
                 force_move(props)
             );
