@@ -60,12 +60,12 @@ namespace tls = as::ssl;
 ```cpp
     using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt;
     as::io_context ioc;
-    client_t amcl{
+    auto amcl = client_t::create(
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     );
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl->next_layer(), host, port, as::use_awaitable);
 ```
 
 == mqtts
@@ -91,7 +91,7 @@ namespace tls = as::ssl;
         ctx
     );
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl->next_layer(), host, port, as::use_awaitable);
 ```
 
 == ws
@@ -103,7 +103,7 @@ namespace tls = as::ssl;
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     );
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl->next_layer(), host, port, as::use_awaitable);
 ```
 
 
@@ -129,7 +129,7 @@ namespace tls = as::ssl;
         ctx                  // mqtts is as::ssl::stream<mqtt>
     );
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await am::async_underlying_handshake(amcl->next_layer(), host, port, as::use_awaitable);
 ```
 
 == Layer access
@@ -164,7 +164,7 @@ am::will will{
 };
 
 // MQTT connect and receive loop start
-auto connack_opt = co_await amcl.async_start(
+auto connack_opt = co_await amcl->async_start(
     am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -186,7 +186,7 @@ For detailed information about errors, refer to {api-base}/++group__error__repor
 
 ```cpp
 // MQTT connect and receive loop start
-auto [ec, connack_opt] = co_await amcl.async_start(
+auto [ec, connack_opt] = co_await amcl->async_start(
     am::v5::connect_packet{
         true,   // clean_start
         0x1234, // keep_alive
@@ -206,7 +206,7 @@ if (connack_opt) {
 You can omit explicit packet creation as follows:
 
 ```cpp
-auto connack_opt = co_await amcl.async_start(
+auto connack_opt = co_await amcl->async_start(
     true,   // clean_start
     std::uint16_t(0x1234), // keep_alive
     "ClientIdentifier1",
@@ -231,9 +231,9 @@ std::vector<am::topic_subopts> sub_entry{
     {"topic2", am::qos::at_least_once},
     {"topic3", am::qos::exactly_once},
 };
-auto suback_opt = co_await amcl.async_subscribe(
+auto suback_opt = co_await amcl->async_subscribe(
     am::v5::subscribe_packet{
-        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
+        *amcl->acquire_unique_packet_id(), // sync version only in thread safe environment
         am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
     },
     as::use_awaitable
@@ -255,9 +255,9 @@ std::vector<am::topic_sharename> unsub_entry{
     "topic3",
 };
 
-auto unsuback_opt = co_await amcl.async_unsubscribe(
+auto unsuback_opt = co_await amcl->async_unsubscribe(
     am::v5::unsubscribe_packet{
-        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
+        *amcl->acquire_unique_packet_id(), // sync version only in thread safe environment
         am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
     },
     as::use_awaitable
@@ -277,7 +277,7 @@ Here is a code example that sending QoS0 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS0 and wait response (socket write complete)
-auto pubres0 = co_await amcl.async_publish(
+auto pubres0 = co_await amcl->async_publish(
     am::v5::publish_packet{
         "topic1",
         "payload1",
@@ -294,8 +294,8 @@ Here is a code example that sending QoS1 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS1 and wait response (puback receive)
-auto pid_pub1 = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
-auto pubres1 = co_await amcl.async_publish(
+auto pid_pub1 = co_await amcl->async_acquire_unique_packet_id(as::use_awaitable); // async version
+auto pubres1 = co_await amcl->async_publish(
     am::v5::publish_packet{
         *pid_pub1_opt,
         "topic2",
@@ -315,8 +315,8 @@ Here is a code example that sending QoS1 PUBLISH packet.
 
 ```cpp
 // MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
-auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
-auto pubres2 = co_await amcl.async_publish(
+auto pid_pub2 = co_await amcl->acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
+auto pubres2 = co_await amcl->async_publish(
     am::v5::publish_packet{
         pid_pub2,
         "topic3",
@@ -337,7 +337,7 @@ After `async_publish()` completes, the `pubrec_opt` and `pubcomp_opt` of {api-ba
 === {api-base}/++classasync__mqtt_1_1client.html#a825c14790ca009436f20c1b2c7952204++[async_recv()] funtion
 
 ```cpp
-auto pv = co_await amcl.async_recv(as::use_awaitable);
+auto pv = co_await amcl->async_recv(as::use_awaitable);
 pv.visit(
     am::overload{
         [&](awaitable_client::publish_packet& p) {
@@ -363,7 +363,7 @@ The parameters of `CompletionToken` are `error_code` and `packet_variant`. If `e
 === {api-base}/++classasync__mqtt_1_1client.html#acd225df7e04770be801742bbbb437d9e++[async_disconnect()] funtion
 
 ```cpp
-co_await amcl.async_disconnect(
+co_await amcl->async_disconnect(
     am::v5::disconnect_packet{},
     as::use_awaitable
 );
@@ -379,7 +379,7 @@ Sending a DISCONNECT packet to the broker initiates a graceful disconnect sequen
 === {api-base}/++classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110++[async_close()] funtion
 
 ```cpp
-co_await amcl.async_close(as::use_awaitable);
+co_await amcl->async_close(as::use_awaitable);
 ```
 
 The `CompletionToken` parameter is nothing.
