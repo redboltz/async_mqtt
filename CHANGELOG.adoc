@@ -2,6 +2,7 @@
 
 = History
 == 7.0.1
+* Move endpoint definition (using) to endpoint_fwd.hpp #311, #312
 * Refined documents. #308
 
 == 7.0.0
