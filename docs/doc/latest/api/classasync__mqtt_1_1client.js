@@ -6,8 +6,6 @@ var classasync__mqtt_1_1client =
     [ "executor_type", "classasync__mqtt_1_1client.html#a93814f9dcc11fb4295897ac5317c276d", null ],
     [ "lowest_layer_type", "classasync__mqtt_1_1client.html#aeb5e89195f6b3080b218c321d4b6d7ef", null ],
     [ "next_layer_type", "classasync__mqtt_1_1client.html#a69c86bce11c102ac589f446bff5aaff7", null ],
-    [ "client", "classasync__mqtt_1_1client.html#a9b17702ad539982547fa5dc3de34f8df", null ],
-    [ "client", "classasync__mqtt_1_1client.html#ae422a3de6052d79df44db7f73994c54f", null ],
     [ "client", "classasync__mqtt_1_1client.html#a09c99f0a62f86b9449cbd2407d74be69", null ],
     [ "client", "classasync__mqtt_1_1client.html#ab47c58452e33366ac3646846b9126a70", null ],
     [ "acquire_unique_packet_id", "classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86", null ],
