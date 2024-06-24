@@ -877,17 +877,6 @@ private:
     bool packet_id_released_ = false;
 };
 
-/**
- * @ingroup endpoint
- * @related basic_endpoint
- * @brief Type alias of basic_endpoint (PacketIdBytes=2).
- *        This is for typical usecase.
- * @tparam Role          role for packet sendable checking
- * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
- */
-template <role Role, typename NextLayer>
-using endpoint = basic_endpoint<Role, 2, NextLayer>;
-
 } // namespace async_mqtt
 
 #include <async_mqtt/impl/endpoint_impl.hpp>
