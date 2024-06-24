@@ -1,8 +1,15 @@
 :last-update-label!:
 
 = History
-== 7.0.1
+== 8.0.0
+=== breaking changes
+* `client` becomes `shared_ptr` similar as `endpoint`. #315
+** To create `client` instance, `client<...>::create(args)` similar as `endpoint`.
+** This is required to keep client's lifetime during async operation is working.
+** `client` and `endpoint` are consistent interface now.
+=== other updates
 * Move endpoint definition (using) to endpoint_fwd.hpp #311, #312
+* install `*.ipp` files along with other header files #309
 * Refined documents. #308
 
 == 7.0.0

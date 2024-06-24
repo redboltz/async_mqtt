@@ -1,7 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"classasync__mqtt_1_1property_1_1maximum__qos.html":[0,2,1,0,22],
-"classasync__mqtt_1_1property_1_1maximum__qos.html#a9b06ebeadc1ba6c6ed0a965c81ba2b70":[0,2,1,0,22,1],
 "classasync__mqtt_1_1property_1_1maximum__qos.html#ac0b48992952a2c87d7b8b9c182725427":[0,2,1,0,22,0],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html":[0,2,1,0,3],
 "classasync__mqtt_1_1property_1_1message__expiry__interval.html#a599ad258dabd588cda82ace5d95394ac":[0,2,1,0,3,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX1 =
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html":[0,2,0,3,0],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a45c11f40101d5997ec0d4e406f3b275a":[0,2,0,3,0,0],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a6e602bb1e96b31452d5fee7cb31132f9":[0,2,0,3,0,4],
-"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a83cf6dc8b65e35c2414abbbe496f38db":[0,2,0,3,0,1]
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a83cf6dc8b65e35c2414abbbe496f38db":[0,2,0,3,0,1],
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a98c6e2957c22b01c57686ea97612c11b":[0,2,0,3,0,3],
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#abf5558c0404c4e825a7ff7752b01e524":[0,2,0,3,0,5]
 };
