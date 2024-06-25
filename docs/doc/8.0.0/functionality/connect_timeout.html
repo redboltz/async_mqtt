@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Connect Timeout</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Connect Timeout</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before thinking about connection timeout, we need to define what a connection is. Here is a typical connection sequence:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>am::async_underlying_handshake</code> (resolves hostname, TCP, TLS, and WebSocket handshake if required)</p>
+</li>
+<li>
+<p>Send MQTT CONNECT packet</p>
+</li>
+<li>
+<p>Receive MQTT CONNACK packet</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Typically, the user can set a timer before Step 1 and cancel the timer after Step 3. If the timer expires, call the <code>close()</code> function.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pingresp_timeout">PINGRESP timeout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After the MQTT connection is established (Step 3 is finished successfully), if the underlying connection is disconnected, then the <code>recv()</code> function returns an error. However, if the broker is frozen or the disconnect is not detected but actually disconnected, the client needs to know the status of the connection.</p>
+</div>
+<div class="paragraph">
+<p>In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send a PINGREQ packet.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_set_pingresp_recv_timeout_ms">set_pingresp_recv_timeout_ms()</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../api/classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">set_pingresp_recv_timeout_ms() for client</a></p>
+</li>
+<li>
+<p><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0">set_pingresp_recv_timeout_ms() for endpoint</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The parameter is in milliseconds. You need to call this function before sending the MQTT CONNECT packet. The timer is automatically set when the PINGREQ packet is sent. If a PINGRESP packet is received from the broker, the timer is canceled. If the timer expires, the connection is disconnected from the client side. Finally, the client gets an error from the <code>async_recv()</code> function.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sending_pingreq_packet">sending PINGREQ packet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can create a PINGREQ packet and send it manually. Alternatively, you can set the keep_alive value in the CONNECT packet to a value greater than 0. Then, the client will automatically start sending PINGREQ packets if the keep_alive seconds pass without any packet being sent.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If keep_alive is set to a value greater than 0, the broker also starts checking the client connection status. If the broker doesn&#8217;t receive any packet from the client during keep_alive * 1.5 seconds, the connection is closed by the broker.
+</td>
+</tr>
+</table>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="packet_id.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="keep_session.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
