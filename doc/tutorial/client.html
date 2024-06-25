@@ -252,7 +252,7 @@ pre.rouge .ss {
     <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
     <span class="c1">// // (check res)</span>
 
-    <span class="n">client_t</span> <span class="n">amcl</span><span class="p">{</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer (as::ssl::stream&lt;mqtt&gt;)</span>
         <span class="n">ctx</span>
     <span class="p">);</span>
@@ -269,7 +269,7 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="k">using</span> <span class="n">client_t</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-    <span class="n">client_t</span> <span class="n">amcl</span><span class="p">{</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span>  <span class="c1">// args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)</span>
     <span class="p">);</span>
     <span class="c1">// handshake underlying layers</span>
@@ -297,7 +297,7 @@ pre.rouge .ss {
     <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
     <span class="c1">// // (check res)</span>
 
-    <span class="n">client_t</span> <span class="n">amcl</span><span class="p">{</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer ( bs::websocket::stream&lt;mqtts&gt;)</span>
         <span class="n">ctx</span>                  <span class="c1">// mqtts is as::ssl::stream&lt;mqtt&gt;</span>
     <span class="p">);</span>

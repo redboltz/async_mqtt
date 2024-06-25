@@ -1,6 +1,9 @@
 :last-update-label!:
 
 = History
+== 8.0.1
+* Refined documents. #317
+
 == 8.0.0
 === breaking changes
 * `client` becomes `shared_ptr` similar as `endpoint`. #315
