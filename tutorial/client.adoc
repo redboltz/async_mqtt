@@ -86,7 +86,7 @@ namespace tls = as::ssl;
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
 
-    client_t amcl{
+    auto amcl = client_t::create(
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
         ctx
     );
@@ -99,7 +99,7 @@ namespace tls = as::ssl;
 ```cpp
     using client_t = am::client<am::protocol_version::v3_1_1, am::protocol::ws>;
     as::io_context ioc;
-    client_t amcl{
+    auto amcl = client_t::create(
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     );
     // handshake underlying layers
@@ -124,7 +124,7 @@ namespace tls = as::ssl;
     // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
     // // (check res)
 
-    client_t amcl{
+    auto amcl = client_t::create(
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
         ctx                  // mqtts is as::ssl::stream<mqtt>
     );
