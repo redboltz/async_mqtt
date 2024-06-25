@@ -12,7 +12,7 @@ ifndef::env-github[:api-base: link:api]
 
 == Latest release
 
-https://redboltz.github.io/async_mqtt/doc/7.0.0/index.html[7.0.0 document]
+https://redboltz.github.io/async_mqtt/doc/8.0.0/index.html[8.0.0 document]
 
 == Current main branch
 
