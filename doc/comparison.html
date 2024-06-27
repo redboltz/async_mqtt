@@ -57,6 +57,89 @@ div#navigation table {
 }
 
 </style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
 </head>
 <body class="article">
 <div id="header">
@@ -420,11 +503,11 @@ div#navigation table {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-sh" data-lang="sh">git clone https://github.com/redboltz/footprint_m5.git
-cd footprint_m5
-mkdir build
-cd build
-cmake -DCMAKE_CXX_FLAGS="-std=c++20" ..</code></pre>
+<pre class="rouge highlight"><code data-lang="sh">git clone https://github.com/redboltz/footprint_m5.git
+<span class="nb">cd </span>footprint_m5
+<span class="nb">mkdir </span>build
+<span class="nb">cd </span>build
+cmake <span class="nt">-DCMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">"-std=c++20"</span> ..</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -433,7 +516,7 @@ cmake -DCMAKE_CXX_FLAGS="-std=c++20" ..</code></pre>
 <h5 id="_async_mqtt5_header_only">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async-mqtt5
+<pre class="rouge highlight"><code>time make check_async-mqtt5
 [ 50%] Building CXX object CMakeFiles/check_async-mqtt5.dir/src/check_async-mqtt5.cpp.o
 [100%] Linking CXX executable check_async-mqtt5
 [100%] Built target check_async-mqtt5
@@ -445,7 +528,7 @@ make check_async-mqtt5  16.81s user 0.74s system 99% cpu 17.598 total</code></pr
 <h5 id="_async_mqtt_header_only">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async_mqtt
+<pre class="rouge highlight"><code>time make check_async_mqtt
 [ 50%] Building CXX object CMakeFiles/check_async_mqtt.dir/src/check_async_mqtt.cpp.o
 [100%] Linking CXX executable check_async_mqtt
 [100%] Built target check_async_mqtt
@@ -460,7 +543,7 @@ make check_async_mqtt  27.70s user 1.08s system 99% cpu 28.867 total</code></pre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make async_mqtt
+<pre class="rouge highlight"><code>time make async_mqtt
 [ 50%] Building CXX object CMakeFiles/async_mqtt.dir/src/async_mqtt.cpp.o
 [100%] Linking CXX static library libasync_mqtt.a
 [100%] Built target async_mqtt
@@ -472,7 +555,7 @@ make async_mqtt  50.56s user 2.33s system 98% cpu 53.452 total</code></pre>
 <h5 id="_async_mqtt_separate_compilation_mode_user_code_part">async_mqtt (separate-compilation-mode) user code part</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async_mqtt_separate
+<pre class="rouge highlight"><code>time make check_async_mqtt_separate
 [ 50%] Built target async_mqtt
 [ 75%] Building CXX object CMakeFiles/check_async_mqtt_separate.dir/src/check_async_mqtt_separate.cpp.o
 [100%] Linking CXX executable check_async_mqtt_separate
@@ -488,7 +571,7 @@ make check_async_mqtt_separate  15.59s user 0.98s system 99% cpu 16.633 total</c
 <h5 id="_async_mqtt5_header_only_2">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async-mqtt5
+<pre class="rouge highlight"><code>time make check_async-mqtt5
 [ 50%] Building CXX object CMakeFiles/check_async-mqtt5.dir/src/check_async-mqtt5.cpp.o
 [100%] Linking CXX executable check_async-mqtt5
 [100%] Built target check_async-mqtt5
@@ -500,7 +583,7 @@ make check_async-mqtt5  19.45s user 0.40s system 99% cpu 19.898 total</code></pr
 <h5 id="_async_mqtt_header_only_2">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async_mqtt
+<pre class="rouge highlight"><code>time make check_async_mqtt
 [ 50%] Building CXX object CMakeFiles/check_async_mqtt.dir/src/check_async_mqtt.cpp.o
 [100%] Linking CXX executable check_async_mqtt
 [100%] Built target check_async_mqtt
@@ -515,7 +598,7 @@ make check_async_mqtt  32.38s user 0.47s system 99% cpu 32.939 total</code></pre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make async_mqtt
+<pre class="rouge highlight"><code>time make async_mqtt
 [ 50%] Building CXX object CMakeFiles/async_mqtt.dir/src/async_mqtt.cpp.o
 [100%] Linking CXX static library libasync_mqtt.a
 [100%] Built target async_mqtt
@@ -527,7 +610,7 @@ make async_mqtt  68.22s user 0.78s system 99% cpu 1:09.23 total</code></pre>
 <h5 id="_async_mqtt_separate_compilation_mode_user_code_part_2">async_mqtt (separate-compilation-mode) user code part</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>time make check_async_mqtt_separate
+<pre class="rouge highlight"><code>time make check_async_mqtt_separate
 [ 50%] Built target async_mqtt
 [ 75%] Building CXX object CMakeFiles/check_async_mqtt_separate.dir/src/check_async_mqtt_separate.cpp.o
 [100%] Linking CXX executable check_async_mqtt_separate
@@ -543,7 +626,7 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 <h5 id="_async_mqtt5_header_only_3">async-mqtt5 (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>/usr/bin/time -v ./check_async-mqtt5
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async-mqtt5
         Command being timed: "./check_async-mqtt5"
         User time (seconds): 0.00
         System time (seconds): 0.00
@@ -574,7 +657,7 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 <h5 id="_async_mqtt_header_only_3">async_mqtt (header-only)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>/usr/bin/time -v ./check_async_mqtt
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async_mqtt
         Command being timed: "./check_async_mqtt"
         User time (seconds): 0.00
         System time (seconds): 0.00
@@ -605,7 +688,7 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 <h5 id="_async_mqtt_separate_compilation_mode">async_mqtt (separate-compilation-mode)</h5>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code>/usr/bin/time -v ./check_async_mqtt_separate
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async_mqtt_separate
         Command being timed: "./check_async_mqtt_separate"
         User time (seconds): 0.00
         System time (seconds): 0.00
@@ -656,7 +739,6 @@ make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</c
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-06-27 11:43:53 +0900
 </div>
 </div>
 </body>
