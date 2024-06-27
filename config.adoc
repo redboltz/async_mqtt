@@ -23,6 +23,7 @@ ifndef::env-github[:api-base: link:api]
 |ASYNC_MQTT_BUILD_SYSTEM_TESTS|Build system tests. The system tests requires broker.
 |ASYNC_MQTT_BUILD_TOOLS|Build tools (broker, bench, etc)
 |ASYNC_MQTT_BUILD_EXAMPLES|Build examples
+|ASYNC_MQTT_BUILD_LIB|Build separate compiled library
 |===
 
 If you want to use TLS, Websocket, and Websocket on TLS, you don't need to define ASYNC_MQTT_USE_TLS and/or ASYNC_MQTT_USE_WS. Simply include the following files that are not included in `async_mqtt/all.hpp`.
