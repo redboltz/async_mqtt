@@ -210,6 +210,52 @@ Therefore, once you compile <code>async_mqtt.cpp</code> (which takes a long time
 </li>
 </ul>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_library_build">Library build</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is an alternative method to build a separately compiled library.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the <code>ASYNC_MQTT_BUILD_LIB=ON</code> definition to cmake.</p>
+</li>
+<li>
+<p>Build the target <code>async_mqtt_separate</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For example, on Linux:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sh">cmake <span class="nt">-DASYNC_MQTT_BUILD_LIB</span><span class="o">=</span>ON ..
+make async_mqtt_separate</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This generates <code>lib/libasync_mqtt_separate.a</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can link it to your application that is compiled with <code>ASYNC_MQTT_SEPARATE_COMPILATION</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ensure you provide the same option when building both <code>async_mqtt_separate</code> and your application. If the options differ, linker-related errors may occur.</p>
+</div>
+<div class="paragraph">
+<p>You can build <code>async_mqtt_separate</code> in parallel. This is faster but requires more memory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sh">make async_mqtt_separate <span class="nt">-j</span></code></pre>
+</div>
+</div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -226,8 +272,6 @@ Therefore, once you compile <code>async_mqtt.cpp</code> (which takes a long time
 </tr>
 </thead>
 </table>
-</div>
-</div>
 </div>
 </div>
 </div>
