@@ -43,3 +43,29 @@ Therefore, once you compile `async_mqtt.cpp` (which takes a long time due to ins
 * xref:{am-base-path}/example/separate_endpoint/CMakeLists.txt[CMakeLists.txt]
 * xref:{am-base-path}/example/separate_endpoint/async_mqtt.cpp[async_mqtt.cpp]
 * xref:{am-base-path}/example/separate_endpoint/main.cpp[main.cpp]
+
+== Library build
+
+This is an alternative method to build a separately compiled library.
+
+1. Add the `ASYNC_MQTT_BUILD_LIB=ON` definition to cmake.
+2. Build the target `async_mqtt_separate`.
+
+For example, on Linux:
+
+```sh
+cmake -DASYNC_MQTT_BUILD_LIB=ON ..
+make async_mqtt_separate
+```
+
+This generates `lib/libasync_mqtt_separate.a`.
+
+You can link it to your application that is compiled with `ASYNC_MQTT_SEPARATE_COMPILATION`.
+
+Ensure you provide the same option when building both `async_mqtt_separate` and your application. If the options differ, linker-related errors may occur.
+
+You can build `async_mqtt_separate` in parallel. This is faster but requires more memory.
+
+```sh
+make async_mqtt_separate -j
+```
