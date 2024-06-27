@@ -2,6 +2,7 @@
 
 = History
 == 8.0.1
+* Fixed bench tool infinity acqire packet_id problem on QoS1, 2. #320
 * Added `ASYNC_MQTT_BUILD_LIB` cmake option. #319
 * Restored missing Dockerfile.ubuntu. #318
 

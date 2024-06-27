@@ -53,6 +53,7 @@ enum class mode {
 enum class ev_type {
     recv_packet,
     sent_result,
+    acquire_result,
     other
 };
 
@@ -239,7 +240,7 @@ struct bench {
     }
     void operator()(am::error_code const& ec, am::packet_id_type pid, ClientInfo* pci = nullptr) {
         pci->pid = pid;
-        proc(ec, am::packet_variant{}, pid, pci, ev_type::other);
+        proc(ec, am::packet_variant{}, pid, pci, ev_type::acquire_result);
     }
 
 private:
@@ -874,36 +875,19 @@ private:
                         );
                     }
                 }
+                else if (evt == ev_type::acquire_result) {
+                    if (ec) {
+                        locked_cout() << "acquire_unique_packet_id error:" << ec.message() << std::endl;
+                        exit(-1);
+                    }
+                    am::pub::opts opts = bc_.qos | bc_.retain;
+                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                    send_publish(opts);
+                    BOOST_ASSERT(pci->send_times != 0);
+                    --pci->send_times;
+                }
                 else if (evt == ev_type::other) {
                     if (bc_.md == mode::single || bc_.md == mode::send) {
-                        auto trigger_pub =
-                            [&] {
-                                if (bc_.qos == am::qos::at_least_once ||
-                                    bc_.qos == am::qos::exactly_once) {
-                                    pci->c->async_acquire_unique_packet_id(
-                                        as::append(
-                                            *this,
-                                            pci
-                                        )
-                                    );
-                                    BOOST_ASSERT(!ec);
-                                    am::pub::opts opts = bc_.qos | bc_.retain;
-                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                                    send_publish(opts);
-                                    BOOST_ASSERT(pci->send_times != 0);
-                                    --pci->send_times;
-                                }
-                                else {
-                                    pci->pid = 0;
-                                    am::pub::opts opts = bc_.qos | bc_.retain;
-                                    pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
-                                    send_publish(opts);
-                                    BOOST_ASSERT(pci->send_times != 0);
-                                    --pci->send_times;
-                                }
-                            };
-
-
                         switch (bc_.ph.load()) {
                         case phase::idle:
                             // pub interval (idle) timer fired
@@ -911,7 +895,24 @@ private:
                                 locked_cout() << "pub interval (idle) timer error:" << ec.message() << std::endl;
                                 exit(-1);
                             }
-                            trigger_pub();
+                            if (bc_.qos == am::qos::at_least_once ||
+                                bc_.qos == am::qos::exactly_once) {
+                                pci->c->async_acquire_unique_packet_id(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                                BOOST_ASSERT(!ec);
+                            }
+                            else {
+                                pci->pid = 0;
+                                am::pub::opts opts = bc_.qos | bc_.retain;
+                                pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                send_publish(opts);
+                                BOOST_ASSERT(pci->send_times != 0);
+                                --pci->send_times;
+                            }
                             BOOST_ASSERT(pci->send_idle_count != 0);
 
                             if (bc_.md == mode::send) {
@@ -952,7 +953,24 @@ private:
                                 locked_cout() << "pub interval timer error:" << ec.message() << std::endl;
                                 exit(-1);
                             }
-                            trigger_pub();
+                            if (bc_.qos == am::qos::at_least_once ||
+                                bc_.qos == am::qos::exactly_once) {
+                                pci->c->async_acquire_unique_packet_id(
+                                    as::append(
+                                        *this,
+                                        pci
+                                    )
+                                );
+                                BOOST_ASSERT(!ec);
+                            }
+                            else {
+                                pci->pid = 0;
+                                am::pub::opts opts = bc_.qos | bc_.retain;
+                                pci->sent.at(pci->send_times - 1) = std::chrono::steady_clock::now();
+                                send_publish(opts);
+                                BOOST_ASSERT(pci->send_times != 0);
+                                --pci->send_times;
+                            }
                             if (pci->send_times != 0) {
                                 pci->tim->expires_at(
                                     pci->tim->expiry() +
