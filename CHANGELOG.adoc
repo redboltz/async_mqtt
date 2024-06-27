@@ -1,6 +1,10 @@
 :last-update-label!:
 
 = History
+== 8.0.1
+* Added `ASYNC_MQTT_BUILD_LIB` cmake option. #319
+* Restored missing Dockerfile.ubuntu. #318
+
 == 8.0.0
 === breaking changes
 * `client` becomes `shared_ptr` similar as `endpoint`. #315

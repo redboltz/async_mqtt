@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required (VERSION 3.13.0)
-project(async_mqtt_iface VERSION 8.0.0)
+project(async_mqtt_iface VERSION 8.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,6 +18,7 @@ option(ASYNC_MQTT_BUILD_UNIT_TESTS "Enable building unit tests" OFF)
 option(ASYNC_MQTT_BUILD_SYSTEM_TESTS "Enable building system tests" OFF)
 option(ASYNC_MQTT_BUILD_TOOLS "Enable building tools (broker, bench, etc.." OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" OFF)
+option(ASYNC_MQTT_BUILD_LIB "Enable building separate compilation library" OFF)
 
 # Not implemented yet
 option(ASYNC_MQTT_USE_STR_CHECK "Enable UTF8 String check" OFF)
@@ -105,6 +106,13 @@ if(ASYNC_MQTT_BUILD_UNIT_TESTS OR ASYNC_MQTT_BUILD_SYSTEM_TESTS)
     add_subdirectory(test)
 endif()
 
+if(ASYNC_MQTT_BUILD_LIB)
+    message(STATUS "Library build enabled")
+    add_subdirectory(lib)
+else()
+    message(STATUS "Library build disabled")
+endif()
+
 # Heder dependency checking
 add_custom_target("check_deps")
 if(MSVC)
@@ -136,7 +144,7 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 8.0.0" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 8.0.1" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = GENERATING_DOCUMENTATION ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS ASYNC_MQTT_USE_LOG" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
@@ -145,8 +153,6 @@ if(DOXYGEN_FOUND)
         COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_LATEX         = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_MEMBERS     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_CLASSES     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-#        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_FRIEND_COMPOUNDS  = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-#        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_IN_BODY_DOCS      = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "CLASS_GRAPH            = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INCLUDE_GRAPH          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMAND ${CMAKE_COMMAND} -E echo "INCLUDED_BY_GRAPH      = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
