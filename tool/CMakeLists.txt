@@ -4,7 +4,7 @@ list(APPEND exec_PROGRAMS
     client_cli.cpp
 )
 
-find_package(Boost 1.81.0 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
 
 # Without this setting added, azure pipelines completely fails to find the boost libraries. No idea why.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

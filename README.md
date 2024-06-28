@@ -60,4 +60,5 @@ See [document](https://redboltz.github.io/async_mqtt/doc/latest/tutorial/client.
 ## Requirement
 
 - Compiler: C++17 or later
-- Boost Libraries:  1.81.0 or later
+- Boost Libraries:  1.84.0 or later
+  - If you don't build tests, 1.82.0 or later

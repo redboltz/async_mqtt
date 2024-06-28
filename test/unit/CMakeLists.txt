@@ -84,7 +84,7 @@ list(APPEND check_ce_PROGRAMS
     ut_static_assert_fail_server.cpp
 )
 
-find_package(Boost 1.81.0 REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost 1.84.0 REQUIRED COMPONENTS unit_test_framework)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     link_directories(${Boost_LIBRARY_DIRS})
 endif()

@@ -2,6 +2,9 @@
 
 = History
 == 8.0.1
+* Fixed required boost version. #322
+** Boost 1.84.0 or later is required.
+*** If you don't build tests, Boost 1.82.0 or later is required.
 * Fixed bench tool infinity acqire packet_id problem on QoS1, 2. #320
 * Added `ASYNC_MQTT_BUILD_LIB` cmake option. #319
 * Restored missing Dockerfile.ubuntu. #318
