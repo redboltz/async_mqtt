@@ -76,7 +76,7 @@ else()
     message(STATUS "Print payload disabled")
 endif()
 
-find_package(Boost 1.81.0 REQUIRED COMPONENTS ${ASYNC_MQTT_BOOST_COMPONENTS})
+find_package(Boost 1.82.0 REQUIRED COMPONENTS ${ASYNC_MQTT_BOOST_COMPONENTS})
 
 if(ASYNC_MQTT_USE_TLS)
     find_package(OpenSSL REQUIRED)

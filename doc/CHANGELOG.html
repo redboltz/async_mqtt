@@ -64,8 +64,7 @@ div#navigation table {
 <h1>History</h1>
 <div class="details">
 <span id="author" class="author">== 8.0.1</span><br>
-<span id="revnumber">version 1,</span>
-<span id="revdate">2. #320</span>
+<span id="revdate">* Fixed required boost version. #322</span>
 </div>
 </div>
 <div id="content">
@@ -74,10 +73,27 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
+<p>Boost 1.84.0 or later is required.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you don&#8217;t build tests, Boost 1.82.0 or later is required.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed bench tool infinity acqire packet_id problem on QoS1, 2. #320</p>
+</li>
+<li>
 <p>Added <code>ASYNC_MQTT_BUILD_LIB</code> cmake option. #319</p>
 </li>
 <li>
 <p>Restored missing Dockerfile.ubuntu. #318</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -894,7 +910,6 @@ Hence I categolize the fix to breaking changes.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1<br>
 </div>
 </div>
 </body>
