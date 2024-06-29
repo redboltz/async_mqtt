@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Thread Safety</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Thread Safety</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_single_threaded">Single Threaded</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can call both asynchronous (async) and synchronous (sync) APIs without any special precautions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_multi_threaded">Multi-threaded</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All distinct objects are not thread-safe. To access shared <code>client</code> and/or <code>endpoint</code> objects, construct them with a strand-wrapped executor for the underlying layer&#8217;s argument. The <code>async_*</code> member functions of <code>client</code> and <code>endpoint</code> will dispatch to the executor. As a result of the strand&#8217;s effect, your asynchronous processes will be serialized.</p>
+</div>
+<div class="paragraph">
+<p>The following synchronous member functions are accessed directly. Therefore, you need to introduce locks or explicitly dispatch to the executor.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endpoint member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a9864c9c46f655e82a8cbb93d2725f0e0">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire the new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adaff45fdd6e9bc61001b1ac936040c01">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#ae72fa838272da0e140e5ad1acf24463b">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5c54a4deadb8706eafe3f56fc59eca07">get_qos2_publish_handled_pids</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get already PUBLISH recv CompletionToken is invoked packet_ids</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#abcfa56073b24d3efa6c8ed881295e45e">restore_qos2_publish_handled_pids</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restore already PUBLISH recv CompletionToken is invoked packet_ids</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a6dfe47bd9ab1590e66f110e3dbe1087e">restore_packets</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restore pacets as stored packets</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a5ed8d45ffcfb114533d8de5ddddb4f92">get_stored_packets</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get stored packets</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a9cbabd5f427b1cb18d61ac49c7bbf83b">get_protocol_version</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Get MQTT protocol version</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire the new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">register_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../api/classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">release_packet_id</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="maximum_packet_size.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="logging.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
