@@ -7,6 +7,8 @@
 #if !defined(ASYNC_MQTT_BROKER_BROKER_HPP)
 #define ASYNC_MQTT_BROKER_BROKER_HPP
 
+#include <boost/asio/experimental/channel.hpp>
+#include <boost/asio/experimental/concurrent_channel.hpp>
 #include <async_mqtt/all.hpp>
 #include <broker/endpoint_variant.hpp>
 #include <broker/security.hpp>
@@ -31,12 +33,13 @@ class broker {
     using this_type = broker<Epsp>;
 
 public:
-    broker(as::io_context& timer_ioc, bool recycling_allocator = false)
-        :timer_ioc_{timer_ioc},
-         tim_disconnect_{timer_ioc_},
+    broker(as::any_io_executor exe, bool recycling_allocator = false)
+        :exe_{force_move(exe)},
+         tim_disconnect_{exe_},
          recycling_allocator_{recycling_allocator} {
         std::unique_lock<mutex> g_sec{mtx_security_};
         security_.default_config();
+        channel_read();
     }
 
     void handle_accept(epsp_type epsp, std::optional<std::string> preauthed_user_name = {}) {
@@ -67,6 +70,30 @@ private:
                     );
                     return;
                 }
+                BOOST_ASSERT(pv);
+                ch_recv_.async_send(ec, epsp, force_move(pv), as::detached);
+                async_read_packet(force_move(epsp));
+            };
+        if (recycling_allocator_) {
+            epsp.async_recv(
+                as::bind_allocator(
+                    as::recycling_allocator<char>(),
+                    recv_proc
+                )
+            );
+        }
+        else {
+            epsp.async_recv(
+                recv_proc
+            );
+        }
+    }
+
+    void channel_read() {
+        ch_recv_.async_receive(
+            [this]
+            (error_code, std::optional<epsp_type> epsp_opt, packet_variant pv) {
+                auto epsp = force_move(*epsp_opt);
                 BOOST_ASSERT(pv);
                 pv.visit(
                     overload {
@@ -254,21 +281,9 @@ private:
                         }
                     }
                 );
-            };
-
-        if (recycling_allocator_) {
-            epsp.async_recv(
-                as::bind_allocator(
-                    as::recycling_allocator<char>(),
-                    recv_proc
-                )
-            );
-        }
-        else {
-            epsp.async_recv(
-                recv_proc
-            );
-        }
+                channel_read();
+            }
+        );
     }
 
     void connect_handler(
@@ -404,7 +419,7 @@ private:
             it = idx.emplace_hint(
                 it,
                 session_state<epsp_type>::create(
-                    timer_ioc_,
+                    exe_,
                     mtx_subs_map_,
                     subs_map_,
                     shared_targets_,
@@ -431,9 +446,7 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [this, epsp](error_code) mutable {
-                    async_read_packet(force_move(epsp));
-                }
+                as::detached
             );
         }
         else if (auto old_epsp = const_cast<session_state<epsp_type>&>(**it).lock()) {
@@ -485,7 +498,7 @@ private:
                         bool inserted;
                         std::tie(it, inserted) = idx.emplace(
                             session_state<epsp_type>::create(
-                                timer_ioc_,
+                                exe_,
                                 mtx_subs_map_,
                                 subs_map_,
                                 shared_targets_,
@@ -512,9 +525,7 @@ private:
                             false, // session present
                             true,  // authenticated
                             force_move(connack_props),
-                            [this, epsp](error_code) mutable {
-                                async_read_packet(force_move(epsp));
-                            }
+                            as::detached
                         );
                     }
                 }
@@ -578,12 +589,7 @@ private:
                 false, // session present
                 true,  // authenticated
                 force_move(connack_props),
-                [
-                    this,
-                    epsp
-                ](error_code) mutable {
-                    async_read_packet(force_move(epsp));
-                }
+                as::detached
             );
         }
         else {
@@ -648,7 +654,6 @@ private:
                                 },
                                 [](auto&) { BOOST_ASSERT(false); }
                             );
-                            async_read_packet(force_move(epsp));
                         }
                     );
                 }
@@ -876,12 +881,6 @@ private:
         std::vector<buffer> payload,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1156,7 +1155,7 @@ private:
                 if (sub.sid) {
                     props.push_back(property::subscription_identifier(boost::numeric_cast<std::uint32_t>(*sub.sid)));
                     ss.deliver(
-                        timer_ioc_,
+                        exe_,
                         topic,
                         payload,
                         new_opts,
@@ -1166,7 +1165,7 @@ private:
                 }
                 else {
                     ss.deliver(
-                        timer_ioc_,
+                        exe_,
                         topic,
                         payload,
                         new_opts,
@@ -1251,7 +1250,7 @@ private:
             else {
                 std::shared_ptr<as::steady_timer> tim_message_expiry;
                 if (message_expiry_interval) {
-                    tim_message_expiry = std::make_shared<as::steady_timer>(timer_ioc_, *message_expiry_interval);
+                    tim_message_expiry = std::make_shared<as::steady_timer>(exe_, *message_expiry_interval);
                     tim_message_expiry->async_wait(
                         [this, topic = topic, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
                         (boost::system::error_code const& ec) {
@@ -1286,12 +1285,6 @@ private:
         puback_reason_code /*reason_code*/,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1316,12 +1309,6 @@ private:
         pubrec_reason_code reason_code,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1422,12 +1409,6 @@ private:
         pubrel_reason_code reason_code,
         properties /*props*/
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1510,12 +1491,6 @@ private:
         pubcomp_reason_code /*reason_code*/,
         properties /*props*/
     ){
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1540,11 +1515,6 @@ private:
         std::vector<topic_subopts> const& entries,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it = idx.find(epsp);
@@ -1593,7 +1563,7 @@ private:
                 }
                 ssr.get().publish(
                     epsp,
-                    timer_ioc_,
+                    exe_,
                     r.topic,
                     r.payload,
                     std::min(r.qos_value, qos_value) | pub::retain::yes,
@@ -1754,13 +1724,6 @@ private:
         std::vector<topic_sharename> entries,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
-
         std::shared_lock<mutex> g(mtx_sessions_);
         auto& idx = sessions_.template get<tag_con>();
         auto it  = idx.find(epsp);
@@ -1838,12 +1801,6 @@ private:
     void pingreq_handler(
         epsp_type epsp
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         if (!pingresp_) return;
 
         switch (epsp.get_protocol_version()) {
@@ -2100,16 +2057,10 @@ private:
     }
 
     void auth_handler(
-        epsp_type epsp,
+        epsp_type /*epsp*/,
         auth_reason_code /*rc*/,
         properties props
     ) {
-        auto usg = unique_scope_guard(
-            [&] {
-                async_read_packet(force_move(epsp));
-            }
-        );
-
         if (h_auth_props_) h_auth_props_(force_move(props));
     }
 
@@ -2197,7 +2148,7 @@ private:
 
 private:
 
-    as::io_context& timer_ioc_; ///< The boost asio context to run this broker on.
+    as::any_io_executor exe_; ///< The boost asio executor to run this broker on.
     as::steady_timer tim_disconnect_; ///< Used to delay disconnect handling for testing
     std::optional<std::chrono::steady_clock::duration> delay_disconnect_; ///< Used to delay disconnect handling for testing
 
@@ -2239,6 +2190,8 @@ private:
     bool pingresp_ = true;
     bool connack_ = true;
     bool recycling_allocator_;
+    using channel_t = as::experimental::concurrent_channel<void(error_code, std::optional<epsp_type>, packet_variant)>;
+    channel_t ch_recv_{exe_, std::numeric_limits<std::size_t>::max()};
 };
 
 } // namespace async_mqtt

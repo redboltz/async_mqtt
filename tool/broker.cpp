@@ -118,7 +118,7 @@ std::shared_ptr<as::ssl::context> init_ctx(
 inline
 void run_broker(boost::program_options::variables_map const& vm) {
     try {
-        as::io_context timer_ioc;
+        as::thread_pool tp_broker{vm["core_threads"].as<std::size_t>()};
 
         using epv_type = am::basic_endpoint_variant<
             am::role::server,
@@ -140,7 +140,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         am::broker<
             epv_type
-        > brk{timer_ioc, vm["recycling_allocator"].as<bool>()};
+        > brk{tp_broker.get_executor(), vm["recycling_allocator"].as<bool>()};
 
         auto num_of_iocs =
             [&] () -> std::size_t {
@@ -572,22 +572,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
             }
         };
 
-        as::executor_work_guard<
-            as::io_context::executor_type
-        > guard_timer_ioc(timer_ioc.get_executor());
-
-        std::thread th_timer {
-            [&timer_ioc] {
-                try {
-                    timer_ioc.run();
-                }
-                catch (std::exception const& e) {
-                    ASYNC_MQTT_LOG("mqtt_broker", error)
-                        << "th_timer exception:" << e.what();
-                }
-                ASYNC_MQTT_LOG("mqtt_broker", trace) << "timer_ioc.run() finished";
-            }
-        };
         std::vector<std::thread> ts;
         ts.reserve(num_of_iocs * threads_per_ioc);
         auto fixed_core_map = vm["fixed_core_map"].as<bool>();
@@ -664,9 +648,8 @@ void run_broker(boost::program_options::variables_map const& vm) {
         for (auto& t : ts) t.join();
         ASYNC_MQTT_LOG("mqtt_broker", trace) << "ts joined";
 
-        guard_timer_ioc.reset();
-        th_timer.join();
-        ASYNC_MQTT_LOG("mqtt_broker", trace) << "th_timer joined";
+        tp_broker.join();
+        ASYNC_MQTT_LOG("mqtt_broker", trace) << "tp_broker joined";
 
         signals.cancel();
         th_signal.join();
@@ -703,6 +686,11 @@ int main(int argc, char *argv[]) {
                 "threads_per_ioc",
                 boost::program_options::value<std::size_t>()->default_value(1),
                 "Number of worker threads for each io_context."
+            )
+            (
+                "core_threads",
+                boost::program_options::value<std::size_t>()->default_value(1),
+                "Number of core threads."
             )
             (
                 "tcp_no_delay",
