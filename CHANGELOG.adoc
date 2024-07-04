@@ -1,6 +1,10 @@
 :last-update-label!:
 
 = History
+
+== 8.0.2
+* Refined tests. #322
+
 == 8.0.1
 * Fixed required boost version. #322
 ** Boost 1.84.0 or later is required.
