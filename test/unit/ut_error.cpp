@@ -147,4 +147,49 @@ BOOST_AUTO_TEST_CASE(category) {
     BOOST_TEST(success != auth_reason_code1);
 }
 
+BOOST_AUTO_TEST_CASE(category_detail) {
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::partial_error_detected);
+        BOOST_TEST(e.message() == "partial_error_detected");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_conflict);
+        BOOST_TEST(e.message() == "packet_identifier_conflict");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(e.message() == "packet_not_allowed_to_send");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_not_allowed_to_store);
+        BOOST_TEST(e.message() == "packet_not_allowed_to_store");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_not_regulated);
+        BOOST_TEST(e.message() == "packet_not_regulated");
+    }
+    {
+        std::stringstream ss;
+        auto e = am::mqtt_error::partial_error_detected;
+        ss << e;
+        BOOST_TEST(ss.str() == "partial_error_detected");
+    }
+    {
+        auto se = am::system_error{
+            am::make_error_code(
+                am::pubrel_reason_code::success
+            )
+        };
+        BOOST_TEST(se.code() == am::pubrel_reason_code::success);
+    }
+    {
+        auto se = am::system_error{
+            am::make_error_code(
+                am::auth_reason_code::success
+            )
+        };
+        BOOST_TEST(se.code() == am::auth_reason_code::success);
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
