@@ -2037,4 +2037,100 @@ BOOST_AUTO_TEST_CASE(bulk_recv_chunked_halfway_payload) {
     ioc.run();
 }
 
+BOOST_AUTO_TEST_CASE(bulk_write_close) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            ep->set_bulk_write(true);
+            // prepare connect
+            {
+                auto connect = am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+
+                auto connack = am::v3_1_1::connack_packet{
+                    false,   // session_present
+                    am::connect_return_code::accepted
+                };
+                co_await ep->next_layer().emulate_recv(connack, as::as_tuple(as::deferred));
+                co_await ep->async_recv(as::as_tuple(as::deferred));
+            }
+            // test scenario
+            {
+                {
+                    am::error_code ec;
+                    ep->next_layer().close(ec);
+                }
+                auto [ec1, ec2t] =
+                    co_await (
+                        ep->async_send(am::v3_1_1::pingreq_packet{}, as::as_tuple(as::use_awaitable)) &&
+                        ep->async_send(am::v3_1_1::pingreq_packet{}, as::as_tuple(as::use_awaitable))
+                    );
+                auto [ec2] = ec2t;
+                BOOST_TEST(ec1 == am::errc::connection_reset);
+                BOOST_TEST(ec2 == am::errc::connection_reset);
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+BOOST_AUTO_TEST_CASE(write_close) {
+    auto version = am::protocol_version::v3_1_1;
+    as::io_context ioc;
+    as::co_spawn(
+        ioc.get_executor(),
+        [&]() -> as::awaitable<void> {
+            auto exe = co_await as::this_coro::executor;
+            auto ep = am::endpoint<async_mqtt::role::client, am::cpp20coro_stub_socket>::create(
+                version,
+                // for stub_socket args
+                version,
+                am::force_move(exe)
+            );
+            // test scenario
+            {
+                auto connect = am::v3_1_1::connect_packet{
+                    true,   // clean_session
+                    0x1234, // keep_alive
+                    "cid1"
+                };
+                {
+                    am::error_code ec;
+                    ep->next_layer().close(ec);
+                }
+                auto [ec] = co_await ep->async_send(connect, as::as_tuple(as::deferred));
+                BOOST_TEST(ec == am::errc::connection_reset);
+
+                co_await ep->async_close(as::deferred);
+                co_await ep->next_layer().wait_response(as::as_tuple(as::deferred));
+            }
+
+            co_return;
+        },
+        as::detached
+    );
+    ioc.run();
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
