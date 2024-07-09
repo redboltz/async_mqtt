@@ -404,7 +404,7 @@ private:
             it = idx.emplace_hint(
                 it,
                 session_state<epsp_type>::create(
-                    timer_ioc_,
+                    epsp.get_executor(),
                     mtx_subs_map_,
                     subs_map_,
                     shared_targets_,
@@ -485,7 +485,7 @@ private:
                         bool inserted;
                         std::tie(it, inserted) = idx.emplace(
                             session_state<epsp_type>::create(
-                                timer_ioc_,
+                                epsp.get_executor(),
                                 mtx_subs_map_,
                                 subs_map_,
                                 shared_targets_,
@@ -1156,7 +1156,7 @@ private:
                 if (sub.sid) {
                     props.push_back(property::subscription_identifier(boost::numeric_cast<std::uint32_t>(*sub.sid)));
                     ss.deliver(
-                        timer_ioc_,
+                        timer_ioc_.get_executor(),
                         topic,
                         payload,
                         new_opts,
@@ -1166,7 +1166,7 @@ private:
                 }
                 else {
                     ss.deliver(
-                        timer_ioc_,
+                        timer_ioc_.get_executor(),
                         topic,
                         payload,
                         new_opts,
@@ -1593,7 +1593,7 @@ private:
                 }
                 ssr.get().publish(
                     epsp,
-                    timer_ioc_,
+                    timer_ioc_.get_executor(),
                     r.topic,
                     r.payload,
                     std::min(r.qos_value, qos_value) | pub::retain::yes,
