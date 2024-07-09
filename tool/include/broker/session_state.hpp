@@ -11,6 +11,7 @@
 #include <set>
 
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/experimental/concurrent_channel.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
@@ -118,6 +119,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             force_move(session_expiry_interval)
         );
         sssp->update_will(exe, will, will_expiry_interval);
+        sssp->ch_recv_loop();
         return sssp;
     }
 
@@ -237,54 +239,23 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
-        properties props) {
+        properties props
+    ) {
 
         auto send_publish =
-            [this, epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this()]
+            [this, epsp = epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this()]
             (packet_id_type pid) mutable {
                 if (auto sp = wp.lock()) {
-                    switch (version_) {
-                    case protocol_version::v3_1_1:
-                        epsp.async_send(
-                            v3_1_1::publish_packet{
-                                pid,
-                                force_move(pub_topic),
-                                force_move(payload),
-                                pubopts
-                            },
-                            [this, epsp](error_code const& ec) {
-                                if (ec) {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                                        << "epsp:" << epsp.get_address() << " "
-                                        << ec.message();
-                                }
-                            }
-                        );
-                        break;
-                    case protocol_version::v5:
-                        epsp.async_send(
-                            v5::publish_packet{
-                                pid,
-                                force_move(pub_topic),
-                                force_move(payload),
-                                pubopts,
-                                force_move(props)
-                            },
-                            [this, epsp](error_code const& ec) {
-                                if (ec) {
-                                    ASYNC_MQTT_LOG("mqtt_broker", info)
-                                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                                        << "epsp:" << epsp.get_address() << " "
-                                        << ec.message();
-                                }
-                            }
-                        );
-                        break;
-                    default:
-                        BOOST_ASSERT(false);
-                        break;
-                    }
+                    ch_.async_send(
+                        error_code{},
+                        force_move(epsp),
+                        pid,
+                        force_move(pub_topic),
+                        force_move(payload),
+                         pubopts,
+                        force_move(props),
+                        [](error_code){}
+                    );
                 }
             };
 
@@ -736,6 +707,68 @@ private:
         }
     }
 
+    void ch_recv_loop() {
+        ch_.async_receive(
+            [this]
+            (
+                error_code const& ec,
+                std::optional<epsp_type> epsp_opt,
+                packet_id_type pid,
+                std::string pub_topic,
+                std::vector<buffer> payload,
+                pub::opts pubopts,
+                properties props
+            ) {
+                if (ec) return;
+                auto& epsp = *epsp_opt;
+                switch (version_) {
+                case protocol_version::v3_1_1:
+                    epsp.async_send(
+                        v3_1_1::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(payload),
+                            pubopts
+                        },
+                        [this, epsp](error_code const& ec) {
+                            if (ec) {
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                    << "epsp:" << epsp.get_address() << " "
+                                    << ec.message();
+                            }
+                        }
+                    );
+                    break;
+                case protocol_version::v5:
+                    epsp.async_send(
+                        v5::publish_packet{
+                            pid,
+                            force_move(pub_topic),
+                            force_move(payload),
+                            pubopts,
+                            force_move(props)
+                        },
+                        [this, epsp](error_code const& ec) {
+                            if (ec) {
+                                ASYNC_MQTT_LOG("mqtt_broker", info)
+                                    << ASYNC_MQTT_ADD_VALUE(address, this)
+                                    << "epsp:" << epsp.get_address() << " "
+                                    << ec.message();
+                            }
+                        }
+                    );
+                    break;
+                default:
+                    BOOST_ASSERT(false);
+                    break;
+                }
+
+                ch_recv_loop();
+            }
+        );
+    }
+
 private:
     friend class session_states<epsp_type>;
 
@@ -772,6 +805,18 @@ private:
 
     std::optional<std::string> response_topic_;
     std::function<void()> clean_handler_;
+
+    as::experimental::concurrent_channel<
+        void(
+            error_code,
+            std::optional<epsp_type>,
+            packet_id_type,
+            std::string,
+            std::vector<buffer>,
+            pub::opts,
+            properties
+        )
+    > ch_{exe_, std::numeric_limits<std::size_t>::max()};
 };
 
 template <typename Sp>
