@@ -279,7 +279,9 @@ private:
     // private constructor for internal use
     explicit basic_publish_packet(buffer buf, error_code& ec);
 
+    struct tag_internal{};
     explicit basic_publish_packet(
+        tag_internal,
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
         buffer&& topic_name,
         std::vector<buffer>&& payloads,

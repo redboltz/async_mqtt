@@ -45,6 +45,7 @@ namespace as = boost::asio;
 template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_publish_packet<PacketIdBytes>::basic_publish_packet(
+    tag_internal,
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     buffer&& topic_name,
     std::vector<buffer>&& payloads,
