@@ -32,6 +32,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     Payload&& payloads,
     pub::opts pubopts
 ):basic_publish_packet{
+    tag_internal{},
     packet_id,
     [&]() -> buffer {
         if constexpr(std::is_same_v<std::decay_t<StringViewLike>, buffer>) {
