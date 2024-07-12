@@ -3,6 +3,7 @@
 = History
 
 == 8.0.2
+* Fixed private constructor chosen problem on publish packet. #325
 * Refined tests. #322
 
 == 8.0.1
