@@ -99,6 +99,7 @@ struct bench_context {
         std::chrono::steady_clock::time_point& tp_pub_after_idle_delay,
         std::chrono::steady_clock::time_point& tp_publish,
         bool detail_report,
+        std::string all_rtt_store_file,
         std::vector<
             as::executor_work_guard<
                 as::io_context::executor_type
@@ -151,6 +152,7 @@ struct bench_context {
      tp_pub_after_idle_delay{tp_pub_after_idle_delay},
      tp_publish{tp_publish},
      detail_report{detail_report},
+     all_rtt_store_file{all_rtt_store_file},
      guard_iocs{guard_iocs},
      md{md},
      workers{workers},
@@ -201,6 +203,7 @@ struct bench_context {
     std::chrono::steady_clock::time_point& tp_pub_after_idle_delay;
     std::chrono::steady_clock::time_point& tp_publish;
     bool detail_report;
+    std::string all_rtt_store_file;
     std::vector<
         as::executor_work_guard<
             as::io_context::executor_type
@@ -856,6 +859,17 @@ private:
                             << "client_id:" << maxmin_cid << std::endl;
                         locked_cout() << "Finish" << std::endl;
                         bc_.tim_progress->cancel();
+                        if (!bc_.all_rtt_store_file.empty()) {
+                            locked_cout() << "storing all RTT to " << bc_.all_rtt_store_file << std::endl;
+                            std::ofstream ofs{bc_.all_rtt_store_file};
+                            for (auto& ci : cis_) {
+                                for (auto rtt : ci.rtt_us) {
+                                    ofs << rtt << "\n";
+                                }
+                                ofs << "\n";
+                            }
+                            locked_cout() << "store finished" << std::endl;
+                        }
                         if (bc_.close_after_report) {
                             for (auto& ci : cis_) {
                                 ci.c->async_close([]{});
@@ -1308,6 +1322,11 @@ int main(int argc, char *argv[]) {
                 "report for each client's max mid avg min"
             )
             (
+                "all_rtt_store_file",
+                boost::program_options::value<std::string>()->default_value(""),
+                "file name to store all RTT"
+            )
+            (
                 "pub_idle_count",
                 boost::program_options::value<std::size_t>()->default_value(1),
                 "ideling publish count. it is useful to ignore authorization cache."
@@ -1462,6 +1481,7 @@ int main(int argc, char *argv[]) {
         std::chrono::steady_clock::time_point tp_publish;
 
         auto detail_report = vm["detail_report"].as<bool>();
+        auto all_rtt_store_file = vm["all_rtt_store_file"].as<std::string>();
 
         std::optional<am::host_port> manager_hp;
         std::uint16_t manager_port = 0;
@@ -2033,6 +2053,7 @@ int main(int argc, char *argv[]) {
             tp_pub_after_idle_delay,
             tp_publish,
             detail_report,
+            all_rtt_store_file,
             guard_iocs,
             md,
             workers,
