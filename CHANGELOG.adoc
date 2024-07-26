@@ -3,7 +3,7 @@
 = History
 
 == 8.0.2
-* Refined unit_test. #328
+* Refined unit_test. #328, #329
 * Updated cli library. #327
 * Added all RTT output mode to bench. #326
 * Fixed private constructor chosen problem on publish packet. #325
