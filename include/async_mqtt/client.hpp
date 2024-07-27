@@ -161,6 +161,13 @@ public:
     client(this_type&&) = default;
 
     /**
+     * @brief destructor
+     * This function destroys the client,
+     * cancelling any outstanding asynchronous operations associated with the client.
+     */
+    ~client() = default;
+
+    /**
      * @brief copy assign operator **deleted**
      */
     this_type& operator=(this_type const&) = delete;
