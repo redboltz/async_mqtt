@@ -3,6 +3,7 @@
 = History
 
 == 8.0.2
+* Added destructor comment for basic_endpoint and client. #330
 * Refined unit_test. #328, #329
 * Updated cli library. #327
 * Added all RTT output mode to bench. #326

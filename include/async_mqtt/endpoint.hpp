@@ -102,6 +102,8 @@ public:
 
     /**
      * @brief destructor
+     * This function destroys the basic_endpoint,
+     * cancelling any outstanding asynchronous operations associated with the basic_endpoint.
      */
     ~basic_endpoint();
 
