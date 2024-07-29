@@ -69,3 +69,61 @@ You can build `async_mqtt_separate` in parallel. This is faster but requires mor
 ```sh
 make async_mqtt_separate -j
 ```
+
+=== Customize
+
+By default, the following preprocessor macros are defined. You can customize them by defining the macros with your own values at the top of your library source file.
+
+==== ASYNC_MQTT_PP_ROLE
+Defines the instantiation of endpoint roles.
+
+Default value:
+
+```cpp
+(role::client)(role::server)(role::any)
+```
+
+==== ASYNC_MQTT_PP_SIZE
+Defines the instantiation of Packet Identifier sizes.
+
+Default value:
+
+```cpp
+(2)(4)
+```
+
+==== ASYNC_MQTT_PP_PROTOCOL
+Defines the instantiation of endpoint/client underlying layer protocols.
+
+Default value:
+
+```cpp
+(protocol::mqtt)
+```
+
+If `ASYNC_MQTT_USE_TLS` is defined:
+
+```cpp
+(protocol::mqtt)(protocol::mqtts)
+```
+
+If `ASYNC_MQTT_USE_WS` is defined:
+
+```cpp
+(protocol::mqtt)(protocol::ws)
+```
+
+If both `ASYNC_MQTT_USE_TLS` and `ASYNC_MQTT_USE_WS` are defined:
+
+```cpp
+(protocol::mqtt)(protocol::mqtts)(protocol::ws)(protocol::wss)
+```
+
+==== ASYNC_MQTT_PP_VERSION
+Defines the instantiation of MQTT versions.
+
+Default value:
+
+```cpp
+(protocol_version::v3_1_1)(protocol_version::v5)
+```
