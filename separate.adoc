@@ -74,6 +74,13 @@ make async_mqtt_separate -j
 
 By default, the following preprocessor macros are defined. You can customize them by defining the macros with your own values at the top of your library source file.
 
+For example:
+
+```cpp
+#define ASYNC_MQTT_PP_PROTOCOL (your_own_socket)
+#include <async_mqtt/src.hpp>
+```
+
 ==== ASYNC_MQTT_PP_ROLE
 Defines the instantiation of endpoint roles.
 
