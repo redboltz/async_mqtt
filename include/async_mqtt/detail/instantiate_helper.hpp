@@ -20,8 +20,15 @@
 
 #include <async_mqtt/role.hpp>
 
+#if !defined(ASYNC_MQTT_PP_ROLE)
 #define ASYNC_MQTT_PP_ROLE (role::client)(role::server)(role::any)
+#endif // !defined(ASYNC_MQTT_PP_ROLE)
+
+#if !defined(ASYNC_MQTT_PP_SIZE)
 #define ASYNC_MQTT_PP_SIZE (2)(4)
+#endif // !defined(ASYNC_MQTT_PP_SIZE)
+
+#if !defined(ASYNC_MQTT_PP_PROTOCOL)
 
 #if defined(ASYNC_MQTT_USE_TLS)
 #  if defined(ASYNC_MQTT_USE_WS)
@@ -51,6 +58,7 @@
 #  endif // defined(ASYNC_MQTT_USE_WS)
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
+#endif // !defined(ASYNC_MQTT_PP_PROTOCOL)
 
 #define ASYNC_MQTT_PP_PACKET \
     (v3_1_1::connect_packet) \
@@ -88,8 +96,10 @@
 
 #define ASYNC_MQTT_PP_BASIC_PACKET_INSTANTIATE(name, n) name<n>
 
+#if !defined(ASYNC_MQTT_PP_VERSION)
 #define ASYNC_MQTT_PP_VERSION \
     (protocol_version::v3_1_1) \
     (protocol_version::v5)
+#endif // !defined(ASYNC_MQTT_PP_VERSION)
 
 #endif // ASYNC_MQTT_DETAIL_INSTANTIATE_HELPER_HPP
