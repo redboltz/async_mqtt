@@ -256,6 +256,99 @@ make async_mqtt_separate</code></pre>
 <pre class="rouge highlight"><code data-lang="sh">make async_mqtt_separate <span class="nt">-j</span></code></pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_customize">Customize</h3>
+<div class="paragraph">
+<p>By default, the following preprocessor macros are defined. You can customize them by defining the macros with your own values at the top of your library source file.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#define ASYNC_MQTT_PP_PROTOCOL (your_own_socket)
+#include</span> <span class="cpf">&lt;async_mqtt/src.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_role">ASYNC_MQTT_PP_ROLE</h4>
+<div class="paragraph">
+<p>Defines the instantiation of endpoint roles.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">)(</span><span class="n">role</span><span class="o">::</span><span class="n">server</span><span class="p">)(</span><span class="n">role</span><span class="o">::</span><span class="n">any</span><span class="p">)</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_size">ASYNC_MQTT_PP_SIZE</h4>
+<div class="paragraph">
+<p>Defines the instantiation of Packet Identifier sizes.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="mi">4</span><span class="p">)</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_protocol">ASYNC_MQTT_PP_PROTOCOL</h4>
+<div class="paragraph">
+<p>Defines the instantiation of endpoint/client underlying layer protocols.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="p">)</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>ASYNC_MQTT_USE_TLS</code> is defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="p">)(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtts</span><span class="p">)</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>ASYNC_MQTT_USE_WS</code> is defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="p">)(</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="p">)</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If both <code>ASYNC_MQTT_USE_TLS</code> and <code>ASYNC_MQTT_USE_WS</code> are defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="p">)(</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtts</span><span class="p">)(</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="p">)(</span><span class="n">protocol</span><span class="o">::</span><span class="n">wss</span><span class="p">)</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_version">ASYNC_MQTT_PP_VERSION</h4>
+<div class="paragraph">
+<p>Defines the instantiation of MQTT versions.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="p">(</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">)(</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v5</span><span class="p">)</span></code></pre>
+</div>
+</div>
 <div id="navigation">
 <table class="tableblock frame-none grid-none stretch">
 <colgroup>
@@ -272,6 +365,8 @@ make async_mqtt_separate</code></pre>
 </tr>
 </thead>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
