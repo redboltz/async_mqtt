@@ -126,30 +126,6 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
 }
 
 template <std::size_t PacketIdBytes>
-template <
-    typename StringViewLike,
-    typename Payload,
-    std::enable_if_t<
-        std::is_convertible_v<std::decay_t<StringViewLike>, std::string_view> &&
-        detail::is_payload<Payload>(),
-        std::nullptr_t
-    >
->
-ASYNC_MQTT_HEADER_ONLY_INLINE
-basic_publish_packet<PacketIdBytes>::basic_publish_packet(
-    StringViewLike&& topic_name,
-    Payload&& payloads,
-    pub::opts pubopts
-) : basic_publish_packet{
-        0,
-        std::forward<StringViewLike>(topic_name),
-        std::forward<Payload>(payloads),
-        pubopts
-    }
-{
-}
-
-template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<as::const_buffer> basic_publish_packet<PacketIdBytes>::const_buffer_sequence() const {
     std::vector<as::const_buffer> ret;
