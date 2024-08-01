@@ -150,7 +150,7 @@ struct cpp20coro_basic_stub_socket {
             else {
                 buffer buf{epk.packet};
                 error_code ec;
-                auto pv = buffer_to_packet_variant(buf, socket.version_, ec);
+                auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_, ec);
                 self.complete(ec, force_move(pv));
             }
         }
