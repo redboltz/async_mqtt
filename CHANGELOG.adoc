@@ -9,7 +9,7 @@
 * Updated cli library. #327
 * Added all RTT output mode to bench. #326
 * Fixed private constructor chosen problem on publish packet. #325
-* Refined tests. #322
+* Refined tests. #322, #333
 
 == 8.0.1
 * Fixed required boost version. #322
