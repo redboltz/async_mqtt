@@ -24,6 +24,7 @@ ifndef::env-github[* xref:api/topics.html[API Reference]]
 * ${include("CHANGELOG.adoc")}
 * Introduction
 ** ${include("requirements.adoc")}
+** ${include("goal.adoc")}
 * Quick Look
 ** ${include("quicklook.adoc")}
 ** ${include("performance.adoc")}
