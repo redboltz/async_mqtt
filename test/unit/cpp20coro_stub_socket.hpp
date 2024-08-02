@@ -10,7 +10,7 @@
 #include <deque>
 
 #include <boost/asio.hpp>
-#include <boost/asio/experimental/channel.hpp>
+#include <boost/asio/experimental/concurrent_channel.hpp>
 
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/packet/packet_variant.hpp>
@@ -312,14 +312,14 @@ struct cpp20coro_basic_stub_socket {
     };
 
 private:
-    using channel_t = as::experimental::channel<void(error_packet)>;
+    using channel_t = as::experimental::concurrent_channel<void(error_packet)>;
     protocol_version version_;
     as::any_io_executor exe_;
     std::optional<error_packet> epk_opt_;
     std::optional<std::string::iterator> packet_it_opt_;
     bool open_ = true;
     channel_t ch_recv_{exe_, 1024};
-    channel_t ch_send_{exe_, 1};
+    channel_t ch_send_{exe_, 1024};
     error_code send_ec_;
 };
 
