@@ -3,7 +3,7 @@
 = History
 
 == 8.0.2
-* Removed invalid `#`. #336
+* Removed invalid `#`. #336, #337
 * Refined documents. #335
 * Added separate compilation mode customization points. #331
 * Added destructor comment for basic_endpoint and client. #330
