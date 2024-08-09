@@ -31,6 +31,18 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
+if(POLICY CMP0144)
+  cmake_policy(SET CMP0144 NEW)
+endif()
+
+if(POLICY CMP0167)
+  if (MSVC)
+    cmake_policy(SET CMP0167 OLD)
+  else ()
+    cmake_policy(SET CMP0167 NEW)
+  endif()
+endif()
+
 if(ASYNC_MQTT_USE_STATIC_BOOST)
     message(STATUS "Staticly linking with Boost")
     set(Boost_USE_STATIC_LIBS TRUE)

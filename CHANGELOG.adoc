@@ -3,6 +3,7 @@
 = History
 
 == 8.0.2
+* Fixed cmake warnings due to CMP0167. #338
 * Removed invalid `#`. #336, #337
 * Refined documents. #335
 * Added separate compilation mode customization points. #331
