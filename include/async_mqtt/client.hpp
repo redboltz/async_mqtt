@@ -156,9 +156,9 @@ public:
     client(this_type const&) = delete;
 
     /**
-     * @brief move constructor
+     * @brief move constructor **deleted**
      */
-    client(this_type&&) = default;
+    client(this_type&&) = delete;
 
     /**
      * @brief destructor
@@ -173,9 +173,9 @@ public:
     this_type& operator=(this_type const&) = delete;
 
     /**
-     * @brief move assign operator
+     * @brief move assign operator **deleted**
      */
-    this_type& operator=(this_type&&) = default;
+    this_type& operator=(this_type&&) = delete;
 
     /**
      * @brief send CONNECT packet and start packet receive loop
