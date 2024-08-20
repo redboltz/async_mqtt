@@ -1,7 +1,7 @@
 var searchData=
 [
   ['rap_0',['rap',['../group__subscribe__options.html#ga8bc075c2f0afb49cb967bfd697852a29',1,'async_mqtt::sub']]],
-  ['rap_5fto_5fstr_1',['rap_to_str',['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::opts']]],
+  ['rap_5fto_5fstr_1',['rap_to_str',['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::opts::rap_to_str()'],['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::rap_to_str()']]],
   ['rbegin_2',['rbegin',['../classasync__mqtt_1_1buffer.html#a114d7ad7bdf186c19ead1682e8a29ab6',1,'async_mqtt::buffer']]],
   ['re_5fauthenticate_3',['re_authenticate',['../group__auth__reason__code.html#gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2',1,'async_mqtt']]],
   ['reason_20code_20based_20errors_4',['MQTT reason code based errors',['../group__error__reporting.html#autotoc_md6',1,'']]],
@@ -32,9 +32,9 @@ var searchData=
   ['retain_29',['retain',['../group__publish__options.html#ga89fabc81d8448fa347b2146349ae4737',1,'async_mqtt::pub::retain'],['../group__subscribe__options.html#gga8bc075c2f0afb49cb967bfd697852a29a16d79ff80feadcf2f52096f073f2b94a',1,'retainasync_mqtt::sub']]],
   ['retain_5favailable_30',['retain_available',['../classasync__mqtt_1_1property_1_1retain__available.html',1,'async_mqtt::property::retain_available'],['../classasync__mqtt_1_1property_1_1retain__available.html#a9070b255f3c00b0cea225d2713738921',1,'async_mqtt::property::retain_available::retain_available()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89a4cd4bf5473da35426244172d847a241a',1,'retain_availableasync_mqtt::property']]],
   ['retain_5fhandling_31',['retain_handling',['../group__subscribe__options.html#ga9ba40e799df5fa42cc6ef4a283679aca',1,'async_mqtt::sub']]],
-  ['retain_5fhandling_5fto_5fstr_32',['retain_handling_to_str',['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::opts']]],
+  ['retain_5fhandling_5fto_5fstr_32',['retain_handling_to_str',['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::opts::retain_handling_to_str()'],['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::retain_handling_to_str()']]],
   ['retain_5fnot_5fsupported_33',['retain_not_supported',['../group__connect__reason__code.html#gga24f7ddcada0b756be2b7fd352820bbb1a56d405a06363897d4b0b09e1605d6d54',1,'retain_not_supportedasync_mqtt'],['../group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565a56d405a06363897d4b0b09e1605d6d54',1,'retain_not_supportedasync_mqtt']]],
-  ['retain_5fto_5fstr_34',['retain_to_str',['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::opts']]],
+  ['retain_5fto_5fstr_34',['retain_to_str',['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::opts::retain_to_str()'],['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::retain_to_str()']]],
   ['rfind_35',['rfind',['../classasync__mqtt_1_1buffer.html#a10863870aa464f6a509b5039404e1aa6',1,'async_mqtt::buffer::rfind(buffer const &amp;buf, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#a9afd4a601f932e7f09013dd9c3a4d211',1,'async_mqtt::buffer::rfind(std::string_view v, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#ae2379c0aa302383e2b8711b1fed57701',1,'async_mqtt::buffer::rfind(char ch, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#a88bdf0c7d13724a34e5e5d87b98b08e0',1,'async_mqtt::buffer::rfind(char const *s, size_type pos, size_type count) const'],['../classasync__mqtt_1_1buffer.html#a71f24316808f123dfc1b1fb82136f553',1,'async_mqtt::buffer::rfind(char const *s, size_type pos=npos) const']]],
   ['role_36',['role',['../group__role.html#ga83492944f4f6b69eb11ce917d1f27c4a',1,'async_mqtt']]],
   ['role_20client_20server_20or_20both_37',['MQTT connection role (client, server or both)',['../group__role.html',1,'']]]
