@@ -10,7 +10,8 @@ ifndef::env-github[:api-base: link:../api]
 
 = Packet-Based APIs
 
-`async_mqtt` automatically updates the endpoint's internal state when sending and receiving packets.
+An MQTT connection is established through the exchange of CONNECT and CONNACK packets. This exchange allows the endpoints to mutually communicate their capabilities.
+`async_mqtt` automatically updates the internal state of the endpoints when sending or receiving these packets.
 
 * client: For high-level MQTT client operations
 ** The client contains an endpoint internally. The client sends and receives endpoint setting-related packets via `async_start()`. See xref:../tutorial/client.adoc[Client APIs]
