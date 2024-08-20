@@ -12,5 +12,5 @@ var searchData=
   ['disconnect_5fwith_5fwill_5fmessage_9',['disconnect_with_will_message',['../group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565aae2400bd68561fe196b3c4275015285e',1,'async_mqtt']]],
   ['dont_10',['dont',['../group__subscribe__options.html#gga8bc075c2f0afb49cb967bfd697852a29af6b97efb0d0e5583be95b68319ede622',1,'async_mqtt::sub']]],
   ['dup_11',['dup',['../group__publish__options.html#gacb20c099f1b6d25577268f35b192a3cd',1,'async_mqtt::pub']]],
-  ['dup_5fto_5fstr_12',['dup_to_str',['../group__publish__options.html#ga1d01ae8614f9e61ba92cc019a04fdb11',1,'async_mqtt::pub::opts']]]
+  ['dup_5fto_5fstr_12',['dup_to_str',['../group__publish__options.html#ga1d01ae8614f9e61ba92cc019a04fdb11',1,'async_mqtt::pub::opts::dup_to_str()'],['../group__publish__options.html#ga1d01ae8614f9e61ba92cc019a04fdb11',1,'async_mqtt::pub::dup_to_str()']]]
 ];
