@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['rap_5fto_5fstr_0',['rap_to_str',['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::opts']]],
+  ['rap_5fto_5fstr_0',['rap_to_str',['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::opts::rap_to_str()'],['../group__subscribe__options.html#gab1d185ccae3b8beecb35d89a7207a132',1,'async_mqtt::sub::rap_to_str()']]],
   ['rbegin_1',['rbegin',['../classasync__mqtt_1_1buffer.html#a114d7ad7bdf186c19ead1682e8a29ab6',1,'async_mqtt::buffer']]],
   ['reason_5fstring_2',['reason_string',['../classasync__mqtt_1_1property_1_1reason__string.html#a82ce0999484c4074a5c23fcc5963e333',1,'async_mqtt::property::reason_string']]],
   ['receive_5fmaximum_3',['receive_maximum',['../classasync__mqtt_1_1property_1_1receive__maximum.html#a2aad8f9236fb4c76ac3ad289c8d4460a',1,'async_mqtt::property::receive_maximum']]],
@@ -21,7 +21,7 @@ var searchData=
   ['restore_5fpackets_18',['restore_packets',['../classasync__mqtt_1_1basic__endpoint.html#a6dfe47bd9ab1590e66f110e3dbe1087e',1,'async_mqtt::basic_endpoint']]],
   ['restore_5fqos2_5fpublish_5fhandled_5fpids_19',['restore_qos2_publish_handled_pids',['../classasync__mqtt_1_1basic__endpoint.html#abcfa56073b24d3efa6c8ed881295e45e',1,'async_mqtt::basic_endpoint']]],
   ['retain_5favailable_20',['retain_available',['../classasync__mqtt_1_1property_1_1retain__available.html#a9070b255f3c00b0cea225d2713738921',1,'async_mqtt::property::retain_available']]],
-  ['retain_5fhandling_5fto_5fstr_21',['retain_handling_to_str',['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::opts']]],
-  ['retain_5fto_5fstr_22',['retain_to_str',['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::opts']]],
+  ['retain_5fhandling_5fto_5fstr_21',['retain_handling_to_str',['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::opts::retain_handling_to_str()'],['../group__subscribe__options.html#ga1b9762c54284f8e6f6a28c5b7604b9d7',1,'async_mqtt::sub::retain_handling_to_str()']]],
+  ['retain_5fto_5fstr_22',['retain_to_str',['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::opts::retain_to_str()'],['../group__publish__options.html#ga4f7a28146e2625b204fe7a47caac0cb0',1,'async_mqtt::pub::retain_to_str()']]],
   ['rfind_23',['rfind',['../classasync__mqtt_1_1buffer.html#a10863870aa464f6a509b5039404e1aa6',1,'async_mqtt::buffer::rfind(buffer const &amp;buf, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#a9afd4a601f932e7f09013dd9c3a4d211',1,'async_mqtt::buffer::rfind(std::string_view v, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#ae2379c0aa302383e2b8711b1fed57701',1,'async_mqtt::buffer::rfind(char ch, size_type pos=npos) const noexcept'],['../classasync__mqtt_1_1buffer.html#a88bdf0c7d13724a34e5e5d87b98b08e0',1,'async_mqtt::buffer::rfind(char const *s, size_type pos, size_type count) const'],['../classasync__mqtt_1_1buffer.html#a71f24316808f123dfc1b1fb82136f553',1,'async_mqtt::buffer::rfind(char const *s, size_type pos=npos) const']]]
 ];
