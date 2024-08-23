@@ -26,6 +26,55 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::tim_cancelled {
 
 // member functions
 
+// public
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename... Args>
+inline
+std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>
+basic_endpoint<Role, PacketIdBytes, NextLayer>::create(
+    protocol_version ver,
+    Args&&... args
+) {
+    return make_shared_helper<this_type>::make_shared(ver, std::forward<Args>(args)...);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+as::any_io_executor
+basic_endpoint<Role, PacketIdBytes, NextLayer>::get_executor() const {
+    return stream_->get_executor();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type const&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() const {
+    return stream_->next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() {
+    return stream_->next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type const&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() const {
+    return stream_->lowest_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() {
+    return stream_->lowest_layer();
+}
+
+
 // private
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
