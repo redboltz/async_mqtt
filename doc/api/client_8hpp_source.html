@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;8.0.2</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;9.0.0</span>
    </div>
   </td>
  </tr>
@@ -249,234 +249,235 @@ $(function(){initNavTree('client_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span> </div>
 <div class="line"><a id="l00549" name="l00549"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2">  549</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2">set_auto_replace_topic_alias_send</a>(<span class="keywordtype">bool</span> val);</div>
 <div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span> </div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">  560</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">set_pingresp_recv_timeout_ms</a>(std::size_t ms);</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span> </div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649">  571</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649">set_bulk_write</a>(<span class="keywordtype">bool</span> val);</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span> </div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#aece04b491b26e3484ce5125748b86adf">  583</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#aece04b491b26e3484ce5125748b86adf">set_bulk_read_buffer_size</a>(std::size_t val);</div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span> </div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>    &gt;</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        CompletionToken,</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a>)</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>    )</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">  609</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a>(</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    );</div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span> </div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>    &gt;</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>        CompletionToken,</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a>)</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>    )</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">  638</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a>(</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    );</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span> </div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    &gt;</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        CompletionToken,</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    )</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e">  668</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a>(</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>        <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id,</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>    );</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span> </div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    &gt;</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>        CompletionToken,</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>        <span class="keywordtype">void</span>()</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    )</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27">  698</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a>(</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>        <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id,</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    );</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span> </div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">  707</a></span>    std::optional&lt;packet_id_type&gt; <a class="code hl_function" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a>();</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span> </div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">  714</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">register_packet_id</a>(<a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id);</div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">  720</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">release_packet_id</a>(<a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id);</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span> </div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Executor1&gt;</div>
-<div class="foldopen" id="foldopen00726" data-start="{" data-end="};">
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1client_1_1rebind__executor.html">  726</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1client_1_1rebind__executor.html">rebind_executor</a> {</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>        <span class="keyword">using </span><a class="code hl_class" href="classasync__mqtt_1_1client.html">other</a> = <a class="code hl_class" href="classasync__mqtt_1_1client.html">client</a>&lt;</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>            Version,</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>            <span class="keyword">typename</span> NextLayer::template <a class="code hl_class" href="classasync__mqtt_1_1client.html">rebind_executor&lt;Executor1&gt;::other</a></div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>        &gt;;</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    };</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab">  561</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab">set_pingresp_recv_timeout</a>(std::chrono::milliseconds duration);</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649">  572</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649">set_bulk_write</a>(<span class="keywordtype">bool</span> val);</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span> </div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#aece04b491b26e3484ce5125748b86adf">  584</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#aece04b491b26e3484ce5125748b86adf">set_bulk_read_buffer_size</a>(std::size_t val);</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>    &gt;</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>        CompletionToken,</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a>)</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    )</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">  610</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#ae866b887888316e02f14487ec2892a23">async_acquire_unique_packet_id</a>(</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    );</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span> </div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>    &gt;</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>        CompletionToken,</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a>)</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    )</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">  639</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_acquire_unique_packet_id_wait_until</a>(</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    );</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span> </div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>    &gt;</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>        CompletionToken,</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    )</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e">  669</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#acbe876628df6963609eb6e9aa4a0729e">async_register_packet_id</a>(</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id,</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    );</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>    &gt;</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>        CompletionToken,</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        <span class="keywordtype">void</span>()</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    )</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27">  699</a></span>    <a class="code hl_function" href="classasync__mqtt_1_1client.html#a2574049a028672d01dcb4a49d80dec27">async_release_packet_id</a>(</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>        <a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id,</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    );</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span> </div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">  708</a></span>    std::optional&lt;packet_id_type&gt; <a class="code hl_function" href="classasync__mqtt_1_1client.html#ab160ebb19bd7e51f8460e59a88deff86">acquire_unique_packet_id</a>();</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span> </div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">  715</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">register_packet_id</a>(<a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id);</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno"><a class="line" href="classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">  721</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classasync__mqtt_1_1client.html#a5e091785f9ed21afc1aeaf9a09ccebb2">release_packet_id</a>(<a class="code hl_typedef" href="group__packet.html#gac92751864e0dd29699b7844345ac7162">packet_id_type</a> packet_id);</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span> </div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Executor1&gt;</div>
+<div class="foldopen" id="foldopen00727" data-start="{" data-end="};">
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno"><a class="line" href="structasync__mqtt_1_1client_1_1rebind__executor.html">  727</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structasync__mqtt_1_1client_1_1rebind__executor.html">rebind_executor</a> {</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>        <span class="keyword">using </span><a class="code hl_class" href="classasync__mqtt_1_1client.html">other</a> = <a class="code hl_class" href="classasync__mqtt_1_1client.html">client</a>&lt;</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>            Version,</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>            <span class="keyword">typename</span> NextLayer::template <a class="code hl_class" href="classasync__mqtt_1_1client.html">rebind_executor&lt;Executor1&gt;::other</a></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>        &gt;;</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    };</div>
 </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span> </div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    <span class="keyword">explicit</span></div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>(</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>        Args&amp;&amp;... args</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    );</div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span> </div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Other&gt;</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <span class="keyword">explicit</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    <a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>(</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        <a class="code hl_class" href="classasync__mqtt_1_1client.html">client&lt;Version, Other&gt;</a>&amp;&amp; other</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    );</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span> </div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    &gt;</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>        CompletionToken,</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;connack_packet&gt;)</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>    )</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    async_start_impl(</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>        std::optional&lt;connect_packet&gt; packet,</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>    );</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span> </div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    &gt;</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        CompletionToken,</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>    )</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>    async_subscribe_impl(</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        std::optional&lt;subscribe_packet&gt; packet,</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    );</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span> </div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>    &gt;</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>        CompletionToken,</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>    )</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    async_unsubscribe_impl(</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>        std::optional&lt;unsubscribe_packet&gt; packet,</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    );</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span> </div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>    &gt;</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>        CompletionToken,</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, pubres_type)</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>    )</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>    async_publish_impl(</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        std::optional&lt;publish_packet&gt; packet,</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    );</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span> </div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    &gt;</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        CompletionToken,</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    )</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>    async_disconnect_impl(</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        std::optional&lt;disconnect_packet&gt; packet,</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    );</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    <span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>    &gt;</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>        CompletionToken,</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>    )</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>    async_auth_impl(</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>        std::optional&lt;v5::auth_packet&gt; packet,</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>    );</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span> </div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    <span class="keywordtype">void</span> recv_loop();</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span> </div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>    <span class="comment">// async operations</span></div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    <span class="keyword">struct </span>start_op;</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    <span class="keyword">struct </span>subscribe_op;</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    <span class="keyword">struct </span>unsubscribe_op;</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    <span class="keyword">struct </span>publish_op;</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    <span class="keyword">struct </span>disconnect_op;</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    <span class="keyword">struct </span>auth_op;</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    <span class="keyword">struct </span>recv_op;</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>    <span class="comment">// internal types</span></div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>    <span class="keyword">struct </span>pid_tim_pv_res_col;</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    <span class="keyword">struct </span>recv_type;</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span> </div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>    <span class="keyword">using </span>endpoint_type_sp = std::shared_ptr&lt;endpoint_type&gt;;</div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span> </div>
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>    endpoint_type_sp ep_;</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    pid_tim_pv_res_col pid_tim_pv_res_col_;</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>    std::deque&lt;recv_type&gt; recv_queue_;</div>
-<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    <span class="keywordtype">bool</span> recv_queue_inserted_ = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>    as::steady_timer tim_notify_publish_recv_;</div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>};</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span> </div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span> </div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span>... Args&gt;</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="keyword">explicit</span></div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>    <a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>(</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>        Args&amp;&amp;... args</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    );</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span> </div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Other&gt;</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>    <span class="keyword">explicit</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>    <a class="code hl_enumvalue" href="group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125">client</a>(</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>        <a class="code hl_class" href="classasync__mqtt_1_1client.html">client&lt;Version, Other&gt;</a>&amp;&amp; other</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    );</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span> </div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    &gt;</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        CompletionToken,</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;connack_packet&gt;)</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    )</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    async_start_impl(</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        std::optional&lt;connect_packet&gt; packet,</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>    );</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span> </div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>    &gt;</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        CompletionToken,</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>    )</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    async_subscribe_impl(</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        std::optional&lt;subscribe_packet&gt; packet,</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    );</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span> </div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>    &gt;</div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>        CompletionToken,</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, std::optional&lt;suback_packet&gt;)</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    )</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    async_unsubscribe_impl(</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        std::optional&lt;unsubscribe_packet&gt; packet,</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    );</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span> </div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>    &gt;</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        CompletionToken,</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>, pubres_type)</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    )</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    async_publish_impl(</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        std::optional&lt;publish_packet&gt; packet,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>    );</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span> </div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    &gt;</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        CompletionToken,</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>    )</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    async_disconnect_impl(</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        std::optional&lt;disconnect_packet&gt; packet,</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>    );</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span> </div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    <span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        <span class="keyword">typename</span> CompletionToken = as::default_completion_token_t&lt;executor_type&gt;</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>    &gt;</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="preprocessor">#if !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        CompletionToken,</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>        <span class="keywordtype">void</span>(<a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a>)</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>    )</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span><span class="preprocessor">#endif </span><span class="comment">// !defined(GENERATING_DOCUMENTATION)</span></div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>    async_auth_impl(</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>        <a class="code hl_typedef" href="group__error.html#gaa100a3fca173f12e33f3b5711710033d">error_code</a> ec,</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>        std::optional&lt;v5::auth_packet&gt; packet,</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>        CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;executor_type&gt;{}</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>    );</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>    <span class="keywordtype">void</span> recv_loop();</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span> </div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    <span class="comment">// async operations</span></div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    <span class="keyword">struct </span>start_op;</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    <span class="keyword">struct </span>subscribe_op;</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    <span class="keyword">struct </span>unsubscribe_op;</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>    <span class="keyword">struct </span>publish_op;</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    <span class="keyword">struct </span>disconnect_op;</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    <span class="keyword">struct </span>auth_op;</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>    <span class="keyword">struct </span>recv_op;</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span> </div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>    <span class="comment">// internal types</span></div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    <span class="keyword">struct </span>pid_tim_pv_res_col;</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>    <span class="keyword">struct </span>recv_type;</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span> </div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    <span class="keyword">using </span>endpoint_type_sp = std::shared_ptr&lt;endpoint_type&gt;;</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span> </div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    endpoint_type_sp ep_;</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>    pid_tim_pv_res_col pid_tim_pv_res_col_;</div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    std::deque&lt;recv_type&gt; recv_queue_;</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>    <span class="keywordtype">bool</span> recv_queue_inserted_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>    as::steady_timer tim_notify_publish_recv_;</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>};</div>
 </div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span> </div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span> </div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_impl.hpp&gt;</span></div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_start.hpp&gt;</span></div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_subscribe.hpp&gt;</span></div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_unsubscribe.hpp&gt;</span></div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_publish.hpp&gt;</span></div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_disconnect.hpp&gt;</span></div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_auth.hpp&gt;</span></div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_close.hpp&gt;</span></div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_recv.hpp&gt;</span></div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_acquire_unique_packet_id.hpp&gt;</span></div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_acquire_unique_packet_id_wait_until.hpp&gt;</span></div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_register_packet_id.hpp&gt;</span></div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_release_packet_id.hpp&gt;</span></div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span> </div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_CLIENT_HPP</span></div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span> </div>
+<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span> </div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_impl.hpp&gt;</span></div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_start.hpp&gt;</span></div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_subscribe.hpp&gt;</span></div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_unsubscribe.hpp&gt;</span></div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_publish.hpp&gt;</span></div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_disconnect.hpp&gt;</span></div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_auth.hpp&gt;</span></div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_close.hpp&gt;</span></div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_recv.hpp&gt;</span></div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_acquire_unique_packet_id.hpp&gt;</span></div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_acquire_unique_packet_id_wait_until.hpp&gt;</span></div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_register_packet_id.hpp&gt;</span></div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span><span class="preprocessor">#include &lt;async_mqtt/impl/client_release_packet_id.hpp&gt;</span></div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span> </div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_CLIENT_HPP</span></div>
 <div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html">async_mqtt::basic_endpoint</a></div><div class="ttdoc">MQTT endpoint corresponding to the connection.</div><div class="ttdef"><b>Definition</b> endpoint_fwd.hpp:28</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html_a631e1e2d54cfc10767b1d8c29639441d"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html#a631e1e2d54cfc10767b1d8c29639441d">async_mqtt::basic_endpoint::executor_type</a></div><div class="ttdeci">typename next_layer_type::executor_type executor_type</div><div class="ttdoc">executor_type of the given NextLayer</div><div class="ttdef"><b>Definition</b> endpoint.hpp:77</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html_ac6d52c82d975d51c9f08627abbf8dec7"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html#ac6d52c82d975d51c9f08627abbf8dec7">async_mqtt::basic_endpoint::lowest_layer_type</a></div><div class="ttdeci">typename stream_type::lowest_layer_type lowest_layer_type</div><div class="ttdoc">lowest_layer_type of the given NextLayer</div><div class="ttdef"><b>Definition</b> endpoint.hpp:74</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1basic__endpoint_html_af485b15270d8b1e12746342d4f79cb15"><div class="ttname"><a href="classasync__mqtt_1_1basic__endpoint.html#af485b15270d8b1e12746342d4f79cb15">async_mqtt::basic_endpoint::next_layer_type</a></div><div class="ttdeci">typename stream_type::next_layer_type next_layer_type</div><div class="ttdoc">type of the given NextLayer</div><div class="ttdef"><b>Definition</b> endpoint.hpp:71</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html"><div class="ttname"><a href="classasync__mqtt_1_1client.html">async_mqtt::client</a></div><div class="ttdoc">MQTT client for casual usecases.</div><div class="ttdef"><b>Definition</b> client.hpp:82</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a02bd1ae59363ab1ce95295693fc276e0"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a02bd1ae59363ab1ce95295693fc276e0">async_mqtt::client::operator=</a></div><div class="ttdeci">this_type &amp; operator=(this_type &amp;&amp;)=delete</div><div class="ttdoc">move assign operator deleted</div></div>
+<div class="ttc" id="aclassasync__mqtt_1_1client_html_a091ab1426321033e7e6670dee529beab"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab">async_mqtt::client::set_pingresp_recv_timeout</a></div><div class="ttdeci">void set_pingresp_recv_timeout(std::chrono::milliseconds duration)</div><div class="ttdoc">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a09c99f0a62f86b9449cbd2407d74be69"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a09c99f0a62f86b9449cbd2407d74be69">async_mqtt::client::client</a></div><div class="ttdeci">client(this_type const &amp;)=delete</div><div class="ttdoc">copy constructor deleted</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a09f09518ac6e775b09519080a96af3a2"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2">async_mqtt::client::set_auto_replace_topic_alias_send</a></div><div class="ttdeci">void set_auto_replace_topic_alias_send(bool val)</div><div class="ttdoc">auto replace topic with corresponding topic alias on send PUBLISH packet. Registering topic alias nee...</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a107f857b734a01cfeb6f8fc7894e60f1"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a107f857b734a01cfeb6f8fc7894e60f1">async_mqtt::client::async_acquire_unique_packet_id_wait_until</a></div><div class="ttdeci">async_acquire_unique_packet_id_wait_until(CompletionToken &amp;&amp;token=as::default_completion_token_t&lt; executor_type &gt;{})</div><div class="ttdoc">acuire unique packet_id. If packet_id is fully acquired, then wait until released.</div></div>
@@ -487,7 +488,6 @@ $(function(){initNavTree('client_8hpp_source.html',''); initResizable(true); });
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a2a7414f348afda7a9059135338ddaadc"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a2a7414f348afda7a9059135338ddaadc">async_mqtt::client::register_packet_id</a></div><div class="ttdeci">bool register_packet_id(packet_id_type packet_id)</div><div class="ttdoc">register packet_id.</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a3782e6b2c2225a3a022de56a63ae9567"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a3782e6b2c2225a3a022de56a63ae9567">async_mqtt::client::client</a></div><div class="ttdeci">client(this_type &amp;&amp;)=delete</div><div class="ttdoc">move constructor deleted</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a38459925809f8106efee03ade8e66c41"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a38459925809f8106efee03ade8e66c41">async_mqtt::client::create</a></div><div class="ttdeci">static std::shared_ptr&lt; this_type &gt; create(Args &amp;&amp;... args)</div><div class="ttdoc">create</div><div class="ttdef"><b>Definition</b> client.hpp:147</div></div>
-<div class="ttc" id="aclassasync__mqtt_1_1client_html_a3f9ba18339a5788f7d4386845eabfbe7"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">async_mqtt::client::set_pingresp_recv_timeout_ms</a></div><div class="ttdeci">void set_pingresp_recv_timeout_ms(std::size_t ms)</div><div class="ttdoc">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a408de6451241efe9acb6d8f671228e28"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a408de6451241efe9acb6d8f671228e28">async_mqtt::client::next_layer</a></div><div class="ttdeci">next_layer_type &amp; next_layer()</div><div class="ttdoc">next_layer getter</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a449daed4cb9f6cb3d417a9bdcb6f092d"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a449daed4cb9f6cb3d417a9bdcb6f092d">async_mqtt::client::get_endpoint</a></div><div class="ttdeci">endpoint_type const &amp; get_endpoint() const</div><div class="ttdoc">get endpoint This is for detail operation</div></div>
 <div class="ttc" id="aclassasync__mqtt_1_1client_html_a53ecf68e9242a4355251ad8abbbebd93"><div class="ttname"><a href="classasync__mqtt_1_1client.html#a53ecf68e9242a4355251ad8abbbebd93">async_mqtt::client::get_endpoint</a></div><div class="ttdeci">endpoint_type &amp; get_endpoint()</div><div class="ttdoc">get endpoint This is for detail operation</div></div>
@@ -533,7 +533,7 @@ $(function(){initNavTree('client_8hpp_source.html',''); initResizable(true); });
 <div class="ttc" id="astructasync__mqtt_1_1client_1_1pubres__type_html_a2236be9c48a3a879ceb1fc3b36e14ffc"><div class="ttname"><a href="structasync__mqtt_1_1client_1_1pubres__type.html#a2236be9c48a3a879ceb1fc3b36e14ffc">async_mqtt::client::pubres_type::pubrec_opt</a></div><div class="ttdeci">std::optional&lt; pubrec_packet &gt; pubrec_opt</div><div class="ttdef"><b>Definition</b> client.hpp:128</div></div>
 <div class="ttc" id="astructasync__mqtt_1_1client_1_1pubres__type_html_ac421d7d122a64ae87537f85dc9faaf15"><div class="ttname"><a href="structasync__mqtt_1_1client_1_1pubres__type.html#ac421d7d122a64ae87537f85dc9faaf15">async_mqtt::client::pubres_type::pubcomp_opt</a></div><div class="ttdeci">std::optional&lt; pubcomp_packet &gt; pubcomp_opt</div><div class="ttdef"><b>Definition</b> client.hpp:132</div></div>
 <div class="ttc" id="astructasync__mqtt_1_1client_1_1pubres__type_html_adbf276995037034b6a8ea247bd35b53a"><div class="ttname"><a href="structasync__mqtt_1_1client_1_1pubres__type.html#adbf276995037034b6a8ea247bd35b53a">async_mqtt::client::pubres_type::puback_opt</a></div><div class="ttdeci">std::optional&lt; puback_packet &gt; puback_opt</div><div class="ttdef"><b>Definition</b> client.hpp:124</div></div>
-<div class="ttc" id="astructasync__mqtt_1_1client_1_1rebind__executor_html"><div class="ttname"><a href="structasync__mqtt_1_1client_1_1rebind__executor.html">async_mqtt::client::rebind_executor</a></div><div class="ttdoc">rebinds the client type to another executor</div><div class="ttdef"><b>Definition</b> client.hpp:726</div></div>
+<div class="ttc" id="astructasync__mqtt_1_1client_1_1rebind__executor_html"><div class="ttname"><a href="structasync__mqtt_1_1client_1_1rebind__executor.html">async_mqtt::client::rebind_executor</a></div><div class="ttdoc">rebinds the client type to another executor</div><div class="ttdef"><b>Definition</b> client.hpp:727</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

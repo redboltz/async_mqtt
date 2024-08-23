@@ -43,7 +43,7 @@ var classasync__mqtt_1_1basic__endpoint =
     [ "set_auto_replace_topic_alias_send", "classasync__mqtt_1_1basic__endpoint.html#a70f40da2602fb6b22049aafa815782e0", null ],
     [ "set_bulk_read_buffer_size", "classasync__mqtt_1_1basic__endpoint.html#acde955d86b34419c08075af7178fad12", null ],
     [ "set_bulk_write", "classasync__mqtt_1_1basic__endpoint.html#a2259505ae9d0272321f9cabd7b6f45e1", null ],
-    [ "set_pingreq_send_interval_ms", "classasync__mqtt_1_1basic__endpoint.html#abc343e2fad88dabbcad10c2ece142fdc", null ],
-    [ "set_pingresp_recv_timeout_ms", "classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0", null ],
+    [ "set_pingreq_send_interval", "classasync__mqtt_1_1basic__endpoint.html#ad50d613544ac977dbc69c64c367eeb32", null ],
+    [ "set_pingresp_recv_timeout", "classasync__mqtt_1_1basic__endpoint.html#a304a6bc9c9db1435b06b79217c8375dd", null ],
     [ "endpoint", "group__endpoint.html#ga2e1a75540d6fe007c2a768600ad6d8cb", null ]
 ];

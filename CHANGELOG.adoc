@@ -2,6 +2,12 @@
 
 = History
 
+== 9.0.0
+=== breaking changes
+* Updated timeout duration setting function parameter type as `std::chorono::milliseconds`. #342
+  ** User can pass any duration types like `std::chrono::milliseconds`, `std::chrono::seconds`, etc.
+  ** The Mminimum resolution is milliseconds.
+
 == 8.0.2
 * Deleted unused and undefined `is_error()` function. #341
 * Deleted `client` move operations. #339

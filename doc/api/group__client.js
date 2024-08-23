@@ -42,6 +42,6 @@ var group__client =
       [ "set_auto_replace_topic_alias_send", "classasync__mqtt_1_1client.html#a09f09518ac6e775b09519080a96af3a2", null ],
       [ "set_bulk_read_buffer_size", "classasync__mqtt_1_1client.html#aece04b491b26e3484ce5125748b86adf", null ],
       [ "set_bulk_write", "classasync__mqtt_1_1client.html#aa56df38927dcfa249981a336cd14c649", null ],
-      [ "set_pingresp_recv_timeout_ms", "classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7", null ]
+      [ "set_pingresp_recv_timeout", "classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab", null ]
     ] ]
 ];
