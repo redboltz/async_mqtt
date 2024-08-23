@@ -96,9 +96,7 @@ public:
     static std::shared_ptr<this_type> create(
         protocol_version ver,
         Args&&... args
-    ) {
-        return make_shared_helper<this_type>::make_shared(ver, std::forward<Args>(args)...);
-    }
+    );
 
     /**
      * @brief destructor
@@ -131,63 +129,45 @@ public:
      * @brief executor getter
      * @return return internal stream's executor
      */
-    as::any_io_executor get_executor() const {
-        return stream_->get_executor();
-    }
+    as::any_io_executor get_executor() const;
 
     /**
      * @brief next_layer getter
      * @return const reference of the next_layer
      */
-    next_layer_type const& next_layer() const {
-        return stream_->next_layer();
-    }
+    next_layer_type const& next_layer() const;
+
     /**
      * @brief next_layer getter
      * @return reference of the next_layer
      */
-    next_layer_type& next_layer() {
-        return stream_->next_layer();
-    }
+    next_layer_type& next_layer();
 
     /**
      * @brief lowest_layer getter
      * @return const reference of the lowest_layer
      */
-    lowest_layer_type const& lowest_layer() const {
-        return stream_->lowest_layer();
-    }
+    lowest_layer_type const& lowest_layer() const;
+
     /**
      * @brief lowest_layer getter
      * @return reference of the lowest_layer
      */
-    lowest_layer_type& lowest_layer() {
-        return stream_->lowest_layer();
-    }
+    lowest_layer_type& lowest_layer();
 
     /**
      * @brief auto publish response setter. Should be called before send()/recv() call.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
      */
-    void set_auto_pub_response(bool val) {
-        ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "set_auto_pub_response val:" << val;
-        auto_pub_response_ = val;
-    }
+    void set_auto_pub_response(bool val);
 
     /**
      * @brief auto pingreq response setter. Should be called before send()/recv() call.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
      */
-    void set_auto_ping_response(bool val) {
-        ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "set_auto_ping_response val:" << val;
-        auto_ping_response_ = val;
-    }
+    void set_auto_ping_response(bool val);
 
     /**
      * @brief auto map (allocate) topic alias on send PUBLISH packet.
@@ -196,12 +176,7 @@ public:
      * @note By default not automatically mapping.
      * @param val if true, enable auto mapping, otherwise disable.
      */
-    void set_auto_map_topic_alias_send(bool val) {
-        ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "set_auto_map_topic_alias_send val:" << val;
-        auto_map_topic_alias_send_ = val;
-    }
+    void set_auto_map_topic_alias_send(bool val);
 
     /**
      * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
@@ -210,12 +185,7 @@ public:
      * @note By default not automatically replacing.
      * @param val if true, enable auto replacing, otherwise disable.
      */
-    void set_auto_replace_topic_alias_send(bool val) {
-        ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "set_auto_replace_topic_alias_send val:" << val;
-        auto_replace_topic_alias_send_ = val;
-    }
+    void set_auto_replace_topic_alias_send(bool val);
 
     /**
      * @brief Set timeout for receiving PINGRESP packet after PINGREQ packet is sent.
@@ -227,14 +197,7 @@ public:
      * @param duration if zero, timer is not set; otherwise duration is set.
      *                 The minimum resolution is in milliseconds.
      */
-    void set_pingresp_recv_timeout(std::chrono::milliseconds duration) {
-        if (duration == std::chrono::milliseconds::zero()) {
-            pingresp_recv_timeout_ms_ = std::nullopt;
-        }
-        else {
-            pingresp_recv_timeout_ms_.emplace(duration);
-        }
-    }
+    void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
     /**
      * @brief Set bulk write mode.
@@ -245,9 +208,7 @@ public:
      * @note By default bulk write mode is false (disabled)
      * @param val if true, enable bulk write mode, otherwise disable it.
      */
-    void set_bulk_write(bool val) {
-        stream_->set_bulk_write(val);
-    }
+    void set_bulk_write(bool val);
 
     /**
      * @brief Set the bulk read buffer size.
@@ -259,9 +220,7 @@ public:
      *
      * @param val If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size.
      */
-    void set_bulk_read_buffer_size(std::size_t val) {
-        stream_->set_bulk_read_buffer_size(val);
-    }
+    void set_bulk_read_buffer_size(std::size_t val);
 
 
     // async functions

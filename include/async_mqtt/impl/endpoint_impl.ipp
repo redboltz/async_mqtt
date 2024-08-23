@@ -24,6 +24,73 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::~basic_endpoint() {
         << "destroy";
 }
 
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_auto_pub_response(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_auto_pub_response val:" << val;
+    auto_pub_response_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_auto_ping_response(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_auto_ping_response val:" << val;
+    auto_ping_response_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_auto_map_topic_alias_send(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_auto_map_topic_alias_send val:" << val;
+    auto_map_topic_alias_send_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_auto_replace_topic_alias_send(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_auto_replace_topic_alias_send val:" << val;
+    auto_replace_topic_alias_send_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingresp_recv_timeout(
+    std::chrono::milliseconds duration
+) {
+    if (duration == std::chrono::milliseconds::zero()) {
+        pingresp_recv_timeout_ms_ = std::nullopt;
+    }
+    else {
+        pingresp_recv_timeout_ms_.emplace(duration);
+    }
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_bulk_write(bool val) {
+    stream_->set_bulk_write(val);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
+    stream_->set_bulk_read_buffer_size(val);
+}
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
