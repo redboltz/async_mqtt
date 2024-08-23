@@ -7,6 +7,8 @@
 * Updated timeout duration setting function parameter type as `std::chorono::milliseconds`. #342
   ** User can pass any duration types like `std::chrono::milliseconds`, `std::chrono::seconds`, etc.
   ** The Mminimum resolution is milliseconds.
+=== other updates
+* Moved all implementations of basic_endpoint member functions to impl. #343
 
 == 8.0.2
 * Deleted unused and undefined `is_error()` function. #341
