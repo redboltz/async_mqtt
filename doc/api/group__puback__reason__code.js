@@ -12,7 +12,6 @@ var group__puback__reason__code =
       [ "async_mqtt::puback_reason_code::payload_format_invalid", "group__puback__reason__code.html#gga3129c11af64f00be426b3deae38158eeaf897d0fef94c20148d17243124f7d1ca", null ]
     ] ],
     [ "async_mqtt::get_puback_reason_code_category", "group__puback__reason__code.html#ga6134e2183a7ea348474db98524911c2e", null ],
-    [ "async_mqtt::is_error", "group__puback__reason__code.html#ga5920272fab0a2d1b8844d284ed535d78", null ],
     [ "async_mqtt::make_error_code", "group__puback__reason__code.html#ga669161fb5ffb05e993bb77c1bb5e1a9d", null ],
     [ "async_mqtt::operator<<", "group__puback__reason__code.html#gae6903f786dd4ac7f8926ff33b785452a", null ],
     [ "async_mqtt::puback_reason_code_to_string", "group__puback__reason__code.html#ga9bc71afebe8f5cfbbea19d6aaddd5da3", null ]

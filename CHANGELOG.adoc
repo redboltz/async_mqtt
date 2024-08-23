@@ -3,6 +3,7 @@
 = History
 
 == 8.0.2
+* Deleted unused and undefined `is_error()` function. #341
 * Deleted `client` move operations. #339
 * Fixed cmake warnings due to CMP0167. #338
 * Removed invalid `#`. #336, #337

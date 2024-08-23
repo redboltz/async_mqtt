@@ -12,7 +12,6 @@ var group__pubrec__reason__code =
       [ "async_mqtt::pubrec_reason_code::payload_format_invalid", "group__pubrec__reason__code.html#ggab5231230a17ac40eda52d85e349b8339af897d0fef94c20148d17243124f7d1ca", null ]
     ] ],
     [ "async_mqtt::get_pubrec_reason_code_category", "group__pubrec__reason__code.html#ga630503fc933a2dcd218933813bba6c38", null ],
-    [ "async_mqtt::is_error", "group__pubrec__reason__code.html#gaaaf8ffbc96522545e80194b29ff100b1", null ],
     [ "async_mqtt::make_error_code", "group__pubrec__reason__code.html#ga1f6e3f81b9a475d90012fbc010892ff3", null ],
     [ "async_mqtt::operator<<", "group__pubrec__reason__code.html#ga81e4fb8ee19d96d5d84967123e361342", null ],
     [ "async_mqtt::pubrec_reason_code_to_string", "group__pubrec__reason__code.html#ga173211d10e70cb555e880a39720a268d", null ]
