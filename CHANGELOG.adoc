@@ -9,8 +9,6 @@
   ** The Mminimum resolution is milliseconds.
 === other updates
 * Moved all implementations of basic_endpoint member functions to impl. #343
-
-== 8.0.2
 * Deleted unused and undefined `is_error()` function. #341
 * Deleted `client` move operations. #339
 * Fixed cmake warnings due to CMP0167. #338
