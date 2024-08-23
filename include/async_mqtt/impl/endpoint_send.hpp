@@ -230,7 +230,7 @@ send_op {
             ep.status_ = connection_status::connecting;
             auto keep_alive = actual_packet.keep_alive();
             if (keep_alive != 0 && !ep.pingreq_send_interval_ms_) {
-                ep.pingreq_send_interval_ms_.emplace(keep_alive * 1000);
+                ep.pingreq_send_interval_ms_.emplace(std::chrono::seconds{keep_alive});
             }
             if (actual_packet.clean_start()) {
                 ep.clear_pid_man();

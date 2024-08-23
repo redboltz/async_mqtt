@@ -224,14 +224,15 @@ public:
      * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
      * \n This function should be called before send() call.
      * @note By default timeout is not set.
-     * @param ms if 0, timer is not set, otherwise set val milliseconds.
+     * @param duration if zero, timer is not set; otherwise duration is set.
+     *                 The minimum resolution is in milliseconds.
      */
-    void set_pingresp_recv_timeout_ms(std::size_t ms) {
-        if (ms == 0) {
+    void set_pingresp_recv_timeout(std::chrono::milliseconds duration) {
+        if (duration == std::chrono::milliseconds::zero()) {
             pingresp_recv_timeout_ms_ = std::nullopt;
         }
         else {
-            pingresp_recv_timeout_ms_.emplace(ms);
+            pingresp_recv_timeout_ms_.emplace(duration);
         }
     }
 
@@ -709,9 +710,10 @@ public:
      * @note By default, PINGREQ packet sending interval is set the same value as
      *       CONNECT packet keep alive seconds.
      *       This function overrides it.
-     * @param ms if 0, timer is not set, otherwise set val milliseconds.
+     * @param duration if zero, timer is not set; otherwise duration is set.
+     *                 The minimum resolution is in milliseconds.
      */
-    void set_pingreq_send_interval_ms(std::size_t ms);
+    void set_pingreq_send_interval(std::chrono::milliseconds duration);
 
     /**
      * @brief rebinds the basic_endpoint type to another executor
@@ -852,9 +854,9 @@ private:
 
     connection_status status_{connection_status::closed};
 
-    std::optional<std::size_t> pingreq_send_interval_ms_;
-    std::optional<std::size_t> pingreq_recv_timeout_ms_;
-    std::optional<std::size_t> pingresp_recv_timeout_ms_;
+    std::optional<std::chrono::milliseconds> pingreq_send_interval_ms_;
+    std::optional<std::chrono::milliseconds> pingreq_recv_timeout_ms_;
+    std::optional<std::chrono::milliseconds> pingresp_recv_timeout_ms_;
 
     std::shared_ptr<as::steady_timer> tim_pingreq_send_;
     std::shared_ptr<as::steady_timer> tim_pingreq_recv_;

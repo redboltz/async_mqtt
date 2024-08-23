@@ -86,7 +86,11 @@ handle_v3_1_1_connect(v3_1_1::connect_packet& p) {
     ep.status_ = connection_status::connecting;
     auto keep_alive = p.keep_alive();
     if (keep_alive != 0) {
-        ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
+        ep.pingreq_recv_timeout_ms_.emplace(
+            std::chrono::milliseconds{
+                keep_alive * 1000 * 3 / 2
+            }
+        );
     }
     if (p.clean_session()) {
         ep.need_store_ = false;
@@ -107,7 +111,11 @@ handle_v5_connect(v5::connect_packet& p) {
     ep.status_ = connection_status::connecting;
     auto keep_alive = p.keep_alive();
     if (keep_alive != 0) {
-        ep.pingreq_recv_timeout_ms_.emplace(keep_alive * 1000 * 3 / 2);
+        ep.pingreq_recv_timeout_ms_.emplace(
+            std::chrono::milliseconds{
+                keep_alive * 1000 * 3 / 2
+            }
+        );
     }
     for (auto const& prop : p.props()) {
         prop.visit(
@@ -181,7 +189,11 @@ handle_v5_connack(v5::connack_packet& p) {
                     },
                     [&](property::server_keep_alive const& p) {
                         if constexpr (can_send_as_client(Role)) {
-                            ep.set_pingreq_send_interval_ms(p.val() * 1000);
+                            ep.set_pingreq_send_interval(
+                                std::chrono::seconds{
+                                    p.val()
+                                }
+                            );
                         }
                     },
                     [](auto const&) {

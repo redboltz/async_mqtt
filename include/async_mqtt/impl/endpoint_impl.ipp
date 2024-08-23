@@ -73,13 +73,15 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::is_publish_processing(typename b
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval_ms(std::size_t ms) {
-    if (ms == 0) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
+    std::chrono::milliseconds duration
+) {
+    if (duration == std::chrono::milliseconds::zero()) {
         pingreq_send_interval_ms_.reset();
         tim_pingreq_send_->cancel();
     }
     else {
-        pingreq_send_interval_ms_.emplace(ms);
+        pingreq_send_interval_ms_.emplace(duration);
         reset_pingreq_send_timer();
     }
 }
@@ -205,7 +207,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer() {
                 status_ == connection_status::closing ||
                 status_ == connection_status::closed) return;
             tim_pingreq_send_->expires_after(
-                std::chrono::milliseconds{*pingreq_send_interval_ms_}
+                *pingreq_send_interval_ms_
             );
             tim_pingreq_send_->async_wait(
                 [this, wp = std::weak_ptr{tim_pingreq_send_}](error_code const& ec) {
@@ -246,7 +248,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer() {
             status_ == connection_status::closing ||
             status_ == connection_status::closed) return;
         tim_pingreq_recv_->expires_after(
-            std::chrono::milliseconds{*pingreq_recv_timeout_ms_}
+            *pingreq_recv_timeout_ms_
         );
         tim_pingreq_recv_->async_wait(
             [this, wp = std::weak_ptr{tim_pingreq_recv_}](error_code const& ec) {
@@ -298,7 +300,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer() {
             status_ == connection_status::closing ||
             status_ == connection_status::closed) return;
         tim_pingresp_recv_->expires_after(
-            std::chrono::milliseconds{*pingresp_recv_timeout_ms_}
+            *pingresp_recv_timeout_ms_
         );
         tim_pingresp_recv_->async_wait(
             [this, wp = std::weak_ptr{tim_pingresp_recv_}](error_code const& ec) {
