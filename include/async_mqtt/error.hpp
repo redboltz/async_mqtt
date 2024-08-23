@@ -554,15 +554,6 @@ std::ostream& operator<<(std::ostream& o, puback_reason_code v);
  */
 sys::error_category const& get_puback_reason_code_category();
 
-/**
- * @ingroup puback_reason_code
- * @brief check reason code error
- * @param v  target
- * @return true if the reason code is error, otherwise false
- */
-constexpr
-bool is_error(puback_reason_code v);
-
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -619,15 +610,6 @@ std::ostream& operator<<(std::ostream& o, pubrec_reason_code v);
  * @return  category
  */
 sys::error_category const& get_pubrec_reason_code_category();
-
-/**
- * @ingroup pubrec_reason_code
- * @brief check reason code error
- * @param v  target
- * @return true if the reason code is error, otherwise false
- */
-constexpr
-bool is_error(pubrec_reason_code v);
 
 ////////////////////////////////////////////////////////////////////////////////
 
