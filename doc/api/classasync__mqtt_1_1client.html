@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">async_mqtt<span id="projectnumber">&#160;8.0.2</span>
+   <div id="projectname">async_mqtt<span id="projectnumber">&#160;9.0.0</span>
    </div>
   </td>
  </tr>
@@ -223,10 +223,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a09f09518ac6e775b09519080a96af3a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">auto replace topic with corresponding topic alias on send PUBLISH packet. Registering topic alias need to do manually. <br  />
  This function should be called before send() call.  <br /></td></tr>
 <tr class="separator:a09f09518ac6e775b09519080a96af3a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f9ba18339a5788f7d4386845eabfbe7" id="r_a3f9ba18339a5788f7d4386845eabfbe7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f9ba18339a5788f7d4386845eabfbe7">set_pingresp_recv_timeout_ms</a> (std::size_t ms)</td></tr>
-<tr class="memdesc:a3f9ba18339a5788f7d4386845eabfbe7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
+<tr class="memitem:a091ab1426321033e7e6670dee529beab" id="r_a091ab1426321033e7e6670dee529beab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a091ab1426321033e7e6670dee529beab">set_pingresp_recv_timeout</a> (std::chrono::milliseconds duration)</td></tr>
+<tr class="memdesc:a091ab1426321033e7e6670dee529beab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired, then the underlying layer is closed from the client side. If the protocol_version is v5, then send DISCONNECT packet with the reason code <a class="el" href="group__disconnect__reason__code.html#gga15697ab1af4bc8686af3e88886db3565ae979b305a6c6521989593b16346de1c0" title="Keep Alive timeout.">disconnect_reason_code::keep_alive_timeout</a> automatically before underlying layer is closed. <br  />
  This function should be called before send() call.  <br /></td></tr>
-<tr class="separator:a3f9ba18339a5788f7d4386845eabfbe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a091ab1426321033e7e6670dee529beab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa56df38927dcfa249981a336cd14c649" id="r_aa56df38927dcfa249981a336cd14c649"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa56df38927dcfa249981a336cd14c649">set_bulk_write</a> (bool val)</td></tr>
 <tr class="memdesc:aa56df38927dcfa249981a336cd14c649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one. <br  />
  This function should be called before send() call.  <br /></td></tr>
@@ -1571,8 +1571,8 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 
 </div>
 </div>
-<a id="a3f9ba18339a5788f7d4386845eabfbe7" name="a3f9ba18339a5788f7d4386845eabfbe7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f9ba18339a5788f7d4386845eabfbe7">&#9670;&#160;</a></span>set_pingresp_recv_timeout_ms()</h2>
+<a id="a091ab1426321033e7e6670dee529beab" name="a091ab1426321033e7e6670dee529beab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a091ab1426321033e7e6670dee529beab">&#9670;&#160;</a></span>set_pingresp_recv_timeout()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1580,9 +1580,9 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c0c0">protocol_version</a> Version, typename NextLayer &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::set_pingresp_recv_timeout_ms </td>
+          <td class="memname">void <a class="el" href="classasync__mqtt_1_1client.html">async_mqtt::client</a>&lt; Version, NextLayer &gt;::set_pingresp_recv_timeout </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>ms</em></span></td><td>)</td>
+          <td class="paramtype">std::chrono::milliseconds</td>          <td class="paramname"><span class="paramname"><em>duration</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1593,7 +1593,7 @@ template&lt;<a class="el" href="group__mqtt.html#ga133d6d106d4e527d07fea2d12544c
 <dl class="section note"><dt>Note</dt><dd>By default timeout is not set. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ms</td><td>if 0, timer is not set, otherwise set val milliseconds. </td></tr>
+    <tr><td class="paramname">duration</td><td>if zero, timer is not set; otherwise duration is set. The minimum resolution is in milliseconds. </td></tr>
   </table>
   </dd>
 </dl>

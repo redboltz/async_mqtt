@@ -34,7 +34,7 @@ namespace as = boost::asio;
  * Only MQTT broker(sever) can send this packet.
  * If basic_endpoint::set_auto_ping_response() is called with true, then this packet is
  * automatically sent when PINGREQ v3_1_1::pingreq_packet is received.
- * If the endpoint called basic_endpoint::set_pingresp_recv_timeout_ms() with non 0 argument,
+ * If the endpoint called basic_endpoint::set_pingresp_recv_timeout() with non 0 argument,
  * and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed
  * from the client side.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086

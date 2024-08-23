@@ -555,9 +555,10 @@ public:
      * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
      * \n This function should be called before send() call.
      * @note By default timeout is not set.
-     * @param ms if 0, timer is not set, otherwise set val milliseconds.
+     * @param duration if zero, timer is not set; otherwise duration is set.
+     *                 The minimum resolution is in milliseconds.
      */
-    void set_pingresp_recv_timeout_ms(std::size_t ms);
+    void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
     /**
      * @brief Set bulk write mode.

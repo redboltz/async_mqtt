@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(pingresp_no_tout_v311) {
                 version,
                 am::force_move(exe)
             );
-            ep->set_pingresp_recv_timeout_ms(10);
+            ep->set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(pingresp_no_tout_v5) {
                 version,
                 am::force_move(exe)
             );
-            ep->set_pingresp_recv_timeout_ms(10);
+            ep->set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -245,9 +245,9 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 version,
                 am::force_move(exe)
             );
-            ep->set_pingreq_send_interval_ms(0); // for coverage
-            ep->set_pingresp_recv_timeout_ms(0); // for coverage
-            ep->set_pingresp_recv_timeout_ms(10);
+            ep->set_pingreq_send_interval(std::chrono::milliseconds::zero()); // for coverage
+            ep->set_pingresp_recv_timeout(std::chrono::milliseconds::zero()); // for coverage
+            ep->set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                 version,
                 am::force_move(exe)
             );
-            ep->set_pingresp_recv_timeout_ms(10);
+            ep->set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{

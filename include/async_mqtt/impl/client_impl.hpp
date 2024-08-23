@@ -171,8 +171,10 @@ client<Version, NextLayer>::set_auto_replace_topic_alias_send(bool val) {
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client<Version, NextLayer>::set_pingresp_recv_timeout_ms(std::size_t ms) {
-    ep_->set_pingresp_recv_timeout_ms(ms);
+client<Version, NextLayer>::set_pingresp_recv_timeout(
+    std::chrono::milliseconds duration
+) {
+    ep_->set_pingresp_recv_timeout(duration);
 }
 
 template <protocol_version Version, typename NextLayer>
