@@ -21,20 +21,20 @@ BOOST_AUTO_TEST_CASE(ep) {
     broker_runner br;
     as::io_context ioc;
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t::create(
+    auto amep = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
     am::async_underlying_handshake(
-        amep->next_layer(),
+        amep.next_layer(),
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amep->async_send(
+            amep.async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(ep) {
                 },
                 [&](am::error_code const& ec) {
                     BOOST_TEST(!ec);
-                    amep->async_recv(
+                    amep.async_recv(
                         [&](am::error_code const& ec, am::packet_variant pv) {
                             BOOST_TEST(!ec);
                             pv.visit(
@@ -60,21 +60,21 @@ BOOST_AUTO_TEST_CASE(ep) {
                             );
 
                             // test case
-                            amep->async_recv(
+                            amep.async_recv(
                                 as::bind_cancellation_slot(
                                     sig1.slot(),
                                     [&](am::error_code const& ec, am::packet_variant pv) {
                                         BOOST_TEST(ec == as::error::operation_aborted);
                                         BOOST_TEST(!pv);
                                         ++canceled;
-                                        amep->async_recv(
+                                        amep.async_recv(
                                             as::bind_cancellation_slot(
                                                 sig1.slot(),
                                                 [&](am::error_code const& ec, am::packet_variant pv) {
                                                     BOOST_TEST(ec == as::error::operation_aborted);
                                                     BOOST_TEST(!pv);
                                                     ++canceled;
-                                                    amep->async_close(as::detached);
+                                                    amep.async_close(as::detached);
                                                 }
                                             )
                                         );
@@ -116,19 +116,19 @@ BOOST_AUTO_TEST_CASE(cl) {
     broker_runner br;
     as::io_context ioc;
     using cl_t = am::client<am::protocol_version::v3_1_1, am::protocol::mqtt>;
-    auto amcl = cl_t::create(
+    auto amcl = cl_t{
         ioc.get_executor()
-    );
+    };
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
     am::async_underlying_handshake(
-        amcl->next_layer(),
+        amcl.next_layer(),
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
             BOOST_TEST(ec == am::error_code{});
-            amcl->async_start(
+            amcl.async_start(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -141,21 +141,21 @@ BOOST_AUTO_TEST_CASE(cl) {
                     BOOST_TEST(!ec);
                     BOOST_CHECK(connack_opt);
                     // test case
-                    amcl->async_recv(
+                    amcl.async_recv(
                         as::bind_cancellation_slot(
                             sig1.slot(),
                             [&](am::error_code const& ec, am::packet_variant pv) {
                                 BOOST_TEST(ec == as::error::operation_aborted);
                                 BOOST_TEST(!pv);
                                 ++canceled;
-                                amcl->async_recv(
+                                amcl.async_recv(
                                     as::bind_cancellation_slot(
                                         sig1.slot(),
                                         [&](am::error_code const& ec, am::packet_variant pv) {
                                             BOOST_TEST(ec == as::error::operation_aborted);
                                             BOOST_TEST(!pv);
                                             ++canceled;
-                                            amcl->async_close(as::detached);
+                                            amcl.async_close(as::detached);
                                         }
                                     )
                                 );

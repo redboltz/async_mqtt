@@ -16,23 +16,24 @@ namespace am = async_mqtt;
 
 struct app {
     app(as::any_io_executor exe, std::string_view host, std::string_view port)
-        :exe{am::force_move(exe)}, host{host}, port{port}
+        :exe_{am::force_move(exe)},
+         host_{host},
+         port_{port},
+         amep_{
+             am::protocol_version::v3_1_1,
+             exe_
+         }
     {}
 
     void start() {
         am::setup_log(am::severity_level::trace);
 
-        amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
-            am::protocol_version::v3_1_1,
-            exe
-        );
-
         std::cout << "start" << std::endl;
         // Handshake undlerying layer (Name resolution and TCP handshaking)
         am::async_underlying_handshake(
-            amep->next_layer(),
-            host,
-            port,
+            amep_.next_layer(),
+            host_,
+            port_,
             [this]
             (boost::system::error_code ec) {
                 handle_handshake(ec);
@@ -54,7 +55,7 @@ struct app {
                 }
             };
             // Send MQTT CONNECT
-            amep->async_send(
+            amep_.async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -76,7 +77,7 @@ struct app {
             return;
         }
         // Recv MQTT CONNACK
-        amep->async_recv(
+        amep_.async_recv(
             [this]
             (am::error_code const& ec, am::packet_variant pv) {
                 handle_recv_connack(ec, am::force_move(pv));
@@ -100,9 +101,9 @@ struct app {
                             << " sp:" << p.session_present()
                             << std::endl;
                         // Send MQTT SUBSCRIBE
-                        amep->async_send(
+                        amep_.async_send(
                             am::v3_1_1::subscribe_packet{
-                                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                                *amep_.acquire_unique_packet_id(), // sync version only works thread safe context
                                 { {"topic1", am::qos::at_most_once} }
                             },
                             [this]
@@ -123,7 +124,7 @@ struct app {
             return;
         }
         // Recv MQTT SUBACK
-        amep->async_recv(
+        amep_.async_recv(
             [this]
             (am::error_code const& ec, am::packet_variant pv) {
                 handle_recv_suback(ec, am::force_move(pv));
@@ -151,9 +152,9 @@ struct app {
                         }
                         std::cout << std::endl;
                         // Send MQTT PUBLISH
-                        amep->async_send(
+                        amep_.async_send(
                             am::v3_1_1::publish_packet{
-                                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                                *amep_.acquire_unique_packet_id(), // sync version only works thread safe context
                                 "topic1",
                                 "payload1",
                                 am::qos::at_least_once
@@ -176,7 +177,7 @@ struct app {
             return;
         }
         // Recv MQTT PUBACK or (echobacked) PUBLISH
-        amep->async_recv(
+        amep_.async_recv(
             [this]
             (am::error_code const& ec, am::packet_variant pv) {
                 handle_recv_puback_or_publish(ec, am::force_move(pv));
@@ -214,8 +215,8 @@ struct app {
                     [](auto const&) {}
                 }
             );
-            if (++count < 2) {
-                amep->async_recv(
+            if (++count_ < 2) {
+                amep_.async_recv(
                     [this]
                     (am::error_code const& ec, am::packet_variant pv) {
                         handle_recv_puback_or_publish(ec, am::force_move(pv));
@@ -224,16 +225,16 @@ struct app {
             }
             else {
                 std::cout << "close" << std::endl;
-                amep->async_close(as::detached);
+                amep_.async_close(as::detached);
             }
         }
     }
 
-    as::any_io_executor exe;
-    std::string_view host;
-    std::string_view port;
-    std::shared_ptr<am::endpoint<am::role::client, am::protocol::mqtt>> amep;
-    int count = 0;
+    as::any_io_executor exe_;
+    std::string_view host_;
+    std::string_view port_;
+    am::endpoint<am::role::client, am::protocol::mqtt> amep_;
+    int count_ = 0;
 };
 
 int main(int argc, char* argv[]) {

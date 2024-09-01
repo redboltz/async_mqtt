@@ -11,34 +11,34 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <typename NextLayer>
 template <typename Packet>
-struct stream<NextLayer>::stream_write_packet_op {
+struct stream_impl<NextLayer>::stream_write_packet_op {
     using stream_type = this_type;
     using stream_type_sp = std::shared_ptr<stream_type>;
     using next_layer_type = stream_type::next_layer_type;
 
-    stream_type& strm;
+    std::shared_ptr<stream_type> strm;
     std::shared_ptr<Packet> packet;
     std::size_t size = packet->size();
-    stream_type_sp life_keeper = strm.shared_from_this();
     enum { dispatch, post, write, bulk_write, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        auto& a_strm{*strm};
         switch (state) {
         case dispatch: {
             state = post;
-            auto& a_strm{strm};
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
             );
         } break;
         case post: {
-            auto& a_strm{strm};
             auto& a_packet{*packet};
             if (!a_strm.bulk_write_ || a_strm.write_queue_.immediate_executable()) {
                 state = write;
@@ -53,10 +53,9 @@ struct stream<NextLayer>::stream_write_packet_op {
             );
         } break;
         case write: {
-            strm.write_queue_.start_work();
-            if (strm.lowest_layer().is_open()) {
+            a_strm.write_queue_.start_work();
+            if (a_strm.lowest_layer().is_open()) {
                 state = complete;
-                auto& a_strm{strm};
                 auto& a_packet{*packet};
                 if constexpr (
                     has_async_write<next_layer_type>::value) {
@@ -76,7 +75,6 @@ struct stream<NextLayer>::stream_write_packet_op {
             }
             else {
                 state = complete;
-                auto& a_strm{strm};
                 as::dispatch(
                     a_strm.get_executor(),
                     as::append(
@@ -88,12 +86,10 @@ struct stream<NextLayer>::stream_write_packet_op {
             }
         } break;
         case bulk_write: {
-            strm.write_queue_.start_work();
-            if (strm.lowest_layer().is_open()) {
+            a_strm.write_queue_.start_work();
+            if (a_strm.lowest_layer().is_open()) {
                 state = complete;
-                auto& a_strm{strm};
                 if (a_strm.storing_cbs_.empty()) {
-                    auto& a_strm{strm};
                     auto& a_size{size};
                     as::dispatch(
                         a_strm.get_executor(),
@@ -125,7 +121,6 @@ struct stream<NextLayer>::stream_write_packet_op {
             }
             else {
                 state = complete;
-                auto& a_strm{strm};
                 as::dispatch(
                     a_strm.get_executor(),
                     as::append(
@@ -148,13 +143,13 @@ struct stream<NextLayer>::stream_write_packet_op {
         error_code ec,
         std::size_t bytes_transferred
     ) {
+        auto& a_strm{*strm};
         if (ec) {
-            strm.write_queue_.stop_work();
-            auto& a_strm{strm};
+            a_strm.write_queue_.stop_work();
             as::post(
                 a_strm.get_executor(),
-                [&a_strm, life_keeper = life_keeper] {
-                    a_strm.write_queue_.poll_one();
+                [strm = force_move(strm)] {
+                    strm->write_queue_.poll_one();
                 }
             );
             self.complete(ec, bytes_transferred);
@@ -162,13 +157,12 @@ struct stream<NextLayer>::stream_write_packet_op {
         }
         switch (state) {
         case complete: {
-            strm.write_queue_.stop_work();
-            strm.sending_cbs_.clear();
-            auto& a_strm{strm};
+            a_strm.write_queue_.stop_work();
+            a_strm.sending_cbs_.clear();
             as::post(
                 a_strm.get_executor(),
-                [&a_strm, life_keeper = life_keeper] {
-                    a_strm.write_queue_.poll_one();
+                [strm = force_move(strm)] {
+                    strm->write_queue_.poll_one();
                 }
             );
             self.complete(ec, size);
@@ -180,6 +174,8 @@ struct stream<NextLayer>::stream_write_packet_op {
     }
 };
 
+} // namespace detail
+
 template <typename NextLayer>
 template <typename Packet, typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -190,19 +186,21 @@ stream<NextLayer>::async_write_packet(
     Packet packet,
     CompletionToken&& token
 ) {
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, std::size_t)
         >(
-            stream_write_packet_op<Packet>{
-                *this,
+            typename impl_type::template stream_write_packet_op<Packet>{
+                impl_,
                 std::make_shared<Packet>(force_move(packet))
             },
             token,
             get_executor()
         );
 }
+
 } // namespace async_mqtt
 
 #endif // ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP

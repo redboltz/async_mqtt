@@ -22,14 +22,14 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t::create(
+    auto amep_pub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
-    auto amep_sub = ep_t::create(
+    };
+    auto amep_sub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}};
+    tc t{{amep_pub, amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -202,14 +202,14 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t::create(
+    auto amep_pub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
-    auto amep_sub = ep_t::create(
+    };
+    auto amep_sub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -373,7 +373,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}};
+    tc t{{amep_pub, amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -384,14 +384,14 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t::create(
+    auto amep_pub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
-    auto amep_sub = ep_t::create(
+    };
+    auto amep_sub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
+    };
 
     static int count = 0;
     struct tc : coro_base<ep_t> {
@@ -569,7 +569,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}};
+    tc t{{amep_pub, amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -580,14 +580,14 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep_pub = ep_t::create(
+    auto amep_pub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
-    auto amep_sub = ep_t::create(
+    };
+    auto amep_sub = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
+    };
 
     static int count = 0;
     struct tc : coro_base<ep_t> {
@@ -749,7 +749,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
         }
     };
 
-    tc t{{*amep_pub, *amep_sub}};
+    tc t{{amep_pub, amep_sub}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

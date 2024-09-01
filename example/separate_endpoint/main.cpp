@@ -25,7 +25,7 @@ proc(
 
     try {
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        co_await am::async_underlying_handshake(amep->next_layer(), host, port, as::use_awaitable);
+        co_await am::async_underlying_handshake(amep.next_layer(), host, port, as::use_awaitable);
         std::cout << "Underlying layer handshaked" << std::endl;
 
         // prepare will message if you need.
@@ -40,7 +40,7 @@ proc(
         };
 
         // Send MQTT CONNECT
-        co_await amep->async_send(
+        co_await amep.async_send(
             am::v3_1_1::connect_packet{
                 true,   // clean_session
                 0x1234, // keep_alive
@@ -53,7 +53,7 @@ proc(
         );
 
         // Recv MQTT CONNACK
-        if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
@@ -71,16 +71,16 @@ proc(
         std::vector<am::topic_subopts> sub_entry{
             {"topic1", am::qos::at_most_once}
         };
-        co_await amep->async_send(
+        co_await amep.async_send(
             am::v3_1_1::subscribe_packet{
-                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                *amep.acquire_unique_packet_id(), // sync version only works thread safe context
                 am::force_move(sub_entry)
             },
             as::use_awaitable
         );
 
         // Recv MQTT SUBACK
-        if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
+        if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
             pv.visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
@@ -99,9 +99,9 @@ proc(
         }
 
         // Send MQTT PUBLISH
-        co_await amep->async_send(
+        co_await amep.async_send(
             am::v3_1_1::publish_packet{
-                *amep->acquire_unique_packet_id(), // sync version only works thread safe context
+                *amep.acquire_unique_packet_id(), // sync version only works thread safe context
                 "topic1",
                 "payload1",
                 am::qos::at_least_once
@@ -111,7 +111,7 @@ proc(
 
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         for (std::size_t count = 0; count != 2; ++count) {
-            if (am::packet_variant pv = co_await amep->async_recv(as::use_awaitable)) {
+            if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
                 pv.visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
@@ -137,7 +137,7 @@ proc(
             }
         }
         std::cout << "close" << std::endl;
-        co_await amep->async_close(as::use_awaitable);
+        co_await amep.async_close(as::use_awaitable);
     }
     catch (boost::system::system_error const& se) {
         std::cout << se.what() << std::endl;
@@ -151,10 +151,10 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     as::io_context ioc;
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    as::co_spawn(amep->get_executor(), proc(amep, argv[1], argv[2]), as::detached);
+    };
+    as::co_spawn(amep.get_executor(), proc(amep, argv[1], argv[2]), as::detached);
     ioc.run();
 }

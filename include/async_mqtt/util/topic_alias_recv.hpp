@@ -49,23 +49,24 @@ public:
                 },
                 [](auto&) { BOOST_ASSERT(false); }
             );
-
         }
     }
 
     std::string find(topic_alias_type alias) const {
-        BOOST_ASSERT(alias >= min_ && alias <= max_);
-        std::string topic;
-        auto it = aliases_.find(alias);
-        if (it != aliases_.end()) topic = it->topic;
+        if (alias >= min_ && alias <= max_) {
+            std::string topic;
+            auto it = aliases_.find(alias);
+            if (it != aliases_.end()) topic = it->topic;
 
-        ASYNC_MQTT_LOG("mqtt_impl", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
-            << "find_topic_by_alias"
-            << " alias:" << alias
-            << " topic:" << topic;
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << ASYNC_MQTT_ADD_VALUE(address, this)
+                << "find_topic_by_alias"
+                << " alias:" << alias
+                << " topic:" << topic;
 
-        return topic;
+            return topic;
+        }
+        return std::string{};
     }
 
     void clear() {

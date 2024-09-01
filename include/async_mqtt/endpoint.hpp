@@ -7,23 +7,7 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
-#include <set>
-#include <deque>
-
-#include <async_mqtt/endpoint_fwd.hpp>
-#include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/packet_variant.hpp>
-#include <async_mqtt/util/value_allocator.hpp>
-#include <async_mqtt/util/make_shared_helper.hpp>
-#include <async_mqtt/util/stream.hpp>
-#include <async_mqtt/util/store.hpp>
-#include <async_mqtt/role.hpp>
-#include <async_mqtt/util/log.hpp>
-#include <async_mqtt/util/topic_alias_send.hpp>
-#include <async_mqtt/util/topic_alias_recv.hpp>
-#include <async_mqtt/util/packet_id_manager.hpp>
-#include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/detail/endpoint_impl.hpp>
 
 /**
  * @defgroup connection MQTT connection
@@ -46,26 +30,13 @@ enum class filter {
 };
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-class basic_endpoint : public std::enable_shared_from_this<basic_endpoint<Role, PacketIdBytes, NextLayer>> {
-    enum class connection_status {
-        connecting,
-        connected,
-        disconnecting,
-        closing,
-        closed
-    };
-
+class basic_endpoint {
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
-    using this_type_sp = std::shared_ptr<this_type>;
-    using this_type_wp = std::weak_ptr<this_type>;
+    using impl_type = detail::basic_endpoint_impl<Role, PacketIdBytes, NextLayer>;
     using stream_type =
         stream<
             NextLayer
         >;
-
-    template <typename T>
-    friend class make_shared_helper;
-
 public:
     /// @brief type of the given NextLayer
     using next_layer_type = typename stream_type::next_layer_type;
@@ -80,7 +51,7 @@ public:
     using packet_variant_type = basic_packet_variant<PacketIdBytes>;
 
     /**
-     * @brief create
+     * @brief constructor
      * @tparam Args Types for the next layer
      * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
      *              server can set undetermined
@@ -90,10 +61,10 @@ public:
      *    - protocol::mqtts
      *    - protocol::ws
      *    - protocol::wss
-     * @return shared_ptr of basic_endpoint.
      */
     template <typename... Args>
-    static std::shared_ptr<this_type> create(
+    explicit
+    basic_endpoint(
         protocol_version ver,
         Args&&... args
     );
@@ -111,9 +82,9 @@ public:
     basic_endpoint(this_type const&) = delete;
 
     /**
-     * @brief move constructor **deleted**
+     * @brief move constructor
      */
-    basic_endpoint(this_type&&) = delete;
+    basic_endpoint(this_type&&) = default;
 
     /**
      * @brief copy assign operator **deleted**
@@ -121,15 +92,15 @@ public:
     this_type& operator=(this_type const&) = delete;
 
     /**
-     * @brief move assign operator **deleted**
+     * @brief move assign operator
      */
-    this_type& operator=(this_type&&) = delete;
+    this_type& operator=(this_type&&) = default;
 
     /**
      * @brief executor getter
      * @return return internal stream's executor
      */
-    as::any_io_executor get_executor() const;
+    as::any_io_executor get_executor();
 
     /**
      * @brief next_layer getter
@@ -552,7 +523,7 @@ public:
 #endif // !defined(GENERATING_DOCUMENTATION)
     async_get_stored_packets(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    ) const;
+    );
 
     /**
      * @brief regulate publish packet for store
@@ -582,7 +553,7 @@ public:
     async_regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes> packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    ) const;
+    );
 
     // sync APIs
 
@@ -687,23 +658,6 @@ public:
     };
 
 private: // compose operation impl
-
-    /**
-     * @brief constructor
-     * @tparam Args Types for the next layer
-     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
-     *              server can set undetermined
-     * @param  args args for the next layer. There are predefined next layer types:
-     *              \n @link protocol::mqtt @endlink, @link protocol::mqtts @endlink,
-     *              @link protocol::ws @endlink, and @link protocol::wss @endlink.
-     */
-    template <typename... Args>
-    explicit
-    basic_endpoint(
-        protocol_version ver,
-        Args&&... args
-    );
-
     /**
      *  @brief Rebinding constructor
      *         This constructor creates a basic_endpoint from the basic_endpoint with a different executor.
@@ -715,119 +669,8 @@ private: // compose operation impl
         basic_endpoint<Role, PacketIdBytes, Other>&& other
     );
 
-    static constexpr bool can_send_as_client(role r);
-    static constexpr bool can_send_as_server(role r);
-    static std::optional<topic_alias_type> get_topic_alias(properties const& props);
-
-    struct acquire_unique_packet_id_op;
-    struct acquire_unique_packet_id_wait_until_op;
-    struct register_packet_id_op;
-    struct release_packet_id_op;
-    template <typename Packet> struct send_op;
-    struct recv_op;
-    struct close_op;
-    struct restore_packets_op;
-    struct get_stored_packets_op;
-    struct regulate_for_store_op;
-    struct add_retry_op;
-
 private:
-
-    template <
-        typename Packet,
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_send(
-        Packet packet,
-        bool from_queue,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
-    async_add_retry(
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet);
-    void send_stored();
-    void initialize();
-
-    void reset_pingreq_send_timer();
-    void reset_pingreq_recv_timer();
-    void reset_pingresp_recv_timer();
-
-    void notify_retry_one();
-    void complete_retry_one();
-    void notify_retry_all();
-    bool has_retry() const;
-
-    void clear_pid_man();
-    void release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid);
-
-private:
-    protocol_version protocol_version_;
-    std::shared_ptr<stream_type> stream_;
-    packet_id_manager<typename basic_packet_id_type<PacketIdBytes>::type> pid_man_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_suback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_unsuback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_puback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_pubrec_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_pubcomp_;
-
-    bool need_store_ = false;
-    store<PacketIdBytes> store_;
-
-    bool auto_pub_response_ = false;
-    bool auto_ping_response_ = false;
-
-    bool auto_map_topic_alias_send_ = false;
-    bool auto_replace_topic_alias_send_ = false;
-    std::optional<topic_alias_send> topic_alias_send_;
-    std::optional<topic_alias_recv> topic_alias_recv_;
-
-    receive_maximum_type publish_send_max_{receive_maximum_max};
-    receive_maximum_type publish_recv_max_{receive_maximum_max};
-    receive_maximum_type publish_send_count_{0};
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> publish_recv_;
-    std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
-
-    ioc_queue close_queue_;
-
-    std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
-    std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
-
-    connection_status status_{connection_status::closed};
-
-    std::optional<std::chrono::milliseconds> pingreq_send_interval_ms_;
-    std::optional<std::chrono::milliseconds> pingreq_recv_timeout_ms_;
-    std::optional<std::chrono::milliseconds> pingresp_recv_timeout_ms_;
-
-    std::shared_ptr<as::steady_timer> tim_pingreq_send_;
-    std::shared_ptr<as::steady_timer> tim_pingreq_recv_;
-    std::shared_ptr<as::steady_timer> tim_pingresp_recv_;
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_handled_;
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_processing_;
-
-    struct tim_cancelled;
-    std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
-    bool packet_id_released_ = false;
+    std::shared_ptr<impl_type> impl_;
 };
 
 } // namespace async_mqtt

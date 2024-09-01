@@ -11,10 +11,12 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 restore_packets_op {
-    this_type& ep;
+    this_type_sp ep;
     std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
     enum { dispatch, complete } state = dispatch;
 
@@ -22,22 +24,49 @@ restore_packets_op {
     void operator()(
         Self& self
     ) {
+        auto& a_ep{*ep};
         switch (state) {
         case dispatch: {
             state = complete;
-            auto& a_ep{ep};
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
         } break;
         case complete:
-            ep.restore_packets(force_move(pvs));
+            a_ep.restore_packets(force_move(pvs));
             self.complete();
             break;
         }
     }
 };
+
+// sync version
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::restore_packets(
+    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+) {
+    for (auto& pv : pvs) {
+        pv.visit(
+            [&](auto& p) {
+                if (pid_man_.register_id(p.packet_id())) {
+                    store_.add(force_move(p));
+                }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_impl", error)
+                        << ASYNC_MQTT_ADD_VALUE(address, this)
+                        << "packet_id:" << p.packet_id()
+                        << " has already been used. Skip it";
+                }
+            }
+        );
+    }
+}
+
+} // namespace detail
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
@@ -52,13 +81,14 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_restore_packets(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "restore_packets";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void()
         >(
-            restore_packets_op{
-                *this,
+            typename impl_type::restore_packets_op{
+                impl_,
                 force_move(pvs)
             },
             token,
@@ -77,21 +107,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::restore_packets(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "restore_packets";
-    for (auto& pv : pvs) {
-        pv.visit(
-            [&](auto& p) {
-                if (pid_man_.register_id(p.packet_id())) {
-                    store_.add(force_move(p));
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", error)
-                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                        << "packet_id:" << p.packet_id()
-                        << " has already been used. Skip it";
-                }
-            }
-        );
-    }
+    BOOST_ASSERT(impl_);
+    impl_->restore_packets(force_move(pvs));
 }
 
 } // namespace async_mqtt

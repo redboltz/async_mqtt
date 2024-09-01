@@ -30,12 +30,12 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
 
     auto pingreq = am::v5::pingreq_packet();
 
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {connack},
@@ -68,19 +68,19 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
     );
 
     // send connect
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(connect == wp);
         }
     );
     {
-        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
+        auto [ec] = ep.async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
         BOOST_TEST(connack == pv);
     }
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
     std::promise<void> pro;
     auto fut = pro.get_future();
     // send pingreq packet due to overridden keepalive
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(pingreq == wp);
             pro.set_value();
@@ -97,19 +97,19 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
     fut.get();
 
     // send disconnect
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(disconnect == wp);
         }
     );
     {
-        auto [ec] = ep->async_send(disconnect, as::as_tuple(as::use_future)).get();
+        auto [ec] = ep.async_send(disconnect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv close
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
         BOOST_TEST(!pv);
     }

@@ -11,10 +11,12 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 get_stored_packets_op {
-    this_type const& ep;
+    this_type_sp ep;
     std::vector<basic_store_packet_variant<PacketIdBytes>> packets = {};
     enum { dispatch, complete } state = dispatch;
 
@@ -22,22 +24,33 @@ get_stored_packets_op {
     void operator()(
         Self& self
     ) {
+        auto& a_ep{*ep};
         switch (state) {
         case dispatch: {
             state = complete;
-            auto& a_ep{ep};
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
         } break;
         case complete:
-            packets = ep.get_stored_packets();
+            packets = a_ep.get_stored_packets();
             self.complete(error_code{}, force_move(packets));
             break;
         }
     }
 };
+
+// sync version
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+std::vector<basic_store_packet_variant<PacketIdBytes>>
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const {
+    return store_.get_stored();
+}
+
+} // namespace detail
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
@@ -47,17 +60,18 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
 )
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
     CompletionToken&& token
-) const {
+) {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "get_stored_packets";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
         >(
-            get_stored_packets_op{
-                *this
+            typename impl_type::get_stored_packets_op{
+                impl_
             },
             token,
             get_executor()
@@ -73,7 +87,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::get_stored_packets() const {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "get_stored_packets";
-    return store_.get_stored();
+    BOOST_ASSERT(impl_);
+    return impl_->get_stored_packets();
 }
 
 } // namespace async_mqtt

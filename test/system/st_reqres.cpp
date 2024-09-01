@@ -22,10 +22,10 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep = ep_t::create(
+    auto amep = ep_t{
         am::protocol_version::v5,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
         std::string response_topic;
     };
 
-    tc t{*amep};
+    tc t{amep};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

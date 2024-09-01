@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     as::io_context ioc;
-    auto amcl = client_t::create(ioc.get_executor());
-    as::co_spawn(amcl->get_executor(), proc(*amcl, argv[1], argv[2]), as::detached);
+    auto amcl = client_t{ioc.get_executor()};
+    as::co_spawn(amcl.get_executor(), proc(amcl, argv[1], argv[2]), as::detached);
     ioc.run();
 }

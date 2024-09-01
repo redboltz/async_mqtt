@@ -23,10 +23,10 @@ int main(int argc, char* argv[]) {
     am::setup_log(am::severity_level::trace);
 
     as::io_context ioc;
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     // async_mqtt thread
     auto guard = as::make_work_guard(ioc.get_executor());
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
         std::string host{argv[1]};
         std::string port{argv[2]};
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        am::async_underlying_handshake(amep->next_layer(), host, port, as::use_future).get();
+        am::async_underlying_handshake(amep.next_layer(), host, port, as::use_future).get();
         std::cout << "Underlying layer handshaked" << std::endl;
 
         // prepare will message if you need.
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT CONNECT
         {
-            auto fut = amep->async_send(
+            auto fut = amep.async_send(
                 am::v3_1_1::connect_packet{
                     true,   // clean_session
                     0x1234, // keep_alive
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT CONNACK
         {
-            auto fut = amep->async_recv(as::use_future);
+            auto fut = amep.async_recv(as::use_future);
             auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
             if (pv) {
                 pv.visit(
@@ -103,9 +103,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT SUBSCRIBE
         {
-            auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep.async_acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get(); // throw if error_code is not success
-            auto fut = amep->async_send(
+            auto fut = amep.async_send(
                 am::v3_1_1::subscribe_packet{
                     pid,
                     { {"topic1", am::qos::at_most_once} }
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 
         // Recv MQTT SUBACK
         {
-            auto fut = amep->async_recv(as::use_future);
+            auto fut = amep.async_recv(as::use_future);
             auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
             if (pv) {
                 pv.visit(
@@ -140,9 +140,9 @@ int main(int argc, char* argv[]) {
 
         // Send MQTT PUBLISH
         {
-            auto fut_id = amep->async_acquire_unique_packet_id(as::use_future);
+            auto fut_id = amep.async_acquire_unique_packet_id(as::use_future);
             auto pid = fut_id.get(); // throw if error_code is not success
-            auto fut = amep->async_send(
+            auto fut = amep.async_send(
                 am::v3_1_1::publish_packet{
                     pid,
                     "topic1",
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         {
             for (std::size_t count = 0; count != 2; ++count) {
-                auto fut =  amep->async_recv(as::use_future);
+                auto fut =  amep.async_recv(as::use_future);
                 auto pv = fut.get(); // get am::packet_variant, throw if error_code is not success
                 if (pv) {
                     pv.visit(
@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
         }
         {
             std::cout << "close" << std::endl;
-            auto fut = amep->async_close(as::use_future);
+            auto fut = amep.async_close(as::use_future);
             fut.get();
         }
     }

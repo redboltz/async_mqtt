@@ -15,42 +15,43 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <protocol_version Version, typename NextLayer>
-struct client<Version, NextLayer>::
+struct client_impl<Version, NextLayer>::
 recv_op {
-    this_type& cl;
+    this_type_sp cl;
     enum { dispatch, recv, complete } state = dispatch;
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        auto& a_cl{*cl};
         if (state == dispatch) {
             state = recv;
-            auto& a_cl{cl};
             as::dispatch(
-                a_cl.ep_->get_executor(),
+                a_cl.ep_.get_executor(),
                 force_move(self)
             );
         }
         else {
             BOOST_ASSERT(state == recv);
             state = complete;
-            if (cl.recv_queue_.empty()) {
-                cl.recv_queue_inserted_ = false;
+            if (a_cl.recv_queue_.empty()) {
+                a_cl.recv_queue_inserted_ = false;
                 auto tim = std::make_shared<as::steady_timer>(
-                    cl.ep_->get_executor()
+                    a_cl.ep_.get_executor()
                 );
-                cl.tim_notify_publish_recv_.expires_at(
+                a_cl.tim_notify_publish_recv_.expires_at(
                     std::chrono::steady_clock::time_point::max()
                 );
-                auto& a_cl{cl};
                 a_cl.tim_notify_publish_recv_.async_wait(
                     force_move(self)
                 );
             }
             else {
-                auto [ec, pv] = force_move(cl.recv_queue_.front());
-                cl.recv_queue_.pop_front();
+                auto [ec, pv] = force_move(a_cl.recv_queue_.front());
+                a_cl.recv_queue_.pop_front();
                 self.complete(
                     ec,
                     force_move(pv)
@@ -65,9 +66,10 @@ recv_op {
         error_code /* ec */
     ) {
         BOOST_ASSERT(state == complete);
-        if (cl.recv_queue_inserted_) {
-            auto [ec, pv] = force_move(cl.recv_queue_.front());
-            cl.recv_queue_.pop_front();
+        auto& a_cl{*cl};
+        if (a_cl.recv_queue_inserted_) {
+            auto [ec, pv] = force_move(a_cl.recv_queue_.front());
+            a_cl.recv_queue_.pop_front();
             self.complete(
                 ec,
                 force_move(pv)
@@ -82,6 +84,8 @@ recv_op {
     }
 };
 
+} // namespace detail
+
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -94,13 +98,14 @@ client<Version, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, packet_variant)
         >(
-            recv_op{
-                *this
+            typename impl_type::recv_op{
+                impl_
             },
             token,
             get_executor()

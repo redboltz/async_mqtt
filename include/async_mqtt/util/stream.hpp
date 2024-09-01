@@ -21,15 +21,17 @@
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/util/log.hpp>
 
+#include <async_mqtt/util/detail/stream_impl.hpp>
+
 namespace async_mqtt {
 namespace as = boost::asio;
 namespace sys = boost::system;
 
 template <typename NextLayer>
-class stream : public std::enable_shared_from_this<stream<NextLayer>> {
+class stream {
 public:
     using this_type = stream<NextLayer>;
-    using this_type_sp = std::shared_ptr<this_type>;
+    using impl_type = detail::stream_impl<NextLayer>;
     using next_layer_type = typename std::remove_reference<NextLayer>::type;
     using lowest_layer_type =
         typename std::remove_reference<
@@ -37,16 +39,20 @@ public:
         >::type;
     using executor_type = async_mqtt::executor_type<next_layer_type>;
 
-    template <typename T>
-    friend class make_shared_helper;
-
     template <
         typename T,
         typename... Args,
         std::enable_if_t<!std::is_same_v<std::decay_t<T>, this_type>>* = nullptr
     >
-    static std::shared_ptr<this_type> create(T&& t, Args&&... args) {
-        return make_shared_helper<this_type>::make_shared(std::forward<T>(t), std::forward<Args>(args)...);
+    explicit
+    stream(T&& t, Args&&... args)
+        :impl_{
+            std::make_shared<impl_type>(
+                std::forward<T>(t),
+                std::forward<Args>(args)...
+            )
+        }
+    {
     }
 
     ~stream() {
@@ -55,23 +61,23 @@ public:
             << "destroy";
     }
 
-    stream(this_type&&) = delete;
+    stream(this_type&&) = default;
     stream(this_type const&) = delete;
-    this_type& operator=(this_type&&) = delete;
+    this_type& operator=(this_type&&) = default;
     this_type& operator=(this_type const&) = delete;
 
     next_layer_type const& next_layer() const {
-        return nl_;
+        return impl_->next_layer();
     }
     next_layer_type& next_layer() {
-        return nl_;
+        return impl_->next_layer();
     }
 
     lowest_layer_type const& lowest_layer() const {
-        return get_lowest_layer(nl_);
+        return impl_->lowest_layer();
     }
     lowest_layer_type& lowest_layer() {
-        return get_lowest_layer(nl_);
+        return impl_->lowest_layer();
     }
 
     template <
@@ -99,7 +105,7 @@ public:
     );
 
     as::any_io_executor get_executor() {
-        return nl_.get_executor();
+        return impl_->get_executor();
     };
 
     template <
@@ -114,7 +120,7 @@ public:
     );
 
     void set_bulk_write(bool val) {
-        bulk_write_ = val;
+        impl_->set_bulk_write(val);
     }
 
     template <typename Executor1>
@@ -125,93 +131,22 @@ public:
     };
 
     void set_bulk_read_buffer_size(std::size_t size) {
-        bulk_read_buffer_size_ = size;
+        impl_->set_bulk_read_buffer_size(size);
     }
 
 private:
-
     // constructor
-    template <
-        typename T,
-        typename... Args,
-        std::enable_if_t<!std::is_same_v<std::decay_t<T>, this_type>>* = nullptr
-    >
-    explicit
-    stream(T&& t, Args&&... args)
-        :nl_{std::forward<T>(t), std::forward<Args>(args)...}
-    {
-        initialize(nl_);
-    }
-
     template <typename Other>
     explicit
     stream(
         stream<Other>&& other
     )
-        :nl_{force_move(other.nl_)}
+        :impl_{force_move(other.impl_)}
     {
-        initialize(nl_);
     }
-
-    template <typename Layer>
-    static void initialize(Layer& layer) {
-        if constexpr (has_next_layer<Layer>::value) {
-            initialize(layer.next_layer());
-        }
-        if constexpr(has_initialize<Layer>::value) {
-            layer_customize<Layer>::initialize(layer);
-        }
-    }
-
-    // POC BEGIN
-    void init_read();
-
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, buffer)
-    )
-    async_read_some(
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
-    );
-
-    template <typename Self>
-    void parse_packet(Self& self);
-    // POC END
-
-    // async operations
-
-    template <typename Packet>     struct stream_write_packet_op;
-    struct stream_read_packet_op;
-    struct stream_close_op;
-    struct stream_read_some_op;
 
 private:
-    struct error_packet {
-        error_packet(error_code ec)
-            :ec{ec} {}
-        error_packet(buffer packet)
-            :packet{force_move(packet)} {}
-
-        error_code ec;
-        buffer packet;
-    };
-
-    next_layer_type nl_;
-    ioc_queue read_queue_;
-    as::streambuf read_buf_;
-    std::size_t remaining_length_ = 0;
-    std::size_t multiplier_ = 1;
-    std::size_t bulk_read_buffer_size_ = 0;
-    enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
-    ioc_queue write_queue_;
-    std::deque<error_packet> read_packets_;
-    static_vector<char, 5> header_remaining_length_buf_;
-    std::vector<as::const_buffer> storing_cbs_;
-    std::vector<as::const_buffer> sending_cbs_;
-    bool bulk_write_ = false;
+    std::shared_ptr<impl_type> impl_;
 };
 
 } // namespace async_mqtt

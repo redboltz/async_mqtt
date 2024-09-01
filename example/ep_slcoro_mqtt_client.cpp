@@ -23,7 +23,7 @@ struct app {
         std::string_view port
     ):host_{std::move(host)},
       port_{std::move(port)},
-      amep_{am::endpoint<am::role::client, am::protocol::mqtt>::create(am::protocol_version::v3_1_1, exe)}
+      amep_{am::protocol_version::v3_1_1, exe}
     {
         impl_();
     }
@@ -54,7 +54,7 @@ private:
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
                 yield am::async_underlying_handshake(
-                    app_.amep_->next_layer(),
+                    app_.amep_.next_layer(),
                     app_.host_,
                     app_.port_,
                     *this
@@ -68,7 +68,7 @@ private:
                 if (ec) return;
 
                 // Send MQTT CONNECT
-                yield app_.amep_->async_send(
+                yield app_.amep_.async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -85,7 +85,7 @@ private:
                 }
 
                 // Recv MQTT CONNACK
-                yield app_.amep_->async_recv(*this);
+                yield app_.amep_.async_recv(*this);
                 if (ec) {
                     std::cout << "MQTT CONNACK recv error:" << ec.message() << std::endl;
                     return;
@@ -104,9 +104,9 @@ private:
                 );
 
                 // Send MQTT SUBSCRIBE
-                yield app_.amep_->async_send(
+                yield app_.amep_.async_send(
                     am::v3_1_1::subscribe_packet{
-                        *app_.amep_->acquire_unique_packet_id(), // sync version only works thread safe context
+                        *app_.amep_.acquire_unique_packet_id(), // sync version only works thread safe context
                         { {"topic1", am::qos::at_most_once} }
                     },
                     *this
@@ -116,7 +116,7 @@ private:
                     return;
                 }
                 // Recv MQTT SUBACK
-                yield app_.amep_->async_recv(*this);
+                yield app_.amep_.async_recv(*this);
                 if (ec) {
                     std::cout << "MQTT SUBACK recv error:" << ec.message() << std::endl;
                     return;
@@ -139,9 +139,9 @@ private:
                 );
 
                 // Send MQTT PUBLISH
-                yield app_.amep_->async_send(
+                yield app_.amep_.async_send(
                     am::v3_1_1::publish_packet{
-                        *app_.amep_->acquire_unique_packet_id(), // sync version only works thread safe context
+                        *app_.amep_.acquire_unique_packet_id(), // sync version only works thread safe context
                         "topic1",
                         "payload1",
                         am::qos::at_least_once
@@ -154,7 +154,7 @@ private:
                 }
                 // Recv MQTT PUBLISH and PUBACK (order depends on broker)
                 for (app_.count_ = 0; app_.count_ != 2; ++app_.count_) {
-                    yield app_.amep_->async_recv(*this);
+                    yield app_.amep_.async_recv(*this);
                     if (ec) {
                         std::cout << "MQTT recv error:" << ec.message() << std::endl;
                         return;
@@ -184,7 +184,7 @@ private:
                     );
                 }
                 std::cout << "close" << std::endl;
-                yield app_.amep_->async_close(*this);
+                yield app_.amep_.async_close(*this);
             }
         }
 
@@ -195,7 +195,7 @@ private:
 
     std::string_view host_;
     std::string_view port_;
-    std::shared_ptr<am::endpoint<am::role::client, am::protocol::mqtt>> amep_;
+    am::endpoint<am::role::client, am::protocol::mqtt> amep_;
     std::size_t count_ = 0;
     impl impl_{*this};
     // prepare will message if you need.

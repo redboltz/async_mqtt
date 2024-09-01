@@ -33,12 +33,12 @@ BOOST_AUTO_TEST_CASE(epst) {
         }
     };
 
-    auto ep = am::endpoint_st<am::role::client, am::stub_socket>::create(
+    auto ep = am::endpoint_st<am::role::client, am::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
     auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
     BOOST_TEST(pid1 == 1);
@@ -57,12 +57,12 @@ BOOST_AUTO_TEST_CASE(bep) {
         }
     };
 
-    auto ep = am::basic_endpoint<am::role::client, 4, am::null_strand, am::stub_socket>::create(
+    auto ep = am::basic_endpoint<am::role::client, 4, am::null_strand, am::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
     auto fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
     auto pid1 = fut1.get();
     BOOST_TEST(pid1 == 1);

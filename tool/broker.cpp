@@ -268,11 +268,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
             mqtt_async_accept =
                 [&] {
                     auto epsp =
-                        am::basic_endpoint<
-                            am::role::server,
-                            2,
-                            am::protocol::mqtt
-                        >::create(
+                        std::make_shared<
+                            am::basic_endpoint<
+                                am::role::server,
+                                2,
+                               am::protocol::mqtt
+                            >
+                        >(
                             am::protocol_version::undetermined,
                             as::make_strand(con_ioc_getter().get_executor())
                         );
@@ -310,11 +312,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
             ws_async_accept =
                 [&] {
                     auto epsp =
-                        am::basic_endpoint<
-                            am::role::server,
-                            2,
-                            am::protocol::ws
-                        >::create(
+                        std::make_shared<
+                            am::basic_endpoint<
+                                am::role::server,
+                                2,
+                               am::protocol::ws
+                            >
+                        >(
                             am::protocol_version::undetermined,
                             as::make_strand(con_ioc_getter().get_executor())
                         );
@@ -404,11 +408,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         }
                     );
                     auto epsp =
-                        am::basic_endpoint<
-                            am::role::server,
-                            2,
-                            am::protocol::mqtts
-                        >::create(
+                        std::make_shared<
+                            am::basic_endpoint<
+                                am::role::server,
+                                2,
+                               am::protocol::mqtts
+                            >
+                        >(
                             am::protocol_version::undetermined,
                             as::make_strand(con_ioc_getter().get_executor()),
                             *mqtts_ctx
@@ -498,11 +504,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
                         }
                     );
                     auto epsp =
-                        am::basic_endpoint<
-                            am::role::server,
-                            2,
-                            am::protocol::wss
-                        >::create(
+                        std::make_shared<
+                            am::basic_endpoint<
+                                am::role::server,
+                                2,
+                               am::protocol::wss
+                            >
+                        >(
                             am::protocol_version::undetermined,
                             as::make_strand(con_ioc_getter().get_executor()),
                             *wss_ctx

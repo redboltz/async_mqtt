@@ -22,14 +22,14 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t::create(
+    auto amep1 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    auto amep2 = ep_t::create(
+    };
+    auto amep2 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
         }
     };
 
-    tc t{{*amep1, *amep2}};
+    tc t{{amep1, amep2}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -136,14 +136,14 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t::create(
+    auto amep1 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    auto amep2 = ep_t::create(
+    };
+    auto amep2 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
         }
     };
 
-    tc t{{*amep1, *amep2}};
+    tc t{{amep1, amep2}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -250,14 +250,14 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t::create(
+    auto amep1 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    auto amep2 = ep_t::create(
+    };
+    auto amep2 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
         }
     };
 
-    tc t{{*amep1, *amep2}};
+    tc t{{amep1, amep2}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());
@@ -364,14 +364,14 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
     as::io_context ioc;
     static auto guard{as::make_work_guard(ioc.get_executor())};
     using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
-    auto amep1 = ep_t::create(
+    auto amep1 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
-    auto amep2 = ep_t::create(
+    };
+    auto amep2 = ep_t{
         am::protocol_version::v3_1_1,
         ioc.get_executor()
-    );
+    };
 
     struct tc : coro_base<ep_t> {
         using coro_base<ep_t>::coro_base;
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
         }
     };
 
-    tc t{{*amep1, *amep2}};
+    tc t{{amep1, amep2}};
     t();
     ioc.run();
     BOOST_TEST(t.finish());

@@ -19,25 +19,27 @@ namespace async_mqtt {
 
 namespace hana = boost::hana;
 
+namespace detail {
+
 template <protocol_version Version, typename NextLayer>
-struct client<Version, NextLayer>::
+struct client_impl<Version, NextLayer>::
 unsubscribe_op {
-    this_type& cl;
+    this_type_sp cl;
     error_code ec;
-    std::optional<unsubscribe_packet> packet;
+    std::optional<typename client_type::unsubscribe_packet> packet;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        auto& a_cl{*cl};
         if (ec) {
             self.complete(ec, std::nullopt);
             return;
         }
-        auto& a_cl{cl};
         auto pid = packet->packet_id();
         auto a_packet{force_move(*packet)};
-        a_cl.ep_->async_send(
+        a_cl.ep_.async_send(
             force_move(a_packet),
             as::append(
                 force_move(self),
@@ -52,14 +54,15 @@ unsubscribe_op {
         error_code const& ec,
         packet_id_type pid
     ) {
+        auto& a_cl{*cl};
         if (ec) {
             self.complete(ec, std::nullopt);
             return;
         }
 
-        auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
+        auto tim = std::make_shared<as::steady_timer>(a_cl.ep_.get_executor());
         tim->expires_at(std::chrono::steady_clock::time_point::max());
-        cl.pid_tim_pv_res_col_.get_tim_idx().emplace(pid, tim);
+        a_cl.pid_tim_pv_res_col_.get_tim_idx().emplace(pid, tim);
         tim->async_wait(
             as::append(
                 force_move(self),
@@ -74,7 +77,8 @@ unsubscribe_op {
         error_code /* ec */,
         std::shared_ptr<as::steady_timer> tim
     ) {
-        auto& idx = cl.pid_tim_pv_res_col_.get_tim_idx();
+        auto& a_cl{*cl};
+        auto& idx = a_cl.pid_tim_pv_res_col_.get_tim_idx();
         auto it = idx.find(tim);
         if (it == idx.end()) {
             self.complete(
@@ -85,7 +89,7 @@ unsubscribe_op {
         else {
             auto pv = it->pv;
             idx.erase(it);
-            if (auto *p = pv->template get_if<unsuback_packet>()) {
+            if (auto *p = pv->template get_if<typename client_type::unsuback_packet>()) {
                 auto ec =
                     [&] {
                         if constexpr(Version == protocol_version::v5) {
@@ -128,46 +132,54 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(error_code, std::optional<unsuback_packet>)
+    void(error_code, std::optional<typename client_type::unsuback_packet>)
 )
-client<Version, NextLayer>::async_unsubscribe_impl(
+client_impl<Version, NextLayer>::async_unsubscribe_impl(
+    this_type_sp impl,
     error_code ec,
-    std::optional<unsubscribe_packet> packet,
+    std::optional<typename client_type::unsubscribe_packet> packet,
     CompletionToken&& token
 ) {
     if (packet) {
         ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << ASYNC_MQTT_ADD_VALUE(address, impl.get())
             << *packet;
     }
+    BOOST_ASSERT(impl);
+    auto exe = impl->get_executor();
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, std::optional<unsuback_packet>)
+            void(error_code, std::optional<typename client_type::unsuback_packet>)
         >(
             unsubscribe_op{
-                *this,
+                force_move(impl),
                 ec,
                 force_move(packet)
             },
             token,
-            get_executor()
+            exe
         );
 }
+
+} // namespace detail
 
 template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 auto
 client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
+    BOOST_ASSERT(impl_);
     if constexpr (std::is_constructible_v<unsubscribe_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return async_unsubscribe_impl(
+            return impl_type::async_unsubscribe_impl(
+                impl_,
                 error_code{},
                 unsubscribe_packet{std::forward<Args>(args)...}
             );
         }
         catch (system_error const& se) {
-            return async_unsubscribe_impl(
+            return impl_type::async_unsubscribe_impl(
+                impl_,
                 se.code(),
                 std::nullopt
             );
@@ -188,14 +200,16 @@ client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
                     "unsubscribe_packet is not constructible"
                 );
                 try {
-                    return async_unsubscribe_impl(
+                    return impl_type::async_unsubscribe_impl(
+                        impl_,
                         error_code{},
                         unsubscribe_packet{std::forward<decltype(rest_args)>(rest_args)...},
                         std::forward<decltype(back)>(back)
                     );
                 }
                 catch (system_error const& se) {
-                    return async_unsubscribe_impl(
+                    return impl_type::async_unsubscribe_impl(
+                        impl_,
                         se.code(),
                         std::nullopt,
                         std::forward<decltype(back)>(back)

@@ -11,6 +11,22 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
+template <protocol_version Version, typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void()
+)
+client_impl<Version, NextLayer>::async_close(
+    CompletionToken&& token
+) {
+    return ep_.async_close(std::forward<CompletionToken>(token));
+}
+
+} // namespace detail
+
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -20,7 +36,8 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
 client<Version, NextLayer>::async_close(
     CompletionToken&& token
 ) {
-    return ep_->async_close(std::forward<CompletionToken>(token));
+    BOOST_ASSERT(impl_);
+    return impl_->async_close(std::forward<CompletionToken>(token));
 }
 
 } // namespace async_mqtt

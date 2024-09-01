@@ -12,27 +12,28 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <typename NextLayer>
-struct stream<NextLayer>::stream_close_op {
+struct stream_impl<NextLayer>::stream_close_op {
     using stream_type = this_type;
     using stream_type_sp = std::shared_ptr<stream_type>;
 
-    stream_type& strm;
+    std::shared_ptr<stream_type> strm;
     enum {
         dispatch,
         close,
         complete
     } state = dispatch;
-    stream_type_sp life_keeper = strm.shared_from_this();
 
     template <typename Self>
     void operator()(
         Self& self,
         error_code ec = error_code{}
     ) {
+        auto& a_strm{*strm};
         if (state == dispatch) {
             state = close;
-            auto& a_strm{strm};
             as::dispatch(
                 a_strm.get_executor(),
                 as::append(
@@ -44,8 +45,8 @@ struct stream<NextLayer>::stream_close_op {
         }
         else {
             BOOST_ASSERT(state == complete);
-            strm.storing_cbs_.clear();
-            strm.sending_cbs_.clear();
+            a_strm.storing_cbs_.clear();
+            a_strm.sending_cbs_.clear();
             self.complete(ec);
         }
     }
@@ -56,8 +57,8 @@ struct stream<NextLayer>::stream_close_op {
         error_code /* ec */,
         std::reference_wrapper<Layer> stream
     ) {
+        auto& a_strm{*strm};
         BOOST_ASSERT(state == close);
-        auto& a_strm{strm};
         if constexpr(has_async_close<Layer>::value) {
             if constexpr (has_next_layer<Layer>::value) {
                 layer_customize<Layer>::async_close(
@@ -98,6 +99,8 @@ struct stream<NextLayer>::stream_close_op {
     }
 };
 
+} // namespace detail
+
 template <typename NextLayer>
 template<typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -107,19 +110,19 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
 stream<NextLayer>::async_close(
     CompletionToken&& token
 ) {
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code)
         >(
-            stream_close_op{
-                *this
+            typename impl_type::stream_close_op{
+                impl_
             },
             token,
             get_executor()
         );
 }
-
 
 } // namespace async_mqtt
 

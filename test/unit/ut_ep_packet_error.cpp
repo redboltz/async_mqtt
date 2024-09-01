@@ -32,12 +32,12 @@ BOOST_AUTO_TEST_CASE(v311_before_connected) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(v311_before_connected) {
         "pass1"
     };
 
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {"\x20\x02\x02\x00"sv}, // invalid reserved flag
@@ -57,24 +57,24 @@ BOOST_AUTO_TEST_CASE(v311_before_connected) {
     );
 
     // send connect
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(connect == wp);
         }
     );
     {
-        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
+        auto [ec] = ep.async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack (malformed)
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     // recv close
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
         BOOST_TEST(!pv);
     }
@@ -93,12 +93,12 @@ BOOST_AUTO_TEST_CASE(v5_before_connected) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(v5_before_connected) {
         am::properties{}
     };
 
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {"\x20\x02\x02\x00"sv}, // invalid reserved flag
@@ -119,24 +119,24 @@ BOOST_AUTO_TEST_CASE(v5_before_connected) {
     );
 
     // send connect
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(connect == wp);
         }
     );
     {
-        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
+        auto [ec] = ep.async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack (malformed)
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     // recv close
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
         BOOST_TEST(!pv);
     }
@@ -155,12 +155,12 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
         am::properties{}
     };
 
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {connack},
@@ -188,19 +188,19 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
     );
 
     // send connect
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(connect == wp);
         }
     );
     {
-        auto [ec] = ep->async_send(connect, as::as_tuple(as::use_future)).get();
+        auto [ec] = ep.async_send(connect, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
     }
 
     // recv connack
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
         BOOST_TEST(connack == pv);
     }
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
         am::disconnect_reason_code::malformed_packet
     };
 
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(disconnect == wp);
         }
@@ -218,14 +218,14 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
 
     // recv connack (malformed)
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 
 
     // recv close
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
         BOOST_TEST(!pv);
     }
@@ -244,14 +244,14 @@ BOOST_AUTO_TEST_CASE(v5_server_connect) {
         }
     };
 
-    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {"\x10\x08\x00\x04MQTT\x05\x01"sv}, // invalid reserved flags
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(v5_server_connect) {
         am::connect_reason_code::malformed_packet
     };
 
-    ep->next_layer().set_write_packet_checker(
+    ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
             BOOST_TEST(connack == wp);
         }
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(v5_server_connect) {
 
     // recv connect (malformed)
     {
-        auto [ec, pv] = ep->async_recv(as::as_tuple(as::use_future)).get();
+        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
 

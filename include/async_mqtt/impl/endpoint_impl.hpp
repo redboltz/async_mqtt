@@ -11,10 +11,12 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 // classes
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::tim_cancelled {
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::tim_cancelled {
     tim_cancelled(
         std::shared_ptr<as::steady_timer> tim,
         bool cancelled = false
@@ -30,80 +32,15 @@ struct basic_endpoint<Role, PacketIdBytes, NextLayer>::tim_cancelled {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename... Args>
-inline
-std::shared_ptr<basic_endpoint<Role, PacketIdBytes, NextLayer>>
-basic_endpoint<Role, PacketIdBytes, NextLayer>::create(
-    protocol_version ver,
-    Args&&... args
-) {
-    return make_shared_helper<this_type>::make_shared(ver, std::forward<Args>(args)...);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-as::any_io_executor
-basic_endpoint<Role, PacketIdBytes, NextLayer>::get_executor() const {
-    return stream_->get_executor();
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type const&
-basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() const {
-    return stream_->next_layer();
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type&
-basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() {
-    return stream_->next_layer();
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type const&
-basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() const {
-    return stream_->lowest_layer();
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type&
-basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() {
-    return stream_->lowest_layer();
-}
-
-
-// private
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::can_send_as_client(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::client);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::can_send_as_server(role r) {
-    return static_cast<int>(r) & static_cast<int>(role::server);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-template <typename... Args>
-basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
     protocol_version ver,
     Args&&... args
 ): protocol_version_{ver},
-   stream_{stream_type::create(std::forward<Args>(args)...)},
-   store_{stream_->get_executor()},
-   tim_pingreq_send_{std::make_shared<as::steady_timer>(stream_->get_executor())},
-   tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())},
-   tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())}
+   stream_{std::forward<Args>(args)...},
+   store_{stream_.get_executor()},
+   tim_pingreq_send_{stream_.get_executor()},
+   tim_pingreq_recv_{stream_.get_executor()},
+   tim_pingresp_recv_{stream_.get_executor()}
 {
     BOOST_ASSERT(
         (Role == role::client && ver != protocol_version::undetermined) ||
@@ -112,15 +49,134 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+as::any_io_executor
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_executor() {
+    return stream_.get_executor();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::next_layer_type const&
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::next_layer() const {
+    return stream_.next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::next_layer_type&
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::next_layer() {
+    return stream_.next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer_type const&
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer() const {
+    return stream_.lowest_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer_type&
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer() {
+    return stream_.lowest_layer();
+}
+
+
+// private
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+constexpr bool
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_client(role r) {
+    return
+        static_cast<int>(r) &
+        static_cast<int>(role::client);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+constexpr bool
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_server(role r) {
+    return static_cast<int>(r) & static_cast<int>(role::server);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename Other>
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
+    basic_endpoint_impl<Role, PacketIdBytes, Other>&& other
+): protocol_version_{other.ver},
+   stream_{force_move(other.stream_)},
+   store_{stream_.get_executor()},
+   tim_pingreq_send_{stream_.get_executor()},
+   tim_pingreq_recv_{stream_.get_executor()},
+   tim_pingresp_recv_{stream_.get_executor()}
+{
+}
+
+} // namespace detail
+
+// member functions
+
+// public
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename... Args>
+basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
+    protocol_version ver,
+    Args&&... args
+): impl_{
+    std::make_shared<impl_type>(
+        ver,
+        std::forward<Args>(args)...
+    )
+}
+{
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+as::any_io_executor
+basic_endpoint<Role, PacketIdBytes, NextLayer>::get_executor() {
+    return impl_->get_executor();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type const&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() const {
+    return impl_->next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer_type&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::next_layer() {
+    return impl_->next_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type const&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() const {
+    return impl_->lowest_layer();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+typename basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer_type&
+basic_endpoint<Role, PacketIdBytes, NextLayer>::lowest_layer() {
+    return impl_->lowest_layer();
+}
+
+// private
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Other>
 basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
     basic_endpoint<Role, PacketIdBytes, Other>&& other
-): protocol_version_{other.ver},
-   stream_{force_move(other.stream_)},
-   store_{stream_->get_executor()},
-   tim_pingreq_send_{std::make_shared<as::steady_timer>(stream_->get_executor())},
-   tim_pingreq_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())},
-   tim_pingresp_recv_{std::make_shared<as::steady_timer>(stream_->get_executor())}
+): impl_{std::move(other.impl_)}
 {
 }
 

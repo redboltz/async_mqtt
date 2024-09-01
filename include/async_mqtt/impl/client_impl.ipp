@@ -20,65 +20,71 @@
 namespace async_mqtt {
 namespace mi = boost::multi_index;
 
-// member functions
+namespace detail {
 
 template <protocol_version Version, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-client<Version, NextLayer>::recv_loop() {
-    ep_->async_recv(
-        [this, sp = this->shared_from_this()]
+client_impl<Version, NextLayer>::recv_loop(this_type_sp impl) {
+    BOOST_ASSERT(impl);
+    auto& a_impl{*impl};
+    a_impl.ep_.async_recv(
+        [impl = force_move(impl)]
         (error_code const& ec, packet_variant pv) mutable {
             if (ec) {
-                recv_queue_.emplace_back(ec);
-                recv_queue_inserted_  = true;
-                tim_notify_publish_recv_.cancel();
+                impl->recv_queue_.emplace_back(ec);
+                impl->recv_queue_inserted_  = true;
+                impl->tim_notify_publish_recv_.cancel();
                 return;
             }
             pv.visit(
                 overload {
-                    [&](connack_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::connack_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(0);
                         if (it != idx.end()) {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
                         }
                     },
-                    [&](suback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::suback_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(p.packet_id());
                         if (it != idx.end()) {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
                         }
                     },
-                    [&](unsuback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::unsuback_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(p.packet_id());
                         if (it != idx.end()) {
                             const_cast<std::optional<packet_variant>&>(it->pv).emplace(p);
                             it->tim->cancel();
                         }
                     },
-                    [&](publish_packet& p) {
-                        recv_queue_.emplace_back(force_move(p));
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
+                    [&](typename client_type::publish_packet& p) {
+                        impl->recv_queue_.emplace_back(force_move(p));
+                        impl->recv_queue_inserted_  = true;
+                        impl->tim_notify_publish_recv_.cancel();
                     },
-                    [&](puback_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::puback_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(p.packet_id());
                         if (it != idx.end()) {
-                            const_cast<std::optional<puback_packet>&>(it->res.puback_opt).emplace(p);
+                            const_cast<std::optional<typename client_type::puback_packet>&>(
+                                it->res.puback_opt
+                            ).emplace(p);
                             it->tim->cancel();
                         }
                     },
-                    [&](pubrec_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::pubrec_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(p.packet_id());
                         if (it != idx.end()) {
-                            const_cast<std::optional<pubrec_packet>&>(it->res.pubrec_opt).emplace(p);
+                            const_cast<std::optional<typename client_type::pubrec_packet>&>(
+                                it->res.pubrec_opt
+                            ).emplace(p);
                             if constexpr (Version == protocol_version::v5) {
                                 if (make_error_code(p.code())) {
                                     it->tim->cancel();
@@ -86,31 +92,45 @@ client<Version, NextLayer>::recv_loop() {
                             }
                         }
                     },
-                    [&](pubcomp_packet& p) {
-                        auto& idx = pid_tim_pv_res_col_.get_pid_idx();
+                    [&](typename client_type::pubcomp_packet& p) {
+                        auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();
                         auto it = idx.find(p.packet_id());
                         if (it != idx.end()) {
-                            const_cast<std::optional<pubcomp_packet>&>(it->res.pubcomp_opt).emplace(p);
+                            const_cast<std::optional<typename client_type::pubcomp_packet>&>(
+                                it->res.pubcomp_opt
+                            ).emplace(p);
                             it->tim->cancel();
                         }
                     },
-                    [&](disconnect_packet& p) {
-                        recv_queue_.emplace_back(force_move(p));
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
+                    [&](typename client_type::disconnect_packet& p) {
+                        impl->recv_queue_.emplace_back(force_move(p));
+                        impl->recv_queue_inserted_  = true;
+                        impl->tim_notify_publish_recv_.cancel();
                     },
                     [&](v5::auth_packet& p) {
-                        recv_queue_.emplace_back(force_move(p));
-                        recv_queue_inserted_  = true;
-                        tim_notify_publish_recv_.cancel();
+                        impl->recv_queue_.emplace_back(force_move(p));
+                        impl->recv_queue_inserted_  = true;
+                        impl->tim_notify_publish_recv_.cancel();
                     },
                     [&](auto const&) {
                     }
                 }
             );
-            recv_loop();
+            recv_loop(force_move(impl));
         }
     );
+}
+
+} // namespace detail
+
+// member functions
+
+template <protocol_version Version, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+client<Version, NextLayer>::recv_loop() {
+    BOOST_ASSERT(impl_);
+    impl_type::recv_loop(impl_);
 }
 
 } // namespace async_mqtt
@@ -122,6 +142,10 @@ client<Version, NextLayer>::recv_loop() {
 
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_version, a_protocol) \
 namespace async_mqtt { \
+namespace detail { \
+template \
+class client_impl<a_version, a_protocol>; \
+} \
 template \
 class client<a_version, a_protocol>; \
 } // namespace async_mqtt
