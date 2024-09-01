@@ -22,12 +22,12 @@ Typically, the user can set a timer before Step 1 and cancel the timer after Ste
 
 After the MQTT connection is established (Step 3 is finished successfully), if the underlying connection is disconnected, then the `recv()` function returns an error. However, if the broker is frozen or the disconnect is not detected but actually disconnected, the client needs to know the status of the connection.
 
-In this case, you can use `set_pingresp_recv_timeout_ms()` and send a PINGREQ packet.
+In this case, you can use `set_pingresp_recv_timeout()` and send a PINGREQ packet.
 
-== set_pingresp_recv_timeout_ms()
+== set_pingresp_recv_timeout()
 
-* {api-base}/++classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7++[set_pingresp_recv_timeout_ms() for client]
-* {api-base}/++classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0++[set_pingresp_recv_timeout_ms() for endpoint]
+* {api-base}/++classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab++[set_pingresp_recv_timeout() for client]
+* {api-base}/++classasync__mqtt_1_1basic__endpoint.html#a304a6bc9c9db1435b06b79217c8375dd++[set_pingresp_recv_timeout() for endpoint]
 
 
 The parameter is in milliseconds. You need to call this function before sending the MQTT CONNECT packet. The timer is automatically set when the PINGREQ packet is sent. If a PINGRESP packet is received from the broker, the timer is canceled. If the timer expires, the connection is disconnected from the client side. Finally, the client gets an error from the `async_recv()` function.
