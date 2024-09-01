@@ -93,20 +93,20 @@ div#navigation table {
 <p>After the MQTT connection is established (Step 3 is finished successfully), if the underlying connection is disconnected, then the <code>recv()</code> function returns an error. However, if the broker is frozen or the disconnect is not detected but actually disconnected, the client needs to know the status of the connection.</p>
 </div>
 <div class="paragraph">
-<p>In this case, you can use <code>set_pingresp_recv_timeout_ms()</code> and send a PINGREQ packet.</p>
+<p>In this case, you can use <code>set_pingresp_recv_timeout()</code> and send a PINGREQ packet.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_set_pingresp_recv_timeout_ms">set_pingresp_recv_timeout_ms()</h2>
+<h2 id="_set_pingresp_recv_timeout">set_pingresp_recv_timeout()</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../api/classasync__mqtt_1_1client.html#a3f9ba18339a5788f7d4386845eabfbe7">set_pingresp_recv_timeout_ms() for client</a></p>
+<p><a href="../api/classasync__mqtt_1_1client.html#a091ab1426321033e7e6670dee529beab">set_pingresp_recv_timeout() for client</a></p>
 </li>
 <li>
-<p><a href="../api/classasync__mqtt_1_1basic__endpoint.html#adc5ad61f8f5490ef59836a3dcbdeccf0">set_pingresp_recv_timeout_ms() for endpoint</a></p>
+<p><a href="../api/classasync__mqtt_1_1basic__endpoint.html#a304a6bc9c9db1435b06b79217c8375dd">set_pingresp_recv_timeout() for endpoint</a></p>
 </li>
 </ul>
 </div>
