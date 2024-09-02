@@ -16,6 +16,7 @@ var dir_df0bffcb61356486763cc61cf65485e2 =
     [ "static_vector.hpp", "static__vector_8hpp_source.html", null ],
     [ "store.hpp", "store_8hpp_source.html", null ],
     [ "stream.hpp", "stream_8hpp_source.html", null ],
+    [ "stream_fwd.hpp", "stream__fwd_8hpp_source.html", null ],
     [ "stream_traits.hpp", "stream__traits_8hpp_source.html", null ],
     [ "string_view_helper.hpp", "string__view__helper_8hpp_source.html", null ],
     [ "topic_alias_recv.hpp", "topic__alias__recv_8hpp_source.html", null ],

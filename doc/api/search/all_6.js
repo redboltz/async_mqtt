@@ -8,7 +8,7 @@ var searchData=
   ['class_20for_20stored_20packets_20publish_20pubrel_5',['variant class for stored packets (PUBLISH, PUBREL)',['../group__store__packet__variant.html',1,'']]],
   ['clean_5fsession_6',['clean_session',['../classasync__mqtt_1_1v3__1__1_1_1connect__packet.html#a77c76294b8c6d4b21e3dbfa04a89be83',1,'async_mqtt::v3_1_1::connect_packet']]],
   ['clean_5fstart_7',['clean_start',['../classasync__mqtt_1_1v5_1_1connect__packet.html#a79b4fda95f1f4c3efa7c36126994b0d8',1,'async_mqtt::v5::connect_packet']]],
-  ['client_8',['client',['../classasync__mqtt_1_1client.html',1,'async_mqtt::client&lt; Version, NextLayer &gt;'],['../classasync__mqtt_1_1client.html#a09c99f0a62f86b9449cbd2407d74be69',1,'async_mqtt::client::client(this_type const &amp;)=delete'],['../classasync__mqtt_1_1client.html#a3782e6b2c2225a3a022de56a63ae9567',1,'async_mqtt::client::client(this_type &amp;&amp;)=delete'],['../group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125',1,'clientasync_mqtt'],['../group__client.html',1,'client (High level MQTT client)']]],
+  ['client_8',['client',['../classasync__mqtt_1_1client.html',1,'async_mqtt::client&lt; Version, NextLayer &gt;'],['../classasync__mqtt_1_1client.html#a9b17702ad539982547fa5dc3de34f8df',1,'async_mqtt::client::client(Args &amp;&amp;... args)'],['../classasync__mqtt_1_1client.html#a09c99f0a62f86b9449cbd2407d74be69',1,'async_mqtt::client::client(this_type const &amp;)=delete'],['../classasync__mqtt_1_1client.html#ab47c58452e33366ac3646846b9126a70',1,'async_mqtt::client::client(this_type &amp;&amp;)=default'],['../group__role.html#gga83492944f4f6b69eb11ce917d1f27c4aa62608e08adc29a8d6dbc9754e659f125',1,'clientasync_mqtt'],['../group__client.html',1,'client (High level MQTT client)']]],
   ['client_20high_20level_20mqtt_20client_9',['client (High level MQTT client)',['../group__client.html',1,'']]],
   ['client_20server_20broker_10',['endpoint (Packet level MQTT endpoint for client/server,broker)',['../group__endpoint.html',1,'']]],
   ['client_20server_20or_20both_11',['MQTT connection role (client, server or both)',['../group__role.html',1,'']]],
@@ -41,10 +41,9 @@ var searchData=
   ['correlation_5fdata_38',['correlation_data',['../classasync__mqtt_1_1property_1_1correlation__data.html',1,'async_mqtt::property::correlation_data'],['../classasync__mqtt_1_1property_1_1correlation__data.html#a3485faa745776197b7c7ec0ba6e3e1e6',1,'async_mqtt::property::correlation_data::correlation_data()'],['../group__property.html#gga5cb48750d7fa394639fc0dada2c34f89aece98a0ffeaca98ee2601250877fe12f',1,'correlation_dataasync_mqtt::property']]],
   ['counting_20immutable_20buffer_39',['Reference counting immutable buffer',['../group__buffer.html',1,'']]],
   ['crbegin_40',['crbegin',['../classasync__mqtt_1_1buffer.html#a92ed7db78da4b1cd5f8de8acab7a7bbe',1,'async_mqtt::buffer']]],
-  ['create_41',['create',['../classasync__mqtt_1_1client.html#a38459925809f8106efee03ade8e66c41',1,'async_mqtt::client::create()'],['../classasync__mqtt_1_1basic__endpoint.html#ae3faa98c0f30e8df05ef02a6a1f4ed85',1,'async_mqtt::basic_endpoint::create()']]],
-  ['crend_42',['crend',['../classasync__mqtt_1_1buffer.html#affa80c740527fd62f738cc271bc9c702',1,'async_mqtt::buffer']]],
-  ['customization_43',['underlying layer customization',['../group__underlying__customize.html',1,'']]],
-  ['customize_44',['predefined underlying customize',['../group__predefined__customize.html',1,'']]],
-  ['customized_5fssl_5fstream_2ehpp_45',['customized_ssl_stream.hpp',['../customized__ssl__stream_8hpp.html',1,'']]],
-  ['customized_5fwebsocket_5fstream_2ehpp_46',['customized_websocket_stream.hpp',['../customized__websocket__stream_8hpp.html',1,'']]]
+  ['crend_41',['crend',['../classasync__mqtt_1_1buffer.html#affa80c740527fd62f738cc271bc9c702',1,'async_mqtt::buffer']]],
+  ['customization_42',['underlying layer customization',['../group__underlying__customize.html',1,'']]],
+  ['customize_43',['predefined underlying customize',['../group__predefined__customize.html',1,'']]],
+  ['customized_5fssl_5fstream_2ehpp_44',['customized_ssl_stream.hpp',['../customized__ssl__stream_8hpp.html',1,'']]],
+  ['customized_5fwebsocket_5fstream_2ehpp_45',['customized_websocket_stream.hpp',['../customized__websocket__stream_8hpp.html',1,'']]]
 ];

@@ -204,10 +204,10 @@ pre.rouge .ss {
 <h3 id="_define_endpoint">define endpoint</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span><span class="p">{</span>
     <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span>
     <span class="n">exe</span>
-<span class="p">);</span>
+<span class="p">};</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
 </div>
 </div>
@@ -231,11 +231,11 @@ pre.rouge .ss {
 <span class="p">};</span>
 
 <span class="c1">// handshake underlying layers</span>
-<span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amep</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amep</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
 <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"underlying_handshaked"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
 <span class="c1">// Send MQTT CONNECT</span>
-<span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">async_send</span><span class="p">(</span>
+<span class="k">co_await</span> <span class="n">amep</span><span class="p">.</span><span class="n">async_send</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
         <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
@@ -248,7 +248,7 @@ pre.rouge .ss {
 <span class="p">);</span>
 
 <span class="c1">// Recv MQTT CONNACK</span>
-<span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
 <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
         <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
