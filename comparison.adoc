@@ -31,7 +31,7 @@ ifndef::env-github[:api-base: link:api]
 |functionality\library|async_mqtt|async-mqtt5|mqtt_cpp
 
 |Completion Token support|x|x|-
-|[Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) support|x|-|-
+|[Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) support|x|x|-
 |Operation cancel support|x|x|-
 |[Associated Characteristics](https://www.boost.org/doc/html/boost_asio/overview/model/associators.html) support|x|x|-
 |===

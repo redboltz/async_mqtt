@@ -53,11 +53,11 @@ namespace tls = as::ssl;
     as::io_context ioc;
 
     //                     endpoint is client  choose underlying layer
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor() // args for underlying layer (mqtt)
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
-    );
+    };
 
 ```
 
@@ -71,11 +71,11 @@ namespace tls = as::ssl;
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
 
-    auto amep = am::endpoint<am::role::client, am::protocol::mqtts>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::mqtts>{
         am::protocol_version::v5, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer (as::ssl::stream<mqtt>)
         ctx
-    );
+    };
 ```
 
 == ws
@@ -83,10 +83,10 @@ namespace tls = as::ssl;
 ```cpp
     as::io_context ioc;
 
-    auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::ws>{
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
-    );
+    };
 ```
 
 
@@ -100,11 +100,11 @@ namespace tls = as::ssl;
     // If you want to check server certificate, set cacert as follows.
     // ctx.load_verify_file(cacert);
 
-    auto amep = am::endpoint<am::role::client, am::protocol::wss>::create(
+    auto amep = am::endpoint<am::role::client, am::protocol::wss>{
         am::protocol_version::v3_1_1, // choose MQTT version v3_1_1 or v5
         ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream<mqtts>)
         ctx                  // mqtts is as::ssl::stream<mqtt>
-    );
+    };
 ```
 
 == Layer access

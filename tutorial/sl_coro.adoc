@@ -73,7 +73,7 @@ Next, add the app's constructor as follows. The endpoint is created here. In the
         std::string_view port
     ):host_{std::move(host)},
       port_{std::move(port)},
-      amep_{am::endpoint<am::role::client, am::protocol::mqtt>::create(am::protocol_version::v3_1_1, exe)}
+      amep_{am::protocol_version::v3_1_1, exe}
     {
         impl_();
     }
@@ -90,7 +90,7 @@ private:
 
     std::string_view host_;
     std::string_view port_;
-    std::shared_ptr<am::endpoint<am::role::client, am::protocol::mqtt>> amep_;
+    am::endpoint<am::role::client, am::protocol::mqtt> amep_;
     std::size_t count_ = 0;
     impl impl_{*this};
     // prepare will message if you need.
@@ -151,7 +151,7 @@ This is the basics of the stackless coroutine approach. Now, let's add a more me
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
                 yield am::async_underlying_handshake(
-                    app_.amep_->next_layer(),
+                    app_.amep_.next_layer(),
                     app_.host_,
                     app_.port_,
                     *this
@@ -169,7 +169,7 @@ The important point is
 
 ```cpp
                 yield am::async_underlying_handshake(
-                    app_.amep_->next_layer(),
+                    app_.amep_.next_layer(),
                     app_.host_,
                     app_.port_,
                     *this
@@ -205,7 +205,7 @@ Even if `proc()` is called again, the following part of the code is skipped:
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
                 yield am::underlying_handshake(
-                    app_.amep_->next_layer(),
+                    app_.amep_.next_layer(),
                     app_.host_,
                     app_.port_,
                     *this
@@ -221,7 +221,7 @@ Create MQTT CONNECT packet and send it as follows:
 
 ```cpp
                 // Send MQTT CONNECT
-                yield app_.amep_->async_send(
+                yield app_.amep_.async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session
                         0x1234, // keep_alive
@@ -253,7 +253,7 @@ Receive MQTT packet as follows:
 
 ```cpp
                 // Recv MQTT CONNACK
-                yield app_.amep_->async_recv(*this);
+                yield app_.amep_.async_recv(*this);
 ```
 
 When a packet is received then the function resumes at the following line:

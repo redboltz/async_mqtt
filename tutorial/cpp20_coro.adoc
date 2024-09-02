@@ -53,10 +53,10 @@ proc(Executor exe, std::string_view host, std::string_view port) {
 === define endpoint
 
 ```cpp
-auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
     am::protocol_version::v3_1_1,
     exe
-);
+};
 std::cout << "start" << std::endl;
 ```
 
@@ -78,11 +78,11 @@ am::will will{
 };
 
 // handshake underlying layers
-co_await am::underlying_handshake(amep->next_layer(), host, port, as::use_awaitable);
+co_await am::underlying_handshake(amep.next_layer(), host, port, as::use_awaitable);
 std::cout << "underlying_handshaked" << std::endl;
 
 // Send MQTT CONNECT
-co_await amep->async_send(
+co_await amep.async_send(
     am::v3_1_1::connect_packet{
         true,   // clean_session
         0x1234, // keep_alive
@@ -95,7 +95,7 @@ co_await amep->async_send(
 );
 
 // Recv MQTT CONNACK
-am::packet_variant pv = co_await amep->async_recv(as::use_awaitable);
+am::packet_variant pv = co_await amep.async_recv(as::use_awaitable);
 pv.visit(
     am::overload {
         [&](am::v3_1_1::connack_packet const& p) {
