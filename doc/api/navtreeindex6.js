@@ -1,6 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"structasync__mqtt_1_1pub_1_1opts.html#ad406db591c5f28508143b9f885b12be1":[0,2,1,9,0,0,26],
 "structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1":[0,2,0,7,0,0,29],
 "structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1":[0,2,1,9,0,0,29],
 "structasync__mqtt_1_1pub_1_1opts.html#aeaaed644f437a45bbc25b74d4b4a87ab":[0,2,0,7,0,0,3],
@@ -47,12 +46,12 @@ var NAVTREEINDEX6 =
 "structasync__mqtt_1_1sub_1_1opts.html#af16207f619e6c1db2e13b3c7499cb463":[0,2,1,13,1,0,29],
 "structasync__mqtt_1_1sub_1_1opts.html#afe1731ec071e892c031969970f20383a":[0,2,1,13,1,0,3],
 "subopts_8hpp_source.html":[2,0,0,0,0,16],
-"topic__alias__recv_8hpp_source.html":[2,0,0,0,2,19],
-"topic__alias__send_8hpp_source.html":[2,0,0,0,2,20],
+"topic__alias__recv_8hpp_source.html":[2,0,0,0,2,18],
+"topic__alias__send_8hpp_source.html":[2,0,0,0,2,19],
 "topic__sharename_8hpp_source.html":[2,0,0,0,0,17],
 "topic__subopts_8hpp_source.html":[2,0,0,0,0,18],
 "topics.html":[0],
-"utf8validate_8hpp_source.html":[2,0,0,0,2,21],
+"utf8validate_8hpp_source.html":[2,0,0,0,2,20],
 "v3__1__1__connack_8hpp_source.html":[2,0,0,0,0,19],
 "v3__1__1__connect_8hpp_source.html":[2,0,0,0,0,20],
 "v3__1__1__disconnect_8hpp_source.html":[2,0,0,0,0,21],
@@ -82,8 +81,8 @@ var NAVTREEINDEX6 =
 "v5__subscribe_8hpp_source.html":[2,0,0,0,0,45],
 "v5__unsuback_8hpp_source.html":[2,0,0,0,0,46],
 "v5__unsubscribe_8hpp_source.html":[2,0,0,0,0,47],
-"value__allocator_8hpp_source.html":[2,0,0,0,2,22],
-"variable__bytes_8hpp_source.html":[2,0,0,0,2,23],
+"value__allocator_8hpp_source.html":[2,0,0,0,2,21],
+"variable__bytes_8hpp_source.html":[2,0,0,0,2,22],
 "will_8hpp_source.html":[2,0,0,0,0,48],
 "ws_8hpp_source.html":[2,0,0,0,1,5],
 "wss_8hpp_source.html":[2,0,0,0,1,6]

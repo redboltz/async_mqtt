@@ -7,7 +7,6 @@ var dir_df0bffcb61356486763cc61cf65485e2 =
     [ "ioc_queue.hpp", "ioc__queue_8hpp_source.html", null ],
     [ "json_like_out.hpp", "json__like__out_8hpp_source.html", null ],
     [ "log.hpp", "log_8hpp_source.html", null ],
-    [ "make_shared_helper.hpp", "make__shared__helper_8hpp_source.html", null ],
     [ "move.hpp", "move_8hpp_source.html", null ],
     [ "overload.hpp", "overload_8hpp_source.html", null ],
     [ "packet_id_manager.hpp", "packet__id__manager_8hpp_source.html", null ],
