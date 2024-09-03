@@ -19,7 +19,6 @@
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/client_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
-#include <async_mqtt/util/make_shared_helper.hpp>
 
 namespace async_mqtt::detail {
 

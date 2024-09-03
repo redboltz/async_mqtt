@@ -14,7 +14,6 @@
 #include <boost/asio/async_result.hpp>
 
 #include <async_mqtt/util/stream_traits.hpp>
-#include <async_mqtt/util/make_shared_helper.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/util/buffer.hpp>
