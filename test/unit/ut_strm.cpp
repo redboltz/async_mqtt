@@ -35,27 +35,27 @@ BOOST_AUTO_TEST_CASE(write_cont) {
 
     using strm_t = am::stream<async_mqtt::stub_socket>;
     {
-        auto s = strm_t::create(
+        strm_t s{
             // for stub_socket args
             version,
             ioc.get_executor()
-        );
+        };
         auto sg =
             am::shared_scope_guard(
-                [&, s] {
+                [&] {
                     guard.reset();
                 }
             );
 
         auto p = am::v3_1_1::pingreq_packet();
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
-        s->async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
+        s.async_write_packet(p, [sg](am::error_code const&, std::size_t){});
     }
     ioc.run();
 }

@@ -11,10 +11,12 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 register_packet_id_op {
-    this_type& ep;
+    this_type_sp ep;
     typename basic_packet_id_type<PacketIdBytes>::type packet_id;
     enum { dispatch, complete } state = dispatch;
 
@@ -22,17 +24,17 @@ register_packet_id_op {
     void operator()(
         Self& self
     ) {
+        auto& a_ep{*ep};
         switch (state) {
         case dispatch: {
             state = complete;
-            auto& a_ep{ep};
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
         } break;
         case complete:
-            if (ep.pid_man_.register_id(packet_id)) {
+            if (a_ep.pid_man_.register_id(packet_id)) {
                 self.complete(error_code{});
             }
             else {
@@ -47,6 +49,18 @@ register_packet_id_op {
     }
 };
 
+// sync version
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+bool
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
+    return pid_man_.register_id(packet_id);
+}
+
+} // namespace detail
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -60,13 +74,14 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "register_packet_id pid:" << packet_id;
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code)
         >(
-            register_packet_id_op{
-                *this,
+            typename impl_type::register_packet_id_op{
+                impl_,
                 packet_id
             },
             token,
@@ -81,7 +96,8 @@ inline
 bool
 basic_endpoint<Role, PacketIdBytes, NextLayer>::
 register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
-    auto ret = pid_man_.register_id(packet_id);
+    BOOST_ASSERT(impl_);
+    auto ret = impl_->register_packet_id(packet_id);
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "register_packet_id:" << packet_id << " result:" << ret;

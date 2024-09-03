@@ -6,6 +6,7 @@ var dir_f8efeb8e1feb6bbd3b8b0bf040091d61 =
     [ "all.hpp", "all_8hpp_source.html", null ],
     [ "buffer_to_packet_variant.hpp", "buffer__to__packet__variant_8hpp_source.html", null ],
     [ "client.hpp", "client_8hpp_source.html", null ],
+    [ "client_fwd.hpp", "client__fwd_8hpp_source.html", null ],
     [ "endpoint.hpp", "endpoint_8hpp_source.html", null ],
     [ "endpoint_fwd.hpp", "endpoint__fwd_8hpp_source.html", null ],
     [ "error.hpp", "error_8hpp_source.html", null ],

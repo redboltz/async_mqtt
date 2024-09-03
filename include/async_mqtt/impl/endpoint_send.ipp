@@ -10,24 +10,24 @@
 #include <async_mqtt/impl/endpoint_send.hpp>
 #include <async_mqtt/util/inline.hpp>
 
-namespace async_mqtt {
+namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 send_op<Packet>::
 validate_topic_alias_range(topic_alias_type ta) {
-    if (!ep.topic_alias_send_) {
+    if (!ep->topic_alias_send_) {
         ASYNC_MQTT_LOG("mqtt_impl", error)
-            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+            << ASYNC_MQTT_ADD_VALUE(address, ep.get())
             << "topic_alias is set but topic_alias_maximum is 0";
         return false;
     }
-    if (ta == 0 || ta > ep.topic_alias_send_->max()) {
+    if (ta == 0 || ta > ep->topic_alias_send_->max()) {
         ASYNC_MQTT_LOG("mqtt_impl", error)
-            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+            << ASYNC_MQTT_ADD_VALUE(address, ep.get())
             << "topic_alias is set but out of range";
         return false;
     }
@@ -38,12 +38,12 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::optional<std::string>
-basic_endpoint<Role, PacketIdBytes, NextLayer>::
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 send_op<Packet>::
 validate_topic_alias(std::optional<topic_alias_type> ta_opt) {
     if (!ta_opt) {
         ASYNC_MQTT_LOG("mqtt_impl", error)
-            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+            << ASYNC_MQTT_ADD_VALUE(address, ep.get())
             << "topic is empty but topic_alias isn't set";
         return std::nullopt;
     }
@@ -52,10 +52,10 @@ validate_topic_alias(std::optional<topic_alias_type> ta_opt) {
         return std::nullopt;
     }
 
-    auto topic = ep.topic_alias_send_->find(*ta_opt);
+    auto topic = ep->topic_alias_send_->find(*ta_opt);
     if (topic.empty()) {
         ASYNC_MQTT_LOG("mqtt_impl", error)
-            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+            << ASYNC_MQTT_ADD_VALUE(address, ep.get())
             << "topic is empty but topic_alias is not registered";
         return std::nullopt;
     }
@@ -66,41 +66,41 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
-basic_endpoint<Role, PacketIdBytes, NextLayer>::
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 send_op<Packet>::
 validate_maximum_packet_size(std::size_t size) {
-    if (size > ep.maximum_packet_size_send_) {
+    if (size > ep->maximum_packet_size_send_) {
         ASYNC_MQTT_LOG("mqtt_impl", error)
-            << ASYNC_MQTT_ADD_VALUE(address, &ep)
+            << ASYNC_MQTT_ADD_VALUE(address, ep.get())
             << "packet size over maximum_packet_size for sending";
         return false;
     }
     return true;
 }
 
-} // namespace async_mqtt
+} // namespace async_mqtt::detail
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #include <async_mqtt/detail/instantiate_helper.hpp>
 
 #define ASYNC_MQTT_INSTANTIATE_EACH_PACKET(a_role, a_size, a_protocol, a_packet) \
-namespace async_mqtt { \
+namespace async_mqtt::detail { \
 template \
 bool \
-basic_endpoint<a_role, a_size, a_protocol>::send_op<a_packet>:: \
+basic_endpoint_impl<a_role, a_size, a_protocol>::send_op<a_packet>:: \
 validate_topic_alias_range(topic_alias_type); \
 \
 template \
 std::optional<std::string> \
-basic_endpoint<a_role, a_size, a_protocol>::send_op<a_packet>:: \
+basic_endpoint_impl<a_role, a_size, a_protocol>::send_op<a_packet>:: \
 validate_topic_alias(std::optional<topic_alias_type>); \
 \
 template \
 bool \
-basic_endpoint<a_role, a_size, a_protocol>::send_op<a_packet>:: \
+basic_endpoint_impl<a_role, a_size, a_protocol>::send_op<a_packet>:: \
 validate_maximum_packet_size(std::size_t); \
-} // namespace async_mqtt
+} // namespace async_mqtt::detail
 
 #define ASYNC_MQTT_PP_GENERATE(r, product) \
     BOOST_PP_EXPAND( \

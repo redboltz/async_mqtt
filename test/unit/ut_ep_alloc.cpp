@@ -21,7 +21,7 @@ namespace am = async_mqtt;
 namespace as = boost::asio;
 
 // packet_id is hard coded in this test case for just testing.
-// but users need to get packet_id via ep->acquire_unique_packet_id(...)
+// but users need to get packet_id via ep.acquire_unique_packet_id(...)
 // see other test cases.
 
 static constexpr std::size_t check_digit_read = 12345;
@@ -58,12 +58,12 @@ BOOST_AUTO_TEST_CASE(custom_read) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -77,21 +77,21 @@ BOOST_AUTO_TEST_CASE(custom_read) {
         true,   // session_present
         am::connect_return_code::accepted
     };
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {connack}
         }
     );
-    ep->next_layer().set_associated_cheker_for_read(check_digit_read);
+    ep.next_layer().set_associated_cheker_for_read(check_digit_read);
     my_alloc_read<int> ma;
     BOOST_CHECK(!allocate_called_read);
     BOOST_CHECK(!deallocate_called_read);
-    ep->async_send(
+    ep.async_send(
         connect,
         [&](auto ec) {
             BOOST_CHECK(!ec);
-            ep->async_recv(
+            ep.async_recv(
                 as::bind_allocator(
                     ma,
                     [&](auto ec, auto pv) {
@@ -141,12 +141,12 @@ BOOST_AUTO_TEST_CASE(custom_write) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
 
-    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::client, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -160,23 +160,23 @@ BOOST_AUTO_TEST_CASE(custom_write) {
         true,   // session_present
         am::connect_return_code::accepted
     };
-    ep->next_layer().set_recv_packets(
+    ep.next_layer().set_recv_packets(
         {
             // receive packets
             {connack}
         }
     );
-    ep->next_layer().set_associated_cheker_for_write(check_digit_write);
+    ep.next_layer().set_associated_cheker_for_write(check_digit_write);
     my_alloc_write<int> ma;
     BOOST_CHECK(!allocate_called_write);
     BOOST_CHECK(!deallocate_called_write);
-    ep->async_send(
+    ep.async_send(
         connect,
         as::bind_allocator(
             ma,
             [&](auto ec) {
                 BOOST_CHECK(!ec);
-                ep->async_recv(
+                ep.async_recv(
                     [&](auto ec, auto pv) {
                         BOOST_TEST(!ec);
                         BOOST_TEST(pv == connack);

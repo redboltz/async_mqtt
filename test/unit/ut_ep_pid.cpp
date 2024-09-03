@@ -32,23 +32,23 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         }
     };
 
-    auto ep = am::endpoint<am::role::client, am::stub_socket>::create(
+    auto ep = am::endpoint<am::role::client, am::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
-    );
+    };
 
     for (std::size_t i = 0; i != 0xffff; ++i) {
-        ep->async_acquire_unique_packet_id_wait_until(as::use_future).get();
+        ep.async_acquire_unique_packet_id_wait_until(as::use_future).get();
     }
 
     as::dispatch(
         as::bind_executor(
-            ep->get_executor(),
+            ep.get_executor(),
             [&] {
                 // sync version return nullopt
-                auto pid_opt = ep->acquire_unique_packet_id();
+                auto pid_opt = ep.acquire_unique_packet_id();
                 BOOST_CHECK(!pid_opt);
             }
         )
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
     {
         // async version return nullopt
         try {
-            auto pid_opt = ep->async_acquire_unique_packet_id(as::use_future).get();
+            auto pid_opt = ep.async_acquire_unique_packet_id(as::use_future).get();
             (void)pid_opt;
             BOOST_CHECK(false);
         }
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(wait_until) {
     as::cancellation_signal sig1;
     {
         // cancel
-        ep->async_acquire_unique_packet_id_wait_until(
+        ep.async_acquire_unique_packet_id_wait_until(
             as::bind_cancellation_slot(
                 sig1.slot(),
                 [&](am::error_code const& ec, am::packet_id_type pid) {
@@ -101,14 +101,14 @@ BOOST_AUTO_TEST_CASE(wait_until) {
     std::future<void> rel_fut3;
     as::dispatch(
         as::bind_executor(
-            ep->get_executor(),
+            ep.get_executor(),
             [&] {
-                acq_fut1 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-                acq_fut2 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-                acq_fut3 = ep->async_acquire_unique_packet_id_wait_until(as::use_future);
-                rel_fut1 = ep->async_release_packet_id(10001, as::use_future);
-                rel_fut2 = ep->async_release_packet_id(10002, as::use_future);
-                rel_fut3 = ep->async_release_packet_id(10003, as::use_future);
+                acq_fut1 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
+                acq_fut2 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
+                acq_fut3 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
+                rel_fut1 = ep.async_release_packet_id(10001, as::use_future);
+                rel_fut2 = ep.async_release_packet_id(10002, as::use_future);
+                rel_fut3 = ep.async_release_packet_id(10003, as::use_future);
                 pro.set_value();
             }
         )

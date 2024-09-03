@@ -18,12 +18,12 @@ namespace as = boost::asio;
 BOOST_AUTO_TEST_CASE(tc) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
-    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>::create(
+    auto ep = am::endpoint<async_mqtt::role::server, async_mqtt::stub_socket>{
         version,
         // for stub_socket args
         version,
         ioc
-    );
+    };
     auto p = am::v3_1_1::connect_packet{
         true,   // clean_session
         0x0, // keep_alive
@@ -33,6 +33,6 @@ BOOST_AUTO_TEST_CASE(tc) {
         "pass1"
     };
     // static_assert fail as expected
-    auto ec = ep->async_send(p, as::use_future).get();
+    auto ec = ep.async_send(p, as::use_future).get();
     BOOST_TEST(!ec);
 }

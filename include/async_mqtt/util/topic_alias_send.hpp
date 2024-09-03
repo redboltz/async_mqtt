@@ -55,7 +55,6 @@ public:
                 },
                 [](auto&) { BOOST_ASSERT(false); }
             );
-
         }
     }
 
@@ -65,19 +64,21 @@ public:
             << "find_topic_by_alias"
             << " alias:" << alias;
 
-        BOOST_ASSERT(alias >= min_ && alias <= max_);
-        auto& idx = aliases_.get<tag_alias>();
-        auto it = idx.find(alias);
-        if (it == idx.end()) return std::string();
+        if (alias >= min_ && alias <= max_) {
+            auto& idx = aliases_.get<tag_alias>();
+            auto it = idx.find(alias);
+            if (it == idx.end()) return std::string();
 
-        idx.modify(
-            it,
-            [&](entry& e) {
-                e.tp = std::chrono::steady_clock::now();
-            },
-            [](auto&) { BOOST_ASSERT(false); }
-        );
-        return it->topic;
+            idx.modify(
+                it,
+                [&](entry& e) {
+                    e.tp = std::chrono::steady_clock::now();
+                },
+                [](auto&) { BOOST_ASSERT(false); }
+            );
+            return it->topic;
+        }
+        return std::string{};
     }
 
     std::string find_without_touch(topic_alias_type alias) const {
@@ -86,11 +87,13 @@ public:
             << "find_topic_by_alias"
             << " alias:" << alias;
 
-        BOOST_ASSERT(alias >= min_ && alias <= max_);
-        auto& idx = aliases_.get<tag_alias>();
-        auto it = idx.find(alias);
-        if (it == idx.end()) return std::string();
-        return it->topic;
+        if (alias >= min_ && alias <= max_) {
+            auto& idx = aliases_.get<tag_alias>();
+            auto it = idx.find(alias);
+            if (it == idx.end()) return std::string();
+            return it->topic;
+        }
+        return std::string{};
     }
 
     std::optional<topic_alias_type> find(std::string_view topic) const {

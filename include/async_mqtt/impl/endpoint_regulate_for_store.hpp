@@ -11,10 +11,12 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 regulate_for_store_op {
-    this_type const& ep;
+    this_type_sp ep;
     v5::basic_publish_packet<PacketIdBytes> packet;
     enum { dispatch, complete } state = dispatch;
 
@@ -22,10 +24,10 @@ regulate_for_store_op {
     void operator()(
         Self& self
     ) {
+        auto& a_ep{*ep};
         switch (state) {
         case dispatch: {
             state = complete;
-            auto& a_ep{ep};
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
@@ -33,52 +35,22 @@ regulate_for_store_op {
         } break;
         case complete: {
             error_code ec;
-            ep.regulate_for_store(packet, ec);
+            a_ep.regulate_for_store(packet, ec);
             self.complete(ec, force_move(packet));
         } break;
         }
     }
 };
 
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, v5::basic_publish_packet<PacketIdBytes>)
-)
-basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
-    v5::basic_publish_packet<PacketIdBytes> packet,
-    CompletionToken&& token
-) const {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "regulate_for_store:" << packet;
-    return
-        as::async_compose<
-            CompletionToken,
-            void(error_code, v5::basic_publish_packet<PacketIdBytes>)
-        >(
-            regulate_for_store_op{
-                *this,
-                force_move(packet)
-            },
-            token,
-            get_executor()
-        );
-}
-
 // sync version
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::regulate_for_store(
     v5::basic_publish_packet<PacketIdBytes>& packet,
     error_code& ec
 ) const {
-    ASYNC_MQTT_LOG("mqtt_api", info)
-        << ASYNC_MQTT_ADD_VALUE(address, this)
-        << "regulate_for_store:" << packet;
     if (packet.topic().empty()) {
         if (auto ta_opt = get_topic_alias(packet.props())) {
             auto topic = topic_alias_send_->find_without_touch(*ta_opt);
@@ -101,6 +73,52 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
         packet.remove_topic_alias();
     }
     ec = error_code{};
+}
+
+} // namespace detail
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+)
+basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
+    v5::basic_publish_packet<PacketIdBytes> packet,
+    CompletionToken&& token
+) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "regulate_for_store:" << packet;
+    BOOST_ASSERT(impl_);
+    return
+        as::async_compose<
+            CompletionToken,
+            void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+        >(
+            typename impl_type::regulate_for_store_op{
+                impl_,
+                force_move(packet)
+            },
+            token,
+            get_executor()
+        );
+}
+
+// sync version
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+inline
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
+    v5::basic_publish_packet<PacketIdBytes>& packet,
+    error_code& ec
+) const {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "regulate_for_store:" << packet;
+    BOOST_ASSERT(impl_);
+    impl_->regulate_for_store(packet, ec);
 }
 
 } // namespace async_mqtt

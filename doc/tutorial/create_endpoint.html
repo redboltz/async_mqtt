@@ -215,11 +215,11 @@ pre.rouge .ss {
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
 
     <span class="c1">//                     endpoint is client  choose underlying layer</span>
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span><span class="p">{</span>
         <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span> <span class="c1">// args for underlying layer (mqtt)</span>
         <span class="c1">// mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">};</span></code></pre>
 </div>
 </div>
 </div>
@@ -236,11 +236,11 @@ pre.rouge .ss {
     <span class="c1">// If you want to check server certificate, set cacert as follows.</span>
     <span class="c1">// ctx.load_verify_file(cacert);</span>
 
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtts</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtts</span><span class="o">&gt;</span><span class="p">{</span>
         <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v5</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer (as::ssl::stream&lt;mqtt&gt;)</span>
         <span class="n">ctx</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">};</span></code></pre>
 </div>
 </div>
 </div>
@@ -252,10 +252,10 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
 
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;</span><span class="p">{</span>
         <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span>  <span class="c1">// args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">};</span></code></pre>
 </div>
 </div>
 </div>
@@ -272,11 +272,11 @@ pre.rouge .ss {
     <span class="c1">// If you want to check server certificate, set cacert as follows.</span>
     <span class="c1">// ctx.load_verify_file(cacert);</span>
 
-    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">wss</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">wss</span><span class="o">&gt;</span><span class="p">{</span>
         <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="c1">// choose MQTT version v3_1_1 or v5</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer ( bs::websocket::stream&lt;mqtts&gt;)</span>
         <span class="n">ctx</span>                  <span class="c1">// mqtts is as::ssl::stream&lt;mqtt&gt;</span>
-    <span class="p">);</span></code></pre>
+    <span class="p">};</span></code></pre>
 </div>
 </div>
 </div>

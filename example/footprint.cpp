@@ -13,15 +13,15 @@ int main() {
 
     am::setup_log(am::severity_level::warning);
     as::io_context ioc;
-    auto amcl = am::client<am::protocol_version::v5, am::protocol::mqtt>::create(ioc.get_executor());
+    auto amcl = am::client<am::protocol_version::v5, am::protocol::mqtt>{ioc.get_executor()};
     as::co_spawn(
-        amcl->get_executor(),
+        amcl.get_executor(),
         [&] () -> as::awaitable<void> {
             auto exe = co_await as::this_coro::executor;
 
             // Resolve hostname
             auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl->next_layer(),
+                amcl.next_layer(),
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::deferred)
@@ -29,7 +29,7 @@ int main() {
             if (ec_und) co_return;
 
             // MQTT connect and receive loop start
-            auto [ec_con, connack_opt] = co_await amcl->async_start(
+            auto [ec_con, connack_opt] = co_await amcl.async_start(
                 true,   // clean_session
                 std::uint16_t(0x1234), // keep_alive
                 "cid1",
@@ -54,8 +54,8 @@ int main() {
                     am::sub::retain_handling::send
                 },
             };
-            auto [ec_sub, suback_opt] = co_await amcl->async_subscribe(
-                *amcl->acquire_unique_packet_id(), // sync version only in strand
+            auto [ec_sub, suback_opt] = co_await amcl.async_subscribe(
+                *amcl.acquire_unique_packet_id(), // sync version only in strand
                 am::force_move(sub_entry), // sub_entry variable is required to avoid g++ bug
                 as::as_tuple(as::use_awaitable)
             );
@@ -64,7 +64,7 @@ int main() {
 
             // publish
             // MQTT publish QoS0 and wait response (socket write complete)
-            auto [ec_pub0, pubres0] = co_await amcl->async_publish(
+            auto [ec_pub0, pubres0] = co_await amcl.async_publish(
                 "topic1",
                 "payload1",
                 am::qos::at_most_once,
@@ -72,13 +72,13 @@ int main() {
             );
             if (ec_pub0) co_return;
 
-            auto [ec_recv, pv] = co_await amcl->async_recv(
+            auto [ec_recv, pv] = co_await amcl.async_recv(
                 as::as_tuple(as::deferred)
             );
 
             // unsubscribe
-            auto [ec_unsub, unsuback_opt] = co_await amcl->async_unsubscribe(
-                *amcl->acquire_unique_packet_id(), // sync version only in strand
+            auto [ec_unsub, unsuback_opt] = co_await amcl.async_unsubscribe(
+                *amcl.acquire_unique_packet_id(), // sync version only in strand
                 std::vector<am::topic_sharename>{"topic1"},
                 as::as_tuple(as::use_awaitable)
             );
@@ -86,7 +86,7 @@ int main() {
             if (!unsuback_opt) co_return;
 
             // disconnect
-            auto [ec_discon] = co_await amcl->async_disconnect(
+            auto [ec_discon] = co_await amcl.async_disconnect(
                 as::as_tuple(as::use_awaitable)
             );
             if (ec_discon) co_return;

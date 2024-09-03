@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
 
                 // underlying connect
                 auto ep1 =
-                    am::endpoint<am::role::server, am::cpp20coro_stub_socket>::create(
+                    std::make_shared<am::endpoint<am::role::server, am::cpp20coro_stub_socket>>(
                         am::protocol_version::undetermined, // for broker decided by connect packet
                         // for cpp20coro_stub_socket args
                         am::protocol_version::v3_1_1,       // for emulated client so should already be known
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
 
                 // underlying connect
                 auto ep2 =
-                    am::endpoint<am::role::server, am::cpp20coro_stub_socket>::create(
+                    std::make_shared<am::endpoint<am::role::server, am::cpp20coro_stub_socket>>(
                         am::protocol_version::v5,
                         //am::protocol_version::undetermined,
                         // for cpp20coro_stub_socket args

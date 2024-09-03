@@ -22,24 +22,25 @@ namespace async_mqtt {
 
 namespace hana = boost::hana;
 
+namespace detail {
 template <protocol_version Version, typename NextLayer>
-struct client<Version, NextLayer>::
+struct client_impl<Version, NextLayer>::
 start_op {
-    this_type& cl;
+    this_type_sp cl;
     error_code ec;
-    std::optional<connect_packet> packet;
+    std::optional<typename client_type::connect_packet> packet;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        auto& a_cl{*cl};
         if (ec) {
             self.complete(ec, std::nullopt);
             return;
         }
-        auto& a_cl{cl};
         auto a_packet{force_move(*packet)};
-        a_cl.ep_->async_send(
+        a_cl.ep_.async_send(
             force_move(a_packet),
             force_move(self)
         );
@@ -50,15 +51,16 @@ start_op {
         Self& self,
         error_code const& ec
     ) {
+        auto& a_cl{*cl};
         if (ec) {
             self.complete(ec, std::nullopt);
             return;
         }
 
-        auto tim = std::make_shared<as::steady_timer>(cl.ep_->get_executor());
+        auto tim = std::make_shared<as::steady_timer>(a_cl.ep_.get_executor());
         tim->expires_at(std::chrono::steady_clock::time_point::max());
-        cl.pid_tim_pv_res_col_.get_tim_idx().emplace(tim);
-        cl.recv_loop();
+        a_cl.pid_tim_pv_res_col_.get_tim_idx().emplace(tim);
+        recv_loop(cl);
         tim->async_wait(
             as::append(
                 force_move(self),
@@ -73,7 +75,8 @@ start_op {
         error_code /* ec */,
         std::shared_ptr<as::steady_timer> tim
     ) {
-        auto& idx = cl.pid_tim_pv_res_col_.get_tim_idx();
+        auto& a_cl{*cl};
+        auto& idx = a_cl.pid_tim_pv_res_col_.get_tim_idx();
         auto it = idx.find(tim);
         if (it == idx.end()) {
             self.complete(
@@ -84,7 +87,7 @@ start_op {
         else {
             auto pv = it->pv;
             idx.erase(it);
-            if (auto *p = pv->template get_if<connack_packet>()) {
+            if (auto *p = pv->template get_if<typename client_type::connack_packet>()) {
                 self.complete(make_error_code(p->code()), *p);
             }
             else {
@@ -102,46 +105,54 @@ template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
-    void(error_code, std::optional<connack_packet>)
+    void(error_code, std::optional<typename client_type::connack_packet>)
 )
-client<Version, NextLayer>::async_start_impl(
+client_impl<Version, NextLayer>::async_start_impl(
+    this_type_sp impl,
     error_code ec,
-    std::optional<connect_packet> packet,
+    std::optional<typename client_type::connect_packet> packet,
     CompletionToken&& token
 ) {
+    BOOST_ASSERT(impl);
     if (packet) {
         ASYNC_MQTT_LOG("mqtt_api", info)
-            << ASYNC_MQTT_ADD_VALUE(address, this)
+            << ASYNC_MQTT_ADD_VALUE(address, impl.get())
             << *packet;
     }
+    auto exe = impl->get_executor();
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, std::optional<connack_packet>)
+            void(error_code, std::optional<typename client_type::connack_packet>)
         >(
             start_op{
-                *this,
+                force_move(impl),
                 ec,
                 force_move(packet)
             },
             token,
-            get_executor()
+            exe
         );
 }
+
+} // namespace detail
 
 template <protocol_version Version, typename NextLayer>
 template <typename... Args>
 auto
 client<Version, NextLayer>::async_start(Args&&... args) {
+    BOOST_ASSERT(impl_);
     if constexpr (std::is_constructible_v<connect_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return async_start_impl(
+            return impl_type::async_start_impl(
+                impl_,
                 error_code{},
                 connect_packet{std::forward<Args>(args)...}
             );
         }
         catch (system_error const& se) {
-            return async_start_impl(
+            return impl_type::async_start_impl(
+                impl_,
                 se.code(),
                 std::nullopt
             );
@@ -162,14 +173,18 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                     "connect_packet is not constructible"
                 );
                 try {
-                    return async_start_impl(
+                    return impl_type::async_start_impl(
+                        impl_,
                         error_code{},
-                        connect_packet{std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...},
+                        connect_packet{
+                            std::forward<std::remove_reference_t<decltype(rest_args)>>(rest_args)...
+                        },
                         std::forward<decltype(back)>(back)
                     );
                 }
                 catch (system_error const& se) {
-                    return async_start_impl(
+                    return impl_type::async_start_impl(
+                        impl_,
                         se.code(),
                         std::nullopt,
                         std::forward<decltype(back)>(back)

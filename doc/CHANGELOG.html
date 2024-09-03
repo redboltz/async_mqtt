@@ -71,6 +71,25 @@ div#navigation table {
 <div class="ulist">
 <ul>
 <li>
+<p>endpoint, basic_endpoint, and client become value based design. #346</p>
+<div class="ulist">
+<ul>
+<li>
+<p>static member function <code>create()</code> is removed.</p>
+</li>
+<li>
+<p>constructor becomes public.</p>
+</li>
+<li>
+<p>move constructor is supported.</p>
+</li>
+<li>
+<p>you can replace <code>endpoint&lt;&#8230;&#8203;&gt;::create(&#8230;&#8203;)</code>  with <code>endpoint&lt;&#8230;&#8203;&gt;{&#8230;&#8203;}</code> for value or <code>std::make_shared&lt;endpoint&lt;&#8230;&#8203;&gt;&gt;(&#8230;&#8203;)</code> for shared_ptr.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>Updated timeout duration setting function parameter type as <code>std::chorono::milliseconds</code>. #342, #345</p>
 <div class="ulist">
 <ul>

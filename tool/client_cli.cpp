@@ -1136,12 +1136,12 @@ int main(int argc, char* argv[]) {
 
         auto protocol = vm["protocol"].as<std::string>();
         if (protocol == "mqtt") {
-            auto amep = am::endpoint<am::role::client, am::protocol::mqtt>::create(
+            auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
                 version,
                 ioc.get_executor()
-            );
-            auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, vm, version};
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, vm, version};
             nm();
             ioc.run();
             return 0;
@@ -1168,13 +1168,13 @@ int main(int argc, char* argv[]) {
                 ctx.use_certificate_chain_file(vm["certificate"].as<std::string>());
                 ctx.use_private_key_file(vm["private_key"].as<std::string>(), boost::asio::ssl::context::pem);
             }
-            auto amep = am::endpoint<am::role::client, am::protocol::mqtts>::create(
+            auto amep = am::endpoint<am::role::client, am::protocol::mqtts>{
                 version,
                 ioc.get_executor(),
                 ctx
-            );
-            auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, vm, version};
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, vm, version};
             nm();
             ioc.run();
             return 0;
@@ -1182,12 +1182,12 @@ int main(int argc, char* argv[]) {
 #endif // defined(ASYNC_MQTT_USE_TLS)
 #if defined(ASYNC_MQTT_USE_WS)
         else if (protocol == "ws") {
-            auto amep = am::endpoint<am::role::client, am::protocol::ws>::create(
+            auto amep = am::endpoint<am::role::client, am::protocol::ws>{
                 version,
                 ioc.get_executor()
-            );
-            auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, vm, version};
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, vm, version};
             nm();
             ioc.run();
             return 0;
@@ -1215,13 +1215,13 @@ int main(int argc, char* argv[]) {
                 ctx.use_certificate_chain_file(vm["certificate"].as<std::string>());
                 ctx.use_private_key_file(vm["private_key"].as<std::string>(), boost::asio::ssl::context::pem);
             }
-            auto amep = am::endpoint<am::role::client, am::protocol::wss>::create(
+            auto amep = am::endpoint<am::role::client, am::protocol::wss>{
                 version,
                 ioc.get_executor(),
                 ctx
-            );
-            auto cc = client_cli{ioc, *amep, version};
-            auto nm = network_manager{*amep, vm, version};
+            };
+            auto cc = client_cli{ioc, amep, version};
+            auto nm = network_manager{amep, vm, version};
             nm();
             ioc.run();
             return 0;

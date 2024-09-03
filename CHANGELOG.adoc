@@ -4,9 +4,14 @@
 
 == 9.0.0
 === breaking changes
+* endpoint, basic_endpoint, and client become value based design. #346
+** static member function `create()` is removed.
+** constructor becomes public.
+** move constructor is supported.
+** you can replace `endpoint<...>::create(...)`  with `endpoint<...>{...}` for value or `std::make_shared<endpoint<...>>(...)` for shared_ptr.
 * Updated timeout duration setting function parameter type as `std::chorono::milliseconds`. #342, #345
-  ** User can pass any duration types like `std::chrono::milliseconds`, `std::chrono::seconds`, etc.
-  ** The Mminimum resolution is milliseconds.
+** User can pass any duration types like `std::chrono::milliseconds`, `std::chrono::seconds`, etc.
+** The Mminimum resolution is milliseconds.
 === other updates
 * Moved all implementations of basic_endpoint member functions to impl. #343
 * Deleted unused and undefined `is_error()` function. #341

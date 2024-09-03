@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP)
-#define ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP
+#if !defined(ASYNC_MQTT_UTIL_IMPL_STREAM_READ_PACKET_HPP)
+#define ASYNC_MQTT_UTIL_IMPL_STREAM_READ_PACKET_HPP
 
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/util/stream.hpp>
@@ -13,29 +13,30 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <typename NextLayer>
-struct stream<NextLayer>::stream_read_packet_op {
+struct stream_impl<NextLayer>::stream_read_packet_op {
     using stream_type = this_type;
     using stream_type_sp = std::shared_ptr<stream_type>;
     using next_layer_type = stream_type::next_layer_type;
 
-    stream_type& strm;
+    std::shared_ptr<stream_type> strm;
     std::size_t received = 0;
     std::uint32_t mul = 1;
     std::uint32_t rl = 0;
     std::size_t rl_expected = 2;
     std::shared_ptr<char[]> spca = nullptr;
-    stream_type_sp life_keeper = strm.shared_from_this();
     enum { dispatch, post, work, remaining_length, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
+        auto& a_strm{*strm};
         switch (state) {
         case dispatch: {
             state = post;
-            auto& a_strm{strm};
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
@@ -43,21 +44,18 @@ struct stream<NextLayer>::stream_read_packet_op {
         } break;
         case post: {
             state = work;
-            auto& a_strm{strm};
             a_strm.read_queue_.post(
                 force_move(self)
             );
         } break;
         case work: {
-            strm.read_queue_.start_work();
-            auto& a_strm{strm};
+            a_strm.read_queue_.start_work();
             if (a_strm.bulk_read_buffer_size_ == 0) {
                 // start non bulk read
                 state = remaining_length;
                 // read fixed_header + first remaining_length
-                strm.header_remaining_length_buf_.resize(5);
-                auto address = &strm.header_remaining_length_buf_[received];
-                auto& a_strm{strm};
+                a_strm.header_remaining_length_buf_.resize(5);
+                auto address = &a_strm.header_remaining_length_buf_[received];
                 if constexpr (
                     has_async_read<next_layer_type>::value) {
                         layer_customize<next_layer_type>::async_read(
@@ -77,7 +75,9 @@ struct stream<NextLayer>::stream_read_packet_op {
             }
             else {
                 // start bulk read
-                a_strm.async_read_some(
+                auto strm_copy = strm;
+                async_read_some(
+                    strm_copy,
                     force_move(self)
                 );
             }
@@ -96,6 +96,7 @@ struct stream<NextLayer>::stream_read_packet_op {
         std::size_t bytes_transferred
     ) {
         (void)bytes_transferred; // Ignore unused argument in release build
+        auto& a_strm{*strm};
 
         if (ec) {
             next();
@@ -108,7 +109,7 @@ struct stream<NextLayer>::stream_read_packet_op {
             BOOST_ASSERT(bytes_transferred == rl_expected);
             rl_expected = 1;
             received += bytes_transferred;
-            if (strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
+            if (a_strm.header_remaining_length_buf_[received - 1] & 0b10000000) {
                 // remaining_length continues
                 if (received == 5) {
                     next();
@@ -121,10 +122,9 @@ struct stream<NextLayer>::stream_read_packet_op {
                     );
                     return;
                 }
-                rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
+                rl += (a_strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
                 mul *= 128;
-                auto address = &strm.header_remaining_length_buf_[received];
-                auto& a_strm{strm};
+                auto address = &a_strm.header_remaining_length_buf_[received];
                 if constexpr (
                     has_async_read<next_layer_type>::value) {
                         layer_customize<next_layer_type>::async_read(
@@ -144,7 +144,7 @@ struct stream<NextLayer>::stream_read_packet_op {
             }
             else {
                 // remaining_length end
-                rl += (strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
+                rl += (a_strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
 
                 BOOST_ASIO_REBIND_ALLOC(
                     typename as::associated_allocator<Self>::type,
@@ -158,8 +158,8 @@ struct stream<NextLayer>::stream_read_packet_op {
                     received + rl
                 );
                 std::copy(
-                    strm.header_remaining_length_buf_.data(),
-                    strm.header_remaining_length_buf_.data() + received, spca.get()
+                    a_strm.header_remaining_length_buf_.data(),
+                    a_strm.header_remaining_length_buf_.data() + received, spca.get()
                 );
 
                 if (rl == 0) {
@@ -171,7 +171,6 @@ struct stream<NextLayer>::stream_read_packet_op {
                 else {
                     state = complete;
                     auto address = &spca[std::ptrdiff_t(received)];
-                    auto& a_strm{strm};
                     if constexpr (
                         has_async_read<next_layer_type>::value) {
                             layer_customize<next_layer_type>::async_read(
@@ -214,65 +213,41 @@ struct stream<NextLayer>::stream_read_packet_op {
     }
 
     void next() {
-        strm.read_queue_.stop_work();
-        auto& a_strm{strm};
+        auto& a_strm{*strm};
+        a_strm.read_queue_.stop_work();
         as::post(
             a_strm.get_executor(),
-            [&a_strm, life_keeper = life_keeper] {
-                a_strm.read_queue_.poll_one();
+            [strm = force_move(strm)] {
+                strm->read_queue_.poll_one();
             }
         );
     }
 };
 
 template <typename NextLayer>
-template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, buffer)
-)
-stream<NextLayer>::async_read_packet(
-    CompletionToken&& token
-) {
-    return
-        as::async_compose<
-            CompletionToken,
-            void(error_code, buffer)
-        >(
-            stream_read_packet_op{
-                *this
-            },
-            token,
-            get_executor()
-        );
-}
-
-template <typename NextLayer>
 inline
 void
-stream<NextLayer>::init_read() {
+stream_impl<NextLayer>::init_read() {
     read_state_ = read_state::fixed_header;
     header_remaining_length_buf_.clear();
     remaining_length_ = 0;
     multiplier_ = 1;
 }
 
-
 template <typename NextLayer>
-struct stream<NextLayer>::stream_read_some_op {
+struct stream_impl<NextLayer>::stream_read_some_op {
     using stream_type = this_type;
     using stream_type_sp = std::shared_ptr<stream_type>;
     using next_layer_type = stream_type::next_layer_type;
 
-    stream_type& strm;
-    stream_type_sp life_keeper = strm.shared_from_this();
+    std::shared_ptr<stream_type> strm;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
-        if (strm.read_packets_.empty()) {
-            auto& a_strm{strm};
+        auto& a_strm{*strm};
+        if (a_strm.read_packets_.empty()) {
             if constexpr (
                 has_async_read_some<next_layer_type>::value) {
                     layer_customize<next_layer_type>::async_read_some(
@@ -289,8 +264,8 @@ struct stream<NextLayer>::stream_read_some_op {
             }
         }
         else {
-            auto [ec, packet] = force_move(strm.read_packets_.front());
-            strm.read_packets_.pop_front();
+            auto [ec, packet] = force_move(a_strm.read_packets_.front());
+            a_strm.read_packets_.pop_front();
             self.complete(ec, force_move(packet));
         }
     }
@@ -301,14 +276,14 @@ struct stream<NextLayer>::stream_read_some_op {
         error_code const& ec,
         std::size_t bytes_transferred
     ) {
+        auto& a_strm{*strm};
         if (ec) {
-            strm.init_read();
-            strm.read_packets_.emplace_back(ec);
+            a_strm.init_read();
+            a_strm.read_packets_.emplace_back(ec);
         }
         else {
-            strm.read_buf_.commit(bytes_transferred);
-            strm.parse_packet(self);
-            auto& a_strm{strm};
+            a_strm.read_buf_.commit(bytes_transferred);
+            a_strm.parse_packet(self);
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
@@ -323,27 +298,31 @@ BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
     CompletionToken,
     void(error_code, buffer)
 )
-stream<NextLayer>::async_read_some(
+stream_impl<NextLayer>::async_read_some(
+    this_type_sp impl,
     CompletionToken&& token
 ) {
+    BOOST_ASSERT(impl);
+    auto exe = impl->get_executor();
     return
         as::async_compose<
             CompletionToken,
             void(error_code, buffer)
         >(
             stream_read_some_op{
-                *this
+                force_move(impl)
             },
             token,
-            get_executor()
+            exe
         );
 }
+
 
 template <typename NextLayer>
 template <typename Self>
 inline
 void
-stream<NextLayer>::parse_packet(Self& self) {
+stream_impl<NextLayer>::parse_packet(Self& self) {
     while (read_buf_.size() != 0) {
         switch (read_state_) {
         case read_state::fixed_header: {
@@ -410,6 +389,32 @@ stream<NextLayer>::parse_packet(Self& self) {
     }
 }
 
+} // namespace detail
+
+template <typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void(error_code, buffer)
+)
+stream<NextLayer>::async_read_packet(
+    CompletionToken&& token
+) {
+    BOOST_ASSERT(impl_);
+    return
+        as::async_compose<
+            CompletionToken,
+            void(error_code, buffer)
+        >(
+            typename impl_type::stream_read_packet_op{
+                impl_
+            },
+            token,
+            get_executor()
+        );
+}
+
+
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_STREAM_READ_PACKET_HPP
+#endif // ASYNC_MQTT_UTIL_IMPL_STREAM_READ_PACKET_HPP

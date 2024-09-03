@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a83cf6dc8b65e35c2414abbbe496f38db":[0,2,0,3,0,1],
+"classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a98c6e2957c22b01c57686ea97612c11b":[0,2,0,3,0,3],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#abf5558c0404c4e825a7ff7752b01e524":[0,2,0,3,0,5],
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#ae8f845776d61cced7df729f440a54830":[0,2,0,3,0,2],
 "classasync__mqtt_1_1v3__1__1_1_1pingresp__packet.html":[0,2,0,4,0],
@@ -226,6 +228,7 @@ var NAVTREEINDEX2 =
 "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html":[0,2,2,0,1],
 "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html#a9c62100a96131fc22c1a52561d3d52cc":[0,2,2,0,1,0],
 "client_8hpp_source.html":[2,0,0,0,5],
+"client__fwd_8hpp_source.html":[2,0,0,0,6],
 "control__packet__type_8hpp_source.html":[2,0,0,0,0,0],
 "customized__basic__stream_8hpp_source.html":[2,0,0,0,1,0],
 "customized__ssl__stream_8hpp.html":[2,0,0,0,1,1],
@@ -238,16 +241,13 @@ var NAVTREEINDEX2 =
 "dir_df0bffcb61356486763cc61cf65485e2.html":[2,0,0,0,2],
 "dir_f8efeb8e1feb6bbd3b8b0bf040091d61.html":[2,0,0,0],
 "endian__convert_8hpp_source.html":[2,0,0,0,2,1],
-"endpoint_8hpp_source.html":[2,0,0,0,6],
-"endpoint__fwd_8hpp_source.html":[2,0,0,0,7],
-"error_8hpp_source.html":[2,0,0,0,8],
+"endpoint_8hpp_source.html":[2,0,0,0,7],
+"endpoint__fwd_8hpp_source.html":[2,0,0,0,8],
+"error_8hpp_source.html":[2,0,0,0,9],
 "files.html":[2,0],
 "functions.html":[1,2,0],
 "functions.html":[1,2,0,0],
 "functions_b.html":[1,2,0,1],
 "functions_c.html":[1,2,0,2],
-"functions_d.html":[1,2,0,3],
-"functions_e.html":[1,2,0,4],
-"functions_f.html":[1,2,0,5],
-"functions_func.html":[1,2,1]
+"functions_d.html":[1,2,0,3]
 };

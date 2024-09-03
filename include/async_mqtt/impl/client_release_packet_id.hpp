@@ -11,6 +11,32 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
+template <protocol_version Version, typename NextLayer>
+template <typename CompletionToken>
+BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
+    CompletionToken,
+    void()
+)
+client_impl<Version, NextLayer>::async_release_packet_id(
+    packet_id_type pid,
+    CompletionToken&& token
+) {
+    return ep_.async_release_packet_id(pid, std::forward<CompletionToken>(token));
+}
+
+// sync version
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client_impl<Version, NextLayer>::release_packet_id(packet_id_type packet_id) {
+    ep_.release_packet_id(packet_id);
+}
+
+} // namespace detail
+
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -21,7 +47,8 @@ client<Version, NextLayer>::async_release_packet_id(
     packet_id_type pid,
     CompletionToken&& token
 ) {
-    return ep_->async_release_packet_id(pid, std::forward<CompletionToken>(token));
+    BOOST_ASSERT(impl_);
+    return impl_->async_release_packet_id(pid, std::forward<CompletionToken>(token));
 }
 
 // sync version
@@ -30,7 +57,8 @@ template <protocol_version Version, typename NextLayer>
 inline
 void
 client<Version, NextLayer>::release_packet_id(packet_id_type packet_id) {
-    ep_->release_packet_id(packet_id);
+    BOOST_ASSERT(impl_);
+    impl_->release_packet_id(packet_id);
 }
 
 } // namespace async_mqtt

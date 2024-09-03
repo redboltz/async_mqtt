@@ -151,60 +151,61 @@ $(function(){initNavTree('topic__alias__recv_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                },</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                [](<span class="keyword">auto</span>&amp;) { BOOST_ASSERT(<span class="keyword">false</span>); }</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            );</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::string find(<a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        BOOST_ASSERT(alias &gt;= min_ &amp;&amp; alias &lt;= max_);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        std::string topic;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">auto</span> it = aliases_.find(alias);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">if</span> (it != aliases_.end()) topic = it-&gt;topic;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            &lt;&lt; <span class="stringliteral">&quot;find_topic_by_alias&quot;</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            &lt;&lt; <span class="stringliteral">&quot; alias:&quot;</span> &lt;&lt; alias</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            &lt;&lt; <span class="stringliteral">&quot; topic:&quot;</span> &lt;&lt; topic;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> topic;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">void</span> clear() {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            &lt;&lt; <span class="stringliteral">&quot;clear_topic_alias&quot;</span>;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        aliases_.clear();</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> max()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> max_; }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> min_ = 1;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> max_;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keyword">struct </span>entry {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        entry(std::string topic, <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias)</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            : topic{force_move(topic)}, alias{alias} {}</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        std::string topic;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    };</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keyword">using </span>mi_topic_alias = mi::multi_index_container&lt;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        entry,</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        mi::indexed_by&lt;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            mi::ordered_unique&lt;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                mi::key&lt;&amp;entry::alias&gt;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            &gt;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        &gt;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    &gt;;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    mi_topic_alias aliases_;</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>};</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_TOPIC_ALIAS_RECV_HPP</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    std::string find(<a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">if</span> (alias &gt;= min_ &amp;&amp; alias &lt;= max_) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            std::string topic;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            <span class="keyword">auto</span> it = aliases_.find(alias);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            <span class="keywordflow">if</span> (it != aliases_.end()) topic = it-&gt;topic;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                &lt;&lt; <span class="stringliteral">&quot;find_topic_by_alias&quot;</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                &lt;&lt; <span class="stringliteral">&quot; alias:&quot;</span> &lt;&lt; alias</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                &lt;&lt; <span class="stringliteral">&quot; topic:&quot;</span> &lt;&lt; topic;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <span class="keywordflow">return</span> topic;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        }</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordflow">return</span> std::string{};</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">void</span> clear() {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        ASYNC_MQTT_LOG(<span class="stringliteral">&quot;mqtt_impl&quot;</span>, <a class="code hl_enumvalue" href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">info</a>)</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            &lt;&lt; ASYNC_MQTT_ADD_VALUE(address, <span class="keyword">this</span>)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            &lt;&lt; <span class="stringliteral">&quot;clear_topic_alias&quot;</span>;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        aliases_.clear();</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    }</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> max()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> max_; }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> min_ = 1;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> max_;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">struct </span>entry {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        entry(std::string topic, <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias)</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            : topic{force_move(topic)}, alias{alias} {}</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        std::string topic;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <a class="code hl_typedef" href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">topic_alias_type</a> alias;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    };</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">using </span>mi_topic_alias = mi::multi_index_container&lt;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        entry,</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        mi::indexed_by&lt;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            mi::ordered_unique&lt;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                mi::key&lt;&amp;entry::alias&gt;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            &gt;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        &gt;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    &gt;;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    mi_topic_alias aliases_;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>};</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_TOPIC_ALIAS_RECV_HPP</span></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfa04a75036e9d520bb983c5ed03b8d0182">async_mqtt::severity_level::trace</a></div><div class="ttdeci">@ trace</div><div class="ttdoc">trace level for detaied behavior and reporting issue</div></div>
 <div class="ttc" id="agroup__log_html_gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c"><div class="ttname"><a href="group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacaf9b6b99962bf5c2264824231d7a40c">async_mqtt::severity_level::info</a></div><div class="ttdeci">@ info</div><div class="ttdoc">info level api call is output</div></div>
 <div class="ttc" id="agroup__property_html_ga5fe22439446e72837355d835aaa7a1e6"><div class="ttname"><a href="group__property.html#ga5fe22439446e72837355d835aaa7a1e6">async_mqtt::topic_alias_type</a></div><div class="ttdeci">std::uint16_t topic_alias_type</div><div class="ttdoc">type of the topic alias value</div><div class="ttdef"><b>Definition</b> property.hpp:66</div></div>

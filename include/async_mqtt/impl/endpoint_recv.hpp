@@ -15,15 +15,16 @@
 
 namespace async_mqtt {
 
+namespace detail {
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint<Role, PacketIdBytes, NextLayer>::
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 recv_op {
-    this_type& ep;
+    this_type_sp ep;
     std::optional<filter> fil = std::nullopt;
     std::set<control_packet_type> types = {};
     std::optional<error_code> decided_error = std::nullopt;
     enum { initiate, disconnect, close, read } state = initiate;
-    this_type_sp life_keeper = ep.shared_from_this();
 
     template <typename Self>
     void operator()(
@@ -31,9 +32,10 @@ recv_op {
         error_code ec = error_code{},
         buffer buf = buffer{}
     ) {
+        auto& a_ep{*ep};
         if (ec) {
             ASYNC_MQTT_LOG("mqtt_impl", info)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "recv error:" << ec.message();
             if (ec == as::error::operation_aborted) {
                 // on cancel, not close the connection
@@ -45,8 +47,9 @@ recv_op {
             else {
                 decided_error.emplace(ec);
                 state = close;
-                auto& a_ep{ep};
+                auto ep_copy = ep;
                 a_ep.async_close(
+                    force_move(ep_copy),
                     force_move(self)
                 );
             }
@@ -56,23 +59,23 @@ recv_op {
         switch (state) {
         case initiate: {
             state = read;
-            auto& a_ep{ep};
-            a_ep.stream_->async_read_packet(
+            a_ep.stream_.async_read_packet(
                 force_move(self)
             );
         } break;
         case read: {
-            if (buf.size() > ep.maximum_packet_size_recv_) {
+            if (buf.size() > a_ep.maximum_packet_size_recv_) {
                 // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
-                BOOST_ASSERT(ep.protocol_version_ == protocol_version::v5);
+                BOOST_ASSERT(a_ep.protocol_version_ == protocol_version::v5);
                 state = disconnect;
                 decided_error.emplace(
                     make_error_code(
                         disconnect_reason_code::packet_too_large
                     )
                 );
-                auto& a_ep{ep};
+                auto ep_copy = ep;
                 a_ep.async_send(
+                    force_move(ep_copy),
                     v5::disconnect_packet{
                         disconnect_reason_code::packet_too_large
                     },
@@ -83,16 +86,18 @@ recv_op {
 
             bool call_complete = true;
             error_code ec = error_code{};
-            auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, ep.protocol_version_, ec);
+            auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, a_ep.protocol_version_, ec);
+            auto ep_copy = ep;
             if (ec) {
                 decided_error.emplace(ec);
-                if (ep.protocol_version_ == protocol_version::v5) {
+                if (a_ep.protocol_version_ == protocol_version::v5) {
                     state = disconnect;
-                    auto& a_ep{ep};
                     if constexpr (can_send_as_server(Role)) {
                         if (ec.category() == get_connect_reason_code_category()) {
                             a_ep.status_ = connection_status::connecting;
-                            a_ep.async_send(
+                            auto ep_copy = ep;
+                            async_send(
+                                force_move(ep_copy),
                                 v5::connack_packet{
                                     false,
                                     static_cast<connect_reason_code>(ec.value())
@@ -104,9 +109,10 @@ recv_op {
                     }
                     if (ec.category() == get_disconnect_reason_code_category()) {
                         state = disconnect;
-                        if (ep.status_ == connection_status::connected) {
-                            auto& a_ep{ep};
+                        if (a_ep.status_ == connection_status::connected) {
+                            auto ep_copy = ep;
                             a_ep.async_send(
+                                force_move(ep_copy),
                                 v5::disconnect_packet{
                                     static_cast<disconnect_reason_code>(ec.value())
                                 },
@@ -117,15 +123,16 @@ recv_op {
                     }
                 }
                 state = close;
-                auto& a_ep{ep};
+                auto ep_copy = ep;
                 a_ep.async_close(
+                    force_move(ep_copy),
                     force_move(self)
                 );
                 return;
             }
             else {
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
-                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                     << "recv:" << v;
                 v.visit(
                     // do internal protocol processing
@@ -145,8 +152,10 @@ recv_op {
                         [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
                             switch (p.opts().get_qos()) {
                             case qos::at_least_once: {
-                                if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                                if (a_ep.auto_pub_response_ &&
+                                    a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v3_1_1::basic_puback_packet<PacketIdBytes>(p.packet_id()),
                                         as::detached
                                     );
@@ -156,8 +165,7 @@ recv_op {
                                 call_complete = process_qos2_publish(protocol_version::v3_1_1, p.packet_id());
                                 if (!call_complete) {
                                     // do the next read
-                                    auto& a_ep{ep};
-                                    a_ep.stream_->async_read_packet(
+                                    a_ep.stream_.async_read_packet(
                                         force_move(self)
                                     );
                                 }
@@ -169,15 +177,16 @@ recv_op {
                         [&](v5::basic_publish_packet<PacketIdBytes>& p) {
                             switch (p.opts().get_qos()) {
                             case qos::at_least_once: {
-                                if (ep.publish_recv_.size() == ep.publish_recv_max_) {
+                                if (a_ep.publish_recv_.size() == a_ep.publish_recv_max_) {
                                     state = disconnect;
                                     decided_error.emplace(
                                         make_error_code(
                                             disconnect_reason_code::receive_maximum_exceeded
                                         )
                                     );
-                                    auto& a_ep{ep};
+                                    auto ep_copy = ep;
                                     a_ep.async_send(
+                                        force_move(ep_copy),
                                         v5::disconnect_packet{
                                             disconnect_reason_code::receive_maximum_exceeded
                                         },
@@ -186,24 +195,26 @@ recv_op {
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
-                                ep.publish_recv_.insert(packet_id);
-                                if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                                a_ep.publish_recv_.insert(packet_id);
+                                if (a_ep.auto_pub_response_ && a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v5::basic_puback_packet<PacketIdBytes>{packet_id},
                                         as::detached
                                     );
                                 }
                             } break;
                             case qos::exactly_once: {
-                                if (ep.publish_recv_.size() == ep.publish_recv_max_) {
+                                if (a_ep.publish_recv_.size() == a_ep.publish_recv_max_) {
                                     state = disconnect;
                                     decided_error.emplace(
                                         make_error_code(
                                             disconnect_reason_code::receive_maximum_exceeded
                                         )
                                     );
-                                    auto& a_ep{ep};
+                                    auto ep_copy = ep;
                                     a_ep.async_send(
+                                        force_move(ep_copy),
                                         v5::disconnect_packet{
                                             disconnect_reason_code::receive_maximum_exceeded
                                         },
@@ -212,12 +223,11 @@ recv_op {
                                     return;
                                 }
                                 auto packet_id = p.packet_id();
-                                ep.publish_recv_.insert(packet_id);
+                                a_ep.publish_recv_.insert(packet_id);
                                 call_complete = process_qos2_publish(protocol_version::v5, packet_id);
                                 if (!call_complete) {
                                     // do the next read
-                                    auto& a_ep{ep};
-                                    a_ep.stream_->async_read_packet(
+                                    a_ep.stream_.async_read_packet(
                                         force_move(self)
                                     );
                                 }
@@ -230,16 +240,17 @@ recv_op {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
                                     // extract topic from topic_alias
                                     if (*ta_opt == 0 ||
-                                        !ep.topic_alias_recv_ || // topic_alias_maximum is 0
-                                        *ta_opt > ep.topic_alias_recv_->max()) {
+                                        !a_ep.topic_alias_recv_ || // topic_alias_maximum is 0
+                                        *ta_opt > a_ep.topic_alias_recv_->max()) {
                                         state = disconnect;
                                         decided_error.emplace(
                                             make_error_code(
                                                 disconnect_reason_code::topic_alias_invalid
                                             )
                                         );
-                                        auto& a_ep{ep};
+                                        auto ep_copy = ep;
                                         a_ep.async_send(
+                                            force_move(ep_copy),
                                             v5::disconnect_packet{
                                                 disconnect_reason_code::topic_alias_invalid
                                             },
@@ -248,11 +259,11 @@ recv_op {
                                         return;
                                     }
                                     else {
-                                        BOOST_ASSERT(ep.topic_alias_recv_);
-                                        auto topic = ep.topic_alias_recv_->find(*ta_opt);
+                                        BOOST_ASSERT(a_ep.topic_alias_recv_);
+                                        auto topic = a_ep.topic_alias_recv_->find(*ta_opt);
                                         if (topic.empty()) {
                                             ASYNC_MQTT_LOG("mqtt_impl", error)
-                                                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                                << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                                 << "no matching topic alias: "
                                                 << *ta_opt;
                                             state = disconnect;
@@ -261,8 +272,9 @@ recv_op {
                                                     disconnect_reason_code::topic_alias_invalid
                                                 )
                                             );
-                                            auto& a_ep{ep};
+                                            auto ep_copy = ep;
                                             a_ep.async_send(
+                                                force_move(ep_copy),
                                                 v5::disconnect_packet{
                                                     disconnect_reason_code::topic_alias_invalid
                                                 },
@@ -277,7 +289,7 @@ recv_op {
                                 }
                                 else {
                                     ASYNC_MQTT_LOG("mqtt_impl", error)
-                                        << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                        << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                         << "topic is empty but topic_alias isn't set";
                                     state = disconnect;
                                     decided_error.emplace(
@@ -285,8 +297,9 @@ recv_op {
                                             disconnect_reason_code::topic_alias_invalid
                                         )
                                     );
-                                    auto& a_ep{ep};
+                                    auto ep_copy = ep;
                                     a_ep.async_send(
+                                        force_move(ep_copy),
                                         v5::disconnect_packet{
                                             disconnect_reason_code::topic_alias_invalid
                                         },
@@ -298,16 +311,17 @@ recv_op {
                             else {
                                 if (auto ta_opt = get_topic_alias(p.props())) {
                                     if (*ta_opt == 0 ||
-                                        !ep.topic_alias_recv_ || // topic_alias_maximum is 0
-                                        *ta_opt > ep.topic_alias_recv_->max()) {
+                                        !a_ep.topic_alias_recv_ || // topic_alias_maximum is 0
+                                        *ta_opt > a_ep.topic_alias_recv_->max()) {
                                         state = disconnect;
                                         decided_error.emplace(
                                             make_error_code(
                                                 disconnect_reason_code::topic_alias_invalid
                                             )
                                         );
-                                        auto& a_ep{ep};
+                                        auto ep_copy = ep;
                                         a_ep.async_send(
+                                            force_move(ep_copy),
                                             v5::disconnect_packet{
                                                 disconnect_reason_code::topic_alias_invalid
                                             },
@@ -316,22 +330,22 @@ recv_op {
                                         return;
                                     }
                                     else {
-                                        BOOST_ASSERT(ep.topic_alias_recv_);
+                                        BOOST_ASSERT(a_ep.topic_alias_recv_);
                                         // extract topic from topic_alias
-                                        ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                                        a_ep.topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
                                     }
                                 }
                             }
                         },
                         [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_puback_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
-                                ep.release_pid(packet_id);
+                            if (a_ep.pid_puback_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v3_1_1_puback, packet_id);
+                                a_ep.release_pid(packet_id);
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id puback received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -339,7 +353,6 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
                                 as::dispatch(
                                     a_ep.get_executor(),
                                     force_move(self)
@@ -349,15 +362,15 @@ recv_op {
                         },
                         [&](v5::basic_puback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_puback_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v5_puback, packet_id);
-                                ep.release_pid(packet_id);
-                                --ep.publish_send_count_;
+                            if (a_ep.pid_puback_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v5_puback, packet_id);
+                                a_ep.release_pid(packet_id);
+                                --a_ep.publish_send_count_;
                                 send_publish_from_queue();
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id puback received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -365,8 +378,9 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
+                                auto ep_copy = ep;
                                 a_ep.async_send(
+                                    force_move(ep_copy),
                                     v5::disconnect_packet{
                                         disconnect_reason_code::protocol_error
                                     },
@@ -377,10 +391,11 @@ recv_op {
                         },
                         [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_pubrec_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v3_1_1_pubrec, packet_id);
-                                if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                            if (a_ep.pid_pubrec_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v3_1_1_pubrec, packet_id);
+                                if (a_ep.auto_pub_response_ && a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v3_1_1::basic_pubrel_packet<PacketIdBytes>(packet_id),
                                         as::detached
                                     );
@@ -388,7 +403,7 @@ recv_op {
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id pubrec received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -396,7 +411,6 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
                                 as::dispatch(
                                     a_ep.get_executor(),
                                     force_move(self)
@@ -406,16 +420,17 @@ recv_op {
                         },
                         [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_pubrec_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v5_pubrec, packet_id);
+                            if (a_ep.pid_pubrec_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v5_pubrec, packet_id);
                                 if (make_error_code(p.code())) {
-                                    ep.release_pid(packet_id);
-                                    ep.qos2_publish_processing_.erase(packet_id);
-                                    --ep.publish_send_count_;
+                                    a_ep.release_pid(packet_id);
+                                    a_ep.qos2_publish_processing_.erase(packet_id);
+                                    --a_ep.publish_send_count_;
                                     send_publish_from_queue();
                                 }
-                                else if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                                else if (a_ep.auto_pub_response_ && a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v5::basic_pubrel_packet<PacketIdBytes>(packet_id),
                                         as::detached
                                     );
@@ -423,7 +438,7 @@ recv_op {
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id pubrec received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -431,8 +446,9 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
+                                auto ep_copy = ep;
                                 a_ep.async_send(
+                                    force_move(ep_copy),
                                     v5::disconnect_packet{
                                         disconnect_reason_code::protocol_error
                                     },
@@ -443,9 +459,10 @@ recv_op {
                         },
                         [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.qos2_publish_handled_.erase(packet_id);
-                            if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                ep.async_send(
+                            a_ep.qos2_publish_handled_.erase(packet_id);
+                            if (a_ep.auto_pub_response_ && a_ep.status_ == connection_status::connected) {
+                                a_ep.async_send(
+                                    ep,
                                     v3_1_1::basic_pubcomp_packet<PacketIdBytes>(packet_id),
                                     as::detached
                                 );
@@ -453,9 +470,10 @@ recv_op {
                         },
                         [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            ep.qos2_publish_handled_.erase(packet_id);
-                            if (ep.auto_pub_response_ && ep.status_ == connection_status::connected) {
-                                ep.async_send(
+                            a_ep.qos2_publish_handled_.erase(packet_id);
+                            if (a_ep.auto_pub_response_ && a_ep.status_ == connection_status::connected) {
+                                a_ep.async_send(
+                                    ep,
                                     v5::basic_pubcomp_packet<PacketIdBytes>(packet_id),
                                     as::detached
                                 );
@@ -463,16 +481,16 @@ recv_op {
                         },
                         [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_pubcomp_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
-                                ep.release_pid(packet_id);
-                                ep.qos2_publish_processing_.erase(packet_id);
-                                --ep.publish_send_count_;
+                            if (a_ep.pid_pubcomp_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
+                                a_ep.release_pid(packet_id);
+                                a_ep.qos2_publish_processing_.erase(packet_id);
+                                --a_ep.publish_send_count_;
                                 send_publish_from_queue();
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id pubcomp received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -480,7 +498,6 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
                                 as::dispatch(
                                     a_ep.get_executor(),
                                     force_move(self)
@@ -490,14 +507,14 @@ recv_op {
                         },
                         [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_pubcomp_.erase(packet_id)) {
-                                ep.store_.erase(response_packet::v5_pubcomp, packet_id);
-                                ep.release_pid(packet_id);
-                                ep.qos2_publish_processing_.erase(packet_id);
+                            if (a_ep.pid_pubcomp_.erase(packet_id)) {
+                                a_ep.store_.erase(response_packet::v5_pubcomp, packet_id);
+                                a_ep.release_pid(packet_id);
+                                a_ep.qos2_publish_processing_.erase(packet_id);
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
-                                    << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                                     << "invalid packet_id pubcomp received packet_id:" << packet_id;
                                 state = disconnect;
                                 decided_error.emplace(
@@ -505,8 +522,9 @@ recv_op {
                                         disconnect_reason_code::protocol_error
                                     )
                                 );
-                                auto& a_ep{ep};
+                                auto ep_copy = ep;
                                 a_ep.async_send(
+                                    force_move(ep_copy),
                                     v5::disconnect_packet{
                                         disconnect_reason_code::protocol_error
                                     },
@@ -521,14 +539,14 @@ recv_op {
                         },
                         [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_suback_.erase(packet_id)) {
-                                ep.release_pid(packet_id);
+                            if (a_ep.pid_suback_.erase(packet_id)) {
+                                a_ep.release_pid(packet_id);
                             }
                         },
                         [&](v5::basic_suback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_suback_.erase(packet_id)) {
-                                ep.release_pid(packet_id);
+                            if (a_ep.pid_suback_.erase(packet_id)) {
+                                a_ep.release_pid(packet_id);
                             }
                         },
                         [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
@@ -537,20 +555,22 @@ recv_op {
                         },
                         [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_unsuback_.erase(packet_id)) {
-                                ep.release_pid(packet_id);
+                            if (a_ep.pid_unsuback_.erase(packet_id)) {
+                                a_ep.release_pid(packet_id);
                             }
                         },
                         [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
                             auto packet_id = p.packet_id();
-                            if (ep.pid_unsuback_.erase(packet_id)) {
-                                ep.release_pid(packet_id);
+                            if (a_ep.pid_unsuback_.erase(packet_id)) {
+                                a_ep.release_pid(packet_id);
                             }
                         },
                         [&](v3_1_1::pingreq_packet&) {
                             if constexpr(can_send_as_server(Role)) {
-                                if (ep.auto_ping_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                                if (a_ep.auto_ping_response_ &&
+                                    a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v3_1_1::pingresp_packet(),
                                         as::detached
                                     );
@@ -559,8 +579,10 @@ recv_op {
                         },
                         [&](v5::pingreq_packet&) {
                             if constexpr(can_send_as_server(Role)) {
-                                if (ep.auto_ping_response_ && ep.status_ == connection_status::connected) {
-                                    ep.async_send(
+                                if (a_ep.auto_ping_response_ &&
+                                    a_ep.status_ == connection_status::connected) {
+                                    a_ep.async_send(
+                                        ep,
                                         v5::pingresp_packet(),
                                         as::detached
                                     );
@@ -568,16 +590,16 @@ recv_op {
                             }
                         },
                         [&](v3_1_1::pingresp_packet&) {
-                            ep.tim_pingresp_recv_->cancel();
+                            a_ep.tim_pingresp_recv_.cancel();
                         },
                         [&](v5::pingresp_packet&) {
-                            ep.tim_pingresp_recv_->cancel();
+                            a_ep.tim_pingresp_recv_.cancel();
                         },
                         [&](v3_1_1::disconnect_packet&) {
-                            ep.status_ = connection_status::disconnecting;
+                            a_ep.status_ = connection_status::disconnecting;
                         },
                         [&](v5::disconnect_packet&) {
-                            ep.status_ = connection_status::disconnecting;
+                            a_ep.status_ = connection_status::disconnecting;
                         },
                         [&](v5::auth_packet&) {
                         },
@@ -586,7 +608,7 @@ recv_op {
                     }
                 );
             }
-            ep.reset_pingreq_recv_timer();
+            reset_pingreq_recv_timer(force_move(ep_copy));
 
             auto try_to_comp =
                 [&] {
@@ -605,7 +627,6 @@ recv_op {
                     ) {
                         // read the next packet
                         state = initiate;
-                        auto& a_ep{ep};
                         as::dispatch(
                             a_ep.get_executor(),
                             force_move(self)
@@ -625,15 +646,16 @@ recv_op {
         } break;
         case disconnect: {
             state = close;
-            auto& a_ep{ep};
+            auto ep_copy = ep;
             a_ep.async_close(
+                force_move(ep_copy),
                 force_move(self)
             );
         } break;
         case close: {
             BOOST_ASSERT(decided_error);
             ASYNC_MQTT_LOG("mqtt_impl", info)
-                << ASYNC_MQTT_ADD_VALUE(address, &ep)
+                << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "recv code triggers close:" << decided_error->message();
             self.complete(force_move(*decided_error), packet_variant_type{});
         } break;
@@ -656,6 +678,8 @@ recv_op {
     void handle_v5_connack(v5::connack_packet& p);
 };
 
+} // namespace detail
+
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
@@ -668,13 +692,14 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, packet_variant_type)
         >(
-            recv_op{
-                *this
+            typename impl_type::recv_op{
+                impl_
             },
             token,
             get_executor()
@@ -694,13 +719,14 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, packet_variant_type)
         >(
-            recv_op{
-                *this,
+            typename impl_type::recv_op{
+                impl_,
                 filter::match,
                 force_move(types)
             },
@@ -723,13 +749,14 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "recv";
+    BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
             void(error_code, packet_variant_type)
         >(
-            recv_op{
-                *this,
+            typename impl_type::recv_op{
+                impl_,
                 fil,
                 force_move(types)
             },
