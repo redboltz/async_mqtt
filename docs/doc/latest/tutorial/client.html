@@ -222,12 +222,12 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="k">using</span> <span class="n">client_t</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="p">;</span>
     <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span> <span class="c1">// args for underlying layer (mqtt)</span>
         <span class="c1">// mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;</span>
-    <span class="p">);</span>
+    <span class="p">};</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -252,12 +252,12 @@ pre.rouge .ss {
     <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
     <span class="c1">// // (check res)</span>
 
-    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer (as::ssl::stream&lt;mqtt&gt;)</span>
         <span class="n">ctx</span>
-    <span class="p">);</span>
+    <span class="p">};</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -269,11 +269,11 @@ pre.rouge .ss {
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">    <span class="k">using</span> <span class="n">client_t</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">client</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">ws</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
-    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">()</span>  <span class="c1">// args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)</span>
-    <span class="p">);</span>
+    <span class="p">};</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -297,12 +297,12 @@ pre.rouge .ss {
     <span class="c1">// auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);</span>
     <span class="c1">// // (check res)</span>
 
-    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="o">::</span><span class="n">create</span><span class="p">(</span>
+    <span class="k">auto</span> <span class="n">amcl</span> <span class="o">=</span> <span class="n">client_t</span><span class="p">{</span>
         <span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span>  <span class="c1">// args for underlying layer ( bs::websocket::stream&lt;mqtts&gt;)</span>
         <span class="n">ctx</span>                  <span class="c1">// mqtts is as::ssl::stream&lt;mqtt&gt;</span>
-    <span class="p">);</span>
+    <span class="p">};</span>
     <span class="c1">// handshake underlying layers</span>
-    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+    <span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span><span class="n">amcl</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 </div>
@@ -385,7 +385,7 @@ pre.rouge .ss {
 <span class="p">};</span>
 
 <span class="c1">// MQTT connect and receive loop start</span>
-<span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_start</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_start</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
         <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
@@ -410,7 +410,7 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT connect and receive loop start</span>
-<span class="k">auto</span> <span class="p">[</span><span class="n">ec</span><span class="p">,</span> <span class="n">connack_opt</span><span class="p">]</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_start</span><span class="p">(</span>
+<span class="k">auto</span> <span class="p">[</span><span class="n">ec</span><span class="p">,</span> <span class="n">connack_opt</span><span class="p">]</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_start</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
         <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
@@ -432,7 +432,7 @@ pre.rouge .ss {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_start</span><span class="p">(</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">connack_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_start</span><span class="p">(</span>
     <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_start</span>
     <span class="n">std</span><span class="o">::</span><span class="kt">uint16_t</span><span class="p">(</span><span class="mh">0x1234</span><span class="p">),</span> <span class="c1">// keep_alive</span>
     <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
@@ -463,9 +463,9 @@ pre.rouge .ss {
     <span class="p">{</span><span class="s">"topic2"</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_least_once</span><span class="p">},</span>
     <span class="p">{</span><span class="s">"topic3"</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">exactly_once</span><span class="p">},</span>
 <span class="p">};</span>
-<span class="k">auto</span> <span class="n">suback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_subscribe</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">suback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_subscribe</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">subscribe_packet</span><span class="p">{</span>
-        <span class="o">*</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
+        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
         <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">sub_entry</span><span class="p">)</span> <span class="c1">// sub_entry variable is required to avoid g++ bug</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -490,9 +490,9 @@ pre.rouge .ss {
     <span class="s">"topic3"</span><span class="p">,</span>
 <span class="p">};</span>
 
-<span class="k">auto</span> <span class="n">unsuback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_unsubscribe</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">unsuback_opt</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_unsubscribe</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">unsubscribe_packet</span><span class="p">{</span>
-        <span class="o">*</span><span class="n">amcl</span><span class="o">-&gt;</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
+        <span class="o">*</span><span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id</span><span class="p">(),</span> <span class="c1">// sync version only in thread safe environment</span>
         <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">unsub_entry</span><span class="p">)</span> <span class="c1">// unsub_entry variable is required to avoid g++ bug</span>
     <span class="p">},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
@@ -519,7 +519,7 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS0 and wait response (socket write complete)</span>
-<span class="k">auto</span> <span class="n">pubres0</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_publish</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">pubres0</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="s">"topic1"</span><span class="p">,</span>
         <span class="s">"payload1"</span><span class="p">,</span>
@@ -538,8 +538,8 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS1 and wait response (puback receive)</span>
-<span class="k">auto</span> <span class="n">pid_pub1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
-<span class="k">auto</span> <span class="n">pubres1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_publish</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">pid_pub1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_acquire_unique_packet_id</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
+<span class="k">auto</span> <span class="n">pubres1</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="o">*</span><span class="n">pid_pub1_opt</span><span class="p">,</span>
         <span class="s">"topic2"</span><span class="p">,</span>
@@ -562,8 +562,8 @@ pre.rouge .ss {
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// MQTT publish QoS2 and wait response (pubrec, pubcomp receive)</span>
-<span class="k">auto</span> <span class="n">pid_pub2</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">acquire_unique_packet_id_wait_until</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
-<span class="k">auto</span> <span class="n">pubres2</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_publish</span><span class="p">(</span>
+<span class="k">auto</span> <span class="n">pid_pub2</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">acquire_unique_packet_id_wait_until</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span> <span class="c1">// async version</span>
+<span class="k">auto</span> <span class="n">pubres2</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_publish</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">publish_packet</span><span class="p">{</span>
         <span class="n">pid_pub2</span><span class="p">,</span>
         <span class="s">"topic3"</span><span class="p">,</span>
@@ -590,7 +590,7 @@ pre.rouge .ss {
 <h3 id="_async_recv_funtion"><a href="../api/classasync__mqtt_1_1client.html#a825c14790ca009436f20c1b2c7952204">async_recv()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
 <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">overload</span><span class="p">{</span>
         <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">awaitable_client</span><span class="o">::</span><span class="n">publish_packet</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
@@ -623,7 +623,7 @@ pre.rouge .ss {
 <h3 id="_async_disconnect_funtion"><a href="../api/classasync__mqtt_1_1client.html#acd225df7e04770be801742bbbb437d9e">async_disconnect()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_disconnect</span><span class="p">(</span>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_disconnect</span><span class="p">(</span>
     <span class="n">am</span><span class="o">::</span><span class="n">v5</span><span class="o">::</span><span class="n">disconnect_packet</span><span class="p">{},</span>
     <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
 <span class="p">);</span></code></pre>
@@ -645,7 +645,7 @@ pre.rouge .ss {
 <h3 id="_async_close_funtion"><a href="../api/classasync__mqtt_1_1client.html#a9dda4bdcebd220beb5392adb5da86110">async_close()</a> funtion</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="o">-&gt;</span><span class="n">async_close</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">co_await</span> <span class="n">amcl</span><span class="p">.</span><span class="n">async_close</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

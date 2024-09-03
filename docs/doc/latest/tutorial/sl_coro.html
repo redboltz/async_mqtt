@@ -220,7 +220,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
         <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port</span>
     <span class="p">)</span><span class="o">:</span><span class="n">host_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">host</span><span class="p">)},</span>
       <span class="n">port_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">port</span><span class="p">)},</span>
-      <span class="n">amep_</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;::</span><span class="n">create</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">exe</span><span class="p">)}</span>
+      <span class="n">amep_</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">exe</span><span class="p">}</span>
     <span class="p">{</span>
         <span class="n">impl_</span><span class="p">();</span>
     <span class="p">}</span>
@@ -237,7 +237,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 
     <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host_</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port_</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;&gt;</span> <span class="n">amep_</span><span class="p">;</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span> <span class="n">amep_</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="n">impl</span> <span class="n">impl_</span><span class="p">{</span><span class="o">*</span><span class="k">this</span><span class="p">};</span>
     <span class="c1">// prepare will message if you need.</span>
@@ -304,7 +304,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 
                 <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
                 <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
-                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
                     <span class="o">*</span><span class="k">this</span>
@@ -324,7 +324,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
-                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
                     <span class="o">*</span><span class="k">this</span>
@@ -363,7 +363,7 @@ If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using 
 
                 <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
                 <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
-                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
                     <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
                     <span class="o">*</span><span class="k">this</span>
@@ -385,7 +385,7 @@ See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coro
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Send MQTT CONNECT</span>
-                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">async_send</span><span class="p">(</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">async_send</span><span class="p">(</span>
                     <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
                         <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
                         <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
@@ -424,7 +424,7 @@ See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Recv MQTT CONNACK</span>
-                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="o">-&gt;</span><span class="n">async_recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
