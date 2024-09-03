@@ -12,13 +12,14 @@
 * Updated timeout duration setting function parameter type as `std::chorono::milliseconds`. #342, #345
 ** User can pass any duration types like `std::chrono::milliseconds`, `std::chrono::seconds`, etc.
 ** The Mminimum resolution is milliseconds.
+
 === other updates
 * Moved all implementations of basic_endpoint member functions to impl. #343
 * Deleted unused and undefined `is_error()` function. #341
 * Deleted `client` move operations. #339
 * Fixed cmake warnings due to CMP0167. #338
 * Removed invalid `#`. #336, #337
-* Refined documents. #335, #340
+* Refined documents. #335, #340, #347
 * Added separate compilation mode customization points. #331
 * Added destructor comment for basic_endpoint and client. #330
 * Refined unit_test. #328, #329
@@ -41,6 +42,7 @@
 ** To create `client` instance, `client<...>::create(args)` similar as `endpoint`.
 ** This is required to keep client's lifetime during async operation is working.
 ** `client` and `endpoint` are consistent interface now.
+
 === other updates
 * Move endpoint definition (using) to endpoint_fwd.hpp #311, #312
 * install `*.ipp` files along with other header files #309
@@ -54,6 +56,7 @@
 * Re-designed error_code handling respect to Boost.Asio way. #266, #270, 271, #272, #273, #299
 ** All async functions has the Completion Handler signature as `void(async_mqtt::error_code, ...)`, except `void()`.
 *** It works well with other Boost.Asio based libraries, and Boost.Asio itself.
+
 === other updates
 * Added footprint example. #304
 * Added async_auth() to client. #303
