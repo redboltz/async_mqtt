@@ -2,6 +2,9 @@
 
 = History
 
+== 9.0.1
+* Refined documents. #348
+
 == 9.0.0
 === breaking changes
 * endpoint, basic_endpoint, and client become value based design. #346
