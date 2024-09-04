@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Comparison</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Comparison</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>[async_mqtt](<a href="https://github.com/redboltz/async_mqtt" class="bare">https://github.com/redboltz/async_mqtt</a>)</p>
+</li>
+<li>
+<p>[async-mqtt5](<a href="https://github.com/mireo/async-mqtt5" class="bare">https://github.com/mireo/async-mqtt5</a>)</p>
+</li>
+<li>
+<p>[mqtt_cpp](<a href="https://github.com/redboltz/mqtt_cpp" class="bare">https://github.com/redboltz/mqtt_cpp</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_underlying_protocol_support">Underlying protocol support</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">functionality\library</th>
+<th class="tableblock halign-left valign-top">async_mqtt</th>
+<th class="tableblock halign-left valign-top">async-mqtt5</th>
+<th class="tableblock halign-left valign-top">mqtt_cpp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TLS support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Websocket support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Websocket on TLS support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_asio_style_support">Asio style support</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">functionality\library</th>
+<th class="tableblock halign-left valign-top">async_mqtt</th>
+<th class="tableblock halign-left valign-top">async-mqtt5</th>
+<th class="tableblock halign-left valign-top">mqtt_cpp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Completion Token support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Default Completion Token](<a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html</a>) support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Operation cancel support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[Associated Characteristics](<a href="https://www.boost.org/doc/html/boost_asio/overview/model/associators.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/model/associators.html</a>) support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mqtt_protocol_support">MQTT protocol support</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">functionality\library</th>
+<th class="tableblock halign-left valign-top">async_mqtt</th>
+<th class="tableblock halign-left valign-top">async-mqtt5</th>
+<th class="tableblock halign-left valign-top">mqtt_cpp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Protocol Version 5.0 support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Protocol Version 3.1.1 support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AUTH packet custom authentication support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clean Start support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keep Alive support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receive Maximum property flow control support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum Packet Size property limitation support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">partial</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topic Alias property support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topic Alias auto extract</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topic Alias auto assign</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Topic Alias resend regulate packet</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_misc">Misc</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">functionality\library</th>
+<th class="tableblock halign-left valign-top">async_mqtt</th>
+<th class="tableblock halign-left valign-top">async-mqtt5</th>
+<th class="tableblock halign-left valign-top">note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High level easy to use APIs  support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low level detailed operation APIs  support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT Client APIs support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT Server(broker) APIs support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Send CONNACK, SUBACK, etc</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auto adjust protocol behavior support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Receive Mamixum, Topic Alias, etc</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Separate Compilation support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Once built the library, then next time faster complation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Auto reconnect support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See <a href="functionality/resend.html">Resend message</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multiple broker connect support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">logging</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">define ASYNC_MQTT_USE_LOG to enable logging</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offline publish support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Out of MQTT spec</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Footprint size optimize (-Os)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4,660kb</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4,324kb</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compilation Time no optimize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28.9s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">17.6s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15.6s (async_mqtt separate-compilation-mode application part)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compilation Time size optimize (-Os)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32.9s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">19.9s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16.8s (async_mqtt separate-compilation-mode application part)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_detail_information_of_compilation_time_and_footprint_size">Detail information of Compilation Time and Footprint size</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Repository for measuring:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/footprint_m5" class="bare">https://github.com/redboltz/footprint_m5</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Commit hash:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/footprint_m5/tree/32ec8cf7c545271e4dc3a0f780eb96b7d600c561" class="bare">https://github.com/redboltz/footprint_m5/tree/32ec8cf7c545271e4dc3a0f780eb96b7d600c561</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Operating system</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Linux 6.8.7-arch1-2 #1 SMP PREEMPT_DYNAMIC Fri, 19 Apr 2024 09:51:31 +0000 x86_64 GNU/Linux</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>CPU</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Intel&#174; Core&#8482; i7-6700 CPU @ 3.40GHz, 8 cores</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>RAM</p>
+<div class="ulist">
+<ul>
+<li>
+<p>64GB</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sh">git clone https://github.com/redboltz/footprint_m5.git
+<span class="nb">cd </span>footprint_m5
+<span class="nb">mkdir </span>build
+<span class="nb">cd </span>build
+cmake <span class="nt">-DCMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">"-std=c++20"</span> ..</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compilation_time_no_optimization">Compilation time (no optimization)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only">async-mqtt5 (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async-mqtt5
+[ 50%] Building CXX object CMakeFiles/check_async-mqtt5.dir/src/check_async-mqtt5.cpp.o
+[100%] Linking CXX executable check_async-mqtt5
+[100%] Built target check_async-mqtt5
+make check_async-mqtt5  16.81s user 0.74s system 99% cpu 17.598 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only">async_mqtt (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async_mqtt
+[ 50%] Building CXX object CMakeFiles/check_async_mqtt.dir/src/check_async_mqtt.cpp.o
+[100%] Linking CXX executable check_async_mqtt
+[100%] Built target check_async_mqtt
+make check_async_mqtt  27.70s user 1.08s system 99% cpu 28.867 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_library_part">async_mqtt (separate-compilation-mode) library part</h5>
+<div class="paragraph">
+<p>Separate compilation library part (<strong>only once build required</strong>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make async_mqtt
+[ 50%] Building CXX object CMakeFiles/async_mqtt.dir/src/async_mqtt.cpp.o
+[100%] Linking CXX static library libasync_mqtt.a
+[100%] Built target async_mqtt
+make async_mqtt  50.56s user 2.33s system 98% cpu 53.452 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_user_code_part">async_mqtt (separate-compilation-mode) user code part</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async_mqtt_separate
+[ 50%] Built target async_mqtt
+[ 75%] Building CXX object CMakeFiles/check_async_mqtt_separate.dir/src/check_async_mqtt_separate.cpp.o
+[100%] Linking CXX executable check_async_mqtt_separate
+[100%] Built target check_async_mqtt_separate
+make check_async_mqtt_separate  15.59s user 0.98s system 99% cpu 16.633 total</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compilation_time_size_optimization_os">Compilation time (size optimization (-Os))</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only_2">async-mqtt5 (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async-mqtt5
+[ 50%] Building CXX object CMakeFiles/check_async-mqtt5.dir/src/check_async-mqtt5.cpp.o
+[100%] Linking CXX executable check_async-mqtt5
+[100%] Built target check_async-mqtt5
+make check_async-mqtt5  19.45s user 0.40s system 99% cpu 19.898 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only_2">async_mqtt (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async_mqtt
+[ 50%] Building CXX object CMakeFiles/check_async_mqtt.dir/src/check_async_mqtt.cpp.o
+[100%] Linking CXX executable check_async_mqtt
+[100%] Built target check_async_mqtt
+make check_async_mqtt  32.38s user 0.47s system 99% cpu 32.939 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_library_part_2">async_mqtt (separate-compilation-mode) library part</h5>
+<div class="paragraph">
+<p>Separate compilation library part (<strong>only once build required</strong>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make async_mqtt
+[ 50%] Building CXX object CMakeFiles/async_mqtt.dir/src/async_mqtt.cpp.o
+[100%] Linking CXX static library libasync_mqtt.a
+[100%] Built target async_mqtt
+make async_mqtt  68.22s user 0.78s system 99% cpu 1:09.23 total</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode_user_code_part_2">async_mqtt (separate-compilation-mode) user code part</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>time make check_async_mqtt_separate
+[ 50%] Built target async_mqtt
+[ 75%] Building CXX object CMakeFiles/check_async_mqtt_separate.dir/src/check_async_mqtt_separate.cpp.o
+[100%] Linking CXX executable check_async_mqtt_separate
+[100%] Built target check_async_mqtt_separate
+make check_async_mqtt_separate  16.38s user 0.38s system 99% cpu 16.826 total</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_memory_consumption_size_optimization_os">Memory consumption size optimization (-Os)</h4>
+<div class="sect4">
+<h5 id="_async_mqtt5_header_only_3">async-mqtt5 (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async-mqtt5
+        Command being timed: "./check_async-mqtt5"
+        User time (seconds): 0.00
+        System time (seconds): 0.00
+        Percent of CPU this job got: 66%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 4324
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 184
+        Voluntary context switches: 8
+        Involuntary context switches: 0
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_header_only_3">async_mqtt (header-only)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async_mqtt
+        Command being timed: "./check_async_mqtt"
+        User time (seconds): 0.00
+        System time (seconds): 0.00
+        Percent of CPU this job got: 66%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 4660
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 184
+        Voluntary context switches: 9
+        Involuntary context switches: 0
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_async_mqtt_separate_compilation_mode">async_mqtt (separate-compilation-mode)</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>/usr/bin/time -v ./check_async_mqtt_separate
+        Command being timed: "./check_async_mqtt_separate"
+        User time (seconds): 0.00
+        System time (seconds): 0.00
+        Percent of CPU this job got: 66%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 5376
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 195
+        Voluntary context switches: 9
+        Involuntary context switches: 0
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0</code></pre>
+</div>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="performance.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="index.html">Up</a><br>
+<a href="index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="tutorial/client.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>

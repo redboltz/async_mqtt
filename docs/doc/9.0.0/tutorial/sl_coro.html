@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Using stackless coroutine</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>Using stackless coroutine</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is the stackless coroutine approach. It uses the switch-case-based Boost.Asio stackless coroutine.
+See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
+</div>
+<div class="paragraph">
+<p>It is convenient but a little tricky. Due to the switch-case basis, there are some restrictions, especially regarding defining local variables.
+If you can use <a href="cpp20_coro.html">C++20 coroutine</a>, I recommend using it.</p>
+</div>
+<div class="paragraph">
+<p>Stackless coroutines can avoid deeply nested callbacks, making the code easier to read.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prepare_your_application_class">Prepare your application class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here is an application class prototype:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="cp">#include</span> <span class="cpf">&lt;boost/asio/yield.hpp&gt;</span><span class="cp">
+</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Executor</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">app</span> <span class="p">{</span>
+
+<span class="nl">private:</span>
+    <span class="k">struct</span> <span class="nc">impl</span> <span class="p">{</span>
+        <span class="n">impl</span><span class="p">(</span><span class="n">app</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">)</span><span class="o">:</span><span class="n">app_</span><span class="p">{</span><span class="n">a</span><span class="p">}</span>
+        <span class="p">{</span>
+        <span class="p">}</span>
+        <span class="c1">// forwarding callbacks</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()()</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">({},</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
+        <span class="p">}</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
+        <span class="p">}</span>
+        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">force_move</span><span class="p">(</span><span class="n">pv</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="k">private</span><span class="o">:</span>
+        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">private</span><span class="o">:</span>
+        <span class="n">app</span><span class="o">&amp;</span> <span class="n">app_</span><span class="p">;</span>
+        <span class="k">mutable</span> <span class="n">as</span><span class="o">::</span><span class="n">coroutine</span> <span class="n">coro_</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="n">impl</span> <span class="n">impl_</span><span class="p">{</span><span class="o">*</span><span class="k">this</span><span class="p">};</span>
+<span class="p">};</span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/asio/unyield.hpp&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, add the app&#8217;s constructor as follows. The endpoint is created here. In the constructor body, <code>impl_()</code> is called to start the coroutine. Then, declare the app&#8217;s member variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">    <span class="n">app</span><span class="p">(</span><span class="n">Executor</span> <span class="n">exe</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port</span>
+    <span class="p">)</span><span class="o">:</span><span class="n">host_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">host</span><span class="p">)},</span>
+      <span class="n">port_</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">port</span><span class="p">)},</span>
+      <span class="n">amep_</span><span class="p">{</span><span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span> <span class="n">exe</span><span class="p">}</span>
+    <span class="p">{</span>
+        <span class="n">impl_</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="c1">// ...</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+    <span class="p">)</span> <span class="p">{</span>
+        <span class="n">reenter</span> <span class="p">(</span><span class="n">coro</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host_</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port_</span><span class="p">;</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span> <span class="n">amep_</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">count_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">impl</span> <span class="n">impl_</span><span class="p">{</span><span class="o">*</span><span class="k">this</span><span class="p">};</span>
+    <span class="c1">// prepare will message if you need.</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">will</span> <span class="n">will</span><span class="p">{</span>
+        <span class="s">"WillTopic1"</span><span class="p">,</span>
+        <span class="s">"WillMessage1"</span><span class="p">,</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">,</span>
+        <span class="p">{</span> <span class="c1">// properties</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">user_property</span><span class="p">{</span><span class="s">"key1"</span><span class="p">,</span> <span class="s">"val1"</span><span class="p">},</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">content_type</span><span class="p">{</span><span class="s">"text"</span><span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">};</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, implement <code>int main()</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Usage: "</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" host port"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">trace</span><span class="p">);</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
+    <span class="n">app</span> <span class="n">a</span><span class="p">{</span><span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]};</span>
+    <span class="n">ioc</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you execute the program, you will see the <code>start</code> output message. This indicates that the coroutine has started successfully.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the basics of the stackless coroutine approach. Now, let&#8217;s add a more meaningful sequence.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handshake_underlying_layers_mqtt_mqtts_ws_wss">Handshake underlying layers (mqtt, mqtts, ws, wss)</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">proc</span><span class="p">(</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span>
+        <span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="n">reenter</span> <span class="p">(</span><span class="n">coro_</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
+                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span>
+
+                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">"Underlying layer connected ec:"</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The important point is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">async_underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The fourth argument of <code>underlying_handshake</code> is <code>CompletionToken</code>. When using a stackless coroutine, we pass <code>*this</code> as the <code>CompletionToken</code>. The function <code>proc()</code> is implicitly returned and <code>underlying_handshake</code> starts processing. When the asynchronous process is finished, the following <code>operator()</code> is called:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">        <span class="kt">void</span> <span class="nf">operator</span><span class="p">()(</span><span class="n">am</span><span class="o">::</span><span class="n">error_code</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">ec</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">proc</span><span class="p">(</span><span class="n">ec</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span><span class="p">{});</span>
+        <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, <code>proc</code> is called. You can distinguish which async process has finished by <code>proc()&#8217;s parameter. You can check `ec</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                    <span class="o">&lt;&lt;</span> <span class="s">"Underlying layer connected ec:"</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Even if <code>proc()</code> is called again, the following part of the code is skipped:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+                <span class="c1">// Handshake undlerying layer (Name resolution and TCP handshaking)</span>
+                <span class="n">yield</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">host_</span><span class="p">,</span>
+                    <span class="n">app_</span><span class="p">.</span><span class="n">port_</span><span class="p">,</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the switch-case-based Boost.Asio stackless coroutine mechanism.
+See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_mqtt_connect_packet">Send MQTT CONNECT packet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create MQTT CONNECT packet and send it as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Send MQTT CONNECT</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">async_send</span><span class="p">(</span>
+                    <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
+                        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+                        <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
+                        <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+                        <span class="n">app_</span><span class="p">.</span><span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+                        <span class="s">"UserName1"</span><span class="p">,</span>
+                        <span class="s">"Password1"</span>
+                    <span class="p">},</span>
+                    <span class="o">*</span><span class="k">this</span>
+                <span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the async process is finished, the function resumes at the following line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNECT send error:"</span> <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameter of the completion token is <code>error_code const&amp; ec</code>.
+See <a href="../api/classasync__mqtt_1_1basic__endpoint.html">API reference</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recv_mqtt_connack_packet">Recv MQTT CONNACK packet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Receive MQTT packet as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="c1">// Recv MQTT CONNACK</span>
+                <span class="n">yield</span> <span class="n">app_</span><span class="p">.</span><span class="n">amep_</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When a packet is received then the function resumes at the following line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp">                <span class="k">if</span> <span class="p">(</span><span class="n">ec</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                        <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv error:"</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">ec</span><span class="p">.</span><span class="n">message</span><span class="p">()</span>
+                        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">BOOST_ASSERT</span><span class="p">(</span><span class="n">pv</span><span class="p">);</span> <span class="c1">// if ec is not error, then pv is always valid.</span>
+                    <span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+                        <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+                            <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                                    <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
+                                    <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                                    <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+                            <span class="p">},</span>
+                            <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
+                        <span class="p">}</span>
+                    <span class="p">);</span>
+                <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of the completion token are <code>error_code const&amp; ec</code> and <code>packet_variant pv</code>. The <code>ec</code> can be converted to a boolean. If <code>ec</code> evaluates to true, an error has occurred. For detailed information about errors, refer to <a href="../api/group__error__reporting.html">Errors for APIs</a>.</p>
+</div>
+<div class="paragraph">
+<p>If there is no error, you can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sendrecv_packets">Send/Recv packets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See the simple example <a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_slcoro_mqtt_client.cpp">ep_slcoro_mqtt_client.cpp</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to explore a more complex use case, <a href="../../tool/client_cli.cpp">client_cli.cpp</a> is helpful. It is a command-line MQTT client application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples">Examples</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_slcoro_mqtt_client.cpp">ep_slcoro_mqtt_client.cpp</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_slcoro_mqtts_client.cpp">ep_slcoro_mqtts_client.cpp</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_slcoro_ws_client.cpp">ep_slcoro_ws_client.cpp</a></p>
+</li>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_slcoro_wss_client.cpp">ep_slcoro_wss_client.cpp</a></p>
+</li>
+</ul>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="cpp20_coro.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="send_recv.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
