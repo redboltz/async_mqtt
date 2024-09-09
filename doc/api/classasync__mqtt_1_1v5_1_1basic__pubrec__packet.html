@@ -158,9 +158,8 @@ Friends</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:gacd2bd0951db1235ee3c026bcb016329a" id="r_gacd2bd0951db1235ee3c026bcb016329a"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>pubrec_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">basic_pubrec_packet</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:gacd2bd0951db1235ee3c026bcb016329a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">basic_pubrec_packet</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="memitem:gacd2bd0951db1235ee3c026bcb016329a" id="r_gacd2bd0951db1235ee3c026bcb016329a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrec__v5.html#gacd2bd0951db1235ee3c026bcb016329a">pubrec_packet</a> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">basic_pubrec_packet</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:gacd2bd0951db1235ee3c026bcb016329a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v5)">basic_pubrec_packet</a> (PacketIdBytes=2).  <br /></td></tr>
 <tr class="separator:gacd2bd0951db1235ee3c026bcb016329a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa67dce6fe08dd36dc180967d23163b9" id="r_afa67dce6fe08dd36dc180967d23163b9"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
 <tr class="memitem:afa67dce6fe08dd36dc180967d23163b9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afa67dce6fe08dd36dc180967d23163b9">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">basic_pubrec_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1basic__pubrec__packet.html">basic_pubrec_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
@@ -174,12 +173,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>pubrec_packet</b> = 
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v5::basic_pubrec_packet&lt; PacketIdBytes &gt;</div><p>MQTT PUBREC packet (v5) </p>
-<h4><a class="anchor" id="autotoc_md62"></a>
-Thread Safety</h4>
-<ul>
-<li>Distinct objects: Safe</li>
-<li>Shared objects: Unsafe</li>
-</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">PacketIdBytes</td><td>size of packet_id</td></tr>
@@ -188,7 +181,19 @@ Thread Safety</h4>
 </dl>
 <p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBLISH (QoS2) <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">v5::basic_publish_packet</a> is received.</p>
 <p>When the packet is received with error reason_code, the packet_id is automatically released and become reusable. <br  />
- See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131</a> </p>
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131</a></p>
+<h4><a class="anchor" id="autotoc_md342"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md343"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pubrec_8hpp_source.html">async_mqtt/packet/v5_pubrec.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a81916e1bf13f06f022fff46ad89d6c5a" name="a81916e1bf13f06f022fff46ad89d6c5a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a81916e1bf13f06f022fff46ad89d6c5a">&#9670;&#160;</a></span>basic_pubrec_packet() <span class="overload">[1/3]</span></h2>
@@ -515,7 +520,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md344"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pubrec_8hpp_source.html">async_mqtt/packet/v5_pubrec.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -597,7 +608,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md345"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pubrec_8hpp_source.html">async_mqtt/packet/v5_pubrec.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

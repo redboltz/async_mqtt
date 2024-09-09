@@ -33,10 +33,6 @@ namespace as = boost::asio;
 /**
  * @ingroup pubcomp_v3_1_1_detail
  * @brief MQTT PUBCOMP packet (v3.1.1)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
@@ -44,6 +40,15 @@ namespace as = boost::asio;
  *
  * When the packet is received, the packet_id is automatically released and become reusable.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718058
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pubcomp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_pubcomp_packet {
@@ -117,6 +122,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pubcomp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs);
@@ -127,6 +137,11 @@ bool operator<(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_pac
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pubcomp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs);
@@ -137,6 +152,11 @@ bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_pa
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pubcomp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_pubcomp_packet<PacketIdBytes> const& v);
@@ -145,6 +165,11 @@ std::ostream& operator<<(std::ostream& o, basic_pubcomp_packet<PacketIdBytes> co
  * @ingroup pubcomp_v3_1_1
  * @related basic_pubcomp_packet
  * @brief Type alias of basic_pubcomp_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pubcomp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using pubcomp_packet = basic_pubcomp_packet<2>;
 

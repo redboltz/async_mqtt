@@ -30,14 +30,19 @@ namespace as = boost::asio;
 
 /**
  * @ingroup auth_v5
- * @brief MQTT AUTH packet (v35)
+ * @brief MQTT AUTH packet (v5)
+ *
+ * MQTT AUTH packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217
+ *
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_auth.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
- * MQTT UNSUBACK packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217
  */
 class auth_packet {
 public:
@@ -168,6 +173,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_auth.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(auth_packet const& lhs, auth_packet const& rhs);
 
@@ -177,6 +187,11 @@ bool operator<(auth_packet const& lhs, auth_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_auth.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(auth_packet const& lhs, auth_packet const& rhs);
 

@@ -35,14 +35,19 @@ namespace as = boost::asio;
 /**
  * @ingroup unsubscribe_v3_1_1_detail
  * @brief MQTT UNSUBSCRIBE packet (v3.1.1)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT UNSUBSCRIBE packet.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_unsubscribe_packet {
@@ -128,6 +133,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubscribe_packet<PacketIdBytes> const& rhs);
@@ -138,6 +148,11 @@ bool operator<(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubsc
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubscribe_packet<PacketIdBytes> const& rhs);
@@ -148,6 +163,11 @@ bool operator==(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubs
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes> const& v);
@@ -156,6 +176,11 @@ std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes
  * @ingroup unsubscribe_v3_1_1
  * @related basic_unsubscribe_packet
  * @brief Type alias of basic_unsubscribe_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using unsubscribe_packet = basic_unsubscribe_packet<2>;
 

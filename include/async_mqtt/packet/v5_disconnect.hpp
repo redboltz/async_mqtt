@@ -28,10 +28,6 @@ namespace as = boost::asio;
 /**
  * @ingroup disconnect_v5
  * @brief MQTT DISCONNECT packet (v5)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  *
  * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
  * The endpoint can't send packets any more.
@@ -41,6 +37,15 @@ namespace as = boost::asio;
  * When the broker receives DISCONNECT packet, then close underlying layer from the broker.
  * In this case, Will is not published by the broker except reason_code is Disconnect with Will Message.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class disconnect_packet {
 public:
@@ -172,6 +177,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
 
@@ -181,6 +191,11 @@ bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs);
 

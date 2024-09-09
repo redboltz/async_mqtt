@@ -25,6 +25,11 @@ namespace async_mqtt {
  * @brief MQTT QoS
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/qos.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class qos : std::uint8_t
 {
@@ -38,6 +43,11 @@ enum class qos : std::uint8_t
  * @brief stringize qos
  * @param v target
  * @return QoS string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/qos.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* qos_to_str(qos v) {
     switch(v) {
@@ -54,6 +64,11 @@ constexpr char const* qos_to_str(qos v) {
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/qos.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 std::ostream& operator<<(std::ostream& o, qos v)

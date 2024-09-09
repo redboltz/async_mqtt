@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_SETUP_LOG_HPP)
-#define ASYNC_MQTT_SETUP_LOG_HPP
+#if !defined(ASYNC_MQTT_UTIL_SETUP_LOG_HPP)
+#define ASYNC_MQTT_UTIL_SETUP_LOG_HPP
 
 // This is an example implementation for logging setup.
 // If your code doesn't use Boost.Log then you can use the setup_log() directly.
@@ -45,6 +45,11 @@ static constexpr char const* log_color_table[] {
  * @param threshold
  *        Set threshold severity_level by channel
  *        If the log severity_level >= threshold then log message outputs.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/setup_log.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 void setup_log(std::map<std::string, severity_level> threshold) {
@@ -131,6 +136,11 @@ void setup_log(std::map<std::string, severity_level> threshold) {
  * @param threshold
  *        Set threshold severity_level for all channels
  *        If the log severity_level >= threshold then log message outputs.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/setup_log.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 void setup_log(severity_level threshold = severity_level::warning) {
@@ -154,4 +164,4 @@ void setup_log(Params&&...) {}
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_SETUP_LOG_HPP
+#endif // ASYNC_MQTT_UTIL_SETUP_LOG_HPP

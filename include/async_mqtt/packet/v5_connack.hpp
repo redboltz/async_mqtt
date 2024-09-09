@@ -28,13 +28,18 @@ namespace as = boost::asio;
 /**
  * @ingroup connack_v5
  * @brief MQTT CONNACK packet (v5)
+ *
+ * Only MQTT broker(sever) can send this packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074
+ *
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connack.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
- * Only MQTT broker(sever) can send this packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074
  */
 class connack_packet {
 public:
@@ -135,6 +140,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connack.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(connack_packet const& lhs, connack_packet const& rhs);
 
@@ -144,6 +154,11 @@ bool operator<(connack_packet const& lhs, connack_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connack.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(connack_packet const& lhs, connack_packet const& rhs);
 
@@ -153,6 +168,11 @@ bool operator==(connack_packet const& lhs, connack_packet const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connack.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, connack_packet const& v);
 

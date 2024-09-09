@@ -17,6 +17,11 @@ namespace async_mqtt {
 /**
  * @ingroup packet
  * @brief MQTT control packet type
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/control_packet_type.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class control_packet_type : std::uint8_t {
 
@@ -44,6 +49,11 @@ enum class control_packet_type : std::uint8_t {
  * @brief stringize control_packet_type
  * @param v target
  * @return control_packet_type
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/control_packet_type.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr
 char const* control_packet_type_to_str(control_packet_type v) {
@@ -75,6 +85,11 @@ char const* control_packet_type_to_str(control_packet_type v) {
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/control_packet_type.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 std::ostream& operator<<(std::ostream& o, control_packet_type v)

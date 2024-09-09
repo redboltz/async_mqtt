@@ -27,9 +27,6 @@ namespace as = boost::asio;
 /**
  * @ingroup pingresp_v3_1_1
  * @brief MQTT PINGRESP packet (v3.1.1)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
  *
  * Only MQTT broker(sever) can send this packet.
  * If basic_endpoint::set_auto_ping_response() is called with true, then this packet is
@@ -38,6 +35,15 @@ namespace as = boost::asio;
  * and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed
  * from the client side.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pingresp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class pingresp_packet {
 public:
@@ -101,6 +107,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pingresp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(pingresp_packet const& lhs, pingresp_packet const& rhs);
 
@@ -110,6 +121,11 @@ bool operator<(pingresp_packet const& lhs, pingresp_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pingresp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(pingresp_packet const& lhs, pingresp_packet const& rhs);
 
@@ -119,6 +135,11 @@ bool operator==(pingresp_packet const& lhs, pingresp_packet const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_pingresp.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, pingresp_packet const& v);
 

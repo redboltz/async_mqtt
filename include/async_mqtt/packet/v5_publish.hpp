@@ -41,10 +41,6 @@ namespace as = boost::asio;
 /**
  * @ingroup publish_v5_detail
  * @brief MQTT PUBLISH packet (v5)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * If both the client and the broker keeping the session, QoS1 and QoS2 PUBLISH packet is
@@ -53,6 +49,15 @@ namespace as = boost::asio;
  * the next connection is established.
  * If the session doesn' exist or lost, then the stored packets are erased.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_publish.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_publish_packet {
@@ -308,6 +313,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_publish.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_packet<PacketIdBytes> const& rhs);
@@ -318,6 +328,11 @@ bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pac
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_publish.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_packet<PacketIdBytes> const& rhs);
@@ -328,6 +343,11 @@ bool operator==(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pa
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_publish.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v);
@@ -336,6 +356,11 @@ std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> co
  * @ingroup publish_v5
  * @related basic_publish_packet
  * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_publish.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using publish_packet = basic_publish_packet<2>;
 

@@ -33,13 +33,18 @@ namespace as = boost::asio;
 /**
  * @ingroup connect_v5
  * @brief MQTT CONNECT packet (v5)
+ *
+ * Only MQTT client can send this packet.
+ * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901033
+ *
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connect.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
- * Only MQTT client can send this packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901033
  */
 class connect_packet {
 public:
@@ -240,6 +245,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(connect_packet const& lhs, connect_packet const& rhs);
 
@@ -249,6 +259,11 @@ bool operator<(connect_packet const& lhs, connect_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(connect_packet const& lhs, connect_packet const& rhs);
 
@@ -258,6 +273,11 @@ bool operator==(connect_packet const& lhs, connect_packet const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_connect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, connect_packet const& v);
 

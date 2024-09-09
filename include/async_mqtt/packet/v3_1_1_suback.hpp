@@ -35,14 +35,19 @@ namespace as = boost::asio;
 /**
  * @ingroup suback_v3_1_1_detail
  * @brief MQTT SUBACK packet (v3.1.1)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT SUBACK packet.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_suback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_suback_packet {
@@ -132,6 +137,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_suback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_packet<PacketIdBytes> const& rhs);
@@ -142,6 +152,11 @@ bool operator<(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_packe
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_suback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_packet<PacketIdBytes> const& rhs);
@@ -152,6 +167,11 @@ bool operator==(basic_suback_packet<PacketIdBytes> const& lhs, basic_suback_pack
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_suback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_suback_packet<PacketIdBytes> const& v);
@@ -160,6 +180,11 @@ std::ostream& operator<<(std::ostream& o, basic_suback_packet<PacketIdBytes> con
  * @ingroup suback_v3_1_1
  * @related basic_suback_packet
  * @brief Type alias of basic_suback_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_suback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using suback_packet = basic_suback_packet<2>;
 

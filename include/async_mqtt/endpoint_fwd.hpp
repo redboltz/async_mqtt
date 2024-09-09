@@ -20,6 +20,10 @@ namespace async_mqtt {
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/endpoint.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  * @tparam Role          role for packet sendable checking
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
@@ -35,6 +39,11 @@ class basic_endpoint;
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/endpoint.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */

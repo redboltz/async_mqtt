@@ -149,14 +149,20 @@ Related Symbols</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT PINGRESP packet (v3.1.1) </p>
-<h4><a class="anchor" id="autotoc_md43"></a>
+<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e77ec0b180801e25279d35d225a7771" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v3.1.1)">v3_1_1::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a304a6bc9c9db1435b06b79217c8375dd" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed from the client side. <br  />
+ See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086</a></p>
+<h4><a class="anchor" id="autotoc_md239"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
 <li>Shared objects: Unsafe</li>
 </ul>
-<p>Only MQTT broker(sever) can send this packet. If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e77ec0b180801e25279d35d225a7771" title="auto pingreq response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_ping_response()</a> is called with true, then this packet is automatically sent when PINGREQ <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html" title="MQTT PINGREQ packet (v3.1.1)">v3_1_1::pingreq_packet</a> is received. If the endpoint called <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a304a6bc9c9db1435b06b79217c8375dd" title="Set timeout for receiving PINGRESP packet after PINGREQ packet is sent. If the timer is fired,...">basic_endpoint::set_pingresp_recv_timeout()</a> with non 0 argument, and PINGRESP packet isn't received until the timer fired, then the underlying layer is closed from the client side. <br  />
- See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086</a> </p>
+<h4><a class="anchor" id="autotoc_md240"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pingresp_8hpp_source.html">async_mqtt/packet/v3_1_1_pingresp.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab074b326b3d3a2b1d1a2d98b3781a316" name="ab074b326b3d3a2b1d1a2d98b3781a316"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab074b326b3d3a2b1d1a2d98b3781a316">&#9670;&#160;</a></span>const_buffer_sequence()</h2>
@@ -290,7 +296,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md241"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pingresp_8hpp_source.html">async_mqtt/packet/v3_1_1_pingresp.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -329,7 +341,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md243"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pingresp_8hpp_source.html">async_mqtt/packet/v3_1_1_pingresp.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -368,7 +386,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md242"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pingresp_8hpp_source.html">async_mqtt/packet/v3_1_1_pingresp.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

@@ -15,6 +15,15 @@ namespace async_mqtt {
 /**
  * @ingroup packet
  * @brief subsscription entry
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/topic_subopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class topic_subopts {
 public:
