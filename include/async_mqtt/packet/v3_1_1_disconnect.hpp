@@ -34,9 +34,6 @@ namespace as = boost::asio;
 /**
  * @ingroup disconnect_v3_1_1
  * @brief MQTT DISCONNECT packet (v3.1.1)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
  *
  * Only MQTT client can send this packet.
  * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.
@@ -47,6 +44,15 @@ namespace as = boost::asio;
  * When the broker receives DISCONNECT packet, then close underlying layer from the broker.
  * In this case, Will is not published by the broker.
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class disconnect_packet {
 public:
@@ -108,6 +114,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
 
@@ -117,6 +128,11 @@ bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs);
 
@@ -126,6 +142,11 @@ bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v3_1_1_disconnect.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, disconnect_packet const& v);
 

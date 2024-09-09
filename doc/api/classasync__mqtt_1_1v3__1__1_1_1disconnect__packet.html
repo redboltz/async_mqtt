@@ -149,14 +149,20 @@ Related Symbols</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT DISCONNECT packet (v3.1.1) </p>
-<h4><a class="anchor" id="autotoc_md41"></a>
+<p>Only MQTT client can send this packet. When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status. The endpoint can't send packets any more. The underlying layer is not automatically closed from the client side. If you want to close the underlying layer from the client side, you need to call basic_endpoint::close() after sending DISCONNECT packet. When the broker receives DISCONNECT packet, then close underlying layer from the broker. In this case, Will is not published by the broker. <br  />
+ See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090</a></p>
+<h4><a class="anchor" id="autotoc_md229"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
 <li>Shared objects: Unsafe</li>
 </ul>
-<p>Only MQTT client can send this packet. When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status. The endpoint can't send packets any more. The underlying layer is not automatically closed from the client side. If you want to close the underlying layer from the client side, you need to call basic_endpoint::close() after sending DISCONNECT packet. When the broker receives DISCONNECT packet, then close underlying layer from the broker. In this case, Will is not published by the broker. <br  />
- See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090</a> </p>
+<h4><a class="anchor" id="autotoc_md230"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__disconnect_8hpp_source.html">async_mqtt/packet/v3_1_1_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac145097343110f56fe6b11701c5f940c" name="ac145097343110f56fe6b11701c5f940c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac145097343110f56fe6b11701c5f940c">&#9670;&#160;</a></span>const_buffer_sequence()</h2>
@@ -290,7 +296,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md231"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__disconnect_8hpp_source.html">async_mqtt/packet/v3_1_1_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -329,7 +341,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md233"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__disconnect_8hpp_source.html">async_mqtt/packet/v3_1_1_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -368,7 +386,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md232"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__disconnect_8hpp_source.html">async_mqtt/packet/v3_1_1_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

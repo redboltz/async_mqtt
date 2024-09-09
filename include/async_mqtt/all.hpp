@@ -15,7 +15,6 @@
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
-#include <async_mqtt/setup_log.hpp>
 #include <async_mqtt/packet/control_packet_type.hpp>
 #include <async_mqtt/packet/packet_fwd.hpp>
 #include <async_mqtt/packet/packet_helper.hpp>
@@ -77,6 +76,7 @@
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
+#include <async_mqtt/util/setup_log.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/store.hpp>

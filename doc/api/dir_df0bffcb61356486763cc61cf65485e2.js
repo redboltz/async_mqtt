@@ -11,6 +11,7 @@ var dir_df0bffcb61356486763cc61cf65485e2 =
     [ "overload.hpp", "overload_8hpp_source.html", null ],
     [ "packet_id_manager.hpp", "packet__id__manager_8hpp_source.html", null ],
     [ "scope_guard.hpp", "scope__guard_8hpp_source.html", null ],
+    [ "setup_log.hpp", "setup__log_8hpp_source.html", null ],
     [ "shared_ptr_array.hpp", "shared__ptr__array_8hpp_source.html", null ],
     [ "static_vector.hpp", "static__vector_8hpp_source.html", null ],
     [ "store.hpp", "store_8hpp_source.html", null ],

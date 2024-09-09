@@ -24,6 +24,11 @@ namespace as = boost::asio;
 /**
  * @ingroup predefined_customize
  * @brief customization class template specialization for boost::asio::basic_stream_socket
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/customized_basic_stream.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Protocol, typename Executor>
 struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {

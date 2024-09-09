@@ -17,6 +17,11 @@ namespace async_mqtt {
 /**
  * @ingroup role
  * @brief MQTT endpoint connection role
+ *
+ * #### Requirements
+ * - Header: async_mqtt/role.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class role {
     client = 0b01, ///< as client. Can't send CONNACK, SUBACK, UNSUBACK, PINGRESP. Can send Other packets.

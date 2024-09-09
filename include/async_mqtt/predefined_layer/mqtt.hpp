@@ -35,6 +35,11 @@ namespace protocol {
 /**
  * @ingroup predefined_layer_mqtt
  * @brief Type alias of Boost.Asio TCP socket
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/mqtt.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 
@@ -48,6 +53,11 @@ using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)
  * @return deduced by token
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/mqtt.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <
     typename Socket,

@@ -126,20 +126,20 @@ $(function(){initNavTree('packet__helper_8hpp_source.html',''); initResizable(tr
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Packet&gt;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>std::ostream&amp; <a class="code hl_function" href="group__mqtt__error.html#gacbe53a5d6bdf7b8480cc8ada2a246db0">operator&lt;&lt; </a>(std::ostream&amp; o, hex_dump_t&lt;Packet&gt; <span class="keyword">const</span>&amp; v);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Packet&gt;</div>
-<div class="foldopen" id="foldopen00035" data-start="{" data-end="}">
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">   35</a></span>hex_dump_t&lt;Packet&gt; <a class="code hl_function" href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">hex_dump</a>(Packet <span class="keyword">const</span>&amp; p) {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> hex_dump_t&lt;Packet&gt;{p};</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Packet&gt;</div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">   40</a></span>hex_dump_t&lt;Packet&gt; <a class="code hl_function" href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">hex_dump</a>(Packet <span class="keyword">const</span>&amp; p) {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> hex_dump_t&lt;Packet&gt;{p};</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
 </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;async_mqtt/packet/impl/packet_helper.hpp&gt;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_PACKET_HELPER_HPP</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &lt;async_mqtt/packet/impl/packet_helper.hpp&gt;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_PACKET_PACKET_HELPER_HPP</span></div>
 <div class="ttc" id="agroup__mqtt__error_html_gacbe53a5d6bdf7b8480cc8ada2a246db0"><div class="ttname"><a href="group__mqtt__error.html#gacbe53a5d6bdf7b8480cc8ada2a246db0">async_mqtt::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;o, mqtt_error v)</div><div class="ttdoc">output to the stream</div></div>
-<div class="ttc" id="agroup__packet_html_gaaa8acacd569b8fe8044f9a88ec431925"><div class="ttname"><a href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">async_mqtt::hex_dump</a></div><div class="ttdeci">hex_dump_t&lt; Packet &gt; hex_dump(Packet const &amp;p)</div><div class="ttdoc">hexdump the packet. Usage. std::cout &lt;&lt; hex_dump(p) &lt;&lt; std::endl;</div><div class="ttdef"><b>Definition</b> packet_helper.hpp:35</div></div>
+<div class="ttc" id="agroup__packet_html_gaaa8acacd569b8fe8044f9a88ec431925"><div class="ttname"><a href="group__packet.html#gaaa8acacd569b8fe8044f9a88ec431925">async_mqtt::hex_dump</a></div><div class="ttdeci">hex_dump_t&lt; Packet &gt; hex_dump(Packet const &amp;p)</div><div class="ttdoc">hexdump the packet. Usage. std::cout &lt;&lt; hex_dump(p) &lt;&lt; std::endl;</div><div class="ttdef"><b>Definition</b> packet_helper.hpp:40</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

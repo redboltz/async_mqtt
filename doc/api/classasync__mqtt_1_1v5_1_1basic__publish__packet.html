@@ -187,9 +187,8 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:ga9db7a5336b9296dd1f7413b5c2f5290a" id="r_ga9db7a5336b9296dd1f7413b5c2f5290a"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>publish_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">basic_publish_packet</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:ga9db7a5336b9296dd1f7413b5c2f5290a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">basic_publish_packet</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="memitem:ga9db7a5336b9296dd1f7413b5c2f5290a" id="r_ga9db7a5336b9296dd1f7413b5c2f5290a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__publish__v5.html#ga9db7a5336b9296dd1f7413b5c2f5290a">publish_packet</a> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">basic_publish_packet</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:ga9db7a5336b9296dd1f7413b5c2f5290a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html" title="MQTT PUBLISH packet (v5)">basic_publish_packet</a> (PacketIdBytes=2).  <br /></td></tr>
 <tr class="separator:ga9db7a5336b9296dd1f7413b5c2f5290a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f3f29c29c6d7cb107aefd73a70b4a37" id="r_a9f3f29c29c6d7cb107aefd73a70b4a37"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
 <tr class="memitem:a9f3f29c29c6d7cb107aefd73a70b4a37"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9f3f29c29c6d7cb107aefd73a70b4a37">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">basic_publish_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1basic__publish__packet.html">basic_publish_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
@@ -207,12 +206,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>publish_packet</b> =
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v5::basic_publish_packet&lt; PacketIdBytes &gt;</div><p>MQTT PUBLISH packet (v5) </p>
-<h4><a class="anchor" id="autotoc_md61"></a>
-Thread Safety</h4>
-<ul>
-<li>Distinct objects: Safe</li>
-<li>Shared objects: Unsafe</li>
-</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">PacketIdBytes</td><td>size of packet_id</td></tr>
@@ -220,7 +213,19 @@ Thread Safety</h4>
   </dd>
 </dl>
 <p>If both the client and the broker keeping the session, QoS1 and QoS2 PUBLISH packet is stored in the endpoint for resending if disconnect/reconnect happens. In addition, the client can sent the packet at offline. The packets are stored and will send after the next connection is established. If the session doesn' exist or lost, then the stored packets are erased. <br  />
- See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100</a> </p>
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100</a></p>
+<h4><a class="anchor" id="autotoc_md336"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md337"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__publish_8hpp_source.html">async_mqtt/packet/v5_publish.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af3d724005411ce5c6d1aeee8c57df5d5" name="af3d724005411ce5c6d1aeee8c57df5d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af3d724005411ce5c6d1aeee8c57df5d5">&#9670;&#160;</a></span>basic_publish_packet() <span class="overload">[1/2]</span></h2>
@@ -853,7 +858,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md338"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__publish_8hpp_source.html">async_mqtt/packet/v5_publish.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -894,7 +905,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md340"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__publish_8hpp_source.html">async_mqtt/packet/v5_publish.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -935,7 +952,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md339"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__publish_8hpp_source.html">async_mqtt/packet/v5_publish.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

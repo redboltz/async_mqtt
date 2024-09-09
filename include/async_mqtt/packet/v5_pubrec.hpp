@@ -34,10 +34,6 @@ namespace as = boost::asio;
 /**
  * @ingroup pubrec_v5_detail
  * @brief MQTT PUBREC packet (v5)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
@@ -45,6 +41,15 @@ namespace as = boost::asio;
  *
  * When the packet is received with error reason_code, the packet_id is automatically released and become reusable.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_pubrec.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_pubrec_packet {
@@ -193,6 +198,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_pubrec.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_packet<PacketIdBytes> const& rhs);
@@ -203,6 +213,11 @@ bool operator<(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_packe
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_pubrec.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_packet<PacketIdBytes> const& rhs);
@@ -211,6 +226,11 @@ bool operator==(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_pack
  * @ingroup pubrec_v5
  * @related basic_pubrec_packet
  * @brief Type alias of basic_pubrec_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_pubrec.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using pubrec_packet = basic_pubrec_packet<2>;
 

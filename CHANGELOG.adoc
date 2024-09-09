@@ -3,7 +3,8 @@
 = History
 
 == 9.0.1
-* Refined documents. #348
+* Moved setup_log.hpp to `util/` (appropriate location). #349
+* Refined documents. #348, #349
 
 == 9.0.0
 === breaking changes

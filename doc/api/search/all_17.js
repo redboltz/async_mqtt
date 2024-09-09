@@ -2,7 +2,7 @@ var searchData=
 [
   ['unacceptable_5fprotocol_5fversion_0',['unacceptable_protocol_version',['../group__connect__return__code.html#gga8342d3b4108d9bb325b95dbd9c0c6109aa9b8a4c21e2b1fa3780625fe15465bca',1,'async_mqtt']]],
   ['underlying_20customize_1',['predefined underlying customize',['../group__predefined__customize.html',1,'']]],
-  ['underlying_20errors_2',['Underlying errors',['../group__error__reporting.html#autotoc_md5',1,'']]],
+  ['underlying_20errors_2',['Underlying errors',['../group__error__reporting.html#autotoc_md12',1,'']]],
   ['underlying_20layer_20customization_3',['underlying layer customization',['../group__underlying__customize.html',1,'']]],
   ['underlying_20layer_20tcp_4',['predefined underlying layer (TCP)',['../group__predefined__layer__mqtt.html',1,'']]],
   ['underlying_20layer_20tls_5',['predefined underlying layer (TLS)',['../group__predefined__layer__mqtts.html',1,'']]],

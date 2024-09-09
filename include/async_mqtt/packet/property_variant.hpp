@@ -24,6 +24,11 @@ namespace async_mqtt {
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(property_variant const& lhs, property_variant const& rhs);
 
@@ -32,6 +37,11 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(property_variant const& lhs, property_variant const& rhs);
 
@@ -40,6 +50,11 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @param os output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, property_variant const& v);
 
@@ -50,6 +65,10 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class property_variant {
@@ -196,6 +215,11 @@ private:
 /**
  * @ingroup property
  * @brief property variant collection type
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using properties = std::vector<property_variant>;
 
@@ -205,6 +229,11 @@ using properties = std::vector<property_variant>;
  * @param os output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, properties const& props);
 
@@ -214,6 +243,11 @@ std::ostream& operator<<(std::ostream& o, properties const& props);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator<(property_variant const& lhs, property_variant const& rhs);
 
@@ -223,6 +257,11 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 bool operator==(property_variant const& lhs, property_variant const& rhs);
 
@@ -232,6 +271,11 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, property_variant const& v);
 

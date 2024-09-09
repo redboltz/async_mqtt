@@ -30,6 +30,11 @@ std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
  *        Usage. std::cout << hex_dump(p) << std::endl;
  * @param p packet to dump. p must be valid packet. packet_variant system_error cannot be accepted.
  * @return id
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/packet_helper.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Packet>
 hex_dump_t<Packet> hex_dump(Packet const& p) {

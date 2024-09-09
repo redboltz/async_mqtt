@@ -16,6 +16,10 @@
 /**
  * @defgroup predefined_layer_wss predefined underlying layer (Websocket on TLS)
  * @ingroup predefined_layer
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/wss.hpp
+ *
  */
 
 namespace async_mqtt {
@@ -45,6 +49,10 @@ namespace protocol {
  *     std::string_view port,
  *     CompletionToken&& token
  * )
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/wss.hpp
+ *
  */
 using wss = bs::websocket::stream<mqtts>;
 

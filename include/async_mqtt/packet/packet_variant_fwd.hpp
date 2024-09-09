@@ -28,6 +28,10 @@ namespace async_mqtt {
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/packet_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_packet_variant;
@@ -36,6 +40,11 @@ class basic_packet_variant;
  * @ingroup packet_variant
  * @related basic_packet_variant
  * @brief type alias of basic_packet_variant (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/packet_variant.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using packet_variant = basic_packet_variant<2>;
 

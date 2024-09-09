@@ -27,6 +27,11 @@ namespace pub {
  * @brief Check fixed header is DUP
  * @param v fixed_header byte
  * @return If DUP return true, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr bool is_dup(std::uint8_t v) {
     return (v & 0b00001000) != 0;
@@ -38,6 +43,11 @@ constexpr bool is_dup(std::uint8_t v) {
  * @brief Get qos from the fixed header
  * @param v fixed_header byte
  * @return qos
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr qos get_qos(std::uint8_t v) {
     return static_cast<qos>((v & 0b00000110) >> 1);
@@ -49,6 +59,11 @@ constexpr qos get_qos(std::uint8_t v) {
  * @brief Check fixed header is RETAIN
  * @param v fixed_header byte
  * @return If RETAIN return true, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr bool is_retain(std::uint8_t v) {
     return (v & 0b00000001) != 0;
@@ -60,6 +75,11 @@ constexpr bool is_retain(std::uint8_t v) {
  * @brief Set DUP to the fixed header
  * @param fixed_header fixed_header byte
  * @param dup DUP to set
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
     if (dup) fixed_header |=  0b00001000;
@@ -71,6 +91,11 @@ constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
  * @brief MQTT RETAIN
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class retain : std::uint8_t {
     yes = 0b00000001, ///< Retain
@@ -83,6 +108,11 @@ enum class retain : std::uint8_t {
  * @brief MQTT DUP
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class dup : std::uint8_t {
     yes = 0b00001000, ///< Duplicated
@@ -97,6 +127,11 @@ enum class dup : std::uint8_t {
  *    - Shared objects: Unsafe
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901101
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 struct opts final {
     constexpr opts() = default;
@@ -244,6 +279,11 @@ private:
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(retain lhs, dup rhs) { return opts(lhs) | rhs; }
 
@@ -253,6 +293,11 @@ constexpr opts operator|(retain lhs, dup rhs) { return opts(lhs) | rhs; }
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(retain lhs, qos rhs) { return opts(lhs) | rhs; }
 
@@ -262,6 +307,11 @@ constexpr opts operator|(retain lhs, qos rhs) { return opts(lhs) | rhs; }
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(dup lhs, retain rhs) { return opts(lhs) | rhs; }
 
@@ -271,6 +321,11 @@ constexpr opts operator|(dup lhs, retain rhs) { return opts(lhs) | rhs; }
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(dup lhs, qos rhs)    { return opts(lhs) | rhs; }
 
@@ -280,6 +335,11 @@ constexpr opts operator|(dup lhs, qos rhs)    { return opts(lhs) | rhs; }
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(qos lhs, retain rhs) { return opts(lhs) | rhs; }
 
@@ -289,6 +349,11 @@ constexpr opts operator|(qos lhs, retain rhs) { return opts(lhs) | rhs; }
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
 
@@ -299,6 +364,11 @@ constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
  * @brief stringize retain
  * @param v target
  * @return retain string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* retain_to_str(retain v) {
     switch(v) {
@@ -315,6 +385,11 @@ constexpr char const* retain_to_str(retain v) {
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 std::ostream& operator<<(std::ostream& o, retain v)
@@ -329,6 +404,11 @@ std::ostream& operator<<(std::ostream& o, retain v)
  * @brief stringize dup
  * @param v target
  * @return dup string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* dup_to_str(dup v) {
     switch(v) {
@@ -345,6 +425,11 @@ constexpr char const* dup_to_str(dup v) {
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/pubopts.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 std::ostream& operator<<(std::ostream& o, dup v)

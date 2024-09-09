@@ -35,14 +35,19 @@ namespace as = boost::asio;
 /**
  * @ingroup subscribe_v5_detail
  * @brief MQTT SUBSCRIBE packet (v5)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT SUBSCRIBE packet.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_subscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_subscribe_packet {
@@ -141,6 +146,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_subscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe_packet<PacketIdBytes> const& rhs);
@@ -151,6 +161,11 @@ bool operator<(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_subscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe_packet<PacketIdBytes> const& rhs);
@@ -161,6 +176,11 @@ bool operator==(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscrib
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_subscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_subscribe_packet<PacketIdBytes> const& v);
@@ -169,6 +189,11 @@ std::ostream& operator<<(std::ostream& o, basic_subscribe_packet<PacketIdBytes> 
  * @ingroup subscribe_v5
  * @related basic_subscribe_packet
  * @brief Type alias of basic_subscribe_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_subscribe.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using subscribe_packet = basic_subscribe_packet<2>;
 

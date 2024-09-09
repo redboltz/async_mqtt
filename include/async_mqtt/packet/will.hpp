@@ -22,6 +22,10 @@ namespace async_mqtt {
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/will.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class will {
 public:
@@ -177,6 +181,11 @@ private:
  * @param os output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/will.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline std::ostream& operator<<(std::ostream& o, will const& v) {
     o << "{" <<

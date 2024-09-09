@@ -47,6 +47,11 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
 /**
  * @ingroup property
  * @brief payload_format
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class payload_format {
     binary, ///< binary
@@ -56,42 +61,77 @@ enum class payload_format {
 /**
  * @ingroup property
  * @brief type of the session expiry interval (seconds)
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using session_expiry_interval_type = std::uint32_t;
 
 /**
  * @ingroup property
  * @brief type of the topic alias value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using topic_alias_type = std::uint16_t;
 
 /**
  * @ingroup property
  * @brief type of the receive maximum value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using receive_maximum_type = std::uint16_t;
 
 /**
  * @ingroup property
  * @brief the special session_expiry_interval value that session is never expire.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 static constexpr session_expiry_interval_type session_never_expire = 0xffffffffUL;
 
 /**
  * @ingroup property
  * @brief the maximum topic_alias value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 static constexpr topic_alias_type topic_alias_max = 0xffff;
 
 /**
  * @ingroup property
  * @brief the maximum receive_maximum value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 static constexpr receive_maximum_type receive_maximum_max = 0xffff;
 
 /**
  * @ingroup property
  * @brief the maximum maximum_packet_size value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 static constexpr std::uint32_t packet_size_no_limit =
     1 + // fixed header
@@ -106,6 +146,10 @@ namespace property {
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class payload_format_indicator : public detail::n_bytes_property<1> {
@@ -141,6 +185,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class message_expiry_interval : public detail::n_bytes_property<4> {
 public:
@@ -170,6 +218,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class content_type : public detail::string_property {
@@ -254,6 +306,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class response_topic : public detail::string_property {
 public:
@@ -336,6 +392,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class correlation_data : public detail::binary_property {
@@ -420,6 +480,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class subscription_identifier : public detail::variable_property {
 public:
@@ -441,6 +505,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class session_expiry_interval : public detail::n_bytes_property<4> {
@@ -471,6 +539,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class assigned_client_identifier : public detail::string_property {
@@ -555,6 +627,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class server_keep_alive : public detail::n_bytes_property<2> {
 public:
@@ -584,6 +660,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class authentication_method : public detail::string_property {
@@ -668,6 +748,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class authentication_data : public detail::binary_property {
 public:
@@ -751,6 +835,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class request_problem_information : public detail::n_bytes_property<1> {
 public:
@@ -780,6 +868,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class will_delay_interval : public detail::n_bytes_property<4> {
@@ -811,6 +903,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class request_response_information : public detail::n_bytes_property<1> {
 public:
@@ -840,6 +936,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class response_information : public detail::string_property {
@@ -924,6 +1024,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class server_reference : public detail::string_property {
 public:
@@ -1006,6 +1110,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class reason_string : public detail::string_property {
@@ -1090,6 +1198,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class receive_maximum : public detail::n_bytes_property<2> {
 public:
@@ -1120,6 +1232,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class topic_alias_maximum : public detail::n_bytes_property<2> {
@@ -1152,6 +1268,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class topic_alias : public detail::n_bytes_property<2> {
 public:
@@ -1181,6 +1301,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class maximum_qos : public detail::n_bytes_property<1> {
@@ -1214,6 +1338,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class retain_available : public detail::n_bytes_property<1> {
 public:
@@ -1244,6 +1372,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class user_property : private boost::totally_ordered<user_property> {
@@ -1336,6 +1468,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class maximum_packet_size : public detail::n_bytes_property<4> {
 public:
@@ -1366,6 +1502,10 @@ private:
  * #### Thread Safety
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
  *
  */
 class wildcard_subscription_available : public detail::n_bytes_property<1> {
@@ -1398,6 +1538,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class subscription_identifier_available : public detail::n_bytes_property<1> {
 public:
@@ -1429,6 +1573,10 @@ private:
  *    - Distinct objects: Safe
  *    - Shared objects: Unsafe
  *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class shared_subscription_available : public detail::n_bytes_property<1> {
 public:
@@ -1458,6 +1606,11 @@ private:
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Property>
 std::enable_if_t<
@@ -1472,6 +1625,11 @@ operator<<(std::ostream& o, Property const& v);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Property>
 std::enable_if_t<
@@ -1486,6 +1644,11 @@ operator<<(std::ostream& o, Property const& v);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Property>
 std::enable_if_t<
@@ -1500,6 +1663,11 @@ operator<<(std::ostream& o, Property const& v);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Property>
 std::enable_if_t<
@@ -1514,6 +1682,11 @@ operator<<(std::ostream& o, Property const& v);
  * @param o output stream
  * @param v target
  * @return  output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <typename Property>
 std::enable_if_t<

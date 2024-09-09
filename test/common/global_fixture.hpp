@@ -11,7 +11,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <async_mqtt/setup_log.hpp>
+#include <async_mqtt/util/setup_log.hpp>
 
 struct global_fixture {
     void setup() {

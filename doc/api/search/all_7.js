@@ -2,7 +2,7 @@ var searchData=
 [
   ['data_0',['data',['../classasync__mqtt_1_1buffer.html#aacbd3a5eefbf1dd4e572fdf1fe9d6a86',1,'async_mqtt::buffer']]],
   ['debug_1',['debug',['../group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfaad42f6697b035b7580e4fef93be20b4d',1,'async_mqtt']]],
-  ['directly_20mapping_20to_20mqtt_20packets_2',['MQTT related error but not directly mapping to MQTT packets',['../group__error__reporting.html#autotoc_md7',1,'']]],
+  ['directly_20mapping_20to_20mqtt_20packets_2',['MQTT related error but not directly mapping to MQTT packets',['../group__error__reporting.html#autotoc_md14',1,'']]],
   ['disconnect_3',['disconnect',['../group__packet.html#ggad751afab4b1771811a82fcc3f34938b4a9d634e1a156dc0c1611eb4c3cff57276',1,'async_mqtt']]],
   ['disconnect_20packet_20v3_201_201_4',['DISCONNECT packet (v3.1.1)',['../group__disconnect__v3__1__1.html',1,'']]],
   ['disconnect_20packet_20v5_200_5',['DISCONNECT packet (v5.0)',['../group__disconnect__v5.html',1,'']]],

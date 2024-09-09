@@ -165,14 +165,20 @@ Related Symbols</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT DISCONNECT packet (v5) </p>
-<h4><a class="anchor" id="autotoc_md56"></a>
+<p>When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status. The endpoint can't send packets any more. The underlying layer is not automatically closed from the client side. If you want to close the underlying layer from the client side, you need to call basic_endpoint::close() after sending DISCONNECT packet. When the broker receives DISCONNECT packet, then close underlying layer from the broker. In this case, Will is not published by the broker except reason_code is Disconnect with Will Message. <br  />
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205</a></p>
+<h4><a class="anchor" id="autotoc_md312"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
 <li>Shared objects: Unsafe</li>
 </ul>
-<p>When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status. The endpoint can't send packets any more. The underlying layer is not automatically closed from the client side. If you want to close the underlying layer from the client side, you need to call basic_endpoint::close() after sending DISCONNECT packet. When the broker receives DISCONNECT packet, then close underlying layer from the broker. In this case, Will is not published by the broker except reason_code is Disconnect with Will Message. <br  />
- See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205</a> </p>
+<h4><a class="anchor" id="autotoc_md313"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__disconnect_8hpp_source.html">async_mqtt/packet/v5_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a65ee27ddcf0d22a8b3fb5b6df4a627cb" name="a65ee27ddcf0d22a8b3fb5b6df4a627cb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a65ee27ddcf0d22a8b3fb5b6df4a627cb">&#9670;&#160;</a></span>disconnect_packet() <span class="overload">[1/2]</span></h2>
@@ -413,7 +419,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md314"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__disconnect_8hpp_source.html">async_mqtt/packet/v5_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -491,7 +503,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md315"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__disconnect_8hpp_source.html">async_mqtt/packet/v5_disconnect.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

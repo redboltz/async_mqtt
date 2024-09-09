@@ -71,6 +71,10 @@ namespace async_mqtt {
  *     - v3_1_1::disconnect_packet
  *     - v5::disconnect_packet
  *
+ * #### Requirements
+ * - Header: async_mqtt/client.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  * @tparam Version       MQTT protocol version.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */

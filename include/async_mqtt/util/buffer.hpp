@@ -33,6 +33,15 @@ namespace as = boost::asio;
  * Typical MQTT client developpers don't need to care about the buffer.
  * This class provides string_view interface.
  * This class holds string_view pointee's lifetime optionally.
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/util/buffer.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 class buffer {
 public:
@@ -955,6 +964,11 @@ private:
  * @brief hashing function
  * @param v target
  * @return hash value
+ *
+ * #### Requirements
+ * - Header: async_mqtt/util/buffer.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline std::size_t hash_value(buffer const& v) noexcept {
     std::size_t result = 0;
@@ -976,6 +990,11 @@ namespace asio {
  *
  * @param  data  source async_mqtt::buffer
  * @return boost::asio::const_buffer
+ *
+ * #### Requirements
+ * - Header: async_mqtt/util/buffer.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline const_buffer buffer(async_mqtt::buffer const& data) {
     return buffer(data.data(), data.size());
@@ -989,6 +1008,11 @@ namespace std {
 /**
  * @ingroup buffer
  * @brief class template hash specilization for the buffer
+ *
+ * #### Requirements
+ * - Header: async_mqtt/util/buffer.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <>
 class hash<async_mqtt::buffer> {

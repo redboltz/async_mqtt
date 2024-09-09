@@ -19,6 +19,11 @@ namespace property {
  * @brief MQTT property identifier
  *
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_id.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class id {
     payload_format_indicator          =  1, ///< Payload Format Indicator
@@ -55,6 +60,11 @@ enum class id {
  * @brief stringize packet identifier
  * @param v target
  * @return packet identifier
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_id.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* id_to_str(id v) {
     switch (v) {
@@ -95,6 +105,11 @@ constexpr char const* id_to_str(id v) {
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/property_id.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 inline
 std::ostream& operator<<(std::ostream& o, id v)

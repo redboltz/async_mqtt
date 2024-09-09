@@ -44,6 +44,11 @@ struct channel : std::string {
  * @ingroup log
  * log severity level
  * warning is recommended for actual operation because there is no output except something important.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/util/log.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class severity_level {
     trace,   ///< trace level for detaied behavior and reporting issue

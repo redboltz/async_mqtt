@@ -34,10 +34,6 @@ namespace as = boost::asio;
 /**
  * @ingroup puback_v5_detail
  * @brief MQTT PUBACK packet (v5)
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
- *
  * @tparam PacketIdBytes size of packet_id
  *
  * If basic_endpoint::set_auto_pub_response() is called with true, then this packet is
@@ -45,6 +41,15 @@ namespace as = boost::asio;
  *
  * When the packet is received, the packet_id is automatically released and become reusable.
  * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901121
+ *
+ * #### Thread Safety
+ *    - Distinct objects: Safe
+ *    - Shared objects: Unsafe
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_puback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 class basic_puback_packet {
@@ -195,6 +200,11 @@ private:
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_puback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_packet<PacketIdBytes> const& rhs);
@@ -205,6 +215,11 @@ bool operator<(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_packe
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_puback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 template <std::size_t PacketIdBytes>
 bool operator==(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_packet<PacketIdBytes> const& rhs);
@@ -213,6 +228,11 @@ bool operator==(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_pack
  * @ingroup puback_v5
  * @related basic_puback_packet
  * @brief Type alias of basic_puback_packet (PacketIdBytes=2).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/packet/v5_puback.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using puback_packet = basic_puback_packet<2>;
 

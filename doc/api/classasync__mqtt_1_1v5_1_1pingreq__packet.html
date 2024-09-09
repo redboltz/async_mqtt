@@ -149,14 +149,20 @@ Related Symbols</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MQTT PINGREQ packet (v5) </p>
-<h4><a class="anchor" id="autotoc_md57"></a>
+<p>Only MQTT client can send this packet. This packet is to notify the client is living. When you set keep_alive_sec &gt; 0 on CONNECT packet (<a class="el" href="classasync__mqtt_1_1v5_1_1connect__packet.html" title="MQTT CONNECT packet (v5)">v5::connect_packet</a>), then PINGREQ packet is automatically sent after keep_alive_sec passed after the last packet sent. When the broker receives this packet, KeepAlive timeout (keep_alive_sec * 1.5) is reset and start counting from 0. <br  />
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195</a></p>
+<h4><a class="anchor" id="autotoc_md316"></a>
 Thread Safety</h4>
 <ul>
 <li>Distinct objects: Safe</li>
 <li>Shared objects: Unsafe</li>
 </ul>
-<p>Only MQTT client can send this packet. This packet is to notify the client is living. When you set keep_alive_sec &gt; 0 on CONNECT packet (<a class="el" href="classasync__mqtt_1_1v5_1_1connect__packet.html" title="MQTT CONNECT packet (v5)">v5::connect_packet</a>), then PINGREQ packet is automatically sent after keep_alive_sec passed after the last packet sent. When the broker receives this packet, KeepAlive timeout (keep_alive_sec * 1.5) is reset and start counting from 0. <br  />
- See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195</a> </p>
+<h4><a class="anchor" id="autotoc_md317"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pingreq_8hpp_source.html">async_mqtt/packet/v5_pingreq.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a76e1a2704a52f9eb0fc7d0f0139849ba" name="a76e1a2704a52f9eb0fc7d0f0139849ba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a76e1a2704a52f9eb0fc7d0f0139849ba">&#9670;&#160;</a></span>const_buffer_sequence()</h2>
@@ -290,7 +296,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md318"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pingreq_8hpp_source.html">async_mqtt/packet/v5_pingreq.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -329,7 +341,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md320"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pingreq_8hpp_source.html">async_mqtt/packet/v5_pingreq.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -368,7 +386,13 @@ Thread Safety</h4>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md319"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__pingreq_8hpp_source.html">async_mqtt/packet/v5_pingreq.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

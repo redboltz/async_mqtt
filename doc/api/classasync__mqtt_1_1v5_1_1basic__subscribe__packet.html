@@ -145,9 +145,8 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:ga7fe480a091fca0ed9c07257d2da2a609" id="r_ga7fe480a091fca0ed9c07257d2da2a609"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subscribe_packet</b> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:ga7fe480a091fca0ed9c07257d2da2a609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v5)">basic_subscribe_packet</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="memitem:ga7fe480a091fca0ed9c07257d2da2a609" id="r_ga7fe480a091fca0ed9c07257d2da2a609"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__subscribe__v5.html#ga7fe480a091fca0ed9c07257d2da2a609">subscribe_packet</a> = <a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:ga7fe480a091fca0ed9c07257d2da2a609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html" title="MQTT SUBSCRIBE packet (v5)">basic_subscribe_packet</a> (PacketIdBytes=2).  <br /></td></tr>
 <tr class="separator:ga7fe480a091fca0ed9c07257d2da2a609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefab38c46715ee949f8d0226a29e9a16" id="r_aefab38c46715ee949f8d0226a29e9a16"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
 <tr class="memitem:aefab38c46715ee949f8d0226a29e9a16"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aefab38c46715ee949f8d0226a29e9a16">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v5_1_1basic__subscribe__packet.html">basic_subscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
@@ -165,12 +164,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>subscribe_packet</b>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v5::basic_subscribe_packet&lt; PacketIdBytes &gt;</div><p>MQTT SUBSCRIBE packet (v5) </p>
-<h4><a class="anchor" id="autotoc_md65"></a>
-Thread Safety</h4>
-<ul>
-<li>Distinct objects: Safe</li>
-<li>Shared objects: Unsafe</li>
-</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">PacketIdBytes</td><td>size of packet_id</td></tr>
@@ -178,7 +171,19 @@ Thread Safety</h4>
   </dd>
 </dl>
 <p>MQTT SUBSCRIBE packet. <br  />
- See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161</a> </p>
+ See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161</a></p>
+<h4><a class="anchor" id="autotoc_md358"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md359"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__subscribe_8hpp_source.html">async_mqtt/packet/v5_subscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ab3b6abd2f8d95c21655c1f657cc7059e" name="ab3b6abd2f8d95c21655c1f657cc7059e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab3b6abd2f8d95c21655c1f657cc7059e">&#9670;&#160;</a></span>basic_subscribe_packet()</h2>
@@ -428,7 +433,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md360"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__subscribe_8hpp_source.html">async_mqtt/packet/v5_subscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -469,7 +480,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md362"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__subscribe_8hpp_source.html">async_mqtt/packet/v5_subscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -510,7 +527,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md361"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v5__subscribe_8hpp_source.html">async_mqtt/packet/v5_subscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

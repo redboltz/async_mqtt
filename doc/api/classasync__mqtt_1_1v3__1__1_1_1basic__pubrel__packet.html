@@ -139,9 +139,8 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:gac621c1b7011518ff60a9fbedde43b367" id="r_gac621c1b7011518ff60a9fbedde43b367"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>pubrel_packet</b> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html">basic_pubrel_packet</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:gac621c1b7011518ff60a9fbedde43b367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html" title="MQTT PUBREL packet (v3.1.1)">basic_pubrel_packet</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="memitem:gac621c1b7011518ff60a9fbedde43b367" id="r_gac621c1b7011518ff60a9fbedde43b367"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__pubrel__v3__1__1.html#gac621c1b7011518ff60a9fbedde43b367">pubrel_packet</a> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html">basic_pubrel_packet</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:gac621c1b7011518ff60a9fbedde43b367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html" title="MQTT PUBREL packet (v3.1.1)">basic_pubrel_packet</a> (PacketIdBytes=2).  <br /></td></tr>
 <tr class="separator:gac621c1b7011518ff60a9fbedde43b367"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5fa3f32c0a7ba10a6a93ace11be2087" id="r_ab5fa3f32c0a7ba10a6a93ace11be2087"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
 <tr class="memitem:ab5fa3f32c0a7ba10a6a93ace11be2087"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab5fa3f32c0a7ba10a6a93ace11be2087">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html">basic_pubrel_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrel__packet.html">basic_pubrel_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
@@ -159,12 +158,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>pubrel_packet</b> = 
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v3_1_1::basic_pubrel_packet&lt; PacketIdBytes &gt;</div><p>MQTT PUBREL packet (v3.1.1) </p>
-<h4><a class="anchor" id="autotoc_md48"></a>
-Thread Safety</h4>
-<ul>
-<li>Distinct objects: Safe</li>
-<li>Shared objects: Unsafe</li>
-</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">PacketIdBytes</td><td>size of packet_id</td></tr>
@@ -172,7 +165,19 @@ Thread Safety</h4>
   </dd>
 </dl>
 <p>If <a class="el" href="classasync__mqtt_1_1basic__endpoint.html#a5e8920d50890684fc33eab70c709a90f" title="auto publish response setter. Should be called before send()/recv() call.">basic_endpoint::set_auto_pub_response()</a> is called with true, then this packet is automatically sent when PUBREC <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__pubrec__packet.html" title="MQTT PUBREC packet (v3.1.1)">v3_1_1::basic_pubrec_packet</a> is received. If both the client and the broker keeping the session, this packet is stored in the endpoint for resending if disconnect/reconnect happens. If the session doesn' exist or lost, then the stored packets are erased. <br  />
- See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718053">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718053</a> </p>
+ See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718053">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718053</a></p>
+<h4><a class="anchor" id="autotoc_md268"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md269"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pubrel_8hpp_source.html">async_mqtt/packet/v3_1_1_pubrel.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3b24c4e505dad391aec420fbb90ddd4b" name="a3b24c4e505dad391aec420fbb90ddd4b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3b24c4e505dad391aec420fbb90ddd4b">&#9670;&#160;</a></span>basic_pubrel_packet()</h2>
@@ -374,7 +379,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md270"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pubrel_8hpp_source.html">async_mqtt/packet/v3_1_1_pubrel.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -415,7 +426,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md272"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pubrel_8hpp_source.html">async_mqtt/packet/v3_1_1_pubrel.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -456,7 +473,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md271"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__pubrel_8hpp_source.html">async_mqtt/packet/v3_1_1_pubrel.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>

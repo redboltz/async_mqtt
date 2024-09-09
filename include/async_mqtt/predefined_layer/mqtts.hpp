@@ -26,6 +26,10 @@ namespace protocol {
  * @ingroup predefined_layer_mqtts
  * @brief Type alias of boost::asio::ssl::stream of mqtt
  * @brief predefined underlying layer (TLS)
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/mqtts.hpp
+ *
  */
 using mqtts = as::ssl::stream<mqtt>;
 
@@ -40,6 +44,10 @@ using mqtts = as::ssl::stream<mqtt>;
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)
  * @return deduced by token
+ *
+ * #### Requirements
+ * - Header: async_mqtt/predefined_layer/mqtts.hpp
+ *
  */
 template <
     typename NextLayer,

@@ -25,24 +25,44 @@ namespace async_mqtt {
 /**
  * @ingroup error
  * @brief sys is a namespace alias of [boost::sytem](https://www.boost.org/libs/system/doc/html/system.html).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 namespace sys = boost::system;
 
 /**
  * @ingroup error
  * @brief errc is a namespace alias of [boost::sytem::errc](https://www.boost.org/libs/system/doc/html/system.html#ref_errc).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 namespace errc = sys::errc;
 
 /**
  * @ingroup error
  * @brief error_code is a type alias of [boost::sytem::error_code](https://www.boost.org/libs/system/doc/html/system.html#ref_error_code).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using error_code = sys::error_code;
 
 /**
  * @ingroup error
  * @brief system_error is a type alias of [boost::sytem::system_error](https://www.boost.org/libs/system/doc/html/system.html#ref_system_error).
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 using system_error = sys::system_error;
 
@@ -85,6 +105,11 @@ using system_error = sys::system_error;
 /**
  * @ingroup mqtt_error
  * @brief general error code
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class mqtt_error {
     partial_error_detected                 = 0x0101, ///< Some entries have error on suback/unsuback (not an error)
@@ -101,6 +126,11 @@ enum class mqtt_error {
  * @brief make error code
  * @param v target
  * @return mqtt_error string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(mqtt_error v);
 
@@ -109,6 +139,11 @@ error_code make_error_code(mqtt_error v);
  * @brief stringize mqtt_error
  * @param v target
  * @return mqtt_error string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* mqtt_error_to_string(mqtt_error v);
 
@@ -118,6 +153,11 @@ constexpr char const* mqtt_error_to_string(mqtt_error v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, mqtt_error v);
 
@@ -125,6 +165,11 @@ std::ostream& operator<<(std::ostream& o, mqtt_error v);
  * @ingroup mqtt_error
  * @brief   get gategory of mqtt_error
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_mqtt_error_category();
 
@@ -140,6 +185,11 @@ sys::error_category const& get_mqtt_error_category();
  * @ingroup connect_return_code
  * @brief connect return code
  * See https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc385349256
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class connect_return_code : std::uint8_t {
     accepted                      = 0, ///< Connection accepted (not an error)
@@ -155,6 +205,11 @@ enum class connect_return_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return connect_return_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(connect_return_code v);
 
@@ -163,6 +218,11 @@ error_code make_error_code(connect_return_code v);
  * @brief stringize connect_return_code
  * @param v target
  * @return connect_return_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* connect_return_code_to_string(connect_return_code v);
 
@@ -172,6 +232,11 @@ constexpr char const* connect_return_code_to_string(connect_return_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, connect_return_code v);
 
@@ -179,6 +244,11 @@ std::ostream& operator<<(std::ostream& o, connect_return_code v);
  * @ingroup connect_return_code
  * @brief   get gategory of connect_return_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_connect_return_code_category();
 
@@ -195,6 +265,11 @@ sys::error_category const& get_connect_return_code_category();
  * @brief MQTT suback_return_code
  *
  * \n See http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718071
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class suback_return_code : std::uint8_t {
     success_maximum_qos_0                  = 0x00, ///< Success with QoS0 (not an error)
@@ -208,6 +283,11 @@ enum class suback_return_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return suback_return_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(suback_return_code v);
 
@@ -216,6 +296,11 @@ error_code make_error_code(suback_return_code v);
  * @brief stringize suback_return_code
  * @param v target
  * @return suback_return_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* suback_return_code_to_string(suback_return_code v);
 
@@ -225,6 +310,11 @@ constexpr char const* suback_return_code_to_string(suback_return_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, suback_return_code v);
 
@@ -232,6 +322,11 @@ std::ostream& operator<<(std::ostream& o, suback_return_code v);
  * @ingroup suback_return_code
  * @brief   get gategory of suback_return_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_suback_return_code_category();
 
@@ -241,12 +336,22 @@ sys::error_category const& get_suback_return_code_category();
  * @defgroup connect_reason_code connect_reason_code
  * @ingroup error_reporting
  * @ingroup connack_v5
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 
 /**
  * @ingroup connect_reason_code
  * @brief connect reason code
  * It is reported as CONNECT response via CONNACK packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class connect_reason_code : std::uint8_t {
     success                       = 0x00, ///< Success (not an error)
@@ -278,6 +383,11 @@ enum class connect_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return connect_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(connect_reason_code v);
 
@@ -286,6 +396,11 @@ error_code make_error_code(connect_reason_code v);
  * @brief stringize connect_reason_code
  * @param v target
  * @return connect_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* connect_reason_code_to_string(connect_reason_code v);
 
@@ -295,6 +410,11 @@ constexpr char const* connect_reason_code_to_string(connect_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, connect_reason_code v);
 
@@ -302,6 +422,11 @@ std::ostream& operator<<(std::ostream& o, connect_reason_code v);
  * @ingroup connect_reason_code
  * @brief   get gategory of connect_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_connect_reason_code_category();
 
@@ -317,6 +442,11 @@ sys::error_category const& get_connect_reason_code_category();
  * @ingroup disconnect_reason_code
  * @brief disconnect reason code
  * It is reported via DISCONNECT
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class disconnect_reason_code : std::uint8_t {
     normal_disconnection                   = 0x00, ///< Normal disconnection (not an error)
@@ -355,6 +485,11 @@ enum class disconnect_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return disconnect_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(disconnect_reason_code v);
 
@@ -363,6 +498,11 @@ error_code make_error_code(disconnect_reason_code v);
  * @brief stringize disconnect_reason_code
  * @param v target
  * @return disconnect_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* disconnect_reason_code_to_string(disconnect_reason_code v);
 
@@ -372,6 +512,11 @@ constexpr char const* disconnect_reason_code_to_string(disconnect_reason_code v)
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, disconnect_reason_code v);
 
@@ -379,6 +524,11 @@ std::ostream& operator<<(std::ostream& o, disconnect_reason_code v);
  * @ingroup disconnect_reason_code
  * @brief   get gategory of disconnect_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_disconnect_reason_code_category();
 
@@ -394,6 +544,11 @@ sys::error_category const& get_disconnect_reason_code_category();
  * @ingroup suback_reason_code
  * @brief suback reason code
  * It is reported as SUBSCRIBE response via SUBNACK packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class suback_reason_code : std::uint8_t {
     granted_qos_0                          = 0x00, ///< Granted QoS 0 (not an error)
@@ -415,6 +570,11 @@ enum class suback_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return suback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(suback_reason_code v);
 
@@ -423,6 +583,11 @@ error_code make_error_code(suback_reason_code v);
  * @brief stringize suback_reason_code
  * @param v target
  * @return suback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* suback_reason_code_to_string(suback_reason_code v);
 
@@ -432,6 +597,11 @@ constexpr char const* suback_reason_code_to_string(suback_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, suback_reason_code v);
 
@@ -439,6 +609,11 @@ std::ostream& operator<<(std::ostream& o, suback_reason_code v);
  * @ingroup suback_reason_code
  * @brief   get gategory of suback_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_suback_reason_code_category();
 
@@ -454,6 +629,11 @@ sys::error_category const& get_suback_reason_code_category();
  * @ingroup unsuback_reason_code
  * @brief unsuback reason code
  * It is reported as UNSUBSCRIBE response via UNSUBNACK packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class unsuback_reason_code : std::uint8_t {
     success                       = 0x00, ///< Success (not an error)
@@ -470,6 +650,11 @@ enum class unsuback_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return unsuback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(unsuback_reason_code v);
 
@@ -478,6 +663,11 @@ error_code make_error_code(unsuback_reason_code v);
  * @brief stringize unsuback_reason_code
  * @param v target
  * @return unsuback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* unsuback_reason_code_to_string(unsuback_reason_code v);
 
@@ -487,6 +677,11 @@ constexpr char const* unsuback_reason_code_to_string(unsuback_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, unsuback_reason_code v);
 
@@ -494,6 +689,11 @@ std::ostream& operator<<(std::ostream& o, unsuback_reason_code v);
  * @ingroup unsuback_reason_code
  * @brief   get gategory of unsuback_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_unsuback_reason_code_category();
 
@@ -509,6 +709,11 @@ sys::error_category const& get_unsuback_reason_code_category();
  * @ingroup puback_reason_code
  * @brief puback reason code
  * It is reported as PUBLISH (QoS1) response via PUBACK packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class puback_reason_code : std::uint8_t {
     success                       = 0x00, ///< Success (not an error)
@@ -527,6 +732,11 @@ enum class puback_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return puback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(puback_reason_code v);
 
@@ -535,6 +745,11 @@ error_code make_error_code(puback_reason_code v);
  * @brief stringize puback_reason_code
  * @param v target
  * @return puback_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* puback_reason_code_to_string(puback_reason_code v);
 
@@ -544,6 +759,11 @@ constexpr char const* puback_reason_code_to_string(puback_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, puback_reason_code v);
 
@@ -551,6 +771,11 @@ std::ostream& operator<<(std::ostream& o, puback_reason_code v);
  * @ingroup puback_reason_code
  * @brief   get gategory of puback_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_puback_reason_code_category();
 
@@ -566,6 +791,11 @@ sys::error_category const& get_puback_reason_code_category();
  * @ingroup pubrec_reason_code
  * @brief pubrec reason code
  * It is reported as PUBLISH (QoS2) response via PUBREC packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class pubrec_reason_code : std::uint8_t {
     success                       = 0x00, ///< Success (not an error)
@@ -584,6 +814,11 @@ enum class pubrec_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return pubrec_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(pubrec_reason_code v);
 
@@ -592,6 +827,11 @@ error_code make_error_code(pubrec_reason_code v);
  * @brief stringize pubrec_reason_code
  * @param v target
  * @return pubrec_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* pubrec_reason_code_to_string(pubrec_reason_code v);
 
@@ -601,6 +841,11 @@ constexpr char const* pubrec_reason_code_to_string(pubrec_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, pubrec_reason_code v);
 
@@ -608,6 +853,11 @@ std::ostream& operator<<(std::ostream& o, pubrec_reason_code v);
  * @ingroup pubrec_reason_code
  * @brief   get gategory of pubrec_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_pubrec_reason_code_category();
 
@@ -622,6 +872,11 @@ sys::error_category const& get_pubrec_reason_code_category();
  * @ingroup pubrel_reason_code
  * @brief pubrel reason code
  * It is reported as PUBREC response via PUBREL packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class pubrel_reason_code : std::uint8_t {
     success                     = 0x00, ///< Success (not an error)
@@ -633,6 +888,11 @@ enum class pubrel_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return pubrel_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(pubrel_reason_code v);
 
@@ -641,6 +901,11 @@ error_code make_error_code(pubrel_reason_code v);
  * @brief stringize pubrel_reason_code
  * @param v target
  * @return pubrel_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* pubrel_reason_code_to_string(pubrel_reason_code v);
 
@@ -650,6 +915,11 @@ constexpr char const* pubrel_reason_code_to_string(pubrel_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, pubrel_reason_code v);
 
@@ -657,6 +927,11 @@ std::ostream& operator<<(std::ostream& o, pubrel_reason_code v);
  * @ingroup pubrel_reason_code
  * @brief   get gategory of pubrel_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_pubrel_reason_code_category();
 
@@ -672,6 +947,11 @@ sys::error_category const& get_pubrel_reason_code_category();
  * @ingroup pubcomp_reason_code
  * @brief pubcomp reason code
  * It is reported as PUBREL response via PUBCOMP packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class pubcomp_reason_code : std::uint8_t {
     success                     = 0x00, ///< Success (not an error)
@@ -683,6 +963,11 @@ enum class pubcomp_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return pubcomp_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(pubcomp_reason_code v);
 
@@ -691,6 +976,11 @@ error_code make_error_code(pubcomp_reason_code v);
  * @brief stringize pubcomp_reason_code
  * @param v target
  * @return pubcomp_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* pubcomp_reason_code_to_string(pubcomp_reason_code v);
 
@@ -700,6 +990,11 @@ constexpr char const* pubcomp_reason_code_to_string(pubcomp_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, pubcomp_reason_code v);
 
@@ -707,6 +1002,11 @@ std::ostream& operator<<(std::ostream& o, pubcomp_reason_code v);
  * @ingroup pubcomp_reason_code
  * @brief   get gategory of pubcomp_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_pubcomp_reason_code_category();
 
@@ -721,6 +1021,11 @@ sys::error_category const& get_pubcomp_reason_code_category();
  * @ingroup auth_reason_code
  * @brief auth reason code
  * It is reported via AUTH packet
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 enum class auth_reason_code : std::uint8_t {
     success                 = 0x00, ///< Success (not an error)
@@ -733,6 +1038,11 @@ enum class auth_reason_code : std::uint8_t {
  * @brief make error code
  * @param v target
  * @return auth_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 error_code make_error_code(auth_reason_code v);
 
@@ -741,6 +1051,11 @@ error_code make_error_code(auth_reason_code v);
  * @brief stringize auth_reason_code
  * @param v target
  * @return auth_reason_code string
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 constexpr char const* auth_reason_code_to_string(auth_reason_code v);
 
@@ -750,6 +1065,11 @@ constexpr char const* auth_reason_code_to_string(auth_reason_code v);
  * @param o output stream
  * @param v  target
  * @return output stream
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 std::ostream& operator<<(std::ostream& o, auth_reason_code v);
 
@@ -757,6 +1077,11 @@ std::ostream& operator<<(std::ostream& o, auth_reason_code v);
  * @ingroup auth_reason_code
  * @brief   get gategory of auth_reason_code
  * @return  category
+ *
+ * #### Requirements
+ * - Header: async_mqtt/error.hpp
+ * - Convenience header: async_mqtt/all.hpp
+ *
  */
 sys::error_category const& get_auth_reason_code_category();
 
