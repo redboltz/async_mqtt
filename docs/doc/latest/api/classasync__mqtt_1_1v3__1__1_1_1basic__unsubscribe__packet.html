@@ -142,9 +142,8 @@ Static Public Member Functions</h2></td></tr>
 Related Symbols</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>(Note that these are not member symbols.) </p>
 </td></tr>
-<tr class="memitem:ga0366c5a1e09f36f76a1e6792fbe6bcf1" id="r_ga0366c5a1e09f36f76a1e6792fbe6bcf1"><td class="memItemLeft" align="right" valign="top">
-using&#160;</td><td class="memItemRight" valign="bottom"><b>unsubscribe_packet</b> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">basic_unsubscribe_packet</a>&lt;2&gt;</td></tr>
-<tr class="memdesc:ga0366c5a1e09f36f76a1e6792fbe6bcf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v3.1.1)">basic_unsubscribe_packet</a> (PacketIdBytes=2). <br /></td></tr>
+<tr class="memitem:ga0366c5a1e09f36f76a1e6792fbe6bcf1" id="r_ga0366c5a1e09f36f76a1e6792fbe6bcf1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__unsubscribe__v3__1__1.html#ga0366c5a1e09f36f76a1e6792fbe6bcf1">unsubscribe_packet</a> = <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">basic_unsubscribe_packet</a>&lt;2&gt;</td></tr>
+<tr class="memdesc:ga0366c5a1e09f36f76a1e6792fbe6bcf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias of <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html" title="MQTT UNSUBSCRIBE packet (v3.1.1)">basic_unsubscribe_packet</a> (PacketIdBytes=2).  <br /></td></tr>
 <tr class="separator:ga0366c5a1e09f36f76a1e6792fbe6bcf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae62093d0c2ab3389e5c3d0669a711e03" id="r_ae62093d0c2ab3389e5c3d0669a711e03"><td class="memTemplParams" colspan="2">template&lt;std::size_t PacketIdBytes&gt; </td></tr>
 <tr class="memitem:ae62093d0c2ab3389e5c3d0669a711e03"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae62093d0c2ab3389e5c3d0669a711e03">operator&lt;</a> (<a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">basic_unsubscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;lhs, <a class="el" href="classasync__mqtt_1_1v3__1__1_1_1basic__unsubscribe__packet.html">basic_unsubscribe_packet</a>&lt; PacketIdBytes &gt; const &amp;rhs)</td></tr>
@@ -162,12 +161,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>unsubscribe_packet</
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;std::size_t PacketIdBytes&gt;<br />
 class async_mqtt::v3_1_1::basic_unsubscribe_packet&lt; PacketIdBytes &gt;</div><p>MQTT UNSUBSCRIBE packet (v3.1.1) </p>
-<h4><a class="anchor" id="autotoc_md52"></a>
-Thread Safety</h4>
-<ul>
-<li>Distinct objects: Safe</li>
-<li>Shared objects: Unsafe</li>
-</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">PacketIdBytes</td><td>size of packet_id</td></tr>
@@ -175,7 +168,19 @@ Thread Safety</h4>
   </dd>
 </dl>
 <p>MQTT UNSUBSCRIBE packet. <br  />
- See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072</a> </p>
+ See <a href="http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072">http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072</a></p>
+<h4><a class="anchor" id="autotoc_md292"></a>
+Thread Safety</h4>
+<ul>
+<li>Distinct objects: Safe</li>
+<li>Shared objects: Unsafe</li>
+</ul>
+<h4><a class="anchor" id="autotoc_md293"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__unsubscribe_8hpp_source.html">async_mqtt/packet/v3_1_1_unsubscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac8fab0af84ead38d4ffa4f556b1126e1" name="ac8fab0af84ead38d4ffa4f556b1126e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac8fab0af84ead38d4ffa4f556b1126e1">&#9670;&#160;</a></span>basic_unsubscribe_packet()</h2>
@@ -396,7 +401,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs less than the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md294"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__unsubscribe_8hpp_source.html">async_mqtt/packet/v3_1_1_unsubscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -437,7 +448,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>output stream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>output stream</dd></dl>
+<h4><a class="anchor" id="autotoc_md296"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__unsubscribe_8hpp_source.html">async_mqtt/packet/v3_1_1_unsubscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
@@ -478,7 +495,13 @@ template&lt;std::size_t PacketIdBytes&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the lhs equal to the rhs, otherwise false.</dd></dl>
+<h4><a class="anchor" id="autotoc_md295"></a>
+Requirements</h4>
+<ul>
+<li>Header: <a class="el" href="v3__1__1__unsubscribe_8hpp_source.html">async_mqtt/packet/v3_1_1_unsubscribe.hpp</a></li>
+<li>Convenience header: <a class="el" href="all_8hpp_source.html">async_mqtt/all.hpp</a> </li>
+</ul>
 
 </div>
 </div>
