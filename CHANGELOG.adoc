@@ -3,6 +3,7 @@
 = History
 
 == 9.0.1
+* Refined bench tool. #352
 * Refined docker container. #350
 * Moved setup_log.hpp to `util/` (appropriate location). #349
 * Refined documents. #348, #349, #351

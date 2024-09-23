@@ -804,6 +804,19 @@ private:
                         std::string maxavg_cid;
                         std::size_t maxmin = 0;
                         std::string maxmin_cid;
+
+                        if (!bc_.all_rtt_store_file.empty()) {
+                            locked_cout() << "storing all RTT to " << bc_.all_rtt_store_file << std::endl;
+                            std::ofstream ofs{bc_.all_rtt_store_file};
+                            for (auto& ci : cis_) {
+                                for (auto rtt : ci.rtt_us) {
+                                    ofs << rtt << "\n";
+                                }
+                                ofs << "\n";
+                            }
+                            locked_cout() << "store finished" << std::endl;
+                        }
+
                         for (auto& ci : cis_) {
                             std::sort(ci.rtt_us.begin(), ci.rtt_us.end());
                             std::string cid = ci.get_client_id();
@@ -859,17 +872,6 @@ private:
                             << "client_id:" << maxmin_cid << std::endl;
                         locked_cout() << "Finish" << std::endl;
                         bc_.tim_progress->cancel();
-                        if (!bc_.all_rtt_store_file.empty()) {
-                            locked_cout() << "storing all RTT to " << bc_.all_rtt_store_file << std::endl;
-                            std::ofstream ofs{bc_.all_rtt_store_file};
-                            for (auto& ci : cis_) {
-                                for (auto rtt : ci.rtt_us) {
-                                    ofs << rtt << "\n";
-                                }
-                                ofs << "\n";
-                            }
-                            locked_cout() << "store finished" << std::endl;
-                        }
                         if (bc_.close_after_report) {
                             for (auto& ci : cis_) {
                                 ci.c.async_close([]{});
