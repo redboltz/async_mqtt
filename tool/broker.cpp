@@ -875,9 +875,9 @@ int main(int argc, char *argv[]) {
             am::setup_log(am::severity_level::fatal);
             break;
         }
-#else
+#else  // defined(ASYNC_MQTT_USE_LOG)
         am::setup_log();
-#endif
+#endif // defined(ASYNC_MQTT_USE_LOG)
 
         run_broker(vm);
     }
