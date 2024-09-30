@@ -1067,7 +1067,7 @@ int main(int argc, char* argv[]) {
         }
 
         std::cout << "type 'help' to show menu" << std::endl;
-#if defined(MQTT_USE_LOG)
+#if defined(ASYNC_MQTT_USE_LOG)
         switch (vm["verbose"].as<unsigned int>()) {
         case 5:
             am::setup_log(am::severity_level::trace);
@@ -1088,9 +1088,9 @@ int main(int argc, char* argv[]) {
             am::setup_log(am::severity_level::fatal);
             break;
         }
-#else
+#else  // defined(ASYNC_MQTT_USE_LOG)
         am::setup_log();
-#endif
+#endif // defined(ASYNC_MQTT_USE_LOG)
 
         if (!vm.count("host")) {
             std::cerr << "host must be set" << std::endl;
