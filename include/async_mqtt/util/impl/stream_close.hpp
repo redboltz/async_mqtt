@@ -33,6 +33,9 @@ struct stream_impl<NextLayer>::stream_close_op {
     ) {
         auto& a_strm{*strm};
         if (state == dispatch) {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                << "async operation start. state: dispatch -> close";
             state = close;
             as::dispatch(
                 a_strm.get_executor(),
@@ -44,6 +47,9 @@ struct stream_impl<NextLayer>::stream_close_op {
             );
         }
         else {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                << "async operation finish. state: complete";
             BOOST_ASSERT(state == complete);
             a_strm.storing_cbs_.clear();
             a_strm.sending_cbs_.clear();
@@ -60,7 +66,13 @@ struct stream_impl<NextLayer>::stream_close_op {
         auto& a_strm{*strm};
         BOOST_ASSERT(state == close);
         if constexpr(has_async_close<Layer>::value) {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                << "has_async_close";
             if constexpr (has_next_layer<Layer>::value) {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                    << "call async_close";
                 layer_customize<Layer>::async_close(
                     stream.get(),
                     as::append(
@@ -70,6 +82,10 @@ struct stream_impl<NextLayer>::stream_close_op {
                 );
             }
             else {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                    << "NOT has_next_layer (lowest layer (TCP)). call async_close. "
+                    << "state: close -> complete";
                 state = complete;
                 layer_customize<Layer>::async_close(
                     stream.get(),
@@ -78,7 +94,13 @@ struct stream_impl<NextLayer>::stream_close_op {
             }
         }
         else {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                << "NOT has_async_close";
             if constexpr (has_next_layer<Layer>::value) {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                    << "skip this layer";
                 as::dispatch(
                     a_strm.get_executor(),
                     as::append(
@@ -89,6 +111,9 @@ struct stream_impl<NextLayer>::stream_close_op {
                 );
             }
             else {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << ASYNC_MQTT_ADD_VALUE(address, strm.get())
+                    << "NOT has_next_layer (lowest layer (TCP)) state: close -> complete";
                 state = complete;
                 as::dispatch(
                     a_strm.get_executor(),
