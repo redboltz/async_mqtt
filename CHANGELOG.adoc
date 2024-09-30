@@ -3,6 +3,7 @@
 = History
 
 == 9.0.1
+* Fixed TLS plug out timeout logic. #355
 * Refined client_cli tool. #354
 * Refined bench tool. #352
 * Refined docker container. #350
