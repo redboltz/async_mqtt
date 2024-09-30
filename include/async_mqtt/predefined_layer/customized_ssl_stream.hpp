@@ -54,11 +54,16 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
 
     struct async_close_impl {
         as::ssl::stream<NextLayer>& stream;
+        enum {
+            shutdown,
+            complete
+        } state = shutdown;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
+            BOOST_ASSERT(state == shutdown);
             auto tim = std::make_shared<as::steady_timer>(
                 stream.get_executor(),
                 shutdown_timeout
@@ -92,9 +97,14 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
                 if (auto sp = wp.lock()) {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << "TLS async_shutdown timeout";
+                    BOOST_ASSERT(state == shutdown);
+                    state = complete;
                     self.complete(ec);
+                    return;
                 }
             }
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << "TLS async_shutdown timeout doesn't processed. ec:" << ec.message();
         }
 
         template <typename Self>
@@ -102,9 +112,16 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
             Self& self,
             error_code const& ec
         ) {
-            ASYNC_MQTT_LOG("mqtt_impl", info)
-                << "TLS async_shutdown ec:" << ec.message();
-            self.complete(ec);
+            if (state == complete) {
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << "TLS async_shutdown already timeout";
+            }
+            else {
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << "TLS async_shutdown ec:" << ec.message();
+                state = complete;
+                self.complete(ec);
+            }
         }
     };
 };
