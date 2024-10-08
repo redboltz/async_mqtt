@@ -68,43 +68,30 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
                 stream.get_executor(),
                 shutdown_timeout
             );
-            auto self_sp = std::make_shared<Self>(force_move(self));
+            auto sig = std::make_shared<as::cancellation_signal>();
             tim->async_wait(
-                as::consign(
-                    as::append(
-                        std::ref(*self_sp),
-                        std::weak_ptr<as::steady_timer>(tim)
-                    ),
-                    self_sp
-                )
-            );
-            stream.async_shutdown(
-                as::consign(
-                    std::ref(*self_sp),
-                    self_sp,
-                    tim
-                )
-            );
-        }
-
-        template <typename Self>
-        void operator()(
-            Self& self,
-            error_code const& ec,
-            std::weak_ptr<as::steady_timer> wp
-        ) {
-            if (!ec) {
-                if (auto sp = wp.lock()) {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "TLS async_shutdown timeout";
-                    BOOST_ASSERT(state == shutdown);
-                    state = complete;
-                    self.complete(ec);
-                    return;
+                [sig, wp = std::weak_ptr<as::steady_timer>(tim)]
+                (error_code const& ec) {
+                    if (!ec) {
+                        if (auto sp = wp.lock()) {
+                            ASYNC_MQTT_LOG("mqtt_impl", info)
+                                << "TLS async_shutdown timeout";
+                            sig->emit(as::cancellation_type::terminal);
+                        }
+                    }
                 }
-            }
-            ASYNC_MQTT_LOG("mqtt_impl", info)
-                << "TLS async_shutdown timeout doesn't processed. ec:" << ec.message();
+            );
+            auto& a_stream{stream};
+            a_stream.async_shutdown(
+                as::bind_cancellation_slot(
+                    sig->slot(),
+                    as::consign(
+                        force_move(self),
+                        tim,
+                        sig
+                    )
+                )
+            );
         }
 
         template <typename Self>
@@ -112,16 +99,10 @@ struct layer_customize<as::ssl::stream<NextLayer>> {
             Self& self,
             error_code const& ec
         ) {
-            if (state == complete) {
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << "TLS async_shutdown already timeout";
-            }
-            else {
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << "TLS async_shutdown ec:" << ec.message();
-                state = complete;
-                self.complete(ec);
-            }
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << "TLS async_shutdown ec:" << ec.message();
+            state = complete;
+            self.complete(ec);
         }
     };
 };

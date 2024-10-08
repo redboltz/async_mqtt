@@ -47,6 +47,7 @@ struct stream_impl<NextLayer>::stream_read_packet_op {
             a_strm.read_queue_.post(
                 force_move(self)
             );
+            a_strm.read_queue_.try_execute();
         } break;
         case work: {
             a_strm.read_queue_.start_work();

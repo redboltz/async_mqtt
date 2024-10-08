@@ -3,6 +3,7 @@
 = History
 
 == 9.0.2
+* Fixed TLS timeout logic. #357
 * Fixed broker auth file for docker. #356
 
 == 9.0.1
