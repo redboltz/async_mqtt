@@ -51,7 +51,7 @@ close_op {
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                     << "already close requested";
-              a_ep.close_queue_.post(
+                a_ep.close_queue_.post(
                     force_move(self)
                 );
             } break;

@@ -51,6 +51,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
             a_strm.write_queue_.post(
                 force_move(self)
             );
+            a_strm.write_queue_.try_execute();
         } break;
         case write: {
             a_strm.write_queue_.start_work();

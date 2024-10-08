@@ -40,6 +40,9 @@ public:
             queue_,
             std::forward<CompletionToken>(token)
         );
+    }
+
+    void try_execute() {
         if (immediate_executable()) {
             queue_.restart();
             queue_.poll_one();
