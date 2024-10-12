@@ -23,6 +23,7 @@ ifndef::env-github[:api-base: link:api]
 |ASYNC_MQTT_BUILD_SYSTEM_TESTS|Build system tests. The system tests requires broker.
 |ASYNC_MQTT_BUILD_TOOLS|Build tools (broker, bench, etc)
 |ASYNC_MQTT_BUILD_EXAMPLES|Build examples
+|ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE|Build examples for separate library build. It requires much memory.
 |ASYNC_MQTT_BUILD_LIB|Build separate compiled library
 |===
 
