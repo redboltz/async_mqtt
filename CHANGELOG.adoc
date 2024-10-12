@@ -3,6 +3,7 @@
 = History
 
 == 9.0.2
+* Added ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE option to enable library separate build example. #359
 * Fixed TLS timeout logic. #357
 * Fixed broker auth file for docker. #356
 

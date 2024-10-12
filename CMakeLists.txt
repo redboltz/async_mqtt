@@ -18,6 +18,7 @@ option(ASYNC_MQTT_BUILD_UNIT_TESTS "Enable building unit tests" OFF)
 option(ASYNC_MQTT_BUILD_SYSTEM_TESTS "Enable building system tests" OFF)
 option(ASYNC_MQTT_BUILD_TOOLS "Enable building tools (broker, bench, etc.." OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" OFF)
+option(ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE "Enable building separate library build example applications(It requires much memory)" OFF)
 option(ASYNC_MQTT_BUILD_LIB "Enable building separate compilation library" OFF)
 
 # Not implemented yet
