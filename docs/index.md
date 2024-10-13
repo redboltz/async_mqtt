@@ -1,13 +1,16 @@
-# Since 5.0.0 all docments is here
-
-## latest
-- [main](doc/latest/index.html)
-- [5.0.0](doc/5.0.0/index.html)
-
-
-# Older versions' [async_mqtt](https://github.com/redboltz/async_mqtt) API reference
+# Older versions' [async_mqtt](https://github.com/redboltz/async_mqtt) documents
 
 ## releases
+- [9.0.1](doc/9.0.1/html/index.html)
+- [9.0.0](doc/9.0.0/html/index.html)
+- [8.0.1](doc/8.0.1/html/index.html)
+- [8.0.0](doc/8.0.0/html/index.html)
+- [7.0.0](doc/7.0.0/html/index.html)
+- [6.0.0](doc/6.0.0/html/index.html)
+- [5.1.2](doc/5.1.2/html/index.html)
+- [5.1.1](doc/5.1.1/html/index.html)
+- [5.1.0](doc/5.1.0/html/index.html)
+- [5.0.0](doc/5.0.0/html/index.html)
 - [4.1.0](doc/4.1.0/html/index.html)
 - [4.0.0](doc/4.0.0/html/index.html)
 - [3.0.0](doc/3.0.0/html/index.html)
