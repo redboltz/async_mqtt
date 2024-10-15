@@ -21,14 +21,15 @@ template <typename Executor>
 struct app {
     app(Executor exe,
         std::string_view host,
-        std::string_view port
+        std::string_view port,
+        as::ssl::context ctx
     ):host_{std::move(host)},
       port_{std::move(port)},
+      ctx_{std::move(ctx)},
       amep_{
           am::protocol_version::v3_1_1, exe, ctx_
       }
     {
-        ctx_.set_verify_mode(as::ssl::verify_none);
         impl_();
     }
 
@@ -208,7 +209,7 @@ private:
 
     std::string_view host_;
     std::string_view port_;
-    as::ssl::context ctx_{as::ssl::context::tlsv12};
+    as::ssl::context ctx_;
     am::endpoint<am::role::client, am::protocol::mqtts> amep_;
     std::size_t count_ = 0;
     impl impl_{*this};
@@ -233,6 +234,7 @@ int main(int argc, char* argv[]) {
     }
     am::setup_log(am::severity_level::trace);
     as::io_context ioc;
-    app a{ioc.get_executor(), argv[1], argv[2]};
+    as::ssl::context ctx{as::ssl::context::tlsv12};
+    app a{ioc.get_executor(), argv[1], argv[2], am::force_move(ctx)};
     ioc.run();
 }

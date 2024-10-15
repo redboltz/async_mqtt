@@ -2,6 +2,9 @@
 
 = History
 
+== 9.0.3
+* Fixed TLS example. #361
+
 == 9.0.2
 * Added ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE option to enable library separate build example. #359
 * Fixed TLS timeout logic. #357
