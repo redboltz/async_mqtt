@@ -49,7 +49,7 @@ var NAVTREEINDEX =
 "classasync__mqtt_1_1property_1_1maximum__packet__size.html#a34262695c6ff573cdf6fcc7037cb8180",
 "classasync__mqtt_1_1v3__1__1_1_1pingreq__packet.html#a83cf6dc8b65e35c2414abbbe496f38db",
 "functions_e.html",
-"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e",
+"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea4a82a29d3501e81008a42fced4b5cc73",
 "group__qos.html#ga7e7341552a092506c39d7c2554b10423",
 "structasync__mqtt_1_1pub_1_1opts.html#ad9994dd66c0562a4a568da58065690e1"
 ];

@@ -55,9 +55,8 @@ var NAVTREEINDEX3 =
 "group__auth__reason__code.html#gga90f5a0229709aaa4257d01db383f9763ace8cff1135956ea6a10c328a829277d2":[0,2,1,1,0,0,2],
 "group__auth__v5.html":[0,2,1,1],
 "group__buffer.html":[0,2,2,0],
-"group__buffer.html#ga3fd86cf55e3842b607702b72c0617159":[0,2,2,0,2],
-"group__buffer.html#ga4c78376365b748051fe7385678fb6f68":[0,2,2,0,4],
-"group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f":[0,2,2,0,3],
+"group__buffer.html#ga4c78376365b748051fe7385678fb6f68":[0,2,2,0,3],
+"group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f":[0,2,2,0,2],
 "group__client.html":[0,0,0],
 "group__connack__v3__1__1.html":[0,2,0,0],
 "group__connack__v5.html":[0,2,1,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX3 =
 "group__mqtt__error.html#gac43e72f2b8f8ed37fa104e0b7816a608":[0,1,0,0,3],
 "group__mqtt__error.html#gacbe53a5d6bdf7b8480cc8ada2a246db0":[0,1,0,0,4],
 "group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea0639b981c4678706949ab313c9df2d1f":[0,1,0,0,0,5],
-"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584":[0,1,0,0,0,0]
+"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea13bfb719ca3c626b0539a1646d46e584":[0,1,0,0,0,0],
+"group__mqtt__error.html#ggab680615570fddcfb9aab72ea9e9d2acea21c76d7f1a3498b34e970521bb8ace9e":[0,1,0,0,0,1]
 };
