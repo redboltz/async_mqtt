@@ -130,64 +130,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga4c78376365b748051fe7385678fb6f68" id="r_ga4c78376365b748051fe7385678fb6f68"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; char[]&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4c78376365b748051fe7385678fb6f68">async_mqtt::make_shared_ptr_char_array</a> (std::size_t size)</td></tr>
 <tr class="memdesc:ga4c78376365b748051fe7385678fb6f68"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared_ptr&lt;char[]&gt; creating function. You can choose the target type.  <br /></td></tr>
 <tr class="separator:ga4c78376365b748051fe7385678fb6f68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3fd86cf55e3842b607702b72c0617159" id="r_ga3fd86cf55e3842b607702b72c0617159"><td class="memTemplParams" colspan="2">template&lt;typename Alloc &gt; </td></tr>
-<tr class="memitem:ga3fd86cf55e3842b607702b72c0617159"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; char[]&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ga3fd86cf55e3842b607702b72c0617159">async_mqtt::allocate_shared_ptr_char_array</a> (Alloc &amp;&amp;alloc, std::size_t size)</td></tr>
-<tr class="memdesc:ga3fd86cf55e3842b607702b72c0617159"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared_ptr&lt;char[]&gt; creating function with allocator. You can choose the target type.  <br /></td></tr>
-<tr class="separator:ga3fd86cf55e3842b607702b72c0617159"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga3fd86cf55e3842b607702b72c0617159" name="ga3fd86cf55e3842b607702b72c0617159"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3fd86cf55e3842b607702b72c0617159">&#9670;&#160;</a></span>allocate_shared_ptr_char_array()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Alloc &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; char[]&gt; async_mqtt::allocate_shared_ptr_char_array </td>
-          <td>(</td>
-          <td class="paramtype">Alloc &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>alloc</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>shared_ptr&lt;char[]&gt; creating function with allocator. You can choose the target type. </p>
-<ul>
-<li>if your compiler setting is C++20 or later, then <code>std::make_shared&lt;char[]&gt;(size)</code> is used.<ul>
-<li>It can allocate an array of characters and the control block in a single allocation.</li>
-</ul>
-</li>
-<li>otherwise <code>std::shared_ptr&lt;char[]&gt;(new char[size])</code> is used.<ul>
-<li>It requires two times allocations. <dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">alloc</td><td>allocator </td></tr>
-    <tr><td class="paramname">size</td><td>of char array </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>shared_ptr of array </dd></dl>
-</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
 <a id="gafccb94aa6be5a8e224e1b900e9522b4f" name="gafccb94aa6be5a8e224e1b900e9522b4f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gafccb94aa6be5a8e224e1b900e9522b4f">&#9670;&#160;</a></span>buffer()</h2>
 

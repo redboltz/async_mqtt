@@ -90,7 +90,6 @@ var group__buffer =
     [ "std::hash< async_mqtt::buffer >", "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html", [
       [ "operator()", "classstd_1_1hash_3_01async__mqtt_1_1buffer_01_4.html#a9c62100a96131fc22c1a52561d3d52cc", null ]
     ] ],
-    [ "async_mqtt::allocate_shared_ptr_char_array", "group__buffer.html#ga3fd86cf55e3842b607702b72c0617159", null ],
     [ "boost::asio::buffer", "group__buffer.html#gafccb94aa6be5a8e224e1b900e9522b4f", null ],
     [ "async_mqtt::make_shared_ptr_char_array", "group__buffer.html#ga4c78376365b748051fe7385678fb6f68", null ]
 ];

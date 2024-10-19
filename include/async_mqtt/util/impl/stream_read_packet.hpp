@@ -146,16 +146,7 @@ struct stream_impl<NextLayer>::stream_read_packet_op {
             else {
                 // remaining_length end
                 rl += (a_strm.header_remaining_length_buf_[received - 1] & 0b01111111) * mul;
-
-                BOOST_ASIO_REBIND_ALLOC(
-                    typename as::associated_allocator<Self>::type,
-                    char
-                )
-                alloc{
-                    as::get_associated_allocator(self)
-                };
-                spca = allocate_shared_ptr_char_array(
-                    alloc,
+                spca = make_shared_ptr_char_array(
                     received + rl
                 );
                 std::copy(
@@ -284,7 +275,7 @@ struct stream_impl<NextLayer>::stream_read_some_op {
         }
         else {
             a_strm.read_buf_.commit(bytes_transferred);
-            a_strm.parse_packet(self);
+            a_strm.parse_packet();
             as::dispatch(
                 a_strm.get_executor(),
                 force_move(self)
@@ -320,10 +311,9 @@ stream_impl<NextLayer>::async_read_some(
 
 
 template <typename NextLayer>
-template <typename Self>
 inline
 void
-stream_impl<NextLayer>::parse_packet(Self& self) {
+stream_impl<NextLayer>::parse_packet() {
     while (read_buf_.size() != 0) {
         switch (read_state_) {
         case read_state::fixed_header: {
@@ -359,15 +349,8 @@ stream_impl<NextLayer>::parse_packet(Self& self) {
         } break;
         case read_state::payload: {
             if (read_buf_.size() >= remaining_length_) {
-                BOOST_ASIO_REBIND_ALLOC(
-                    typename as::associated_allocator<Self>::type,
-                    char
-                )
-                alloc{
-                    as::get_associated_allocator(self)
-                };
                 std::size_t total_size = header_remaining_length_buf_.size() + remaining_length_;
-                auto spca = allocate_shared_ptr_char_array(alloc, total_size);
+                auto spca = make_shared_ptr_char_array(total_size);
                 std::copy_n(
                     header_remaining_length_buf_.data(),
                     header_remaining_length_buf_.size(),

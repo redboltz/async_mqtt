@@ -123,24 +123,9 @@ $(function(){initNavTree('shared__ptr__array_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
 </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Alloc&gt;</div>
-<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="group__buffer.html#ga3fd86cf55e3842b607702b72c0617159">   46</a></span><span class="keyword">inline</span> std::shared_ptr&lt;char []&gt; <a class="code hl_function" href="group__buffer.html#ga3fd86cf55e3842b607702b72c0617159">allocate_shared_ptr_char_array</a>(Alloc&amp;&amp; alloc, std::size_t size) {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#if __cpp_lib_shared_ptr_arrays &gt;= 201707L</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">return</span> std::allocate_shared&lt;char[]&gt;(alloc, size);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#else  </span><span class="comment">// __cpp_lib_shared_ptr_arrays &gt;= 201707L</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;char[]&gt;(</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        alloc.allocate(size),</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        [alloc, size](<span class="keywordtype">char</span>* ptr) <span class="keyword">mutable</span> { alloc.deallocate(ptr, size); }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    );</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif </span><span class="comment">// __cpp_lib_shared_ptr_arrays &gt;= 201707Lhai</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>}</div>
-</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>} <span class="comment">// namespace async_mqtt</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_SHARED_PTR_ARRAY_HPP</span></div>
-<div class="ttc" id="agroup__buffer_html_ga3fd86cf55e3842b607702b72c0617159"><div class="ttname"><a href="group__buffer.html#ga3fd86cf55e3842b607702b72c0617159">async_mqtt::allocate_shared_ptr_char_array</a></div><div class="ttdeci">std::shared_ptr&lt; char[]&gt; allocate_shared_ptr_char_array(Alloc &amp;&amp;alloc, std::size_t size)</div><div class="ttdoc">shared_ptr&lt;char[]&gt; creating function with allocator. You can choose the target type.</div><div class="ttdef"><b>Definition</b> shared_ptr_array.hpp:46</div></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <span class="comment">// namespace async_mqtt</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif </span><span class="comment">// ASYNC_MQTT_UTIL_SHARED_PTR_ARRAY_HPP</span></div>
 <div class="ttc" id="agroup__buffer_html_ga4c78376365b748051fe7385678fb6f68"><div class="ttname"><a href="group__buffer.html#ga4c78376365b748051fe7385678fb6f68">async_mqtt::make_shared_ptr_char_array</a></div><div class="ttdeci">std::shared_ptr&lt; char[]&gt; make_shared_ptr_char_array(std::size_t size)</div><div class="ttdoc">shared_ptr&lt;char[]&gt; creating function. You can choose the target type.</div><div class="ttdef"><b>Definition</b> shared_ptr_array.hpp:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

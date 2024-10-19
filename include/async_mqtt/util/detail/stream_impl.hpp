@@ -117,8 +117,7 @@ private:
 
     void init_read();
 
-    template <typename Self>
-    void parse_packet(Self& self);
+    void parse_packet();
 
     // async operations
 
