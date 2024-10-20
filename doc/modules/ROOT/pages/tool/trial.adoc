@@ -1,0 +1,17 @@
+= Free trial broker on cloud
+
+You can connect to the broker `async-mqtt.redboltz.net` for testing.
+
+|===
+|port|protocol|client_cli.sh access
+
+|1883|MQTT on TCP|./client_cli.sh --host async-mqtt.redboltz.net --port 1883 --protocol mqtt
+|8883|MQTT on TLS|./client_cli.sh --host async-mqtt.redboltz.net --port 8883 --protocol mqtts
+|10080|MQTT on Websocket|./client_cli.sh --host async-mqtt.redboltz.net --port 10080 --protocol ws
+|10443|MQTT on Websocket(TLS)|./client_cli.sh --host async-mqtt.redboltz.net --port 10443 --protocol wss
+|===
+
+== Important notice
+
+You are free to use it for any application, but please do not abuse or rely upon it for anything of importance. This server runs on an very low spec vps. It is not intended to demonstrate any performance characteristics.
+Please don't publish anything sensitive, anybody could be listening.

@@ -1,0 +1,25 @@
+# Copyright Takatoshi Kondo 2024
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+name: async_mqtt
+version: ~
+title: async_mqtt
+start_page: index.adoc
+asciidoc:
+  attributes:
+    source-language: asciidoc@
+    table-caption: false
+nav:
+  - modules/ROOT/nav.adoc
+ext:
+  cpp-reference:
+    config: doc/mrdocs.yml
+  cpp-tagfiles:
+    files:
+      - file: ./doc/tagfiles/async_mqtt-doxygen.tag.xml
+        base_url: 'xref:reference:'
+    using-namespaces:
+      - async_mqtt

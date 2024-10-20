@@ -41,15 +41,15 @@ namespace as = boost::asio;
  * automatically sent when PUBREL v5::basic_pubrel_packet is received.
  *
  * When the packet is received, the packet_id is automatically released and become reusable.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901151
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901151"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubcomp.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubcomp.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -60,9 +60,9 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
      * @param reason_code PubcompReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154"></a>
      * @param props       properties.
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901155
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901155"></a>
      */
     explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -82,7 +82,7 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREL packet
      * @param reason_code PubcompReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901154"></a>
      */
     explicit basic_pubcomp_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -200,8 +200,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubcomp.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubcomp.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -215,8 +215,8 @@ bool operator<(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_pac
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubcomp.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubcomp.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -228,8 +228,8 @@ bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_pa
  * @brief Type alias of basic_pubcomp_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubcomp.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubcomp.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using pubcomp_packet = basic_pubcomp_packet<2>;

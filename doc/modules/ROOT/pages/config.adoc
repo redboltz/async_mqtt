@@ -1,0 +1,53 @@
+= Config
+
+== cmake
+
+|===
+|Flag|Effects
+
+|ASYNC_MQTT_USE_TLS|Enables TLS for tools (broker, bench, client_cli, ...)
+|ASYNC_MQTT_USE_WS|Enables Websocket for tools (broker, bench, client_cli, ...) (compilation time becomes longer). See <<faster-compile, make faster compilation time>>.
+|ASYNC_MQTT_USE_LOG|Enable logging via Boost.Log
+|ASYNC_MQTT_PRINT_PAYLOAD|Output payload when publish packet is output
+|ASYNC_MQTT_BUILD_UNIT_TESTS|Build unit tests
+|ASYNC_MQTT_BUILD_SYSTEM_TESTS|Build system tests. The system tests requires broker.
+|ASYNC_MQTT_BUILD_TOOLS|Build tools (broker, bench, etc)
+|ASYNC_MQTT_BUILD_EXAMPLES|Build examples
+|ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE|Build examples for separate library build. It requires much memory.
+|ASYNC_MQTT_BUILD_LIB|Build separate compiled library
+|===
+
+If you want to use TLS, Websocket, and Websocket on TLS, you don't need to define ASYNC_MQTT_USE_TLS and/or ASYNC_MQTT_USE_WS. Simply include the following files that are not included in `async_mqtt/all.hpp`.
+
+For TLS:
+```cpp
+#include <async_mqtt/predefined_layer/mqtts.hpp>
+```
+
+For Websocket
+```cpp
+#include <async_mqtt/predefined_layer/ws.hpp>
+```
+
+For Websocket on TLS
+```cpp
+#include <async_mqtt/predefined_layer/wss.hpp>
+```
+
+
+== C++ preprocessor macro
+
+|===
+|Flag|Effects
+
+|ASYNC_MQTT_USE_TLS|Enables TLS
+|ASYNC_MQTT_USE_WS|Enables Websockets (compilation time becomes longer), See <<faster-compile, make faster compilation time>>.
+|ASYNC_MQTT_USE_LOG|Enable logging via Boost.Log
+|ASYNC_MQTT_PRINT_PAYLOAD|Output payload when publish packet is output
+|ASYNC_MQTT_SEPARATE_COMPILATION|Enables xref:separate.adoc[Separate Compilation Mode]
+|===
+
+
+== Make faster compilation time [[faster-compile]]
+
+xref:separate.adoc[Separate Compilation Mode] for async_mqtt and https://www.boost.org/libs/beast/doc/html/beast/config/configuration_preprocessor_defin.html[Boost.Beast] would solve the long compilation time.

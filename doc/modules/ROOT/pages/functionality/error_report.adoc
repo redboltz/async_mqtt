@@ -1,0 +1,34 @@
+= Error Reporting
+
+== Send
+`async_*` functions report errors as follows:
+
+|===
+| Phase                    | Error Type
+
+| Packet Construction *1    | `cpp:async_mqtt::connect_reason_code[connect_reason_code]` if the packet is CONNECT and the error is specific to the connection. Otherwise, `cpp:async_mqtt::disconnect_reason_code[disconnect_reason_code]`.
+                             e.g., Invalid argument passed.
+| Packet Send Validation    | `cpp:async_mqtt::disconnect_reason_code[disconnect_reason_code]`.
+                             e.g., Sending packet at an invalid time.
+| Sending                   | Error code from the underlying layer (`boost::system::error_code`).
+                             e.g., Bad file descriptor.
+|===
+
+*1 `cpp:async_mqtt::client::async_start[client::async_start]` ,`cpp:async_mqtt::client::async_subscribe[client::async_subscribe]` ,`cpp:async_mqtt::client::async_unsubscribe[client::async_unsubscribe]` ,`cpp:async_mqtt::client::async_disconnect[client::async_disconnect]` , and `cpp:async_mqtt::client::async_auth[client::async_auth]` support internal packet construction.
+
+== Receive
+
+`async_*` functions report errors as follows:
+
+|===
+| Phase                      | Error Type
+
+| Receiving                  | Error code from the underlying layer (`boost::system::error_code`).
+                               e.g., End of file.
+| Packet Construction *2      | `cpp:async_mqtt::connect_reason_code[connect_reason_code]` if the packet is CONNECT and the error is specific to the connection. Otherwise, `cpp:async_mqtt::disconnect_reason_code[disconnect_reason_code]`.
+                               e.g., Malformed packet.
+| Received Packet Validation  | `cpp:async_mqtt::disconnect_reason_code[disconnect_reason_code]`.
+                               e.g., Receiving packet at an invalid time.
+|===
+
+*2 When `cpp:async_mqtt::endpoint[endpoint]` is used as a broker, a CONNECT packet will be received.

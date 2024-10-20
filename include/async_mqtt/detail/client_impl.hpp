@@ -69,12 +69,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void()
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -82,12 +77,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_variant)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_recv(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -109,12 +99,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_id_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_acquire_unique_packet_id(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -122,12 +107,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_id_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -135,12 +115,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_register_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -149,12 +124,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void()
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_release_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -185,12 +155,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<connack_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_start_impl(
         this_type_sp impl,
         error_code ec,
@@ -202,12 +167,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_subscribe_impl(
         this_type_sp impl,
         error_code ec,
@@ -219,12 +179,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_unsubscribe_impl(
         this_type_sp impl,
         error_code ec,
@@ -236,12 +191,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, pubres_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_publish_impl(
         this_type_sp impl,
         error_code ec,
@@ -253,12 +203,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_disconnect_impl(
         this_type_sp impl,
         error_code ec,
@@ -270,12 +215,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_auth_impl(
         this_type_sp impl,
         error_code ec,

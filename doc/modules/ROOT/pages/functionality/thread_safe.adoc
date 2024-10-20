@@ -1,0 +1,33 @@
+= Thread Safety
+
+== Single Threaded
+
+You can call both asynchronous (async) and synchronous (sync) APIs without any special precautions.
+
+== Multi-threaded
+
+All distinct objects are not thread-safe. To access shared `client` and/or `endpoint` objects, construct them with a strand-wrapped executor for the underlying layer's argument. The `async_*` member functions of `client` and `endpoint` will dispatch to the executor. As a result of the strand's effect, your asynchronous processes will be serialized.
+
+The following synchronous member functions are accessed directly. Therefore, you need to introduce locks or explicitly dispatch to the executor.
+
+
+|===
+|endpoint member function | effects
+
+|cpp:async_mqtt::basic_endpoint::acquire_unique_packet_id[acquire_unique_packet_id]|Acquire the new unique packet_id
+|cpp:async_mqtt::basic_endpoint::register_packet_id[register_packet_id]|Register the packet_id
+|cpp:async_mqtt::basic_endpoint::release_packet_id[release_packet_id]|Release the packet_id
+|cpp:async_mqtt::basic_endpoint::get_qos2_publish_handled_pids[get_qos2_publish_handled_pids]|Get already PUBLISH recv CompletionToken is invoked packet_ids
+|cpp:async_mqtt::basic_endpoint::restore_qos2_publish_handled_pids[restore_qos2_publish_handled_pids]|Restore already PUBLISH recv CompletionToken is invoked packet_ids
+|cpp:async_mqtt::basic_endpoint::restore_packets[restore_packets]|Restore pacets as stored packets
+|cpp:async_mqtt::basic_endpoint::get_stored_packets[get_stored_packets]|Get stored packets
+|cpp:async_mqtt::basic_endpoint::get_protocol_version[get_protocol_version]|Get MQTT protocol version
+|===
+
+|===
+|client member function | effects
+
+|cpp:async_mqtt::client::acquire_unique_packet_id[acquire_unique_packet_id]|Acquire the new unique packet_id
+|cpp:async_mqtt::client::register_packet_id[register_packet_id]|Register the packet_id
+|cpp:async_mqtt::client::release_packet_id[release_packet_id]|Release the packet_id
+|===

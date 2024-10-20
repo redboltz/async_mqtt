@@ -32,8 +32,8 @@ std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
  * @return id
  *
  * #### Requirements
- * - Header: async_mqtt/packet/packet_helper.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/packet_helper.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <typename Packet>

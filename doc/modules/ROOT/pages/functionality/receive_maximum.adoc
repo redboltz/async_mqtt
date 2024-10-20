@@ -1,0 +1,36 @@
+= Receive Maximum
+
+Receive Maximum is a way to flow control PUBLISH (QoS1, QoS2) packets. They require storage for resending. So the node should prepare the memory packet size * Receive Maximum. The maximum value of the packet size can be defined using xref:functionality/maximum_packet_size.adoc[Maximum Packet Size]. If the node sends over the Receive Maximum packets, then it is protocol error. The counterpart disconnects the connection with DISCONNECT packet with Reason Code 0x93 (Receive Maximum exceeded).
+
+
+== When to Increase/Decrease the Receive Count?
+
+* When the node sends/receives a PUBLISH (QoS1 or QoS2) packet, the receive count is increased.
+* When the node sends/receives a PUBACK packet corresponding to the PUBLISH QoS1 packet, the receive count is decreased.
+* When the node sends/receives a PUBCOMP packet corresponding to the PUBLISH QoS2 packet, the receive count is decreased.
+* When the node sends/receives a PUBREC packet corresponding to the PUBLISH QoS2 packet, and if the PUBREC Reason Code is an error, then the receive count is decreased.
+
+The timing for decreasing the receive count is the same as when the Packet Identifier becomes reusable.
+
+
+NOTE: Packet Identifier and Receive Maximum are not directly related. Packet Identifier is not only used for PUBLISH (QoS1 or QoS2) packets but also for SUBSCRIBE/UNSUBSCRIBE packets.
+
+== Notifying Receive Maximum
+
+There are two independent Receive Maximum limits.
+
+image::receive_maximum.svg[receive_maximum]
+
+=== broker to client Receive Maximum
+
+The client can set the `Receive Maximum` property, with a value greater than 0, to the CONNECT packet. This means the client can concurrently receive PUBLISH (QoS1 or QoS2) packets until the receive count reaches the Receive Maximum.
+
+=== client to client Receive Maximum
+
+The broker can set the `Receive Maximum` property, with a value greater than 0, to the CONNACK packet. This means the broker can concurrently receive PUBLISH (QoS1 or QoS2) packets until the receive count reaches the Receive Maximum.
+
+== async_mqtt implementation
+
+`async_mqtt` automatically respects the Receive Maximum, so users don't need to worry about it. If a user calls `async_send()` with PUBLISH (QoS1 or QoS2) packets more than the received Receive Maximum times before the publish sequence finishes, async_mqtt internally queues the PUBLISH packets. When the receive count decreases, the queued PUBLISH packets are sent. The order of sending the PUBLISH packets is the same as the order of the user's `async_send()` function calls.
+
+There is no explicit limitation on the number of queued packets. However, in order to create PUBLISH (QoS1 or QoS2) packets, the user needs to acquire a Packet Identifier. This is limited to a maximum of 65535, so it also limits the number of queued packets.

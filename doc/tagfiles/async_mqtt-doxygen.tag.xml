@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+    <compound kind="class">
+        <name>async_mqtt::client</name>
+        <filename>async_mqtt/client.adoc</filename>
+        <member kind="function">
+            <name>async_start</name>
+            <anchorfile>async_mqtt/client/async_start.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_subscribe</name>
+            <anchorfile>async_mqtt/client/async_subscribe.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_unsubscribe</name>
+            <anchorfile>async_mqtt/client/async_unsubscribe.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_publish</name>
+            <anchorfile>async_mqtt/client/async_publish.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_auth</name>
+            <anchorfile>async_mqtt/client/async_auth.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_recv</name>
+            <anchorfile>async_mqtt/client/async_recv.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_disconnect</name>
+            <anchorfile>async_mqtt/client/async_disconnect.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_close</name>
+            <anchorfile>async_mqtt/client/async_close.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_acquire_unique_packet_id</name>
+            <anchorfile>async_mqtt/client/async_acquire_unique_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_acquire_unique_packet_id_wait_until</name>
+            <anchorfile>async_mqtt/client/async_acquire_unique_packet_id_wait_until.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_register_packet_id</name>
+            <anchorfile>async_mqtt/client/async_register_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_release_packet_id</name>
+            <anchorfile>async_mqtt/client/async_release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>acquire_unique_packet_id</name>
+            <anchorfile>async_mqtt/client/acquire_unique_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_pingresp_recv_timeout</name>
+            <anchorfile>async_mqtt/client/set_pingresp_recv_timeout.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>acquire_unique_packet_id</name>
+            <anchorfile>async_mqtt/client/acquire_unique_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>register_packet_id</name>
+            <anchorfile>async_mqtt/client/register_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>release_packet_id</name>
+            <anchorfile>async_mqtt/client/release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_map_topic_alias_send</name>
+            <anchorfile>async_mqtt/client/set_auto_map_topic_alias_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_replace_topic_alias_send</name>
+            <anchorfile>async_mqtt/client/set_auto_replace_topic_alias_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_bulk_write</name>
+            <anchorfile>async_mqtt/client/set_bulk_write.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::client::pubres_type</name>
+        <filename>async_mqtt/client/pubres_type.adoc</filename>
+    </compound>
+
+    <compound kind="class">
+        <name>async_mqtt::endpoint</name>
+        <filename>async_mqtt/endpoint.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::basic_endpoint</name>
+        <filename>async_mqtt/basic_endpoint.adoc</filename>
+        <member kind="function">
+            <name>async_send</name>
+            <anchorfile>async_mqtt/basic_endpoint/async_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_acquire_unique_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/async_acquire_unique_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_acquire_unique_packet_id_wait_until</name>
+            <anchorfile>async_mqtt/basic_endpoint/async_acquire_unique_packet_id_wait_until.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_register_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/async_register_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>async_release_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/async_release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_pingresp_recv_timeout</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_pingresp_recv_timeout.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>acquire_unique_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/acquire_unique_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>register_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/register_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>release_packet_id</name>
+            <anchorfile>async_mqtt/basic_endpoint/release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>get_qos2_publish_handled_pids</name>
+            <anchorfile>async_mqtt/basic_endpoint/get_qos2_publish_handled_pids.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>restore_qos2_publish_handled_pids</name>
+            <anchorfile>async_mqtt/basic_endpoint/restore_qos2_publish_handled_pids.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>restore_packets</name>
+            <anchorfile>async_mqtt/basic_endpoint/restore_packets.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>get_stored_packets</name>
+            <anchorfile>async_mqtt/basic_endpoint/get_stored_packets.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>get_protocol_version</name>
+            <anchorfile>async_mqtt/basic_endpoint/get_protocol_version.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_pub_response</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_auto_pub_response.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_ping_response</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_auto_ping_response.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_map_topic_alias_send</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_auto_map_topic_alias_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_auto_replace_topic_alias_send</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_auto_replace_topic_alias_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_bulk_write</name>
+            <anchorfile>async_mqtt/basic_endpoint/set_bulk_write.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+
+    <compound kind="class">
+        <name>async_mqtt::packet_variant</name>
+        <filename>async_mqtt/packet_variant.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::basic_packet_variant</name>
+        <filename>async_mqtt/basic_packet_variant.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::v3_1_1::connect_packet</name>
+        <filename>async_mqtt/v3_1_1/connect_packet.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::v5::connect_packet</name>
+        <filename>async_mqtt/v5/connect_packet.adoc</filename>
+    </compound>
+
+    <compound kind="class">
+        <name>async_mqtt::property::topic_alias_maximum</name>
+        <filename>async_mqtt/property/topic_alias_maximum.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::property::topic_alias</name>
+        <filename>async_mqtt/property/topic_alias.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::property::receive_maximum</name>
+        <filename>async_mqtt/property/receive_maximum.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::property::maximum_packet_size</name>
+        <filename>async_mqtt/property/maximum_packet_size.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::property::session_expiry_interval</name>
+        <filename>async_mqtt/property/session_expiry_interval.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::property::server_keep_alive</name>
+        <filename>async_mqtt/property/server_keep_alive.adoc</filename>
+    </compound>
+
+    <compound kind="function">
+        <name>async_mqtt::setup_log</name>
+        <filename>async_mqtt/setup_log.adoc</filename>
+    </compound>
+
+    <compound kind="class">
+        <name>async_mqtt::connect_reason_code</name>
+        <filename>async_mqtt/connect_reason_code.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::disconnect_reason_code</name>
+        <filename>async_mqtt/disconnect_reason_code.adoc</filename>
+    </compound>
+</tagfile>

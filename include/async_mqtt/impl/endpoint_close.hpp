@@ -81,10 +81,7 @@ close_op {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_close(
     this_type_sp impl,
     CompletionToken&& token
@@ -111,10 +108,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_close(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_close(CompletionToken&& token) {
     ASYNC_MQTT_LOG("mqtt_api", info)
         << ASYNC_MQTT_ADD_VALUE(address, this)

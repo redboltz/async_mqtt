@@ -46,8 +46,8 @@ struct channel : std::string {
  * warning is recommended for actual operation because there is no output except something important.
  *
  * #### Requirements
- * - Header: async_mqtt/util/log.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/util/log.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class severity_level {

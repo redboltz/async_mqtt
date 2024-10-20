@@ -22,8 +22,8 @@ namespace async_mqtt {
  * @brief MQTT protocol version
  *
  * #### Requirements
- * - Header: async_mqtt/protocol_version.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/protocol_version.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class protocol_version {
@@ -39,8 +39,8 @@ enum class protocol_version {
  * @return  version string
  *
  * #### Requirements
- * - Header: async_mqtt/protocol_version.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/protocol_version.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* protocol_version_to_str(protocol_version v) {
@@ -60,8 +60,8 @@ constexpr char const* protocol_version_to_str(protocol_version v) {
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/protocol_version.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/protocol_version.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

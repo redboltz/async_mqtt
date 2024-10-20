@@ -30,15 +30,15 @@ namespace as = boost::asio;
  * @brief MQTT CONNACK packet (v5)
  *
  * Only MQTT broker(sever) can send this packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901074"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connack.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connack.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class connack_packet {
@@ -50,9 +50,9 @@ public:
      *                        When the endpoint receives CONNACK packet with session_present is false,
      *                        then stored packets are erased.
      * @param reason_code ConnectReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901079
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901079"></a>
      * @param props       properties.
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901080
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901080"></a>
      */
     explicit connack_packet(
         bool session_present,
@@ -142,8 +142,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connack.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connack.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(connack_packet const& lhs, connack_packet const& rhs);
@@ -156,8 +156,8 @@ bool operator<(connack_packet const& lhs, connack_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connack.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connack.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(connack_packet const& lhs, connack_packet const& rhs);
@@ -170,8 +170,8 @@ bool operator==(connack_packet const& lhs, connack_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connack.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connack.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, connack_packet const& v);

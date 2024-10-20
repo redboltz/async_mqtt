@@ -1,0 +1,68 @@
+= Packet-Based APIs
+
+An MQTT connection is established through the exchange of CONNECT and CONNACK packets. This exchange allows the endpoints to mutually communicate their capabilities.
+`async_mqtt` automatically updates the internal state of the endpoints when sending or receiving these packets.
+
+* client: For high-level MQTT client operations
+** The client contains an endpoint internally. The client sends and receives endpoint setting-related packets via `async_start()`. See xref:../tutorial/client.adoc[Client APIs]
+
+* endpoint: For detailed MQTT operations
+** To send and receive packets, use the async_send() and async_recv() member functions. See xref:../tutorial/send_recv.adoc[Send/Recv packets]
+
+
+== MQTT v3.1.1
+
+=== cpp:v3_1_1::connect_packet[CONNECT Packet]
+
+==== Send (client only)
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` packet sending is configured. A `PINGREQ` packet is sent if no other packet is sent within the `keep_alive` seconds.
+* If `clean_session` is set to true, the endpoint's Session State is cleared. See xref:functionality/keep_session.adoc[Keep session].
+
+==== Receive (server only)
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` receiving timeout is configured. If no packet is received within `keep_alive` * 1.5 seconds after the last packet, the connection is disconnected.
+* If `clean_session` is set to false, the session state storage is configured. See xref:functionality/keep_session.adoc[Keep session].
+
+=== cpp:v3_1_1::connack_packet[CONNACK Packet]
+
+==== Receive (client only)
+
+* If `session_present` is set to false, the endpoint's Session State is cleared. The configured session state setting is retained, meaning that if a PUBLISH packet with QoS 1 or QoS 2 is sent, it will be stored. If `session_present` is set to true, stored PUBLISH and PUBREL packets are sent.
+
+== MQTT v5.0
+
+=== cpp:v5::connect_packet[CONNECT Packet]
+
+==== Send (client only)
+
+* If `clean_start` is set, the endpoint's Session State is cleared. See xref:functionality/keep_session.adoc[Keep session].
+* If cpp:async_mqtt::property::topic_alias_maximum[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for sending. See xref:functionality/topic_alias.adoc[Topic Alias].
+* If cpp:async_mqtt::property::receive_maximum[`receive_maximum`] is set, the receive maximum for incoming packets is configured. See xref:functionality/receive_maximum.adoc[Receive Maximum].
+* If cpp:async_mqtt::property::maximum_packet_size[`maximum_packet_size`] is set, the maximum packet size for incoming packets is configured. See xref:functionality/maximum_packet_size.adoc[Maximum Packet Size].
+* If cpp:async_mqtt::property::session_expiry_interval[`session_expiry_interval`] is set to a value greater than 0, session state storage is configured. See xref:functionality/keep_session.adoc[Keep session].
+
+==== Receive (server only)
+
+* If `keep_alive` is set to a value greater than 0, `PINGREQ` receiving timeout is configured. If no packet is received within `keep_alive` * 1.5 seconds after the last packet, the connection is disconnected.
+* If cpp:async_mqtt::property::topic_alias_maximum[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for receiving. See xref:functionality/topic_alias.adoc[Topic Alias].
+* If cpp:async_mqtt::property::receive_maximum[`receive_maximum`] is set, the receive maximum for outgoing packets is configured. See xref:functionality/receive_maximum.adoc[Receive Maximum].
+* If cpp:async_mqtt::property::maximum_packet_size[`maximum_packet_size`] is set, the maximum packet size for outgoing packets is configured. See xref:functionality/maximum_packet_size.adoc[Maximum Packet Size].
+* If cpp:async_mqtt::property::session_expiry_interval[`session_expiry_interval`] is set to a value greater than 0, session state storage is configured. See xref:functionality/keep_session.adoc[Keep session].
+
+=== cpp:v5::connack_packet[CONNACK Packet]
+
+==== Send (server only)
+
+* If cpp:async_mqtt::property::topic_alias_maximum[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for sending. See xref:functionality/topic_alias.adoc[Topic Alias].
+* If cpp:async_mqtt::property::receive_maximum[`receive_maximum`] is set, the receive maximum for incoming packets is configured. See xref:functionality/receive_maximum.adoc[Receive Maximum].
+* If cpp:async_mqtt::property::maximum_packet_size[`maximum_packet_size`] is set, the maximum packet size for incoming packets is configured. See xref:functionality/maximum_packet_size.adoc[Maximum Packet Size].
+* If cpp:async_mqtt::property::session_expiry_interval[`session_expiry_interval`] is set to a value greater than 0, session state storage is configured. See xref:functionality/keep_session.adoc[Keep session].
+
+==== Receive (client only)
+
+* If `session_present` is set to false, the endpoint's Session State is cleared. The configured session state setting is retained, meaning that if a PUBLISH packet with QoS 1 or QoS 2 is sent, it will be stored. If `session_present` is set to true, stored PUBLISH and PUBREL packets are sent.
+* If cpp:async_mqtt::property::topic_alias_maximum[`topic_alias_maximum`] is set, prepare the `topic name` - `topic alias` map for receiving. See xref:functionality/topic_alias.adoc[Topic Alias].
+* If cpp:async_mqtt::property::receive_maximum[`receive_maximum`] is set, the receive maximum for outgoing packets is configured. See xref:functionality/receive_maximum.adoc[Receive Maximum].
+* If cpp:async_mqtt::property::maximum_packet_size[`maximum_packet_size`] is set, the maximum packet size for outgoing packets is configured. See xref:functionality/maximum_packet_size.adoc[Maximum Packet Size].
+* If cpp:async_mqtt::property::server_keep_alive[`server_keep_alive`] is set, `PINGREQ` packet sending is overridden. A `PINGREQ` packet is sent if no other packet is sent within the `server_keep_alive` seconds.

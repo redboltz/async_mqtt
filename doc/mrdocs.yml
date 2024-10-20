@@ -1,0 +1,43 @@
+# Copyright Takatoshi Kondo 2024
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+# Input
+source-root: ..
+input:
+  # Directories that contain documented source files
+  include:
+    - ../include
+  # Patterns to filter out the source-files in the directories
+  file-patterns:
+    - '*.hpp'
+
+# Filters
+filters:
+  symbols:
+    exclude:
+      - 'std::*'
+      - 'boost::system'
+      - 'boost::system::*'
+      - 'boost::asio'
+      - 'boost::asio::*'
+    include:
+      - 'async_mqtt::client'
+      - 'async_mqtt::endpoint'
+      - 'async_mqtt::basic_endpoint'
+      - 'async_mqtt::layer_customize'
+      - 'async_mqtt::protocol'
+inaccessible-members: never
+inaccessible-bases: never
+
+# Generator
+generate: adoc
+base-url: https://www.github.com/redboltz/async_mqtt/blob/main/include/
+
+# Style
+verbose: true
+multipage: true
+
+cmake: '-D CMAKE_CXX_STANDARD=17 -D ASYNC_MQTT_USE_TLS=ON -D ASYNC_MQTT_USE_WS=ON -D ASYNC_MQTT_USE_LOG=ON -D ASYNC_MQTT_BUILD_TOOLS=ON"'

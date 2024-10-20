@@ -54,10 +54,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const 
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(std::vector<basic_store_packet_variant<PacketIdBytes>>)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
     CompletionToken&& token
 ) {

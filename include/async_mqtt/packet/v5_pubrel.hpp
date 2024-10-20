@@ -41,15 +41,15 @@ namespace as = boost::asio;
  * If both the client and the broker keeping the session, this packet is
  * stored in the endpoint for resending if disconnect/reconnect happens.
  * If the session doesn' exist or lost, then the stored packets are erased.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901141
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901141"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrel.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrel.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -60,9 +60,9 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREC packet
      * @param reason_code PubrelReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144"></a>
      * @param props       properties.
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901145
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901145"></a>
      */
     explicit basic_pubrel_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -82,7 +82,7 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBREC packet
      * @param reason_code PubrelReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144"></a>
      */
     explicit basic_pubrel_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -201,8 +201,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrel.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrel.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -216,8 +216,8 @@ bool operator<(basic_pubrel_packet<PacketIdBytes> const& lhs, basic_pubrel_packe
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrel.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrel.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -229,8 +229,8 @@ bool operator==(basic_pubrel_packet<PacketIdBytes> const& lhs, basic_pubrel_pack
  * @brief Type alias of basic_pubrel_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrel.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrel.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using pubrel_packet = basic_pubrel_packet<2>;

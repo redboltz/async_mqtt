@@ -56,10 +56,7 @@ release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) 
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id,
     CompletionToken&& token

@@ -44,6 +44,7 @@
 #include <async_mqtt/packet/impl/v5_auth.ipp>
 
 #include <async_mqtt/packet/impl/packet_variant.ipp>
+#include <async_mqtt/packet/impl/property.ipp>
 #include <async_mqtt/packet/impl/property_variant.ipp>
 
 #include <async_mqtt/impl/buffer_to_packet_variant.ipp>

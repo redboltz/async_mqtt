@@ -15,10 +15,7 @@ namespace detail {
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, packet_id_type)
-)
+auto
 client_impl<Version, NextLayer>::async_acquire_unique_packet_id(
     CompletionToken&& token
 ) {
@@ -38,10 +35,7 @@ client_impl<Version, NextLayer>::acquire_unique_packet_id() {
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, packet_id_type)
-)
+auto
 client<Version, NextLayer>::async_acquire_unique_packet_id(
     CompletionToken&& token
 ) {

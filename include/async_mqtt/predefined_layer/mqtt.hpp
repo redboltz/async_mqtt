@@ -37,8 +37,8 @@ namespace protocol {
  * @brief Type alias of Boost.Asio TCP socket
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/mqtt.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/predefined_layer/mqtt.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
@@ -55,8 +55,8 @@ using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
  * @return deduced by token
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/mqtt.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/predefined_layer/mqtt.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <
@@ -66,12 +66,7 @@ template <
         Executor
     >
 >
-#if !defined(GENERATING_DOCUMENTATION)
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
-#endif // !defined(GENERATING_DOCUMENTATION)
+auto
 async_underlying_handshake(
     as::basic_stream_socket<Socket, Executor>& layer,
     std::string_view host,

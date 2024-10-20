@@ -16,13 +16,20 @@ namespace async_mqtt {
 /**
  * @ingroup endpoint
  * @brief MQTT endpoint corresponding to the connection
+ *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/endpoint.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/endpoint.hpp
+ * @li Convenience header: async_mqtt/all.hpp
+ *
+ * #### predefined next layer types for NextLayer:
+ *    @li @ref protocol::mqtt
+ *    @li @ref protocol::mqtts
+ *    @li @ref protocol::ws
+ *    @li @ref protocol::wss
  *
  * @tparam Role          role for packet sendable checking
  * @tparam PacketIdBytes MQTT spec is 2. You can use `endpoint` for that.
@@ -36,13 +43,20 @@ class basic_endpoint;
  * @related basic_endpoint
  * @brief Type alias of basic_endpoint (PacketIdBytes=2).
  *        This is for typical usecase.
+ *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
+ *
+ * #### predefined next layer types for NextLayer:
+ *    @li @ref protocol::mqtt
+ *    @li @ref protocol::mqtts
+ *    @li @ref protocol::ws
+ *    @li @ref protocol::wss
  *
  * #### Requirements
- * - Header: async_mqtt/endpoint.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/endpoint.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.

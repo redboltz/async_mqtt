@@ -137,6 +137,10 @@ public:
      */
     std::vector<as::const_buffer> const_buffer_sequence() const;
 
+    /**
+     * @brief bool conversion
+     * @return true if has value, otherwise (std::monostate) false.
+     */
     operator bool() const;
 
 private:

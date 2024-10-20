@@ -88,10 +88,7 @@ recv_op {
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, std::optional<publish_packet>, std::optional<disconnect_packet>)
-)
+auto
 client<Version, NextLayer>::async_recv(
     CompletionToken&& token
 ) {

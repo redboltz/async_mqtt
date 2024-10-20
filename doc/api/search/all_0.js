@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['0_0',['0',['../group__auth__v5.html',1,'AUTH packet (v5.0)'],['../group__connack__v5.html',1,'CONNACK packet (v5.0)'],['../group__connect__v5.html',1,'CONNECT packet (v5.0)'],['../group__disconnect__v5.html',1,'DISCONNECT packet (v5.0)'],['../group__pingreq__v5.html',1,'PINGREQ packet (v5.0)'],['../group__pingresp__v5.html',1,'PINGRESP packet (v5.0)'],['../group__packet__v5.html',1,'protocol version 5.0'],['../group__puback__v5.html',1,'PUBACK packet (v5.0)'],['../group__pubcomp__v5.html',1,'PUBCOMP packet (v5.0)'],['../group__publish__v5.html',1,'PUBLISH packet (v5.0)'],['../group__pubrec__v5.html',1,'PUBREC packet (v5.0)'],['../group__pubrel__v5.html',1,'PUBREL packet (v5.0)'],['../group__suback__v5.html',1,'SUBACK packet (v5.0)'],['../group__subscribe__v5.html',1,'SUBSCRIBE packet (v5.0)'],['../group__unsuback__v5.html',1,'UNSUBACK packet (v5.0)'],['../group__unsubscribe__v5.html',1,'UNSUBSCRIBE packet (v5.0)']]],
-  ['0_20packets_1',['Property for MQTT v5.0 packets',['../group__property.html',1,'']]]
-];

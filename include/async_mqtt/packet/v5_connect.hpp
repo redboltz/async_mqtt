@@ -35,15 +35,15 @@ namespace as = boost::asio;
  * @brief MQTT CONNECT packet (v5)
  *
  * Only MQTT client can send this packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901033
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901033"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class connect_packet {
@@ -55,7 +55,8 @@ public:
      *                       When the endpoint receives CONNECT packet with clean_start is false,
      *                       then the endpoint start storing PUBLISH packet (QoS1 and QoS2) and PUBREL packet
      *                       that would send by the endpoint until the corresponding response would be received.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039"></a>
+     *
      * @param keep_alive_sec When the endpoint sends CONNECT packet with keep_alive_sec,
      *                       then the endpoint start sending PINGREQ packet keep_alive_sec after the last
      *                       packet is sent.
@@ -65,16 +66,16 @@ public:
      *                       the endpoint close the underlying layer automatically.
      *                       At that time, if the endpoint recv() is called, then the CompletionToken is
      *                       invoked with system_error.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045"></a>
      * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
      *                       if it is empty string.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059"></a>
      * @param user_name      MQTT UserName. It is often used for authentication.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071"></a>
      * @param password       MQTT Password. It is often used for authentication.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072"></a>
      * @param props          Connect properties.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046"></a>
      */
     explicit connect_packet(
         bool clean_start,
@@ -92,7 +93,7 @@ public:
      *                       When the endpoint receives CONNECT packet with clean_start is false,
      *                       then the endpoint start storing PUBLISH packet (QoS1 and QoS2) and PUBREL packet
      *                       that would send by the endpoint until the corresponding response would be received.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901039"></a>
      * @param keep_alive_sec When the endpoint sends CONNECT packet with keep_alive_sec,
      *                       then the endpoint start sending PINGREQ packet keep_alive_sec after the last
      *                       packet is sent.
@@ -102,18 +103,18 @@ public:
      *                       the endpoint close the underlying layer automatically.
      *                       At that time, if the endpoint recv() is called, then the CompletionToken is
      *                       invoked with system_error.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901045"></a>
      * @param client_id      MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
      *                       if it is empty string.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901059"></a>
      * @param w              MQTT Will
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901060
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901060"></a>
      * @param user_name      MQTT UserName. It is often used for authentication.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901071"></a>
      * @param password       MQTT Password. It is often used for authentication.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901072"></a>
      * @param props          Connect properties.
-     *                       \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046
+     *                       \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901046"></a>
      */
     explicit connect_packet(
         bool clean_start,
@@ -247,8 +248,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(connect_packet const& lhs, connect_packet const& rhs);
@@ -261,8 +262,8 @@ bool operator<(connect_packet const& lhs, connect_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(connect_packet const& lhs, connect_packet const& rhs);
@@ -275,8 +276,8 @@ bool operator==(connect_packet const& lhs, connect_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_connect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, connect_packet const& v);

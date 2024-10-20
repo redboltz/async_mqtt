@@ -128,10 +128,7 @@ struct stream_impl<NextLayer>::stream_close_op {
 
 template <typename NextLayer>
 template<typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 stream<NextLayer>::async_close(
     CompletionToken&& token
 ) {

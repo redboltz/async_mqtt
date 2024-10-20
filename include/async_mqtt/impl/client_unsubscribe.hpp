@@ -130,10 +130,7 @@ unsubscribe_op {
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, std::optional<typename client_type::unsuback_packet>)
-)
+auto
 client_impl<Version, NextLayer>::async_unsubscribe_impl(
     this_type_sp impl,
     error_code ec,

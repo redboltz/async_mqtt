@@ -594,10 +594,7 @@ send_op {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet, typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_send(
     this_type_sp impl,
     Packet packet,
@@ -623,10 +620,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_send(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet, typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_send(
     this_type_sp impl,
     Packet packet,
@@ -653,10 +647,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_send(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Packet, typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
     Packet packet,
     CompletionToken&& token

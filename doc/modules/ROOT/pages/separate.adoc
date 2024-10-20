@@ -1,0 +1,126 @@
+= Separate Compilation Mode
+
+== Header only mode
+
+By default, async_mqtt operates in header-only mode. Simply `#include <async_mqtt/all.hpp>` in your source file.
+
+
+== Separate compilation mode
+
+Header-only mode is simple but can significantly increase your project's build times. In this case, using separate compilation mode could help resolve the issue.
+
+Set the compiler option to define the `ASYNC_MQTT_SEPARATE_COMPILATION` preprocessor macro for all translation units. This enables separate compilation mode.
+Then, prepare a source file `async_mqtt.cpp` as follows:
+
+```cpp
+#include <async_mqtt/src.hpp>
+```
+
+This is for building the library code.
+
+Other source files remain unchanged from the header-only mode. Simply `#include <async_mqtt/all.hpp>`.
+Defining `ASYNC_MQTT_SEPARATE_COMPILATION` automatically removes the library code present in `async_mqtt.cpp` from `async_mqtt/all.hpp`.
+Therefore, once you compile `async_mqtt.cpp` (which takes a long time due to instantiation), subsequent builds will have faster compilation times.
+
+=== Examples
+
+==== Separate compilation mode client
+* link:example/separate_client/CMakeLists.txt[CMakeLists.txt]
+* link:example/separate_client/async_mqtt.cpp[async_mqtt.cpp]
+* link:example/separate_client/main.cpp[main.cpp]
+
+==== Separate compilation mode endpoint
+* link:example/separate_endpoint/CMakeLists.txt[CMakeLists.txt]
+* link:example/separate_endpoint/async_mqtt.cpp[async_mqtt.cpp]
+* link:example/separate_endpoint/main.cpp[main.cpp]
+
+== Library build
+
+This is an alternative method to build a separately compiled library.
+
+1. Add the `ASYNC_MQTT_BUILD_LIB=ON` definition to cmake.
+2. Build the target `async_mqtt_separate`.
+
+For example, on Linux:
+
+```sh
+cmake -DASYNC_MQTT_BUILD_LIB=ON ..
+make async_mqtt_separate
+```
+
+This generates `lib/libasync_mqtt_separate.a`.
+
+You can link it to your application that is compiled with `ASYNC_MQTT_SEPARATE_COMPILATION`.
+
+Ensure you provide the same option when building both `async_mqtt_separate` and your application. If the options differ, linker-related errors may occur.
+
+You can build `async_mqtt_separate` in parallel. This is faster but requires more memory.
+
+```sh
+make async_mqtt_separate -j
+```
+
+=== Customize
+
+By default, the following preprocessor macros are defined. You can customize them by defining the macros with your own values at the top of your library source file.
+
+For example:
+
+```cpp
+#define ASYNC_MQTT_PP_PROTOCOL (your_own_socket)
+#include <async_mqtt/src.hpp>
+```
+
+==== ASYNC_MQTT_PP_ROLE
+Defines the instantiation of endpoint roles.
+
+Default value:
+
+```cpp
+(role::client)(role::server)(role::any)
+```
+
+==== ASYNC_MQTT_PP_SIZE
+Defines the instantiation of Packet Identifier sizes.
+
+Default value:
+
+```cpp
+(2)(4)
+```
+
+==== ASYNC_MQTT_PP_PROTOCOL
+Defines the instantiation of endpoint/client underlying layer protocols.
+
+Default value:
+
+```cpp
+(protocol::mqtt)
+```
+
+If `ASYNC_MQTT_USE_TLS` is defined:
+
+```cpp
+(protocol::mqtt)(protocol::mqtts)
+```
+
+If `ASYNC_MQTT_USE_WS` is defined:
+
+```cpp
+(protocol::mqtt)(protocol::ws)
+```
+
+If both `ASYNC_MQTT_USE_TLS` and `ASYNC_MQTT_USE_WS` are defined:
+
+```cpp
+(protocol::mqtt)(protocol::mqtts)(protocol::ws)(protocol::wss)
+```
+
+==== ASYNC_MQTT_PP_VERSION
+Defines the instantiation of MQTT versions.
+
+Default value:
+
+```cpp
+(protocol_version::v3_1_1)(protocol_version::v5)
+```

@@ -1,0 +1,11 @@
+= Maximum Packet Size
+
+
+The Maximum Packet Size is a way to control the size of all packets. If a node sends a packet larger than the Maximum Packet Size, it is considered a protocol error. The counterpart disconnects the connection with a DISCONNECT packet with Reason Code 0x95 (Packet too large).
+
+== Notifying Maximum Packet Size
+
+
+There are two independent Maximum Packet Size limits.
+
+image::maximum_packet_size.svg[maximum_packet_size]

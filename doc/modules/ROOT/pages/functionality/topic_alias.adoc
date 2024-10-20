@@ -1,0 +1,70 @@
+= Topic Alias
+
+Topic Alias is a way to reduce PUBLISH packet size.
+
+== Notifying capacity
+
+There are two independent Topic Alias capacities.
+
+image::topic_alias1.svg[topic_alias]
+
+
+=== Broker to Client Topic Alias
+
+The client can set the `Topic Alias Maximum` property to a value greater than 0 in the CONNECT packet. This means the client can receive PUBLISH packets with the `Topic Alias` property set to a value less than or equal to the `Topic Alias Maximum`. The broker can then send PUBLISH packets using the `Topic Alias` property.
+If the broker does not receive a CONNECT packet with the `Topic Alias Maximum` property set to a value greater than 0, the broker cannot use `Topic Alias`.
+
+=== Client to Broker Topic Alias
+
+The broker can set the `Topic Alias Maximum` property to a value greater than 0 in the CONNACK packet. This means the broker can receive PUBLISH packets with the `Topic Alias` property set to a value less than or equal to the `Topic Alias Maximum`. The client can then send PUBLISH packets using the `Topic Alias` property.
+If the client does not receive a CONNACK packet with the `Topic Alias Maximum` property set to a value greater than 0, the client cannot use `Topic Alias`.
+
+
+== Using Topic Alias
+
+image::topic_alias2.svg[topic_alias]
+
+=== Register/Overwrite
+
+When you set the `TopicName` filed and `Topic Alias` property in the PUBLISH packet, the mapping is registered. If the `Topic Alias` is already mapped, the mapping is overwritten.
+
+=== Use
+
+When you set an empty (zero length) `TopicName` field and `Topic Alias` property in the PUBLISH packet, the receiver needs to extract the `TopicName` corresponding to the `Topic Alias`.
+In this case, the packet size is usually reduced, especially if the `TopicName` is long.
+
+== async_mqtt Support
+
+=== Setup
+
+If you are using async_mqtt as the client, all you need to do is set the `Topic Alias Maximum` property in the CONNECT packet.
+If you are using async_mqtt as the server (broker), all you need to do is set the `Topic Alias Maximum` property in the CONNACK packet.
+
+Then the mapping functionality is automatically set up.
+
+=== set_auto_map_topic_alias_send(bool)
+
+When you call this function with the argument `true`, the `Topic Alias` is automatically allocated and used when you send a PUBLISH packet. If you run out of all `Topic Alias` values, the oldest mapping is automatically replaced using the LRU (Least Recently Used) algorithm.
+
+=== set_replace_map_topic_alias_send(bool)
+
+When you call this function with the argument `true`, the `Topic Alias` is automatically used if the mapping is registered when you send a PUBLISH packet.
+
+=== Manual Use
+
+You can register/use `Topic Alias` manually by setting the PUBLISH packet. This works well with the above two automatic functionalities.
+
+== Pitfall
+
+async_mqtt has already solved this problem. This is an implementation note.
+If the client/broker xref:functionality/keep_session.adoc[keeps the session], any halfway QoS1 and QoS2 PUBLISH packets should be resent just after reconnection. What happens if the PUBLISH packet uses a `Topic Alias`? In this case, the `TopicName` is empty. The counterpart's `Topic Alias Maximum` could be reduced (or removed) upon reconnection. The MQTT spec states that the lifetime of a `Topic Alias` mapping should end on disconnect. In other words, the lifetime of a `Topic Alias` mapping is the same as the lifetime of the connection, not the session.
+
+So, if the client/broker sends a PUBLISH packet with an empty `TopicName` and `Topic Alias` property just after reconnection, it is a protocol violation.
+
+To solve this problem, the client/broker needs to extract the `TopicName` from the `Topic Alias` property when sending and create a new PUBLISH packet containing the extracted `TopicName`, and remove the `Topic Alias` property from the sending PUBLISH packet. When resending, use the stored (non-Topic Aliased) packet.
+
+This process is automatically handled by async_mqtt internally. Users don't need to worry about this issue.
+
+image::topic_alias3.svg[topic_alias]
+
+async_mqtt does expected behavior automatically.

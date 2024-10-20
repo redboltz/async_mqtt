@@ -1,0 +1,27 @@
+:last-update-label!:
+:am-version: latest
+:source-highlighter: rouge
+:rouge-style: base16.monokai
+
+ifdef::env-github[:am-base-path: ../main]
+ifndef::env-github[:am-base-path: ..]
+ifdef::env-github[:api-base: link:https://redboltz.github.io/async_mqtt/doc/{am-version}/html]
+ifndef::env-github[:api-base: link:api]
+
+= Document
+
+== Latest release
+
+https://redboltz.github.io/async_mqtt/doc/9.0.2/index.html[9.0.2 document]
+
+== Current main branch
+
+https://redboltz.github.io/async_mqtt/doc/latest/index.html[main branch document]
+
+== Older
+
+https://redboltz.github.io/async_mqtt/[Older releases document]
+
+== Code Repository
+
+https://github.com/redboltz/async_mqtt/[async_mqtt project top page]

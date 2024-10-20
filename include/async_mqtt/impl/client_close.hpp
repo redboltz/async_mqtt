@@ -15,10 +15,7 @@ namespace detail {
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 client_impl<Version, NextLayer>::async_close(
     CompletionToken&& token
 ) {
@@ -29,10 +26,7 @@ client_impl<Version, NextLayer>::async_close(
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void()
-)
+auto
 client<Version, NextLayer>::async_close(
     CompletionToken&& token
 ) {

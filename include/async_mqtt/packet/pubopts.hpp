@@ -29,8 +29,8 @@ namespace pub {
  * @return If DUP return true, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr bool is_dup(std::uint8_t v) {
@@ -45,8 +45,8 @@ constexpr bool is_dup(std::uint8_t v) {
  * @return qos
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr qos get_qos(std::uint8_t v) {
@@ -61,8 +61,8 @@ constexpr qos get_qos(std::uint8_t v) {
  * @return If RETAIN return true, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr bool is_retain(std::uint8_t v) {
@@ -77,8 +77,8 @@ constexpr bool is_retain(std::uint8_t v) {
  * @param dup DUP to set
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
@@ -90,11 +90,11 @@ constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
  * @ingroup publish_options
  * @brief MQTT RETAIN
  *
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104"></a>
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class retain : std::uint8_t {
@@ -107,11 +107,11 @@ enum class retain : std::uint8_t {
  * @ingroup publish_options
  * @brief MQTT DUP
  *
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102"></a>
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class dup : std::uint8_t {
@@ -122,15 +122,16 @@ enum class dup : std::uint8_t {
 /**
  * @ingroup publish_options
  * @brief MQTT PublishOptions
- * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
  *
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901101
+ * #### Thread Safety
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
+ *
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901101"></a>
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 struct opts final {
@@ -281,8 +282,8 @@ private:
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(retain lhs, dup rhs) { return opts(lhs) | rhs; }
@@ -295,8 +296,8 @@ constexpr opts operator|(retain lhs, dup rhs) { return opts(lhs) | rhs; }
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(retain lhs, qos rhs) { return opts(lhs) | rhs; }
@@ -309,8 +310,8 @@ constexpr opts operator|(retain lhs, qos rhs) { return opts(lhs) | rhs; }
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(dup lhs, retain rhs) { return opts(lhs) | rhs; }
@@ -323,8 +324,8 @@ constexpr opts operator|(dup lhs, retain rhs) { return opts(lhs) | rhs; }
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(dup lhs, qos rhs)    { return opts(lhs) | rhs; }
@@ -337,8 +338,8 @@ constexpr opts operator|(dup lhs, qos rhs)    { return opts(lhs) | rhs; }
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(qos lhs, retain rhs) { return opts(lhs) | rhs; }
@@ -351,8 +352,8 @@ constexpr opts operator|(qos lhs, retain rhs) { return opts(lhs) | rhs; }
  * @return conbined opts
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
@@ -366,8 +367,8 @@ constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
  * @return retain string
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* retain_to_str(retain v) {
@@ -387,8 +388,8 @@ constexpr char const* retain_to_str(retain v) {
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline
@@ -406,8 +407,8 @@ std::ostream& operator<<(std::ostream& o, retain v)
  * @return dup string
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* dup_to_str(dup v) {
@@ -427,8 +428,8 @@ constexpr char const* dup_to_str(dup v) {
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/pubopts.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/pubopts.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

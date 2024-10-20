@@ -1,0 +1,82 @@
+= Keep session
+
+MQTT has the concept of a "session." See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901230
+It contains subscription information, halfway PUBLISH (QoS1 and QoS2 only), and PUBREL packets. `async_mqtt` is automatically configured when the client sends a CONNECT packet and the broker receives it. All you need to do is set up the CONNECT packet and send it.
+
+== MQTT v3.1.1
+
+The session is controlled by the `clean_session` flag of the CONNECT packet.
+
+NOTE: The broker could expire the session due to implementation limitations.
+
+
+=== CONNECT with clean_session 0
+
+==== the broker has the previous session
+
+* The broker returns CONNACK with `session_present` set to 1.
+* The broker sends halfway PUBLISH and PUBREL packets after the CONNACK is sent.
+* The client sends halfway PUBLISH and PUBREL packets after the CONNACK is received.
+
+NOTE: The MQTT v5.0 specification states that the client can send packets before the CONNACK is received, but since the CONNACK could indicate an error, waiting for the CONNACK is a reasonable design choice.
+
+* Both the client and the broker store the session during the connection and after disconnection.
+
+
+
+==== the broker doesn't have the previous session
+
+* The broker returns CONNACK with `session_present` set to 0.
+* The client clears halfway PUBLISH and PUBREL packets after the CONNACK is received.
+
+NOTE: The halfway packets are for the previous session. If the previous session doesn't exist, the client-side halfway packets should be cleared.
+
+* Both the client and the broker store the session during the connection and after disconnection.
+
+
+=== CONNECT with clean_session 1
+
+* Both the client's and the broker's sessions are cleared.
+* The broker returns CONNACK with `session_present` set to 0.
+* Both the client and the broker do not store sessions during the connection and after disconnection.
+
+
+== MQTT v5.0
+
+The session is controlled by the `clean_start` flag and the Session Expiry Interval property of the CONNECT packet.
+
+NOTE: The broker could expire the session due to implementation limitations.
+
+=== clean_start
+
+==== CONNECT with clean_start 0
+
+===== the broker has the previous session
+
+* The broker returns CONNACK with `session_present` set to 1.
+* The broker sends halfway PUBLISH and PUBREL packets after the CONNACK is sent.
+* The client sends halfway PUBLISH and PUBREL packets after the CONNACK is received.
+
+NOTE: The MQTT v5.0 spec states that the client can send packets before the CONNACK is received, but since the CONNACK could indicate an error, waiting for the CONNACK is a reasonable design choice.
+
+===== the broker doesn't have the previous session
+
+* The broker returns CONNACK with `session_present` set to 0.
+* The client clears halfway PUBLISH and PUBREL packets after the CONNACK is received.
+
+NOTE: The halfway packets are for the previous session. If the previous session doesn't exist, the client-side halfway packets should be cleared.
+
+==== CONNECT with clean_start 1
+
+* Both the client's and the broker's sessions are cleared.
+* The broker returns CONNACK with `session_present` set to 0.
+
+=== Session Expiry Interval
+
+==== CONNECT with Session Expiry Interval is greater than 0
+
+* Both the client and the broker store the session during the connection and after disconnection until the Session Expiry Interval seconds have passed.
+
+==== CONNECT without Session Expiry Interval is greater than 0
+
+* Both the client and the broker do not store the session during the connection and after disconnection.

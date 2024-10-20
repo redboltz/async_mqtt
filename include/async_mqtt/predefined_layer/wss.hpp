@@ -18,7 +18,7 @@
  * @ingroup predefined_layer
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/wss.hpp
+ * @li Header: async_mqtt/predefined_layer/wss.hpp
  *
  */
 
@@ -51,7 +51,7 @@ namespace protocol {
  * )
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/wss.hpp
+ * @li Header: async_mqtt/predefined_layer/wss.hpp
  *
  */
 using wss = bs::websocket::stream<mqtts>;

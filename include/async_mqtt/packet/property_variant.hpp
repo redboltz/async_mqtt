@@ -26,8 +26,8 @@ namespace async_mqtt {
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(property_variant const& lhs, property_variant const& rhs);
@@ -39,8 +39,8 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(property_variant const& lhs, property_variant const& rhs);
@@ -52,8 +52,8 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, property_variant const& v);
@@ -62,13 +62,44 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
 /**
  * @ingroup property_variant
  * @brief property variant
+ *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ * @li Distinct objects: Safe
+ * @li Shared objects: Unsafe
+ *
+ * #### variants
+ * @li @ref std::monostate
+ * @li @ref property::payload_format_indicator
+ * @li @ref property::message_expiry_interval
+ * @li @ref property::content_type
+ * @li @ref property::response_topic
+ * @li @ref property::correlation_data
+ * @li @ref property::subscription_identifier
+ * @li @ref property::session_expiry_interval
+ * @li @ref property::assigned_client_identifier
+ * @li @ref property::server_keep_alive
+ * @li @ref property::authentication_method
+ * @li @ref property::authentication_data
+ * @li @ref property::request_problem_information
+ * @li @ref property::will_delay_interval
+ * @li @ref property::request_response_information
+ * @li @ref property::response_information
+ * @li @ref property::server_reference
+ * @li @ref property::reason_string
+ * @li @ref property::receive_maximum
+ * @li @ref property::topic_alias_maximum
+ * @li @ref property::topic_alias
+ * @li @ref property::maximum_qos
+ * @li @ref property::retain_available
+ * @li @ref property::user_property
+ * @li @ref property::maximum_packet_size
+ * @li @ref property::wildcard_subscription_available
+ * @li @ref property::subscription_identifier_available
+ * @li @ref property::shared_subscription_available
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class property_variant {
@@ -217,8 +248,8 @@ private:
  * @brief property variant collection type
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using properties = std::vector<property_variant>;
@@ -231,8 +262,8 @@ using properties = std::vector<property_variant>;
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, properties const& props);
@@ -245,8 +276,8 @@ std::ostream& operator<<(std::ostream& o, properties const& props);
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(property_variant const& lhs, property_variant const& rhs);
@@ -259,8 +290,8 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(property_variant const& lhs, property_variant const& rhs);
@@ -273,8 +304,8 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, property_variant const& v);

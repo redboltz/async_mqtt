@@ -38,15 +38,15 @@ namespace as = boost::asio;
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT SUBSCRIBE packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901161"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_subscribe.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_subscribe.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -59,7 +59,7 @@ public:
      *                  basic_endpoint::acquire_unique_packet_id().
      * @param params    subscribe entries.
      * @param props     properties.
-     *                  \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901164
+     *                  \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901164"></a>
      */
     explicit basic_subscribe_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -148,8 +148,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_subscribe.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_subscribe.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -163,8 +163,8 @@ bool operator<(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscribe
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_subscribe.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_subscribe.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -178,8 +178,8 @@ bool operator==(basic_subscribe_packet<PacketIdBytes> const& lhs, basic_subscrib
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_subscribe.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_subscribe.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -191,8 +191,8 @@ std::ostream& operator<<(std::ostream& o, basic_subscribe_packet<PacketIdBytes> 
  * @brief Type alias of basic_subscribe_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_subscribe.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_subscribe.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using subscribe_packet = basic_subscribe_packet<2>;

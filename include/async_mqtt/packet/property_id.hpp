@@ -18,11 +18,11 @@ namespace property {
  * @ingroup property
  * @brief MQTT property identifier
  *
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029"></a>
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_id.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_id.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class id {
@@ -62,8 +62,8 @@ enum class id {
  * @return packet identifier
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_id.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_id.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* id_to_str(id v) {
@@ -107,8 +107,8 @@ constexpr char const* id_to_str(id v) {
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/property_id.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/property_id.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

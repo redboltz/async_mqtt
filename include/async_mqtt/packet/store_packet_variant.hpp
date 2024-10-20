@@ -24,8 +24,8 @@ namespace async_mqtt {
  * @brief corresponding response packet
  *
  * #### Requirements
- * - Header: async_mqtt/packet/store_packet_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class response_packet {

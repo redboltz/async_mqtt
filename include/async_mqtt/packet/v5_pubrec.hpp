@@ -40,15 +40,15 @@ namespace as = boost::asio;
  * automatically sent when PUBLISH (QoS2) v5::basic_publish_packet is received.
  *
  * When the packet is received with error reason_code, the packet_id is automatically released and become reusable.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901131"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrec.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -59,9 +59,9 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS2) packet
      * @param reason_code PubcompReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134"></a>
      * @param props       properties.
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901135
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901135"></a>
      */
     explicit basic_pubrec_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -81,7 +81,7 @@ public:
      * @brief constructor
      * @param packet_id MQTT PacketIdentifier that is corresponding to the PUBLISH(QoS2) packet
      * @param reason_code PubcompReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901134"></a>
      */
     explicit basic_pubrec_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -200,8 +200,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrec.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -215,8 +215,8 @@ bool operator<(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_packe
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrec.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -228,8 +228,8 @@ bool operator==(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_pack
  * @brief Type alias of basic_pubrec_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pubrec.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using pubrec_packet = basic_pubrec_packet<2>;
