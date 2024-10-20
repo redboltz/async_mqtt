@@ -10,8 +10,10 @@ namespace as = boost::asio;
 namespace am = async_mqtt;
 
 int main() {
-
-    am::setup_log(am::severity_level::warning);
+    am::setup_log(
+        am::severity_level::warning,
+        true // log colored
+    );
     as::io_context ioc;
     auto amcl = am::client<am::protocol_version::v5, am::protocol::mqtt>{ioc.get_executor()};
     as::co_spawn(

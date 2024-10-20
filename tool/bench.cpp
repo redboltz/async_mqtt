@@ -1344,6 +1344,11 @@ int main(int argc, char *argv[]) {
                 "set verbose level, possible values:\n 0 - Fatal\n 1 - Error\n 2 - Warning\n 3 - Info\n 4 - Debug\n 5 - Trace"
             )
             (
+                "colored_log",
+                boost::program_options::value<bool>()->default_value(true),
+                "if set true, log output is colored corresponding to the severity, otherwise not colored"
+            )
+            (
                 "cacert",
                 boost::program_options::value<std::string>(),
                 "CA Certificate file to verify server certificate for mqtts and wss connections"
@@ -1447,26 +1452,24 @@ int main(int argc, char *argv[]) {
 #if defined(ASYNC_MQTT_USE_LOG)
         switch (vm["verbose"].as<unsigned int>()) {
         case 5:
-            am::setup_log(am::severity_level::trace);
+            am::setup_log(am::severity_level::trace, vm["colored_log"].as<bool>());
             break;
         case 4:
-            am::setup_log(am::severity_level::debug);
+            am::setup_log(am::severity_level::debug, vm["colored_log"].as<bool>());
             break;
         case 3:
-            am::setup_log(am::severity_level::info);
+            am::setup_log(am::severity_level::info, vm["colored_log"].as<bool>());
             break;
         case 2:
-            am::setup_log(am::severity_level::warning);
+            am::setup_log(am::severity_level::warning, vm["colored_log"].as<bool>());
             break;
         default:
-            am::setup_log(am::severity_level::error);
+            am::setup_log(am::severity_level::error, vm["colored_log"].as<bool>());
             break;
         case 0:
-            am::setup_log(am::severity_level::fatal);
+            am::setup_log(am::severity_level::fatal, vm["colored_log"].as<bool>());
             break;
         }
-#else  // defined(ASYNC_MQTT_USE_LOG)
-        am::setup_log();
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
         if (!vm.count("target")) {

@@ -232,7 +232,10 @@ int main(int argc, char* argv[]) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
     }
-    am::setup_log(am::severity_level::trace);
+    am::setup_log(
+        am::severity_level::trace,
+        true // log colored
+    );
     as::io_context ioc;
     as::ssl::context ctx{as::ssl::context::tlsv12};
     app a{ioc.get_executor(), argv[1], argv[2], am::force_move(ctx)};
