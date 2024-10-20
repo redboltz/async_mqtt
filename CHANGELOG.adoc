@@ -3,6 +3,7 @@
 = History
 
 == 9.1.0
+* Refined documents. #364, #365
 * Made colored log selectable (by default true(colored)). #363
 * Fixed misuse of bound allocator. #362
 * Fixed TLS example. #361
