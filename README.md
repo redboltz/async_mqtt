@@ -11,7 +11,7 @@ Document is https://github.com/redboltz/async_mqtt/blob/doc/README.adoc
 
 # Overview
 
-[API Reference](https://redboltz.github.io/async_mqtt)
+[Latest document](https://redboltz.github.io/async_mqtt/doc/latest/index.html)
 
 ## Boost.Asio style asynchronous APIs support
 
