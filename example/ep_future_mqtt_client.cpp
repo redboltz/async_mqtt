@@ -20,7 +20,10 @@ int main(int argc, char* argv[]) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
     }
-    am::setup_log(am::severity_level::trace);
+    am::setup_log(
+        am::severity_level::trace,
+        true // log colored
+    );
 
     as::io_context ioc;
     auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{

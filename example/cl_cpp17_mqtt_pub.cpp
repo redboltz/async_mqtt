@@ -123,7 +123,10 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-    am::setup_log(am::severity_level::warning);
+    am::setup_log(
+        am::severity_level::warning,
+        true // log colored
+    );
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;

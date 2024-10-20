@@ -26,7 +26,10 @@ struct app {
     {}
 
     void start() {
-        am::setup_log(am::severity_level::trace);
+        am::setup_log(
+            am::severity_level::trace,
+            true // log colored
+        );
 
         std::cout << "start" << std::endl;
         // Handshake undlerying layer (Name resolution and TCP handshaking)

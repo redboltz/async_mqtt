@@ -154,7 +154,11 @@ pre.rouge .ss {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="cpp"><span class="n">async_mqtt</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span><span class="n">async_mqtt</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">info</span><span class="p">);</span> <span class="c1">// you can use any other severity_level</span></code></pre>
+<pre class="rouge highlight"><code data-lang="cpp"><span class="n">async_mqtt</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span>
+    <span class="n">async_mqtt</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">info</span><span class="p">,</span> <span class="c1">// you can use any other severity_level</span>
+    <span class="nb">true</span>                              <span class="c1">// if true or omit the argument</span>
+                                      <span class="c1">// log is colored, otherwise non colored</span>
+<span class="p">);</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

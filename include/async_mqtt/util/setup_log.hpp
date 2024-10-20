@@ -45,6 +45,8 @@ static constexpr char const* log_color_table[] {
  * @param threshold
  *        Set threshold severity_level by channel
  *        If the log severity_level >= threshold then log message outputs.
+ * @param colored
+ *        If true, log is colored corresponding to the severity
  *
  * #### Requirements
  * - Header: async_mqtt/setup_log.hpp
@@ -52,11 +54,11 @@ static constexpr char const* log_color_table[] {
  *
  */
 inline
-void setup_log(std::map<std::string, severity_level> threshold) {
+void setup_log(std::map<std::string, severity_level> threshold, bool colored = true) {
     // https://www.boost.org/doc/libs/1_73_0/libs/log/doc/html/log/tutorial/advanced_filtering.html
 
     auto fmt =
-        [](boost::log::record_view const& rec, boost::log::formatting_ostream& strm) {
+        [colored](boost::log::record_view const& rec, boost::log::formatting_ostream& strm) {
             // Timestamp custom formatting example
             if (auto v = boost::log::extract<boost::posix_time::ptime>("TimeStamp", rec)) {
                 strm.imbue(
@@ -74,7 +76,7 @@ void setup_log(std::map<std::string, severity_level> threshold) {
             }
             // Adjust severity length example
             if (auto v = boost::log::extract<severity_level>("Severity", rec)) {
-                strm << log_color_table[static_cast<std::size_t>(v.get())];
+                if (colored) strm << log_color_table[static_cast<std::size_t>(v.get())];
                 strm << "S:" << std::setw(7) << std::left << v.get() << " ";
             }
             if (auto v = boost::log::extract<channel>("Channel", rec)) {
@@ -136,6 +138,8 @@ void setup_log(std::map<std::string, severity_level> threshold) {
  * @param threshold
  *        Set threshold severity_level for all channels
  *        If the log severity_level >= threshold then log message outputs.
+ * @param colored
+ *        If true, log is colored corresponding to the severity
  *
  * #### Requirements
  * - Header: async_mqtt/setup_log.hpp
@@ -143,7 +147,7 @@ void setup_log(std::map<std::string, severity_level> threshold) {
  *
  */
 inline
-void setup_log(severity_level threshold = severity_level::warning) {
+void setup_log(severity_level threshold = severity_level::warning, bool colored = true) {
     setup_log(
         {
             { "mqtt_api", threshold },
@@ -151,7 +155,8 @@ void setup_log(severity_level threshold = severity_level::warning) {
             { "mqtt_impl", threshold },
             { "mqtt_broker", threshold },
             { "mqtt_test", threshold },
-        }
+        },
+        colored
     );
 }
 
