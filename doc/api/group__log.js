@@ -8,6 +8,6 @@ var group__log =
       [ "async_mqtt::severity_level::error", "group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfacb5e100e5a9a3e7f6d1fd97512215282", null ],
       [ "async_mqtt::severity_level::fatal", "group__log.html#gga3abd0c0ebf71c7d01def2a00423d1abfadf6402fd9ecc60f5a2159fdf45711cd4", null ]
     ] ],
-    [ "async_mqtt::setup_log", "group__log.html#ga9d3595338fa766b0916c26168023bf33", null ],
-    [ "async_mqtt::setup_log", "group__log.html#ga61df85c3992a1a67d0342ddecb05ef52", null ]
+    [ "async_mqtt::setup_log", "group__log.html#gaa9a6cd71475ce3a8c125e55aa85eb9db", null ],
+    [ "async_mqtt::setup_log", "group__log.html#ga380e70ad37525b716fab2df30eeb5949", null ]
 ];
