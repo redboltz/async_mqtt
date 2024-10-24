@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Customize Underlying Layer :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/customize.html">
+    <link rel="prev" href="functionality/error_report.html">
+    <link rel="next" href="config.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../_/css/boostlook.css">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../_'</script>
+<link rel="icon" href="../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Customize/Config</li>
+    <li><a href="customize.html">Customize Underlying Layer</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="functionality/error_report.html"><span class="material-symbols-outlined" title="Previous: Error Reporting">arrow_back</span></a>
+    <a accesskey="p" href="config.html"><span class="material-symbols-outlined" title="Next: Config">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Customize Underlying Layer</h1>
+  <div class="sect1">
+<h2 id="_customization_points"><a class="anchor" href="#_customization_points"></a>Customization Points</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use async_mqtt with not only predefined underlying layers (mqtt, mqtts, ws, and wss) but also your own underlying layers.
+In order to use your own underlying layer with async_mqtt, you need to define a class template specilization.</p>
+</div>
+<div class="paragraph">
+<p>Lets' say you want to use <code>your_own_stream</code> as the underlying layer of async_mqtt.</p>
+</div>
+<div class="sect2">
+<h3 id="_four_check_points"><a class="anchor" href="#_four_check_points"></a>Four check points</h3>
+<div class="paragraph">
+<p>If you need some custom processes for <code>your_own_stream</code> at least one of the following four points, you need to define <code>struct layer_customize</code> specilization. If you don&#8217;t define the specialization, or its static member functions, the default version is used.</p>
+</div>
+<div class="sect3">
+<h4 id="_1_initialize"><a class="anchor" href="#_1_initialize"></a>1. initialize</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Do nothing by default.</p>
+</li>
+<li>
+<p>initialize is called from the bottom layer to the top layer synchronously.</p>
+</li>
+<li>
+<p>initialize is called when the endpoint is created.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_async_read_some"><a class="anchor" href="#_2_async_read_some"></a>2. async_read_some</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Call <code>your_own_stream.async_read_some()</code> by default.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html" class="bare">https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_async_read"><a class="anchor" href="#_3_async_read"></a>3. async_read</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Call Boost.Asio&#8217;s <code>async_read()</code> with <code>your_own_stream</code> by default. Boost.Asio&#8217;s <code>async_read()</code> calls <code>your_own_stream.async_read_some()</code> internally.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html" class="bare">https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_async_write"><a class="anchor" href="#_4_async_write"></a>4. async_write</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Call Boost.Asio&#8217;s <code>async_write()</code> with <code>your_own_stream</code> by default.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="https://www.boost.org/doc/html/boost_asio/reference/async_write/overload1.html" class="bare">https://www.boost.org/doc/html/boost_asio/reference/async_write/overload1.html</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_async_close"><a class="anchor" href="#_5_async_close"></a>5. async_close</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Do nothing by default.</p>
+</li>
+<li>
+<p>async_close is called from the top layer to the bottom layer asynchronously.</p>
+</li>
+<li>
+<p>initialize is called when the endpoint is created.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Only if you want to customize some of the four points, then define the member function as follows:</p>
+</div>
+<div class="paragraph">
+<p>customized_your_own_stream.hpp</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/util/stream_traits.hpp&gt;
+
+// Partial or full specialization here
+template &lt;typename NextLayer&gt;
+struct layer_customize&lt;your_own_stream&lt;NextLayer&gt;&gt; {
+
+    // define if you want to customize initialize process
+    static void initialize(your_own_stream&lt;NextLayer&gt;&amp; stream) {
+        // Special initialization for your_own_stream
+    }
+
+    // define if you want to customize async_read_some process
+    template &lt;
+        typename MutableBufferSequence,
+        typename CompletionToken
+    &gt;
+    static auto
+    async_read_some(
+        your_own_stream&lt;NextLayer&gt;&amp; stream,
+        MutableBufferSequence const&amp; mbs,
+        CompletionToken&amp;&amp; token
+    ) {
+        return as::async_compose&lt;
+            CompletionToken,
+            void(error_code const&amp; ec, std::size_t size)
+        &gt; (
+            async_read_some_impl&lt;MutableBufferSequence&gt;{
+                stream,
+                mbs
+            },
+            token
+        );
+    }
+
+    // define if you want to customize async_read process
+    template &lt;
+        typename MutableBufferSequence,
+        typename CompletionToken
+    &gt;
+    static auto
+    async_read(
+        your_own_stream&lt;NextLayer&gt;&amp; stream,
+        MutableBufferSequence const&amp; mbs,
+        CompletionToken&amp;&amp; token
+    ) {
+        return as::async_compose&lt;
+            CompletionToken,
+            void(error_code const&amp; ec, std::size_t size)
+        &gt; (
+            async_read_impl&lt;MutableBufferSequence&gt;{
+                stream,
+                mbs
+            },
+            token
+        );
+    }
+
+    // define if you want to customize async_write process
+    template &lt;
+        typename ConstBufferSequence,
+        typename CompletionToken
+    &gt;
+    static auto
+    async_write(
+        your_own_stream&lt;NextLayer&gt;&amp; stream,
+        ConstBufferSequence const&amp; cbs,
+        CompletionToken&amp;&amp; token
+    ) {
+        return as::async_compose&lt;
+            CompletionToken,
+            void(error_code const&amp; ec, std::size_t size)
+        &gt; (
+            async_write_impl&lt;ConstBufferSequence&gt;{
+                stream,
+                cbs
+            },
+            token
+        );
+    }
+
+
+    // define if you want to customize async_close process
+    template &lt;
+        typename CompletionToken
+    &gt;
+    static auto
+    async_close(
+        bs::websocket::stream&lt;NextLayer&gt;&amp; stream,
+        CompletionToken&amp;&amp; token
+    ) {
+        return as::async_compose&lt;
+            CompletionToken,
+            void(error_code const&amp; ec)
+        &gt; (
+            async_close_impl{
+                stream
+            },
+            token
+        );
+    }
+};
+
+// define async_read_impl, async_write_impl, and async_close_impl for your own layer here</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can replace <code>your_***_function()</code>. async_mqtt has some of predefined <code>struct layer_customize</code> specializations.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/" class="bare">https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/</a></p>
+</div>
+<div class="paragraph">
+<p><code>customized_*_stream.hpp</code> help defining your own underlaying layer.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/customize.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="functionality/error_report.html">Error Reporting</a></span>
+        <span class="next"><a href="config.html">Config</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script async src="../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

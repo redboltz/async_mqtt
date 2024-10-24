@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>client_cli :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/tool/client_cli.html">
+    <link rel="prev" href="broker.html">
+    <link rel="next" href="bench.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="broker.html">broker</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Tools</li>
+    <li><a href="client_cli.html">client_cli</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="broker.html"><span class="material-symbols-outlined" title="Previous: broker">arrow_back</span></a>
+    <a accesskey="p" href="bench.html"><span class="material-symbols-outlined" title="Next: bench">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">client_cli</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>client_cli</code> is an intaractive MQTT client.</p>
+</div>
+<div class="paragraph">
+<p><code>client_cli</code> has Boost.ProgramOptions style options.
+<a href="https://github.com/redboltz/async_mqtt/blob/main/tool/cli.conf" class="bare">https://github.com/redboltz/async_mqtt/blob/main/tool/cli.conf</a> is config file.
+You can also set command line options. The command line options are higher priority than file options.</p>
+</div>
+<div class="paragraph">
+<p><strong>Type <code>help</code> if you want to see the list of commands</strong>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_color"><a class="anchor" href="#_color"></a>Color</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Red colored strings mean command result (status).</p>
+</li>
+<li>
+<p>Cyan colored strings mean a received packet or received result.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_commands"><a class="anchor" href="#_commands"></a>Commands</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">cli&gt;
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - pub &lt;topic&gt; &lt;payload&gt; &lt;qos[0-2]&gt;
+        publish
+ - sub &lt;topic_filter&gt; &lt;qos[0-2]&gt;
+        subscribe
+ - unsub &lt;topic_filter&gt;
+        unsubscribe
+ - bpub
+        build publish packet and send ...
+ - bsub
+        build publish packet and send ...</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_build_subscribe_packet"><a class="anchor" href="#_build_subscribe_packet"></a>Build subscribe packet</h3>
+<div class="paragraph">
+<p><code>bsub</code> is a sub menu.</p>
+</div>
+<div class="paragraph">
+<p>You can use the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">bsub&gt;
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - topic &lt;TopicFilter&gt;
+
+ - qos &lt;[0-2]&gt;
+
+ - nl &lt;[0|1]&gt;
+        No Local
+ - rap &lt;[0|1]&gt;
+        Retain as Published
+ - rh &lt;[0(send) | 1(new sub only) | 2(not send)]&gt;
+        Retain Handling
+ - sid &lt;[1-268435455] or 0 (clear)&gt;
+        Subscription Identifier Property
+ - add_up &lt;key&gt; &lt;val&gt;
+        Subscription Identifier Property
+ - show
+        show building packet
+ - clear
+        clear packet
+ - send
+        send packet
+ - cli
+        Top menu</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to return to top menu, you need to type <code>cli</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_build_publish_packet"><a class="anchor" href="#_build_publish_packet"></a>Build publish packet</h3>
+<div class="paragraph">
+<p><code>bpub</code> is a sub menu.</p>
+</div>
+<div class="paragraph">
+<p>You can use the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">bpub&gt;
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - topic &lt;TopicName&gt;
+
+ - payload &lt;Payload&gt;
+
+ - retain &lt;[0|1]&gt;
+
+ - qos &lt;[0-2]&gt;
+
+ - pfi &lt;[0|1]&gt;
+        Payload Format Idenfitier Property (0:Binary, 1:String)
+ - mei &lt;[0-4294967295]&gt;
+        Message Expiry Interval Property (32bit seconds)
+ - ct &lt;ContentTypeSrting&gt;
+        Content Type Property (ContentTypeString)
+ - rt &lt;topic&gt;
+        Response Topic Property (topic)
+ - cd &lt;data(only string supported on this tool)&gt;
+        Correlation Data Property (data binary)
+ - ta &lt;[1-65535]&gt;
+        Topic Alias Property (16bit TopicAlias value)
+ - add_up &lt;key&gt; &lt;val&gt;
+        Subscription Identifier Property
+ - show
+        show building packet
+ - clear
+        clear packet
+ - send
+        send packet
+ - cli
+        Top menu</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In order to return to top menu, you need to type <code>cli</code>.</p>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/tool/client_cli.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="broker.html">broker</a></span>
+        <span class="next"><a href="bench.html">bench</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

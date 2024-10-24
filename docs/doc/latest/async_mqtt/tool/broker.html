@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>broker :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/tool/broker.html">
+    <link rel="prev" href="trial.html">
+    <link rel="next" href="client_cli.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Tools</li>
+    <li><a href="broker.html">broker</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="trial.html"><span class="material-symbols-outlined" title="Previous: Free trial broker on cloud">arrow_back</span></a>
+    <a accesskey="p" href="client_cli.html"><span class="material-symbols-outlined" title="Next: client_cli">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">broker</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>broker</code> is a MQTT broker.</p>
+</div>
+<div class="paragraph">
+<p><code>broker</code> has Boost.ProgramOptions style options.
+<a href="https://github.com/redboltz/async_mqtt/blob/main/tool/broker.conf" class="bare">https://github.com/redboltz/async_mqtt/blob/main/tool/broker.conf</a> is config file.
+You can also set command line options. The command line options are higher priority than file options.</p>
+</div>
+<div class="paragraph">
+<p><code>broker</code> has json like authenticate/authorize file.
+<a href="https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json" class="bare">https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json</a> is an example file.</p>
+</div>
+<div class="paragraph">
+<p><code>broker</code> supports MQTT on TCP, TLS, WebSocket, and WebSocket on TLS. They can be mixed. <code>broker</code> supports MQTT v3.1.1 and v5.0. They can be mixed. <code>broker</code> can deliver packets between the different MQTT version clients. The packet is converted from/to v3.1.1 to/from v5.0.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authentication_and_authorization"><a class="anchor" href="#_authentication_and_authorization"></a>authentication and authorization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json" class="bare">https://github.com/redboltz/async_mqtt/blob/main/tool/auth.json</a> helps understanding the following descriptions:</p>
+</div>
+<div class="sect2">
+<h3 id="_authentication"><a class="anchor" href="#_authentication"></a>authentication</h3>
+<div class="paragraph">
+<p><code>broker</code> has <code>user</code> concept. <code>user</code> means authentication and authorization unit. One <code>user</code> could have multiple MQTT connections if Client Identifier is different. If <code>user</code> and Client Identifier is the same, the connections and sessions regard to the same. The same online connection exists and then the same new connection is authenticated, the previous one is disconnected by the broker. It is <strong>overwrite</strong> model that is required by MQTT spec.</p>
+</div>
+<div class="paragraph">
+<p><code>broker</code> supports the following authentication method.</p>
+</div>
+<div class="paragraph">
+<p><code>name</code> filed is correspondint to <code>user</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_sha256"><a class="anchor" href="#_sha256"></a>sha256</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>name</p>
+<div class="ulist">
+<ul>
+<li>
+<p>User Name in MQTT CONNECT packet.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>method</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "sha256"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>salt</p>
+<div class="ulist">
+<ul>
+<li>
+<p>salt for generating sha256 digest</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>digest</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Hexadecimal string of <code>sha256(salt+password)</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_client_certification"><a class="anchor" href="#_client_certification"></a>client certification</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>name</p>
+<div class="ulist">
+<ul>
+<li>
+<p>User Name in the client certification</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>method</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "client_cert"</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The client needs to set its name to the <code>CN</code> field of the client certification.
+The filed can be changed using the broker option <code>--verify_field</code>.
+Don&#8217;t set User Name and Password in MQTT CONNECT packet.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_plain_password"><a class="anchor" href="#_plain_password"></a>plain password</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>name</p>
+<div class="ulist">
+<ul>
+<li>
+<p>User Name in MQTT CONNECT packet.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>method</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "plain_password"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>password</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Password string.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_anonymous"><a class="anchor" href="#_anonymous"></a>anonymous</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>name</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "anonymous"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>method</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "anonymous"</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If anonymous is appeared in authentication field, then the client that doesn&#8217;t have User Name and Password in MQTT CONNECT packet can be authenticated. That doesn&#8217;t mean empty string.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_unauthenticated"><a class="anchor" href="#_unauthenticated"></a>unauthenticated</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>name</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "unauthenticated"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>method</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Set "unauthenticated"</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If the client is unauthenticated, and if the authentication filed has this method, then the client can be connected. In this case, the connection&#8217;s User Name is regard to one special "unauthenticated" name (not actual "unauthenticated" string).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_group"><a class="anchor" href="#_group"></a>group</h3>
+<div class="paragraph">
+<p><code>group</code> is convenient concept to sum up <code>user`s. The name of `group</code> starts with <code>@</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_authorization"><a class="anchor" href="#_authorization"></a>authorization</h3>
+<div class="paragraph">
+<p><code>authorization</code> is a concept that granting publish/subscribe to the topics to `user`s or `group`s.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>topic</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Target topic to grant. Not only a topic name but also MQTT&#8217;s multi-level wildcard <code>#</code> can be used to specify topics.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>allow</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add permissions to the specified target <code>topic</code> for `user`s and `group`s</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>deny</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove permissions to the specified target <code>topic</code> for `user`s and `group`s</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The permissions evaluates the top to bottom of the file. So recommended style is first, declaring widly permissions using <code>#</code> at the top side of <code>authorization</code> fileds, and then declaring specific topic&#8217;s permissions. In other words, the recommended order is wide to narrow.</p>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/tool/broker.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="trial.html">Free trial broker on cloud</a></span>
+        <span class="next"><a href="client_cli.html">client_cli</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

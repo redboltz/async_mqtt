@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Separate Compilation Mode :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/separate.html">
+    <link rel="prev" href="config.html">
+    <link rel="next" href="tool/container.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../_/css/boostlook.css">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../_'</script>
+<link rel="icon" href="../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="config.html">Config</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Customize/Config</li>
+    <li><a href="separate.html">Separate Compilation Mode</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="config.html"><span class="material-symbols-outlined" title="Previous: Config">arrow_back</span></a>
+    <a accesskey="p" href="tool/container.html"><span class="material-symbols-outlined" title="Next: Run async_mqtt broker/client on the docker container">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Separate Compilation Mode</h1>
+  <div class="sect1">
+<h2 id="_header_only_mode"><a class="anchor" href="#_header_only_mode"></a>Header only mode</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, async_mqtt operates in header-only mode. Simply <code>#include &lt;async_mqtt/all.hpp&gt;</code> in your source file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_separate_compilation_mode"><a class="anchor" href="#_separate_compilation_mode"></a>Separate compilation mode</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Header-only mode is simple but can significantly increase your project&#8217;s build times. In this case, using separate compilation mode could help resolve the issue.</p>
+</div>
+<div class="paragraph">
+<p>Set the compiler option to define the <code>ASYNC_MQTT_SEPARATE_COMPILATION</code> preprocessor macro for all translation units. This enables separate compilation mode.
+Then, prepare a source file <code>async_mqtt.cpp</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/src.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is for building the library code.</p>
+</div>
+<div class="paragraph">
+<p>Other source files remain unchanged from the header-only mode. Simply <code>#include &lt;async_mqtt/all.hpp&gt;</code>.
+Defining <code>ASYNC_MQTT_SEPARATE_COMPILATION</code> automatically removes the library code present in <code>async_mqtt.cpp</code> from <code>async_mqtt/all.hpp</code>.
+Therefore, once you compile <code>async_mqtt.cpp</code> (which takes a long time due to instantiation), subsequent builds will have faster compilation times.</p>
+</div>
+<div class="sect2">
+<h3 id="_examples"><a class="anchor" href="#_examples"></a>Examples</h3>
+<div class="sect3">
+<h4 id="_separate_compilation_mode_client"><a class="anchor" href="#_separate_compilation_mode_client"></a>Separate compilation mode client</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/separate_client/CMakeLists.txt">CMakeLists.txt</a></p>
+</li>
+<li>
+<p><a href="example/separate_client/async_mqtt.cpp">async_mqtt.cpp</a></p>
+</li>
+<li>
+<p><a href="example/separate_client/main.cpp">main.cpp</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_separate_compilation_mode_endpoint"><a class="anchor" href="#_separate_compilation_mode_endpoint"></a>Separate compilation mode endpoint</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/separate_endpoint/CMakeLists.txt">CMakeLists.txt</a></p>
+</li>
+<li>
+<p><a href="example/separate_endpoint/async_mqtt.cpp">async_mqtt.cpp</a></p>
+</li>
+<li>
+<p><a href="example/separate_endpoint/main.cpp">main.cpp</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_library_build"><a class="anchor" href="#_library_build"></a>Library build</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is an alternative method to build a separately compiled library.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the <code>ASYNC_MQTT_BUILD_LIB=ON</code> definition to cmake.</p>
+</li>
+<li>
+<p>Build the target <code>async_mqtt_separate</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For example, on Linux:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">cmake -DASYNC_MQTT_BUILD_LIB=ON ..
+make async_mqtt_separate</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This generates <code>lib/libasync_mqtt_separate.a</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can link it to your application that is compiled with <code>ASYNC_MQTT_SEPARATE_COMPILATION</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ensure you provide the same option when building both <code>async_mqtt_separate</code> and your application. If the options differ, linker-related errors may occur.</p>
+</div>
+<div class="paragraph">
+<p>You can build <code>async_mqtt_separate</code> in parallel. This is faster but requires more memory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">make async_mqtt_separate -j</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_customize"><a class="anchor" href="#_customize"></a>Customize</h3>
+<div class="paragraph">
+<p>By default, the following preprocessor macros are defined. You can customize them by defining the macros with your own values at the top of your library source file.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#define ASYNC_MQTT_PP_PROTOCOL (your_own_socket)
+#include &lt;async_mqtt/src.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_role"><a class="anchor" href="#_async_mqtt_pp_role"></a>ASYNC_MQTT_PP_ROLE</h4>
+<div class="paragraph">
+<p>Defines the instantiation of endpoint roles.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(role::client)(role::server)(role::any)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_size"><a class="anchor" href="#_async_mqtt_pp_size"></a>ASYNC_MQTT_PP_SIZE</h4>
+<div class="paragraph">
+<p>Defines the instantiation of Packet Identifier sizes.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(2)(4)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_protocol"><a class="anchor" href="#_async_mqtt_pp_protocol"></a>ASYNC_MQTT_PP_PROTOCOL</h4>
+<div class="paragraph">
+<p>Defines the instantiation of endpoint/client underlying layer protocols.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(protocol::mqtt)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>ASYNC_MQTT_USE_TLS</code> is defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(protocol::mqtt)(protocol::mqtts)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>ASYNC_MQTT_USE_WS</code> is defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(protocol::mqtt)(protocol::ws)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If both <code>ASYNC_MQTT_USE_TLS</code> and <code>ASYNC_MQTT_USE_WS</code> are defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(protocol::mqtt)(protocol::mqtts)(protocol::ws)(protocol::wss)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_async_mqtt_pp_version"><a class="anchor" href="#_async_mqtt_pp_version"></a>ASYNC_MQTT_PP_VERSION</h4>
+<div class="paragraph">
+<p>Defines the instantiation of MQTT versions.</p>
+</div>
+<div class="paragraph">
+<p>Default value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">(protocol_version::v3_1_1)(protocol_version::v5)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/separate.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="config.html">Config</a></span>
+        <span class="next"><a href="tool/container.html">Run async_mqtt broker/client on the docker container</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script async src="../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>
