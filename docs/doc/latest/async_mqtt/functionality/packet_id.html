@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Packet Identifier Management :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/functionality/packet_id.html">
+    <link rel="prev" href="non_packet_based.html">
+    <link rel="next" href="connect_timeout.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Functionality</li>
+    <li><a href="packet_id.html">Packet Identifier Management</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="non_packet_based.html"><span class="material-symbols-outlined" title="Previous: Non packet based APIs">arrow_back</span></a>
+    <a accesskey="p" href="connect_timeout.html"><span class="material-symbols-outlined" title="Next: Connect Timeout">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Packet Identifier Management</h1>
+  <div class="paragraph">
+<p>SUBSCRIBE, UNSUBSCRIBE, and PUBLISH (QoS 1, QoS 2) packets require a Packet Identifier. The Packet Identifier is used to distinguish the response packets. Users need to set a Packet Identifier for the following request packets.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Request Packet</th>
+<th class="tableblock halign-left valign-top">Response Packet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBSCRIBE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNSUBSCRIBE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UNSUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLISH (QoS 1)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBACK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLISH (QoS 2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBREC, PUBREL, PUBCOMP</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Packet Identifier is managed by <code>endpoint</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>client</code> (high-level MQTT client) has an <code>endpoint</code> internally.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To set a Packet Identifier for the request packet, users need to get a Packet Identifier from the <code>endpoint</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here are member functions to get a Packet Identifier. There are two methods: <strong>acquire</strong> and <strong>register</strong>. For ordinary use cases, <strong>acquire</strong> is the preferred choice. If users want to manage the Packet Identifier themselves, they can use <strong>register</strong>. When you get the Packet Identifier, the ownership of the Packet Identifier is transferred to the user.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endpoint member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/async_acquire_unique_packet_id.html" class="xref page">async_acquire_unique_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/async_acquire_unique_packet_id_wait_until.html" class="xref page">async_acquire_unique_packet_id_wait_until</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/async_register_packet_id.html" class="xref page">async_register_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/acquire_unique_packet_id.html" class="xref page">acquire_unique_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/register_packet_id.html" class="xref page">register_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/async_acquire_unique_packet_id.html" class="xref page">async_acquire_unique_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/async_acquire_unique_packet_id_wait_until.html" class="xref page">async_acquire_unique_packet_id_wait_until</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/async_register_packet_id.html" class="xref page">async_register_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/acquire_unique_packet_id.html" class="xref page">acquire_unique_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Acquire a new unique packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/register_packet_id.html" class="xref page">register_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>When the user calls a packet sending function with the packet that has the Packet Identifier set, the ownership of the Packet Identifier is transferred to the library (async_mqtt <code>endpoint</code>). Once the ownership is transferred, the Packet Identifier will automatically become reusable when the response packet is received, an error occurs, or the send process is canceled. Therefore, the user should not call the <strong>release</strong> APIs.</p>
+</div>
+<div class="paragraph">
+<p>If the user wants to <strong>release</strong> the obtained Packet Identifier before the ownership is transferred to the <code>endpoint</code>, they can use the following <strong>release</strong> APIs.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">endpoint member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/async_release_packet_id.html" class="xref page">async_release_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/basic_endpoint/release_packet_id.html" class="xref page">release_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">client member function</th>
+<th class="tableblock halign-left valign-top">effects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/async_release_packet_id.html" class="xref page">async_release_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/async_mqtt/client/release_packet_id.html" class="xref page">release_packet_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release the packet_id</p></td>
+</tr>
+</tbody>
+</table>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/functionality/packet_id.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="non_packet_based.html">Non packet based APIs</a></span>
+        <span class="next"><a href="connect_timeout.html">Connect Timeout</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

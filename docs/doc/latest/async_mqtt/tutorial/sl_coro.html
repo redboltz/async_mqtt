@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Stackless coroutine :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/tutorial/sl_coro.html">
+    <link rel="prev" href="cpp20_coro.html">
+    <link rel="next" href="send_recv.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class=" is-current-page" data-depth="3">
+            <a class="nav-link" href="sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Tutorial</li>
+    <li>endpoint</li>
+    <li><a href="sl_coro.html">Stackless coroutine</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="cpp20_coro.html"><span class="material-symbols-outlined" title="Previous: C++20 coroutine">arrow_back</span></a>
+    <a accesskey="p" href="send_recv.html"><span class="material-symbols-outlined" title="Next: Send/Recv packets">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Stackless coroutine</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is the stackless coroutine approach. It uses the switch-case-based Boost.Asio stackless coroutine.
+See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
+</div>
+<div class="paragraph">
+<p>It is convenient but a little tricky. Due to the switch-case basis, there are some restrictions, especially regarding defining local variables.
+If you can use <a href="cpp20_coro.html" class="xref page">C++20 coroutine</a>, I recommend using it.</p>
+</div>
+<div class="paragraph">
+<p>Stackless coroutines can avoid deeply nested callbacks, making the code easier to read.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prepare_your_application_class"><a class="anchor" href="#_prepare_your_application_class"></a>Prepare your application class</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here is an application class prototype:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/asio/yield.hpp&gt;
+
+template &lt;typename Executor&gt;
+struct app {
+
+private:
+    struct impl {
+        impl(app&amp; a):app_{a}
+        {
+        }
+        // forwarding callbacks
+        void operator()() const {
+            proc({}, am::packet_variant{});
+        }
+        void operator()(am::error_code const&amp; ec) const {
+            proc(ec, am::packet_variant{});
+        }
+        void operator()(am::error_code const&amp; ec, am::packet_variant pv) const {
+            proc(ec, am::force_move(pv));
+        }
+    private:
+        void proc(
+            am::error_code const&amp; ec,
+            am::packet_variant pv
+        ) const {
+
+            reenter (coro_) {
+                std::cout &lt;&lt; "start" &lt;&lt; std::endl;
+            }
+        }
+
+    private:
+        app&amp; app_;
+        mutable as::coroutine coro_;
+    };
+
+    impl impl_{*this};
+};
+#include &lt;boost/asio/unyield.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, add the app&#8217;s constructor as follows. The endpoint is created here. In the constructor body, <code>impl_()</code> is called to start the coroutine. Then, declare the app&#8217;s member variables.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    app(Executor exe,
+        std::string_view host,
+        std::string_view port
+    ):host_{std::move(host)},
+      port_{std::move(port)},
+      amep_{am::protocol_version::v3_1_1, exe}
+    {
+        impl_();
+    }
+    // ...
+
+private:
+    void proc(
+        am::error_code const&amp; ec,
+        am::packet_variant pv
+    ) {
+        reenter (coro) {
+        }
+    }
+
+    std::string_view host_;
+    std::string_view port_;
+    am::endpoint&lt;am::role::client, am::protocol::mqtt&gt; amep_;
+    std::size_t count_ = 0;
+    impl impl_{*this};
+    // prepare will message if you need.
+    am::will will{
+        "WillTopic1",
+        "WillMessage1",
+        am::qos::at_most_once,
+        { // properties
+            am::property::user_property{"key1", "val1"},
+            am::property::content_type{"text"},
+        }
+    };
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, implement <code>int main()</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        std::cout &lt;&lt; "Usage: " &lt;&lt; argv[0] &lt;&lt; " host port" &lt;&lt; std::endl;
+        return -1;
+    }
+    am::setup_log(am::severity_level::trace);
+    as::io_context ioc;
+    app a{ioc.get_executor(), argv[1], argv[2]};
+    ioc.run();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you execute the program, you will see the <code>start</code> output message. This indicates that the coroutine has started successfully.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">        void proc(
+            am::error_code const&amp; ec,
+            am::packet_variant pv
+        ) const {
+
+            reenter (coro_) {
+                std::cout &lt;&lt; "start" &lt;&lt; std::endl;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the basics of the stackless coroutine approach. Now, let&#8217;s add a more meaningful sequence.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_handshake_underlying_layers_mqtt_mqtts_ws_wss"><a class="anchor" href="#_handshake_underlying_layers_mqtt_mqtts_ws_wss"></a>Handshake underlying layers (mqtt, mqtts, ws, wss)</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">        void proc(
+            am::error_code const&amp; ec,
+            am::packet_variant pv
+        ) const {
+
+            reenter (coro_) {
+                std::cout &lt;&lt; "start" &lt;&lt; std::endl;
+
+                // Handshake undlerying layer (Name resolution and TCP handshaking)
+                yield am::async_underlying_handshake(
+                    app_.amep_.next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );
+
+                std::cout
+                    &lt;&lt; "Underlying layer connected ec:"
+                    &lt;&lt; ec.message()
+                    &lt;&lt; std::endl;
+
+                if (ec) return;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The important point is</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                yield am::async_underlying_handshake(
+                    app_.amep_.next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The fourth argument of <code>underlying_handshake</code> is <code>CompletionToken</code>. When using a stackless coroutine, we pass <code>*this</code> as the <code>CompletionToken</code>. The function <code>proc()</code> is implicitly returned and <code>underlying_handshake</code> starts processing. When the asynchronous process is finished, the following <code>operator()</code> is called:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">        void operator()(am::error_code const&amp; ec) const {
+            proc(ec, am::packet_variant{});
+        }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, <code>proc</code> is called. You can distinguish which async process has finished by <code>proc()&#8217;s parameter. You can check `ec</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                std::cout
+                    &lt;&lt; "Underlying layer connected ec:"
+                    &lt;&lt; ec.message()
+                    &lt;&lt; std::endl;
+
+                if (ec) return;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Even if <code>proc()</code> is called again, the following part of the code is skipped:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                std::cout &lt;&lt; "start" &lt;&lt; std::endl;
+
+                // Handshake undlerying layer (Name resolution and TCP handshaking)
+                yield am::underlying_handshake(
+                    app_.amep_.next_layer(),
+                    app_.host_,
+                    app_.port_,
+                    *this
+                );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the switch-case-based Boost.Asio stackless coroutine mechanism.
+See <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html" class="bare">https://www.boost.org/doc/html/boost_asio/overview/composition/coroutine.html</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_mqtt_connect_packet"><a class="anchor" href="#_send_mqtt_connect_packet"></a>Send MQTT CONNECT packet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create MQTT CONNECT packet and send it as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                // Send MQTT CONNECT
+                yield app_.amep_.async_send(
+                    am::v3_1_1::connect_packet{
+                        true,   // clean_session
+                        0x1234, // keep_alive
+                        "ClientIdentifier1",
+                        app_.will,   // you can pass std::nullopt if you don't want to set the will message
+                        "UserName1",
+                        "Password1"
+                    },
+                    *this
+                );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the async process is finished, the function resumes at the following line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                if (ec) {
+                    std::cout &lt;&lt; "MQTT CONNECT send error:" &lt;&lt; ec.message() &lt;&lt; std::endl;
+                    return;
+                }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameter of the completion token is <code>error_code const&amp; ec</code>.
+See <code><a href="../reference/async_mqtt/basic_endpoint/async_send.html" class="xref page">API reference</a></code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recv_mqtt_connack_packet"><a class="anchor" href="#_recv_mqtt_connack_packet"></a>Recv MQTT CONNACK packet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Receive MQTT packet as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                // Recv MQTT CONNACK
+                yield app_.amep_.async_recv(*this);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When a packet is received then the function resumes at the following line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">                if (ec) {
+                    std::cout
+                        &lt;&lt; "MQTT CONNACK recv error:"
+                        &lt;&lt; ec.message()
+                        &lt;&lt; std::endl;
+                    return;
+                }
+                else {
+                    BOOST_ASSERT(pv); // if ec is not error, then pv is always valid.
+                    pv.visit(
+                        am::overload {
+                            [&amp;](am::v3_1_1::connack_packet const&amp; p) {
+                                std::cout
+                                    &lt;&lt; "MQTT CONNACK recv"
+                                    &lt;&lt; " sp:" &lt;&lt; p.session_present()
+                                    &lt;&lt; std::endl;
+                            },
+                            [](auto const&amp;) {}
+                        }
+                    );
+                }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of the completion token are <code>error_code const&amp; ec</code> and <code>packet_variant pv</code>. The <code>ec</code> can be converted to a boolean. If <code>ec</code> evaluates to true, an error has occurred. For detailed information about errors, refer to <a href="../functionality/error_report.html" class="xref page">Error reporting</a>.</p>
+</div>
+<div class="paragraph">
+<p>If there is no error, you can access the <code>pv</code> using the <code>visit</code> function and overloaded lambda expressions. Each lambda expression corresponds to the actual packet type.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sendrecv_packets"><a class="anchor" href="#_sendrecv_packets"></a>Send/Recv packets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See the simple example <a href="../example/ep_slcoro_mqtt_client.cpp">ep_slcoro_mqtt_client.cpp</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to explore a more complex use case, <a href="https://github.com/redboltz/async_mqtt/blob/main/tool/client_cli.cpp">client_cli.cpp</a> is helpful. It is a command-line MQTT client application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples"><a class="anchor" href="#_examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../example/ep_slcoro_mqtt_client.cpp">ep_slcoro_mqtt_client.cpp</a></p>
+</li>
+<li>
+<p><a href="../example/ep_slcoro_mqtts_client.cpp">ep_slcoro_mqtts_client.cpp</a></p>
+</li>
+<li>
+<p><a href="../example/ep_slcoro_ws_client.cpp">ep_slcoro_ws_client.cpp</a></p>
+</li>
+<li>
+<p><a href="../example/ep_slcoro_wss_client.cpp">ep_slcoro_wss_client.cpp</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/tutorial/sl_coro.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="cpp20_coro.html">C++20 coroutine</a></span>
+        <span class="next"><a href="send_recv.html">Send/Recv packets</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>
