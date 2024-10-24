@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Client :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/tutorial/client.html">
+    <link rel="prev" href="../comparison.html">
+    <link rel="next" href="create_endpoint.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Tutorial</li>
+    <li><a href="client.html">Client</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="../comparison.html"><span class="material-symbols-outlined" title="Previous: Comparison">arrow_back</span></a>
+    <a accesskey="p" href="create_endpoint.html"><span class="material-symbols-outlined" title="Next: Create endpoint">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Client</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code><a href="../reference/async_mqtt/client.html" class="xref page">Client</a></code> provides high level MQTT client APIs.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_include_header_files"><a class="anchor" href="#_include_header_files"></a>Include header files</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use async_mqtt, include the following header file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/all.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, if you want to use TLS and/or WebSocket, include the following header files. They are not included in <code>all.hpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>For TLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/predefined_layer/mqtts.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/predefined_layer/ws.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Websocket on TLS</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;async_mqtt/predefined_layer/wss.hpp&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_client"><a class="anchor" href="#_create_client"></a>Create client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First, choose MQTT protocol version (v3.1.1 or v5), and then choose underlying layer.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/layer.svg" alt="layer structure">
+</div>
+</div>
+<div class="paragraph">
+<p>The following namespace alias is defined in the all code example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">namespace as = boost::asio;
+namespace tls = as::ssl;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mqtt"><a class="anchor" href="#_mqtt"></a>mqtt</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    using client_t = am::client&lt;am::protocol_version::v3_1_1, am::protocol::mqtt;
+    as::io_context ioc;
+    auto amcl = client_t{
+        ioc.get_executor() // args for underlying layer (mqtt)
+        // mqtt is as::basic_stream_socket&lt;as::ip::tcp, as::io_context::executor_type&gt;
+    };
+    // handshake underlying layers
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mqtts"><a class="anchor" href="#_mqtts"></a>mqtts</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    using client_t = am::client&lt;am::protocol_version::v5, am::protocol::mqtts&gt;;
+    as::io_context ioc;
+    am::tls::context ctx{am::tls::context::tlsv12};
+    ctx.set_verify_mode(am::tls::verify_none);
+
+    // If you want to check server certificate, set cacert as follows.
+    // ctx.load_verify_file(cacert);
+
+    // You the broker requires additional TLS layer information,
+    // you can use OpenSSL directly.
+    //
+    // static const unsigned char protos[5] = {4, 'm','q','t','t'};
+    // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
+    // // (check res)
+
+    auto amcl = client_t{
+        ioc.get_executor(),  // args for underlying layer (as::ssl::stream&lt;mqtt&gt;)
+        ctx
+    };
+    // handshake underlying layers
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ws"><a class="anchor" href="#_ws"></a>ws</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    using client_t = am::client&lt;am::protocol_version::v3_1_1, am::protocol::ws&gt;;
+    as::io_context ioc;
+    auto amcl = client_t{
+        ioc.get_executor()  // args for underlying layer (bs::websocket::stream&lt;mqtt&gt;)
+    };
+    // handshake underlying layers
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_wss"><a class="anchor" href="#_wss"></a>wss</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    using client_t = am::client&lt;am::protocol_version::v3_1_1, am::protocol::wss&gt;;
+    as::io_context ioc;
+    am::tls::context ctx{am::tls::context::tlsv12};
+    ctx.set_verify_mode(am::tls::verify_none);
+    // If you want to check server certificate, set cacert as follows.
+    // ctx.load_verify_file(cacert);
+
+    // You the broker requires additional TLS layer information,
+    // you can use OpenSSL directly.
+    //
+    // static const unsigned char protos[5] = {4, 'm','q','t','t'};
+    // auto res = SSL_CTX_set_alpn_protos(ctx.native_handle(), protos, 5);
+    // // (check res)
+
+    auto amcl = client_t{
+        ioc.get_executor(),  // args for underlying layer ( bs::websocket::stream&lt;mqtts&gt;)
+        ctx                  // mqtts is as::ssl::stream&lt;mqtt&gt;
+    };
+    // handshake underlying layers
+    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_layer_access"><a class="anchor" href="#_layer_access"></a>Layer access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Typically, you only need to <code>use next_layer()</code> to pass the <code>async_underlying_handshake()</code> argument. However, if you need to configure each layer individually, you can access all the underlying layers.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Layer access</th>
+<th class="tableblock halign-left valign-top">mqtt</th>
+<th class="tableblock halign-left valign-top">mqtts</th>
+<th class="tableblock halign-left valign-top">ws</th>
+<th class="tableblock halign-left valign-top">wss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">next_layer()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TLS stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WS stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WS stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">next_layer().next_layer()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TLS stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">next_layer().next_layer().next_layer()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lowest_layer()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TCP stream</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_mqtt_connect_packet_and_start_receive_loop"><a class="anchor" href="#_send_mqtt_connect_packet_and_start_receive_loop"></a>Send MQTT CONNECT packet and start receive loop</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After the handshaking of the underlying layers is complete, initiate the MQTT layer connection.</p>
+</div>
+<div class="sect2">
+<h3 id="_async_start_funtion"><a class="anchor" href="#_async_start_funtion"></a><code><a href="../reference/async_mqtt/client/async_start.html" class="xref page">async_start()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// prepare will message if you need.
+am::will will{
+    "WillTopic1",
+    "WillMessage1",
+    am::qos::at_most_once,
+    { // properties
+        am::property::user_property{"key1", "val1"},
+        am::property::content_type{"text"},
+    }
+};
+
+// MQTT connect and receive loop start
+auto connack_opt = co_await amcl.async_start(
+    am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        "ClientIdentifier1",
+        will,   // you can pass std::nullopt if you don't want to set the will message
+        "UserName1",
+        "Password1"
+    },
+    as::use_awaitable
+);
+if (connack_opt) {
+    std::cout &lt;&lt; *connack_opt &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and (optionally) <code>connack_packet</code>. The <code>connack_packet</code> will have a value only if <code>error_code</code> indicates success. When using <code>CompletionToken</code> with mechanisms like <code>as::use_awaitable</code>, <code>as::use_future</code>, or <code>as::deferred</code>, the initial <code>error_code</code> is converted into an exception. If you prefer to receive the <code>error_code</code> as a return value, you can proceed as follows:</p>
+</div>
+<div class="paragraph">
+<p>For detailed information about errors, refer to <a href="../functionality/error_report.html" class="xref page">Error reporting</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MQTT connect and receive loop start
+auto [ec, connack_opt] = co_await amcl.async_start(
+    am::v5::connect_packet{
+        true,   // clean_start
+        0x1234, // keep_alive
+        "ClientIdentifier1",
+        will,   // you can pass std::nullopt if you don't want to set the will message
+        "UserName1",
+        "Password1"
+    },
+    as::as_tuple(as::use_awaitable)
+);
+std::cout &lt;&lt; ec.message() &lt;&lt; std::endl;
+if (connack_opt) {
+    std::cout &lt;&lt; *connack_opt &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can omit explicit packet creation as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto connack_opt = co_await amcl.async_start(
+    true,   // clean_start
+    std::uint16_t(0x1234), // keep_alive
+    "ClientIdentifier1",
+    will,   // you can pass std::nullopt if you don't want to set the will message
+    "UserName1",
+    "Password1",
+    as::use_awaitable
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>connect_packet</code> correspondint to the client version is created automatically.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_subscribeunsubscribe_and_wait_subackunsuback"><a class="anchor" href="#_send_subscribeunsubscribe_and_wait_subackunsuback"></a>Send SUBSCRIBE/UNSUBSCRIBE and wait SUBACK/UNSUBACK</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_async_subscribe_funtion"><a class="anchor" href="#_async_subscribe_funtion"></a><code><a href="../reference/async_mqtt/client/async_subscribe.html" class="xref page">async_subscribe()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// subscribe
+// MQTT send subscribe and wait suback
+std::vector&lt;am::topic_subopts&gt; sub_entry{
+    {"topic1", am::qos::at_most_once},
+    {"topic2", am::qos::at_least_once},
+    {"topic3", am::qos::exactly_once},
+};
+auto suback_opt = co_await amcl.async_subscribe(
+    am::v5::subscribe_packet{
+        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
+        am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
+    },
+    as::use_awaitable
+);
+if (suback_opt) {
+    std::cout &lt;&lt; *suback_opt &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and an optional <code>suback_packet</code>. The <code>suback_packet</code> will have a value only if the <code>error_code</code> indicates success.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_async_unsubscribe_funtion"><a class="anchor" href="#_async_unsubscribe_funtion"></a><code><a href="../reference/async_mqtt/client/async_unsubscribe.html" class="xref page">async_unsubscribe()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MQTT send unsubscribe and wait unsuback
+std::vector&lt;am::topic_sharename&gt; unsub_entry{
+    "topic1",
+    "topic2",
+    "topic3",
+};
+
+auto unsuback_opt = co_await amcl.async_unsubscribe(
+    am::v5::unsubscribe_packet{
+        *amcl.acquire_unique_packet_id(), // sync version only in thread safe environment
+        am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
+    },
+    as::use_awaitable
+);
+if (unsuback_opt) {
+    std::cout &lt;&lt; *unsuback_opt &lt;&lt; std::endl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and an optional <code>unsuback_packet</code>. The <code>unsuback_packet</code> will have a value only if the <code>error_code</code> indicates success.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_publish_packet_and_wait_response"><a class="anchor" href="#_send_publish_packet_and_wait_response"></a>Send PUBLISH packet and wait response</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_async_publish_funtion"><a class="anchor" href="#_async_publish_funtion"></a><code><a href="../reference/async_mqtt/client/async_publish.html" class="xref page">async_publish()</a></code> funtion</h3>
+<div class="paragraph">
+<p>Here is a code example that sending QoS0 PUBLISH packet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MQTT publish QoS0 and wait response (socket write complete)
+auto pubres0 = co_await amcl.async_publish(
+    am::v5::publish_packet{
+        "topic1",
+        "payload1",
+        am::qos::at_most_once
+    },
+    as::use_awaitable
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and <code><a href="../reference/async_mqtt/client/pubres_type.html" class="xref page">pubres_type</a></code>. When you send a QoS0 PUBLISH packet, no response packet is expected, so the <code>CompletionToken</code> is invoked when the underlying layer&#8217;s <code>async_write</code> operation is finished. All members of <code>pubres_t</code> are <code>nullopt</code>.</p>
+</div>
+<div class="paragraph">
+<p>Here is a code example that sending QoS1 PUBLISH packet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MQTT publish QoS1 and wait response (puback receive)
+auto pid_pub1 = co_await amcl.async_acquire_unique_packet_id(as::use_awaitable); // async version
+auto pubres1 = co_await amcl.async_publish(
+    am::v5::publish_packet{
+        *pid_pub1_opt,
+        "topic2",
+        "payload2",
+        am::qos::at_least_once
+    },
+    as::use_awaitable
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To create a QoS1 PUBLISH packet, you need to acquire a packet identifier. The example code above uses <code><a href="../reference/async_mqtt/client/async_acquire_unique_packet_id.html" class="xref page">async_acquire_unique_packet_id()</a></code>, which is the asynchronous version. You can call it from anywhere you want. The parameters of <code>CompletionToken</code> are <code>error_code</code> and <code>packet_id_type</code>. If all packet IDs have already been acquired, the <code>error_code</code> parameter will be <code>mqtt_error::packet_identifier_fully_used</code>. For convenience, a synchronous version, <code><a href="../reference/async_mqtt/client/acquire_unique_packet_id.html" class="xref page">acquire_unique_packet_id()</a></code>, also exists. The synchronous version must be called in a thread-safe context. For example, if you pass a strand-wrapped executor to the client upon creation, the callback handler of the asynchronous function will be in a thread-safe context.</p>
+</div>
+<div class="paragraph">
+<p>After <code>async_publish()</code> completes, the <code>puback_opt</code> of <code><a href="../reference/async_mqtt/client/pubres_type.html" class="xref page">pubres_type</a></code> is set. You can then retrieve the PUBACK packet.</p>
+</div>
+<div class="paragraph">
+<p>Here is a code example that sending QoS1 PUBLISH packet.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// MQTT publish QoS2 and wait response (pubrec, pubcomp receive)
+auto pid_pub2 = co_await amcl.acquire_unique_packet_id_wait_until(as::use_awaitable); // async version
+auto pubres2 = co_await amcl.async_publish(
+    am::v5::publish_packet{
+        pid_pub2,
+        "topic3",
+        "payload3",
+        am::qos::exactly_once
+    },
+    as::use_awaitable
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To create a QoS2 PUBLISH packet, you need to acquire a packet identifier. In this example, <code><a href="../reference/async_mqtt/client/async_acquire_unique_packet_id_wait_until.html" class="xref page">async_acquire_unique_packet_id_wait_until()</a></code> is used. The <code>CompletionToken</code> parameter is an error_code and a packet identifier. If all packet identifiers are in use, the function waits until at least one packet identifier becomes available again and then invokes the <code>CompletionToken</code>. This helps keep the user code simple.</p>
+</div>
+<div class="paragraph">
+<p>After <code>async_publish()</code> completes, the <code>pubrec_opt</code> and <code>pubcomp_opt</code> of <code><a href="../reference/async_mqtt/client/pubres_type.html" class="xref page">pubres_type</a></code> are set. You can then retrieve the PUBREC and PUBCOMP packets.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_receive_publish_packet_from_the_broker"><a class="anchor" href="#_receive_publish_packet_from_the_broker"></a>Receive PUBLISH packet from the broker</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_async_recv_funtion"><a class="anchor" href="#_async_recv_funtion"></a><code><a href="../reference/async_mqtt/client/async_recv.html" class="xref page">async_recv()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto pv = co_await amcl.async_recv(as::use_awaitable);
+pv.visit(
+    am::overload{
+        [&amp;](awaitable_client::publish_packet&amp; p) {
+            std::cout &lt;&lt; p &lt;&lt; std::endl;
+            std::cout &lt;&lt; "topic   : " &lt;&lt; p.topic() &lt;&lt; std::endl;
+            std::cout &lt;&lt; "payload : " &lt;&lt; p.payload() &lt;&lt; std::endl;
+        },
+        [&amp;](awaitable_client::disconnect_packet&amp; p) {
+            std::cout &lt;&lt; p &lt;&lt; std::endl;
+        },
+        [](auto&amp;) {
+        }
+    }
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After you call the <code>async_start()</code> function, the received PUBLISH packets are stored in the client. You can retrieve them using the <code>async_recv()</code> function. If no packets are stored, <code>async_recv()</code> waits until a PUBLISH, DISCONNECT, or AUTH packet is received.</p>
+</div>
+<div class="paragraph">
+<p>The parameters of <code>CompletionToken</code> are <code>error_code</code> and <code>packet_variant</code>. If <code>error_code</code> indicates success, <code>packet_variant</code> contains a packet; otherwise, <code>packet_variant</code> is set to <code>std::monostate</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_send_disconnect_packet"><a class="anchor" href="#_send_disconnect_packet"></a>Send DISCONNECT packet</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_async_disconnect_funtion"><a class="anchor" href="#_async_disconnect_funtion"></a><code><a href="../reference/async_mqtt/client/async_disconnect.html" class="xref page">async_disconnect()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">co_await amcl.async_disconnect(
+    am::v5::disconnect_packet{},
+    as::use_awaitable
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>CompletionToken</code> parameter is <code>error_code</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sending a DISCONNECT packet to the broker initiates a graceful disconnect sequence. The broker sends the MQTT will message if needed, then disconnects the network connection from its side. The client detects the disconnection and finally closes the client-side socket.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_close"><a class="anchor" href="#_close"></a>Close</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_async_close_funtion"><a class="anchor" href="#_async_close_funtion"></a><code><a href="../reference/async_mqtt/client/async_close.html" class="xref page">async_close()</a></code> funtion</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">co_await amcl.async_close(as::use_awaitable);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>CompletionToken</code> parameter is nothing.</p>
+</div>
+<div class="paragraph">
+<p>If you want to close the socket forcibly, you can call the <code>async_close()</code> function. This is useful, for example, when no packets are received from the broker unexpectedly and the client side doesn&#8217;t detect the disconnection.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whole_code"><a class="anchor" href="#_whole_code"></a>Whole code</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/cl_cpp20coro_mqtt.cpp">cl_cpp20coro_mqtt.cpp</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_supported_functionality"><a class="anchor" href="#_supported_functionality"></a>Supported Functionality</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>client supports the following functionalities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../functionality/connect_timeout.html" class="xref page">Connect Timeout</a></p>
+</li>
+<li>
+<p><a href="../functionality/keep_session.html" class="xref page">Keep Session</a></p>
+</li>
+<li>
+<p><a href="../functionality/topic_alias.html" class="xref page">Topic Alias</a></p>
+</li>
+<li>
+<p><a href="../functionality/request_response.html" class="xref page">Request Response</a></p>
+</li>
+<li>
+<p><a href="../functionality/receive_maximum.html" class="xref page">Receive Maximum</a></p>
+</li>
+<li>
+<p><a href="../functionality/maximum_packet_size.html" class="xref page">Maximum Packet Size</a></p>
+</li>
+<li>
+<p><a href="../functionality/logging.html" class="xref page">Logging</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/tutorial/client.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="../comparison.html">Comparison</a></span>
+        <span class="next"><a href="create_endpoint.html">Create endpoint</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

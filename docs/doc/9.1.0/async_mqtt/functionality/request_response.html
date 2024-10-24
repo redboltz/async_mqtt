@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Request/Response :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/functionality/request_response.html">
+    <link rel="prev" href="topic_alias.html">
+    <link rel="next" href="receive_maximum.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+<link rel="icon" href="../../_/img/Boost_Symbol_Transparent.svg" type="image/svg">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="topic_alias.html">Topic Alias</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="logging.html">logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../tool/bench.html">bench</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Functionality</li>
+    <li><a href="request_response.html">Request/Response</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="topic_alias.html"><span class="material-symbols-outlined" title="Previous: Topic Alias">arrow_back</span></a>
+    <a accesskey="p" href="receive_maximum.html"><span class="material-symbols-outlined" title="Next: Receive Maximum">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Request/Response</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>MQTT&#8217;s communication model is a pub/sub model. In order to realize Request/Response on the pub/sub model, MQTT v5.0 uses the following mechanism.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/request_response1.svg" alt="request_response">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_client"><a class="anchor" href="#_client"></a>Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>async_mqtt doesn&#8217;t perform any special treatment for Request/Response. Simply send a CONNECT packet with the <code>RequestResponseInformation</code> property set to 1, and then receive the CONNACK packet. If the CONNACK packet includes <code>ResponseInformation</code>, you can obtain <code>ResponseInformation</code> from it and subscribe to it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_broker"><a class="anchor" href="#_broker"></a>Broker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The broker part of async_mqtt supports Request/Response. When the broker receives a CONNECT packet with <code>RequestResponseInformation</code> set to 1, it automatically generates <code>ResponseInformation</code> and sends back a CONNACK packet with it. <code>ResponseInformation</code> is the <code>TopicName</code> for the response, so the client can use it as the <code>ResponseTopic</code> property when sending a PUBLISH packet.
+The async_mqtt broker has authentication/authorization support. The generated topic can be subscribed to only by the client that sent <code>RequestResponseInformation</code>. The generated topic can be published to by all clients.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_correlation_data"><a class="anchor" href="#_correlation_data"></a>Correlation Data</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115</a></p>
+</div>
+<div class="paragraph">
+<p>The client has only one <code>ResponseTopic</code> and uses it for all requests. The request receiver client could be different, so the responses could be mixed. To distinguish the correct response, <code>CorrelationData</code> can be used. See the following diagram.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/request_response2.svg" alt="request_response">
+</div>
+</div>
+<div class="paragraph">
+<p>client1 got the ResponseInformation R1 and uses it as ResponseTopic. Both client2 and client3 receive the same ResponseTopic and use it for publish back the response.
+If control PUBLISH packet contains not only ResponseTopic but also CorrelationData, then the receiver just set the CorrelationData to the response PUBLISH packet.</p>
+</div>
+<div class="paragraph">
+<p>client1 can choose any string as CorrelationData. Typically, choose unpredictable string to avoid malformed response.
+client1 needs to manage a CorrelationData-Request map to check the corresponding request.</p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/functionality/request_response.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="topic_alias.html">Topic Alias</a></span>
+        <span class="next"><a href="receive_maximum.html">Receive Maximum</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>
