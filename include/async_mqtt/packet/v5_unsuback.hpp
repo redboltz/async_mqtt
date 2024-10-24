@@ -37,15 +37,15 @@ namespace as = boost::asio;
  * @tparam PacketIdBytes size of packet_id
  *
  * MQTT UNSUBACK packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901187
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901187"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_unsuback.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -57,7 +57,7 @@ public:
      * @param packet_id MQTT PacketIdentifier that is corresponding to the UNSUBSCRIBE packet
      * @param params    unsuback entries.
      * @param props     properties.
-     *                  \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901187
+     *                  \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901187"></a>
      */
     explicit basic_unsuback_packet(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id,
@@ -145,8 +145,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_unsuback.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -160,8 +160,8 @@ bool operator<(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_p
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_unsuback.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -175,8 +175,8 @@ bool operator==(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_unsuback.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -188,8 +188,8 @@ std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdBytes> c
  * @brief Type alias of basic_unsuback_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_unsuback.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using unsuback_packet = basic_unsuback_packet<2>;

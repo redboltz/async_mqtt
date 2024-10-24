@@ -1,0 +1,58 @@
+= Packet Identifier Management
+
+SUBSCRIBE, UNSUBSCRIBE, and PUBLISH (QoS 1, QoS 2) packets require a Packet Identifier. The Packet Identifier is used to distinguish the response packets. Users need to set a Packet Identifier for the following request packets.
+
+|===
+| Request Packet | Response Packet
+
+| SUBSCRIBE     | SUBACK
+| UNSUBSCRIBE   | UNSUBACK
+| PUBLISH (QoS 1) | PUBACK
+| PUBLISH (QoS 2) | PUBREC, PUBREL, PUBCOMP
+|===
+
+Packet Identifier is managed by `endpoint`.
+
+NOTE: The `client` (high-level MQTT client) has an `endpoint` internally.
+
+To set a Packet Identifier for the request packet, users need to get a Packet Identifier from the `endpoint`.
+
+Here are member functions to get a Packet Identifier. There are two methods: **acquire** and **register**. For ordinary use cases, **acquire** is the preferred choice. If users want to manage the Packet Identifier themselves, they can use **register**. When you get the Packet Identifier, the ownership of the Packet Identifier is transferred to the user.
+
+|===
+| endpoint member function | effects
+
+| cpp:async_mqtt::basic_endpoint::async_acquire_unique_packet_id[async_acquire_unique_packet_id] | Acquire a new unique packet_id
+| cpp:async_mqtt::basic_endpoint::async_acquire_unique_packet_id_wait_until[async_acquire_unique_packet_id_wait_until] | Acquire a new unique packet_id
+| cpp:async_mqtt::basic_endpoint::async_register_packet_id[async_register_packet_id] | Register the packet_id
+| cpp:async_mqtt::basic_endpoint::acquire_unique_packet_id[acquire_unique_packet_id] | Acquire a new unique packet_id
+| cpp:async_mqtt::basic_endpoint::register_packet_id[register_packet_id] | Register the packet_id
+|===
+
+|===
+| client member function | effects
+
+| cpp:async_mqtt::client::async_acquire_unique_packet_id[async_acquire_unique_packet_id] | Acquire a new unique packet_id
+| cpp:async_mqtt::client::async_acquire_unique_packet_id_wait_until[async_acquire_unique_packet_id_wait_until] | Acquire a new unique packet_id
+| cpp:async_mqtt::client::async_register_packet_id[async_register_packet_id] | Register the packet_id
+| cpp:async_mqtt::client::acquire_unique_packet_id[acquire_unique_packet_id] | Acquire a new unique packet_id
+| cpp:async_mqtt::client::register_packet_id[register_packet_id] | Register the packet_id
+|===
+
+When the user calls a packet sending function with the packet that has the Packet Identifier set, the ownership of the Packet Identifier is transferred to the library (async_mqtt `endpoint`). Once the ownership is transferred, the Packet Identifier will automatically become reusable when the response packet is received, an error occurs, or the send process is canceled. Therefore, the user should not call the **release** APIs.
+
+If the user wants to **release** the obtained Packet Identifier before the ownership is transferred to the `endpoint`, they can use the following **release** APIs.
+
+|===
+| endpoint member function | effects
+
+| cpp:async_mqtt::basic_endpoint::async_release_packet_id[async_release_packet_id] | Release the packet_id
+| cpp:async_mqtt::basic_endpoint::release_packet_id[release_packet_id] | Release the packet_id
+|===
+
+|===
+| client member function | effects
+
+| cpp:async_mqtt::client::async_release_packet_id[async_release_packet_id] | Release the packet_id
+| cpp:async_mqtt::client::release_packet_id[release_packet_id] | Release the packet_id
+|===

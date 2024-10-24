@@ -36,15 +36,15 @@ namespace as = boost::asio;
  * then PINGREQ packet is automatically sent after keep_alive_sec passed after the last packet sent.
  * When the broker receives this packet, KeepAlive timeout (keep_alive_sec * 1.5) is reset and
  * start counting from 0.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901195"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pingreq.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class pingreq_packet {
@@ -110,8 +110,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pingreq.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(pingreq_packet const& lhs, pingreq_packet const& rhs);
@@ -124,8 +124,8 @@ bool operator<(pingreq_packet const& lhs, pingreq_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pingreq.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(pingreq_packet const& lhs, pingreq_packet const& rhs);
@@ -138,8 +138,8 @@ bool operator==(pingreq_packet const& lhs, pingreq_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_pingreq.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, pingreq_packet const& v);

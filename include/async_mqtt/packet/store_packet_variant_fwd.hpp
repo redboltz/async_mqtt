@@ -26,9 +26,15 @@ namespace async_mqtt {
  * @brief MQTT packet variant for store
  * @tparam PacketIdBytes MQTT spec is 2. You can use `store_packet_variant` for that.
  *
+ * #### variants
+ * @li @ref v3_1_1::basic_publish_packet<PacketIdBytes>
+ * @li @ref v3_1_1::basic_pubrel_packet<PacketIdBytes>
+ * @li @ref v5::basic_publish_packet<PacketIdBytes>
+ * @li @ref v5::basic_pubrel_packet<PacketIdBytes>
+ *
  * #### Requirements
- * - Header: async_mqtt/packet/store_packet_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -39,8 +45,8 @@ class basic_store_packet_variant;
  * @brief Type alias of basic_store_packet_variant (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/store_packet_variant.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using store_packet_variant = basic_store_packet_variant<2>;

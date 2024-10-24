@@ -28,7 +28,7 @@ namespace protocol {
  * @brief predefined underlying layer (TLS)
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/mqtts.hpp
+ * @li Header: async_mqtt/predefined_layer/mqtts.hpp
  *
  */
 using mqtts = as::ssl::stream<mqtt>;
@@ -46,7 +46,7 @@ using mqtts = as::ssl::stream<mqtt>;
  * @return deduced by token
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/mqtts.hpp
+ * @li Header: async_mqtt/predefined_layer/mqtts.hpp
  *
  */
 template <
@@ -55,12 +55,7 @@ template <
         typename as::ssl::stream<NextLayer>::executor_type
     >
 >
-#if !defined(GENERATING_DOCUMENTATION)
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
-#endif // !defined(GENERATING_DOCUMENTATION)
+auto
 async_underlying_handshake(
     as::ssl::stream<NextLayer>& layer,
     std::string_view host,

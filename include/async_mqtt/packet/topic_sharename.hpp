@@ -16,12 +16,12 @@ namespace async_mqtt {
  * @brief topic and sharename
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/topic_sharename.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/topic_sharename.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class topic_sharename {

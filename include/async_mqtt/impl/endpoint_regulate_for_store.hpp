@@ -79,10 +79,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::regulate_for_store(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, v5::basic_publish_packet<PacketIdBytes>)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
     v5::basic_publish_packet<PacketIdBytes> packet,
     CompletionToken&& token

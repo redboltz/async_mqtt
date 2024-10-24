@@ -286,10 +286,7 @@ struct stream_impl<NextLayer>::stream_read_some_op {
 
 template <typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, buffer)
-)
+auto
 stream_impl<NextLayer>::async_read_some(
     this_type_sp impl,
     CompletionToken&& token
@@ -377,10 +374,7 @@ stream_impl<NextLayer>::parse_packet() {
 
 template <typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, buffer)
-)
+auto
 stream<NextLayer>::async_read_packet(
     CompletionToken&& token
 ) {

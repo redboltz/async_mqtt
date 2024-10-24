@@ -19,8 +19,8 @@ namespace async_mqtt {
  * @brief MQTT endpoint connection role
  *
  * #### Requirements
- * - Header: async_mqtt/role.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/role.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class role {

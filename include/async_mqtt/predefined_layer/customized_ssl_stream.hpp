@@ -27,8 +27,10 @@ static constexpr auto shutdown_timeout = std::chrono::seconds(3);
  * @brief customization class template specialization for boost::asio::ssl::stream
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/customized_ssl_stream.hpp
+ * @li Header: async_mqtt/predefined_layer/customized_ssl_stream.hpp
  *
+ * @see
+ *   <a href="../../customize.html">Layor customize</a>
  */
 template <typename NextLayer>
 struct layer_customize<as::ssl::stream<NextLayer>> {

@@ -104,10 +104,7 @@ template <
     typename Executor,
     typename CompletionToken
 >
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
+auto
 async_underlying_handshake(
     as::basic_stream_socket<Socket, Executor>& layer,
     std::string_view host,

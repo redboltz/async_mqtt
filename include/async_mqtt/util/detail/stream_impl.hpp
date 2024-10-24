@@ -129,10 +129,7 @@ private:
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     static
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, buffer)
-    )
+    auto
     async_read_some(
         this_type_sp impl,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}

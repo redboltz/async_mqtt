@@ -36,15 +36,15 @@ namespace as = boost::asio;
  * after sending DISCONNECT packet.
  * When the broker receives DISCONNECT packet, then close underlying layer from the broker.
  * In this case, Will is not published by the broker except reason_code is Disconnect with Will Message.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901205"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_disconnect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class disconnect_packet {
@@ -53,9 +53,9 @@ public:
      * @brief constructor
      *
      * @param reason_code DisonnectReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208"></a>
      * @param props       properties.
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901209
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901209"></a>
      */
     explicit disconnect_packet(
         disconnect_reason_code reason_code,
@@ -72,7 +72,7 @@ public:
      * @brief constructor
      *
      * @param reason_code DisonnectReasonCode
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901208"></a>
      */
     explicit disconnect_packet(
         disconnect_reason_code reason_code
@@ -179,8 +179,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_disconnect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
@@ -193,8 +193,8 @@ bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_disconnect.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs);

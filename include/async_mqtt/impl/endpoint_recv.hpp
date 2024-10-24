@@ -682,10 +682,7 @@ recv_op {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, packet_variant_type)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     CompletionToken&& token
 ) {
@@ -708,10 +705,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, packet_variant_type)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     std::set<control_packet_type> types,
     CompletionToken&& token
@@ -737,10 +731,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code, packet_variant_type)
-)
+auto
 basic_endpoint<Role, PacketIdBytes, NextLayer>::async_recv(
     filter fil,
     std::set<control_packet_type> types,

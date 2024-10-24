@@ -43,7 +43,7 @@ using ws = bs::websocket::stream<mqtt>;
  * @return deduced by token
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/ws.hpp
+ * @li Header: async_mqtt/predefined_layer/ws.hpp
  *
  */
 template <
@@ -52,12 +52,7 @@ template <
         typename bs::websocket::stream<NextLayer>::executor_type
     >
 >
-#if !defined(GENERATING_DOCUMENTATION)
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
-#endif // !defined(GENERATING_DOCUMENTATION)
+auto
 async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,
@@ -80,7 +75,7 @@ async_underlying_handshake(
  * @return deduced by token
  *
  * #### Requirements
- * - Header: async_mqtt/predefined_layer/ws.hpp
+ * @li Header: async_mqtt/predefined_layer/ws.hpp
  *
  */
 template <
@@ -89,12 +84,7 @@ template <
         typename bs::websocket::stream<NextLayer>::executor_type
     >
 >
-#if !defined(GENERATING_DOCUMENTATION)
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
-#endif // !defined(GENERATING_DOCUMENTATION)
+auto
 async_underlying_handshake(
     bs::websocket::stream<NextLayer>& layer,
     std::string_view host,

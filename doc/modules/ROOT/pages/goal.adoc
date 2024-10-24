@@ -1,0 +1,25 @@
+= Design Goal
+
+== MQTT Conformance
+
+async_mqtt supports all functionalities of MQTT v3.1.1 and v5.0. Users can send and receive all types of MQTT packets. Some functionalities require stateful endpoint management, which async_mqtt handles efficiently.
+
+== Asio Friendly
+
+async_mqtt supports Asio-style completion tokens, including default completion tokens. Users can bind executors, cancellation slots, and allocators. async_mqtt can work with coroutines, including Asio-style multiple completion waiting.
+
+== High Performance
+
+async_mqtt supports high-performance communication. Balancing latency and throughput can sometimes be a trade-off, and async_mqtt allows configuration per `endpoint` and `client` basis. async_mqtt is used for not only mqtt clients but also high performance brokers. See the xref:performance.adoc[performance] page for details.
+
+== Support for Various Underlying Layers
+
+async_mqtt supports not only TCP, TLS, and WebSocket but also user-defined underlying layers, including test stubs.
+
+== Support for Both Detailed Low-Level Operations and Convenient High-Level Operations
+
+async_mqtt supports detailed operations, such as sending any MQTT packet at any time, through the `endpoint` component. This flexibility facilitates diverse application development. For typical use cases, high-level APIs are more convenient, provided by the `client` component. The `client` is built on top of the `endpoint`.
+
+== Support for Broker Cluster Development
+
+async_mqtt can be used for broker development. For developing a broker cluster, inter-broker communication is crucial. async_mqtt supports expanded length packet identifiers for this purpose.

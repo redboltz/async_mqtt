@@ -1,0 +1,29 @@
+= Request/Response
+
+MQTT's communication model is a pub/sub model. In order to realize Request/Response on the pub/sub model, MQTT v5.0 uses the following mechanism.
+
+image::request_response1.svg[request_response]
+
+== Client
+
+async_mqtt doesn't perform any special treatment for Request/Response. Simply send a CONNECT packet with the `RequestResponseInformation` property set to 1, and then receive the CONNACK packet. If the CONNACK packet includes `ResponseInformation`, you can obtain `ResponseInformation` from it and subscribe to it.
+
+== Broker
+
+The broker part of async_mqtt supports Request/Response. When the broker receives a CONNECT packet with `RequestResponseInformation` set to 1, it automatically generates `ResponseInformation` and sends back a CONNACK packet with it. `ResponseInformation` is the `TopicName` for the response, so the client can use it as the `ResponseTopic` property when sending a PUBLISH packet.
+The async_mqtt broker has authentication/authorization support. The generated topic can be subscribed to only by the client that sent `RequestResponseInformation`. The generated topic can be published to by all clients.
+
+== Correlation Data
+
+See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901115
+
+The client has only one `ResponseTopic` and uses it for all requests. The request receiver client could be different, so the responses could be mixed. To distinguish the correct response, `CorrelationData` can be used. See the following diagram.
+
+
+image::request_response2.svg[request_response]
+
+client1 got the ResponseInformation R1 and uses it as ResponseTopic. Both client2 and client3 receive the same ResponseTopic and use it for publish back the response.
+If control PUBLISH packet contains not only ResponseTopic but also CorrelationData, then the receiver just set the CorrelationData to the response PUBLISH packet.
+
+client1 can choose any string as CorrelationData. Typically, choose unpredictable string to avoid malformed response.
+client1 needs to manage a CorrelationData-Request map to check the corresponding request.

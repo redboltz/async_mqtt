@@ -179,10 +179,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
 
 template <typename NextLayer>
 template <typename Packet, typename CompletionToken>
-BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-    CompletionToken,
-    void(error_code)
-)
+auto
 stream<NextLayer>::async_write_packet(
     Packet packet,
     CompletionToken&& token

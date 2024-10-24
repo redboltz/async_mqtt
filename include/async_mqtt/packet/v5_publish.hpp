@@ -48,15 +48,15 @@ namespace as = boost::asio;
  * the client can sent the packet at offline. The packets are stored and will send after
  * the next connection is established.
  * If the session doesn' exist or lost, then the stored packets are erased.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901100"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_publish.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_publish.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -72,17 +72,17 @@ public:
      *                   basic_endpoint::acquire_unique_packet_id(), or must be registered by
      *                   basic_endpoint::register_packet_id().
      *                   \n If QoS0, the packet_id is not sent actually.
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901108
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901108"></a>
      * @param topic_name MQTT TopicName
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107"></a>
      * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119"></a>
      * @param pubopts    Publish Options. It contains the following elements:
-     *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
-     *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
-     *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     *                   \n DUP See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102"></a>
+     *                   \n QoS See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103"></a>
+     *                   \n RETAIN See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104"></a>
      * @param props      Publish properties.
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109"></a>
      */
     template <
         typename StringViewLike,
@@ -106,15 +106,15 @@ public:
      * @tparam StringViewLike Type of the topic. Any type can convert to std::string_view.
      * @tparam Payload Type of the payload. Any type can convert to std::string_view or its sequence.
      * @param topic_name MQTT TopicName
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107"></a>
      * @param payloads   The body message of the packet. It could be a single buffer of multiple buffer sequence.
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119"></a>
      * @param pubopts    Publish Options. It contains the following elements:
-     *                   \n DUP See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102
-     *                   \n QoS See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103
-     *                   \n RETAIN See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104
+     *                   \n DUP See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102"></a>
+     *                   \n QoS See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103"></a>
+     *                   \n RETAIN See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104"></a>
      * @param props      Publish properties.
-     *                   \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109
+     *                   \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109"></a>
      */
     template <
         typename StringViewLike,
@@ -315,8 +315,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_publish.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_publish.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -330,8 +330,8 @@ bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pac
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_publish.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_publish.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -345,8 +345,8 @@ bool operator==(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pa
  * @return  output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_publish.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_publish.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -358,8 +358,8 @@ std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> co
  * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_publish.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_publish.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using publish_packet = basic_publish_packet<2>;

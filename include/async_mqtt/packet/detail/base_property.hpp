@@ -96,15 +96,29 @@ struct n_bytes_property : private boost::totally_ordered<n_bytes_property<N>> {
         return 2;
     }
 
+    /**
+     * @brief less than operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs less than the rhs, otherwise false.
+     *
+     */
     friend bool operator<(n_bytes_property<N> const& lhs, n_bytes_property<N> const& rhs) {
         return std::tie(lhs.id_, lhs.buf_) < std::tie(rhs.id_, rhs.buf_);
     }
 
+    /**
+     * @brief equal operator
+     * @param lhs compare target
+     * @param rhs compare target
+     * @return true if the lhs equal to the rhs, otherwise false.
+     *
+     */
     friend bool operator==(n_bytes_property<N> const& lhs, n_bytes_property<N> const& rhs) {
         return std::tie(lhs.id_, lhs.buf_) == std::tie(rhs.id_, rhs.buf_);
     }
 
-    static constexpr ostream_format const of_ = ostream_format::direct;
+protected:
     property::id id_;
     static_vector<char, N> buf_;
 };
@@ -218,7 +232,6 @@ struct binary_property : private boost::totally_ordered<binary_property> {
         }
     }
 
-    static constexpr ostream_format const of_ = ostream_format::json_like;
     property::id id_;
     buffer buf_;
     static_vector<char, 2> length_;
@@ -324,7 +337,6 @@ struct variable_property : private boost::totally_ordered<variable_property> {
         return std::tie(lhs.id_, lval) == std::tie(rhs.id_, rval);
     }
 
-    static constexpr ostream_format const of_ = ostream_format::direct;
     property::id id_;
     static_vector<char, 4> value_;
 };

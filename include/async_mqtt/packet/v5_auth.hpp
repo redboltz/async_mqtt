@@ -33,15 +33,15 @@ namespace as = boost::asio;
  * @brief MQTT AUTH packet (v5)
  *
  * MQTT AUTH packet.
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901217"></a>
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_auth.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_auth.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class auth_packet {
@@ -50,9 +50,9 @@ public:
     /**
      * @brief constructor
      * @param reason_code auth_reason_code
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220"></a>
      * @param props       properties
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901221
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901221"></a>
      */
     explicit auth_packet(
         auth_reason_code reason_code,
@@ -67,7 +67,7 @@ public:
     /**
      * @brief constructor
      * @param reason_code auth_reason_code
-     *                    \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220
+     *                    \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901220"></a>
      */
     explicit auth_packet(
         auth_reason_code reason_code
@@ -175,8 +175,8 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_auth.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_auth.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator<(auth_packet const& lhs, auth_packet const& rhs);
@@ -189,8 +189,8 @@ bool operator<(auth_packet const& lhs, auth_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * - Header: async_mqtt/packet/v5_auth.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/v5_auth.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(auth_packet const& lhs, auth_packet const& rhs);

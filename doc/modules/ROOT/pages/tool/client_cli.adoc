@@ -1,0 +1,124 @@
+= client_cli
+
+`client_cli` is an intaractive MQTT client.
+
+`client_cli` has Boost.ProgramOptions style options.
+https://github.com/redboltz/async_mqtt/blob/main/tool/cli.conf is config file.
+You can also set command line options. The command line options are higher priority than file options.
+
+**Type `help` if you want to see the list of commands**.
+
+== Color
+
+* Red colored strings mean command result (status).
+* Cyan colored strings mean a received packet or received result.
+
+== Commands
+
+You can use the following commands:
+
+
+
+```
+cli>
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - pub <topic> <payload> <qos[0-2]>
+        publish
+ - sub <topic_filter> <qos[0-2]>
+        subscribe
+ - unsub <topic_filter>
+        unsubscribe
+ - bpub
+        build publish packet and send ...
+ - bsub
+        build publish packet and send ...
+```
+
+=== Build subscribe packet
+
+`bsub` is a sub menu.
+
+You can use the following commands:
+
+```
+bsub>
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - topic <TopicFilter>
+
+ - qos <[0-2]>
+
+ - nl <[0|1]>
+        No Local
+ - rap <[0|1]>
+        Retain as Published
+ - rh <[0(send) | 1(new sub only) | 2(not send)]>
+        Retain Handling
+ - sid <[1-268435455] or 0 (clear)>
+        Subscription Identifier Property
+ - add_up <key> <val>
+        Subscription Identifier Property
+ - show
+        show building packet
+ - clear
+        clear packet
+ - send
+        send packet
+ - cli
+        Top menu
+```
+In order to return to top menu, you need to type `cli`.
+
+=== Build publish packet
+
+`bpub` is a sub menu.
+
+You can use the following commands:
+
+```
+bpub>
+Commands available:
+ - help
+        This help message
+ - exit
+        Quit the session
+ - topic <TopicName>
+
+ - payload <Payload>
+
+ - retain <[0|1]>
+
+ - qos <[0-2]>
+
+ - pfi <[0|1]>
+        Payload Format Idenfitier Property (0:Binary, 1:String)
+ - mei <[0-4294967295]>
+        Message Expiry Interval Property (32bit seconds)
+ - ct <ContentTypeSrting>
+        Content Type Property (ContentTypeString)
+ - rt <topic>
+        Response Topic Property (topic)
+ - cd <data(only string supported on this tool)>
+        Correlation Data Property (data binary)
+ - ta <[1-65535]>
+        Topic Alias Property (16bit TopicAlias value)
+ - add_up <key> <val>
+        Subscription Identifier Property
+ - show
+        show building packet
+ - clear
+        clear packet
+ - send
+        send packet
+ - cli
+        Top menu
+```
+
+In order to return to top menu, you need to type `cli`.

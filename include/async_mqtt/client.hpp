@@ -36,19 +36,88 @@ public:
     /// @brief executor_type of the given NextLayer
     using executor_type = typename endpoint_type::executor_type;
 
+    /// @brief connect packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::connect_packet.
+    /// if Version is v5 the type is @ref v5::connect_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, connect)
+
+    /// @brief connack packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::connack_packet.
+    /// if Version is v5 the type is @ref v5::connack_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, connack)
+
+    /// @brief subscribe packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::subscribe_packet.
+    /// if Version is v5 the type is @ref v5::subscribe_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, subscribe)
+
+    /// @brief suback packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::suback_packet.
+    /// if Version is v5 the type is @ref v5::suback_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, suback)
+
+    /// @brief unsubscribe packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::unsubscribe_packet.
+    /// if Version is v5 the type is @ref v5::unsubscribe_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, unsubscribe)
+
+    /// @brief unsuback packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::unsuback_packet.
+    /// if Version is v5 the type is @ref v5::unsuback_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, unsuback)
+
+    /// @brief publish packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::publish_packet.
+    /// if Version is v5 the type is @ref v5::publish_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, publish)
+
+    /// @brief puback packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::puback_packet.
+    /// if Version is v5 the type is @ref v5::puback_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, puback)
+
+    /// @brief pubrec packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::pubrec_packet.
+    /// if Version is v5 the type is @ref v5::pubrec_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, pubrec)
+
+    /// @brief pubrel packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::pubrel_packet.
+    /// if Version is v5 the type is @ref v5::pubrel_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, pubrel)
+
+    /// @brief pubcomp packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::pubcomp_packet.
+    /// if Version is v5 the type is @ref v5::pubcomp_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, pubcomp)
+
+    /// @brief pingreq packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::pingreq_packet.
+    /// if Version is v5 the type is @ref v5::pingreq_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, pingreq)
+
+    /// @brief pingresp packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::pingresp_packet.
+    /// if Version is v5 the type is @ref v5::pingresp_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, pingresp)
+
+    /// @brief disconnect packet type
+    ///
+    /// if Version is v3.1.1 the type is @ref v3_1_1::disconnect_packet.
+    /// if Version is v5 the type is @ref v5::disconnect_packet.
     ASYNC_MQTT_PACKET_TYPE(Version, disconnect)
 
     /**
@@ -56,16 +125,16 @@ public:
      */
     struct pubres_type {
         /// puback_packet as the response when you send QoS1 publish
-        /// - @ref v3_1_1::basic_puback_packet "v3_1_1::puback_packet"
-        /// - @ref v5::basic_puback_packet "v5::puback_packet"
+        /// @li @ref v3_1_1::basic_puback_packet "v3_1_1::puback_packet"
+        /// @li @ref v5::basic_puback_packet "v5::puback_packet"
         std::optional<puback_packet> puback_opt;
         /// pubrec_packet as the response when you send QoS2 publish
-        /// - @ref v3_1_1::basic_pubrec_packet "v3_1_1::pubrec_packet"
-        /// - @ref v5::basic_pubrec_packet "v5::pubrec_packet"
+        /// @li @ref v3_1_1::basic_pubrec_packet "v3_1_1::pubrec_packet"
+        /// @li @ref v5::basic_pubrec_packet "v5::pubrec_packet"
         std::optional<pubrec_packet> pubrec_opt;
         /// pubcomp_packet as the response when you send QoS2 publish
-        /// - @ref v3_1_1::basic_pubcomp_packet "v3_1_1::pubcomp_packet"
-        /// - @ref v5::basic_pubcomp_packet "v5::pubcomp_packet"
+        /// @li @ref v3_1_1::basic_pubcomp_packet "v3_1_1::pubcomp_packet"
+        /// @li @ref v5::basic_pubcomp_packet "v5::pubcomp_packet"
         std::optional<pubcomp_packet> pubcomp_opt;
     };
 
@@ -73,11 +142,7 @@ public:
      * @brief constructor
      * @tparam Args Types for the next layer
      * @param  args args for the next layer.
-     * - There are predefined next layer types:
-     *    - protocol::mqtt
-     *    - protocol::mqtts
-     *    - protocol::ws
-     *    - protocol::wss
+     *
      */
     template <typename... Args>
     explicit
@@ -114,45 +179,51 @@ public:
 
     /**
      * @brief send CONNECT packet and start packet receive loop
-     * @param args
-     *  - the preceding arguments
-     *     - CONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - v3_1_1::connect_packet
-     *        - v5::connect_packet
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature:  void(@ref error_reporting "error_code", std::optional<connack_packet>)
-     *           - v3_1_1::connack_packet
-     *           - v5::connack_packet
-     *           - error_code
-     *              - If an error occurs during packet construction
-     *                 - If the is CONNECT packet specific error
-     *                    - connect_reason_code is set
-     *                 - Otherwise
-     *                    - disconnect_reason_code is set
-     *              - If an error occurs while checking the packet for sending
-     *                 - disconnect_reason_code is set
-     *              - If an error occurs at an underlying layer while sending a packet
-     *                 - underlying error is set. e.g. system, asio, beast, ...
-     *              - If the corresponding CONNACK packet is received, you can access connack_packet even if an error is set
-     *                 - If the protocol version is v3.1.1
-     *                    - connect_return_code is set
-     *                 - If the protocol version is v5
-     *                    - connect_reason_code is set
-     *              - Underlying error
-     *                 - TCP, TLS, Websocket related errors
-     *              - mqtt_error, connect_reason_code, disconnect_reason_code
-     *                 - send packet related errors
-     *              - connect_return_code (v3.1.1), connect_reason_code (v5)
-     *                 - CONNACK packet response
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * CONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v3_1_1::connect_packet
+     * @li @ref v5::connect_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, std::optional<@ref connack_packet>)
+     *
+     * ##### error_code and optional<connack_packet>
+     *
+     * @li If an error occurs during packet construction,
+     *     and if it is a CONNECT packet specific error,
+     *     @ref connect_reason_code is set.
+     *     Otherwise, @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     and the corresponding CONNACK packet is received,
+     *     @ref connect_return_code and optional<connack_packet> is set to @ref v3_1_1::connack_packet,
+     *     if the protocol version is v3.1.1.
+     *     @ref connect_reason_code and optional<connack_packet> is set to @ref v5::connack_packet
+     *     if the protocol version is v5.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
      * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
@@ -161,45 +232,58 @@ public:
 
     /**
      * @brief send SUBSCRIBE packet
-     * @param args
-     *  - the preceding arguments
-     *     - SUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - @ref v3_1_1::basic_subscribe_packet "v3_1_1::subscribe_packet"
-     *        - @ref v5::basic_subscribe_packet "v5::subscribe_packet"
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", std::optional<suback_packet>)
-     *           - @ref v3_1_1::basic_suback_packet "v3_1_1::suback_packet"
-     *           - @ref v5::basic_suback_packet "v5::suback_packet"
-     *           - error_code
-     *              - If an error occurs during packet construction
-     *                 - disconnect_reason_code is set
-     *              - If an error occurs while checking the packet for sending
-     *                 - disconnect_reason_code is set
-     *              - If an error occurs at an underlying layer while sending a packet
-     *                 - underlying error is set. e.g. system, asio, beast, ...
-     *              - If the corresponding SUBACK packet is received, you can access suback_packet even if an error is set
-     *                 - If the sent SUBSCRIBE packet has a single entry
-     *                    - If the protocol version is v3.1.1
-     *                       - suback_return_code is set
-     *                    - If the protocol version is v5
-     *                       - suback_reason_code is set
-     *                 - If the sent SUBSCRIBE packet has multiple entries
-     *                    - If all entries of the SUBACK packet are errors
-     *                       - mqtt_error::all_error_detected is set
-     *                    - If some of the entries in the SUBACK packet are errors
-     *                       - mqtt_error::partial_error_detected is set
-     *                    - If there are no errors in the SUBACK packet
-     *                       - errc::success is set
-     *
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * SUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v3_1_1::subscribe_packet
+     * @li @ref v5::subscribe_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, std::optional<@ref suback_packet>)
+     *
+     * ##### error_code and optional<suback_packet>
+     * @li If an error occurs during packet construction,
+     *     @ref disconnect_reason_code is set.
+     *     optional<suback_packet> is set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     optional<suback_packet> is set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     optional<suback_packet> is set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     and the corresponding SUBACK packet is received,
+     *     optional<suback_packet> is set to @ref v3_1_1::suback_packet,
+     *     if the protocol version is v3.1.1.
+     *     optional<suback_packet> is set to @ref v5::suback_packet,
+     *     if the protocol version is v5.
+     *     If sent SUBSCRIBE packet has single entry,
+     *     @ref suback_return_code is set if the protocol version is v3.1.1.
+     *     @ref suback_reason_code is set if the protocol version is v5.
+     *     If sent SUBSCRIBE packet has multiple entries,
+     *     and if the all entries of the SUBACK packet are errors,
+     *     @ref mqtt_error::all_error_detected is set.
+     *     If some of the entries in the SUBACK packet are errors,
+     *     @ref mqtt_error::partial_error_detected is set.
+     *     If there are no errors in the SUBACK packet,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
      * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
@@ -208,45 +292,58 @@ public:
 
     /**
      * @brief send UNSUBSCRIBE packet
-     * @param args
-     *  - the preceding arguments
-     *     - UNSUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - @ref v3_1_1::basic_unsubscribe_packet "v3_1_1::unsubscribe_packet"
-     *        - @ref v5::basic_unsubscribe_packet "v5::unsubscribe_packet"
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", std::optional<unsuback_packet>)
-     *           - @ref v3_1_1::basic_unsuback_packet "v3_1_1::unsuback_packet"
-     *           - @ref v5::basic_unsuback_packet "v5::unsuback_packet"
-     *           - error_code
-     *              - If an error occurs during packet construction
-     *                 - disconnect_reason_code is set
-     *              - If an error occurs while checking the packet for sending
-     *                 - disconnect_reason_code is set
-     *              - If an error occurs at an underlying layer while sending a packet
-     *                 - underlying error is set. e.g. system, asio, beast, ...
-     *              - If the corresponding UNSUBACK packet is received, you can access unsuback_packet even if an error is set
-     *                 - If the protocol version is v3.1.1 (UNSUBACK packet has no error field)
-     *                    - errc::success is set
-     *                 - If the protocol version is v5
-     *                    - If the sent UNSUBSCRIBE packet has a single entry
-     *                       - unsuback_reason_code is set
-     *                 - If the sent UNSUBSCRIBE packet has multiple entries
-     *                    - If all entries of the UNSUBACK packet are errors
-     *                       - mqtt_error::all_error_detected is set
-     *                    - If some of the entries in the UNSUBACK packet are errors
-     *                       - mqtt_error::partial_error_detected is set
-     *                    - If there are no errors in the UNSUBACK packet
-     *                       - errc::success is set
-     *
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * UNSUBSCRIBE packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v3_1_1::unsubscribe_packet
+     * @li @ref v5::unsubscribe_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, std::optional<@ref unsuback_packet>)
+     *
+     * ##### error_code and optional<unsuback_packet>
+     * @li If an error occurs during packet construction,
+     *     @ref disconnect_reason_code is set.
+     *     optional<unsuback_packet> is set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     optional<unsuback_packet> is set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     optional<unsuback_packet> is set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     and the corresponding UNSUBACK packet is received,
+     *     optional<unsuback_packet> is set to @ref v3_1_1::unsuback_packet,
+     *     if the protocol version is v3.1.1.
+     *     optional<unsuback_packet> is set to @ref v5::unsuback_packet,
+     *     if the protocol version is v5.
+     *     If sent UNSUBSCRIBE packet has single entry,
+     *     @ref unsuback_return_code is set if the protocol version is v3.1.1.
+     *     @ref unsuback_reason_code is set if the protocol version is v5.
+     *     If sent UNSUBSCRIBE packet has multiple entries,
+     *     and if the all entries of the UNSUBACK packet are errors,
+     *     @ref mqtt_error::all_error_detected is set.
+     *     If some of the entries in the UNSUBACK packet are errors,
+     *     @ref mqtt_error::partial_error_detected is set.
+     *     If there are no errors in the UNSUBACK packet,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
      * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
@@ -255,47 +352,59 @@ public:
 
     /**
      * @brief send PUBLISH packet
-     * @param args
-     *  - the preceding arguments
-     *     - PUBLISH packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - @ref v3_1_1::basic_publish_packet "v3_1_1::publish_packet"
-     *        - @ref v5::basic_publish_packet "v5::publish_packet"
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", @link pubres_type @endlink)
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
-     *        - When sending QoS0 packet, all members of pubres_type are std::nullopt.
-     *        - When sending QoS1 packet, only pubres_type::puback_opt is set.
-     *        - When sending QoS2 packet, only pubres_type::pubrec_opt and pubres_type::pubcomp are set.
-     *        - error_code
-     *           - If an error occurs during packet construction
-     *              - disconnect_reason_code is set
-     *           - If an error occurs while checking the packet for sending
-     *              - disconnect_reason_code is set
-     *           - If an error occurs at an underlying layer while sending a packet
-     *              - underlying error is set. e.g. system, asio, beast, ...
-     *           - If sent PUBLISH packet is QoS0
-     *              - errc::success is set
-     *           - If sent PUBLISH packet is QoS1 or QoS2
-     *              - If the corresponding response packet is received, you can access the response packet even if an error is set
-     *                 - If the protocol version is v3.1.1 (PUBACK, PUBREC, PUBCOMP packet has no error field)
-     *                    - errc::success is set
-     *                 - If the protocol version is v5
-     *                    - If sent PUBLISH packet is QoS1
-     *                       - puback_reason_code is set
-     *                    - If sent PUBLISH packet is QoS2
-     *                       - If PUBREC is error
-     *                          - pubrec_reason_code is set
-     *                       - Otherwise (after PUBCOMP packet is received)
-     *                          - pubcomp_reason_code is set
-     *
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * PUBLISH packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v3_1_1::publish_packet
+     * @li @ref v5::publish_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, @ref pubres_type)
+     *
+     * ##### pubres_type
+     * @li When sending QoS0 packet, all members of pubres_type are nullopt.
+     * @li When sending QoS1 packet, only @ref pubres_type::puback_opt is set.
+     * @li When sending QoS2 packet, only @ref pubres_type::pubrec_opt and @ref pubres_type::pubcomp are set.
+     *
+     * ##### error_code
+     *
+     * @li If an error occurs during packet construction,
+     *     @ref disconnect_reason_code is set.
+     *     All members of pubres_type are set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     All members of pubres_type are set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     All members of pubres_type are set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     and if sent PUBLISH packet is QoS0,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set,
+     *     if sent PUBLISH packet is QoS1 or QoS2,
+     *     and corresponding response packet is received,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set
+     *     if the protocol version is v3.1.1.
+     *     (On v3.1.1, PUBACK, PUBREC, PUBCOMP packet has no error field.)
+     *     If sent PUBLISH packet is QoS1, @ref puback_reason_code if the protocol version is v5.
+     *     If sent PUBLISH packet is QoS2, @ref pubrec_reason_code as error if the protocol version is v5.
+     *     If sent PUBLISH packet is QoS2, @ref pubcompc_reason_code if the protocol version is v5.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
      * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
@@ -304,85 +413,125 @@ public:
 
     /**
      * @brief send DISCONNECT packet
-     * @param args
-     *  - the preceding arguments
-     *     - DISCONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - v3_1_1::disconnect_packet
-     *        - v5::disconnect_packet
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code")
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
-     *        - error_code
-     *           - If an error occurs during packet construction
-     *              - disconnect_reason_code is set
-     *           - If an error occurs while checking the packet for sending
-     *              - disconnect_reason_code is set
-     *           - If an error occurs at an underlying layer while sending a packet
-     *              - underlying error is set. e.g. system, asio, beast, ...
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * DISCONNECT packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v3_1_1::disconnect_packet
+     * @li @ref v5::disconnect_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code)
+     *
+     * ##### error_code
+     *
+     * @li If an error occurs during packet construction,
+     *     and if it is a DISCONNECT packet specific error,
+     *     @ref disconnect_reason_code is set.
+     *     Otherwise, @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
-     * if they are also supported by the NextLayer type's async_write_some operation.
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_disconnect(Args&&... args);
 
     /**
      * @brief send AUTH packet
-     * @param args
-     *  - the preceding arguments
-     *     - AUTH packet of the Version or its constructor arguments (like std::vector::emplace_back())
-     *        - v5::auth_packet
-     *  - the last argument
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code")
-     *        - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
-     *        - error_code
-     *           - If an error occurs during packet construction
-     *              - auth_reason_code is set
-     *           - If an error occurs while checking the packet for sending
-     *              - auth_reason_code is set
-     *           - If an error occurs at an underlying layer while sending a packet
-     *              - underlying error is set. e.g. system, asio, beast, ...
+     * @param args see <a href="#_parameter_detail">parameter detail</a>
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ## parameter detail
+     *
+     * ### 1st..N-1th parameters
+     * AUTH packet of the Version or its constructor arguments (like std::vector::emplace_back())
+     * @li @ref v5::auth_packet
+     *
+     * ### Nth(the last) parameter
+     * CompletionToken
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code)
+     *
+     * ##### error_code
+     *
+     * @li If an error occurs during packet construction,
+     *     and if it is a AUTH packet specific error,
+     *     @ref disconnect_reason_code is set.
+     *     Otherwise, @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during packet construction,
+     *     but an error occurs while checking the packet for sending,
+     *     @ref disconnect_reason_code is set.
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during checking the packet for sending,
+     *     but an error occurs at an underlying layer while sending a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     optional<connack_packet> is set to nullopt.
+     * @li If no error occurs during the packet for sending,
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
      *
-     * if they are also supported by the NextLayer type's async_write_some operation.
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <typename... Args>
     auto async_auth(Args&&... args);
 
     /**
      * @brief close the underlying connection
-     * @param token  the param is void
+     * @param token see Signature
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void()
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void()
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -390,33 +539,40 @@ public:
     /**
      * @brief receive PUBLISH or DISCONNECT packet
      *        users CANNOT call recv() before the previous recv()'s CompletionToken is invoked
-     * @param token the params are
-     *     - CompletionToken
-     *        - Signature: void(@ref error_reporting "error_code", packet_variant)
-     *          he packet_variant can be one of the following:
-     *           - publish_packet
-     *              - @ref v3_1_1::basic_publish_packet "v3_1_1::publish_packet"
-     *              - @ref v5::basic_publish_packet "v5::publish_packet"
-     *           - disconnect_packet
-     *              - v3_1_1::disconnect_packet
-     *              - v5::disconnect_packet
-     *           - v5::auth_packet
+     * @param token see Signature
      * @return deduced by token
      *
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
-     * if they are also supported by the NextLayer type's async_read_some operation.
+     * #### Signature
+     * void(@ref error_code, @ref packet_variant)
+     *
+     * ##### error_code
+     *
+     * @li If receive error happens, error_code is set as error, otherwise
+     *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     *
+     * ##### packet_variant
+     * If the error_code is errc::success, one of the following packet is set to the packet_variant:
+     * @li @ref v3_1_1::publish_packet, if Version is v3_1_1 and PUBLISH packet is received.
+     * @li @ref v5::publish_packet, if Version is v5 and PUBLISH packet is received.
+     * @li @ref v5::disconnect_packet, if Version is v5 and DISCONNECT packet is received.
+     * @li @ref v5::auth_packet, if Version is v5 and AUTH packet is received.
+     *
+     * ### Per-Operation Cancellation
+     *
+     *  This asynchronous operation supports cancellation for the following
+     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_variant)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_recv(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -468,7 +624,7 @@ public:
     /**
      * @brief auto map (allocate) topic alias on send PUBLISH packet.
      * If all topic aliases are used, then overwrite by LRU algorithm.
-     * \n This function should be called before send() call.
+     * \n This function should be called before async_start() call.
      * @note By default not automatically mapping.
      * @param val if true, enable auto mapping, otherwise disable.
      */
@@ -477,7 +633,7 @@ public:
     /**
      * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
      * Registering topic alias need to do manually.
-     * \n This function should be called before send() call.
+     * \n This function should be called before async_start() call.
      * @note By default not automatically replacing.
      * @param val if true, enable auto replacing, otherwise disable.
      */
@@ -488,7 +644,7 @@ public:
      * If the timer is fired, then the underlying layer is closed from the client side.
      * If the protocol_version is v5, then send DISCONNECT packet with the reason code
      * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
-     * \n This function should be called before send() call.
+     * \n This function should be called before async_start() call.
      * @note By default timeout is not set.
      * @param duration if zero, timer is not set; otherwise duration is set.
      *                 The minimum resolution is in milliseconds.
@@ -500,7 +656,7 @@ public:
      * If true, then concatenate multiple packets' const buffer sequence
      * when send() is called before the previous send() is not completed.
      * Otherwise, send packet one by one.
-     * \n This function should be called before send() call.
+     * \n This function should be called before async_start() call.
      * @note By default bulk write mode is false (disabled)
      * @param val if true, enable bulk write mode, otherwise disable it.
      */
@@ -520,57 +676,66 @@ public:
 
     /**
      * @brief acuire unique packet_id.
-     * @param token
-     *  - CompletionToken
-     *     - Signature: void(error_code, packet_id_type)
-     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param token see Signature
      * @return deduced by token
-     * @par Per-Operation Cancellation
      *
-     *  This asynchronous operation supports cancellation for the following
-     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
-     *  - cancellation_type::total
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, @ref packet_id_type)
+     *
+     * ##### error_code
+     * If packet_id is acquired, <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     * If packet_id has already been fully allocated, @ref mqtt_error::packet_identifier_fully_used is set.
+     *
+     * ##### packet_id_type
+     * If success, acquired packet_id is set. Otherwise, 0 is set.
+     *
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_id_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_acquire_unique_packet_id(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
     /**
      * @brief acuire unique packet_id.
-     * If packet_id is fully acquired, then wait until released.
-     * @param token
-     *  - CompletionToken
-     *     - Signature: void(error_code, packet_id_type)
-     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     *
+     * If all packet_ids has already been used, then wait until one packet_id would be reusable.
+     * packet_id becomes usable when SUBACK, UNSUBACK, PUBACK, PUBREC(with error), or PUBCOMP is received.
+     *
+     * @param token see Signature
      * @return deduced by token
-     * @par Per-Operation Cancellation
+     *
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code, @ref packet_id_type)
+     *
+     * ##### error_code
+     * If packet_id is acquired, <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     * If the operation is cancelled, @ref boost::asio::error::operation_aborted is set.
+     *
+     * ##### packet_id_type
+     * If success, acquired packet_id is set. Otherwise, 0 is set.
+     *
+     * ### Per-Operation Cancellation
      *
      *  This asynchronous operation supports cancellation for the following
      *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
-     *  - cancellation_type::total
+     *  @li cancellation_type::terminal
+     *  @li cancellation_type::partial
+     *
+     * if they are also supported by the NextLayer type's async_read_some and async_write_some operation.
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, packet_id_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_acquire_unique_packet_id_wait_until(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -578,29 +743,24 @@ public:
     /**
      * @brief register packet_id.
      * @param packet_id packet_id to register
-     * @param token
-     *  - CompletionToken
-     *     - Signature: void(error_code)
-     *        - If true, success, otherwise the packet_id has already been used.
-     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param token see Signature
      * @return deduced by token
-     * @par Per-Operation Cancellation
      *
-     *  This asynchronous operation supports cancellation for the following
-     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
-     *  - cancellation_type::total
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void(@ref error_code)
+     *
+     * ##### error_code
+     * If packet_id is registered, <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
+     * If the packet_id has already been used, @ref mqtt_error::packet_identifier_conflict is set.
+     *
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_register_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -609,28 +769,20 @@ public:
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
-     * @param token
-     *  - CompletionToken
-     *     - Signature: void()
-     *     - [Default Completion Token](https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html) is supported
+     * @param token see Signature
      * @return deduced by token
-     * @par Per-Operation Cancellation
      *
-     *  This asynchronous operation supports cancellation for the following
-     *  [boost::asio::cancellation_type](https://www.boost.org/doc/html/boost_asio/reference/cancellation_type.html) values:
-     *  - cancellation_type::terminal
-     *  - cancellation_type::partial
-     *  - cancellation_type::total
+     * ### Completion Token
+     * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
+     *
+     * #### Signature
+     * void()
+     *
      */
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void()
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_release_packet_id(
         packet_id_type packet_id,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -681,12 +833,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<connack_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_start_impl(
         error_code ec,
         std::optional<connect_packet> packet,
@@ -696,12 +843,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_subscribe_impl(
         error_code ec,
         std::optional<subscribe_packet> packet,
@@ -711,12 +853,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, std::optional<suback_packet>)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_unsubscribe_impl(
         error_code ec,
         std::optional<unsubscribe_packet> packet,
@@ -726,12 +863,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, pubres_type)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_publish_impl(
         error_code ec,
         std::optional<publish_packet> packet,
@@ -741,12 +873,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_disconnect_impl(
         error_code ec,
         std::optional<disconnect_packet> packet,
@@ -756,12 +883,7 @@ private:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-#if !defined(GENERATING_DOCUMENTATION)
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
-#endif // !defined(GENERATING_DOCUMENTATION)
+    auto
     async_auth_impl(
         error_code ec,
         std::optional<v5::auth_packet> packet,

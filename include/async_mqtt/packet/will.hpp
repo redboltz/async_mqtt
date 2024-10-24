@@ -18,13 +18,14 @@ namespace async_mqtt {
  * @ingroup connect_v3_1_1
  * @ingroup connect_v5
  * @brief MQTT will message
+ *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/packet/will.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/will.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class will {
@@ -52,8 +53,8 @@ public:
     explicit will(
         StringViewLikeTopic&& topic,
         StringViewLikeMessage&& message,
-        pub::opts pubopts = {},
-        properties props = {}
+        pub::opts pubopts = pub::opts{},
+        properties props = properties{}
     ) :
         topic_{std::string{std::forward<StringViewLikeTopic>(topic)}},
         message_{std::string{std::forward<StringViewLikeMessage>(message)}},
@@ -183,8 +184,8 @@ private:
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/will.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/will.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline std::ostream& operator<<(std::ostream& o, will const& v) {

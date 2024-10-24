@@ -1,0 +1,114 @@
+= C++20 coroutine
+
+C++20 coroutine is supported by the language.
+
+See https://en.cppreference.com/w/cpp/language/coroutines
+
+Using C++ coroutines can avoid deeply nested callbacks, making the code easier to read.
+
+== co_spawn your application routine
+
+```cpp
+int main(int argc, char* argv[]) {
+    am::setup_log(am::severity_level::info);
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " host port" << std::endl;
+        return -1;
+    }
+    as::io_context ioc;
+    as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
+    ioc.run();
+}
+```
+
+To use a coroutine, you need to call `as::co_spawn()` to launch the coroutine as follows:
+
+```cpp
+as::co_spawn(ioc, proc(ioc.get_executor(), argv[1], argv[2]), as::detached);
+```
+
+== define application routine
+
+Define the application routine `proc()` as follows. The return value should be wrapped in `as::awaitable<>`.
+
+
+
+```cpp
+template <typename Executor>
+as::awaitable<void>
+proc(Executor exe, std::string_view host, std::string_view port) {
+   ...
+```
+
+=== define endpoint
+
+```cpp
+auto amep = am::endpoint<am::role::client, am::protocol::mqtt>{
+    am::protocol_version::v3_1_1,
+    exe
+};
+std::cout << "start" << std::endl;
+```
+
+
+There is nothing special; it is the same as a non-coroutine endpoint.
+
+=== chain async calls
+
+```cpp
+// prepare will message if you need.
+am::will will{
+    "WillTopic1",
+    "WillMessage1",
+    am::qos::at_most_once,
+    { // properties
+        am::property::user_property{"key1", "val1"},
+        am::property::content_type{"text"},
+    }
+};
+
+// handshake underlying layers
+co_await am::underlying_handshake(amep.next_layer(), host, port, as::use_awaitable);
+std::cout << "underlying_handshaked" << std::endl;
+
+// Send MQTT CONNECT
+co_await amep.async_send(
+    am::v3_1_1::connect_packet{
+        true,   // clean_session
+        0x1234, // keep_alive
+        "ClientIdentifier1",
+        will,   // you can pass std::nullopt if you don't want to set the will message
+        "UserName1",
+        "Password1"
+    },
+    as::use_awaitable
+);
+
+// Recv MQTT CONNACK
+am::packet_variant pv = co_await amep.async_recv(as::use_awaitable);
+pv.visit(
+    am::overload {
+        [&](am::v3_1_1::connack_packet const& p) {
+            std::cout
+                << "MQTT CONNACK recv"
+                << " sp:" << p.session_present()
+                << std::endl;
+        },
+        [](auto const&) {}
+    }
+);
+```
+
+When you call async functions, add the `co_await` keyword before the function call and pass `as::use_awaitable` as the `CompletionToken`. This is the C++20 coroutine way.
+
+For example, sending a CONNECT packet is done as follows. When `async_send()` is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value `ec`. If `ec` evaluates to true, it means an error occurred, so the code prints an error message and uses `co_return`. When you want to return from a function that has an `as::awaitable<>` return value, you need to call `co_return` instead of `return`.
+
+For detailed information about errors, refer to xref:../functionality/error_report.adoc[Error reporting].
+
+== whole code (example)
+
+* link:../example/ep_cpp20coro_mqtt_client.cpp[ep_cpp20coro_mqtt_client.cpp]
+
+== Other Completion Tokens
+
+You can use not only `as::use_awaitable` but also `as::deferred` and `as::experimental::use_promise`. See the Asio documentation for more details.

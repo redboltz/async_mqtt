@@ -1,0 +1,26 @@
+= Non packet based APIs
+
+Most of the `async_mqtt` APIs are xref:functionality/packet_based.adoc[packet based], so functionalities are automatically applied by simply setting packet parameters and sending/receiving them. However, some functionalities cannot be explained by packets alone. Such functionalities are implemented as non-packet-based APIs.
+
+Here is the list of non-packet-based APIs. These functions should be called before `async_send`/`async_recv` is called.
+
+|===
+|endpoint member function | Effects
+
+|cpp:async_mqtt::basic_endpoint::set_auto_pub_response[set_auto_pub_response()]|If set true, then PUBACK, PUBREC, PUBREL, and PUBCOMP will be sent automatically when the corresponding packet is received.
+|cpp:async_mqtt::basic_endpoint::set_auto_ping_response[set_auto_ping_response()]|If set true, then PINGRESP will be sent automatically when PINGREQ is received.
+|cpp:async_mqtt::basic_endpoint::set_auto_map_topic_alias_send[set_auto_map_topic_alias_send()]|If set true, TopicAlias is automatically acquired and applied on sending PUBLISH packets. The limit is decidec by received TopicAliasMaximum property. If it is 0, no TopicAlias is used. If TopicAlias is fully used, then overwrite the oldest TopicAlias (LRU algorithm).
+|cpp:async_mqtt::basic_endpoint::set_auto_replace_topic_alias_send[set_auto_replace_topic_alias_send()]|It is similar to set_auto_map_topic_alias but not automatically acquired. So you need to register topicalias by yourself. If set true, then TopicAlias is automatically applied if TopicAlias is already registered.
+|cpp:async_mqtt::basic_endpoint::set_pingresp_recv_timeout[set_pingresp_recv_timeout()]|Set timer after sending PINGREQ packet. The timer would be cancelled when PINGRESP packet is received. If timer is fired then the connection is disconnected automatically.
+|cpp:async_mqtt::basic_endpoint::set_bulk_write[set_bulk_write()]|Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one.
+|===
+
+
+|===
+|client member function | Effects
+
+|cpp:async_mqtt::client::set_auto_map_topic_alias_send[set_auto_map_topic_alias_send()]|If set true, TopicAlias is automatically acquired and applied on sending PUBLISH packets. The limit is decidec by received TopicAliasMaximum property. If it is 0, no TopicAlias is used. If TopicAlias is fully used, then overwrite the oldest TopicAlias (LRU algorithm).
+|cpp:async_mqtt::client::set_auto_replace_topic_alias_send[set_auto_replace_topic_alias_send()]|It is similar to set_auto_map_topic_alias but not automatically acquired. So you need to register topicalias by yourself. If set true, then TopicAlias is automatically applied if TopicAlias is already registered.
+|cpp:async_mqtt::client::set_pingresp_recv_timeout[set_pingresp_recv_timeout()]|Set timer after sending PINGREQ packet. The timer would be cancelled when PINGRESP packet is received. If timer is fired then the connection is disconnected automatically.
+|cpp:async_mqtt::client::set_bulk_write[set_bulk_write()]|Set bulk write mode. If true, then concatenate multiple packets' const buffer sequence when send() is called before the previous send() is not completed. Otherwise, send packet one by one.
+|===

@@ -35,12 +35,12 @@ namespace as = boost::asio;
  * This class holds string_view pointee's lifetime optionally.
  *
  * #### Thread Safety
- *    - Distinct objects: Safe
- *    - Shared objects: Unsafe
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * - Header: async_mqtt/util/buffer.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/util/buffer.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 class buffer {
@@ -966,8 +966,8 @@ private:
  * @return hash value
  *
  * #### Requirements
- * - Header: async_mqtt/util/buffer.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/util/buffer.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline std::size_t hash_value(buffer const& v) noexcept {
@@ -992,8 +992,8 @@ namespace asio {
  * @return boost::asio::const_buffer
  *
  * #### Requirements
- * - Header: async_mqtt/util/buffer.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/util/buffer.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline const_buffer buffer(async_mqtt::buffer const& data) {
@@ -1010,8 +1010,8 @@ namespace std {
  * @brief class template hash specilization for the buffer
  *
  * #### Requirements
- * - Header: async_mqtt/util/buffer.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/util/buffer.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <>

@@ -82,10 +82,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code, buffer)
-    )
+    auto
     async_read_packet(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
@@ -94,10 +91,7 @@ public:
         typename Packet,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void(error_code)
-    )
+    auto
     async_write_packet(
         Packet packet,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
@@ -110,10 +104,7 @@ public:
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
-    BOOST_ASIO_INITFN_AUTO_RESULT_TYPE(
-        CompletionToken,
-        void()
-    )
+    auto
     async_close(
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );

@@ -24,11 +24,11 @@ namespace async_mqtt {
  * @ingroup qos
  * @brief MQTT QoS
  *
- * \n See https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234
+ * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234"></a>
  *
  * #### Requirements
- * - Header: async_mqtt/packet/qos.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/qos.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class qos : std::uint8_t
@@ -45,8 +45,8 @@ enum class qos : std::uint8_t
  * @return QoS string
  *
  * #### Requirements
- * - Header: async_mqtt/packet/qos.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/qos.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* qos_to_str(qos v) {
@@ -66,8 +66,8 @@ constexpr char const* qos_to_str(qos v) {
  * @return output stream
  *
  * #### Requirements
- * - Header: async_mqtt/packet/qos.hpp
- * - Convenience header: async_mqtt/all.hpp
+ * @li Header: async_mqtt/packet/qos.hpp
+ * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline
