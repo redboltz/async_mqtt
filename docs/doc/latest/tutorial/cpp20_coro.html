@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>C++20 coroutine</title>
+<style>
+/*! Copyright (C) 2019, TomTom (http://tomtom.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Extension of the AsciiDoctor CSS for AsciiDoxy.
+ * Adding:
+ * - Floating multipage navigation.
+ */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+@import "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css";
+
+/* Multipage navigation */
+div#navigation {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+div#navigation table {
+    margin-bottom: 0;
+}
+@media screen and (min-width: 768px) {
+    body.toc2 div#navigation {
+        left: 15em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 15em;
+    }
+}
+@media screen and (min-width: 1280px) {
+    body.toc2 div#navigation {
+        left: 20em;
+    }
+    body.toc2.toc-right div#navigation {
+        right: 20em;
+    }
+}
+
+</style>
+<style>
+pre.rouge table td { padding: 5px; }
+pre.rouge table pre { margin: 0; }
+pre.rouge, pre.rouge .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+pre.rouge .err {
+  color: #272822;
+  background-color: #f92672;
+}
+pre.rouge .c, pre.rouge .ch, pre.rouge .cd, pre.rouge .cm, pre.rouge .cpf, pre.rouge .c1, pre.rouge .cs {
+  color: #75715e;
+}
+pre.rouge .cp {
+  color: #f4bf75;
+}
+pre.rouge .nt {
+  color: #f4bf75;
+}
+pre.rouge .o, pre.rouge .ow {
+  color: #f8f8f2;
+}
+pre.rouge .p, pre.rouge .pi {
+  color: #f8f8f2;
+}
+pre.rouge .gi {
+  color: #a6e22e;
+}
+pre.rouge .gd {
+  color: #f92672;
+}
+pre.rouge .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+pre.rouge .k, pre.rouge .kn, pre.rouge .kp, pre.rouge .kr, pre.rouge .kv {
+  color: #ae81ff;
+}
+pre.rouge .kc {
+  color: #fd971f;
+}
+pre.rouge .kt {
+  color: #fd971f;
+}
+pre.rouge .kd {
+  color: #fd971f;
+}
+pre.rouge .s, pre.rouge .sb, pre.rouge .sc, pre.rouge .dl, pre.rouge .sd, pre.rouge .s2, pre.rouge .sh, pre.rouge .sx, pre.rouge .s1 {
+  color: #a6e22e;
+}
+pre.rouge .sa {
+  color: #ae81ff;
+}
+pre.rouge .sr {
+  color: #a1efe4;
+}
+pre.rouge .si {
+  color: #cc6633;
+}
+pre.rouge .se {
+  color: #cc6633;
+}
+pre.rouge .nn {
+  color: #f4bf75;
+}
+pre.rouge .nc {
+  color: #f4bf75;
+}
+pre.rouge .no {
+  color: #f4bf75;
+}
+pre.rouge .na {
+  color: #66d9ef;
+}
+pre.rouge .m, pre.rouge .mb, pre.rouge .mf, pre.rouge .mh, pre.rouge .mi, pre.rouge .il, pre.rouge .mo, pre.rouge .mx {
+  color: #a6e22e;
+}
+pre.rouge .ss {
+  color: #a6e22e;
+}
+</style>
+</head>
+<body class="article">
+<div id="header">
+<h1>C++20 coroutine</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>C++20 coroutine is supported by the language.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="https://en.cppreference.com/w/cpp/language/coroutines" class="bare">https://en.cppreference.com/w/cpp/language/coroutines</a></p>
+</div>
+<div class="paragraph">
+<p>Using C++ coroutines can avoid deeply nested callbacks, making the code easier to read.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_co_spawn_your_application_routine">co_spawn your application routine</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">setup_log</span><span class="p">(</span><span class="n">am</span><span class="o">::</span><span class="n">severity_level</span><span class="o">::</span><span class="n">info</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Usage: "</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" host port"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">io_context</span> <span class="n">ioc</span><span class="p">;</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">co_spawn</span><span class="p">(</span><span class="n">ioc</span><span class="p">,</span> <span class="n">proc</span><span class="p">(</span><span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">as</span><span class="o">::</span><span class="n">detached</span><span class="p">);</span>
+    <span class="n">ioc</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To use a coroutine, you need to call <code>as::co_spawn()</code> to launch the coroutine as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="n">as</span><span class="o">::</span><span class="n">co_spawn</span><span class="p">(</span><span class="n">ioc</span><span class="p">,</span> <span class="n">proc</span><span class="p">(</span><span class="n">ioc</span><span class="p">.</span><span class="n">get_executor</span><span class="p">(),</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">as</span><span class="o">::</span><span class="n">detached</span><span class="p">);</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_define_application_routine">define application routine</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Define the application routine <code>proc()</code> as follows. The return value should be wrapped in <code>as::awaitable&lt;&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="nc">Executor</span><span class="p">&gt;</span>
+<span class="n">as</span><span class="o">::</span><span class="n">awaitable</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span>
+<span class="n">proc</span><span class="p">(</span><span class="n">Executor</span> <span class="n">exe</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">host</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">port</span><span class="p">)</span> <span class="p">{</span>
+   <span class="p">...</span></code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_define_endpoint">define endpoint</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="k">auto</span> <span class="n">amep</span> <span class="o">=</span> <span class="n">am</span><span class="o">::</span><span class="n">endpoint</span><span class="o">&lt;</span><span class="n">am</span><span class="o">::</span><span class="n">role</span><span class="o">::</span><span class="n">client</span><span class="p">,</span> <span class="n">am</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">mqtt</span><span class="o">&gt;</span><span class="p">{</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">protocol_version</span><span class="o">::</span><span class="n">v3_1_1</span><span class="p">,</span>
+    <span class="n">exe</span>
+<span class="p">};</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"start"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There is nothing special; it is the same as a non-coroutine endpoint.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chain_async_calls">chain async calls</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code data-lang="cpp"><span class="c1">// prepare will message if you need.</span>
+<span class="n">am</span><span class="o">::</span><span class="n">will</span> <span class="n">will</span><span class="p">{</span>
+    <span class="s">"WillTopic1"</span><span class="p">,</span>
+    <span class="s">"WillMessage1"</span><span class="p">,</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">qos</span><span class="o">::</span><span class="n">at_most_once</span><span class="p">,</span>
+    <span class="p">{</span> <span class="c1">// properties</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">user_property</span><span class="p">{</span><span class="s">"key1"</span><span class="p">,</span> <span class="s">"val1"</span><span class="p">},</span>
+        <span class="n">am</span><span class="o">::</span><span class="n">property</span><span class="o">::</span><span class="n">content_type</span><span class="p">{</span><span class="s">"text"</span><span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// handshake underlying layers</span>
+<span class="k">co_await</span> <span class="n">am</span><span class="o">::</span><span class="n">underlying_handshake</span><span class="p">(</span><span class="n">amep</span><span class="p">.</span><span class="n">next_layer</span><span class="p">(),</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"underlying_handshaked"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+<span class="c1">// Send MQTT CONNECT</span>
+<span class="k">co_await</span> <span class="n">amep</span><span class="p">.</span><span class="n">async_send</span><span class="p">(</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connect_packet</span><span class="p">{</span>
+        <span class="nb">true</span><span class="p">,</span>   <span class="c1">// clean_session</span>
+        <span class="mh">0x1234</span><span class="p">,</span> <span class="c1">// keep_alive</span>
+        <span class="s">"ClientIdentifier1"</span><span class="p">,</span>
+        <span class="n">will</span><span class="p">,</span>   <span class="c1">// you can pass std::nullopt if you don't want to set the will message</span>
+        <span class="s">"UserName1"</span><span class="p">,</span>
+        <span class="s">"Password1"</span>
+    <span class="p">},</span>
+    <span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span>
+<span class="p">);</span>
+
+<span class="c1">// Recv MQTT CONNACK</span>
+<span class="n">am</span><span class="o">::</span><span class="n">packet_variant</span> <span class="n">pv</span> <span class="o">=</span> <span class="k">co_await</span> <span class="n">amep</span><span class="p">.</span><span class="n">async_recv</span><span class="p">(</span><span class="n">as</span><span class="o">::</span><span class="n">use_awaitable</span><span class="p">);</span>
+<span class="n">pv</span><span class="p">.</span><span class="n">visit</span><span class="p">(</span>
+    <span class="n">am</span><span class="o">::</span><span class="n">overload</span> <span class="p">{</span>
+        <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">am</span><span class="o">::</span><span class="n">v3_1_1</span><span class="o">::</span><span class="n">connack_packet</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span>
+                <span class="o">&lt;&lt;</span> <span class="s">"MQTT CONNACK recv"</span>
+                <span class="o">&lt;&lt;</span> <span class="s">" sp:"</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">.</span><span class="n">session_present</span><span class="p">()</span>
+                <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="p">[](</span><span class="k">auto</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="p">}</span>
+<span class="p">);</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you call async functions, add the <code>co_await</code> keyword before the function call and pass <code>as::use_awaitable</code> as the <code>CompletionToken</code>. This is the C++20 coroutine way.</p>
+</div>
+<div class="paragraph">
+<p>For example, sending a CONNECT packet is done as follows. When <code>send()</code> is called, the async send procedure is triggered. When the procedure is finished, the context is returned. You can then access the return value <code>ec</code>. If <code>ec</code> evaluates to true, it means an error occurred, so the code prints an error message and uses <code>co_return</code>. When you want to return from a function that has an <code>as::awaitable&lt;&gt;</code> return value, you need to call <code>co_return</code> instead of <code>return</code>.</p>
+</div>
+<div class="paragraph">
+<p>For detailed information about errors, refer to <a href="../api/group__error__reporting.html">Errors for APIs</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whole_code_example">whole code (example)</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/redboltz/async_mqtt/blob/main/example/ep_cpp20coro_mqtt_client.cpp">ep_cpp20coro_mqtt_client.cpp</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_completion_tokens">Other Completion Tokens</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use not only <code>as::use_awaitable</code> but also <code>as::deferred</code> and <code>as::experimental::use_promise</code>. See the Asio documentation for more details.</p>
+</div>
+<div id="navigation">
+<table class="tableblock frame-none grid-none stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle"><a href="create_endpoint.html">Prev</a></th>
+<th class="tableblock halign-center valign-middle"><a href="../index.html">Up</a><br>
+<a href="../index.html">Home</a></th>
+<th class="tableblock halign-right valign-middle"><a href="sl_coro.html">Next</a></th>
+</tr>
+</thead>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+</body>
+</html>
