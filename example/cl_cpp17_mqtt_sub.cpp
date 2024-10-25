@@ -9,7 +9,7 @@
 // Finally, it disconnects from the broker.
 //
 // Example:
-// ./cl_cpp20coro_mqtt_pub mqtt.redboltz.net 1883
+// ./cl_cpp17_mqtt_sub mqtt.redboltz.net 1883
 
 #include <iostream>
 #include <string>

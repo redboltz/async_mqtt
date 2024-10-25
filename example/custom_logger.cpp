@@ -9,14 +9,74 @@
 // Finally, it disconnects from the broker.
 //
 // Example:
-// ./cl_cpp17_mqtt_pub mqtt.redboltz.net 1883
+// ./custom_logger_pub mqtt.redboltz.net 1883
 
 #include <iostream>
 #include <string>
 
 #include <boost/asio.hpp>
 
+////////////////////////////////////////////////////////////////////////////////
+// Using custom logger BEGIN
+
+// Implement the following codes before any async_mqtt headers include.
+// Exception:
+//   async_mqtt/util/log_severity.hpp is used for defining custom_log
+
+#include <async_mqtt/util/log_severity.hpp>
+
+// Optional:
+// Define custom logger instead of Boost.Log (default)
+// undef ASYNC_MQTT_USE_LOG or remove from compiler option
+// -DASYNC_MQTT_USE_LOG removes all Boost.Log related code.
+// It can compile faster.
+#undef ASYNC_MQTT_USE_LOG
+
+// Define simple custom logger
+// This is example implementation.
+// Just output channel, sevarity, and message body to std::clog
+struct custom_log {
+    explicit constexpr custom_log(std::string_view chan, async_mqtt::severity_level sev)
+    {
+        // Setup filter
+        if (sev < async_mqtt::severity_level::info) {
+            print = false;
+            return;
+        }
+        // Output header
+        std::clog << "[" << sev << "]" << "(" << chan << ") ";
+    }
+    ~custom_log() {
+        // Output trailer
+        if (print) std::clog << std::endl;
+    }
+
+    bool print = true;
+};
+
+template <typename T>
+inline constexpr custom_log const& operator<<(
+    custom_log const& o,
+    T const& t
+) {
+    // Output message body with filter
+    if (o.print) std::clog << t;
+    return o;
+}
+
+// Output additional value. Stringized name(tag) and tagged value.
+#define ASYNC_MQTT_ADD_VALUE(name, val) "<" << #name ">{" << val << "} "
+
+// Set ASYNC_MQTT_LOG macro to custom_log.
+#define ASYNC_MQTT_LOG(chan, sev) custom_log(chan, async_mqtt::severity_level::sev)
+
+// Using custom logger END
+////////////////////////////////////////////////////////////////////////////////
+
+// The following code is the same as cl_cpp17_mqtt_pub.cpp
+
 #include <async_mqtt/all.hpp>
+
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
