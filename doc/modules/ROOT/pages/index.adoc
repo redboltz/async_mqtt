@@ -1,6 +1,6 @@
 = async_mqtt
 
-Takatoshi Kondo
+http://github.com/redboltz/async_mqtt
 
 Copyright © 2024 Takatoshi Kondo
 
@@ -48,3 +48,4 @@ Distributed under the Boost Software License, Version 1.0. (See accompanying fil
 ** xref:tool/broker.adoc[]
 ** xref:tool/client_cli.adoc[]
 ** xref:tool/bench.adoc[]
+* link:http://github.com/redboltz/async_mqtt[Repository]

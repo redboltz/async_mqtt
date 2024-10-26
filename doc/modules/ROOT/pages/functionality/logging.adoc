@@ -1,17 +1,113 @@
-= logging
+= Logging
 
-async_mqtt supports Boost.Log style logging. The severity levels are `fatal`, `error`, `warning`, `info`, `debug`, and `trace`.
+== Using Boost.Log
+`async_mqtt` provides logging support with Boost.Log. Supported severity levels include `fatal`, `error`, `warning`, `info`, `debug`, and `trace`.
 
-The easiest way to setup logging is
+To quickly set up logging, you can use:
 
 ```cpp
 async_mqtt::setup_log(
-    async_mqtt::severity_level::info, // you can use any other severity_level
-    true                              // if true or omit the argument
-                                      // log is colored, otherwise non colored
+    async_mqtt::severity_level::info, // Choose any severity level
+    true                              // Pass `true` or omit to enable colored output
 );
 ```
 
-You can setup your custom settings.
+Custom configurations are also supported.
 
-See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/util/setup_log.hpp[setup_log.hpp]
+See `setup_log.hpp` for details: https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/util/setup_log.hpp[setup_log.hpp]
+
+NOTE: Boost.Log-based logging is enabled when `ASYNC_MQTT_USE_LOG` is defined. For more information, see xref:config.adoc[]
+
+=== Compile time severity filtering
+
+`setup_log()` is for runtime severity level setting.
+
+`ASYNC_MQTT_LOG_SEV` is for compile-time severity level setting.
+If you define as follows:
+
+```cpp
+#define ASYNC_MQTT_LOG_SEV info
+```
+
+then, `fatal`, `error`, `warning`, and `info` logs are compiled. `debug` and `trace` logs are erased from the code.
+It is useful for minimal code generation for logging.
+
+== Using a Custom Logger
+Boost.Log offers extensive functionality, including logging to the console, syslog, and files. However, some users may prefer a simpler logging mechanism.
+
+All you need to do is defining two macros.
+One is `ASYNC_MQTT_ADD_VALUE`, the other is `ASYNC_MQTT_LOG`.
+
+To create and use a custom logger, follow these steps:
+
+All steps should be completed before including any `async_mqtt` headers.
+
+Include the minimal header to implement your custom logger:
+
+```cpp
+#include <async_mqtt/util/log_severity.hpp>
+```
+
+[Optional] Remove the `ASYNC_MQTT_USE_LOG` definition:
+
+```cpp
+#undef ASYNC_MQTT_USE_LOG
+```
+
+NOTE: Even if `ASYNC_MQTT_USE_LOG` is defined, your custom logger works well. But removing Boost.Log is often the one of the dominant motivation to introduce custom loggers.
+
+Define your custom logger class:
+
+```cpp
+// Define logger class
+struct custom_log {
+    explicit constexpr custom_log(
+        std::string chan,              // chan indicates the log channel or part
+        async_mqtt::severity_level sev // sev represents the severity level
+    )
+    {
+        // Setup filter
+        if (sev < async_mqtt::severity_level::info) {
+            print = false;
+            return;
+        }
+        // Output header
+        std::clog << "[" << sev << "]" << "(" << chan << ") ";
+    }
+    ~custom_log() {
+        // Output trailer
+        if (print) std::clog << std::endl;
+    }
+
+    bool print = true;
+};
+
+// Define output stream operator
+template <typename T>
+inline constexpr custom_log const& operator<<(
+    custom_log const& o,
+    T const& t
+) {
+    // Output message body with filter
+    if (o.print) std::clog << t;
+    return o;
+}
+```
+
+NOTE: This example demonstrates how to locate logging elements in the output. e.g.) channel, severity, tag, ... , so different type of brace is intentionally used. (`()<>{}`)
+
+
+Apply the custom logger to the `ASYNC_MQTT_LOG()` macro. The `ASYNC_MQTT_LOG()` macro is used throughout the `async_mqtt` library.
+
+```cpp
+// Output additional value. Stringized name(tag) and tagged value.
+#define ASYNC_MQTT_ADD_VALUE(name, val) "<" << #name ">{" << val << "} "
+```
+
+```cpp
+// Set ASYNC_MQTT_LOG macro to custom_log.
+#define ASYNC_MQTT_LOG(chan, sev) custom_log(chan, async_mqtt::severity_level::sev)
+```
+
+=== Example
+For a full example, see link:../example/custom_logger.cpp[custom_logger.cpp].

@@ -30,6 +30,8 @@
 
 #endif // defined(ASYNC_MQTT_USE_LOG)
 
+#include <async_mqtt/util/log_severity.hpp>
+
 /**
  * @defgroup log logging
  */
@@ -39,38 +41,6 @@ namespace async_mqtt {
 struct channel : std::string {
     using std::string::string;
 };
-
-/**
- * @ingroup log
- * log severity level
- * warning is recommended for actual operation because there is no output except something important.
- *
- * #### Requirements
- * @li Header: async_mqtt/util/log.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
- */
-enum class severity_level {
-    trace,   ///< trace level for detaied behavior and reporting issue
-    debug,   ///< debug level not used in async_mqtt, so far
-    info,    ///< info level api call is output
-    warning, ///< warning level such as timeout
-    error,   ///< error level error report such as connection is failed
-    fatal    ///< fatal level it is logic error of async_mqtt
-};
-
-inline std::ostream& operator<<(std::ostream& o, severity_level sev) {
-    constexpr char const* const str[] {
-        "trace",
-        "debug",
-        "info",
-        "warning",
-        "error",
-        "fatal"
-    };
-    o << str[static_cast<std::size_t>(sev)];
-    return o;
-}
 
 namespace detail {
 
@@ -103,7 +73,7 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(address, "MqttAddress", void const*)
 
 // Take any filterable parameters (FP)
 #define ASYNC_MQTT_LOG_FP(chan, sev)                                          \
-    BOOST_LOG_STREAM_CHANNEL_SEV(async_mqtt::logger(), async_mqtt::channel(chan), sev) \
+    BOOST_LOG_STREAM_CHANNEL_SEV(async_mqtt::logger(), async_mqtt::channel(chan), async_mqtt::severity_level::sev) \
     << boost::log::add_value(async_mqtt::file, __FILE__)                   \
     << boost::log::add_value(async_mqtt::line, __LINE__)                   \
     << boost::log::add_value(async_mqtt::function, BOOST_CURRENT_FUNCTION)
@@ -134,8 +104,8 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(address, "MqttAddress", void const*)
 #define ASYNC_MQTT_LOG(chan, sev)                                       \
     BOOST_PP_IF(                                                        \
         BOOST_PP_GREATER_EQUAL(ASYNC_MQTT_GET_LOG_SEV_NUM(sev), ASYNC_MQTT_GET_LOG_SEV_NUM(ASYNC_MQTT_LOG_SEV)), \
-        ASYNC_MQTT_LOG_FP(chan, async_mqtt::severity_level::sev),                \
-        async_mqtt::detail::null_log(chan, async_mqtt::severity_level::sev)   \
+        ASYNC_MQTT_LOG_FP(chan, sev),                                   \
+        async_mqtt::detail::null_log(chan, async_mqtt::severity_level::sev) \
     )
 
 #endif // !defined(ASYNC_MQTT_LOG)
