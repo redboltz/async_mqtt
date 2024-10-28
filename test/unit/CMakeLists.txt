@@ -20,6 +20,7 @@ list(APPEND check_PROGRAMS
     ut_broker_security.cpp
     ut_buffer.cpp
     ut_code.cpp
+    ut_connection.cpp
     ut_ep_alloc.cpp
     ut_ep_con_discon.cpp
     ut_ep_keep_alive.cpp
