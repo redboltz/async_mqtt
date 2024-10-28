@@ -29,7 +29,7 @@ proc(
     try {
         // all underlying layer handshaking
         // (Resolve hostname, TCP handshake)
-        co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+        co_await amcl.async_underlying_handshake(host, port, as::use_awaitable);
 
         std::cout << "mqtt undlerlying handshaked" << std::endl;
 
@@ -116,8 +116,9 @@ proc(
 
         // recv (coroutine)
         for (int i = 0; i != 2; ++i) {
-            auto pv = co_await amcl.async_recv(as::use_awaitable);
-            pv.visit(
+            auto pv_opt = co_await amcl.async_recv(as::use_awaitable);
+            BOOST_ASSERT(pv_opt);
+            pv_opt->visit(
                 am::overload{
                     [&](client_t::publish_packet& p) {
                         std::cout << p << std::endl;
@@ -134,9 +135,10 @@ proc(
         }
         // recv (callback) before sending
         amcl.async_recv(
-            [] (am::error_code ec, am::packet_variant pv) {
+            [] (am::error_code ec, std::optional<am::packet_variant> pv_opt) {
                 std::cout << ec.message() << std::endl;
-                pv.visit(
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload{
                         [&](client_t::publish_packet& p) {
                             std::cout << p << std::endl;

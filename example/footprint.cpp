@@ -22,8 +22,7 @@ int main() {
             auto exe = co_await as::this_coro::executor;
 
             // Resolve hostname
-            auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl.next_layer(),
+            auto [ec_und] = co_await amcl.async_underlying_handshake(
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::deferred)
@@ -74,7 +73,7 @@ int main() {
             );
             if (ec_pub0) co_return;
 
-            auto [ec_recv, pv] = co_await amcl.async_recv(
+            auto [ec_recv, pv_opt] = co_await amcl.async_recv(
                 as::as_tuple(as::deferred)
             );
 
