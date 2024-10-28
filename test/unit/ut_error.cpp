@@ -9,7 +9,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 
 
 BOOST_AUTO_TEST_SUITE(ut_error)
@@ -153,8 +153,20 @@ BOOST_AUTO_TEST_CASE(category_detail) {
         BOOST_TEST(e.message() == "partial_error_detected");
     }
     {
+        am::error_code e = am::make_error_code(am::mqtt_error::all_error_detected);
+        BOOST_TEST(e.message() == "all_error_detected");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_fully_used);
+        BOOST_TEST(e.message() == "packet_identifier_fully_used");
+    }
+    {
         am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_conflict);
         BOOST_TEST(e.message() == "packet_identifier_conflict");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_invalid);
+        BOOST_TEST(e.message() == "packet_identifier_invalid");
     }
     {
         am::error_code e = am::make_error_code(am::mqtt_error::packet_not_allowed_to_send);
@@ -189,6 +201,15 @@ BOOST_AUTO_TEST_CASE(category_detail) {
             )
         };
         BOOST_TEST(se.code() == am::auth_reason_code::success);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(unknown) {
+    {
+        auto c = am::mqtt_error(99);
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("unknown_mqtt_error"));
     }
 }
 

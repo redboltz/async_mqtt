@@ -16,17 +16,17 @@ In addition, if you want to use TLS and/or WebSocket, include the following head
 
 For TLS:
 ```cpp
-#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
 ```
 
 For Websocket
 ```cpp
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 ```
 
 For Websocket on TLS
 ```cpp
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 ```
 
 The following namespace alias is defined in all code examples:

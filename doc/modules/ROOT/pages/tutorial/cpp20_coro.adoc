@@ -68,7 +68,7 @@ am::will will{
 };
 
 // handshake underlying layers
-co_await am::underlying_handshake(amep.next_layer(), host, port, as::use_awaitable);
+co_await amep.async_underlying_handshake(host, port, as::use_awaitable);
 std::cout << "underlying_handshaked" << std::endl;
 
 // Send MQTT CONNECT

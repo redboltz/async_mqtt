@@ -16,17 +16,17 @@ In addition, if you want to use TLS and/or WebSocket, include the following head
 
 For TLS:
 ```cpp
-#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
 ```
 
 For Websocket
 ```cpp
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 ```
 
 For Websocket on TLS
 ```cpp
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 ```
 
 == Create client
@@ -55,7 +55,7 @@ namespace tls = as::ssl;
         // mqtt is as::basic_stream_socket<as::ip::tcp, as::io_context::executor_type>
     };
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await amcl.async_underlying_handshake(host, port, as::use_awaitable);
 ```
 
 == mqtts
@@ -81,7 +81,7 @@ namespace tls = as::ssl;
         ctx
     };
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await amcl.async_underlying_handshake(host, port, as::use_awaitable);
 ```
 
 == ws
@@ -93,7 +93,7 @@ namespace tls = as::ssl;
         ioc.get_executor()  // args for underlying layer (bs::websocket::stream<mqtt>)
     };
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await amcl.async_underlying_handshake(host, port, as::use_awaitable);
 ```
 
 
@@ -119,12 +119,12 @@ namespace tls = as::ssl;
         ctx                  // mqtts is as::ssl::stream<mqtt>
     };
     // handshake underlying layers
-    co_await am::async_underlying_handshake(amcl.next_layer(), host, port, as::use_awaitable);
+    co_await amcl.async_underlying_handshake(host, port, as::use_awaitable);
 ```
 
 == Layer access
 
-Typically, you only need to `use next_layer()` to pass the `async_underlying_handshake()` argument. However, if you need to configure each layer individually, you can access all the underlying layers.
+Typically, calling the `async_underlying_handshake()` member function is sufficient to establish the underlying layer. However, if you need to configure each layer individually, you can access all the underlying layers.
 
 |===
 |Layer access | mqtt | mqtts | ws | wss

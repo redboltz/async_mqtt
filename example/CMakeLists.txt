@@ -1,4 +1,8 @@
 list(APPEND exec_PROGRAMS
+    cn_mqtt_client.cpp
+    cn_mqtt_pub.cpp
+    cn_mqtt_sub.cpp
+    rvcn_mqtt_client.cpp
     ep_cb_mqtt_client.cpp
     ep_future_mqtt_client.cpp
     ep_slcoro_mqtt_client.cpp
@@ -18,8 +22,16 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
         ep_cpp20coro_mqtt_client.cpp
     )
     if(ASYNC_MQTT_BUILD_EXAMPLE_SEPARATE)
-        add_subdirectory(separate_client)
-        add_subdirectory(separate_endpoint)
+        add_subdirectory(separate_client_manual)
+        add_subdirectory(separate_endpoint_manual)
+        add_subdirectory(separate_protocol_manual)
+        if(ASYNC_MQTT_BUILD_LIB)
+            add_subdirectory(separate_client)
+            add_subdirectory(separate_endpoint)
+            add_subdirectory(separate_protocol)
+        else()
+            message(WARNING "ASYNC_MQTT_BUILD_LIB is required for ASYNC_MQTT_BUILD_EXAMPLE_SEPARATE")
+        endif()
     endif()
 endif()
 

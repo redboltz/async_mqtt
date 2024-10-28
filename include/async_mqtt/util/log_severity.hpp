@@ -12,13 +12,8 @@
 namespace async_mqtt {
 
 /**
- * @ingroup log
  * log severity level
  * warning is recommended for actual operation because there is no output except something important.
- *
- * #### Requirements
- * @li Header: async_mqtt/util/log.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class severity_level {

@@ -20,6 +20,7 @@ list(APPEND check_PROGRAMS
     ut_broker_security.cpp
     ut_buffer.cpp
     ut_code.cpp
+    ut_connection.cpp
     ut_ep_alloc.cpp
     ut_ep_con_discon.cpp
     ut_ep_keep_alive.cpp
@@ -31,6 +32,7 @@ list(APPEND check_PROGRAMS
     ut_ep_packet_error.cpp
     ut_ep_store.cpp
     ut_host_port.cpp
+    ut_timer.cpp
     ut_packet_id.cpp
     ut_packet_v3_1_1_connect.cpp
     ut_packet_v3_1_1_connack.cpp
@@ -64,7 +66,6 @@ list(APPEND check_PROGRAMS
     ut_packet_variant.cpp
     ut_property.cpp
     ut_prop_variant.cpp
-    ut_prop_variant_no_assert.cpp
     ut_retained_topic_map.cpp
     ut_retained_topic_map_broker.cpp
     ut_strm.cpp

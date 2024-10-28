@@ -18,7 +18,7 @@
 #include <boost/asio/experimental/use_promise.hpp>
 #endif // !defined(_MSC_VER)
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 
@@ -288,7 +288,9 @@ BOOST_AUTO_TEST_CASE(v311_subscribe_single_mismatch) {
                 BOOST_TEST(false);
             }
             catch (am::system_error const& se) {
-                BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+                // Invalid unsuback is received, then the connection is automatically
+                // closed, and all halfway operations are cancelled.
+                BOOST_TEST(se.code() == as::error::operation_aborted);
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
@@ -616,7 +618,9 @@ BOOST_AUTO_TEST_CASE(v311_unsubscribe_mismatch) {
                 BOOST_TEST(false);
             }
             catch (am::system_error const& se) {
-                BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+                // Invalid suback is received, then the connection is automatically
+                // closed, and all halfway operations are cancelled.
+                BOOST_TEST(se.code() == as::error::operation_aborted);
             }
             co_await cl.next_layer().emulate_close(as::use_awaitable);
             co_await cl.async_close(as::use_awaitable);
@@ -2037,12 +2041,12 @@ BOOST_AUTO_TEST_CASE(v5_recv_auth_disconnect_fast) {
                 co_await cl.next_layer().emulate_recv(auth, as::use_awaitable);
                 co_await cl.next_layer().emulate_recv(disconnect, as::use_awaitable);
                 {
-                    auto pv = co_await cl.async_recv(as::use_awaitable);
-                    BOOST_TEST(pv == auth);
+                    auto pv_opt = co_await cl.async_recv(as::use_awaitable);
+                    BOOST_TEST(*pv_opt == auth);
                 }
                 {
-                    auto pv = co_await cl.async_recv(as::use_awaitable);
-                    BOOST_TEST(pv == disconnect);
+                    auto pv_opt = co_await cl.async_recv(as::use_awaitable);
+                    BOOST_TEST(*pv_opt == disconnect);
                 }
 
                 // tear down
@@ -2091,11 +2095,11 @@ BOOST_AUTO_TEST_CASE(v5_recv_disconnect_last) {
 
                 // test case
                 auto disconnect = am::v5::disconnect_packet{};
-                auto pv = co_await (
+                auto pv_opt = co_await (
                     cl.next_layer().emulate_recv(disconnect, as::use_awaitable) &&
                     cl.async_recv(as::use_awaitable)
                 );
-                BOOST_TEST(pv == disconnect);
+                BOOST_TEST(*pv_opt == disconnect);
 
                 // tear down
                 co_await cl.next_layer().emulate_close(as::use_awaitable);

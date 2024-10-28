@@ -29,15 +29,15 @@
 #include <async_mqtt/all.hpp>
 
 #if defined(ASYNC_MQTT_USE_TLS)
-#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
 #if defined(ASYNC_MQTT_USE_WS)
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
 
 namespace as = boost::asio;
@@ -518,9 +518,7 @@ private:
                     opts
                 },
                 [](am::error_code const& ec) {
-                    std::cout << color_red << "\n";
-                    std::cout << ec.message() << std::endl;
-                    std::cout << color_none;
+                    output_ec(ec);
                 }
             );
         }
@@ -568,9 +566,7 @@ private:
                     am::force_move(props)
                 },
                 [](am::error_code const& ec) {
-                    std::cout << color_red << "\n";
-                    std::cout << ec.message() << std::endl;
-                    std::cout << color_none;
+                    output_ec(ec);
                 }
             );
         }
@@ -641,9 +637,7 @@ private:
                                 { {am::force_move(topic), opts} }
                             },
                             [](am::error_code const& ec) {
-                                std::cout << color_red << "\n";
-                                std::cout << ec.message() << std::endl;
-                                std::cout << color_none;
+                                output_ec(ec);
                             }
                         );
                     }
@@ -664,9 +658,7 @@ private:
                                 force_move(props)
                             },
                             [](am::error_code const& ec) {
-                                std::cout << color_red << "\n";
-                                std::cout << ec.message() << std::endl;
-                                std::cout << color_none;
+                                output_ec(ec);
                             }
                         );
                     }
@@ -697,9 +689,7 @@ private:
                                 { am::force_move(topic) }
                             },
                             [](am::error_code const& ec) {
-                                std::cout << color_red << "\n";
-                                std::cout << ec.message() << std::endl;
-                                std::cout << color_none;
+                                output_ec(ec);
                             }
                         );
                     }
@@ -710,15 +700,25 @@ private:
                                 { am::force_move(topic) }
                             },
                             [](am::error_code const& ec) {
-                                std::cout << color_red << "\n";
-                                std::cout << ec.message() << std::endl;
-                                std::cout << color_none;
+                                output_ec(ec);
                             }
                         );
                     }
                 }
             }
         );
+    }
+
+private:
+    static void output_ec(am::error_code const& ec) {
+        if (ec) {
+            std::cout << color_red << "\n";
+        }
+        else {
+            std::cout << color_none << "\n";
+        }
+        std::cout << ec.message() << std::endl;
+        std::cout << color_none;
     }
 
 private:
@@ -767,14 +767,17 @@ public:
     }
 
     // forwarding callbacks
-    void operator()(am::error_code const& ec = am::error_code{}, am::packet_variant pv = am::packet_variant{}) {
-        proc(ec, am::force_move(pv));
+    void operator()(
+        am::error_code const& ec = am::error_code{},
+        std::optional<am::packet_variant> pv_opt = std::nullopt
+    ) {
+        proc(ec, am::force_move(pv_opt));
     }
 
 private:
     void proc(
         am::error_code const& ec,
-        am::packet_variant pv
+        std::optional<am::packet_variant> pv_opt
     ) {
         reenter (coro_) {
             yield {
@@ -808,15 +811,19 @@ private:
                 sei_ = vm_["sei"].template as<std::uint32_t>();
 
                 // Handshake underlying layer
-                am::async_underlying_handshake(
-                    ep_.next_layer(),
+                ep_.async_underlying_handshake(
                     host_,
                     boost::lexical_cast<std::string>(port),
                     *this
                 );
             }
-            std::cout << "underlying handshake:" << ec.message() << std::endl;
-            if (ec) return;
+            if (ec) {
+                std::cout << color_red << "underlying handshake:" << ec.message() << color_none << std::endl;
+                return;
+            }
+            else {
+                std::cout << "underlying handshake:" << ec.message() << std::endl;
+            }
 
             // Send MQTT CONNECT
             yield {
@@ -874,7 +881,7 @@ private:
                     std::cout << color_none;
                     return;
                 }
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
                             std::cout << color_recv;

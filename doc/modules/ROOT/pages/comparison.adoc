@@ -4,6 +4,15 @@
 * [async-mqtt5](https://github.com/mireo/async-mqtt5)
 * [mqtt_cpp](https://github.com/redboltz/mqtt_cpp)
 
+== I/O independent (Sans-I/O) support
+
+|===
+|functionality\library|async_mqtt|async-mqtt5|mqtt_cpp
+
+|I/O independent MQTT protocol machine|x|-|-
+|===
+
+
 == Underlying protocol support
 
 |===

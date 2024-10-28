@@ -2,7 +2,16 @@
 
 = History
 
-== 9.1.0
+== 10.0.0
+=== breaking changes #388
+* Re-organized include files.
+** See https://redboltz.github.io/async_mqtt/doc/10.0.0/async_mqtt/header.html
+* Removed non bulk read to meet Sans-I/O interface.
+* Supported I/O independent (aka Sans-I/O) library.
+* underlying_handshake functionality is updated from free function to member function.
+** Simply replace `async_underlying_handshake(your_ep.next_layer(), ...)` with `your_ep.async_underlying_handshake(...)`.
+
+=== other updates
 * Added invalid combination checking of sharename and nl(no local). #372
 * Fixed receive maximum processing. #371
 * Fixed invalid Message Expiry Interval applying. #369

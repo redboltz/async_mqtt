@@ -32,8 +32,7 @@ struct app {
 
 private:
     void connect() {
-        am::async_underlying_handshake(
-            cli_.next_layer(),
+        cli_.async_underlying_handshake(
             host_,
             port_,
             [this](auto&&... args) {
@@ -130,15 +129,15 @@ private:
 
     void handle_recv(
         am::error_code ec,
-        am::packet_variant pv
+        std::optional<am::packet_variant> pv_opt
     ) {
         std::cout << "recv:" << ec.message() << std::endl;
         if (ec) {
             reconnect();
             return;
         }
-        BOOST_ASSERT(pv);
-        std::cout << pv << std::endl;
+        BOOST_ASSERT(pv_opt);
+        std::cout << *pv_opt << std::endl;
         // next receive
         cli_.async_recv(
             [this](auto&&... args) {

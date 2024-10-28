@@ -15,13 +15,12 @@ If you need some custom processes for `your_own_stream` at least one of the foll
 * initialize is called from the bottom layer to the top layer synchronously.
 * initialize is called when the endpoint is created.
 
-==== 2. async_read_some
+==== 2. async_underlying_handshake
+* initialize is called from the bottom layer to the top layer synchronously.
+
+==== 3. async_read_some
 * Call `your_own_stream.async_read_some()` by default.
 ** See https://www.boost.org/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html
-
-==== 3. async_read
-* Call Boost.Asio's `async_read()` with `your_own_stream` by default. Boost.Asio's `async_read()` calls `your_own_stream.async_read_some()` internally.
-** See https://www.boost.org/doc/html/boost_asio/reference/async_read/overload1.html
 
 ==== 4. async_write
 * Call Boost.Asio's `async_write()` with `your_own_stream` by default.
@@ -37,7 +36,9 @@ Only if you want to customize some of the four points, then define the member fu
 customized_your_own_stream.hpp
 
 ```cpp
-#include <async_mqtt/util/stream_traits.hpp>
+#include <async_mqtt/asio_bind/stream_customize.hpp>
+
+// define async_underlying_handshake_op, async_read_some_op, async_write_op, and async_close_op for your own layer here
 
 // Partial or full specialization here
 template <typename NextLayer>
@@ -46,6 +47,31 @@ struct layer_customize<your_own_stream<NextLayer>> {
     // define if you want to customize initialize process
     static void initialize(your_own_stream<NextLayer>& stream) {
         // Special initialization for your_own_stream
+    }
+
+    // define customized async_underlying_handshake process.
+    // no default implementation. So it is mandatory.
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_handshake(
+        your_own_stream<NextLayer>& stream,
+        // write your own async_underlying_handshake parameters here
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            async_handshake_op{
+                stream,
+                // write your own async_underlying_handshake parameters here
+            },
+            token,
+            stream
+        );
     }
 
     // define if you want to customize async_read_some process
@@ -63,7 +89,7 @@ struct layer_customize<your_own_stream<NextLayer>> {
             CompletionToken,
             void(error_code const& ec, std::size_t size)
         > (
-            async_read_some_impl<MutableBufferSequence>{
+            async_read_some_op<MutableBufferSequence>{
                 stream,
                 mbs
             },
@@ -86,7 +112,7 @@ struct layer_customize<your_own_stream<NextLayer>> {
             CompletionToken,
             void(error_code const& ec, std::size_t size)
         > (
-            async_read_impl<MutableBufferSequence>{
+            async_read_op<MutableBufferSequence>{
                 stream,
                 mbs
             },
@@ -109,7 +135,7 @@ struct layer_customize<your_own_stream<NextLayer>> {
             CompletionToken,
             void(error_code const& ec, std::size_t size)
         > (
-            async_write_impl<ConstBufferSequence>{
+            async_write_op<ConstBufferSequence>{
                 stream,
                 cbs
             },
@@ -131,7 +157,7 @@ struct layer_customize<your_own_stream<NextLayer>> {
             CompletionToken,
             void(error_code const& ec)
         > (
-            async_close_impl{
+            async_close_op{
                 stream
             },
             token
@@ -139,12 +165,11 @@ struct layer_customize<your_own_stream<NextLayer>> {
     }
 };
 
-// define async_read_impl, async_write_impl, and async_close_impl for your own layer here
 
 ```
 
 You can replace `your_***_function()`. async_mqtt has some of predefined `struct layer_customize` specializations.
 
-See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/predefined_layer/
+See https://github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/asio_bind/predefined_layer/
 
 `customized_*_stream.hpp` help defining your own underlaying layer.

@@ -32,10 +32,6 @@
 
 #include <async_mqtt/util/log_severity.hpp>
 
-/**
- * @defgroup log logging
- */
-
 namespace async_mqtt {
 
 struct channel : std::string {
@@ -58,7 +54,15 @@ inline constexpr null_log const& operator<<(null_log const& o, T const&) { retur
 
 // template arguments are defined in async_mqtt
 // filter and formatter can distinguish mqtt_cpp's channel and severity by their types
+/**
+ * @brief A type alias of boost.log's logger type.
+ */
 using global_logger_type = boost::log::sources::severity_channel_logger<severity_level, channel>;
+
+/**
+ * @brief Get a reference of thread_local @ref global_logger_type object.
+ * @return The reference of the logger object.
+ */
 inline global_logger_type& logger() {
     thread_local global_logger_type l;
     return l;

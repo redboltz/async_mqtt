@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required (VERSION 3.13.0)
-project(async_mqtt_iface VERSION 9.1.0)
+project(async_mqtt_iface VERSION 10.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,6 +20,7 @@ option(ASYNC_MQTT_BUILD_TOOLS "Enable building tools (broker, bench, etc.." OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES "Enable building example applications" OFF)
 option(ASYNC_MQTT_BUILD_EXAMPLES_SEPARATE "Enable building separate library build example applications(It requires much memory)" OFF)
 option(ASYNC_MQTT_BUILD_LIB "Enable building separate compilation library" OFF)
+option(ASYNC_MQTT_MRDOCS "For Mr.Docs document generation" OFF)
 
 # Not implemented yet
 option(ASYNC_MQTT_USE_STR_CHECK "Enable UTF8 String check" OFF)
@@ -100,6 +101,26 @@ endif()
 set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include)
 
+if(ASYNC_MQTT_BUILD_MRDOCS)
+    message(STATUS "MrDocs generation")
+    set(CMAKE_SYSROOT /usr)
+    file(
+        WRITE
+        "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp"
+        "#include <async_mqtt/all.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>\n"
+    )
+    add_library(async_mqtt_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
+
+    target_compile_features(async_mqtt_mrdocs PUBLIC cxx_constexpr)
+    target_compile_definitions(async_mqtt_mrdocs PUBLIC ASYNC_MQTT_MRDOCS ASYNC_MQTT_USE_LOG)
+    set_target_properties(async_mqtt_mrdocs PROPERTIES NO_SYSTEM_FROM_IMPORTED OFF)
+    target_include_directories(async_mqtt_mrdocs PUBLIC include ${Boost_INCLUDE_DIRS})
+    return()
+endif()
+
 if(ASYNC_MQTT_BUILD_EXAMPLES)
     message(STATUS "Examples enabled")
     add_subdirectory(example)
@@ -148,45 +169,5 @@ foreach(HDR ${ALL_HDR})
     )
     add_dependencies("check_deps" ${TARGET})
 endforeach()
-
-# Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    list(APPEND Doxyfile_CONTENT
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 9.1.0" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = GENERATING_DOCUMENTATION ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS ASYNC_MQTT_USE_LOG" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE_PATTERNS       = */impl/*" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE_PATTERNS      += */detail/*" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_LATEX         = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_MEMBERS     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_CLASSES     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "CLASS_GRAPH            = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDE_GRAPH          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDED_BY_GRAPH      = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_TREEVIEW      = YES " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "DISABLE_INDEX          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "FULL_SIDEBAR           = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HTML_EXTRA_STYLESHEET  = ${CMAKE_CURRENT_SOURCE_DIR}/css/doxygen-awesome.css " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HTML_COLORSTYLE        = LIGHT " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    )
-    if(DOXYGEN_DOT_FOUND)
-        list(APPEND Doxyfile_CONTENT
-            COMMAND ${CMAKE_COMMAND} -E echo "HAVE_DOT       = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        )
-    endif()
-    add_custom_target(
-        doxygen
-        ${Doxyfile_CONTENT}
-        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        VERBATIM
-    )
-    add_compile_definitions(GENERATING_DOCUMENTATION)
-endif()
 
 include(cmake/createcmakeconfig.cmake)

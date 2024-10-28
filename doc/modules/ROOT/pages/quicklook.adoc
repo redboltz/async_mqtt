@@ -10,6 +10,7 @@ cd build
 cmake  -DASYNC_MQTT_USE_LOG=ON -DASYNC_MQTT_BUILD_EXAMPLES=ON ..
 ```
 
+== Boost.Asio bind
 === C++20 coroutine version
 
 ```
@@ -55,7 +56,7 @@ cd example
 
 * link:example/cl_cpp17_mqtt_sub.cpp[Simple subscribe client]
 
-==== Run publisher
+=== Run publisher
 
 At another terminal, run publisher.
 
@@ -66,3 +67,33 @@ At another terminal, run publisher.
 Then, you can see the published messages to delivered to the subscriber.
 
 * link:example/cl_cpp17_mqtt_pub.cpp[Simple publish client]
+
+== I/O independent (Sans-I/O)
+
+NOTE: The examples use the synchronous version of Boost.Asio functions for communication. However, you can replace them with any communication layer (e.g., raw sockets).
+
+```
+make cn_mqtt_pub
+make cn_mqtt_sub
+cd example
+```
+
+==== Run subscriber
+
+```sh
+./cn_mqtt_sub mqtt.redboltz.net 1883
+```
+
+* link:example/cn_mqtt_sub.cpp[Simple subscribe client]
+
+=== Run publisher
+
+At another terminal, run publisher.
+
+```sh
+./cn_mqtt_pub mqtt.redboltz.net 1883
+```
+
+Then, you can see the published messages to delivered to the subscriber.
+
+* link:example/cn_mqtt_pub.cpp[Simple publish client]

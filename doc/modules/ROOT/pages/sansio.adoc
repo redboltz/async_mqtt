@@ -1,0 +1,72 @@
+= I/O Independent MQTT Protocol Machine
+
+async_mqtt supports an I/O independent (also known as Sans-I/O) MQTT protocol machine.
+
+== Classes
+
+image::con_rvcon.svg[connection and rv_connection]
+
+=== cpp:async_mqtt::basic_connection[connection] (basic_connection)
+
+The cpp:async_mqtt::basic_connection[connection] class represents the core protocol state machine.
+
+image::connection.svg[connection]
+
+When public member functions are called, the internal state is updated. If caller action is required, the corresponding on_*() virtual function is invoked.
+
+image::con_on_x_map.svg[mapping]
+
+The following is a list of member functions:
+
+* cpp:async_mqtt::basic_connection::send[send()]
+* cpp:async_mqtt::basic_connection::recv[recv()]
+* cpp:async_mqtt::basic_connection::release_packet_id[release_packet_id()]
+* cpp:async_mqtt::basic_connection::notify_timer_fired[notify_timer_fired()]
+* cpp:async_mqtt::basic_connection::notify_closed[notify_closed()]
+* cpp:async_mqtt::basic_connection::set_pingreq_send_interval[set_pingreq_send_interval()]
+
+Users should override the virtual functions and implement the required actions.
+
+image::con_rvcon.svg[connection and rv_connection]
+
+The following is a list of virtual member functions:
+
+* cpp:async_mqtt::basic_connection::on_error[on_error()]
+* cpp:async_mqtt::basic_connection::on_send[on_send()]
+* cpp:async_mqtt::basic_connection::on_packet_id_release[on_packet_id_release()]
+* cpp:async_mqtt::basic_connection::on_receive[on_receive()]
+* cpp:async_mqtt::basic_connection::on_close[on_close()]
+* cpp:async_mqtt::basic_connection::on_timer_op[on_timer_op()]
+
+=== cpp:async_mqtt::basic_rvconnection[rv_connection]
+
+"rv" stands for "return value based". This class inherits from the connection class and overrides all the on_*() virtual functions. Its implementation converts the parameters into a cpp:async_mqtt::basic_event_variant[event].
+
+The following functions return a vector of cpp:async_mqtt::basic_event_variant[event]s:
+
+* cpp:async_mqtt::basic_rv_connection::send[send()]
+* cpp:async_mqtt::basic_rv_connection::recv[recv()]
+* cpp:async_mqtt::basic_rv_connection::release_packet_id[release_packet_id()]
+* cpp:async_mqtt::basic_rv_connection::notify_timer_fired[notify_timer_fired()]
+* cpp:async_mqtt::basic_rv_connection::notify_closed[notify_closed()]
+* cpp:async_mqtt::basic_rv_connection::set_pingreq_send_interval[set_pingreq_send_interval()]
+
+This class is used by the Boost.Asio binding's basic_endpoint code.
+
+Users can also inherit from the connection (basic_connection) class to implement their own custom behavior.
+
+== Examples
+
+=== connection based
+
+* A sequence of subscribe/publish
+** link:example/cn_mqtt_client.cpp[cn_mqtt_client.cpp]
+* Publisher
+** link:example/cn_mqtt_pub.cpp[cn_mqtt_pub.cpp]
+* Subscriber
+** link:example/cn_mqtt_sub.cpp[cn_mqtt_sub.cpp]
+
+=== rc_connection based
+
+* A sequence of subscribe/publish
+** link:example/rvcn_mqtt_client.cpp[rvcn_mqtt_client.cpp]

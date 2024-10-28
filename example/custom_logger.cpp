@@ -87,8 +87,7 @@ struct app {
     app(as::any_io_executor exe, std::string_view host, std::string_view port)
         : cli_{exe}
     {
-        am::async_underlying_handshake(
-            cli_.next_layer(),
+        cli_.async_underlying_handshake(
             host,
             port,
             [this](auto&&... args) {

@@ -10,8 +10,8 @@
 #include <boost/asio/steady_timer.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 
 namespace async_mqtt {
 
