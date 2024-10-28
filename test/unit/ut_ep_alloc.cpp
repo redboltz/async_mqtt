@@ -40,13 +40,17 @@ struct my_alloc_read : std::allocator<T> {
 
     T* allocate(std::size_t n, void const* hint = nullptr) {
         (void)hint;
-        if (n == check_digit_read) {
+        if (n == check_digit_read ||
+            n == check_digit_read + sizeof(std::ptrdiff_t) // any_completion_handler
+        ) {
             allocate_called_read = true;
         }
         return base_type::allocate(n);
     }
     void deallocate(T* p, std::size_t n) {
-        if (n == check_digit_read) {
+        if (n == check_digit_read ||
+            n == check_digit_read + sizeof(std::ptrdiff_t) // any_completion_handler
+        ) {
             deallocate_called_read = true;
         }
         return base_type::deallocate(p, n);
@@ -87,18 +91,23 @@ BOOST_AUTO_TEST_CASE(custom_read) {
     my_alloc_read<int> ma;
     BOOST_CHECK(!allocate_called_read);
     BOOST_CHECK(!deallocate_called_read);
-    ep.async_send(
-        connect,
+    ep.async_underlying_handshake(
         [&](auto ec) {
             BOOST_CHECK(!ec);
-            ep.async_recv(
-                as::bind_allocator(
-                    ma,
-                    [&](auto ec, auto pv) {
-                        BOOST_TEST(!ec);
-                        BOOST_TEST(pv == connack);
-                    }
-                )
+            ep.async_send(
+                connect,
+                [&](auto ec) {
+                    BOOST_CHECK(!ec);
+                    ep.async_recv(
+                        as::bind_allocator(
+                            ma,
+                            [&](auto ec, auto pv) {
+                                BOOST_TEST(!ec);
+                                BOOST_TEST(*pv == connack);
+                            }
+                        )
+                    );
+                }
             );
         }
     );
@@ -170,20 +179,25 @@ BOOST_AUTO_TEST_CASE(custom_write) {
     my_alloc_write<int> ma;
     BOOST_CHECK(!allocate_called_write);
     BOOST_CHECK(!deallocate_called_write);
-    ep.async_send(
-        connect,
-        as::bind_allocator(
-            ma,
-            [&](auto ec) {
-                BOOST_CHECK(!ec);
-                ep.async_recv(
-                    [&](auto ec, auto pv) {
-                        BOOST_TEST(!ec);
-                        BOOST_TEST(pv == connack);
+    ep.async_underlying_handshake(
+        [&](auto ec) {
+            BOOST_CHECK(!ec);
+            ep.async_send(
+                connect,
+                as::bind_allocator(
+                    ma,
+                    [&](auto ec) {
+                        BOOST_CHECK(!ec);
+                        ep.async_recv(
+                            [&](auto ec, auto pv) {
+                                BOOST_TEST(!ec);
+                                BOOST_TEST(*pv == connack);
+                            }
+                        );
                     }
-                );
-            }
-        )
+                )
+            );
+        }
     );
     ioc.run();
     BOOST_CHECK(allocate_called_write);

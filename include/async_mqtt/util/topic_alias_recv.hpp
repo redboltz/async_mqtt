@@ -19,7 +19,7 @@
 
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
-#include <async_mqtt/packet/property.hpp>
+#include <async_mqtt/protocol/packet/property.hpp>
 
 namespace async_mqtt {
 

@@ -16,9 +16,9 @@ struct v311_disconnect;
 struct v311_disconnect_error;
 BOOST_AUTO_TEST_SUITE_END()
 
-#include <async_mqtt/packet/v3_1_1_disconnect.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_disconnect.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

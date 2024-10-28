@@ -7,272 +7,328 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_RECV_IPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_RECV_IPP
 
-#include <async_mqtt/impl/endpoint_recv.hpp>
+#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/impl/endpoint_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-send_publish_from_queue() {
-    if (ep->status_ != connection_status::connected) return;
-    while (!ep->publish_queue_.empty() &&
-           ep->publish_send_count_ != ep->publish_send_max_) {
-        async_send(
-            ep,
-            force_move(ep->publish_queue_.front()),
-            true, // from queue
-            as::detached
-        );
-        ep->publish_queue_.pop_front();
-    }
-}
+struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+recv_op {
+    this_type_sp ep;
+    std::optional<filter> fil = std::nullopt;
+    std::set<control_packet_type> types = {};
+    std::optional<error_code> decided_error = std::nullopt;
+    std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
+    bool try_resend_from_queue = false;
+    enum { dispatch, prev, read, protocol_read, sent, complete } state = dispatch;
 
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-bool
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-process_qos2_publish(
-    protocol_version ver,
-    typename basic_packet_id_type<PacketIdBytes>::type packet_id
-) {
-    bool already_handled = false;
-    if (ep->qos2_publish_handled_.find(packet_id) == ep->qos2_publish_handled_.end()) {
-        ep->qos2_publish_handled_.emplace(packet_id);
+    template <typename Self>
+    bool process_one_event(
+        Self& self
+    ) {
+        auto& a_ep{*ep};
+        auto event{force_move(a_ep.recv_events_.front())};
+        a_ep.recv_events_.pop_front();
+        return std::visit(
+            overload{
+                [&](error_code ec) {
+                    decided_error.emplace(ec);
+                    return true;
+                },
+                [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
+                    state = sent;
+                    auto ep_copy{ep};
+                    async_send(
+                        force_move(ep_copy),
+                        force_move(ev.get()),
+                        force_move(self)
+                    );
+                    BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
+                    return false;
+                },
+                [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> ev) {
+                    a_ep.notify_release_pid(ev.get());
+                    try_resend_from_queue = true;
+                    return true;
+                },
+                [&](async_mqtt::event::basic_packet_received<PacketIdBytes> ev) {
+                    if (recv_packet) {
+                        // rest events would be processed the next async_recv call
+                        // back the event to the recv_events_ for the next async_recv
+                        a_ep.recv_events_.push_front(force_move(event));
+                        state = complete;
+                        as::post(
+                            a_ep.get_executor(),
+                            force_move(self)
+                        );
+                        return false;
+                    }
+                    else {
+                        recv_packet.emplace(force_move(ev.get()));
+                    }
+                    return true;
+                },
+                [&](async_mqtt::event::timer ev) {
+                    switch (ev.get_kind()) {
+                    case timer_kind::pingreq_send:
+                        // receive server keep alive property in connack
+                        if (ev.get_op() == timer_op::reset) {
+                            reset_pingreq_send_timer(ep, ev.get_ms());
+                        }
+                        else {
+                            BOOST_ASSERT(false);
+                        }
+                        break;
+                    case timer_kind::pingreq_recv:
+                        switch (ev.get_op()) {
+                        case timer_op::set:
+                            set_pingreq_recv_timer(ep, ev.get_ms());
+                            break;
+                        case timer_op::reset:
+                            reset_pingreq_recv_timer(ep, ev.get_ms());
+                            break;
+                        case timer_op::cancel:
+                            cancel_pingreq_recv_timer(ep);
+                            break;
+                        }
+                        break;
+                    case timer_kind::pingresp_recv:
+                        if (ev.get_op() == timer_op::cancel) {
+                            reset_pingresp_recv_timer(ep, ev.get_ms());
+                        }
+                        else {
+                            BOOST_ASSERT(false);
+                        }
+                        break;
+                    default:
+                        BOOST_ASSERT(false);
+                        break;
+                    }
+                    return true;
+                },
+                [&](async_mqtt::event::close) {
+                    state = complete;
+                    auto ep_copy{ep};
+                    async_close(
+                        force_move(ep_copy),
+                        force_move(self)
+                    );
+                    return false;
+                },
+                [&](auto const&) {
+                    BOOST_ASSERT(false);
+                    return false;
+                }
+            },
+            event
+        );
     }
-    else {
-        already_handled = true;
-    }
-    if (ep->status_ == connection_status::connected &&
-        (ep->auto_pub_response_ ||
-         already_handled) // already_handled is true only if the pubrec packet
-    ) {                   // corresponding to the publish packet has already
-        // been sent as success
-        switch (ver) {
-        case protocol_version::v3_1_1:
-            async_send(
-                ep,
-                v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id),
-                as::detached
+
+    template <typename Self>
+    void operator()(
+        Self& self,
+        error_code ec = error_code{},
+        std::size_t bytes_transferred = 0
+    ) {
+        auto& a_ep{*ep};
+        if (ec) {
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
+                << "recv error:" << ec.message();
+            if (ec == as::error::operation_aborted) {
+                // on cancel, not close the connection
+                self.complete(
+                    ec,
+                    force_move(recv_packet)
+                );
+            }
+            else {
+                state = complete;
+                decided_error.emplace(ec);
+                auto ep_copy = ep;
+                a_ep.async_close(
+                    force_move(ep_copy),
+                    force_move(self)
+                );
+            }
+            return;
+        }
+
+        switch (state) {
+        case dispatch: {
+            state = prev;
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
             );
-            break;
-        case protocol_version::v5:
-            ep->async_send(
-                ep,
-                v5::basic_pubrec_packet<PacketIdBytes>(packet_id),
-                as::detached
+        } break;
+        case prev: {
+            while (!a_ep.recv_events_.empty()) {
+                if (!process_one_event(self)) return;
+            }
+            // all previous events processed
+            // and receive event is included in them
+            if (recv_packet) {
+                state = complete;
+                as::post(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+        } break;
+        case read: {
+            state = protocol_read;
+            a_ep.stream_.async_read_some(
+                a_ep.read_buf_.prepare(a_ep.read_buffer_size_),
+                force_move(self)
             );
-            break;
+        } break;
+        case protocol_read: {
+            a_ep.read_buf_.commit(bytes_transferred);
+            std::istream is{&a_ep.read_buf_};
+            auto events{a_ep.con_.recv(is)};
+            std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
+            if (a_ep.recv_events_.empty()) {
+                // required more bytes
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                while (!a_ep.recv_events_.empty()) {
+                    if (!process_one_event(self)) return;
+                }
+                state = complete; // all events processed
+                as::post(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+        } break;
+        case sent: {
+            while (!a_ep.recv_events_.empty()) {
+                if (!process_one_event(self)) return;
+            }
+            // all events processed
+            if (recv_packet || decided_error) {
+                state = complete;
+                as::post(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                // auto response send but no received packet
+                // (PUBLISH QoS2 received again after PUBREC sent)
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+        } break;
+        case complete: {
+            if (decided_error) {
+                self.complete(
+                    *decided_error,
+                    std::nullopt
+                );
+            }
+            else {
+                BOOST_ASSERT(recv_packet);
+                if (fil) {
+                    auto type = recv_packet->type();
+                    if ((*fil == filter::match  && types.find(type) == types.end()) ||
+                        (*fil == filter::except && types.find(type) != types.end())
+                    ) {
+                        // read the next packet
+                        state = prev;
+                        recv_packet.reset();
+                        as::dispatch(
+                            a_ep.get_executor(),
+                            force_move(self)
+                        );
+                        return;
+                    }
+                }
+                if (try_resend_from_queue) {
+                    send_publish_from_queue();
+                }
+                self.complete(
+                    error_code{},
+                    force_move(recv_packet)
+                );
+            }
+        } break;
         default:
             BOOST_ASSERT(false);
             break;
         }
     }
-    if (already_handled) {
-        return false;
-    }
-    return true;
-}
 
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-handle_v3_1_1_connect(v3_1_1::connect_packet& p) {
-    ep->initialize();
-    ep->protocol_version_ = protocol_version::v3_1_1;
-    ep->status_ = connection_status::connecting;
-    auto keep_alive = p.keep_alive();
-    if (keep_alive != 0) {
-        ep->pingreq_recv_timeout_ms_.emplace(
-            std::chrono::milliseconds{
-                keep_alive * 1000 * 3 / 2
-            }
-        );
-    }
-    if (p.clean_session()) {
-        ep->need_store_ = false;
-    }
-    else {
-        ep->need_store_ = true;
-    }
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-handle_v5_connect(v5::connect_packet& p) {
-    ep->initialize();
-    ep->protocol_version_ = protocol_version::v5;
-    ep->status_ = connection_status::connecting;
-    auto keep_alive = p.keep_alive();
-    if (keep_alive != 0) {
-        ep->pingreq_recv_timeout_ms_.emplace(
-            std::chrono::milliseconds{
-                keep_alive * 1000 * 3 / 2
-            }
-        );
-    }
-    for (auto const& prop : p.props()) {
-        prop.visit(
-            overload {
-                [&](property::topic_alias_maximum const& p) {
-                    if (p.val() > 0) {
-                        ep->topic_alias_send_.emplace(p.val());
-                    }
-                },
-                [&](property::receive_maximum const& p) {
-                    BOOST_ASSERT(p.val() != 0);
-                    ep->publish_send_max_ = p.val();
-                },
-                [&](property::maximum_packet_size const& p) {
-                    BOOST_ASSERT(p.val() != 0);
-                    ep->maximum_packet_size_send_ = p.val();
-                },
-                [&](property::session_expiry_interval const& p) {
-                    if (p.val() != 0) {
-                        ep->need_store_ = true;
-                    }
-                },
-                [](auto const&) {
-                }
-            }
-        );
-    }
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-handle_v3_1_1_connack(v3_1_1::connack_packet& p) {
-    if (p.code() == connect_return_code::accepted) {
-        ep->status_ = connection_status::connected;
-        if (p.session_present()) {
-            send_stored(ep);
-        }
-        else {
-            ep->clear_pid_man();
-            ep->store_.clear();
-        }
-    }
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-recv_op::
-handle_v5_connack(v5::connack_packet& p) {
-    if (p.code() == connect_reason_code::success) {
-        ep->status_ = connection_status::connected;
-         for (auto const& prop : p.props()) {
-            prop.visit(
-                overload {
-                    [&](property::topic_alias_maximum const& p) {
-                        if (p.val() > 0) {
-                            ep->topic_alias_send_.emplace(p.val());
-                        }
-                    },
-                    [&](property::receive_maximum const& p) {
-                        BOOST_ASSERT(p.val() != 0);
-                        ep->publish_send_max_ = p.val();
-                    },
-                    [&](property::maximum_packet_size const& p) {
-                        BOOST_ASSERT(p.val() != 0);
-                        ep->maximum_packet_size_send_ = p.val();
-                    },
-                    [&](property::server_keep_alive const& p) {
-                        if constexpr (can_send_as_client(Role)) {
-                            set_pingreq_send_interval(
-                                ep,
-                                std::chrono::seconds{
-                                    p.val()
-                                }
-                            );
-                        }
-                    },
-                    [](auto const&) {
-                    }
-                }
+    void send_publish_from_queue() {
+        if (ep->status_ != close_status::open) return;
+        auto vacancy_opt = ep->con_.get_receive_maximum_vacancy_for_send();
+        while (
+            !ep->publish_queue_.empty() && // has elements
+            (
+                !vacancy_opt ||    // no limit
+                *vacancy_opt != 0  // has vacancy
+            )
+        ) {
+            async_send(
+                ep,
+                force_move(ep->publish_queue_.front()),
+                true, // from queue
+                as::detached
             );
-        }
-
-        if (p.session_present()) {
-            send_stored(ep);
-        }
-        else {
-            ep->clear_pid_man();
-            ep->store_.clear();
+            ep->publish_queue_.pop_front();
         }
     }
+};
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+async_recv(
+    this_type_sp impl,
+    std::optional<filter> fil,
+    std::set<control_packet_type> types,
+    as::any_completion_handler<
+        void(error_code, std::optional<packet_variant_type>)
+    > handler
+) {
+    auto exe = impl->get_executor();
+    as::async_compose<
+        as::any_completion_handler<
+            void(error_code, std::optional<packet_variant_type>)
+        >,
+        void(error_code, std::optional<packet_variant_type>)
+    >(
+        recv_op{
+            force_move(impl),
+            fil,
+            force_move(types)
+        },
+        handler,
+        exe
+    );
 }
 
 } // namespace async_mqtt::detail
 
-#if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-
-#include <async_mqtt/detail/instantiate_helper.hpp>
-
-#define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size, a_protocol) \
-namespace async_mqtt::detail { \
-\
-template \
-void \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-send_publish_from_queue(); \
-\
-template \
-bool \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-process_qos2_publish( \
-    protocol_version, \
-    typename basic_packet_id_type<a_size>::type \
-); \
-\
-template \
-void \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-handle_v3_1_1_connect(v3_1_1::connect_packet&); \
-\
-template \
-void \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-handle_v3_1_1_connack(v3_1_1::connack_packet&); \
-\
-template \
-void \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-handle_v5_connect(v5::connect_packet&); \
-\
-template \
-void \
-basic_endpoint_impl<a_role, a_size, a_protocol>::recv_op:: \
-handle_v5_connack(v5::connack_packet&); \
-\
-} // namespace async_mqtt::detail
-
-#define ASYNC_MQTT_PP_GENERATE(r, product) \
-    BOOST_PP_EXPAND( \
-        ASYNC_MQTT_INSTANTIATE_EACH \
-        BOOST_PP_SEQ_TO_TUPLE( \
-            product \
-        ) \
-    )
-
-BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC_MQTT_PP_SIZE)(ASYNC_MQTT_PP_PROTOCOL))
-
-#undef ASYNC_MQTT_PP_GENERATE
-#undef ASYNC_MQTT_INSTANTIATE_EACH
-
-#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RECV_IPP

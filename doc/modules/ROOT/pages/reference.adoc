@@ -1,17 +1,47 @@
 [#reference]
 = Reference
 
-[width=100%]
+== I/O independent (a.k.a Sans-I/O) MQTT protocol machine
+
+[%header,width=100%,cols="1,1,1"]
 |===
-1+| *MQTT Connections* | *Predefined Layers* | *MQTT packets* | *Errors*
+|MQTT Protocol
+|Timer
+|Error
 
-| **Class Templates**
+|
 
-xref:reference:async_mqtt/client.adoc[`client`]
+*Classes*
 
-xref:reference:async_mqtt/endpoint.adoc[`endpoint`]
+*Protocol machines*
 
-xref:reference:async_mqtt/basic_endpoint.adoc[`basic_endpoint`]
+xref:reference:async_mqtt/connection.adoc[`connection`]
+
+xref:reference:async_mqtt/basic_connection.adoc[`basic_connection`]
+
+xref:reference:async_mqtt/rv_connection.adoc[`rv_connection`]
+
+xref:reference:async_mqtt/basic_rv_connection.adoc[`basic_rv_connection`]
+
+**Events**
+
+xref:reference:async_mqtt/event_variant.adoc[`event_variant`]
+
+xref:reference:async_mqtt/event/basic_send.adoc[`basic_send`]
+
+xref:reference:async_mqtt/event/send.adoc[`send`]
+
+xref:reference:async_mqtt/event/basic_packet_received.adoc[`basic_packet_received`]
+
+xref:reference:async_mqtt/event/packet_received.adoc[`packet_received`]
+
+xref:reference:async_mqtt/event/close.adoc[`close`]
+
+xref:reference:async_mqtt/event/basic_packet_id_released.adoc[`basic_packet_id_released`]
+
+xref:reference:async_mqtt/event/packet_id_released.adoc[`packet_id_released`]
+
+xref:reference:async_mqtt/event/timer.adoc[`timer`]
 
 **Enums**
 
@@ -19,100 +49,23 @@ xref:reference:async_mqtt/protocol_version.adoc[`protocol_version`]
 
 xref:reference:async_mqtt/role.adoc[`role`]
 
+|
+
+**Enums**
+
+xref:reference:async_mqtt/timer_kind.adoc[`timer_kind`]
+
+xref:reference:async_mqtt/timer_op.adoc[`timer_op`]
+
 **Functions**
 
-xref:reference:async_mqtt/setup_log.adoc[`setup_log`]
+xref:reference:async_mqtt/timer_kind_to_string.adoc[`timer_kind_to_string`]
 
-xref:reference:async_mqtt/logger.adoc[`log`]
+xref:reference:async_mqtt/timer_op_to_string.adoc[`timer_op_to_string`]
 
-| **Types**
+|
 
-xref:reference:async_mqtt/protocol/mqtt.adoc[`mqtt`]
-
-xref:reference:async_mqtt/protocol/mqtts.adoc[`mqtts`]
-
-xref:reference:async_mqtt/protocol/ws.adoc[`ws`]
-
-xref:reference:async_mqtt/protocol/wss.adoc[`wss`]
-
-**Class Templates**
-
-xref:reference:async_mqtt/layer_customize-03.adoc[`layer_customize(TCP)`]
-
-xref:reference:async_mqtt/layer_customize-08.adoc[`layer_customize(TLS)`]
-
-xref:reference:async_mqtt/layer_customize-02.adoc[`layer_customize(WS)`]
-
-
-**Function Templates**
-
-xref:reference:async_mqtt/async_underlying_handshake-05.adoc[`async_underlying_handshake(TCP)`]
-xref:reference:async_mqtt/async_underlying_handshake-09.adoc[`async_underlying_handshake(TLS)`]
-xref:reference:async_mqtt/async_underlying_handshake-06.adoc[`async_underlying_handshake(WS)`]
-xref:reference:async_mqtt/async_underlying_handshake-0b.adoc[`async_underlying_handshake(WS with path)`]
-
-| **Class Templates**
-
-**common**
-
-xref:reference:async_mqtt/packet_variant.adoc[`packet_variant`]
-xref:reference:async_mqtt/basic_packet_variant.adoc[`basic_packet_variant`]
-
-**v3.1.1**
-
-xref:reference:async_mqtt/v3_1_1/connect_packet.adoc[`connect_packet`]
-xref:reference:async_mqtt/v3_1_1/connack_packet.adoc[`connack_packet`]
-xref:reference:async_mqtt/v3_1_1/disconnect_packet.adoc[`disconnect_packet`]
-xref:reference:async_mqtt/v3_1_1/subscribe_packet.adoc[`subscribe_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_subscribe_packet.adoc[`basic_subscribe_packet`]
-xref:reference:async_mqtt/v3_1_1/suback_packet.adoc[`suback_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_suback_packet.adoc[`basic_suback_packet`]
-xref:reference:async_mqtt/v3_1_1/unsubscribe_packet.adoc[`unsubscribe_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_unsubscribe_packet.adoc[`basic_unsubscribe_packet`]
-xref:reference:async_mqtt/v3_1_1/unsuback_packet.adoc[`unsuback_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_unsuback_packet.adoc[`basic_unsuback_packet`]
-xref:reference:async_mqtt/v3_1_1/publish_packet.adoc[`publish_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_publish_packet.adoc[`basic_publish_packet`]
-xref:reference:async_mqtt/v3_1_1/puback_packet.adoc[`puback_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_puback_packet.adoc[`basic_puback_packet`]
-xref:reference:async_mqtt/v3_1_1/pubrec_packet.adoc[`pubrec_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_pubrec_packet.adoc[`basic_pubrec_packet`]
-xref:reference:async_mqtt/v3_1_1/pubrel_packet.adoc[`pubrel_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_pubrel_packet.adoc[`basic_pubrel_packet`]
-xref:reference:async_mqtt/v3_1_1/pubcomp_packet.adoc[`pubcomp_packet`]
-xref:reference:async_mqtt/v3_1_1/basic_pubcomp_packet.adoc[`basic_pubcomp_packet`]
-xref:reference:async_mqtt/v3_1_1/pingreq_packet.adoc[`pingreq_packet`]
-xref:reference:async_mqtt/v3_1_1/pingresp_packet.adoc[`pungresp_packet`]
-
-**v5**
-
-xref:reference:async_mqtt/v5/connect_packet.adoc[`connect_packet`]
-xref:reference:async_mqtt/v5/connack_packet.adoc[`connack_packet`]
-xref:reference:async_mqtt/v5/disconnect_packet.adoc[`disconnect_packet`]
-xref:reference:async_mqtt/v5/subscribe_packet.adoc[`subscribe_packet`]
-xref:reference:async_mqtt/v5/basic_subscribe_packet.adoc[`basic_subscribe_packet`]
-xref:reference:async_mqtt/v5/suback_packet.adoc[`suback_packet`]
-xref:reference:async_mqtt/v5/basic_suback_packet.adoc[`basic_suback_packet`]
-xref:reference:async_mqtt/v5/unsubscribe_packet.adoc[`unsubscribe_packet`]
-xref:reference:async_mqtt/v5/basic_unsubscribe_packet.adoc[`basic_unsubscribe_packet`]
-xref:reference:async_mqtt/v5/unsuback_packet.adoc[`unsuback_packet`]
-xref:reference:async_mqtt/v5/basic_unsuback_packet.adoc[`basic_unsuback_packet`]
-xref:reference:async_mqtt/v5/publish_packet.adoc[`publish_packet`]
-xref:reference:async_mqtt/v5/basic_publish_packet.adoc[`basic_publish_packet`]
-xref:reference:async_mqtt/v5/puback_packet.adoc[`puback_packet`]
-xref:reference:async_mqtt/v5/basic_puback_packet.adoc[`basic_puback_packet`]
-xref:reference:async_mqtt/v5/pubrec_packet.adoc[`pubrec_packet`]
-xref:reference:async_mqtt/v5/basic_pubrec_packet.adoc[`basic_pubrec_packet`]
-xref:reference:async_mqtt/v5/pubrel_packet.adoc[`pubrel_packet`]
-xref:reference:async_mqtt/v5/basic_pubrel_packet.adoc[`basic_pubrel_packet`]
-xref:reference:async_mqtt/v5/pubcomp_packet.adoc[`pubcomp_packet`]
-xref:reference:async_mqtt/v5/basic_pubcomp_packet.adoc[`basic_pubcomp_packet`]
-xref:reference:async_mqtt/v5/pingreq_packet.adoc[`pingreq_packet`]
-xref:reference:async_mqtt/v5/pingresp_packet.adoc[`pungresp_packet`]
-xref:reference:async_mqtt/v5/auth_packet.adoc[`auth_packet`]
-
-
-| **Types**
+**Types**
 
 xref:reference:async_mqtt/error_code.adoc[`error_code`]
 
@@ -125,18 +78,199 @@ xref:reference:async_mqtt/mqtt_error.adoc[`mqtt_error`]
 **v3.1.1**
 
 xref:reference:async_mqtt/connect_return_code.adoc[`connect_return_code`]
+
 xref:reference:async_mqtt/suback_return_code.adoc[`suback_return_code`]
 
 **v5**
 
 xref:reference:async_mqtt/connect_reason_code.adoc[`connect_reason_code`]
+
 xref:reference:async_mqtt/disconnect_reason_code.adoc[`disconnect_reason_code`]
+
 xref:reference:async_mqtt/suback_reason_code.adoc[`suback_reason_code`]
+
 xref:reference:async_mqtt/unsuback_reason_code.adoc[`unsuback_reason_code`]
+
 xref:reference:async_mqtt/puback_reason_code.adoc[`puback_reason_code`]
+
 xref:reference:async_mqtt/pubrec_reason_code.adoc[`pubrec_reason_code`]
+
 xref:reference:async_mqtt/pubrel_reason_code.adoc[`pubrel_reason_code`]
+
 xref:reference:async_mqtt/pubcomp_reason_code.adoc[`pubcomp_reason_code`]
+
 xref:reference:async_mqtt/auth_reason_code.adoc[`auth_reason_code`]
+
+|===
+
+
+[%header,width=100%,cols="1,1,1,1"]
+|===
+4+|MQTT packets
+
+|
+
+**Classes(1 of 4)**
+
+**variants**
+
+xref:reference:async_mqtt/packet_variant.adoc[`packet_variant`]
+
+xref:reference:async_mqtt/basic_packet_variant.adoc[`basic_packet_variant`]
+
+**v3.1.1**
+
+xref:reference:async_mqtt/v3_1_1/connect_packet.adoc[`connect_packet`]
+
+xref:reference:async_mqtt/v3_1_1/connack_packet.adoc[`connack_packet`]
+
+xref:reference:async_mqtt/v3_1_1/disconnect_packet.adoc[`disconnect_packet`]
+
+xref:reference:async_mqtt/v3_1_1/subscribe_packet.adoc[`subscribe_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_subscribe_packet.adoc[`basic_subscribe_packet`]
+
+xref:reference:async_mqtt/v3_1_1/suback_packet.adoc[`suback_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_suback_packet.adoc[`basic_suback_packet`]
+
+xref:reference:async_mqtt/v3_1_1/unsubscribe_packet.adoc[`unsubscribe_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_unsubscribe_packet.adoc[`basic_unsubscribe_packet`]
+
+xref:reference:async_mqtt/v3_1_1/unsuback_packet.adoc[`unsuback_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_unsuback_packet.adoc[`basic_unsuback_packet`]
+
+|
+
+**Classes(2 of 4)**
+
+xref:reference:async_mqtt/v3_1_1/publish_packet.adoc[`publish_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_publish_packet.adoc[`basic_publish_packet`]
+
+xref:reference:async_mqtt/v3_1_1/puback_packet.adoc[`puback_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_puback_packet.adoc[`basic_puback_packet`]
+
+xref:reference:async_mqtt/v3_1_1/pubrec_packet.adoc[`pubrec_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_pubrec_packet.adoc[`basic_pubrec_packet`]
+
+xref:reference:async_mqtt/v3_1_1/pubrel_packet.adoc[`pubrel_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_pubrel_packet.adoc[`basic_pubrel_packet`]
+
+xref:reference:async_mqtt/v3_1_1/pubcomp_packet.adoc[`pubcomp_packet`]
+
+xref:reference:async_mqtt/v3_1_1/basic_pubcomp_packet.adoc[`basic_pubcomp_packet`]
+
+xref:reference:async_mqtt/v3_1_1/pingreq_packet.adoc[`pingreq_packet`]
+
+xref:reference:async_mqtt/v3_1_1/pingresp_packet.adoc[`pungresp_packet`]
+
+|
+
+**Classes(3 of 4)**
+
+**v5**
+
+xref:reference:async_mqtt/v5/connect_packet.adoc[`connect_packet`]
+
+xref:reference:async_mqtt/v5/connack_packet.adoc[`connack_packet`]
+
+xref:reference:async_mqtt/v5/disconnect_packet.adoc[`disconnect_packet`]
+
+xref:reference:async_mqtt/v5/subscribe_packet.adoc[`subscribe_packet`]
+
+xref:reference:async_mqtt/v5/basic_subscribe_packet.adoc[`basic_subscribe_packet`]
+
+xref:reference:async_mqtt/v5/suback_packet.adoc[`suback_packet`]
+
+xref:reference:async_mqtt/v5/basic_suback_packet.adoc[`basic_suback_packet`]
+
+xref:reference:async_mqtt/v5/unsubscribe_packet.adoc[`unsubscribe_packet`]
+
+xref:reference:async_mqtt/v5/basic_unsubscribe_packet.adoc[`basic_unsubscribe_packet`]
+
+xref:reference:async_mqtt/v5/unsuback_packet.adoc[`unsuback_packet`]
+
+xref:reference:async_mqtt/v5/basic_unsuback_packet.adoc[`basic_unsuback_packet`]
+
+|
+
+**Classes(4 of 4)**
+
+xref:reference:async_mqtt/v5/publish_packet.adoc[`publish_packet`]
+
+xref:reference:async_mqtt/v5/basic_publish_packet.adoc[`basic_publish_packet`]
+
+xref:reference:async_mqtt/v5/puback_packet.adoc[`puback_packet`]
+
+xref:reference:async_mqtt/v5/basic_puback_packet.adoc[`basic_puback_packet`]
+
+xref:reference:async_mqtt/v5/pubrec_packet.adoc[`pubrec_packet`]
+
+xref:reference:async_mqtt/v5/basic_pubrec_packet.adoc[`basic_pubrec_packet`]
+
+xref:reference:async_mqtt/v5/pubrel_packet.adoc[`pubrel_packet`]
+
+xref:reference:async_mqtt/v5/basic_pubrel_packet.adoc[`basic_pubrel_packet`]
+
+xref:reference:async_mqtt/v5/pubcomp_packet.adoc[`pubcomp_packet`]
+
+xref:reference:async_mqtt/v5/basic_pubcomp_packet.adoc[`basic_pubcomp_packet`]
+
+xref:reference:async_mqtt/v5/pingreq_packet.adoc[`pingreq_packet`]
+
+xref:reference:async_mqtt/v5/pingresp_packet.adoc[`pungresp_packet`]
+
+xref:reference:async_mqtt/v5/auth_packet.adoc[`auth_packet`]
+
+|===
+
+
+== Boost.Asio binding of the  MQTT protocol machine
+
+[width=100%]
+|===
+1+| *MQTT Connections* | *Predefined Layers*
+
+|
+
+**Classes**
+
+xref:reference:async_mqtt/client.adoc[`client`]
+
+xref:reference:async_mqtt/endpoint.adoc[`endpoint`]
+
+xref:reference:async_mqtt/basic_endpoint.adoc[`basic_endpoint`]
+
+**Functions**
+
+xref:reference:async_mqtt/setup_log.adoc[`setup_log`]
+
+xref:reference:async_mqtt/logger.adoc[`log`]
+
+|
+
+**Types**
+
+xref:reference:async_mqtt/protocol/mqtt.adoc[`mqtt`]
+
+xref:reference:async_mqtt/protocol/mqtts.adoc[`mqtts`]
+
+xref:reference:async_mqtt/protocol/ws.adoc[`ws`]
+
+xref:reference:async_mqtt/protocol/wss.adoc[`wss`]
+
+**Classes**
+
+xref:reference:async_mqtt/layer_customize-03.adoc[`layer_customize(TCP)`]
+
+xref:reference:async_mqtt/layer_customize-08.adoc[`layer_customize(TLS)`]
+
+xref:reference:async_mqtt/layer_customize-02.adoc[`layer_customize(WS)`]
 
 |===

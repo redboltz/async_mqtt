@@ -43,7 +43,6 @@ namespace protocol {
  */
 using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 
-} // namespace protocol
 
 /**
  * @ingroup predefined_layer_mqtt
@@ -74,8 +73,8 @@ async_underlying_handshake(
     CompletionToken&& token = as::default_completion_token_t<Executor>{}
 );
 
-} // namespace async_mqtt
+} // namespace protocol
 
-#include <async_mqtt/predefined_layer/impl/mqtt_handshake.hpp>
+} // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PREDEFINED_LAYER_MQTT_HPP

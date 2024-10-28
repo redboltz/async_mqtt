@@ -29,13 +29,13 @@ struct coro_base : as::coroutine {
     virtual ~coro_base() = default;
 
     void operator()(am::error_code const& ec = am::error_code{}) {
-        proc(ec, am::basic_packet_variant<PacketIdBytes>{}, 0);
+        proc(ec, std::nullopt, 0);
     }
-    void operator()(am::error_code const& ec, am::basic_packet_variant<PacketIdBytes> pv) {
-        proc(ec, am::force_move(pv), 0);
+    void operator()(am::error_code const& ec, std::optional<am::basic_packet_variant<PacketIdBytes>> pv_opt) {
+        proc(ec, am::force_move(pv_opt), 0);
     }
     void operator()(am::error_code const& ec, typename am::basic_packet_id_type<PacketIdBytes>::type pid) {
-        proc(ec, am::basic_packet_variant<PacketIdBytes>{}, am::force_move(pid));
+        proc(ec, std::nullopt, pid);
     }
     bool finish() const {
         return *finish_;
@@ -49,7 +49,7 @@ protected:
 private:
     virtual void proc(
         am::error_code ec,
-        am::basic_packet_variant<PacketIdBytes> pv,
+        std::optional<am::basic_packet_variant<PacketIdBytes>> pv_opt,
         typename am::basic_packet_id_type<PacketIdBytes>::type pid
     ) = 0;
     std::vector<std::reference_wrapper<Ep>> eps_;

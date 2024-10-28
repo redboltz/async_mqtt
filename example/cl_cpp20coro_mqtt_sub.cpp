@@ -41,7 +41,7 @@ proc(
         try {
             // all underlying layer handshaking
             // (Resolve hostname, TCP handshake)
-            co_await am::async_underlying_handshake(amcl.next_layer(), host, port);
+            co_await amcl.async_underlying_handshake(host, port);
             std::cout << "mqtt undlerlying handshaked" << std::endl;
 
             // MQTT connect and receive loop start
@@ -74,8 +74,9 @@ proc(
 
             // recv (coroutine)
             while (true) {
-                auto pv = co_await amcl.async_recv(as::use_awaitable);
-                pv.visit(
+                auto pv_opt = co_await amcl.async_recv(as::use_awaitable);
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload{
                         [&](awaitable_client::publish_packet& p) {
                             std::cout << p << std::endl;
