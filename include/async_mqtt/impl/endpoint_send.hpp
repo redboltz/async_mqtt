@@ -166,7 +166,7 @@ send_op {
                 return false;
             }
         }
-        else if constexpr(std::is_same_v<v5::auth_packet, Packet>) {
+        else if constexpr(std::is_same_v<v5::auth_packet, ActualPacket>) {
             if (ep->status_ != connection_status::connected &&
                 ep->status_ != connection_status::connecting) {
                 self.complete(
