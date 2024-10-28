@@ -3,6 +3,7 @@
 = History
 
 == 9.1.0
+* Fixed invalid template parameter comparison. #368
 * Added custom logger example. #367
 * Refined documents. #364, #365
 * Made colored log selectable (by default true(colored)). #363
