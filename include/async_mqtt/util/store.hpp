@@ -29,7 +29,7 @@ class store {
 public:
     using store_packet_type = basic_store_packet_variant<PacketIdBytes>;
 
-    explicit store(as::any_io_executor exe):exe_{exe}{}
+    explicit store() = default;
 
     template <typename Packet>
     bool add(Packet const& packet) {
@@ -55,6 +55,27 @@ public:
         return true;
     }
 
+    bool erase_publish(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
+        ASYNC_MQTT_LOG("mqtt_impl", info)
+            << "[store] erase_publish pid:" << packet_id;
+        auto& idx = elems_.template get<tag_id>();
+        auto [b, e] = idx.equal_range(packet_id);
+        for (; b != e; ++b) {
+            if (b->packet_id() == packet_id &&
+                (
+                    b->response_packet() == response_packet::v3_1_1_puback ||
+                    b->response_packet() == response_packet::v3_1_1_pubrec ||
+                    b->response_packet() == response_packet::v5_puback ||
+                    b->response_packet() == response_packet::v5_pubrec
+                )
+            ) {
+                b = idx.erase(b);
+                return true;
+            }
+        }
+        return false;
+    }
+
     void clear() {
         ASYNC_MQTT_LOG("mqtt_impl", info)
             << "[store] clear";
@@ -62,7 +83,7 @@ public:
     }
 
     template <typename Func>
-    void for_each(Func const& func) {
+    void for_each(Func func) {
         ASYNC_MQTT_LOG("mqtt_impl", info)
             << "[store] for_each";
         for (auto it = elems_.begin(); it != elems_.end();) {
@@ -103,6 +124,7 @@ private:
         store_packet_type packet;
     };
     struct tag_seq{};
+    struct tag_id{};
     struct tag_res_id{};
     using mi_elem = mi::multi_index_container<
         elem_t,
@@ -121,7 +143,6 @@ private:
     >;
 
     mi_elem elems_;
-    as::any_io_executor exe_;
 };
 
 } // namespace async_mqtt

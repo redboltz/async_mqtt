@@ -78,7 +78,7 @@ recv_op {
         else {
             self.complete(
                 make_error_code(as::error::operation_aborted),
-                packet_variant{}
+                std::nullopt
             );
         }
     }
@@ -99,7 +99,7 @@ client<Version, NextLayer>::async_recv(
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, packet_variant)
+            void(error_code, std::optional<packet_variant>)
         >(
             typename impl_type::recv_op{
                 impl_

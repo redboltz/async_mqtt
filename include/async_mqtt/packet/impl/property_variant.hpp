@@ -81,11 +81,6 @@ decltype(auto) property_variant::get_if() const {
     return std::get_if<T>(&var_);
 }
 
-inline
-property_variant::operator bool() {
-    return var_.index() != 0;
-}
-
 property_variant make_property_variant(buffer& buf, property_location loc, error_code& ec);
 properties make_properties(buffer buf, property_location loc, error_code& ec);
 std::vector<as::const_buffer> const_buffer_sequence(properties const& props);

@@ -114,6 +114,7 @@ using system_error = sys::system_error;
  */
 enum class mqtt_error {
     partial_error_detected                 = 0x0101, ///< Some entries have error on suback/unsuback (not an error)
+    packet_enqueued                        = 0x0102, ///< Due to receive_maximum, sent packet is enqueued (not an error)
     all_error_detected                     = 0x0180, ///< All entries have error on suback/unsuback
     packet_identifier_fully_used           = 0x0181, ///< Packet Identifier fully used
     packet_identifier_conflict             = 0x0182, ///< Packet Identifier conflict

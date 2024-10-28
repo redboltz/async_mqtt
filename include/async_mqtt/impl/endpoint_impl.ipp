@@ -21,29 +21,43 @@ namespace detail {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::underlying_accepted() {
+    status_ = close_status::open;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_offline_publish(bool val) {
+    con_.set_offline_publish(val);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_auto_pub_response(bool val) {
-    auto_pub_response_ = val;
+    con_.set_auto_pub_response(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_auto_ping_response(bool val) {
-    auto_ping_response_ = val;
+    con_.set_auto_ping_response(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_auto_map_topic_alias_send(bool val) {
-    auto_map_topic_alias_send_ = val;
+    con_.set_auto_map_topic_alias_send(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_auto_replace_topic_alias_send(bool val) {
-    auto_replace_topic_alias_send_ = val;
+    con_.set_auto_replace_topic_alias_send(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -52,12 +66,16 @@ void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingresp_recv_timeout(
     std::chrono::milliseconds duration
 ) {
-    if (duration == std::chrono::milliseconds::zero()) {
-        pingresp_recv_timeout_ms_ = std::nullopt;
-    }
-    else {
-        pingresp_recv_timeout_ms_.emplace(duration);
-    }
+    con_.set_pingresp_recv_timeout(duration);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    duration_close_by_disconnect_ = duration;
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -70,15 +88,15 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_bulk_write(bool val) {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
-    stream_.set_bulk_read_buffer_size(val);
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_read_buffer_size(std::size_t val) {
+    read_buffer_size_ = val;
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::set<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_qos2_publish_handled_pids() const {
-    return qos2_publish_handled_;
+    return con_.get_qos2_publish_handled_pids();
 }
 
 
@@ -88,23 +106,22 @@ void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::restore_qos2_publish_handled_pids(
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> pids
 ) {
-    qos2_publish_handled_ = force_move(pids);
+    con_.restore_qos2_publish_handled_pids(force_move(pids));
 }
-
 
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 protocol_version
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_protocol_version() const {
-    return protocol_version_;
+    return con_.get_protocol_version();
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const {
-    return qos2_publish_processing_.find(pid) != qos2_publish_processing_.end();
+    return con_.is_publish_processing(pid);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -114,37 +131,38 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
     this_type_sp ep,
     std::chrono::milliseconds duration
 ) {
-    if (duration == std::chrono::milliseconds::zero()) {
-        ep->pingreq_send_interval_ms_.reset();
-        ep->tim_pingreq_send_.cancel();
-    }
-    else {
-        ep->pingreq_send_interval_ms_.emplace(duration);
-        reset_pingreq_send_timer(force_move(ep));
+    auto events = ep->con_.set_pingreq_send_interval(duration);
+    for (auto& event : events) {
+        std::visit(
+            overload {
+                [&](event_timer const& ev) {
+                    if (ev.get_timer_for() == timer::pingreq_send) {
+                        switch (ev.get_op()) {
+                        case event_timer::op_type::set:
+                            set_pingreq_send_timer(ep, ev.get_ms());
+                            break;
+                        case event_timer::op_type::reset:
+                            reset_pingreq_send_timer(ep, ev.get_ms());
+                            break;
+                        case event_timer::op_type::cancel:
+                            cancel_pingreq_send_timer(ep);
+                            break;
+                        }
+                    }
+                    else {
+                        BOOST_ASSERT(false);
+                    }
+                },
+                [&](auto const&...) {
+                    BOOST_ASSERT(false);
+                }
+            },
+            event
+        );
     }
 }
 
 // private
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-std::optional<topic_alias_type>
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_topic_alias(properties const& props) {
-    std::optional<topic_alias_type> ta_opt;
-    for (auto const& prop : props) {
-        prop.visit(
-            overload {
-                [&](property::topic_alias const& p) {
-                    ta_opt.emplace(p.val());
-                },
-                [](auto const&) {
-                }
-            }
-        );
-        if (ta_opt) return ta_opt;
-        }
-    return ta_opt;
-}
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
@@ -155,12 +173,11 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::enqueue_publish(
     if (packet.opts().get_qos() == qos::at_least_once ||
         packet.opts().get_qos() == qos::exactly_once
     ) {
-        if (publish_send_count_ == publish_send_max_) {
+        if (con_.get_receive_maximum_vacancy_for_send() == 0) {
             publish_queue_.push_back(force_move(packet));
             return true;
         }
         else {
-            ++publish_send_count_;
             if (!publish_queue_.empty()) {
                 publish_queue_.push_back(force_move(packet));
                 return true;
@@ -173,108 +190,159 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::enqueue_publish(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::send_stored(this_type_sp ep) {
-    ep->store_.for_each(
-        [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
-            if (pv.size() > ep->maximum_packet_size_send_) {
-                ep->release_pid(pv.packet_id());
-                return false;
-            }
-            pv.visit(
-                // copy packet because the stored packets need to be preserved
-                // until receiving puback/pubrec/pubcomp
-                overload {
-                    [&](v3_1_1::basic_publish_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v5::basic_publish_packet<PacketIdBytes> p) {
-                        if (ep->enqueue_publish(p)) return;
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v5::basic_pubrel_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    }
-                }
-            );
-            return true;
-        }
-    );
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::initialize() {
+    // TBD where call from?
+    publish_queue_.clear();
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::initialize() {
-    publish_send_count_ = 0;
-    publish_queue_.clear();
-    topic_alias_send_ = std::nullopt;
-    topic_alias_recv_ = std::nullopt;
-    publish_recv_.clear();
-    qos2_publish_processing_.clear();
-    need_store_ = false;
-    pid_suback_.clear();
-    pid_unsuback_.clear();
-    pid_puback_.clear();
-    pid_pubrec_.clear();
-    pid_pubcomp_.clear();
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    if constexpr (Role == role::client || Role == role::any) {
+        if (ms) {
+            ep->tim_pingreq_send_.expires_after(
+                *ms
+            );
+            ep->tim_pingreq_send_.async_wait(
+                [wp = std::weak_ptr{ep}](error_code const& ec) {
+                    if (!ec) {
+                        if (auto ep = wp.lock()) {
+                            auto events = ep->con_.notify_timer_fired(timer::pingreq_send);
+                            for (auto& event : events) {
+                                std::visit(
+                                    overload {
+                                        [&](event_timer const& ev) {
+                                            if (ev.get_timer_for() == timer::pingreq_send) {
+                                                switch (ev.get_op()) {
+                                                case event_timer::op_type::set:
+                                                    reset_pingreq_send_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::reset:
+                                                    reset_pingreq_send_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::cancel:
+                                                    ep->tim_pingreq_send_.cancel();
+                                                    break;
+                                                }
+                                            }
+                                            else {
+                                                BOOST_ASSERT(false);
+                                            }
+                                        },
+                                        [&](basic_event_send<PacketIdBytes>& ev) {
+                                            // must be pingreq packet here
+                                            BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
+                                            ep->stream_.async_write_packet(
+                                                force_move(ev.get()),
+                                                as::detached
+                                            );
+                                        },
+                                        [&](auto const&...) {
+                                            BOOST_ASSERT(false);
+                                        }
+                                    },
+                                    event
+                                );
+                            }
+                        }
+                    }
+                }
+            );
+        }
+    }
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    cancel_pingreq_send_timer(ep);
+    set_pingreq_send_timer(ep, ms);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_send_timer(
     this_type_sp ep
 ) {
-    if constexpr (Role == role::client || Role == role::any) {
-        if (ep->pingreq_send_interval_ms_) {
-            ep->tim_pingreq_send_.cancel();
-            if (ep->status_ == connection_status::disconnecting ||
-                ep->status_ == connection_status::closing ||
-                ep->status_ == connection_status::closed) return;
-            ep->tim_pingreq_send_.expires_after(
-                *ep->pingreq_send_interval_ms_
+    ep->tim_pingreq_send_.cancel();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    if constexpr (Role == role::server || Role == role::any) {
+        if (ms) {
+            ep->tim_pingreq_recv_.expires_after(
+                *ms
             );
-            ep->tim_pingreq_send_.async_wait(
+
+            ep->tim_pingreq_recv_.async_wait(
                 [wp = std::weak_ptr{ep}](error_code const& ec) {
                     if (!ec) {
                         if (auto ep = wp.lock()) {
-                            switch (ep->protocol_version_) {
-                            case protocol_version::v3_1_1:
-                                async_send(
-                                    ep,
-                                    v3_1_1::pingreq_packet(),
-                                    as::detached
+                            auto events = ep->con_.notify_timer_fired(timer::pingreq_recv);
+                            for (auto it = events.begin(); it != events.end();) {
+                                auto& event = *it++;
+                                std::visit(
+                                    overload {
+                                        [&](event_timer const& ev) {
+                                            if (ev.get_timer_for() == timer::pingreq_recv) {
+                                                switch (ev.get_op()) {
+                                                case event_timer::op_type::set:
+                                                    reset_pingreq_recv_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::reset:
+                                                    reset_pingreq_recv_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::cancel:
+                                                    ep->tim_pingreq_recv_.cancel();
+                                                    break;
+                                                }
+                                            }
+                                            else {
+                                                BOOST_ASSERT(false);
+                                            }
+                                        },
+                                        [&](event_send& ev) {
+                                            auto pv{force_move(ev.get())};
+                                            BOOST_ASSERT(pv.get_if<v5::disconnect_packet>());
+                                            BOOST_ASSERT(it != events.end());
+                                            auto& ev_close = *it++;
+                                            BOOST_ASSERT(it == events.end());
+                                            BOOST_ASSERT(std::get_if<event_close>(&ev_close));
+                                            ep->stream_.async_write_packet(
+                                                force_move(pv),
+                                                [ep]
+                                                (
+                                                    error_code const& /*ec*/,
+                                                    std::size_t /*bytes_transferred*/
+                                                ) {
+                                                    async_close(ep, as::detached);
+                                                }
+                                            );
+                                        },
+                                        [&](event_close const&) {
+                                            async_close(ep, as::detached);
+                                        },
+                                        [&](auto const&...) {
+                                            BOOST_ASSERT(false);
+                                        }
+                                    },
+                                    event
                                 );
-                                break;
-                            case protocol_version::v5:
-                                async_send(
-                                    ep,
-                                    v5::pingreq_packet(),
-                                    as::detached
-                                );
-                                break;
-                            default:
-                                BOOST_ASSERT(false);
-                                break;
                             }
                         }
                     }
@@ -288,121 +356,96 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    cancel_pingreq_recv_timer(ep);
+    set_pingreq_recv_timer(ep, ms);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_recv_timer(
     this_type_sp ep
 ) {
-    if (ep->pingreq_recv_timeout_ms_) {
-        ep->tim_pingreq_recv_.cancel();
-        if (ep->status_ == connection_status::disconnecting ||
-            ep->status_ == connection_status::closing ||
-            ep->status_ == connection_status::closed) return;
-        ep->tim_pingreq_recv_.expires_after(
-            *ep->pingreq_recv_timeout_ms_
-        );
-        ep->tim_pingreq_recv_.async_wait(
-            [wp = std::weak_ptr{ep}](error_code const& ec) {
-                if (!ec) {
-                    if (auto ep = wp.lock()) {
-                        switch (ep->protocol_version_) {
-                        case protocol_version::v3_1_1:
-                            ASYNC_MQTT_LOG("mqtt_impl", error)
-                                << ASYNC_MQTT_ADD_VALUE(address, ep.get())
-                                << "pingreq recv timeout. close.";
-                            async_close(
-                                ep,
-                                as::detached
-                            );
-                            break;
-                        case protocol_version::v5:
-                            ASYNC_MQTT_LOG("mqtt_impl", error)
-                                << ASYNC_MQTT_ADD_VALUE(address, ep.get())
-                                << "pingreq recv timeout. close.";
-                            async_send(
-                                ep,
-                                v5::disconnect_packet{
-                                    disconnect_reason_code::keep_alive_timeout,
-                                    properties{}
-                                },
-                                [ep](error_code const&){
-                                    async_close(
-                                        ep,
-                                        as::detached
-                                    );
-                                }
-                            );
-                            break;
-                        default:
-                            BOOST_ASSERT(false);
-                            break;
-                        }
-                    }
-                }
-            }
-        );
-    }
+    ep->tim_pingreq_recv_.cancel();
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
-    this_type_sp ep
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
 ) {
-    if (ep->pingresp_recv_timeout_ms_) {
-        ep->tim_pingresp_recv_.cancel();
-        if (ep->status_ == connection_status::disconnecting ||
-            ep->status_ == connection_status::closing ||
-            ep->status_ == connection_status::closed) return;
-        ep->tim_pingresp_recv_.expires_after(
-            *ep->pingresp_recv_timeout_ms_
-        );
-        ep->tim_pingresp_recv_.async_wait(
-            [wp = std::weak_ptr{ep}](error_code const& ec) {
-                if (!ec) {
-                    if (auto ep = wp.lock()) {
-                        switch (ep->protocol_version_) {
-                        case protocol_version::v3_1_1:
-                            ASYNC_MQTT_LOG("mqtt_impl", error)
-                                << ASYNC_MQTT_ADD_VALUE(address, ep.get())
-                                << "pingresp recv timeout. close.";
-                            async_close(
-                                ep,
-                                as::detached
-                            );
-                            break;
-                        case protocol_version::v5:
-                            ASYNC_MQTT_LOG("mqtt_impl", error)
-                                << ASYNC_MQTT_ADD_VALUE(address, ep.get())
-                                << "pingresp recv timeout. close.";
-                            if (ep->status_ == connection_status::connected) {
-                                async_send(
-                                    ep,
-                                    v5::disconnect_packet{
-                                        disconnect_reason_code::keep_alive_timeout,
-                                        properties{}
+    if constexpr (Role == role::client || Role == role::any) {
+        if (ms) {
+            ep->tim_pingresp_recv_.cancel();
+            ep->tim_pingresp_recv_.expires_after(
+                *ms
+            );
+
+            ep->tim_pingresp_recv_.async_wait(
+                [wp = std::weak_ptr{ep}](error_code const& ec) {
+                    if (!ec) {
+                        if (auto ep = wp.lock()) {
+                            auto events = ep->con_.notify_timer_fired(timer::pingresp_recv);
+                            for (auto it = events.begin(); it != events.end();) {
+                                auto& event = *it++;
+                                std::visit(
+                                    overload {
+                                        [&](event_timer const& ev) {
+                                            if (ev.get_timer_for() == timer::pingresp_recv) {
+                                                switch (ev.get_op()) {
+                                                case event_timer::op_type::set:
+                                                    reset_pingresp_recv_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::reset:
+                                                    reset_pingresp_recv_timer(ep, ev.get_ms());
+                                                    break;
+                                                case event_timer::op_type::cancel:
+                                                    ep->tim_pingresp_recv_.cancel();
+                                                    break;
+                                                }
+                                            }
+                                            else {
+                                                BOOST_ASSERT(false);
+                                            }
+                                        },
+                                        [&](event_send& ev) {
+                                            auto pv{force_move(ev.get())};
+                                            BOOST_ASSERT(pv.get_if<v5::disconnect_packet>());
+                                            BOOST_ASSERT(it != events.end());
+                                            auto& ev_close = *it++;
+                                            BOOST_ASSERT(it == events.end());
+                                            BOOST_ASSERT(std::get_if<event_close>(&ev_close));
+                                            ep->stream_.async_write_packet(
+                                                force_move(pv),
+                                                [ep]
+                                                (
+                                                    error_code const& /*ec*/,
+                                                    std::size_t /*bytes_transferred*/
+                                                ) {
+                                                    async_close(ep, as::detached);
+                                                }
+                                            );
+                                        },
+                                        [&](event_close const&) {
+                                            async_close(ep, as::detached);
+                                        },
+                                        [&](auto const&...) {
+                                            BOOST_ASSERT(false);
+                                        }
                                     },
-                                    [ep](error_code const&){
-                                        async_close(
-                                            ep,
-                                            as::detached
-                                        );
-                                    }
+                                    event
                                 );
                             }
-                            else {
-                                async_close(
-                                    ep,
-                                    as::detached
-                                );
-                            }
-                            break;
-                        default:
-                            BOOST_ASSERT(false);
-                            break;
                         }
                     }
                 }
-            }
-        );
+            );
+        }
     }
 }
 
@@ -444,6 +487,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::has_retry() const {
     return !tim_retry_acq_pid_queue_.empty();
 }
 
+#if 0 // TBD
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
@@ -451,12 +495,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::clear_pid_man() {
     pid_man_.clear();
     notify_retry_all();
 }
+#endif
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid) {
-    pid_man_.release_id(pid);
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+notify_release_pid(typename basic_packet_id_type<PacketIdBytes>::type /*pid*/) {
     packet_id_released_ = true;
     notify_retry_one();
 }
@@ -473,6 +518,28 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::~basic_endpoint() {
     ASYNC_MQTT_LOG("mqtt_impl", trace)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "destroy";
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::underlying_accepted() {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "underlying_accepted";
+    BOOST_ASSERT(impl_);
+    impl_->underlying_accepted();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_offline_publish(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_offline_publish val:" << val;
+    BOOST_ASSERT(impl_);
+    impl_->set_offline_publish(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -532,6 +599,16 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingresp_recv_timeout(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_close_delay_after_disconnect_sent(duration);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
 basic_endpoint<Role, PacketIdBytes, NextLayer>::set_bulk_write(bool val) {
     BOOST_ASSERT(impl_);
     impl_->set_bulk_write(val);
@@ -540,9 +617,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::set_bulk_write(bool val) {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint<Role, PacketIdBytes, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_read_buffer_size(std::size_t val) {
     BOOST_ASSERT(impl_);
-    impl_->set_bulk_read_buffer_size(val);
+    impl_->set_read_buffer_size(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

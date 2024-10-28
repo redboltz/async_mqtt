@@ -30,14 +30,16 @@ client_impl<Version, NextLayer>::recv_loop(this_type_sp impl) {
     auto& a_impl{*impl};
     a_impl.ep_.async_recv(
         [impl = force_move(impl)]
-        (error_code const& ec, packet_variant pv) mutable {
+        (error_code const& ec, std::optional<packet_variant> pv_opt) mutable {
             if (ec) {
                 impl->recv_queue_.emplace_back(ec);
                 impl->recv_queue_inserted_  = true;
                 impl->tim_notify_publish_recv_.cancel();
+                impl->pid_tim_pv_res_col_.clear();
                 return;
             }
-            pv.visit(
+            BOOST_ASSERT(pv_opt);
+            pv_opt->visit(
                 overload {
                     [&](typename client_type::connack_packet& p) {
                         auto& idx = impl->pid_tim_pv_res_col_.get_pid_idx();

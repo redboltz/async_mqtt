@@ -767,14 +767,17 @@ public:
     }
 
     // forwarding callbacks
-    void operator()(am::error_code const& ec = am::error_code{}, am::packet_variant pv = am::packet_variant{}) {
-        proc(ec, am::force_move(pv));
+    void operator()(
+        am::error_code const& ec = am::error_code{},
+        std::optional<am::packet_variant> pv_opt = std::nullopt
+    ) {
+        proc(ec, am::force_move(pv_opt));
     }
 
 private:
     void proc(
         am::error_code const& ec,
-        am::packet_variant pv
+        std::optional<am::packet_variant> pv_opt
     ) {
         reenter (coro_) {
             yield {
@@ -808,8 +811,7 @@ private:
                 sei_ = vm_["sei"].template as<std::uint32_t>();
 
                 // Handshake underlying layer
-                am::async_underlying_handshake(
-                    ep_.next_layer(),
+                ep_.async_underlying_handshake(
                     host_,
                     boost::lexical_cast<std::string>(port),
                     *this
@@ -874,7 +876,7 @@ private:
                     std::cout << color_none;
                     return;
                 }
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
                             std::cout << color_recv;

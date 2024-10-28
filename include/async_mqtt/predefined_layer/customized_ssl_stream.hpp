@@ -35,6 +35,97 @@ static constexpr auto shutdown_timeout = std::chrono::seconds(3);
 template <typename NextLayer>
 struct layer_customize<as::ssl::stream<NextLayer>> {
     template <
+        typename CompletionToken = as::default_completion_token_t<typename as::ssl::stream<NextLayer>::executor_type>
+    >
+    static auto
+    async_handshake(
+        as::ssl::stream<NextLayer>& stream,
+        std::string_view host,
+        std::string_view port,
+        CompletionToken&& token = as::default_completion_token_t<typename as::ssl::stream<NextLayer>::executor_type>{}
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            handshake_op{
+                stream,
+                host,
+                port
+            },
+            token,
+            stream
+        );
+    }
+
+    struct handshake_op {
+        handshake_op(
+            as::ssl::stream<NextLayer>& stream,
+            std::string_view host,
+            std::string_view port
+        ):stream{stream},
+          host{host},
+          port{port}
+        {}
+
+        as::ssl::stream<NextLayer>& stream;
+        std::string host;
+        std::string port;
+        enum { dispatch, under, handshake, complete } state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            if (state == dispatch) {
+                state = under;
+                auto& a_stream{stream};
+                as::dispatch(
+                    a_stream.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                BOOST_ASSERT(state == under);
+                state = handshake;
+                auto& a_stream{stream};
+                auto a_host{host};
+                auto a_port{port};
+                layer_customize<NextLayer>::async_handshake(
+                    a_stream.next_layer(),
+                    a_host,
+                    a_port,
+                    force_move(self)
+                );
+            }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code ec
+        ) {
+            if (state == handshake) {
+                state = complete;
+                if (ec) {
+                    self.complete(ec);
+                    return;
+                }
+                auto& a_stream{stream};
+                a_stream.async_handshake(
+                    as::ssl::stream_base::client,
+                    force_move(self)
+                );
+            }
+            else {
+                BOOST_ASSERT(state == complete);
+                self.complete(ec);
+            }
+        }
+    };
+
+    template <
         typename CompletionToken
     >
     static auto

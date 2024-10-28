@@ -34,7 +34,7 @@ register_packet_id_op {
             );
         } break;
         case complete:
-            if (a_ep.pid_man_.register_id(packet_id)) {
+            if (a_ep.con_.register_packet_id(packet_id)) {
                 self.complete(error_code{});
             }
             else {
@@ -56,7 +56,7 @@ inline
 bool
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
-    return pid_man_.register_id(packet_id);
+    return con_.register_packet_id(packet_id);
 }
 
 } // namespace detail

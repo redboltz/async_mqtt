@@ -55,12 +55,6 @@ public:
 
     /**
      * @brief constructor
-     *        the variant value is monostate
-     */
-    explicit basic_packet_variant() = default;
-
-    /**
-     * @brief constructor
      * @param packet packet
      */
     template <
@@ -126,9 +120,15 @@ public:
 
     /**
      * @brief Get control_packet_type.
-     * @return If packet is stored then return its control_packet_type, If error then return std::nullopt.
+     * @return control_packet_type.
      */
-    std::optional<control_packet_type> type() const;
+    control_packet_type type() const;
+
+    /**
+     * @brief Get the size of the packet.
+     * @return the size of the packet.
+     */
+    std::size_t size() const;
 
     /**
      * @brief Create const buffer sequence
@@ -136,12 +136,6 @@ public:
      * @return const buffer sequence
      */
     std::vector<as::const_buffer> const_buffer_sequence() const;
-
-    /**
-     * @brief bool conversion
-     * @return true if has value, otherwise (std::monostate) false.
-     */
-    operator bool() const;
 
 private:
 
@@ -166,7 +160,6 @@ private:
     }
 
     using variant_t = std::variant<
-        std::monostate,
         v3_1_1::connect_packet,
         v3_1_1::connack_packet,
         v3_1_1::basic_publish_packet<PacketIdBytes>,

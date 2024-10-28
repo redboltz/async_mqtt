@@ -100,10 +100,6 @@ public:
         >;
     };
 
-    void set_bulk_read_buffer_size(std::size_t size) {
-        bulk_read_buffer_size_ = size;
-    }
-
 private:
     template <typename Layer>
     static void initialize(Layer& layer) {
@@ -119,22 +115,22 @@ private:
 
     void parse_packet();
 
-    // async operations
-
-    template <typename Packet> struct stream_write_packet_op;
-    struct stream_read_packet_op;
-    struct stream_close_op;
-    struct stream_read_some_op;
     template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
+        typename... Args
     >
-    static
-    auto
-    async_read_some(
+    static auto
+    async_underlying_handshake(
         this_type_sp impl,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+        Args&&... args
     );
 
+    // async operations
+
+    template <typename Packet>
+    struct stream_write_packet_op;
+    template <typename MutableBufferSequence>
+    struct stream_read_some_op;
+    struct stream_close_op;
 
 private:
     friend class stream<NextLayer>;
@@ -150,14 +146,8 @@ private:
 
     next_layer_type nl_;
     ioc_queue read_queue_;
-    as::streambuf read_buf_;
-    std::size_t remaining_length_ = 0;
-    std::size_t multiplier_ = 1;
-    std::size_t bulk_read_buffer_size_ = 0;
-    enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
     ioc_queue write_queue_;
-    std::deque<error_packet> read_packets_;
-    static_vector<char, 5> header_remaining_length_buf_;
+    struct stream_read_op;
     std::vector<as::const_buffer> storing_cbs_;
     std::vector<as::const_buffer> sending_cbs_;
     bool bulk_write_ = false;

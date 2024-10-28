@@ -172,9 +172,9 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
         }
     }
     else {
-        auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
-        auto rest = hana::drop_back(std::move(t), hana::size_c<1>);
-        auto&& back = hana::back(t);
+        auto all = hana::tuple<Args...>(std::forward<Args>(args)...);
+        auto back = hana::back(all);
+        auto rest = hana::drop_back(all, hana::size_c<1>);
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
@@ -190,7 +190,7 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
                         impl_,
                         error_code{},
                         publish_packet{std::forward<decltype(rest_args)>(rest_args)...},
-                        std::forward<decltype(back)>(back)
+                        force_move(back)
                     );
                 }
                 catch (system_error const& se) {
@@ -198,7 +198,7 @@ client<Version, NextLayer>::async_publish(Args&&... args) {
                         impl_,
                         se.code(),
                         std::nullopt,
-                        std::forward<decltype(back)>(back)
+                        force_move(back)
                     );
                 }
             }

@@ -233,23 +233,23 @@ struct bench {
 
     // forwarding callbacks
     void operator()(ClientInfo* pci = nullptr) {
-        proc(am::error_code{}, am::packet_variant{}, {}, pci, ev_type::other);
+        proc(am::error_code{}, std::nullopt, {}, pci, ev_type::other);
     }
     void operator()(am::error_code ec, ClientInfo* pci = nullptr, ev_type ect = ev_type::other) {
-        proc(ec, am::packet_variant{}, {}, pci, ect);
+        proc(ec, std::nullopt, {}, pci, ect);
     }
-    void operator()(am::error_code const& ec, am::packet_variant pv, ClientInfo* pci = nullptr) {
-        proc(ec, am::force_move(pv), {}, pci, ev_type::recv_packet);
+    void operator()(am::error_code const& ec, std::optional<am::packet_variant> pv_opt, ClientInfo* pci = nullptr) {
+        proc(ec, am::force_move(pv_opt), {}, pci, ev_type::recv_packet);
     }
     void operator()(am::error_code const& ec, am::packet_id_type pid, ClientInfo* pci = nullptr) {
         pci->pid = pid;
-        proc(ec, am::packet_variant{}, pid, pci, ev_type::acquire_result);
+        proc(ec, std::nullopt, pid, pci, ev_type::acquire_result);
     }
 
 private:
     void proc(
         boost::system::error_code ec,
-        am::packet_variant pv,
+        std::optional<am::packet_variant> pv_opt,
         am::packet_id_type pid,
         ClientInfo* pci,
         ev_type evt
@@ -281,8 +281,7 @@ private:
             }
 
             // Handshake underlying layer
-            yield am::async_underlying_handshake(
-                pci->c.next_layer(),
+            yield pci->c.async_underlying_handshake(
                 pci->host,
                 pci->port,
                 as::append(
@@ -379,7 +378,7 @@ private:
                     pci
                 )
             );
-            pv.visit(
+            pv_opt->visit(
                 am::overload {
                     [&](am::v5::connack_packet const& p) {
                         if (p.code() == am::connect_reason_code::success) {
@@ -516,7 +515,7 @@ private:
                         pci
                     )
                 );
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v5::suback_packet const& p) {
                             if (p.entries().front() == am::suback_reason_code::granted_qos_0 ||
@@ -747,9 +746,9 @@ private:
                 }
                 else if (evt == ev_type::recv_packet) {
                     // pub received
-                    BOOST_ASSERT(pv);
+                    BOOST_ASSERT(pv_opt);
                     pub_recv ret = pub_recv::cont;
-                    pv.visit(
+                    pv_opt->visit(
                         am::overload {
                             [&](am::v5::publish_packet const& p) {
                                 ret = recv_publish(

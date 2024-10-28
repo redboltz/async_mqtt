@@ -52,6 +52,12 @@ struct client_impl<Version, NextLayer>::pid_tim_pv_res_col {
     auto& get_tim_idx() {
         return elems.template get<tag_tim>();
     }
+    void clear() {
+        for (auto& elem : elems) {
+            const_cast<as::steady_timer&>(*elem.tim).cancel();
+        }
+        elems.clear();
+    }
     using mi_elem_type = mi::multi_index_container<
         elem_type,
         mi::indexed_by<
@@ -79,7 +85,7 @@ struct client_impl<Version, NextLayer>::recv_type {
     {
     }
     error_code ec = error_code{};
-    packet_variant pv;
+    std::optional<packet_variant> pv;
 };
 
 
@@ -182,6 +188,15 @@ client_impl<Version, NextLayer>::set_pingresp_recv_timeout(
 template <protocol_version Version, typename NextLayer>
 inline
 void
+client_impl<Version, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    ep_.set_close_delay_after_disconnect_sent(duration);
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
 client_impl<Version, NextLayer>::set_bulk_write(bool val) {
     ep_.set_bulk_write(val);
 }
@@ -189,8 +204,8 @@ client_impl<Version, NextLayer>::set_bulk_write(bool val) {
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client_impl<Version, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
-    ep_.set_bulk_read_buffer_size(val);
+client_impl<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
+    ep_.set_read_buffer_size(val);
 }
 
 } // namespace detail
@@ -298,6 +313,16 @@ client<Version, NextLayer>::set_pingresp_recv_timeout(
 template <protocol_version Version, typename NextLayer>
 inline
 void
+client<Version, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_close_delay_after_disconnect_sent(duration);
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
 client<Version, NextLayer>::set_bulk_write(bool val) {
     BOOST_ASSERT(impl_);
     impl_->set_bulk_write(val);
@@ -306,9 +331,9 @@ client<Version, NextLayer>::set_bulk_write(bool val) {
 template <protocol_version Version, typename NextLayer>
 inline
 void
-client<Version, NextLayer>::set_bulk_read_buffer_size(std::size_t val) {
+client<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
     BOOST_ASSERT(impl_);
-    impl_->set_bulk_read_buffer_size(val);
+    impl_->set_read_buffer_size(val);
 }
 
 } // namespace async_mqtt

@@ -546,15 +546,15 @@ public:
      * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
      * #### Signature
-     * void(@ref error_code, @ref packet_variant)
+     * void(@ref error_code, std::optional<@ref packet_variant_type>)
      *
-     * ##### error_code
-     *
-     * @li If receive error happens, error_code is set as error, otherwise
+     * ##### error_code and packet_variant_type
+     * @li If an error occurs at an underlying layer while receiving a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     std::optional<@ref packet_variant_type> is set to std::nullopt.
+     * @li If there are no errors during receiving the packet,
      *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
-     *
-     * ##### packet_variant
-     * If the error_code is errc::success, one of the following packet is set to the packet_variant:
+     *     std::optional<@ref packet_variant_type> is set to one of the following @ref basic_packet_variant:
      * @li @ref v3_1_1::publish_packet, if Version is v3_1_1 and PUBLISH packet is received.
      * @li @ref v5::publish_packet, if Version is v5 and PUBLISH packet is received.
      * @li @ref v5::disconnect_packet, if Version is v5 and DISCONNECT packet is received.
@@ -652,6 +652,17 @@ public:
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
     /**
+     * @brief Sets the delay duration for closing the stream after sending the DISCONNECT packet.
+     * If the timer expires, the underlying layer stream will begin closing.
+     * \n This function should be called before async_start() call.
+     * @note By default, no delay is set.
+     * @param duration If set to zero, the timer is not activated, and the close process starts immediately.
+     *                 Otherwise, the close process begins after the specified duration has elapsed.
+     *                 The minimum resolution is in milliseconds.
+     */
+    void set_close_delay_after_disconnect_sent(std::chrono::milliseconds duration);
+
+    /**
      * @brief Set bulk write mode.
      * If true, then concatenate multiple packets' const buffer sequence
      * when send() is called before the previous send() is not completed.
@@ -663,16 +674,23 @@ public:
     void set_bulk_write(bool val);
 
     /**
-     * @brief Set the bulk read buffer size.
+     * @brief Set read buffer size.
      * If bulk read is enabled, the `val` parameter specifies the size of the internal
-     * `async_read_some()` buffer.
-     * Enabling bulk read can improve throughput but may increase latency.
-     * Disabling bulk read can reduce latency but may lower throughput.
-     * By default, bulk read is disabled.
+     * prepared `async_read_some()` streambuf.
+     * By default, read buffer size is 65535.
      *
      * @param val If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size.
      */
-    void set_bulk_read_buffer_size(std::size_t val);
+    void set_read_buffer_size(std::size_t val);
+
+    // TBD doc later
+    template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
 
     /**
      * @brief acuire unique packet_id.
@@ -899,6 +917,7 @@ private:
 } // namespace async_mqtt
 
 #include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/impl/client_underlying_handshake.hpp>
 #include <async_mqtt/impl/client_start.hpp>
 #include <async_mqtt/impl/client_subscribe.hpp>
 #include <async_mqtt/impl/client_unsubscribe.hpp>

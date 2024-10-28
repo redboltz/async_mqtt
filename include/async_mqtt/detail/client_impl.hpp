@@ -48,6 +48,14 @@ public:
     this_type& operator=(this_type const&) = delete;
     this_type& operator=(this_type&&) = delete;
 
+    template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
+
     template <typename... Args>
     auto async_start(Args&&... args);
 
@@ -93,8 +101,9 @@ public:
     void set_auto_map_topic_alias_send(bool val);
     void set_auto_replace_topic_alias_send(bool val);
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
+    void set_close_delay_after_disconnect_sent(std::chrono::milliseconds duration);
     void set_bulk_write(bool val);
-    void set_bulk_read_buffer_size(std::size_t val);
+    void set_read_buffer_size(std::size_t val);
 
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>

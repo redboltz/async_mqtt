@@ -80,10 +80,20 @@ public:
     }
 
     template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
+
+    template <
+        typename MutableBufferSequence,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     auto
-    async_read_packet(
+    async_read_some(
+        MutableBufferSequence const& buffers,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -120,8 +130,8 @@ public:
         >;
     };
 
-    void set_bulk_read_buffer_size(std::size_t size) {
-        impl_->set_bulk_read_buffer_size(size);
+    void set_read_buffer_size(std::size_t size) {
+        impl_->set_read_buffer_size(size);
     }
 
 private:
@@ -141,7 +151,8 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/util/impl/stream_read_packet.hpp>
+#include <async_mqtt/util/impl/stream_underlying_handshake.hpp>
+#include <async_mqtt/util/impl/stream_read.hpp>
 #include <async_mqtt/util/impl/stream_write_packet.hpp>
 #include <async_mqtt/util/impl/stream_close.hpp>
 

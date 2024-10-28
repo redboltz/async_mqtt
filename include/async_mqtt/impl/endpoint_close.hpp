@@ -35,19 +35,17 @@ close_op {
         } break;
         case close:
             switch (a_ep.status_) {
-            case connection_status::connecting:
-            case connection_status::connected:
-            case connection_status::disconnecting: {
+            case close_status::open: {
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                         << "close initiate status:" << static_cast<int>(a_ep.status_);
                 state = complete;
-                a_ep.status_ = connection_status::closing;
+                a_ep.status_ = close_status::closing;
                 a_ep.stream_.async_close(
                     force_move(self)
                 );
             } break;
-            case connection_status::closing: {
+            case close_status::closing: {
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                     << "already close requested";
@@ -55,7 +53,7 @@ close_op {
                     force_move(self)
                 );
             } break;
-            case connection_status::closed:
+            case close_status::closed:
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
                     << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                     << "already closed";
@@ -68,10 +66,11 @@ close_op {
             a_ep.tim_pingreq_send_.cancel();
             a_ep.tim_pingreq_recv_.cancel();
             a_ep.tim_pingresp_recv_.cancel();
-            a_ep.status_ = connection_status::closed;
+            a_ep.status_ = close_status::closed;
             ASYNC_MQTT_LOG("mqtt_impl", trace)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "process enqueued close";
+            a_ep.con_.notify_closed();
             a_ep.close_queue_.poll();
             self.complete();
             break;

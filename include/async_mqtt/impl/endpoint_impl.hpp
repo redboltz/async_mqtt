@@ -35,12 +35,12 @@ template <typename... Args>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
     protocol_version ver,
     Args&&... args
-): protocol_version_{ver},
-   stream_{std::forward<Args>(args)...},
-   store_{stream_.get_executor()},
+): stream_{std::forward<Args>(args)...},
+   con_{ver},
    tim_pingreq_send_{stream_.get_executor()},
    tim_pingreq_recv_{stream_.get_executor()},
-   tim_pingresp_recv_{stream_.get_executor()}
+   tim_pingresp_recv_{stream_.get_executor()},
+   tim_close_by_disconnect_{stream_.get_executor()}
 {
     BOOST_ASSERT(
         (Role == role::client && ver != protocol_version::undetermined) ||
@@ -87,28 +87,11 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer() {
 // private
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_client(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::client);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_server(role r) {
-    return static_cast<int>(r) & static_cast<int>(role::server);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Other>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
     basic_endpoint_impl<Role, PacketIdBytes, Other>&& other
-): protocol_version_{other.ver},
-   stream_{force_move(other.stream_)},
-   store_{stream_.get_executor()},
+): stream_{force_move(other.stream_)},
+   con_{force_move(other.con_)},
    tim_pingreq_send_{stream_.get_executor()},
    tim_pingreq_recv_{stream_.get_executor()},
    tim_pingresp_recv_{stream_.get_executor()}

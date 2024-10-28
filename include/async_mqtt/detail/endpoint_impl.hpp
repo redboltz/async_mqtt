@@ -12,6 +12,7 @@
 
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/connection.hpp>
 #include <async_mqtt/packet/packet_variant.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/stream.hpp>
@@ -28,13 +29,6 @@ namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint_impl {
-    enum class connection_status {
-        connecting,
-        connected,
-        disconnecting,
-        closing,
-        closed
-    };
 
     using this_type = basic_endpoint_impl<Role, PacketIdBytes, NextLayer>;
     using this_type_sp = std::shared_ptr<this_type>;
@@ -70,13 +64,16 @@ public:
     lowest_layer_type const& lowest_layer() const;
     lowest_layer_type& lowest_layer();
 
+    void underlying_accepted();
+    void set_offline_publish(bool val);
     void set_auto_pub_response(bool val);
     void set_auto_ping_response(bool val);
     void set_auto_map_topic_alias_send(bool val);
     void set_auto_replace_topic_alias_send(bool val);
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
+    void set_close_delay_after_disconnect_sent(std::chrono::milliseconds duration);
     void set_bulk_write(bool val);
-    void set_bulk_read_buffer_size(std::size_t val);
+    void set_read_buffer_size(std::size_t val);
 
     // sync funcs
 
@@ -109,6 +106,18 @@ public:
         >;
     };
 
+    template <
+        typename ArgsTuple,
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+    static
+    auto
+    async_underlying_handshake_impl(
+        this_type_sp impl,
+        ArgsTuple&& args_tuple,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
 private: // compose operation impl
 
     template <typename Other>
@@ -117,10 +126,7 @@ private: // compose operation impl
         basic_endpoint_impl<Role, PacketIdBytes, Other>&& other
     );
 
-    static constexpr bool can_send_as_client(role r);
-    static constexpr bool can_send_as_server(role r);
-    static std::optional<topic_alias_type> get_topic_alias(properties const& props);
-
+    template <typename ArgsTuple>  struct underlying_handshake_op;
     struct acquire_unique_packet_id_op;
     struct acquire_unique_packet_id_wait_until_op;
     struct register_packet_id_op;
@@ -181,12 +187,36 @@ private:
     );
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet);
-    static void send_stored(this_type_sp ep);
     void initialize();
 
-    static void reset_pingreq_send_timer(this_type_sp ep);
-    static void reset_pingreq_recv_timer(this_type_sp ep);
-    static void reset_pingresp_recv_timer(this_type_sp ep);
+    static void set_pingreq_send_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
+    static void reset_pingreq_send_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
+    static void cancel_pingreq_send_timer(
+        this_type_sp ep
+    );
+
+    static void set_pingreq_recv_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
+    static void reset_pingreq_recv_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
+    static void cancel_pingreq_recv_timer(
+        this_type_sp ep
+    );
+
+    static void reset_pingresp_recv_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
 
     void notify_retry_one();
     void complete_retry_one();
@@ -194,60 +224,36 @@ private:
     bool has_retry() const;
 
     void clear_pid_man();
-    void release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid);
+    void notify_release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid);
 
 private:
 
     friend class basic_endpoint<Role, PacketIdBytes, NextLayer>;
-    protocol_version protocol_version_;
     stream_type stream_;
-    packet_id_manager<typename basic_packet_id_type<PacketIdBytes>::type> pid_man_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_suback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_unsuback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_puback_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_pubrec_;
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> pid_pubcomp_;
+    std::size_t read_buffer_size_ = 65535; // TBD define constant
+    as::streambuf read_buf_;
+    std::optional<as::streambuf::mutable_buffers_type> mbs_;
+    basic_connection<Role, PacketIdBytes> con_;
 
-    bool need_store_ = false;
-    store<PacketIdBytes> store_;
-
-    bool auto_pub_response_ = false;
-    bool auto_ping_response_ = false;
-
-    bool auto_map_topic_alias_send_ = false;
-    bool auto_replace_topic_alias_send_ = false;
-    std::optional<topic_alias_send> topic_alias_send_;
-    std::optional<topic_alias_recv> topic_alias_recv_;
-
-    receive_maximum_type publish_send_max_{receive_maximum_max};
-    receive_maximum_type publish_recv_max_{receive_maximum_max};
-    receive_maximum_type publish_send_count_{0};
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> publish_recv_;
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
-
     ioc_queue close_queue_;
-
-    std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
-    std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
-
-    connection_status status_{connection_status::closed};
-
-    std::optional<std::chrono::milliseconds> pingreq_send_interval_ms_;
-    std::optional<std::chrono::milliseconds> pingreq_recv_timeout_ms_;
-    std::optional<std::chrono::milliseconds> pingresp_recv_timeout_ms_;
 
     as::steady_timer tim_pingreq_send_;
     as::steady_timer tim_pingreq_recv_;
     as::steady_timer tim_pingresp_recv_;
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_handled_;
-
-    std::set<typename basic_packet_id_type<PacketIdBytes>::type> qos2_publish_processing_;
-
+    as::steady_timer tim_close_by_disconnect_;
+    std::chrono::milliseconds duration_close_by_disconnect_{std::chrono::milliseconds::zero()};
     struct tim_cancelled;
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
     bool packet_id_released_ = false;
+
+    enum class close_status {
+        open,
+        closing,
+        closed
+    };
+    close_status status_{close_status::closed};
+    std::deque<basic_event_variant<PacketIdBytes>> recv_events_;
 };
 
 } // namespace async_mqtt::detail
