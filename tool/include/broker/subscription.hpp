@@ -10,7 +10,7 @@
 #include <optional>
 #include <string>
 
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 #include <broker/session_state_fwd.hpp>
 #include <async_mqtt/util/move.hpp>
 

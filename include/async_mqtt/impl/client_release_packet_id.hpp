@@ -8,31 +8,9 @@
 #define ASYNC_MQTT_IMPL_CLIENT_RELEASE_PACKET_ID_HPP
 
 #include <async_mqtt/client.hpp>
+#include <async_mqtt/impl/client_impl.hpp>
 
 namespace async_mqtt {
-
-namespace detail {
-
-template <protocol_version Version, typename NextLayer>
-template <typename CompletionToken>
-auto
-client_impl<Version, NextLayer>::async_release_packet_id(
-    packet_id_type pid,
-    CompletionToken&& token
-) {
-    return ep_.async_release_packet_id(pid, std::forward<CompletionToken>(token));
-}
-
-// sync version
-
-template <protocol_version Version, typename NextLayer>
-inline
-void
-client_impl<Version, NextLayer>::release_packet_id(packet_id_type packet_id) {
-    ep_.release_packet_id(packet_id);
-}
-
-} // namespace detail
 
 template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
@@ -42,7 +20,26 @@ client<Version, NextLayer>::async_release_packet_id(
     CompletionToken&& token
 ) {
     BOOST_ASSERT(impl_);
-    return impl_->async_release_packet_id(pid, std::forward<CompletionToken>(token));
+    return
+        as::async_initiate<
+            CompletionToken,
+            void()
+        >(
+            [](
+                auto handler,
+                std::shared_ptr<impl_type> impl,
+                packet_id_type pid
+            ) {
+                impl_type::async_release_packet_id(
+                    force_move(impl),
+                    pid,
+                    force_move(handler)
+                );
+            },
+            token,
+            impl_,
+            pid
+        );
 }
 
 // sync version

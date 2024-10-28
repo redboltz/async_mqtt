@@ -2,6 +2,13 @@
 
 = History
 
+== 10.0.0
+=== breaking changes
+* Re-organized include files.
+* Removed non bulk read to meet Sans-I/O interface.
+* Supported I/O independent (aka Sans-I/O) library.
+* underlying_handshake functionality is updated from free function to member function.
+
 == 9.1.0
 * Added invalid combination checking of sharename and nl(no local). #372
 * Fixed receive maximum processing. #371

@@ -9,8 +9,8 @@
 
 #include <cstddef> // for std::size_t
 
-#include <async_mqtt/role.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/role.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 
 namespace async_mqtt {
 

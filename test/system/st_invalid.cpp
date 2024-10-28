@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant /*pv*/,
+            std::optional<am::packet_variant> /*pv_opt*/,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -44,8 +44,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

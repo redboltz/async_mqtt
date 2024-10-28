@@ -12,7 +12,7 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/packet/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/packet_helper.hpp>
 #include <broker/endpoint_variant.hpp>
 #include <broker/broker.hpp>
 
@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::protocol_version::v3_1_1,       // for emulated client so should already be known
                         exe
                     );
+                ep1->underlying_accepted();
                 brk.handle_accept(epv_t{ep1});
 
                 // underlying connect
@@ -58,6 +59,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::protocol_version::v5,
                         exe
                     );
+                ep2->underlying_accepted();
                 brk.handle_accept(epv_t{ep2});
 
                 {
@@ -78,7 +80,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::connect_return_code::accepted
                     };
                     auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                    BOOST_TEST(b2c_packet == exp_packet);
+                    BOOST_TEST(*b2c_packet == exp_packet);
                 }
                 {
                     // subscribe ep1
@@ -103,7 +105,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         }
                     };
                     auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                    BOOST_TEST(b2c_packet == exp_packet);
+                    BOOST_TEST(*b2c_packet == exp_packet);
                 }
                 {
                     // connect ep2
@@ -127,7 +129,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         }
                     };
                     auto b2c_packet = co_await ep2->next_layer().wait_response(as::deferred);
-                    BOOST_TEST(b2c_packet == exp_packet);
+                    BOOST_TEST(*b2c_packet == exp_packet);
                 }
                 {
                     // subscribe ep2
@@ -150,7 +152,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         }
                     };
                     auto b2c_packet = co_await ep2->next_layer().wait_response(as::deferred);
-                    BOOST_TEST(b2c_packet == exp_packet);
+                    BOOST_TEST(*b2c_packet == exp_packet);
                 }
                 {
                     // publish ep2
@@ -176,7 +178,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                         am::qos::at_most_once | am::pub::retain::no | am::pub::dup::no
                     };
                     auto b2c_packet = co_await ep1->next_layer().wait_response(as::deferred);
-                    BOOST_TEST(b2c_packet == exp_packet);
+                    BOOST_TEST(*b2c_packet == exp_packet);
                 }
                 {
                     std::set<am::packet_variant> exp_packets {
@@ -194,9 +196,9 @@ BOOST_AUTO_TEST_CASE(tc1) {
                     };
                     // recv ep2
                     auto b2c_packet1 = co_await ep2->next_layer().wait_response(as::deferred);
-                    BOOST_ASSERT(exp_packets.erase(b2c_packet1) == 1);
+                    BOOST_ASSERT(exp_packets.erase(*b2c_packet1) == 1);
                     auto b2c_packet2 = co_await ep2->next_layer().wait_response(as::deferred);
-                    BOOST_ASSERT(exp_packets.erase(b2c_packet2) == 1);
+                    BOOST_ASSERT(exp_packets.erase(*b2c_packet2) == 1);
                 }
                 {
                     // close ep1

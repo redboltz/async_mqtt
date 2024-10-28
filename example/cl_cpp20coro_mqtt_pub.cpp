@@ -38,7 +38,7 @@ proc(
     try {
         // all underlying layer handshaking
         // (Resolve hostname, TCP handshake)
-        co_await am::async_underlying_handshake(amcl.next_layer(), host, port);
+        co_await amcl.async_underlying_handshake(host, port);
         std::cout << "mqtt undlerlying handshaked" << std::endl;
 
         // MQTT connect and receive loop start
