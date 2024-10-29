@@ -46,24 +46,6 @@ public:
     template <typename Epsp>
     void send(Epsp& epsp) const {
         std::optional<store_packet_variant> packet_opt;
-        if (tim_message_expiry_) {
-            packet_.visit(
-                overload {
-                    [&](v5::basic_publish_packet<sizeof(packet_id_type)> const& m) {
-                        auto updated_packet = m;
-                        auto d =
-                            std::chrono::duration_cast<std::chrono::seconds>(
-                                tim_message_expiry_->expiry() - std::chrono::steady_clock::now()
-                            ).count();
-                        if (d < 0) d = 0;
-                        updated_packet.update_message_expiry_interval(static_cast<std::uint32_t>(d));
-                        packet_opt.emplace(force_move(updated_packet));
-                    },
-                    [](auto const&) {
-                    }
-                }
-            );
-        }
         epsp.register_packet_id(packet_id());
         epsp.async_send(
             packet_opt ? *packet_opt : packet_,
