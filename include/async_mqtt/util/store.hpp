@@ -36,46 +36,7 @@ public:
         if constexpr(is_publish<Packet>()) {
             if (packet.opts().get_qos() == qos::at_least_once ||
                 packet.opts().get_qos() == qos::exactly_once) {
-                std::uint32_t sec = 0;
-                if constexpr(is_v5<Packet>()) {
-                    bool finish = false;
-                    for (auto const& prop : packet.props()) {
-                        prop.visit(
-                            overload {
-                                [&](property::message_expiry_interval const& p) {
-                                    sec = p.val();
-                                    finish = true;
-                                },
-                                [](auto const&) {
-                                }
-                            }
-                        );
-                        if (finish) break;
-                    }
-                }
-                if (sec == 0) {
-                    return elems_.emplace_back(packet).second;
-                }
-                else {
-                    auto tim = std::make_shared<as::steady_timer>(exe_);
-                    tim->expires_after(std::chrono::seconds(sec));
-                    tim->async_wait(
-                        [this, wp = std::weak_ptr<as::steady_timer>(tim)]
-                        (error_code const& ec) {
-                            if (auto tim = wp.lock()) {
-                                if (!ec) {
-                                    auto& idx = elems_.template get<tag_tim>();
-                                    auto it = idx.find(tim.get());
-                                    if (it == idx.end()) return;
-                                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                                        << "[store] message expired:" << it->packet;
-                                    idx.erase(it);
-                                }
-                            }
-                        }
-                    );
-                    return elems_.emplace_back(packet, tim).second;
-                }
+                return elems_.emplace_back(packet).second;
             }
         }
         else if constexpr(is_pubrel<Packet>()) {
@@ -120,14 +81,6 @@ public:
         std::vector<store_packet_type> ret;
         ret.reserve(elems_.size());
         for (auto elem : elems_) {
-            if (elem.tim) {
-                auto d =
-                    std::chrono::duration_cast<std::chrono::seconds>(
-                        elem.tim->expiry() - std::chrono::steady_clock::now()
-                    ).count();
-                if (d < 0) d = 0;
-                elem.packet.update_message_expiry_interval(static_cast<std::uint32_t>(d));
-            }
             ret.push_back(force_move(elem.packet));
         }
         return ret;
@@ -136,9 +89,8 @@ public:
 private:
     struct elem_t {
         elem_t(
-            store_packet_type packet,
-            std::shared_ptr<as::steady_timer> tim = nullptr
-        ): packet{force_move(packet)}, tim{force_move(tim)} {}
+            store_packet_type packet
+        ): packet{force_move(packet)} {}
 
         typename basic_packet_id_type<PacketIdBytes>::type packet_id() const {
             return packet.packet_id();
@@ -148,16 +100,10 @@ private:
             return packet.response_packet_type();
         }
 
-        void const* tim_address() const {
-            return tim.get();
-        }
-
         store_packet_type packet;
-        std::shared_ptr<as::steady_timer> tim = nullptr;
     };
     struct tag_seq{};
     struct tag_res_id{};
-    struct tag_tim{};
     using mi_elem = mi::multi_index_container<
         elem_t,
         mi::indexed_by<
@@ -169,12 +115,6 @@ private:
                 mi::key<
                     &elem_t::response_packet_type,
                     &elem_t::packet_id
-                >
-            >,
-            mi::hashed_non_unique<
-                mi::tag<tag_tim>,
-                mi::key<
-                    &elem_t::tim_address
                 >
             >
         >

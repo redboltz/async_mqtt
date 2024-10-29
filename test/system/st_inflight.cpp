@@ -968,7 +968,9 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                     )
                 );
 
-                // wait for broker QoS1 publish message will expire
+                // 2 > 1 (QoS1 message_expiry_interval)
+                // but PUBLISH has already been triggered
+                // so message shouldn't be expired
                 std::this_thread::sleep_for(std::chrono::seconds(2));
                 yield ep(sub).async_close(*this);
 
@@ -1005,6 +1007,23 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                 );
 
                 yield ep(sub).async_recv(*this);
+                // message_expiry_interval shouldn't be updated
+                // because PUBLISH has already been triggered
+                BOOST_TEST(
+                    pv
+                    ==
+                    (am::v5::publish_packet{
+                        1,
+                        "topic1",
+                        "payload1",
+                        am::qos::at_least_once | am::pub::dup::yes,
+                        {am::property::message_expiry_interval{1}}
+                    })
+                );
+
+                yield ep(sub).async_recv(*this);
+                // message_expiry_interval shouldn't be updated
+                // because PUBLISH has already been triggered
                 BOOST_TEST(
                     pv
                     ==
@@ -1013,7 +1032,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                         "topic1",
                         "payload2",
                         am::qos::exactly_once | am::pub::dup::yes,
-                        {am::property::message_expiry_interval{9}}
+                        {am::property::message_expiry_interval{10}}
                     })
                 );
 
