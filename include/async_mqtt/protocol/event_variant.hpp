@@ -9,6 +9,8 @@
 
 #include <variant>
 
+#include <async_mqtt/error.hpp>
+
 namespace async_mqtt {
 
 /**
@@ -28,6 +30,8 @@ template <std::size_t PacketIdBytes>
 class basic_event_packet_id_released;
 
 class event_timer;
+class event_close;
+class event_recv;
 
 /**
  * @ingroup packet_variant_detail
@@ -76,9 +80,12 @@ class event_timer;
  */
 template <std::size_t PacketIdBytes>
 using basic_event_variant = std::variant<
+    error_code,
     basic_event_send<PacketIdBytes>,
     basic_event_packet_id_released<PacketIdBytes>,
-    event_timer
+    event_recv,
+    event_timer,
+    event_close
 >;
 
 /**
@@ -92,6 +99,11 @@ using basic_event_variant = std::variant<
  *
  */
 using event_variant = basic_event_variant<2>;
+
+template <std::size_t PacketIdBytes>
+inline bool is_error(basic_event_variant<PacketIdBytes> const& ev) {
+    return ev.index() == 0;
+}
 
 } // namespace async_mqtt
 

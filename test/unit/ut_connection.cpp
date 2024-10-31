@@ -42,8 +42,7 @@ BOOST_AUTO_TEST_CASE(send) {
         props
     };
 
-    auto [ec, events] = c.send(p);
-    BOOST_TEST(!ec);
+    auto events = c.send(p);
     BOOST_TEST(events.size() == 2);
     std::visit(
         am::overload{
@@ -70,6 +69,17 @@ BOOST_AUTO_TEST_CASE(send) {
         },
         events[1]
     );
+
+    char recv_connack[] {
+        0x20,       // fixed_header
+        0x08,       // remaining_length
+        0x01,       // session_present
+        char(0x87), // connect_reason_code
+        0x05,       // property_length
+        0x11, 0x0f, char(0xff), char(0xff), char(0xff), // session_expiry_interval
+    };
+
+    events = c.recv(recv_connack, sizeof(recv_connack));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

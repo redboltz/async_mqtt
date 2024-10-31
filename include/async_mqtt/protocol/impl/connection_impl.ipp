@@ -14,6 +14,7 @@ namespace async_mqtt {
 
 namespace detail {
 
+// public
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_connection_impl<Role, PacketIdBytes>::
@@ -21,6 +22,8 @@ basic_connection_impl(protocol_version ver)
     : protocol_version_{ver}
 {
 }
+
+// private
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
@@ -95,6 +98,32 @@ validate_maximum_packet_size(std::size_t size) {
     return true;
 }
 
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::vector<basic_event_variant<PacketIdBytes>>
+basic_connection_impl<Role, PacketIdBytes>::
+notify_timer_fired(timer kind) {
+    switch (kind) {
+    case timer::pingreq_send:
+        switch (protocol_version_) {
+        case protocol_version::v3_1_1:
+            return send(v3_1_1::pingreq_packet());
+            break;
+        case protocol_version::v5:
+            return send(v5::pingreq_packet());
+            break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+    default:
+        BOOST_ASSERT(false);
+        break;
+    }
+    return std::vector<basic_event_variant<PacketIdBytes>>{};
+}
+
+
 } // namespace detail
 
 template <role Role, std::size_t PacketIdBytes>
@@ -109,6 +138,16 @@ basic_connection(protocol_version ver)
     }
 {
 }
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::vector<basic_event_variant<PacketIdBytes>>
+basic_connection<Role, PacketIdBytes>::
+notify_timer_fired(timer kind) {
+    BOOST_ASSERT(impl_);
+    return impl_->notify_timer_fired(kind);
+}
+
 
 } // namespace async_mqtt
 

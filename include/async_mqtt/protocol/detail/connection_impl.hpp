@@ -18,6 +18,7 @@
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/protocol/connection_fwd.hpp>
 #include <async_mqtt/protocol/event_variant.hpp>
+#include <async_mqtt/protocol/timer.hpp>
 
 namespace async_mqtt::detail {
 
@@ -36,8 +37,14 @@ public:
     explicit basic_connection_impl(protocol_version ver);
 
     template <typename Packet>
-    std::tuple<error_code, std::vector<basic_event_variant<PacketIdBytes>>>
+    std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
+
+    std::vector<basic_event_variant<PacketIdBytes>>
+    recv(char const* ptr, std::size_t size);
+
+    std::vector<basic_event_variant<PacketIdBytes>>
+    notify_timer_fired(timer kind);
 
 private:
     template <typename ActualPacket>
@@ -103,6 +110,9 @@ private:
 
     std::set<basic_pid_type> qos2_publish_handled_;
     std::set<basic_pid_type> qos2_publish_processing_;
+
+    class recv_packet_builder;
+    recv_packet_builder rpv_;
 };
 
 } // namespace async_mqtt::detail

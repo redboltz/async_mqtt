@@ -20,16 +20,18 @@ namespace detail {
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
 inline
-std::tuple<error_code, std::vector<basic_event_variant<PacketIdBytes>>>
+std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection_impl<Role, PacketIdBytes>::
 send(Packet packet) {
     std::vector<basic_event_variant<PacketIdBytes>> events;
-    error_code ec;
 
     auto send_and_post_process =
         [&](auto&& actual_packet) {
             auto ec = process_send_packet(actual_packet, events);
-            if (!ec) {
+            if (ec) {
+                events.emplace_back(ec);
+            }
+            else {
                 if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                     // server send stored packets after connack sent
                     send_stored(events);
@@ -65,7 +67,7 @@ send(Packet packet) {
         send_and_post_process(std::forward<Packet>(packet));
     }
 
-    return {ec, force_move(events)};
+    return events;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -591,7 +593,7 @@ basic_connection_impl<Role, PacketIdBytes>::can_send_as_server(role r) {
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
 inline
-std::tuple<error_code, std::vector<basic_event_variant<PacketIdBytes>>>
+std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection<Role, PacketIdBytes>::
 send(Packet packet) {
     BOOST_ASSERT(impl_);

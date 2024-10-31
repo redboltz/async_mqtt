@@ -10,6 +10,7 @@
 #include <memory>
 
 #include <async_mqtt/protocol/detail/connection_impl.hpp>
+#include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {
 
@@ -21,8 +22,14 @@ public:
     basic_connection(protocol_version ver);
 
     template <typename Packet>
-    std::tuple<error_code, std::vector<basic_event_variant<PacketIdBytes>>>
+    std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
+
+    std::vector<basic_event_variant<PacketIdBytes>>
+    recv(char const* buf, std::size_t size);
+
+    std::vector<basic_event_variant<PacketIdBytes>>
+    notify_timer_fired(timer kind);
 
 private:
     std::shared_ptr<impl_type> impl_;
@@ -34,6 +41,7 @@ private:
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 #include <async_mqtt/protocol/impl/connection_impl.ipp>
+#include <async_mqtt/protocol/impl/connection_recv.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PROTOCOL_CONNECTION_HPP
