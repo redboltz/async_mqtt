@@ -485,8 +485,6 @@ recv_op {
                                 a_ep.store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
                                 a_ep.release_pid(packet_id);
                                 a_ep.qos2_publish_processing_.erase(packet_id);
-                                --a_ep.publish_send_count_;
-                                send_publish_from_queue();
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
@@ -511,6 +509,8 @@ recv_op {
                                 a_ep.store_.erase(response_packet::v5_pubcomp, packet_id);
                                 a_ep.release_pid(packet_id);
                                 a_ep.qos2_publish_processing_.erase(packet_id);
+                                --a_ep.publish_send_count_;
+                                send_publish_from_queue();
                             }
                             else {
                                 ASYNC_MQTT_LOG("mqtt_impl", info)
