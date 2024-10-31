@@ -3,6 +3,7 @@
 = History
 
 == 9.1.0
+* Added invalid combination checking of sharename and nl(no local). #372
 * Fixed receive maximum processing. #371
 * Fixed invalid Message Expiry Interval applying. #369
 * Fixed invalid template parameter comparison. #368

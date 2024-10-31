@@ -182,6 +182,26 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     catch (am::system_error const& se) {
         BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
     }
+
+    try {
+        std::vector<am::topic_subopts> args {
+            {
+                std::string("$share/topic1"), // too long
+                am::sub::nl::yes
+            }
+        };
+
+        auto p = am::v5::subscribe_packet{
+            0x1234,         // packet_id
+            args,
+            props
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+    }
+
 }
 
 BOOST_AUTO_TEST_CASE(v5_subscribe_pid4) {
@@ -361,6 +381,13 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_error) {
         am::error_code ec;
         am::v5::subscribe_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::topic_filter_invalid);
+    }
+    {
+        //                CP  RL  PID     PL  TPL   TP      OPT
+        am::buffer buf{"\x82\x0e\x12\x34\x00\x00\x08$share/T\x04"sv}; // invalid sharenme + nl
+        am::error_code ec;
+        am::v5::subscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
     }
 }
 
