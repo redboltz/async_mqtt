@@ -119,7 +119,13 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
             };
             break;
         }
-
+        if (e.opts().get_nl() == sub::nl::yes && !e.sharename().empty()) {
+            throw system_error{
+                make_error_code(
+                    disconnect_reason_code::protocol_error
+                )
+            };
+        }
         auto size = e.all_topic().size();
         remaining_length_ +=
             2 +                     // topic name length
@@ -351,7 +357,15 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_
             );
             return;
         }
-        entries_.emplace_back(std::string{topic}, opts);
+        auto entry = topic_subopts{std::string{topic}, opts};
+        if (entry.opts().get_nl() == sub::nl::yes && !entry.sharename().empty()) {
+            ec = make_error_code(
+                disconnect_reason_code::protocol_error
+            );
+            return;
+        }
+
+        entries_.push_back(force_move(entry));
         buf.remove_prefix(1);
     }
 }
