@@ -13,6 +13,7 @@ namespace async_mqtt {
 
 enum class timer {
     pingreq_send,
+    pingreq_recv,
     pingresp_recv,
 };
 
@@ -20,6 +21,7 @@ constexpr
 char const* timer_to_string(timer v) {
     switch (v) {
     case timer::pingreq_send:                 return "pingreq_send";
+    case timer::pingreq_recv:                 return "pingreq_recv";
     case timer::pingresp_recv:                return "pingresp_recv";
     default:                                  return "unknown_timer";
     }

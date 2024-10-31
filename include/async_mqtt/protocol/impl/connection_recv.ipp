@@ -150,109 +150,158 @@ recv(char const* ptr, std::size_t size) {
     std::vector<basic_event_variant<PacketIdBytes>> events;
 
     rpv_.recv(ptr, size);
-    while (!rpv_.empty()) {
+    for (; !rpv_.empty(); rpv_.pop_front()) {
         auto ep = rpv_.front();
         if (ep.ec) {
             events.emplace_back(ep.ec);
+            events.push_back(event_close{});
+            continue;
         }
-        else {
-            auto& buf{ep.packet};
+        auto& buf{ep.packet};
 
-            // Checking maximum_packet_size
-            if (buf.size() > maximum_packet_size_recv_) {
-                // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
-                BOOST_ASSERT(protocol_version_ == protocol_version::v5);
-                events.push_back(
-                    make_error_code(
+        // Checking maximum_packet_size
+        if (buf.size() > maximum_packet_size_recv_) {
+            // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
+            BOOST_ASSERT(protocol_version_ == protocol_version::v5);
+            events.push_back(
+                make_error_code(
+                    disconnect_reason_code::packet_too_large
+                )
+            );
+            events.push_back(
+                basic_event_send<PacketIdBytes>{
+                    v5::disconnect_packet{
                         disconnect_reason_code::packet_too_large
-                    )
-                );
-                events.push_back(
-                    basic_event_send<PacketIdBytes>{
-                        v5::disconnect_packet{
-                            disconnect_reason_code::packet_too_large
-                        }
-                    }
-                );
-                events.push_back(event_close{});
-                return events;
-            }
-
-            bool call_complete = true; // TBD erase?
-            error_code ec;
-            auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, protocol_version_, ec);
-            if (ec) {
-                if (protocol_version_ == protocol_version::v5) {
-                    if constexpr (can_send_as_server(Role)) {
-                        if (ec.category() == get_connect_reason_code_category()) {
-                            status_ = connection_status::connecting;
-                            events.push_back(
-                                basic_event_send<PacketIdBytes>{
-                                    v5::connack_packet{
-                                        false, // session_present
-                                        static_cast<connect_reason_code>(ec.value())
-                                    }
-                                }
-                            );
-                        }
-                    }
-                    else if (ec.category() == get_disconnect_reason_code_category()) {
-                        if (status_ == connection_status::connected) {
-                            events.push_back(
-                                basic_event_send<PacketIdBytes>{
-                                    v5::disconnect_packet{
-                                        static_cast<disconnect_reason_code>(ec.value())
-                                    }
-                                }
-                            );
-                        }
                     }
                 }
-                events.push_back(event_close{});
-                return events;
-            }
+            );
+            events.push_back(event_close{});
+            continue;
+        }
 
-            // no errors on packet creation phase
-            ASYNC_MQTT_LOG("mqtt_impl", trace)
-                << "recv:" << v;
-            v.visit(
-                // do internal protocol processing
-                overload {
-                    [&](v3_1_1::connect_packet& p) {
-                        initialize();
-                        protocol_version_ = protocol_version::v3_1_1;
+        bool call_complete = true; // TBD erase?
+        error_code ec;
+        auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, protocol_version_, ec);
+        if (ec) {
+            if (protocol_version_ == protocol_version::v5) {
+                if constexpr (can_send_as_server(Role)) {
+                    if (ec.category() == get_connect_reason_code_category()) {
                         status_ = connection_status::connecting;
-                        auto keep_alive = p.keep_alive();
-                        if (keep_alive != 0) {
-                            pingreq_recv_timeout_ms_.emplace(
-                                std::chrono::milliseconds{
-                                    keep_alive * 1000 * 3 / 2
+                        events.push_back(
+                            basic_event_send<PacketIdBytes>{
+                                v5::connack_packet{
+                                    false, // session_present
+                                    static_cast<connect_reason_code>(ec.value())
                                 }
-                            );
-                        }
-                        if (p.clean_session()) {
-                            need_store_ = false;
+                            }
+                        );
+                    }
+                }
+                else if (ec.category() == get_disconnect_reason_code_category()) {
+                    if (status_ == connection_status::connected) {
+                        events.push_back(
+                            basic_event_send<PacketIdBytes>{
+                                v5::disconnect_packet{
+                                    static_cast<disconnect_reason_code>(ec.value())
+                                }
+                            }
+                        );
+                    }
+                }
+            }
+            events.push_back(event_close{});
+            continue;
+        }
+
+        // no errors on packet creation phase
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
+            << "recv:" << v;
+        v.visit(
+            // do internal protocol processing
+            overload {
+                [&](v3_1_1::connect_packet& p) {
+                    initialize();
+                    protocol_version_ = protocol_version::v3_1_1;
+                    status_ = connection_status::connecting;
+                    auto keep_alive = p.keep_alive();
+                    if (keep_alive != 0) {
+                        pingreq_recv_timeout_ms_.emplace(
+                            std::chrono::milliseconds{
+                                keep_alive * 1000 * 3 / 2
+                            }
+                        );
+                    }
+                    if (p.clean_session()) {
+                        need_store_ = false;
+                    }
+                    else {
+                        need_store_ = true;
+                    }
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v5::connect_packet& p) {
+                    initialize();
+                    protocol_version_ = protocol_version::v5;
+                    status_ = connection_status::connecting;
+                    auto keep_alive = p.keep_alive();
+                    if (keep_alive != 0) {
+                        pingreq_recv_timeout_ms_.emplace(
+                            std::chrono::milliseconds{
+                                keep_alive * 1000 * 3 / 2
+                            }
+                        );
+                    }
+                    for (auto const& prop : p.props()) {
+                        prop.visit(
+                            overload {
+                                [&](property::topic_alias_maximum const& p) {
+                                    if (p.val() > 0) {
+                                        topic_alias_send_.emplace(p.val());
+                                    }
+                                },
+                                [&](property::receive_maximum const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    publish_send_max_ = p.val();
+                                },
+                                [&](property::maximum_packet_size const& p) {
+                                    BOOST_ASSERT(p.val() != 0);
+                                    maximum_packet_size_send_ = p.val();
+                                },
+                                [&](property::session_expiry_interval const& p) {
+                                    if (p.val() != 0) {
+                                        need_store_ = true;
+                                    }
+                                },
+                                [](auto const&) {
+                                }
+                            }
+                        );
+                    }
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v3_1_1::connack_packet& p) {
+                    if (p.code() == connect_return_code::accepted) {
+                        status_ = connection_status::connected;
+                        if (p.session_present()) {
+                            send_stored(events);
                         }
                         else {
-                            need_store_ = true;
+                            pid_man_.clear();
+                            store_.clear();
                         }
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                    },
-                    [&](v5::connect_packet& p) {
-                        initialize();
-                        protocol_version_ = protocol_version::v5;
-                        status_ = connection_status::connecting;
-                        auto keep_alive = p.keep_alive();
-                        if (keep_alive != 0) {
-                            pingreq_recv_timeout_ms_.emplace(
-                                std::chrono::milliseconds{
-                                    keep_alive * 1000 * 3 / 2
-                                }
-                            );
-                        }
-                        for (auto const& prop : p.props()) {
+                    }
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v5::connack_packet& p) {
+                    if (p.code() == connect_reason_code::success) {
+                        status_ = connection_status::connected;
+                         for (auto const& prop : p.props()) {
                             prop.visit(
                                 overload {
                                     [&](property::topic_alias_maximum const& p) {
@@ -268,9 +317,14 @@ recv(char const* ptr, std::size_t size) {
                                         BOOST_ASSERT(p.val() != 0);
                                         maximum_packet_size_send_ = p.val();
                                     },
-                                    [&](property::session_expiry_interval const& p) {
-                                        if (p.val() != 0) {
-                                            need_store_ = true;
+                                    [&](property::server_keep_alive const& p) {
+                                        if constexpr (can_send_as_client(Role)) {
+                                            set_pingreq_send_interval(
+                                                ep,
+                                                std::chrono::seconds{
+                                                    p.val()
+                                                }
+                                            );
                                         }
                                     },
                                     [](auto const&) {
@@ -278,234 +332,138 @@ recv(char const* ptr, std::size_t size) {
                                 }
                             );
                         }
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                    },
-                    [&](v3_1_1::connack_packet& p) {
-                        if (p.code() == connect_return_code::accepted) {
-                            status_ = connection_status::connected;
-                            if (p.session_present()) {
-                                send_stored(events);
-                            }
-                            else {
-                                pid_man_.clear();
-                                store_.clear();
-                            }
-                        }
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                    },
-                    [&](v5::connack_packet& p) {
-                        if (p.code() == connect_reason_code::success) {
-                            status_ = connection_status::connected;
-                             for (auto const& prop : p.props()) {
-                                prop.visit(
-                                    overload {
-                                        [&](property::topic_alias_maximum const& p) {
-                                            if (p.val() > 0) {
-                                                topic_alias_send_.emplace(p.val());
-                                            }
-                                        },
-                                        [&](property::receive_maximum const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            publish_send_max_ = p.val();
-                                        },
-                                        [&](property::maximum_packet_size const& p) {
-                                            BOOST_ASSERT(p.val() != 0);
-                                            maximum_packet_size_send_ = p.val();
-                                        },
-                                        [&](property::server_keep_alive const& p) {
-                                            if constexpr (can_send_as_client(Role)) {
-                                                set_pingreq_send_interval(
-                                                    ep,
-                                                    std::chrono::seconds{
-                                                        p.val()
-                                                    }
-                                                );
-                                            }
-                                        },
-                                        [](auto const&) {
-                                        }
-                                    }
-                                );
-                            }
 
-                            if (p.session_present()) {
-                                send_stored(ep);
-                            }
-                            else {
-                                pid_man_.clear();
-                                store_.clear();
-                            }
+                        if (p.session_present()) {
+                            send_stored(ep);
                         }
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                    },
-                    [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                        switch (p.opts().get_qos()) {
-                        case qos::at_least_once: {
-                            auto packet_id = p.packet_id();
-                            if (auto_pub_response_ &&
-                                status_ == connection_status::connected) {
-                                events.push_back(
-                                    event_send{
-                                        v3_1_1::basic_puback_packet<PacketIdBytes>(packet_id)
-                                    }
-                                );
-                            }
-                        } break;
-                        case qos::exactly_once: {
-                            auto packet_id = p.packet_id();
-                            bool already_handled = false;
-                            if (qos2_publish_handled_.find(packet_id) == qos2_publish_handled_.end()) {
-                                qos2_publish_handled_.emplace(packet_id);
-                            }
-                            else {
-                                already_handled = true;
-                            }
-                            if (ep->status_ == connection_status::connected &&
-                                (ep->auto_pub_response_ ||
-                                 already_handled) // already_handled is true only if the pubrec packet
-                            ) {                   // corresponding to the publish packet has already
-                                events.push_back(
-                                    event_send{
-                                        v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id)
-                                    }
-                                );
-                                events.push_back(event_recv{}); // recv pubrel
-                            }
-                        } break;
-                        default:
-                            break;
+                        else {
+                            pid_man_.clear();
+                            store_.clear();
                         }
-                    },
-                    [&](v5::basic_publish_packet<PacketIdBytes>& p) {
-                        switch (p.opts().get_qos()) {
-                        case qos::at_least_once: {
-                            auto packet_id = p.packet_id();
-                            if (publish_recv_.size() == publish_recv_max_) {
-                                events.push_back(
-                                    make_error_code(
+                    }
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    switch (p.opts().get_qos()) {
+                    case qos::at_least_once: {
+                        auto packet_id = p.packet_id();
+                        if (auto_pub_response_ &&
+                            status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v3_1_1::basic_puback_packet<PacketIdBytes>(packet_id)
+                                }
+                            );
+                        }
+                    } break;
+                    case qos::exactly_once: {
+                        auto packet_id = p.packet_id();
+                        bool already_handled = false;
+                        if (qos2_publish_handled_.find(packet_id) == qos2_publish_handled_.end()) {
+                            qos2_publish_handled_.emplace(packet_id);
+                        }
+                        else {
+                            already_handled = true;
+                        }
+                        if (ep->status_ == connection_status::connected &&
+                            (ep->auto_pub_response_ ||
+                             already_handled) // already_handled is true only if the pubrec packet
+                        ) {                   // corresponding to the publish packet has already
+                            events.push_back(
+                                event_send{
+                                    v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id)
+                                }
+                            );
+                            events.push_back(event_recv{}); // recv pubrel
+                        }
+                    } break;
+                    default:
+                        break;
+                    }
+                },
+                [&](v5::basic_publish_packet<PacketIdBytes>& p) {
+                    switch (p.opts().get_qos()) {
+                    case qos::at_least_once: {
+                        auto packet_id = p.packet_id();
+                        if (publish_recv_.size() == publish_recv_max_) {
+                            events.push_back(
+                                make_error_code(
+                                    disconnect_reason_code::receive_maximum_exceeded
+                                )
+                            );
+                            events.push_back(
+                                event_send{
+                                    v5::disconnect_packet{
                                         disconnect_reason_code::receive_maximum_exceeded
-                                    )
-                                );
-                                events.push_back(
-                                    event_send{
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::receive_maximum_exceeded
-                                        }
                                     }
-                                );
-                                events.push_back(event_close{});
-                                return events;
-                            }
-                            publish_recv_.insert(packet_id);
-                            if (auto_pub_response_ && status_ == connection_status::connected) {
-                                events.push_back(
-                                    event_send{
-                                        v5::basic_puback_packet<PacketIdBytes>(packet_id)
-                                    }
-                                );
-                            }
-                        } break;
-                        case qos::exactly_once: {
-                            auto packet_id = p.packet_id();
-                            if (publish_recv_.size() == publish_recv_max_) {
-                                events.push_back(
-                                    make_error_code(
-                                        disconnect_reason_code::receive_maximum_exceeded
-                                    )
-                                );
-                                events.push_back(
-                                    event_send{
-                                        v5::disconnect_packet{
-                                            disconnect_reason_code::receive_maximum_exceeded
-                                        }
-                                    }
-                                );
-                                events.push_back(event_close{});
-                                return events;
-                            }
-                            publish_recv_.insert(packet_id);
-
-                            bool already_handled = false;
-                            if (qos2_publish_handled_.find(packet_id) == qos2_publish_handled_.end()) {
-                                qos2_publish_handled_.emplace(packet_id);
-                            }
-                            else {
-                                already_handled = true;
-                            }
-                            if (ep->status_ == connection_status::connected &&
-                                (ep->auto_pub_response_ ||
-                                 already_handled) // already_handled is true only if the pubrec packet
-                            ) {                   // corresponding to the publish packet has already
-                                events.push_back(
-                                    event_send{
-                                        v5::basic_pubrec_packet<PacketIdBytes>(packet_id)
-                                    }
-                                );
-                                events.push_back(event_recv{}); // recv pubrel
-                            }
-                        } break;
-                        default:
-                            break;
+                                }
+                            );
+                            events.push_back(event_close{});
+                            return;
                         }
+                        publish_recv_.insert(packet_id);
+                        if (auto_pub_response_ && status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v5::basic_puback_packet<PacketIdBytes>(packet_id)
+                                }
+                            );
+                        }
+                    } break;
+                    case qos::exactly_once: {
+                        auto packet_id = p.packet_id();
+                        if (publish_recv_.size() == publish_recv_max_) {
+                            events.push_back(
+                                make_error_code(
+                                    disconnect_reason_code::receive_maximum_exceeded
+                                )
+                            );
+                            events.push_back(
+                                event_send{
+                                    v5::disconnect_packet{
+                                        disconnect_reason_code::receive_maximum_exceeded
+                                    }
+                                }
+                            );
+                            events.push_back(event_close{});
+                            return;
+                        }
+                        publish_recv_.insert(packet_id);
 
-                        if (p.topic().empty()) {
-                            if (auto ta_opt = get_topic_alias(p.props())) {
-                                // extract topic from topic_alias
-                                if (*ta_opt == 0 ||
-                                    !topic_alias_recv_ || // topic_alias_maximum is 0
-                                    *ta_opt > topic_alias_recv_->max()) {
-                                    events.push_back(
-                                        make_error_code(
-                                            disconnect_reason_code::topic_alias_invalid
-                                        )
-                                    );
-                                    events.push_back(
-                                        event_send{
-                                            v5::disconnect_packet{
-                                                disconnect_reason_code::topic_alias_invalid
-                                            }
-                                        }
-                                    );
-                                    events.push_back(event_close{});
-                                    return events;
+                        bool already_handled = false;
+                        if (qos2_publish_handled_.find(packet_id) == qos2_publish_handled_.end()) {
+                            qos2_publish_handled_.emplace(packet_id);
+                        }
+                        else {
+                            already_handled = true;
+                        }
+                        if (ep->status_ == connection_status::connected &&
+                            (ep->auto_pub_response_ ||
+                             already_handled) // already_handled is true only if the pubrec packet
+                        ) {                   // corresponding to the publish packet has already
+                            events.push_back(
+                                event_send{
+                                    v5::basic_pubrec_packet<PacketIdBytes>(packet_id)
                                 }
-                                BOOST_ASSERT(topic_alias_recv_);
-                                auto topic = topic_alias_recv_->find(*ta_opt);
-                                if (topic.empty()) {
-                                    ASYNC_MQTT_LOG("mqtt_impl", error)
-                                        << "no matching topic alias: "
-                                        << *ta_opt;
-                                    events.push_back(
-                                        make_error_code(
-                                            disconnect_reason_code::topic_alias_invalid
-                                        )
-                                    );
-                                    events.push_back(
-                                        event_send{
-                                            v5::disconnect_packet{
-                                                disconnect_reason_code::topic_alias_invalid
-                                            }
-                                        }
-                                    );
-                                    events.push_back(event_close{});
-                                    return events;
-                                }
-                                else {
-                                    p.add_topic(force_move(topic));
-                                }
-                            }
-                            else {
-                                ASYNC_MQTT_LOG("mqtt_impl", error)
-                                    << "topic is empty but topic_alias isn't set";
+                            );
+                            events.push_back(event_recv{}); // recv pubrel
+                        }
+                    } break;
+                    default:
+                        break;
+                    }
+
+                    if (p.topic().empty()) {
+                        if (auto ta_opt = get_topic_alias(p.props())) {
+                            // extract topic from topic_alias
+                            if (*ta_opt == 0 ||
+                                !topic_alias_recv_ || // topic_alias_maximum is 0
+                                *ta_opt > topic_alias_recv_->max()) {
                                 events.push_back(
                                     make_error_code(
                                         disconnect_reason_code::topic_alias_invalid
@@ -519,354 +477,428 @@ recv(char const* ptr, std::size_t size) {
                                     }
                                 );
                                 events.push_back(event_close{});
-                                return events;
+                                return;
                             }
-                        }
-                        else {
-                            if (auto ta_opt = get_topic_alias(p.props())) {
-                                if (*ta_opt == 0 ||
-                                    !topic_alias_recv_ || // topic_alias_maximum is 0
-                                    *ta_opt > topic_alias_recv_->max()) {
-                                    events.push_back(
-                                        make_error_code(
+                            BOOST_ASSERT(topic_alias_recv_);
+                            auto topic = topic_alias_recv_->find(*ta_opt);
+                            if (topic.empty()) {
+                                ASYNC_MQTT_LOG("mqtt_impl", error)
+                                    << "no matching topic alias: "
+                                    << *ta_opt;
+                                events.push_back(
+                                    make_error_code(
+                                        disconnect_reason_code::topic_alias_invalid
+                                    )
+                                );
+                                events.push_back(
+                                    event_send{
+                                        v5::disconnect_packet{
                                             disconnect_reason_code::topic_alias_invalid
-                                        )
-                                    );
-                                    events.push_back(
-                                        event_send{
-                                            v5::disconnect_packet{
-                                                disconnect_reason_code::topic_alias_invalid
-                                            }
                                         }
-                                    );
-                                    events.push_back(event_close{});
-                                    return events;
-                                }
-                                BOOST_ASSERT(topic_alias_recv_);
-                                // extract topic from topic_alias
-                                topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                                    }
+                                );
+                                events.push_back(event_close{});
+                                return;
+                            }
+                            else {
+                                p.add_topic(force_move(topic));
                             }
                         }
-                        events.emplace_front(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                    },
-                    [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_puback_.erase(packet_id)) {
-                            store_.erase(response_packet::v3_1_1_puback, packet_id);
-                            release_pid(packet_id);
-                        }
                         else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "invalid packet_id puback received packet_id:" << packet_id;
+                            ASYNC_MQTT_LOG("mqtt_impl", error)
+                                << "topic is empty but topic_alias isn't set";
                             events.push_back(
                                 make_error_code(
-                                    disconnect_reason_code::protocol_error
-                                )
-                            );
-                            events.push_back(event_close{});
-                            return events;
-                        }
-                    },
-                    [&](v5::basic_puback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_puback_.erase(packet_id)) {
-                            events.emplace_back(
-                                basic_event_packet_received<PacketIdBytes>{p}
-                            );
-                            store_.erase(response_packet::v5_puback, packet_id);
-                            release_pid(packet_id);
-                            --publish_send_count_;
-                            events.push_back(
-                                basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                            );
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "invalid packet_id puback received packet_id:" << packet_id;
-                            events.push_back(
-                                make_error_code(
-                                    disconnect_reason_code::protocol_error
+                                    disconnect_reason_code::topic_alias_invalid
                                 )
                             );
                             events.push_back(
                                 event_send{
                                     v5::disconnect_packet{
-                                        disconnect_reason_code::protocol_error
+                                        disconnect_reason_code::topic_alias_invalid
                                     }
                                 }
                             );
                             events.push_back(event_close{});
-                            return events;
-                        }
-                    },
-                    [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_pubrec_.erase(packet_id)) {
-                            store_.erase(response_packet::v3_1_1_pubrec, packet_id);
-                            events.emplace_back(
-                                basic_event_packet_received<PacketIdBytes>{p}
-                            );
-                            if (auto_pub_response_ && status_ == connection_status::connected) {
-                                events.push_back(
-                                    event_send{
-                                        v3_1_1::basic_pubrel_packet<PacketIdBytes>{packet_id}
-                                    }
-                                );
-                            }
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "invalid packet_id pubrec received packet_id:" << packet_id;
-                            events.push_back(
-                                make_error_code(
-                                    disconnect_reason_code::protocol_error
-                                )
-                            );
-                            events.push_back(event_close{});
-                            return events;
-                        }
-                    },
-                    [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_pubrec_.erase(packet_id)) {
-                            store_.erase(response_packet::v5_pubrec, packet_id);
-                            events.emplace_back(
-                                basic_event_packet_received<PacketIdBytes>{p}
-                            );
-                            if (make_error_code(p.code())) {
-                                release_pid(packet_id);
-                                qos2_publish_processing_.erase(packet_id);
-                                --publish_send_count_;
-                                events.push_back(
-                                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                                );
-                            }
-                            else if (auto_pub_response_ && status_ == connection_status::connected) {
-                                events.push_back(
-                                    event_send{
-                                        v5::basic_pubrel_packet<PacketIdBytes>{packet_id}
-                                    }
-                                );
-                            }
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "invalid packet_id pubrec received packet_id:" << packet_id;
-                            events.push_back(
-                                make_error_code(
-                                    disconnect_reason_code::protocol_error
-                                )
-                            );
-                            events.push_back(
-                                event_send{
-                                    v5::disconnect_packet{
-                                        disconnect_reason_code::protocol_error
-                                    }
-                                }
-                            );
-                            events.push_back(event_close{});
-                            return events;
-                        }
-                    },
-                    [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                        qos2_publish_handled_.erase(packet_id);
-                        if (auto_pub_response_ && status_ == connection_status::connected) {
-                            events.push_back(
-                                event_send{
-                                    v3_1_1::basic_pubcomp_packet<PacketIdBytes>{packet_id}
-                                }
-                            );
-                        }
-                    },
-                    [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        events.emplace_back(
-                            basic_event_packet_received<PacketIdBytes>{p}
-                        );
-                        qos2_publish_handled_.erase(packet_id);
-                        if (auto_pub_response_ && status_ == connection_status::connected) {
-                            events.push_back(
-                                event_send{
-                                    v5::basic_pubcomp_packet<PacketIdBytes>{packet_id}
-                                }
-                            );
-                        }
-                    },
-                    [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_pubcomp_.erase(packet_id)) {
-                            store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
-                            events.emplace_back(
-                                basic_event_packet_received<PacketIdBytes>{p}
-                            );
-                            release_pid(packet_id);
-                            qos2_publish_processing_.erase(packet_id);
-                            --publish_send_count_;
-                            events.push_back(
-                                basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                            );
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << "invalid packet_id pubcomp received packet_id:" << packet_id;
-                            events.push_back(
-                                make_error_code(
-                                    disconnect_reason_code::protocol_error
-                                )
-                            );
-                            events.push_back(event_close{});
-                            return events;
-                        }
-                    },
-                    [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_pubcomp_.erase(packet_id)) {
-                            store_.erase(response_packet::v5_pubcomp, packet_id);
-                            events.emplace_back(
-                                basic_event_packet_received<PacketIdBytes>{p}
-                            );
-                            release_pid(packet_id);
-                            qos2_publish_processing_.erase(packet_id);
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_impl", info)
-                                << ASYNC_MQTT_ADD_VALUE(address, &
-                                << "invalid packet_id pubcomp received packet_id:" << packet_id;
-                            state = disconnect;
-                            decided_error.emplace(
-                                make_error_code(
-                                    disconnect_reason_code::protocol_error
-                                )
-                            );
-                            auto ep_copy = ep;
-                            async_send(
-                                force_move(ep_copy),
-                                v5::disconnect_packet{
-                                    disconnect_reason_code::protocol_error
-                                },
-                                force_move(self)
-                            );
                             return;
                         }
-                    },
-                    [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>&) {
-                    },
-                    [&](v5::basic_subscribe_packet<PacketIdBytes>&) {
-                    },
-                    [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_suback_.erase(packet_id)) {
-                            release_pid(packet_id);
-                        }
-                    },
-                    [&](v5::basic_suback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_suback_.erase(packet_id)) {
-                            release_pid(packet_id);
-                        }
-                    },
-                    [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
-                    },
-                    [&](v5::basic_unsubscribe_packet<PacketIdBytes>&) {
-                    },
-                    [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_unsuback_.erase(packet_id)) {
-                            release_pid(packet_id);
-                        }
-                    },
-                    [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
-                        auto packet_id = p.packet_id();
-                        if (pid_unsuback_.erase(packet_id)) {
-                            release_pid(packet_id);
-                        }
-                    },
-                    [&](v3_1_1::pingreq_packet&) {
-                        if constexpr(can_send_as_server(Role)) {
-                            if (auto_ping_response_ &&
-                                status_ == connection_status::connected) {
-                                async_send(
-                                    ep,
-                                    v3_1_1::pingresp_packet(),
-                                    as::detached
-                                );
-                            }
-                        }
-                    },
-                    [&](v5::pingreq_packet&) {
-                        if constexpr(can_send_as_server(Role)) {
-                            if (auto_ping_response_ &&
-                                status_ == connection_status::connected) {
-                                async_send(
-                                    ep,
-                                    v5::pingresp_packet(),
-                                    as::detached
-                                );
-                            }
-                        }
-                    },
-                    [&](v3_1_1::pingresp_packet&) {
-                        tim_pingresp_recv_.cancel();
-                    },
-                    [&](v5::pingresp_packet&) {
-                        tim_pingresp_recv_.cancel();
-                    },
-                    [&](v3_1_1::disconnect_packet&) {
-                        status_ = connection_status::disconnecting;
-                    },
-                    [&](v5::disconnect_packet&) {
-                        status_ = connection_status::disconnecting;
-                    },
-                    [&](v5::auth_packet&) {
-                    },
-                    [&](std::monostate&) {
                     }
-                }
-            );
-
-            reset_pingreq_recv_timer(force_move(ep_copy));
-
-            auto try_to_comp =
-                [&] {
-                    if (call_complete && !decided_error) {
-                        self.complete(
-                            error_code{},
-                            force_move(v)
+                    else {
+                        if (auto ta_opt = get_topic_alias(p.props())) {
+                            if (*ta_opt == 0 ||
+                                !topic_alias_recv_ || // topic_alias_maximum is 0
+                                *ta_opt > topic_alias_recv_->max()) {
+                                events.push_back(
+                                    make_error_code(
+                                        disconnect_reason_code::topic_alias_invalid
+                                    )
+                                );
+                                events.push_back(
+                                    event_send{
+                                        v5::disconnect_packet{
+                                            disconnect_reason_code::topic_alias_invalid
+                                        }
+                                    }
+                                );
+                                events.push_back(event_close{});
+                                return;
+                            }
+                            BOOST_ASSERT(topic_alias_recv_);
+                            // extract topic from topic_alias
+                            topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
+                        }
+                    }
+                    events.emplace_front(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_puback_.erase(packet_id)) {
+                        store_.erase(response_packet::v3_1_1_puback, packet_id);
+                        release_pid(packet_id);
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id puback received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
                         );
+                        events.push_back(event_close{});
+                        return;
                     }
-                };
-
-            if (fil) {
-                if (auto type_opt = v.type()) {
-                    if ((*fil == filter::match  && types.find(*type_opt) == types.end()) ||
-                        (*fil == filter::except && types.find(*type_opt) != types.end())
-                    ) {
-                        // read the next packet
-                        state = initiate;
-                        as::dispatch(
-                            a_ep.get_executor(),
-                            force_move(self)
+                },
+                [&](v5::basic_puback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_puback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        store_.erase(response_packet::v5_puback, packet_id);
+                        release_pid(packet_id);
+                        --publish_send_count_;
+                        events.push_back(
+                            basic_event_packet_id_released<PacketIdBytes>{packet_id}
                         );
                     }
                     else {
-                        try_to_comp();
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id puback received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.push_back(
+                            event_send{
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::protocol_error
+                                }
+                            }
+                        );
+                        events.push_back(event_close{});
+                        return;
                     }
-                }
-                else {
-                    try_to_comp();
+                },
+                [&](v3_1_1::basic_pubrec_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_pubrec_.erase(packet_id)) {
+                        store_.erase(response_packet::v3_1_1_pubrec, packet_id);
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        if (auto_pub_response_ && status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v3_1_1::basic_pubrel_packet<PacketIdBytes>{packet_id}
+                                }
+                            );
+                        }
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id pubrec received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.push_back(event_close{});
+                    }
+                },
+                [&](v5::basic_pubrec_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_pubrec_.erase(packet_id)) {
+                        store_.erase(response_packet::v5_pubrec, packet_id);
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        if (make_error_code(p.code())) {
+                            release_pid(packet_id);
+                            qos2_publish_processing_.erase(packet_id);
+                            --publish_send_count_;
+                            events.push_back(
+                                basic_event_packet_id_released<PacketIdBytes>{packet_id}
+                            );
+                        }
+                        else if (auto_pub_response_ && status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v5::basic_pubrel_packet<PacketIdBytes>{packet_id}
+                                }
+                            );
+                        }
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id pubrec received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.push_back(
+                            event_send{
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::protocol_error
+                                }
+                            }
+                        );
+                        events.push_back(event_close{});
+                    }
+                },
+                [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    qos2_publish_handled_.erase(packet_id);
+                    if (auto_pub_response_ && status_ == connection_status::connected) {
+                        events.push_back(
+                            event_send{
+                                v3_1_1::basic_pubcomp_packet<PacketIdBytes>{packet_id}
+                            }
+                        );
+                    }
+                },
+                [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    qos2_publish_handled_.erase(packet_id);
+                    if (auto_pub_response_ && status_ == connection_status::connected) {
+                        events.push_back(
+                            event_send{
+                                v5::basic_pubcomp_packet<PacketIdBytes>{packet_id}
+                            }
+                        );
+                    }
+                },
+                [&](v3_1_1::basic_pubcomp_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_pubcomp_.erase(packet_id)) {
+                        store_.erase(response_packet::v3_1_1_pubcomp, packet_id);
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                        qos2_publish_processing_.erase(packet_id);
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id pubcomp received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.push_back(event_close{});
+                    }
+                },
+                [&](v5::basic_pubcomp_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_pubcomp_.erase(packet_id)) {
+                        store_.erase(response_packet::v5_pubcomp, packet_id);
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                        qos2_publish_processing_.erase(packet_id);
+                        --publish_send_count_;
+                        events.push_back(
+                            basic_event_packet_id_released<PacketIdBytes>{packet_id}
+                        );
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                            << "invalid packet_id pubcomp received packet_id:" << packet_id;
+                        events.push_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.push_back(
+                            event_send{
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::protocol_error
+                                }
+                            }
+                        );
+                        events.push_back(event_close{});
+                    }
+                },
+                [&](v3_1_1::basic_subscribe_packet<PacketIdBytes>&) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v5::basic_subscribe_packet<PacketIdBytes>&) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v3_1_1::basic_suback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_suback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                    }
+                },
+                [&](v5::basic_suback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_suback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                    }
+                },
+                [&](v3_1_1::basic_unsubscribe_packet<PacketIdBytes>&) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v5::basic_unsubscribe_packet<PacketIdBytes>&) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](v3_1_1::basic_unsuback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_unsuback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                    }
+                },
+                [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
+                    auto packet_id = p.packet_id();
+                    if (pid_unsuback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        release_pid(packet_id);
+                    }
+                },
+                [&](v3_1_1::pingreq_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    if constexpr(can_send_as_server(Role)) {
+                        if (auto_ping_response_ &&
+                            status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v3_1_1::pingreq_packet{}
+                                }
+                            );
+                        }
+                    }
+                },
+                [&](v5::pingreq_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    if constexpr(can_send_as_server(Role)) {
+                        if (auto_ping_response_ &&
+                            status_ == connection_status::connected) {
+                            events.push_back(
+                                event_send{
+                                    v5::pingreq_packet{}
+                                }
+                            );
+                        }
+                    }
+                },
+                [&](v3_1_1::pingresp_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    events.emplace_back(
+                        event_timer{
+                            event_timer::op_type::cancel,
+                            timer::pingresp_recv
+                        }
+                    );
+                },
+                [&](v5::pingresp_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    events.emplace_back(
+                        event_timer{
+                            event_timer::op_type::cancel,
+                            timer::pingresp_recv
+                        }
+                    );
+                },
+                [&](v3_1_1::disconnect_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    status_ = connection_status::disconnecting;
+                },
+                [&](v5::disconnect_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                    status_ = connection_status::disconnecting;
+                },
+                [&](v5::auth_packet& p) {
+                    events.emplace_back(
+                        basic_event_packet_received<PacketIdBytes>{p}
+                    );
+                },
+                [&](std::monostate&) {
                 }
             }
-            else {
-                try_to_comp();
+        );
+
+        if (pingreq_recv_timeout_ms_) {
+            events.emplace_back(
+                event_timer{
+                    event_timer::op_type::cancel,
+                    timer::pingreq_recv
+                }
+            );
+            if (ep->status_ == connection_status::connecting ||
+                ep->status_ == connection_status::connected
+            ) {
+                events.emplace_back(
+                    event_timer{
+                        event_timer::op_type::set,
+                        timer::pingreq_recv,
+                        *pingreq_recv_timeout_ms_
+                    }
+                );
             }
-        } break;
-    }
+        }
     }
     return events;
 }
