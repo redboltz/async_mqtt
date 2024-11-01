@@ -24,8 +24,9 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
 
+    template <typename Begin, typename End>
     std::vector<basic_event_variant<PacketIdBytes>>
-    recv(char const* buf, std::size_t size);
+    recv(Begin b, End d);
 
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
@@ -34,6 +35,8 @@ public:
     set_pingreq_send_interval(
         std::chrono::milliseconds duration
     );
+
+    bool has_receive_maximum_vacancy_for_send() const;
 
     /**
      * @brief acuire unique packet_id.
@@ -119,6 +122,7 @@ private:
 } // namespace async_mqtt
 
 #include <async_mqtt/protocol/impl/connection_send.hpp>
+#include <async_mqtt/protocol/impl/connection_recv.hpp>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 #include <async_mqtt/protocol/impl/connection_impl.ipp>

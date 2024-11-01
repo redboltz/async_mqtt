@@ -80,10 +80,12 @@ public:
     }
 
     template <
+        typename MutableBufferSequence,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
     auto
-    async_read_packet(
+    async_read_some(
+        MutableBufferSequence const& buffers,
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
@@ -141,7 +143,7 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/util/impl/stream_read_packet.hpp>
+#include <async_mqtt/util/impl/stream_read.hpp>
 #include <async_mqtt/util/impl/stream_write_packet.hpp>
 #include <async_mqtt/util/impl/stream_close.hpp>
 

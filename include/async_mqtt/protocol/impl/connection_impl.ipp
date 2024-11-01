@@ -41,6 +41,47 @@ notify_timer_fired(timer kind) {
             BOOST_ASSERT(false);
             break;
         }
+        break;
+    case timer::pingreq_recv:
+        switch (protocol_version_) {
+        case protocol_version::v3_1_1: {
+            std::vector<basic_event_variant<PacketIdBytes>> events;
+            events.emplace_back(event_close{});
+            return events;
+        } break;
+        case protocol_version::v5: {
+            return send(
+                v5::disconnect_packet{
+                    disconnect_reason_code::keep_alive_timeout,
+                    properties{}
+                }
+            );
+        } break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+        break;
+    case timer::pingresp_recv:
+        switch (protocol_version_) {
+        case protocol_version::v3_1_1: {
+            std::vector<basic_event_variant<PacketIdBytes>> events;
+            events.emplace_back(event_close{});
+            return events;
+        } break;
+        case protocol_version::v5: {
+            return send(
+                v5::disconnect_packet{
+                    disconnect_reason_code::keep_alive_timeout,
+                    properties{}
+                }
+            );
+        } break;
+        default:
+            BOOST_ASSERT(false);
+            break;
+        }
+        break;
     default:
         BOOST_ASSERT(false);
         break;
@@ -74,6 +115,14 @@ set_pingreq_send_interval(
             }
         );
     }
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+bool
+basic_connection_impl<Role, PacketIdBytes>::
+has_receive_maximum_vacancy_for_send() const {
+    return publish_send_count_ != publish_recv_max_;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -196,7 +245,7 @@ template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
-initialize() {
+initialize(bool is_client) {
     publish_send_count_ = 0;
     topic_alias_send_ = std::nullopt;
     topic_alias_recv_ = std::nullopt;
@@ -208,6 +257,7 @@ initialize() {
     pid_puback_.clear();
     pid_pubrec_.clear();
     pid_pubcomp_.clear();
+    is_client_ = is_client;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -322,6 +372,15 @@ set_pingreq_send_interval(
     std::vector<basic_event_variant<PacketIdBytes>> events;
     impl_->set_pingreq_send_interval(duration, events);
     return events;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+bool
+basic_connection<Role, PacketIdBytes>::
+has_receive_maximum_vacancy_for_send() const {
+    BOOST_ASSERT(impl_);
+    return impl_->has_receive_maximum_vacancy_for_send();
 }
 
 template <role Role, std::size_t PacketIdBytes>

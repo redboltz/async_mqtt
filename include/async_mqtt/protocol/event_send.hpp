@@ -18,23 +18,26 @@ class basic_event_send {
 public:
     basic_event_send(
         basic_packet_variant<PacketIdBytes> packet,
-        bool release_packet_id_required_if_send_error = false
+        std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
+        release_packet_id_if_send_error = std::nullopt
     )
         :packet_{force_move(packet)},
-         release_packet_id_required_if_send_error_{release_packet_id_required_if_send_error}
+         release_packet_id_if_send_error_{release_packet_id_if_send_error}
     {
     }
 
     basic_packet_variant<PacketIdBytes> get() const {
         return packet_;
     }
-    bool release_packet_id_required_if_send_error() const {
-        return release_packet_id_required_if_send_error_;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
+    get_release_packet_id_if_send_error() const {
+        return release_packet_id_if_send_error_;
     }
 
 private:
     basic_packet_variant<PacketIdBytes> packet_;
-    bool release_packet_id_required_if_send_error_;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
+    release_packet_id_if_send_error_;
 };
 
 using event_send = basic_event_send<2>;

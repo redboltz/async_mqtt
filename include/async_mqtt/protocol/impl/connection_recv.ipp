@@ -24,140 +24,16 @@
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 
-namespace async_mqtt {
-
-namespace detail {
-
-struct error_packet {
-    error_packet(error_code ec)
-        :ec{ec} {}
-    error_packet(buffer packet)
-        :packet{force_move(packet)} {}
-
-    error_code ec;
-    buffer packet;
-};
-
-template <role Role, std::size_t PacketIdBytes>
-class
-basic_connection_impl<Role, PacketIdBytes>::
-recv_packet_builder {
-public:
-    void recv(char const* ptr, std::size_t size) {
-        BOOST_ASSERT(ptr);
-        while (size != 0) {
-            switch (read_state_) {
-            case read_state::fixed_header: {
-                auto fixed_header = *ptr++;
-                --size;
-                header_remaining_length_buf_.push_back(fixed_header);
-                read_state_ = read_state::remaining_length;
-            } break;
-            case read_state::remaining_length: {
-                while (size != 0) {
-                    auto encoded_byte = *ptr++;
-                    --size;
-                    header_remaining_length_buf_.push_back(encoded_byte);
-                    remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
-                    multiplier_ *= 128;
-                    if ((encoded_byte & 0b1000'0000) == 0) {
-                        read_state_ = read_state::payload;
-                        raw_buf_size_ = header_remaining_length_buf_.size() + remaining_length_;
-                        raw_buf_ = make_shared_ptr_char_array(raw_buf_size_);
-                        raw_buf_ptr_ = raw_buf_.get();
-                        std::copy_n(
-                            header_remaining_length_buf_.data(),
-                            header_remaining_length_buf_.size(),
-                            raw_buf_ptr_
-                        );
-                        raw_buf_ptr_ += header_remaining_length_buf_.size();
-                        break;
-                    }
-                    if (multiplier_ == 128 * 128 * 128 * 128) {
-                        read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
-                        initialize();
-                        return;
-                    }
-                }
-                if (read_state_ != read_state::payload) {
-                    return;
-                }
-            } break;
-            case read_state::payload: {
-                if (size >= remaining_length_) {
-                    std::copy_n(
-                        ptr,
-                        remaining_length_,
-                        raw_buf_ptr_
-                    );
-                    raw_buf_ptr_ += remaining_length_;
-                    size -= remaining_length_;
-                    auto ptr = raw_buf_.get();
-                    read_packets_.emplace_back(
-                        buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
-                    );
-                    initialize();
-                }
-                else {
-                    std::copy_n(
-                        ptr,
-                        size,
-                        raw_buf_ptr_
-                    );
-                    raw_buf_ptr_ += size;
-                    remaining_length_ -= size;
-                    return;
-                }
-            } break;
-            }
-        }
-    }
-
-    error_packet front() const {
-        return read_packets_.front();
-    }
-
-    void pop_front() {
-        read_packets_.pop_front();
-    }
-
-    bool empty() const {
-        return read_packets_.empty();
-    }
-
-    void initialize() {
-        read_state_ = read_state::fixed_header;
-        header_remaining_length_buf_.clear();
-        remaining_length_ = 0;
-        multiplier_ = 1;
-        raw_buf_.reset();
-        raw_buf_size_ = 0;
-        raw_buf_ptr_ = nullptr;
-    }
-
-
-private:
-    enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
-    std::size_t remaining_length_ = 0;
-    std::size_t multiplier_ = 1;
-    static_vector<char, 5> header_remaining_length_buf_;
-    std::shared_ptr<char []> raw_buf_;
-    std::size_t raw_buf_size_ = 0;
-    char* raw_buf_ptr_ = nullptr;
-    std::deque<error_packet> read_packets_;
-
-};
+namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection_impl<Role, PacketIdBytes>::
-recv(char const* ptr, std::size_t size) {
+process_recv_packet() {
     std::vector<basic_event_variant<PacketIdBytes>> events;
-
-    rpv_.recv(ptr, size);
-    for (; !rpv_.empty(); rpv_.pop_front()) {
-        auto ep = rpv_.front();
+    for (; !rpb_.empty(); rpb_.pop_front()) {
+        auto ep = rpb_.front();
         if (ep.ec) {
             events.emplace_back(ep.ec);
             events.emplace_back(event_close{});
@@ -225,7 +101,7 @@ recv(char const* ptr, std::size_t size) {
             // do internal protocol processing
             overload {
                 [&](v3_1_1::connect_packet& p) {
-                    initialize();
+                    initialize(false);
                     protocol_version_ = protocol_version::v3_1_1;
                     status_ = connection_status::connecting;
                     auto keep_alive = p.keep_alive();
@@ -248,7 +124,7 @@ recv(char const* ptr, std::size_t size) {
                     return true;
                 },
                 [&](v5::connect_packet& p) {
-                    initialize();
+                    initialize(false);
                     protocol_version_ = protocol_version::v5;
                     status_ = connection_status::connecting;
                     auto keep_alive = p.keep_alive();
@@ -967,18 +843,6 @@ recv(char const* ptr, std::size_t size) {
     return events;
 }
 
-} // namespace detail
-
-template <role Role, std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-std::vector<basic_event_variant<PacketIdBytes>>
-basic_connection<Role, PacketIdBytes>::
-recv(char const* ptr, std::size_t size) {
-    BOOST_ASSERT(impl_);
-    BOOST_ASSERT(ptr);
-    return impl_->recv(ptr, size);
-}
-
-} // namespace async_mqtt
+} // namespace async_mqtt::detail
 
 #endif // ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_RECV_IPP

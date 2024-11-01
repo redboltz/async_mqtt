@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
         0x11, 0x0f, char(0xff), char(0xff), char(0xff), // session_expiry_interval
     };
 
-    events = c.recv(recv_connack, sizeof(recv_connack));
+    events = c.recv(recv_connack, recv_connack + sizeof(recv_connack));
     BOOST_TEST(events.size() == 1);
     {
         auto expected =

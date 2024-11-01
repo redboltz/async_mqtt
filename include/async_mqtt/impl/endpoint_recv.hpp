@@ -24,13 +24,13 @@ recv_op {
     std::optional<filter> fil = std::nullopt;
     std::set<control_packet_type> types = {};
     std::optional<error_code> decided_error = std::nullopt;
-    enum { initiate, disconnect, close, read } state = initiate;
+    enum { dispatch, read, process } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self,
         error_code ec = error_code{},
-        buffer buf = buffer{}
+        std::size_t bytes_transferred = 0
     ) {
         auto& a_ep{*ep};
         if (ec) {
@@ -57,11 +57,47 @@ recv_op {
         }
 
         switch (state) {
-        case initiate: {
+        case dispatch: {
             state = read;
-            a_ep.stream_.async_read_packet(
+            as::dispatch(
+                a_ep.get_executor(),
                 force_move(self)
             );
+        } break;
+        case read: {
+            state = process;
+            a_ep.mbs_ = a_ep.read_buf_.prepare(a_ep.bulk_read_buffer_size_);
+            a_ep.stream_.async_read_some(
+                a_ep.mbs_,
+                force_move(self)
+            );
+        } break;
+        case process: {
+            state = complete;
+            auto b = as::buffer_sequence_begin(a_ep.mbs_);
+            auto e = std::next(b, bytes_transferred);
+            auto events = a_ep.con_.recv(b, e);
+            for (auto const& event : events) {
+                std::visit(
+                    overload{
+                        [&](error_code ec) {
+                        },
+                        [&](basic_event_send<PacketIdBytes> ev) {
+                        },
+                        [&](basic_event_packet_id_released<PacketIdBytes> ev) {
+                        },
+                        [&](basic_event_packet_received<PacketIdBytes> ev) {
+                        },
+                        [&](event_recv) {
+                        },
+                        [&](event_timer ev) {
+                        },
+                        [&](event_close) {
+                        }
+                    },
+                    event
+                );
+            }
         } break;
         case read: {
             if (buf.size() > a_ep.maximum_packet_size_recv_) {

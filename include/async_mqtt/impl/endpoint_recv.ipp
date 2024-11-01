@@ -20,7 +20,7 @@ recv_op::
 send_publish_from_queue() {
     if (ep->status_ != connection_status::connected) return;
     while (!ep->publish_queue_.empty() &&
-           ep->publish_send_count_ != ep->publish_send_max_) {
+           ep->con_.has_receive_maximum_vacancy_for_send()) {
         async_send(
             ep,
             force_move(ep->publish_queue_.front()),

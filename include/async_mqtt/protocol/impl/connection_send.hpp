@@ -10,6 +10,7 @@
 #include <async_mqtt/protocol/connection.hpp>
 #include <async_mqtt/protocol/event_variant.hpp>
 #include <async_mqtt/protocol/event_send.hpp>
+#include <async_mqtt/protocol/event_close.hpp>
 #include <async_mqtt/protocol/event_timer.hpp>
 #include <async_mqtt/protocol/event_packet_id_released.hpp>
 
@@ -32,8 +33,12 @@ send(Packet packet) {
                     // server send stored packets after connack sent
                     send_stored(events);
                 }
-                if constexpr(Role == role::client) {
-                    if (pingreq_send_interval_ms_) {
+                if constexpr(Role == role::client || Role == role::any) {
+                    if (is_client_ && pingreq_send_interval_ms_) {
+                        if (status_ == connection_status::disconnecting ||
+                            status_ == connection_status::closing ||
+                            status_ == connection_status::closed) return;
+
                         events.emplace_back(
                             event_timer{
                                 event_timer::op_type::reset,
@@ -75,7 +80,7 @@ process_send_packet(
     ActualPacket actual_packet,
     std::vector<basic_event_variant<PacketIdBytes>>& events
 ) {
-    bool release_packet_id_required_if_send_error = false;
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type> release_packet_id_if_send_error;
     // MQTT protocol sendable packet check
     if (
         !(
@@ -182,8 +187,26 @@ process_send_packet(
     // sending process
     bool topic_alias_validated = false;
 
+    if (!validate_maximum_packet_size(actual_packet.size())) {
+        events.emplace_back(
+            make_error_code(
+                mqtt_error::packet_not_allowed_to_send
+            )
+        );
+        if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
+            auto packet_id = actual_packet.packet_id();
+            if (packet_id != 0) {
+                pid_man_.release_id(packet_id);
+                events.emplace_back(
+                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
+                );
+            }
+        }
+        return false;
+    }
+
     if constexpr(std::is_same_v<v3_1_1::connect_packet, std::decay_t<ActualPacket>>) {
-        initialize();
+        initialize(true);
         status_ = connection_status::connecting;
         auto keep_alive = actual_packet.keep_alive();
         if (keep_alive != 0 && !pingreq_send_interval_ms_) {
@@ -201,7 +224,7 @@ process_send_packet(
     }
 
     if constexpr(std::is_same_v<v5::connect_packet, std::decay_t<ActualPacket>>) {
-        initialize();
+        initialize(true);
         status_ = connection_status::connecting;
         auto keep_alive = actual_packet.keep_alive();
         if (keep_alive != 0 && !pingreq_send_interval_ms_) {
@@ -386,7 +409,7 @@ process_send_packet(
             }
             else {
                 // QoS1, 2 but not stored
-                release_packet_id_required_if_send_error = true;
+                release_packet_id_if_send_error.emplace(packet_id);
             }
             if (actual_packet.opts().get_qos() == qos::exactly_once) {
                 qos2_publish_processing_.insert(packet_id);
@@ -521,14 +544,14 @@ process_send_packet(
         auto packet_id = actual_packet.packet_id();
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         pid_suback_.insert(packet_id);
-        release_packet_id_required_if_send_error = true;
+        release_packet_id_if_send_error.emplace(packet_id);
     }
 
     if constexpr(is_unsubscribe<std::decay_t<ActualPacket>>()) {
         auto packet_id = actual_packet.packet_id();
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         pid_unsuback_.insert(packet_id);
-        release_packet_id_required_if_send_error = true;
+        release_packet_id_if_send_error.emplace(packet_id);
     }
 
     if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {
@@ -538,7 +561,7 @@ process_send_packet(
         events.emplace_back(
             event_send{
                 force_move(actual_packet),
-                release_packet_id_required_if_send_error
+                release_packet_id_if_send_error
             }
         );
         if (pingresp_recv_timeout_ms_) {
@@ -555,24 +578,14 @@ process_send_packet(
 
     if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
         status_ = connection_status::disconnecting;
-    }
-
-    if (!validate_maximum_packet_size(actual_packet.size())) {
         events.emplace_back(
-            make_error_code(
-                mqtt_error::packet_not_allowed_to_send
-            )
-        );
-        if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
-            auto packet_id = actual_packet.packet_id();
-            if (packet_id != 0) {
-                pid_man_.release_id(packet_id);
-                events.emplace_back(
-                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                );
+            basic_event_send<PacketIdBytes>{
+                force_move(actual_packet),
+                release_packet_id_if_send_error
             }
-        }
-        return false;
+        );
+        events.emplace_back(event_close{});
+        return true;
     }
 
     if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
@@ -600,7 +613,7 @@ process_send_packet(
     events.emplace_back(
         basic_event_send<PacketIdBytes>{
             force_move(actual_packet),
-            release_packet_id_required_if_send_error
+            release_packet_id_if_send_error
         }
     );
     return true;

@@ -29,7 +29,11 @@ send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events) {
                 // copy packet because the stored packets need to be preserved
                 // until receiving puback/pubrec/pubcomp
                 [&](auto const& p) {
-                    events.emplace_back(event_send{p});
+                    events.emplace_back(
+                        event_send{
+                            p
+                        }
+                    );
                 }
             );
             return true;

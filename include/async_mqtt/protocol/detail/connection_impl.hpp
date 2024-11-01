@@ -40,8 +40,8 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
 
-    std::vector<basic_event_variant<PacketIdBytes>>
-    recv(char const* ptr, std::size_t size);
+    template <typename Begin, typename End>
+    std::vector<basic_event_variant<PacketIdBytes>> recv(Begin b, End e);
 
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
@@ -51,6 +51,8 @@ public:
         std::chrono::milliseconds duration,
         std::vector<basic_event_variant<PacketIdBytes>>& events
     );
+
+    bool has_receive_maximum_vacancy_for_send() const;
 
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
 
@@ -85,8 +87,11 @@ private:
     void
     send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events);
 
+    std::vector<basic_event_variant<PacketIdBytes>>
+    process_recv_packet();
+
     void
-    initialize();
+    initialize(bool is_client);
 
     std::optional<std::string>
     validate_topic_alias(std::optional<topic_alias_type> ta_opt);
@@ -143,7 +148,8 @@ private:
     std::set<basic_pid_type> qos2_publish_processing_;
 
     class recv_packet_builder;
-    recv_packet_builder rpv_;
+    recv_packet_builder rpb_;
+    bool is_client_ = true;
 };
 
 } // namespace async_mqtt::detail
