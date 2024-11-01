@@ -16,17 +16,17 @@ namespace async_mqtt {
 template <std::size_t PacketIdBytes>
 class basic_event_packet_id_released {
 public:
-    basic_event_packet_id_released(basic_packet_id_type<PacketIdBytes> packet_id)
+    basic_event_packet_id_released(typename basic_packet_id_type<PacketIdBytes>::type packet_id)
         :packet_id_{packet_id}
     {
     }
 
-    basic_packet_id_type<PacketIdBytes> get() const {
+    typename basic_packet_id_type<PacketIdBytes>::type get() const {
         return packet_id_;
     }
 
 private:
-    basic_packet_id_type<PacketIdBytes> packet_id_;
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id_;
 };
 
 using event_packet_id_released = basic_event_packet_id_released<2>;

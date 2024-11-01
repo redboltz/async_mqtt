@@ -10,7 +10,6 @@
 #include <memory>
 
 #include <async_mqtt/protocol/detail/connection_impl.hpp>
-#include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {
 
@@ -30,6 +29,11 @@ public:
 
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
+
+    std::vector<basic_event_variant<PacketIdBytes>>
+    set_pingreq_send_interval(
+        std::chrono::milliseconds duration
+    );
 
 private:
     std::shared_ptr<impl_type> impl_;

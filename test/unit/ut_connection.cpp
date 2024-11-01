@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(ut_connection)
 namespace am = async_mqtt;
 
 
-BOOST_AUTO_TEST_CASE(send) {
+BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     am::connection<am::role::client> c{am::protocol_version::v5};
 
     auto w = am::will{
@@ -80,6 +80,31 @@ BOOST_AUTO_TEST_CASE(send) {
     };
 
     events = c.recv(recv_connack, sizeof(recv_connack));
+    BOOST_TEST(events.size() == 1);
+    {
+        auto expected =
+            [&] {
+                auto props = am::properties{
+                    am::property::session_expiry_interval(0x0fffffff)
+                };
+                return am::v5::connack_packet{
+                    true,   // session_present
+                    am::connect_reason_code::not_authorized,
+                    props
+                };
+            } ();
+        std::visit(
+            am::overload{
+                [&](am::event_packet_received const& ev) {
+                    BOOST_TEST(ev.get() == expected);
+                },
+                [](auto const&...) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[0]
+        );
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -123,6 +123,55 @@ notify_timer_fired(timer kind) {
     return std::vector<basic_event_variant<PacketIdBytes>>{};
 }
 
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_pingreq_send_interval(
+    std::chrono::milliseconds duration,
+    std::vector<basic_event_variant<PacketIdBytes>>& events
+) {
+    if (duration == std::chrono::milliseconds::zero()) {
+        pingreq_send_interval_ms_.reset();
+        events.emplace_back(
+            event_timer{
+                event_timer::op_type::cancel,
+                timer::pingreq_send
+            }
+        );
+    }
+    else {
+        pingreq_send_interval_ms_.emplace(duration);
+        events.emplace_back(
+            event_timer{
+                event_timer::op_type::reset,
+                timer::pingreq_send
+            }
+        );
+    }
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::optional<topic_alias_type>
+basic_connection_impl<Role, PacketIdBytes>::
+get_topic_alias(properties const& props) {
+    std::optional<topic_alias_type> ta_opt;
+    for (auto const& prop : props) {
+        prop.visit(
+            overload {
+                [&](property::topic_alias const& p) {
+                    ta_opt.emplace(p.val());
+                },
+                [](auto const&) {
+                }
+            }
+        );
+        if (ta_opt) return ta_opt;
+    }
+    return ta_opt;
+}
+
 
 } // namespace detail
 
@@ -148,6 +197,18 @@ notify_timer_fired(timer kind) {
     return impl_->notify_timer_fired(kind);
 }
 
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::vector<basic_event_variant<PacketIdBytes>>
+basic_connection<Role, PacketIdBytes>::
+set_pingreq_send_interval(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    std::vector<basic_event_variant<PacketIdBytes>> events;
+    impl_->set_pingreq_send_interval(duration, events);
+    return events;
+}
 
 } // namespace async_mqtt
 

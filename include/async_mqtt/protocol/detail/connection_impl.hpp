@@ -46,16 +46,22 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
 
+    void
+    set_pingreq_send_interval(
+        std::chrono::milliseconds duration,
+        std::vector<basic_event_variant<PacketIdBytes>>& events
+    );
+
 private:
     template <typename ActualPacket>
-    error_code
+    bool
     process_send_packet(
         ActualPacket actual_packet,
         std::vector<basic_event_variant<PacketIdBytes>>& events
     );
 
     void
-    send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events) const;
+    send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events);
 
     void
     initialize();
@@ -68,6 +74,9 @@ private:
 
     bool
     validate_maximum_packet_size(std::size_t size);
+
+    std::optional<topic_alias_type>
+    get_topic_alias(properties const& props);
 
     static constexpr bool can_send_as_client(role r);
     static constexpr bool can_send_as_server(role r);

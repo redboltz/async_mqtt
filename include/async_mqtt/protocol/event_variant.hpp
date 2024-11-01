@@ -29,6 +29,9 @@ class basic_event_send;
 template <std::size_t PacketIdBytes>
 class basic_event_packet_id_released;
 
+template <std::size_t PacketIdBytes>
+class basic_event_packet_received;
+
 class event_timer;
 class event_close;
 class event_recv;
@@ -83,6 +86,7 @@ using basic_event_variant = std::variant<
     error_code,
     basic_event_send<PacketIdBytes>,
     basic_event_packet_id_released<PacketIdBytes>,
+    basic_event_packet_received<PacketIdBytes>,
     event_recv,
     event_timer,
     event_close

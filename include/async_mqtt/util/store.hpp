@@ -83,7 +83,7 @@ public:
     }
 
     template <typename Func>
-    void for_each(Func const& func) {
+    void for_each(Func func) {
         ASYNC_MQTT_LOG("mqtt_impl", info)
             << "[store] for_each";
         for (auto it = elems_.begin(); it != elems_.end();) {

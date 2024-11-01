@@ -142,7 +142,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_topic_alias(properties 
             }
         );
         if (ta_opt) return ta_opt;
-        }
+    }
     return ta_opt;
 }
 
