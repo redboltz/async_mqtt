@@ -52,6 +52,28 @@ public:
         std::vector<basic_event_variant<PacketIdBytes>>& events
     );
 
+    std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
+
+    bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
+
+    void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
+
+    std::set<typename basic_packet_id_type<PacketIdBytes>::type> get_qos2_publish_handled_pids() const;
+
+    void restore_qos2_publish_handled_pids(std::set<typename basic_packet_id_type<PacketIdBytes>::type> pids);
+
+    void restore_packets(
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+    );
+
+    std::vector<basic_store_packet_variant<PacketIdBytes>> get_stored_packets() const;
+
+    protocol_version get_protocol_version() const;
+
+    error_code regulate_for_store(
+        v5::basic_publish_packet<PacketIdBytes>& packet
+    ) const;
+
 private:
     template <typename ActualPacket>
     bool

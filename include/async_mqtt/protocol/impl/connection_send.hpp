@@ -606,49 +606,6 @@ process_send_packet(
     return true;
 }
 
-template <role Role, std::size_t PacketIdBytes>
-inline
-void
-basic_connection_impl<Role, PacketIdBytes>::
-send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events) {
-    store_.for_each(
-        [&](basic_store_packet_variant<PacketIdBytes> const& pv) mutable {
-            if (pv.size() > maximum_packet_size_send_) {
-                pid_man_.release_id(pv.packet_id());
-                // TBD some event should be pushed (size error not send id reusable)
-                // Or perhaps nothing is required
-                return false;
-            }
-            pv.visit(
-                // copy packet because the stored packets need to be preserved
-                // until receiving puback/pubrec/pubcomp
-                [&](auto const& p) {
-                    events.emplace_back(event_send{p});
-                }
-            );
-            return true;
-        }
-   );
-}
-
-template <role Role, std::size_t PacketIdBytes>
-inline
-constexpr bool
-basic_connection_impl<Role, PacketIdBytes>::can_send_as_client(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::client);
-}
-
-template <role Role, std::size_t PacketIdBytes>
-inline
-constexpr bool
-basic_connection_impl<Role, PacketIdBytes>::can_send_as_server(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::server);
-}
-
 } // namespace detail
 
 // connection public member functions

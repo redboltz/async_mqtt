@@ -18,22 +18,15 @@ enum class timer {
 };
 
 constexpr
-char const* timer_to_string(timer v) {
-    switch (v) {
-    case timer::pingreq_send:                 return "pingreq_send";
-    case timer::pingreq_recv:                 return "pingreq_recv";
-    case timer::pingresp_recv:                return "pingresp_recv";
-    default:                                  return "unknown_timer";
-    }
-}
+char const* timer_to_string(timer v);
 
-inline
-std::ostream& operator<<(std::ostream& o, timer v)
-{
-    o << timer_to_string(v);
-    return o;
-}
+constexpr
+std::ostream& operator<<(std::ostream& o, timer v);
 
 } // namespace async_mqtt
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/protocol/impl/timer_impl.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PROTOCOL_TIMER_HPP
