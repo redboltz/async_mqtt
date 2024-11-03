@@ -17,6 +17,7 @@
 #include <async_mqtt/util/topic_alias_recv.hpp>
 #include <async_mqtt/protocol_version.hpp>
 #include <async_mqtt/protocol/connection_fwd.hpp>
+#include <async_mqtt/protocol/connection_status.hpp>
 #include <async_mqtt/protocol/event_variant.hpp>
 #include <async_mqtt/protocol/timer.hpp>
 
@@ -24,13 +25,6 @@ namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes>
 class basic_connection_impl {
-    enum class connection_status {
-        connecting,
-        connected,
-        disconnecting,
-        closing,
-        closed
-    };
     using basic_pid_type = typename basic_packet_id_type<PacketIdBytes>::type;
 
 public:
@@ -75,6 +69,8 @@ public:
     error_code regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes>& packet
     ) const;
+
+    connection_status get_connection_status() const;
 
 private:
     template <typename ActualPacket>

@@ -48,14 +48,15 @@ namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
+std::optional<basic_packet_variant<PacketIdBytes>>
+buffer_to_basic_packet_variant(
     buffer buf,
     protocol_version ver,
     error_code& ec
 ) {
     if (buf.size() < 2) {
         ec = make_error_code(disconnect_reason_code::malformed_packet);
-        return basic_packet_variant<PacketIdBytes>{};
+        return std::nullopt;
     }
     switch (get_control_packet_type(std::uint8_t(buf[0]))) {
     case control_packet_type::connect:
@@ -232,11 +233,11 @@ basic_packet_variant<PacketIdBytes> buffer_to_basic_packet_variant(
         break;
     }
     ec = make_error_code(disconnect_reason_code::malformed_packet);
-    return basic_packet_variant<PacketIdBytes>{};
+    return std::nullopt;
 }
 
 ASYNC_MQTT_HEADER_ONLY_INLINE
-packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver, error_code& ec) {
+std::optional<packet_variant> buffer_to_packet_variant(buffer buf, protocol_version ver, error_code& ec) {
     return buffer_to_basic_packet_variant<2>(force_move(buf), ver, ec);
 }
 
@@ -249,7 +250,7 @@ packet_variant buffer_to_packet_variant(buffer buf, protocol_version ver, error_
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_size) \
 namespace async_mqtt { \
 template \
-basic_packet_variant<a_size> buffer_to_basic_packet_variant<a_size>( \
+std::optional<basic_packet_variant<a_size>> buffer_to_basic_packet_variant<a_size>( \
     buffer, \
     protocol_version, \
     error_code& \

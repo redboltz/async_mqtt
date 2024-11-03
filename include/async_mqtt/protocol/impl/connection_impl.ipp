@@ -336,6 +336,13 @@ get_topic_alias(properties const& props) {
     return ta_opt;
 }
 
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+connection_status
+basic_connection_impl<Role, PacketIdBytes>::
+get_connection_status() const {
+    return status_;
+}
 
 } // namespace detail
 
@@ -472,6 +479,15 @@ regulate_for_store(
 ) const {
     BOOST_ASSERT(impl_);
     return impl_->regulate_for_store(packet);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+connection_status
+basic_connection<Role, PacketIdBytes>::
+get_connection_status() const {
+    BOOST_ASSERT(impl_);
+    return impl_->get_connection_status();
 }
 
 } // namespace async_mqtt

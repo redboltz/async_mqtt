@@ -32,20 +32,23 @@ send_op {
         auto& a_ep{*ep};
         if (ec) {
             if (ec == disconnect_reason_code::receive_maximum_exceeded) {
-                a_ep.enqueue_publish(packet);
-                self.complete(
-                    make_error_code(
-                        mqtt_error::packet_enqueued
-                    )
-                );
-                return;
+                if constexpr (std::is_same_v<Packet, v5::basic_publish_packet<PacketIdBytes>>) {
+                    a_ep.enqueue_publish(packet);
+                    self.complete(
+                        make_error_code(
+                            mqtt_error::packet_enqueued
+                        )
+                    );
+                    return;
+                }
+                BOOST_ASSERT(false);
             }
             else {
                 ASYNC_MQTT_LOG("mqtt_impl", info)
                     << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                     << "send error:" << ec.message();
                 if (release_pid_opt) {
-                    a_ep.release_pid(*release_pid_opt);
+                    a_ep.con_.release_packet_id(*release_pid_opt);
                 }
                 self.complete(ec);
                 return;
@@ -85,6 +88,9 @@ send_op {
                                 else {
                                     BOOST_ASSERT(false);
                                 }
+                                break;
+                            default:
+                                BOOST_ASSERT(false);
                                 break;
                             }
                         },
@@ -196,9 +202,5 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
 }
 
 } // namespace async_mqtt
-
-#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/endpoint_send.ipp>
-#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_SEND_HPP

@@ -360,15 +360,15 @@ public:
      * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
      * #### Signature
-     * void(@ref error_code, @ref packet_variant_type)
+     * void(@ref error_code, std::optional<@ref packet_variant_type>)
      *
      * ##### error_code and packet_variant_type
      * @li If an error occurs at an underlying layer while receiving a packet,
      *     underlying error is set. e.g. system, asio, beast, ...
-     *     @ref packet_variant_type is set to std::monostate
+     *     std::optional<@ref packet_variant_type> is set to std::nullopt.
      * @li If there are no errors during receiving the packet,
      *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
-     *     @ref packet_variant_type is set to @ref basic_packet_variant.
+     *     std::optional<@ref packet_variant_type> is set to @ref basic_packet_variant.
      *
      * ### Per-Operation Cancellation
      *
@@ -399,15 +399,15 @@ public:
      * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
      * #### Signature
-     * void(@ref error_code, @ref packet_variant_type)
+     * void(@ref error_code, std::optional<@ref packet_variant_type>)
      *
      * ##### error_code and packet_variant_type
      * @li If an error occurs at an underlying layer while receiving a packet,
      *     underlying error is set. e.g. system, asio, beast, ...
-     *     @ref packet_variant_type is set to std::monostate
+     *     std::optional<@ref packet_variant_type> is set to std::nullopt.
      * @li If there are no errors during receiving the packet,
      *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
-     *     @ref packet_variant_type is set to @ref basic_packet_variant.
+     *     std::optional<@ref packet_variant_type> is set to @ref basic_packet_variant.
      *
      * ### Per-Operation Cancellation
      *
@@ -440,15 +440,15 @@ public:
      * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
      * #### Signature
-     * void(@ref error_code, @ref packet_variant_type)
+     * void(@ref error_code, std::optional<@ref packet_variant_type>)
      *
      * ##### error_code and packet_variant_type
      * @li If an error occurs at an underlying layer while receiving a packet,
      *     underlying error is set. e.g. system, asio, beast, ...
-     *     @ref packet_variant_type is set to std::monostate
+     *     std::optional<@ref packet_variant_type> is set to std::nullopt.
      * @li If there are no errors during receiving the packet,
      *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
-     *     @ref packet_variant_type is set to @ref basic_packet_variant.
+     *     std::optional<@ref packet_variant_type> is set to @ref basic_packet_variant.
      *
      * ### Per-Operation Cancellation
      *

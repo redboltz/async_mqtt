@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     std::visit(
         am::overload{
             [&](am::event_send const& ev) {
-                BOOST_TEST(!ev.release_packet_id_required_if_send_error());
+                BOOST_TEST(!ev.get_release_packet_id_if_send_error());
                 BOOST_TEST(ev.get() == p);
             },
             [](auto const&...) {

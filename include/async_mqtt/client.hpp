@@ -546,15 +546,15 @@ public:
      * @li <a href="https://www.boost.org/doc/html/boost_asio/overview/composition/token_adapters.html">Default Completion Token</a> is supported
      *
      * #### Signature
-     * void(@ref error_code, @ref packet_variant)
+     * void(@ref error_code, std::optional<@ref packet_variant_type>)
      *
-     * ##### error_code
-     *
-     * @li If receive error happens, error_code is set as error, otherwise
+     * ##### error_code and packet_variant_type
+     * @li If an error occurs at an underlying layer while receiving a packet,
+     *     underlying error is set. e.g. system, asio, beast, ...
+     *     std::optional<@ref packet_variant_type> is set to std::nullopt.
+     * @li If there are no errors during receiving the packet,
      *     <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">errc::success</a> is set.
-     *
-     * ##### packet_variant
-     * If the error_code is errc::success, one of the following packet is set to the packet_variant:
+     *     std::optional<@ref packet_variant_type> is set to one of the following @ref basic_packet_variant:
      * @li @ref v3_1_1::publish_packet, if Version is v3_1_1 and PUBLISH packet is received.
      * @li @ref v5::publish_packet, if Version is v5 and PUBLISH packet is received.
      * @li @ref v5::disconnect_packet, if Version is v5 and DISCONNECT packet is received.

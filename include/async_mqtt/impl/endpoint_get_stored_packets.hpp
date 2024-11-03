@@ -34,7 +34,7 @@ get_stored_packets_op {
             );
         } break;
         case complete:
-            packets = a_ep.get_stored_packets();
+            packets = a_ep.con_.get_stored_packets();
             self.complete(error_code{}, force_move(packets));
             break;
         }
@@ -47,7 +47,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 std::vector<basic_store_packet_variant<PacketIdBytes>>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const {
-    return store_.get_stored();
+    return con_.get_stored_packets();
 }
 
 } // namespace detail

@@ -496,6 +496,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::has_retry() const {
     return !tim_retry_acq_pid_queue_.empty();
 }
 
+#if 0 // TBD
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
@@ -503,12 +504,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::clear_pid_man() {
     pid_man_.clear();
     notify_retry_all();
 }
+#endif
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-notify_release_pid(typename basic_packet_id_type<PacketIdBytes>::type pid) {
+notify_release_pid(typename basic_packet_id_type<PacketIdBytes>::type /*pid*/) {
     packet_id_released_ = true;
     notify_retry_one();
 }

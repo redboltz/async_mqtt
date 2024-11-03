@@ -34,8 +34,7 @@ regulate_for_store_op {
             );
         } break;
         case complete: {
-            error_code ec;
-            a_ep.regulate_for_store(packet, ec);
+            error_code ec = a_ep.con_.regulate_for_store(packet);
             self.complete(ec, force_move(packet));
         } break;
         }
@@ -51,28 +50,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::regulate_for_store(
     v5::basic_publish_packet<PacketIdBytes>& packet,
     error_code& ec
 ) const {
-    if (packet.topic().empty()) {
-        if (auto ta_opt = get_topic_alias(packet.props())) {
-            auto topic = topic_alias_send_->find_without_touch(*ta_opt);
-            if (topic.empty()) {
-                ec = make_error_code(
-                    mqtt_error::packet_not_regulated
-                );
-                return;
-            }
-            packet.remove_topic_alias_add_topic(force_move(topic));
-        }
-        else {
-            ec = make_error_code(
-                mqtt_error::packet_not_regulated
-            );
-            return;
-        }
-    }
-    else {
-        packet.remove_topic_alias();
-    }
-    ec = error_code{};
+    ec = con_.regulate_for_store(packet);
 }
 
 } // namespace detail

@@ -115,6 +115,8 @@ public:
         v5::basic_publish_packet<PacketIdBytes>& packet
     ) const;
 
+    connection_status get_connection_status() const;
+
 private:
     std::shared_ptr<impl_type> impl_;
 };

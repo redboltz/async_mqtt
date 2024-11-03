@@ -34,7 +34,7 @@ restore_packets_op {
             );
         } break;
         case complete:
-            a_ep.restore_packets(force_move(pvs));
+            a_ep.con_.restore_packets(force_move(pvs));
             self.complete();
             break;
         }
@@ -49,21 +49,7 @@ void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::restore_packets(
     std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
 ) {
-    for (auto& pv : pvs) {
-        pv.visit(
-            [&](auto& p) {
-                if (pid_man_.register_id(p.packet_id())) {
-                    store_.add(force_move(p));
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", error)
-                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                        << "packet_id:" << p.packet_id()
-                        << " has already been used. Skip it";
-                }
-            }
-        );
-    }
+    con_.restore_packets(force_move(pvs));
 }
 
 } // namespace detail

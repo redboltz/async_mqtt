@@ -68,7 +68,6 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
  * @li Shared objects: Unsafe
  *
  * #### variants
- * @li @ref std::monostate
  * @li @ref property::payload_format_indicator
  * @li @ref property::message_expiry_interval
  * @li @ref property::content_type
@@ -210,7 +209,6 @@ public:
 
 private:
     using variant_t = std::variant<
-        std::monostate,
         property::payload_format_indicator,
         property::message_expiry_interval,
         property::content_type,

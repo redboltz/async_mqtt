@@ -26,6 +26,11 @@
 
 namespace async_mqtt::detail {
 
+// 1. ec, close (netowork level error, v3.1.1 packet error)
+// 2. ec, send_disconnect, close (packet error after connected
+// 3. ec, send_connack, close (packet error before connect)
+// 4. packet_received, [auto_res,] [pingreq_recv_reset]
+
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
@@ -69,6 +74,11 @@ process_recv_packet() {
                     if (ec.category() == get_connect_reason_code_category()) {
                         status_ = connection_status::connecting;
                         events.emplace_back(
+                            make_error_code(
+                                static_cast<connect_reason_code>(ec.value())
+                            )
+                        );
+                        events.emplace_back(
                             basic_event_send<PacketIdBytes>{
                                 v5::connack_packet{
                                     false, // session_present
@@ -80,6 +90,11 @@ process_recv_packet() {
                 }
                 else if (ec.category() == get_disconnect_reason_code_category()) {
                     if (status_ == connection_status::connected) {
+                        events.emplace_back(
+                            make_error_code(
+                                static_cast<disconnect_reason_code>(ec.value())
+                            )
+                        );
                         events.emplace_back(
                             basic_event_send<PacketIdBytes>{
                                 v5::disconnect_packet{

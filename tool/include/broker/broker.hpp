@@ -56,7 +56,7 @@ private:
     void async_read_packet(epsp_type epsp) {
         auto recv_proc =
             [this, epsp]
-            (error_code const& ec, packet_variant pv) mutable {
+            (error_code const& ec, std::optional<packet_variant> pv_opt) mutable {
                 if (ec) {
                     ASYNC_MQTT_LOG("mqtt_broker", info)
                         << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
@@ -67,7 +67,8 @@ private:
                     );
                     return;
                 }
-                BOOST_ASSERT(pv);
+                BOOST_ASSERT(pv_opt);
+                auto& pv{*pv_opt};0
                 pv.visit(
                     overload {
                         [&](v3_1_1::connect_packet& p) {

@@ -18,15 +18,20 @@ namespace async_mqtt {
 
 template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-std::optional<control_packet_type> basic_packet_variant<PacketIdBytes>::type() const {
+control_packet_type basic_packet_variant<PacketIdBytes>::type() const {
     return visit(
-        overload {
-            [] (auto const& p) -> std::optional<control_packet_type>{
-                return p.type();
-            },
-                [] (std::monostate const&) -> std::optional<control_packet_type>{
-                    return std::nullopt;
-                }
+        [] (auto const& p) {
+            return p.type();
+        }
+    );
+}
+
+template <std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::size_t basic_packet_variant<PacketIdBytes>::size() const {
+    return visit(
+        [] (auto const& p) {
+            return p.size();
         }
     );
 }
@@ -38,18 +43,9 @@ std::vector<as::const_buffer> basic_packet_variant<PacketIdBytes>::const_buffer_
         overload {
             [] (auto const& p) {
                 return p.const_buffer_sequence();
-            },
-            [] (std::monostate const&) {
-                return std::vector<as::const_buffer>{};
             }
         }
     );
-}
-
-template <std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-basic_packet_variant<PacketIdBytes>::operator bool() const {
-    return var_.index() != 0;
 }
 
 template <std::size_t PacketIdBytes>
@@ -59,8 +55,6 @@ std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> co
         overload {
             [&] (auto const& p) {
                 o << p;
-            },
-            [&] (std::monostate const&) {
             }
         }
     );
