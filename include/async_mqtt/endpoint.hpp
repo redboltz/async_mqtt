@@ -189,6 +189,14 @@ public:
 
     // async functions
 
+    template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
+
     /**
      * @brief acuire unique packet_id.
      * @param token see Signature
@@ -701,6 +709,7 @@ private:
 } // namespace async_mqtt
 
 #include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/impl/endpoint_underlying_handshake.hpp>
 #include <async_mqtt/impl/endpoint_acquire_unique_packet_id.hpp>
 #include <async_mqtt/impl/endpoint_acquire_unique_packet_id_wait_until.hpp>
 #include <async_mqtt/impl/endpoint_register_packet_id.hpp>

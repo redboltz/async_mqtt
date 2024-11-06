@@ -115,6 +115,7 @@ private: // compose operation impl
     static constexpr bool can_send_as_server(role r);
     static std::optional<topic_alias_type> get_topic_alias(properties const& props);
 
+    template <typename ArgsTuple>  struct underlying_handshake_op;
     struct acquire_unique_packet_id_op;
     struct acquire_unique_packet_id_wait_until_op;
     struct register_packet_id_op;
@@ -178,7 +179,19 @@ private:
     static void send_stored(this_type_sp ep);
     void initialize();
 
+    static void set_pingreq_send_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
     static void reset_pingreq_send_timer(
+        this_type_sp ep,
+        std::optional<std::chrono::milliseconds> ms
+    );
+    static void cancel_pingreq_send_timer(
+        this_type_sp ep
+    );
+
+    static void set_pingreq_recv_timer(
         this_type_sp ep,
         std::optional<std::chrono::milliseconds> ms
     );
@@ -186,6 +199,10 @@ private:
         this_type_sp ep,
         std::optional<std::chrono::milliseconds> ms
     );
+    static void cancel_pingreq_recv_timer(
+        this_type_sp ep
+    );
+
     static void reset_pingresp_recv_timer(
         this_type_sp ep,
         std::optional<std::chrono::milliseconds> ms
@@ -205,6 +222,7 @@ private:
     stream_type stream_;
     std::size_t read_buffer_size_ = 65535; // TBD define constant
     as::streambuf read_buf_;
+    as::streambuf::mutable_buffers_type mbs_;
     connection<Role> con_;
 
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
@@ -217,6 +235,13 @@ private:
     struct tim_cancelled;
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
     bool packet_id_released_ = false;
+
+    enum class close_status {
+        open,
+        closing,
+        closed
+    };
+    close_status status_{close_status::closed};
 };
 
 } // namespace async_mqtt::detail

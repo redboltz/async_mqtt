@@ -20,7 +20,81 @@ send_op {
     this_type_sp ep;
     Packet packet;
     bool from_queue = false;
-    enum { dispatch, write, complete } state = dispatch;
+    std::optional<error_code> decided_error = std::nullopt;
+    using events_type = std::vector<basic_event_variant<PacketIdBytes>>;
+    using events_it_type = typename events_type::iterator;
+    std::shared_ptr<events_type> events = nullptr;
+    events_it_type it = events_it_type{};
+    enum { dispatch, write, sent, complete } state = dispatch;
+
+    template <typename Self>
+    bool process_one_event(
+        Self& self
+    ) {
+        auto& a_ep{*ep};
+        auto& event{*it++};
+        return std::visit(
+            overload{
+                [&](error_code ec) {
+                    decided_error.emplace(ec);
+                    return true;
+                },
+                [&](event_timer const& ev) {
+                    switch (ev.get_timer_for()) {
+                    case timer::pingreq_send:
+                        if (ev.get_op() == event_timer::op_type::reset) {
+                            reset_pingreq_send_timer(ep, ev.get_ms());
+                        }
+                        else {
+                            BOOST_ASSERT(false);
+                        }
+                        break;
+                    case timer::pingresp_recv:
+                        if (ev.get_op() == event_timer::op_type::reset) {
+                            // TBD
+                        }
+                        else {
+                            BOOST_ASSERT(false);
+                        }
+                        break;
+                    default:
+                        BOOST_ASSERT(false);
+                        break;
+                    }
+                    return true;
+                },
+                [&](basic_event_packet_id_released<PacketIdBytes> const& ev) {
+                    a_ep.notify_release_pid(ev.get());
+                    return true;
+                },
+                [&](event_send& ev) {
+                    state = sent;
+                    a_ep.stream_.async_write_packet(
+                        force_move(ev.get()),
+                        as::append(
+                            force_move(self),
+                            ev.get_release_packet_id_if_send_error()
+                        )
+                    );
+                    return false;
+                },
+                [&](event_close) {
+                    state = complete;
+                    auto ep_copy{ep};
+                    async_close(
+                        force_move(ep_copy),
+                        force_move(self)
+                    );
+                    return false;
+                },
+                [&](auto const&) {
+                    BOOST_ASSERT(false);
+                    return true;
+                }
+            },
+            event
+        );
+    }
 
     template <typename Self>
     void operator()(
@@ -64,58 +138,34 @@ send_op {
             );
         } break;
         case write: {
-            state = complete;
-            auto events = a_ep.con_.send(packet);
-            for (auto& event : events) {
-                std::visit(
-                    overload {
-                        [&](error_code) {
-                        },
-                        [&](event_timer const& ev) {
-                            switch (ev.get_timer_for()) {
-                            case timer::pingreq_send:
-                                if (ev.get_op() == event_timer::op_type::reset) {
-                                    reset_pingreq_send_timer(ep, ev.get_ms());
-                                }
-                                else {
-                                    BOOST_ASSERT(false);
-                                }
-                                break;
-                            case timer::pingresp_recv:
-                                if (ev.get_op() == event_timer::op_type::reset) {
-                                    // TBD
-                                }
-                                else {
-                                    BOOST_ASSERT(false);
-                                }
-                                break;
-                            default:
-                                BOOST_ASSERT(false);
-                                break;
-                            }
-                        },
-                        [&](basic_event_packet_id_released<PacketIdBytes> const& ev) {
-                            a_ep.notify_release_pid(ev.get());
-                        },
-                        [&](event_send& ev) {
-                            a_ep.stream_.async_write_packet(
-                                force_move(ev.get()),
-                                as::append(
-                                    force_move(self),
-                                    ev.get_release_packet_id_if_send_error()
-                                )
-                            );
-                        },
-                        [&](auto const& ...) {
-                            BOOST_ASSERT(false);
-                        }
-                    },
-                    event
-                );
+            events = std::make_shared<events_type>(a_ep.con_.send(packet));
+            it = events->begin();
+            while (it != events->end()) {
+                if (!process_one_event(self)) return;
             }
+            state = complete; // all events processed
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
+        } break;
+        case sent: {
+            while (it != events->end()) {
+                if (!process_one_event(self)) return;
+            }
+            state = complete; // all events processed
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
         } break;
         case complete: {
-            self.complete(ec);
+            if (decided_error) {
+                self.complete(*decided_error);
+            }
+            else {
+                self.complete(ec);
+            }
         } break;
         }
     }

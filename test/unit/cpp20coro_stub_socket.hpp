@@ -32,8 +32,8 @@ struct cpp20coro_basic_stub_socket {
 
     struct error_packet {
         error_packet(
-            packet_variant_type pv
-        ): packet{ to_string(pv.const_buffer_sequence()) }
+            std::optional<packet_variant_type> pv
+        ): packet{ to_string(pv->const_buffer_sequence()) }
         {}
 
         error_packet(
@@ -94,7 +94,7 @@ struct cpp20coro_basic_stub_socket {
     auto wait_response(CompletionToken&& token) {
         return as::async_compose<
             CompletionToken,
-            void(error_code, packet_variant_type)
+            void(error_code, std::optional<packet_variant_type>)
         > (
             wait_response_impl{
                 *this
@@ -145,7 +145,7 @@ struct cpp20coro_basic_stub_socket {
             error_packet epk
         ) {
             if (epk.ec) {
-                self.complete(epk.ec, packet_variant_type{});
+                self.complete(epk.ec, std::nullopt);
             }
             else {
                 buffer buf{epk.packet};

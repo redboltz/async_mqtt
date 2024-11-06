@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // set checker before malformed packet recv

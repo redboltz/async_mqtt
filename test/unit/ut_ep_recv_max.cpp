@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     auto [ec1, pid1] = ep.async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(puback2 == pv);
+        BOOST_TEST(puback2 == *pv);
     }
 
     f.get();
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec3 == pv);
+        BOOST_TEST(pubrec3 == *pv);
     }
 
     // send pubrel3
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubcomp3 == pv);
+        BOOST_TEST(pubcomp3 == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(puback2 == pv);
+        BOOST_TEST(puback2 == *pv);
     }
 
     f.get();
@@ -447,7 +447,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec3 == pv);
+        BOOST_TEST(pubrec3 == *pv);
     }
 
     // send pubrel3
@@ -465,7 +465,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubcomp3 == pv);
+        BOOST_TEST(pubcomp3 == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
@@ -534,7 +534,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     auto publish_1_q1 = am::v5::publish_packet(
@@ -616,19 +616,19 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
     // recv publish2
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_2_q1 == pv);
+        BOOST_TEST(publish_2_q1 == *pv);
     }
     // recv publish3
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_3_q0 == pv);
+        BOOST_TEST(publish_3_q0 == *pv);
     }
 
     bool close_called = false;
@@ -679,7 +679,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     ep.next_layer().set_recv_packets(
@@ -700,13 +700,13 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
     // recv publish4
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_4_q2 == pv);
+        BOOST_TEST(publish_4_q2 == *pv);
     }
     // send puback2
     ep.next_layer().set_write_packet_checker(
@@ -732,7 +732,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrel3 == pv);
+        BOOST_TEST(pubrel3 == *pv);
     }
     // send pubcomp3
     ep.next_layer().set_write_packet_checker(
@@ -748,19 +748,19 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_2_q1 == pv);
+        BOOST_TEST(publish_2_q1 == *pv);
     }
     // recv publish3
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_3_q0 == pv);
+        BOOST_TEST(publish_3_q0 == *pv);
     }
     // recv publish5
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_5_q1 == pv);
+        BOOST_TEST(publish_5_q1 == *pv);
     }
 
     close_called = false;
@@ -843,7 +843,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -936,19 +936,19 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
     // recv publish2
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_2_q1 == pv);
+        BOOST_TEST(publish_2_q1 == *pv);
     }
     // recv publish3
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_3_q0 == pv);
+        BOOST_TEST(publish_3_q0 == *pv);
     }
 
     bool close_called = false;
@@ -988,7 +988,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -1020,13 +1020,13 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
     // recv publish4
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_4_q2 == pv);
+        BOOST_TEST(publish_4_q2 == *pv);
     }
     // send puback2
     ep2.next_layer().set_write_packet_checker(
@@ -1052,7 +1052,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrel3 == pv);
+        BOOST_TEST(pubrel3 == *pv);
     }
     // send pubcomp3
     ep2.next_layer().set_write_packet_checker(
@@ -1068,19 +1068,19 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_2_q1 == pv);
+        BOOST_TEST(publish_2_q1 == *pv);
     }
     // recv publish3
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_3_q0 == pv);
+        BOOST_TEST(publish_3_q0 == *pv);
     }
     // recv publish5
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_5_q1 == pv);
+        BOOST_TEST(publish_5_q1 == *pv);
     }
 
     close_called = false;

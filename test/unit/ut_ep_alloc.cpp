@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(custom_read) {
                     ma,
                     [&](auto ec, auto pv) {
                         BOOST_TEST(!ec);
-                        BOOST_TEST(pv == connack);
+                        BOOST_TEST(*pv == connack);
                     }
                 )
             );
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(custom_write) {
                 ep.async_recv(
                     [&](auto ec, auto pv) {
                         BOOST_TEST(!ec);
-                        BOOST_TEST(pv == connack);
+                        BOOST_TEST(*pv == connack);
                     }
                 );
             }

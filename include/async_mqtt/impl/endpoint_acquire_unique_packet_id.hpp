@@ -34,7 +34,7 @@ acquire_unique_packet_id_op {
             );
         } break;
         case complete:
-            pid_opt = a_ep.con_.acquire_unique_id();
+            pid_opt = a_ep.con_.acquire_unique_packet_id();
             state = complete;
             if (pid_opt) {
                 self.complete(error_code{}, *pid_opt);
@@ -56,7 +56,7 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id() {
-    return con_.acquire_unique_id();
+    return con_.acquire_unique_packet_id();
 }
 
 } // namespace detail

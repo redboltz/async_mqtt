@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(pingresp_v311) {
                 co_await ep.next_layer().emulate_recv(am::v3_1_1::pingreq_packet{}, as::as_tuple(as::deferred));
                 co_await ep.async_recv(as::as_tuple(as::deferred));
                 auto [ec, pingresp] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
-                BOOST_TEST(pingresp == am::v3_1_1::pingresp_packet{});
+                BOOST_TEST(*pingresp == am::v3_1_1::pingresp_packet{});
                 co_await ep.async_close(as::deferred);
                 co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
             }
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(pingresp_v5) {
                 co_await ep.next_layer().emulate_recv(am::v5::pingreq_packet{}, as::as_tuple(as::deferred));
                 co_await ep.async_recv(as::as_tuple(as::deferred));
                 auto [ec, pingresp] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
-                BOOST_TEST(pingresp == am::v5::pingresp_packet{});
+                BOOST_TEST(*pingresp == am::v5::pingresp_packet{});
                 co_await ep.async_close(as::deferred);
                 co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
             }
@@ -334,7 +334,7 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(!ec);
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, close] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -435,7 +435,7 @@ BOOST_AUTO_TEST_CASE(remaining_length_error) {
     ioc.run();
 }
 
-BOOST_AUTO_TEST_CASE(remaining_length_error_bulk) {
+BOOST_AUTO_TEST_CASE(remaining_length_error_set_buffer_size) {
     auto version = am::protocol_version::v3_1_1;
     as::io_context ioc;
     as::co_spawn(
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(remaining_length_error_bulk) {
                 version,
                 am::force_move(exe)
             };
-            ep.set_bulk_read_buffer_size(4096);
+            ep.set_read_buffer_size(4096);
             // test scenario
             {
                 co_await ep.next_layer().emulate_recv(
@@ -713,7 +713,7 @@ BOOST_AUTO_TEST_CASE(pub_recv_non_exist_ta_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -786,7 +786,7 @@ BOOST_AUTO_TEST_CASE(pub_recv_no_ta_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -861,7 +861,7 @@ BOOST_AUTO_TEST_CASE(pub_recv_max_zero_ta_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1123,7 +1123,7 @@ BOOST_AUTO_TEST_CASE(puback_recv_no_pid_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1239,7 +1239,7 @@ BOOST_AUTO_TEST_CASE(pubrec_recv_no_pid_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1355,7 +1355,7 @@ BOOST_AUTO_TEST_CASE(pubcomp_recv_no_pid_v5) {
                 {
                     auto [ec, disconnect] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
                     BOOST_TEST(ec == am::error_code{});
-                    BOOST_TEST(disconnect == exp);
+                    BOOST_TEST(*disconnect == exp);
                 }
                 {
                     auto [ec, _] = co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1796,19 +1796,19 @@ BOOST_AUTO_TEST_CASE(publish_cont_recv_v5) {
                     ep.async_recv(as::as_tuple(as::use_awaitable))
                 );
                 BOOST_TEST(ec1 == am::error_code{});
-                BOOST_TEST(pv1 == publish1);
+                BOOST_TEST(*pv1 == publish1);
                 auto [ec2, pv2] = t2;
                 BOOST_TEST(ec2 == am::error_code{});
-                BOOST_TEST(pv2 == publish2);
+                BOOST_TEST(*pv2 == publish2);
                 auto [ec3, pv3] = t3;
                 BOOST_TEST(ec3 == am::error_code{});
-                BOOST_TEST(pv3 == publish3);
+                BOOST_TEST(*pv3 == publish3);
                 auto [ec4, pv4] = t4;
                 BOOST_TEST(ec4 == am::error_code{});
-                BOOST_TEST(pv4 == publish4);
+                BOOST_TEST(*pv4 == publish4);
                 auto [ec5, pv5] = t5;
                 BOOST_TEST(ec5 == am::error_code{});
-                BOOST_TEST(pv5 == publish5);
+                BOOST_TEST(*pv5 == publish5);
 
                 co_await ep.async_close(as::deferred);
                 co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1821,7 +1821,7 @@ BOOST_AUTO_TEST_CASE(publish_cont_recv_v5) {
     ioc.run();
 }
 
-BOOST_AUTO_TEST_CASE(publish_cont_bulk_recv_v5) {
+BOOST_AUTO_TEST_CASE(publish_cont_set_buffer_size_recv_v5) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     as::co_spawn(
@@ -1834,7 +1834,7 @@ BOOST_AUTO_TEST_CASE(publish_cont_bulk_recv_v5) {
                 version,
                 am::force_move(exe)
             };
-            ep.set_bulk_read_buffer_size(4096);
+            ep.set_read_buffer_size(4096);
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1898,19 +1898,19 @@ BOOST_AUTO_TEST_CASE(publish_cont_bulk_recv_v5) {
                     ep.async_recv(as::as_tuple(as::use_awaitable))
                 );
                 BOOST_TEST(ec1 == am::error_code{});
-                BOOST_TEST(pv1 == publish1);
+                BOOST_TEST(*pv1 == publish1);
                 auto [ec2, pv2] = t2;
                 BOOST_TEST(ec2 == am::error_code{});
-                BOOST_TEST(pv2 == publish2);
+                BOOST_TEST(*pv2 == publish2);
                 auto [ec3, pv3] = t3;
                 BOOST_TEST(ec3 == am::error_code{});
-                BOOST_TEST(pv3 == publish3);
+                BOOST_TEST(*pv3 == publish3);
                 auto [ec4, pv4] = t4;
                 BOOST_TEST(ec4 == am::error_code{});
-                BOOST_TEST(pv4 == publish4);
+                BOOST_TEST(*pv4 == publish4);
                 auto [ec5, pv5] = t5;
                 BOOST_TEST(ec5 == am::error_code{});
-                BOOST_TEST(pv5 == publish5);
+                BOOST_TEST(*pv5 == publish5);
 
                 co_await ep.async_close(as::deferred);
                 co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1923,7 +1923,7 @@ BOOST_AUTO_TEST_CASE(publish_cont_bulk_recv_v5) {
     ioc.run();
 }
 
-BOOST_AUTO_TEST_CASE(bulk_recv_chunked) {
+BOOST_AUTO_TEST_CASE(set_buffer_size__recv_chunked) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     as::co_spawn(
@@ -1936,7 +1936,7 @@ BOOST_AUTO_TEST_CASE(bulk_recv_chunked) {
                 version,
                 am::force_move(exe)
             };
-            ep.set_bulk_read_buffer_size(4096);
+            ep.set_read_buffer_size(4096);
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1979,7 +1979,7 @@ BOOST_AUTO_TEST_CASE(bulk_recv_chunked) {
     ioc.run();
 }
 
-BOOST_AUTO_TEST_CASE(bulk_recv_chunked_halfway_payload) {
+BOOST_AUTO_TEST_CASE(bulk_set_buffer_size_recv_chunked_halfway_payload) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     as::co_spawn(
@@ -1992,7 +1992,7 @@ BOOST_AUTO_TEST_CASE(bulk_recv_chunked_halfway_payload) {
                 version,
                 am::force_move(exe)
             };
-            ep.set_bulk_read_buffer_size(4096);
+            ep.set_read_buffer_size(4096);
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{

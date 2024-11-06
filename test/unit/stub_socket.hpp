@@ -147,7 +147,7 @@ struct basic_stub_socket {
                     auto buf = allocate_buffer(packet_begin, packet_end);
                     error_code ec;
                     auto pv = buffer_to_basic_packet_variant<PacketIdBytes>(buf, socket.version_, ec);
-                    if (socket.write_packet_checker_) socket.write_packet_checker_(pv);
+                    if (socket.write_packet_checker_) socket.write_packet_checker_(*pv);
                     it = packet_end;
                     packet_begin = packet_end;
                 }
@@ -218,24 +218,23 @@ struct basic_stub_socket {
                 socket.packet_it_opt_.emplace(begin);
             }
             auto packet_it = *socket.packet_it_opt_;
-            BOOST_ASSERT(
-                static_cast<std::size_t>(std::distance(packet_it, end)) >= mb.size()
-            );
+            auto rest_size = static_cast<std::size_t>(std::distance(packet_it, end));
+            auto copy_size = std::min(rest_size, mb.size());
             std::copy_n(
                 packet_it,
-                mb.size(),
+                copy_size,
                 static_cast<char*>(mb.data())
             );
-            std::advance(packet_it, static_cast<std::ptrdiff_t>(mb.size()));
+            std::advance(packet_it, static_cast<std::ptrdiff_t>(copy_size));
             if (packet_it == end) {
                 // all conttents have read
                 socket.packet_it_opt_.reset();
                 ++socket.recv_packets_it_;
             }
             else {
-                *socket.packet_it_opt_ = packet_it;
+                socket.packet_it_opt_.emplace(packet_it);
             }
-            self.complete(errc::make_error_code(errc::success), mb.size());
+            self.complete(errc::make_error_code(errc::success), copy_size);
         }
     };
 

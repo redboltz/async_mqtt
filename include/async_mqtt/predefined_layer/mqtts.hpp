@@ -33,7 +33,6 @@ namespace protocol {
  */
 using mqtts = as::ssl::stream<mqtt>;
 
-} // namespace protocol
 
 /**
  * @ingroup predefined_layer_mqtts
@@ -64,6 +63,8 @@ async_underlying_handshake(
         typename as::ssl::stream<NextLayer>::executor_type
     >{}
 );
+
+} // namespace protocol
 
 } // namespace async_mqtt
 

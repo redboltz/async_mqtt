@@ -68,7 +68,7 @@ private:
                     return;
                 }
                 BOOST_ASSERT(pv_opt);
-                auto& pv{*pv_opt};0
+                auto& pv{*pv_opt};
                 pv.visit(
                     overload {
                         [&](v3_1_1::connect_packet& p) {

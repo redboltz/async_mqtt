@@ -116,13 +116,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
                     if (ev.get_timer_for() == timer::pingreq_send) {
                         switch (ev.get_op()) {
                         case event_timer::op_type::set:
-                            ep->pingreq_send_interval_ms_.emplace(duration);
+                            set_pingreq_send_timer(ep, ev.get_ms());
                             break;
                         case event_timer::op_type::reset:
-                            reset_pingreq_send_timer(ep);
+                            reset_pingreq_send_timer(ep, ev.get_ms());
                             break;
                         case event_timer::op_type::cancel:
-                            ep->tim_pingreq_send_.cancel();
+                            cancel_pingreq_send_timer(ep);
                             break;
                         }
                     }
@@ -245,13 +245,12 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::initialize() {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
     if constexpr (Role == role::client || Role == role::any) {
         if (ms) {
-            ep->tim_pingreq_send_.cancel();
             ep->tim_pingreq_send_.expires_after(
                 *ms
             );
@@ -307,13 +306,32 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    cancel_pingreq_send_timer(ep);
+    set_pingreq_send_timer(ep, ms);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_send_timer(
+    this_type_sp ep
+) {
+    ep->tim_pingreq_send_.cancel();
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
     if constexpr (Role == role::client || Role == role::any) {
         if (ms) {
-            ep->tim_pingreq_recv_.cancel();
             ep->tim_pingreq_recv_.expires_after(
                 *ms
             );
@@ -354,17 +372,17 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
                                             BOOST_ASSERT(std::get_if<event_close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
-                                                []
+                                                [ep]
                                                 (
                                                     error_code const& /*ec*/,
                                                     std::size_t /*bytes_transferred*/
                                                 ) {
-                                                    ep->async_close(as::detached);
+                                                    async_close(ep, as::detached);
                                                 }
                                             );
                                         },
                                         [&](event_close const&) {
-                                            ep->async_close(as::detached);
+                                            async_close(ep, as::detached);
                                         },
                                         [&](auto const&...) {
                                             BOOST_ASSERT(false);
@@ -379,6 +397,26 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
             );
         }
     }
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
+    this_type_sp ep,
+    std::optional<std::chrono::milliseconds> ms
+) {
+    cancel_pingreq_recv_timer(ep);
+    set_pingreq_recv_timer(ep, ms);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_recv_timer(
+    this_type_sp ep
+) {
+    ep->tim_pingreq_recv_.cancel();
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -431,17 +469,17 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                             BOOST_ASSERT(std::get_if<event_close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
-                                                []
+                                                [ep]
                                                 (
                                                     error_code const& /*ec*/,
                                                     std::size_t /*bytes_transferred*/
                                                 ) {
-                                                    ep->async_close(as::detached);
+                                                    async_close(ep, as::detached);
                                                 }
                                             );
                                         },
                                         [&](event_close const&) {
-                                            ep->async_close(as::detached);
+                                            async_close(ep, as::detached);
                                         },
                                         [&](auto const&...) {
                                             BOOST_ASSERT(false);

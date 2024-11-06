@@ -47,13 +47,13 @@ struct stream_impl<NextLayer>::stream_read_some_op {
                 has_async_read_some<next_layer_type>::value) {
                     layer_customize<next_layer_type>::async_read_some(
                         a_strm.nl_,
-                        a_strm.read_buf_.prepare(a_strm.bulk_read_buffer_size_),
+                        buffers,
                         force_move(self)
                     );
             }
             else {
                 a_strm.nl_.async_read_some(
-                    a_strm.read_buf_.prepare(a_strm.bulk_read_buffer_size_),
+                    buffers,
                     force_move(self)
                 );
             }
@@ -64,18 +64,14 @@ struct stream_impl<NextLayer>::stream_read_some_op {
         }
     }
 
-    // finish bulk read
+    // finish read
     template <typename Self>
     void operator()(
         Self& self,
         error_code const& ec,
         std::size_t bytes_transferred
     ) {
-        auto& a_strm{*strm};
         self.complete(ec, bytes_transferred);
-        if (!ec) {
-            a_strm.read_buf_.commit(bytes_transferred);
-        }
     }
 };
 

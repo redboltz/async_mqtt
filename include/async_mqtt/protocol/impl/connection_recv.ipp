@@ -67,17 +67,17 @@ process_recv_packet() {
         }
 
         error_code ec;
-        auto v = buffer_to_basic_packet_variant<PacketIdBytes>(buf, protocol_version_, ec);
+        auto pv_opt = buffer_to_basic_packet_variant<PacketIdBytes>(buf, protocol_version_, ec);
         if (ec) {
-            if (protocol_version_ == protocol_version::v5) {
-                if constexpr (can_send_as_server(Role)) {
-                    if (ec.category() == get_connect_reason_code_category()) {
-                        status_ = connection_status::connecting;
-                        events.emplace_back(
-                            make_error_code(
-                                static_cast<connect_reason_code>(ec.value())
-                            )
-                        );
+            if constexpr (can_send_as_server(Role)) {
+                if (ec.category() == get_connect_reason_code_category()) {
+                    status_ = connection_status::connecting;
+                    events.emplace_back(
+                        make_error_code(
+                            static_cast<connect_reason_code>(ec.value())
+                        )
+                    );
+                    if (protocol_version_ == protocol_version::v5) {
                         events.emplace_back(
                             basic_event_send<PacketIdBytes>{
                                 v5::connack_packet{
@@ -95,13 +95,15 @@ process_recv_packet() {
                                 static_cast<disconnect_reason_code>(ec.value())
                             )
                         );
-                        events.emplace_back(
-                            basic_event_send<PacketIdBytes>{
-                                v5::disconnect_packet{
-                                    static_cast<disconnect_reason_code>(ec.value())
+                        if (protocol_version_ == protocol_version::v5) {
+                            events.emplace_back(
+                                basic_event_send<PacketIdBytes>{
+                                    v5::disconnect_packet{
+                                        static_cast<disconnect_reason_code>(ec.value())
+                                    }
                                 }
-                            }
-                        );
+                            );
+                        }
                     }
                 }
             }
@@ -110,9 +112,11 @@ process_recv_packet() {
         }
 
         // no errors on packet creation phase
+        BOOST_ASSERT(pv_opt);
+        auto& pv{*pv_opt};
         ASYNC_MQTT_LOG("mqtt_impl", trace)
-            << "recv:" << v;
-        auto result = v.visit(
+            << "recv:" << pv;
+        auto result = pv.visit(
             // do internal protocol processing
             overload {
                 [&](v3_1_1::connect_packet& p) {
@@ -134,7 +138,7 @@ process_recv_packet() {
                         need_store_ = true;
                     }
                     events.emplace_back(
-                        basic_event_packet_received<PacketIdBytes>{v}
+                        basic_event_packet_received<PacketIdBytes>{pv}
                     );
                     return true;
                 },

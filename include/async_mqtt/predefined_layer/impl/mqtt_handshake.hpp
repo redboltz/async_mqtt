@@ -12,6 +12,8 @@
 namespace async_mqtt {
 namespace as = boost::asio;
 
+namespace protocol {
+
 template <
     typename Socket,
     typename Executor
@@ -125,6 +127,8 @@ async_underlying_handshake(
             layer
         );
 }
+
+} // namespace protocol
 
 } // namespace async_mqtt
 

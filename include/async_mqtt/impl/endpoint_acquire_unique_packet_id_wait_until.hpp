@@ -39,7 +39,7 @@ acquire_unique_packet_id_wait_until_op {
         case complete: {
             auto acq_proc =
                 [&] {
-                    pid_opt = a_ep.pid_man_.acquire_unique_id();
+                    pid_opt = a_ep.con_.acquire_unique_packet_id();
                     if (pid_opt) {
                         self.complete(error_code{}, *pid_opt);
                     }

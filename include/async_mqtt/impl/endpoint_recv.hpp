@@ -29,7 +29,7 @@ recv_op {
     using events_it_type = typename events_type::iterator;
     std::shared_ptr<events_type> events = nullptr;
     events_it_type it = events_it_type{};
-    enum { dispatch, read, protocol_read, process_events, sent, complete } state = dispatch;
+    enum { dispatch, read, protocol_read, sent, complete } state = dispatch;
 
     template <typename Self>
     bool process_one_event(
@@ -37,7 +37,7 @@ recv_op {
     ) {
         auto& a_ep{*ep};
         auto& event{*it++};
-        std::visit(
+        return std::visit(
             overload{
                 [&](error_code ec) {
                     decided_error.emplace(ec);
@@ -45,7 +45,9 @@ recv_op {
                 },
                 [&](basic_event_send<PacketIdBytes>& ev) {
                     state = sent;
-                    a_ep.async_send(
+                    auto ep_copy{ep};
+                    async_send(
+                        force_move(ep_copy),
                         force_move(ev.get()),
                         force_move(self)
                     );
@@ -62,8 +64,21 @@ recv_op {
                 },
                 [&](event_timer ev) {
                     switch (ev.get_timer_for()) {
+                    case timer::pingreq_recv:
+                        switch (ev.get_op()) {
+                        case event_timer::op_type::set:
+                            set_pingreq_recv_timer(ep, ev.get_ms());
+                            break;
+                        case event_timer::op_type::reset:
+                            reset_pingreq_recv_timer(ep, ev.get_ms());
+                            break;
+                        case event_timer::op_type::cancel:
+                            cancel_pingreq_recv_timer(ep);
+                            break;
+                        }
+                        break;
                     case timer::pingresp_recv:
-                        if (ev.get_op() == event_timer::op_type::reset) {
+                        if (ev.get_op() == event_timer::op_type::cancel) {
                             reset_pingresp_recv_timer(ep, ev.get_ms());
                         }
                         else {
@@ -78,7 +93,15 @@ recv_op {
                 },
                 [&](event_close) {
                     state = complete;
-                    a_ep.async_close(force_move(self));
+                    auto ep_copy{ep};
+                    async_close(
+                        force_move(ep_copy),
+                        force_move(self)
+                    );
+                    return false;
+                },
+                [](auto const&) {
+                    BOOST_ASSERT(false);
                     return false;
                 }
             },
@@ -106,7 +129,6 @@ recv_op {
             }
             else {
                 decided_error.emplace(ec);
-                state = close;
                 auto ep_copy = ep;
                 a_ep.async_close(
                     force_move(ep_copy),
@@ -126,37 +148,51 @@ recv_op {
         } break;
         case read: {
             state = protocol_read;
-            a_ep.mbs_ = a_ep.read_buf_.prepare(a_ep.bulk_read_buffer_size_);
+            a_ep.mbs_ = a_ep.read_buf_.prepare(a_ep.read_buffer_size_);
             a_ep.stream_.async_read_some(
                 a_ep.mbs_,
                 force_move(self)
             );
         } break;
         case protocol_read: {
-            state = process_events;
-            auto b = as::buffer_sequence_begin(a_ep.mbs_);
-            auto e = std::next(b, bytes_transferred);
+            auto b = as::buffers_iterator<as::streambuf::mutable_buffers_type>::begin(a_ep.mbs_);
+            auto e = std::next(b, std::ptrdiff_t(bytes_transferred));
             events = std::make_shared<events_type>(a_ep.con_.recv(b, e));
-            for (it = events->begin(); it != events->end(); ++it) {
+            a_ep.read_buf_.commit(bytes_transferred);
+            it = events->begin();
+            while (it != events->end()) {
                 if (!process_one_event(self)) return;
             }
             state = complete; // all events processed
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
         } break;
         case sent: {
-            for (it = events->begin(); it != events->end(); ++it) {
+            while (it != events->end()) {
                 if (!process_one_event(self)) return;
             }
             state = complete; // all events processed
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
         } break;
         case complete: {
-            error_code ret_rc;
-            if (decided_error) ret_rc = *decided_error;
-            basic_packet_variant<PacketIdBytes> ret_packet;
-            if (recv_packet) ret_packet = force_move(*recv_packet);
-            self.complete(
-                ec,
-                force_move(recv_packet)
-            );
+            if (decided_error) {
+                self.complete(
+                    *decided_error,
+                    std::nullopt
+                );
+            }
+            else {
+                BOOST_ASSERT(recv_packet);
+                self.complete(
+                    error_code{},
+                    force_move(recv_packet)
+                );
+            }
         } break;
         default:
             BOOST_ASSERT(false);

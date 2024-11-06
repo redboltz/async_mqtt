@@ -12,6 +12,8 @@
 namespace async_mqtt {
 namespace as = boost::asio;
 
+namespace protocol {
+
 template <typename NextLayer>
 struct ws_handshake_op {
     ws_handshake_op(
@@ -140,6 +142,7 @@ async_underlying_handshake(
         );
 }
 
+} // namespace protocol
 
 } // namespace async_mqtt
 

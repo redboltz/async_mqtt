@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(recv_filter) {
     {
         auto [ec, pv] = ep.async_recv(am::filter::match, {am::control_packet_type::connack}, as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     ep.async_close(as::as_tuple(as::use_future)).get();

@@ -127,6 +127,51 @@ has_receive_maximum_vacancy_for_send() const {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_auto_pub_response(bool val) {
+    auto_pub_response_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_auto_ping_response(bool val) {
+    auto_ping_response_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_auto_map_topic_alias_send(bool val) {
+    auto_map_topic_alias_send_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_auto_replace_topic_alias_send(bool val) {
+    auto_replace_topic_alias_send_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+set_pingresp_recv_timeout(std::chrono::milliseconds duration) {
+    if (duration == std::chrono::milliseconds::zero()) {
+        pingresp_recv_timeout_ms_.reset();
+    }
+    else {
+        pingresp_recv_timeout_ms_.emplace(duration);
+    }
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
 std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_connection_impl<Role, PacketIdBytes>::
 acquire_unique_packet_id() {
@@ -150,7 +195,7 @@ basic_connection_impl<Role, PacketIdBytes>::
 release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) {
-    pid_man_.relase_id(packet_id);
+    pid_man_.release_id(packet_id);
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -212,13 +257,22 @@ get_protocol_version() const {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
+bool
+basic_connection_impl<Role, PacketIdBytes>::
+is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const {
+    return qos2_publish_processing_.find(pid) != qos2_publish_processing_.end();
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
 error_code
 basic_connection_impl<Role, PacketIdBytes>::
 regulate_for_store(
     v5::basic_publish_packet<PacketIdBytes>& packet
 ) const {
     if (packet.topic().empty()) {
-        if (auto ta_opt = get_topic_alias(packet.props())) {
+        if (auto ta_opt =
+            get_topic_alias(packet.props())) {
             auto topic = topic_alias_send_->find_without_touch(*ta_opt);
             if (topic.empty()) {
                 return make_error_code(
@@ -392,6 +446,61 @@ has_receive_maximum_vacancy_for_send() const {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_auto_pub_response(
+    bool val
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_auto_pub_response(val);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_auto_ping_response(
+    bool val
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_auto_ping_response(val);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_auto_map_topic_alias_send(
+    bool val
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_auto_map_topic_alias_send(val);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_auto_replace_topic_alias_send(
+    bool val
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_auto_replace_topic_alias_send(val);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_pingresp_recv_timeout(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_pingresp_recv_timeout(duration);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
 std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
 basic_connection<Role, PacketIdBytes>::
 acquire_unique_packet_id() {
@@ -468,6 +577,15 @@ basic_connection<Role, PacketIdBytes>::
 get_protocol_version() const {
     BOOST_ASSERT(impl_);
     return impl_->get_protocol_version();
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+bool
+basic_connection<Role, PacketIdBytes>::
+is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const {
+    BOOST_ASSERT(impl_);
+    return impl_->is_publish_processing(pid);
 }
 
 template <role Role, std::size_t PacketIdBytes>

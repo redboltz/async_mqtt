@@ -93,7 +93,7 @@ public:
 private:
 
     template <std::size_t PacketIdBytesArg>
-    friend basic_packet_variant<PacketIdBytesArg>
+    friend std::optional<basic_packet_variant<PacketIdBytesArg>>
     async_mqtt::buffer_to_basic_packet_variant(buffer buf, protocol_version ver, error_code& ec);
 
 #if defined(ASYNC_MQTT_UNIT_TEST_FOR_PACKET)

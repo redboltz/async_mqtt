@@ -39,6 +39,50 @@ public:
     bool has_receive_maximum_vacancy_for_send() const;
 
     /**
+     * @brief auto publish response setter.
+     * @note By default not automatically sending.
+     * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
+     */
+    void set_auto_pub_response(bool val);
+
+    /**
+     * @brief auto publish response setter.
+     * @note By default not automatically sending.
+     * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
+     */
+    void set_auto_ping_response(bool val);
+
+    /**
+     * @brief auto map (allocate) topic alias on send PUBLISH packet.
+     * If all topic aliases are used, then overwrite by LRU algorithm.
+     * \n This function should be called before async_send() call.
+     * @note By default not automatically mapping.
+     * @param val if true, enable auto mapping, otherwise disable.
+     */
+    void set_auto_map_topic_alias_send(bool val);
+
+    /**
+     * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
+     * Registering topic alias need to do manually.
+     * \n This function should be called before async_send() call.
+     * @note By default not automatically replacing.
+     * @param val if true, enable auto replacing, otherwise disable.
+     */
+    void set_auto_replace_topic_alias_send(bool val);
+
+    /**
+     * @brief Set timeout for receiving PINGRESP packet after PINGREQ packet is sent.
+     * If the timer is fired, then the underlying layer is closed from the client side.
+     * If the protocol_version is v5, then send DISCONNECT packet with the reason code
+     * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
+     * \n This function should be called before async_send() call.
+     * @note By default timeout is not set.
+     * @param duration if zero, timer is not set; otherwise duration is set.
+     *                 The minimum resolution is in milliseconds.
+     */
+    void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
+
+    /**
      * @brief acuire unique packet_id.
      * @return std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
      * if acquired return acquired packet id, otherwise std::nullopt

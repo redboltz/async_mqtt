@@ -34,7 +34,7 @@ release_packet_id_op {
             );
         } break;
         case complete:
-            a_ep.release_pid(packet_id);
+            a_ep.con_.release_packet_id(packet_id);
             state = complete;
             self.complete();
             break;
@@ -49,7 +49,7 @@ inline
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
-    release_pid(packet_id);
+    con_.release_packet_id(packet_id);
 }
 
 } // namespace detail

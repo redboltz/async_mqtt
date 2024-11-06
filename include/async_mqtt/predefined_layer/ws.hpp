@@ -28,9 +28,6 @@ namespace protocol {
  */
 using ws = bs::websocket::stream<mqtt>;
 
-} // namespace protocol
-
-
 /**
  * @ingroup predefined_layer_ws
  * @brief Websocket handshake
@@ -93,6 +90,8 @@ async_underlying_handshake(
         typename bs::websocket::stream<NextLayer>::executor_type
     >{}
 );
+
+} // namespace protocol
 
 } // namespace async_mqtt
 

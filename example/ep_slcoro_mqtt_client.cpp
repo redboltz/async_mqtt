@@ -35,26 +35,25 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, am::packet_variant{});
+            proc({}, std::nullopt);
         }
         void operator()(am::error_code const& ec) const {
-            proc(ec, am::packet_variant{});
+            proc(ec, std::nullopt);
         }
-        void operator()(am::error_code const& ec, am::packet_variant pv) const {
+        void operator()(am::error_code const& ec, std::optional<am::packet_variant> pv) const {
             proc(ec, am::force_move(pv));
         }
     private:
         void proc(
             am::error_code const& ec,
-            am::packet_variant pv
+            std::optional<am::packet_variant> pv
         ) const {
 
             reenter (coro_) {
                 std::cout << "start" << std::endl;
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
-                yield am::async_underlying_handshake(
-                    app_.amep_.next_layer(),
+                yield app_.amep_.async_underlying_handshake(
                     app_.host_,
                     app_.port_,
                     *this
@@ -91,7 +90,7 @@ private:
                     return;
                 }
                 BOOST_ASSERT(pv);
-                pv.visit(
+                pv->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             std::cout
@@ -122,7 +121,7 @@ private:
                     return;
                 }
                 BOOST_ASSERT(pv);
-                pv.visit(
+                pv->visit(
                     am::overload {
                         [&](am::v3_1_1::suback_packet const& p) {
                             std::cout
@@ -160,7 +159,7 @@ private:
                         return;
                     }
                     BOOST_ASSERT(pv);
-                    pv.visit(
+                    pv->visit(
                         am::overload {
                             [&](am::v3_1_1::publish_packet const& p) {
                                 std::cout

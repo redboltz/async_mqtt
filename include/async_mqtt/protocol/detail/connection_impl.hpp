@@ -48,6 +48,16 @@ public:
 
     bool has_receive_maximum_vacancy_for_send() const;
 
+    void set_auto_pub_response(bool val);
+
+    void set_auto_ping_response(bool val);
+
+    void set_auto_map_topic_alias_send(bool val);
+
+    void set_auto_replace_topic_alias_send(bool val);
+
+    void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
+
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
 
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
@@ -69,6 +79,8 @@ public:
     error_code regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes>& packet
     ) const;
+
+    bool is_publish_processing(typename basic_packet_id_type<PacketIdBytes>::type pid) const;
 
     connection_status get_connection_status() const;
 
@@ -99,7 +111,7 @@ private:
     validate_maximum_packet_size(std::size_t size);
 
     std::optional<topic_alias_type>
-    get_topic_alias(properties const& props);
+    static get_topic_alias(properties const& props);
 
     static constexpr bool can_send_as_client(role r);
     static constexpr bool can_send_as_server(role r);

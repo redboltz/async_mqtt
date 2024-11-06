@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // register packet_id for testing
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send disconnect
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // offline publish success
@@ -815,7 +815,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -934,7 +934,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -1245,7 +1245,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // offline publish success
@@ -1560,7 +1560,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send valid packets
@@ -1691,7 +1691,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send disconnect
@@ -2123,7 +2123,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // offline publish success
@@ -2326,7 +2326,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send auth
@@ -2466,7 +2466,7 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -2620,8 +2620,6 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         am::auth_reason_code::continue_authentication,
         am::properties{}
     };
-
-    auto close = am::packet_variant{};
 
     ep.next_layer().set_recv_packets(
         {
@@ -2817,7 +2815,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // offline publish success

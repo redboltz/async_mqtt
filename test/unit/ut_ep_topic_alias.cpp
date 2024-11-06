@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(send_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     auto [ec1, pid1] = ep.async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
@@ -392,7 +392,7 @@ BOOST_AUTO_TEST_CASE(send_server) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -638,7 +638,7 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     auto [ec1, pid1] = ep.async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
@@ -865,7 +865,7 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
 
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     auto [ec1, pid1] = ep.async_acquire_unique_packet_id(as::as_tuple(as::use_future)).get();
@@ -1041,7 +1041,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
                 auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
                 BOOST_TEST(!ec);
 
-                BOOST_TEST(connack == pv);
+                BOOST_TEST(connack == *pv);
             }
         };
 
@@ -1218,7 +1218,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
 
-        BOOST_TEST(publish_reg_t1 == pv);
+        BOOST_TEST(publish_reg_t1 == *pv);
     }
 
     // recv publish_use_ta1
@@ -1226,7 +1226,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
 
-        BOOST_TEST(publish_exp_t1 == pv);
+        BOOST_TEST(publish_exp_t1 == *pv);
     }
 
     // recv publish_reg_t2
@@ -1234,7 +1234,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
 
-        BOOST_TEST(publish_reg_t2 == pv);
+        BOOST_TEST(publish_reg_t2 == *pv);
     }
 
     // recv publish_use_ta2
@@ -1242,7 +1242,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
 
-        BOOST_TEST(publish_exp_t2 == pv);
+        BOOST_TEST(publish_exp_t2 == *pv);
     }
 
 
@@ -1260,7 +1260,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv publish_reg_t3 (invalid)
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
@@ -1268,7 +1268,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv close
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
@@ -1288,7 +1288,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv publish_use_ta3
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
@@ -1296,7 +1296,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     // recv close
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
@@ -1306,21 +1306,21 @@ BOOST_AUTO_TEST_CASE(recv_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_reg_t1_again == pv);
+        BOOST_TEST(publish_reg_t1_again == *pv);
     }
 
     // recv publish_upd_t3
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_upd_t3 == pv);
+        BOOST_TEST(publish_upd_t3 == *pv);
     }
 
     // recv publish_use_ta1
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_exp_t3 == pv);
+        BOOST_TEST(publish_exp_t3 == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
@@ -1381,7 +1381,7 @@ BOOST_AUTO_TEST_CASE(recv_server) {
             {
                 auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
                 BOOST_TEST(!ec);
-                BOOST_TEST(connect == pv);
+                BOOST_TEST(connect == *pv);
             }
 
             // send connack
@@ -1555,28 +1555,28 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_reg_t1 == pv);
+        BOOST_TEST(publish_reg_t1 == *pv);
     }
 
     // recv publish_use_ta1
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_exp_t1 == pv);
+        BOOST_TEST(publish_exp_t1 == *pv);
     }
 
     // recv publish_reg_t2
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_reg_t2 == pv);
+        BOOST_TEST(publish_reg_t2 == *pv);
     }
 
     // recv publish_use_ta2
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_exp_t2 == pv);
+        BOOST_TEST(publish_exp_t2 == *pv);
     }
 
     bool close_called = false;
@@ -1593,14 +1593,14 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     // recv publish_reg_t3 (invalid)
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
     // recv close
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
@@ -1619,14 +1619,14 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     // recv publish_use_ta3
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
     // recv close
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(pv.get_if<std::monostate>() != nullptr);
+        BOOST_TEST(!pv);
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
@@ -1635,14 +1635,14 @@ BOOST_AUTO_TEST_CASE(recv_server) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_upd_t3 == pv);
+        BOOST_TEST(publish_upd_t3 == *pv);
     }
 
     // recv publish_use_ta1
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_exp_t3 == pv);
+        BOOST_TEST(publish_exp_t3 == *pv);
     }
 
     ep.async_close(as::as_tuple(as::use_future)).get();
@@ -1705,7 +1705,7 @@ BOOST_AUTO_TEST_CASE(send_error) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     {

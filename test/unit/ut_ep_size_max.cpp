@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(client_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // size: 21bytes
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(client_send_no_store) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // size: 21bytes
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // size: 21bytes
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(client_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
 
     // recv publish2
@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(server_recv) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(publish_1_q1 == pv);
+        BOOST_TEST(publish_1_q1 == *pv);
     }
 
     // recv publish2
@@ -567,7 +567,7 @@ BOOST_AUTO_TEST_CASE(server_send) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack

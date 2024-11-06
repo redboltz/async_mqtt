@@ -74,7 +74,7 @@ buffer_to_basic_packet_variant(
                 return v5::connect_packet(force_move(buf), ec);
             default:
                 ec = make_error_code(connect_reason_code::unsupported_protocol_version);
-                return basic_packet_variant<PacketIdBytes>{};
+                return std::nullopt;
             }
         } break;
     case control_packet_type::connack:
@@ -85,7 +85,7 @@ buffer_to_basic_packet_variant(
             return v5::connack_packet(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::publish:
@@ -96,7 +96,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_publish_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::puback:
@@ -107,7 +107,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_puback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::pubrec:
@@ -118,7 +118,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_pubrec_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::pubrel:
@@ -129,7 +129,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_pubrel_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::pubcomp:
@@ -140,7 +140,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_pubcomp_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::subscribe:
@@ -151,7 +151,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_subscribe_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::suback:
@@ -162,7 +162,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_suback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::unsubscribe:
@@ -173,7 +173,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_unsubscribe_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::unsuback:
@@ -184,7 +184,7 @@ buffer_to_basic_packet_variant(
             return v5::basic_unsuback_packet<PacketIdBytes>(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::pingreq:
@@ -195,7 +195,7 @@ buffer_to_basic_packet_variant(
             return v5::pingreq_packet(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::pingresp:
@@ -206,7 +206,7 @@ buffer_to_basic_packet_variant(
             return v5::pingresp_packet(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::disconnect:
@@ -217,7 +217,7 @@ buffer_to_basic_packet_variant(
             return v5::disconnect_packet(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     case control_packet_type::auth:
@@ -226,7 +226,7 @@ buffer_to_basic_packet_variant(
             return v5::auth_packet(force_move(buf), ec);
         default:
             ec = make_error_code(disconnect_reason_code::protocol_error);
-            return basic_packet_variant<PacketIdBytes>{};
+            return std::nullopt;
         }
         break;
     default:
