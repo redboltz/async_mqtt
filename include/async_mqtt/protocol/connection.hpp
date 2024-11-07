@@ -39,6 +39,14 @@ public:
     bool has_receive_maximum_vacancy_for_send() const;
 
     /**
+     * @brief set offline publish support
+     * \n This function should be called before async_send() call.
+     * @note By default offline publish is not supported.
+     * @param val if true, offline publish is supported, otherwise not supported
+     */
+    void set_offline_publish(bool val);
+
+    /**
      * @brief auto publish response setter.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent

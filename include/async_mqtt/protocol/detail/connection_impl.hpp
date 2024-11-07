@@ -30,6 +30,8 @@ class basic_connection_impl {
 public:
     explicit basic_connection_impl(protocol_version ver);
 
+    void notify_handshaked();
+
     template <typename Packet>
     std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
@@ -47,6 +49,8 @@ public:
     );
 
     bool has_receive_maximum_vacancy_for_send() const;
+
+    void set_offline_publish(bool val);
 
     void set_auto_pub_response(bool val);
 
@@ -129,6 +133,7 @@ private:
     bool need_store_ = false;
     store<PacketIdBytes> store_;
 
+    bool offline_publish_ = false;
     bool auto_pub_response_ = false;
     bool auto_ping_response_ = false;
 
@@ -146,7 +151,7 @@ private:
     std::uint32_t maximum_packet_size_send_{packet_size_no_limit};
     std::uint32_t maximum_packet_size_recv_{packet_size_no_limit};
 
-    connection_status status_{connection_status::closed};
+    connection_status status_{connection_status::disconnected};
 
     std::optional<std::chrono::milliseconds> pingreq_send_interval_ms_;
     std::optional<std::chrono::milliseconds> pingreq_recv_timeout_ms_;

@@ -467,6 +467,9 @@ process_recv_packet() {
                 [&](v3_1_1::basic_puback_packet<PacketIdBytes>& p) {
                     auto packet_id = p.packet_id();
                     if (pid_puback_.erase(packet_id)) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
                         store_.erase(response_packet::v3_1_1_puback, packet_id);
                         pid_man_.release_id(packet_id);
                         events.emplace_back(
@@ -816,14 +819,14 @@ process_recv_packet() {
                     events.emplace_back(
                         basic_event_packet_received<PacketIdBytes>{p}
                     );
-                    status_ = connection_status::disconnecting;
+                    status_ = connection_status::disconnected;
                     return true;
                 },
                 [&](v5::disconnect_packet& p) {
                     events.emplace_back(
                         basic_event_packet_received<PacketIdBytes>{p}
                     );
-                    status_ = connection_status::disconnecting;
+                    status_ = connection_status::disconnected;
                     return true;
                 },
                 [&](v5::auth_packet& p) {

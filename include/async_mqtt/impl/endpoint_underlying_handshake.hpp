@@ -10,10 +10,8 @@
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/back.hpp>
 #include <boost/hana/drop_back.hpp>
-#include <boost/hana/unpack.hpp>
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/predefined_layer/mqtt.hpp>
 
 namespace async_mqtt {
 
@@ -44,18 +42,12 @@ underlying_handshake_op {
         } break;
         case underlying_handshake:
             state = complete;
-            hana::unpack(
-                std::move(args),
-                [&](auto&&... rest_args) {
-                    ASYNC_MQTT_LOG("mqtt_api", info)
-                        << ASYNC_MQTT_ADD_VALUE(address, this)
-                        << "underlying_handshake";
-                    return protocol::async_underlying_handshake(
-                        a_ep.next_layer(),
-                        std::forward<decltype(rest_args)>(rest_args)...,
-                        force_move(self)
-                    );
-                }
+            ASYNC_MQTT_LOG("mqtt_api", info)
+                << ASYNC_MQTT_ADD_VALUE(address, this)
+                << "underlying_handshake";
+            a_ep.stream_.async_underlying_handshake(
+                force_move(args),
+                force_move(self)
             );
             break;
         case complete:

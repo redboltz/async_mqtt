@@ -118,7 +118,7 @@ struct basic_stub_socket {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_write_some_impl<ConstBufferSequence>{
+            async_write_some_op<ConstBufferSequence>{
                 *this,
                 buffers
             },
@@ -128,7 +128,7 @@ struct basic_stub_socket {
     }
 
     template <typename ConstBufferSequence>
-    struct async_write_some_impl {
+    struct async_write_some_op {
         this_type& socket;
         ConstBufferSequence buffers;
 
@@ -165,7 +165,7 @@ struct basic_stub_socket {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_some_impl<MutableBufferSequence>{
+            async_read_some_op<MutableBufferSequence>{
                 *this,
                 mb
             },
@@ -175,7 +175,7 @@ struct basic_stub_socket {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_some_impl {
+    struct async_read_some_op {
         this_type& socket;
         MutableBufferSequence mb;
         enum { read, complete } state = read;
@@ -241,7 +241,7 @@ struct basic_stub_socket {
 private:
 
     template <typename MutableBufferSequence>
-    friend struct async_read_some_impl;
+    friend struct async_read_some_op;
     protocol_version version_;
     as::any_io_executor exe_;
     packet_queue_t recv_packets_;
@@ -277,6 +277,56 @@ void async_read(
 template <>
 struct layer_customize<stub_socket> {
     template <
+        typename CompletionToken
+    >
+    static auto
+    async_handshake(
+        stub_socket& stream,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            async_handshake_op{
+                stream
+            },
+            token,
+            stream
+        );
+    }
+
+    struct async_handshake_op {
+        enum {dispatch, complete} state = dispatch;
+        async_handshake_op(
+            stub_socket& stream
+        ): stream{stream}
+        {}
+
+        stub_socket& stream;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case dispatch: {
+                state = complete;
+                auto& a_stream{stream};
+                as::dispatch(
+                    a_stream.get_executor(),
+                    force_move(self)
+                );
+            } break;
+            case complete:
+                self.complete(error_code{});
+                break;
+            }
+        }
+    };
+
+    template <
         typename MutableBufferSequence,
         typename CompletionToken
     >
@@ -290,7 +340,7 @@ struct layer_customize<stub_socket> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_impl{
+            async_read_op{
                 stream,
                 mbs
             },
@@ -300,8 +350,8 @@ struct layer_customize<stub_socket> {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_impl {
-        async_read_impl(
+    struct async_read_op {
+        async_read_op(
             stub_socket& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}
@@ -314,7 +364,7 @@ struct layer_customize<stub_socket> {
         void operator()(
             Self& self
         ) {
-            return stream.async_read_some(
+            stream.async_read_some(
                 mbs,
                 force_move(self)
             );
@@ -377,7 +427,7 @@ struct layer_customize<basic_stub_socket<4>> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_impl{
+            async_read_op{
                 stream,
                 mbs
             },
@@ -387,8 +437,8 @@ struct layer_customize<basic_stub_socket<4>> {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_impl {
-        async_read_impl(
+    struct async_read_op {
+        async_read_op(
             basic_stub_socket<4>& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}
@@ -401,7 +451,7 @@ struct layer_customize<basic_stub_socket<4>> {
         void operator()(
             Self& self
         ) {
-            return stream.async_read_some(
+            stream.async_read_some(
                 mbs,
                 force_move(self)
             );

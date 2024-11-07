@@ -35,9 +35,7 @@ send(Packet packet) {
                 }
                 if constexpr(Role == role::client || Role == role::any) {
                     if (is_client_ && pingreq_send_interval_ms_) {
-                        if (status_ == connection_status::disconnecting ||
-                            status_ == connection_status::closing ||
-                            status_ == connection_status::closed) return;
+                        if (status_ == connection_status::disconnected) return;
 
                         events.emplace_back(
                             event_timer{
@@ -109,7 +107,7 @@ process_send_packet(
 
     // connection status check
     if constexpr(is_connect<ActualPacket>()) {
-        if (status_ != connection_status::closed) {
+        if (status_ != connection_status::disconnected) {
             events.emplace_back(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
@@ -145,8 +143,7 @@ process_send_packet(
         }
     }
     else if constexpr(std::is_same_v<v5::auth_packet, ActualPacket>) {
-        if (status_ != connection_status::connected &&
-            status_ != connection_status::connecting) {
+        if (status_ == connection_status::disconnected) {
             events.emplace_back(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
@@ -266,7 +263,7 @@ process_send_packet(
             status_ = connection_status::connected;
         }
         else {
-            status_ = connection_status::disconnecting;
+            status_ = connection_status::disconnected;
         }
     }
 
@@ -295,7 +292,7 @@ process_send_packet(
             }
         }
         else {
-            status_ = connection_status::disconnecting;
+            status_ = connection_status::disconnected;
         }
     }
 
@@ -305,8 +302,14 @@ process_send_packet(
             actual_packet.opts().get_qos() == qos::exactly_once
         ) {
             auto packet_id = actual_packet.packet_id();
+            // TBD use error report instead of assert
             BOOST_ASSERT(pid_man_.is_used_id(packet_id));
-            if (need_store_) {
+            if (need_store_ &&
+                (
+                    status_ != connection_status::disconnected ||
+                    offline_publish_
+                )
+            ) {
                 if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
                     auto ta_opt = get_topic_alias(actual_packet.props());
                     if (actual_packet.topic().empty()) {
@@ -577,7 +580,7 @@ process_send_packet(
     }
 
     if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
-        status_ = connection_status::disconnecting;
+        status_ = connection_status::disconnected;
         events.emplace_back(
             basic_event_send<PacketIdBytes>{
                 force_move(actual_packet),
@@ -590,23 +593,31 @@ process_send_packet(
 
     if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
         if (status_ != connection_status::connected) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
-                << "publish message try to send but not connected";
-            events.emplace_back(
-                make_error_code(
-                    mqtt_error::packet_not_allowed_to_send
-                )
-            );
-            if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
-                auto packet_id = actual_packet.packet_id();
-                if (packet_id != 0) {
-                    pid_man_.release_id(packet_id);
-                    events.emplace_back(
-                        basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                    );
-                }
+            if (offline_publish_) {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << "publish message is not sent but stored";
+
+                return true;
             }
-            return false;
+            else {
+                ASYNC_MQTT_LOG("mqtt_impl", error)
+                    << "publish message try to send but not connected";
+                events.emplace_back(
+                    make_error_code(
+                        mqtt_error::packet_not_allowed_to_send
+                    )
+                );
+                if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
+                    auto packet_id = actual_packet.packet_id();
+                    if (packet_id != 0) {
+                        pid_man_.release_id(packet_id);
+                        events.emplace_back(
+                            basic_event_packet_id_released<PacketIdBytes>{packet_id}
+                        );
+                    }
+                }
+                return false;
+            }
         }
     }
 

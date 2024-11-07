@@ -110,6 +110,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -231,6 +237,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!pv);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -287,6 +299,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -536,6 +550,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     {
         auto [ec] = ep.async_send(pingreq, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -990,6 +1010,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -1534,6 +1556,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1676,6 +1704,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!pv);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1732,6 +1766,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -2019,6 +2055,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     {
         auto [ec] = ep.async_send(auth, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -2522,6 +2564,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start

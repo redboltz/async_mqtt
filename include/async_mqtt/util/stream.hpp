@@ -80,6 +80,16 @@ public:
     }
 
     template <
+        typename ArgsTuple,
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+    auto
+    async_underlying_handshake(
+        ArgsTuple&& args_tuple,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
+    template <
         typename MutableBufferSequence,
         typename CompletionToken = as::default_completion_token_t<executor_type>
     >
@@ -143,6 +153,7 @@ private:
 
 } // namespace async_mqtt
 
+#include <async_mqtt/util/impl/stream_underlying_handshake.hpp>
 #include <async_mqtt/util/impl/stream_read.hpp>
 #include <async_mqtt/util/impl/stream_write_packet.hpp>
 #include <async_mqtt/util/impl/stream_close.hpp>

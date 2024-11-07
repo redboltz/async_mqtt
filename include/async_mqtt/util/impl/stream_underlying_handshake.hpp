@@ -4,26 +4,31 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_UTIL_IMPL_STREAM_READ_HPP)
-#define ASYNC_MQTT_UTIL_IMPL_STREAM_READ_HPP
+#if !defined(ASYNC_MQTT_UTIL_IMPL_STREAM_UNDERLYING_HANDSHAKE_HPP)
+#define ASYNC_MQTT_UTIL_IMPL_STREAM_UNDERLYING_HANDSHAKE_HPP
 
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 
+#include <boost/hana/tuple.hpp>
+#include <boost/hana/unpack.hpp>
+
 namespace async_mqtt {
+
+namespace hana = boost::hana;
 
 namespace detail {
 
 template <typename NextLayer>
-template <typename MutableBufferSequence>
-struct stream_impl<NextLayer>::stream_read_some_op {
+template <typename ArgsTuple>
+struct stream_impl<NextLayer>::stream_underlying_handshake_op {
     using stream_type = this_type;
     using stream_type_sp = std::shared_ptr<stream_type>;
     using next_layer_type = stream_type::next_layer_type;
 
     std::shared_ptr<stream_type> strm;
-    MutableBufferSequence const& buffers;
+    ArgsTuple args;
 
     enum { dispatch, work, complete } state = dispatch;
 
@@ -42,21 +47,17 @@ struct stream_impl<NextLayer>::stream_read_some_op {
         } break;
         case work: {
             state = complete;
-            // start bulk read
-            if constexpr (
-                has_async_read_some<next_layer_type>::value) {
-                    layer_customize<next_layer_type>::async_read_some(
+            hana::unpack(
+                std::move(args),
+                [&](auto&&... rest_args) {
+                    layer_customize<next_layer_type>::async_handshake(
                         a_strm.nl_,
-                        buffers,
+                        std::forward<decltype(rest_args)>(rest_args)...,
                         force_move(self)
                     );
-            }
-            else {
-                a_strm.nl_.async_read_some(
-                    buffers,
-                    force_move(self)
-                );
-            }
+                }
+            );
+            break;
         } break;
         default:
             BOOST_ASSERT(false);
@@ -64,14 +65,13 @@ struct stream_impl<NextLayer>::stream_read_some_op {
         }
     }
 
-    // finish read
+    // finish underlying_handshake
     template <typename Self>
     void operator()(
         Self& self,
-        error_code const& ec,
-        std::size_t bytes_transferred
+        error_code const& ec
     ) {
-        self.complete(ec, bytes_transferred);
+        self.complete(ec);
     }
 };
 
@@ -79,23 +79,23 @@ struct stream_impl<NextLayer>::stream_read_some_op {
 
 template <typename NextLayer>
 template <
-    typename MutableBufferSequence,
+    typename ArgsTuple,
     typename CompletionToken
 >
 auto
-stream<NextLayer>::async_read_some(
-    MutableBufferSequence const& buffers,
+stream<NextLayer>::async_underlying_handshake(
+    ArgsTuple&& args_tuple,
     CompletionToken&& token
 ) {
     BOOST_ASSERT(impl_);
     return
         as::async_compose<
             CompletionToken,
-            void(error_code, std::size_t)
+            void(error_code)
         >(
-            typename impl_type::template stream_read_some_op<MutableBufferSequence>{
+            typename impl_type::template stream_underlying_handshake_op<ArgsTuple>{
                 impl_,
-                buffers
+                std::forward<ArgsTuple>(args_tuple)
             },
             token,
             get_executor()
@@ -105,4 +105,4 @@ stream<NextLayer>::async_read_some(
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_UTIL_IMPL_STREAM_READ_HPP
+#endif // ASYNC_MQTT_UTIL_IMPL_STREAM_UNDERLYING_HANDSHAKE_HPP

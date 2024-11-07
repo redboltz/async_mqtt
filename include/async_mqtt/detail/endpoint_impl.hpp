@@ -64,6 +64,7 @@ public:
     lowest_layer_type const& lowest_layer() const;
     lowest_layer_type& lowest_layer();
 
+    void set_offline_publish(bool val);
     void set_auto_pub_response(bool val);
     void set_auto_ping_response(bool val);
     void set_auto_map_topic_alias_send(bool val);

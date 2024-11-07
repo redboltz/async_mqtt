@@ -71,7 +71,7 @@ struct cpp20coro_basic_stub_socket {
             CompletionToken,
             void()
         > (
-            emulate_recv_impl{
+            emulate_recv_op{
                 *this,
                 error_packet{std::forward<T>(t)}
             },
@@ -96,7 +96,7 @@ struct cpp20coro_basic_stub_socket {
             CompletionToken,
             void(error_code, std::optional<packet_variant_type>)
         > (
-            wait_response_impl{
+            wait_response_op{
                 *this
             },
             token,
@@ -104,7 +104,7 @@ struct cpp20coro_basic_stub_socket {
         );
     }
 
-    struct emulate_recv_impl {
+    struct emulate_recv_op {
         this_type& socket;
         error_packet epk;
 
@@ -127,7 +127,7 @@ struct cpp20coro_basic_stub_socket {
         }
     };
 
-    struct wait_response_impl {
+    struct wait_response_op {
         this_type& socket;
 
         template <typename Self>
@@ -181,7 +181,7 @@ struct cpp20coro_basic_stub_socket {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_write_some_impl<ConstBufferSequence>{
+            async_write_some_op<ConstBufferSequence>{
                 *this,
                 buffers
             },
@@ -191,7 +191,7 @@ struct cpp20coro_basic_stub_socket {
     }
 
     template <typename ConstBufferSequence>
-    struct async_write_some_impl {
+    struct async_write_some_op {
         this_type& socket;
         ConstBufferSequence buffers;
 
@@ -237,7 +237,7 @@ struct cpp20coro_basic_stub_socket {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_some_impl<MutableBufferSequence>{
+            async_read_some_op<MutableBufferSequence>{
                 *this,
                 mb
             },
@@ -247,7 +247,7 @@ struct cpp20coro_basic_stub_socket {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_some_impl {
+    struct async_read_some_op {
         this_type& socket;
         MutableBufferSequence mb;
         enum { read, complete } state = read;
@@ -327,6 +327,7 @@ using cpp20coro_stub_socket = cpp20coro_basic_stub_socket<2>;
 
 template <>
 struct layer_customize<cpp20coro_stub_socket> {
+
     template <
         typename MutableBufferSequence,
         typename CompletionToken
@@ -341,7 +342,7 @@ struct layer_customize<cpp20coro_stub_socket> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_impl{
+            async_read_op{
                 stream,
                 mbs
             },
@@ -351,8 +352,8 @@ struct layer_customize<cpp20coro_stub_socket> {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_impl {
-        async_read_impl(
+    struct async_read_op {
+        async_read_op(
             cpp20coro_stub_socket& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}
@@ -395,7 +396,7 @@ struct layer_customize<cpp20coro_stub_socket> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_write_impl{
+            async_write_op{
                 stream,
                 cbs
             },
@@ -405,8 +406,8 @@ struct layer_customize<cpp20coro_stub_socket> {
     }
 
     template <typename ConstBufferSequence>
-    struct async_write_impl {
-        async_write_impl(
+    struct async_write_op {
+        async_write_op(
             cpp20coro_stub_socket& stream,
             ConstBufferSequence const& cbs
         ): stream{stream}, cbs{cbs}
@@ -447,14 +448,14 @@ struct layer_customize<cpp20coro_stub_socket> {
             CompletionToken,
             void(error_code const& ec)
         > (
-            async_close_impl{stream},
+            async_close_op{stream},
             token,
             stream
         );
     }
 
-    struct async_close_impl {
-        async_close_impl(
+    struct async_close_op {
+        async_close_op(
             cpp20coro_stub_socket& stream
         ):stream{stream}
         {}
@@ -518,7 +519,7 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_read_impl{
+            async_read_op{
                 stream,
                 mbs
             },
@@ -528,8 +529,8 @@ struct layer_customize<cpp20coro_basic_stub_socket<4>> {
     }
 
     template <typename MutableBufferSequence>
-    struct async_read_impl {
-        async_read_impl(
+    struct async_read_op {
+        async_read_op(
             cpp20coro_basic_stub_socket<4>& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}

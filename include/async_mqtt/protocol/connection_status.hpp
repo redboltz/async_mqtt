@@ -12,9 +12,7 @@ namespace async_mqtt {
 enum class connection_status {
     connecting,
     connected,
-    disconnecting,
-    closing,
-    closed
+    disconnected,
 };
 
 } // namespace async_mqtt

@@ -21,6 +21,13 @@ namespace detail {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_offline_publish(bool val) {
+    con_.set_offline_publish(val);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_auto_pub_response(bool val) {
     con_.set_auto_pub_response(val);
 }
@@ -565,6 +572,17 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::~basic_endpoint() {
     ASYNC_MQTT_LOG("mqtt_impl", trace)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "destroy";
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_offline_publish(bool val) {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "set_offline_publish val:" << val;
+    BOOST_ASSERT(impl_);
+    impl_->set_offline_publish(val);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

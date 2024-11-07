@@ -122,6 +122,14 @@ public:
     lowest_layer_type& lowest_layer();
 
     /**
+     * @brief set offline publish support
+     * \n This function should be called before async_send() call.
+     * @note By default offline publish is not supported.
+     * @param val if true, offline publish is supported, otherwise not supported
+     */
+    void set_offline_publish(bool val);
+
+    /**
      * @brief auto publish response setter. Should be called before async_send()/async_recv() call.
      * @note By default not automatically sending.
      * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent

@@ -117,6 +117,8 @@ private:
 
     // async operations
 
+    template <typename ArgsTuple>
+    struct stream_underlying_handshake_op;
     template <typename Packet>
     struct stream_write_packet_op;
     template <typename MutableBufferSequence>

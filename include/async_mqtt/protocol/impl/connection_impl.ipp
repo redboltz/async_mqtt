@@ -137,6 +137,14 @@ template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
+set_offline_publish(bool val) {
+    offline_publish_ = val;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
 set_auto_ping_response(bool val) {
     auto_ping_response_ = val;
 }
@@ -442,6 +450,17 @@ basic_connection<Role, PacketIdBytes>::
 has_receive_maximum_vacancy_for_send() const {
     BOOST_ASSERT(impl_);
     return impl_->has_receive_maximum_vacancy_for_send();
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+set_offline_publish(
+    bool val
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_offline_publish(val);
 }
 
 template <role Role, std::size_t PacketIdBytes>

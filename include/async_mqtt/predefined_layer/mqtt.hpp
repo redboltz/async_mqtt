@@ -77,6 +77,4 @@ async_underlying_handshake(
 
 } // namespace async_mqtt
 
-#include <async_mqtt/predefined_layer/impl/mqtt_handshake.hpp>
-
 #endif // ASYNC_MQTT_PREDEFINED_LAYER_MQTT_HPP
