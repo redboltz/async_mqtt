@@ -29,6 +29,7 @@ recv_op {
     using events_it_type = typename events_type::iterator;
     std::shared_ptr<events_type> events = nullptr;
     events_it_type it = events_it_type{};
+    bool try_resend_from_queue = false;
     enum { dispatch, read, protocol_read, sent, complete } state = dispatch;
 
     template <typename Self>
@@ -56,6 +57,7 @@ recv_op {
                 },
                 [&](basic_event_packet_id_released<PacketIdBytes> ev) {
                     a_ep.notify_release_pid(ev.get());
+                    try_resend_from_queue = true;
                     return true;
                 },
                 [&](basic_event_packet_received<PacketIdBytes> ev) {
@@ -64,6 +66,15 @@ recv_op {
                 },
                 [&](event_timer ev) {
                     switch (ev.get_timer_for()) {
+                    case timer::pingreq_send:
+                        // receive server keep alive property in connack
+                        if (ev.get_op() == event_timer::op_type::reset) {
+                            reset_pingreq_send_timer(ep, ev.get_ms());
+                        }
+                        else {
+                            BOOST_ASSERT(false);
+                        }
+                        break;
                     case timer::pingreq_recv:
                         switch (ev.get_op()) {
                         case event_timer::op_type::set:
@@ -117,7 +128,7 @@ recv_op {
     ) {
         auto& a_ep{*ep};
         if (ec) {
-            ASYNC_MQTT_LOG("mqtt_impl", info)
+            ASYNC_MQTT_LOG("mqtt_impl", error)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "recv error:" << ec.message();
             if (ec == as::error::operation_aborted) {
@@ -128,6 +139,7 @@ recv_op {
                 );
             }
             else {
+                state = complete;
                 decided_error.emplace(ec);
                 auto ep_copy = ep;
                 a_ep.async_close(
@@ -159,15 +171,25 @@ recv_op {
             auto e = std::next(b, std::ptrdiff_t(bytes_transferred));
             events = std::make_shared<events_type>(a_ep.con_.recv(b, e));
             a_ep.read_buf_.commit(bytes_transferred);
-            it = events->begin();
-            while (it != events->end()) {
-                if (!process_one_event(self)) return;
+            if (events->empty()) {
+                // required more bytes
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
             }
-            state = complete; // all events processed
-            as::dispatch(
-                a_ep.get_executor(),
-                force_move(self)
-            );
+            else {
+                it = events->begin();
+                while (it != events->end()) {
+                    if (!process_one_event(self)) return;
+                }
+                state = complete; // all events processed
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
         } break;
         case sent: {
             while (it != events->end()) {
@@ -188,6 +210,9 @@ recv_op {
             }
             else {
                 BOOST_ASSERT(recv_packet);
+                if (try_resend_from_queue) {
+                    send_publish_from_queue();
+                }
                 self.complete(
                     error_code{},
                     force_move(recv_packet)
@@ -201,16 +226,6 @@ recv_op {
     }
 
     void send_publish_from_queue();
-
-    bool process_qos2_publish(
-        protocol_version ver,
-        typename basic_packet_id_type<PacketIdBytes>::type packet_id
-    );
-
-    void handle_v3_1_1_connect(v3_1_1::connect_packet& p);
-    void handle_v5_connect(v5::connect_packet& p);
-    void handle_v3_1_1_connack(v3_1_1::connack_packet& p);
-    void handle_v5_connack(v5::connack_packet& p);
 };
 
 } // namespace detail

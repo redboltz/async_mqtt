@@ -63,7 +63,6 @@ public:
                     remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
                     multiplier_ *= 128;
                     if ((encoded_byte & 0b1000'0000) == 0) {
-                        read_state_ = read_state::payload;
                         raw_buf_size_ = header_remaining_length_buf_.size() + remaining_length_;
                         raw_buf_ = make_shared_ptr_char_array(raw_buf_size_);
                         raw_buf_ptr_ = raw_buf_.get();
@@ -73,6 +72,15 @@ public:
                             raw_buf_ptr_
                         );
                         raw_buf_ptr_ += header_remaining_length_buf_.size();
+                        if (remaining_length_ == 0) {
+                            read_packets_.emplace_back(
+                                buffer{raw_buf_.get(), raw_buf_size_, force_move(raw_buf_)}
+                            );
+                            return;
+                        }
+                        else {
+                            read_state_ = read_state::payload;
+                        }
                         break;
                     }
                     if (multiplier_ == 128 * 128 * 128 * 128) {

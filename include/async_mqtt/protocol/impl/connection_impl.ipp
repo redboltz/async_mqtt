@@ -93,6 +93,14 @@ template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
+notify_closed() {
+    status_ = connection_status::disconnected;
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
 set_pingreq_send_interval(
     std::chrono::milliseconds duration,
     std::vector<basic_event_variant<PacketIdBytes>>& events
@@ -111,7 +119,8 @@ set_pingreq_send_interval(
         events.emplace_back(
             event_timer{
                 event_timer::op_type::reset,
-                timer::pingreq_send
+                timer::pingreq_send,
+                duration
             }
         );
     }
@@ -119,10 +128,10 @@ set_pingreq_send_interval(
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-bool
+std::size_t
 basic_connection_impl<Role, PacketIdBytes>::
-has_receive_maximum_vacancy_for_send() const {
-    return publish_send_count_ != publish_recv_max_;
+get_receive_maximum_vacancy_for_send() const {
+    return publish_send_max_ - publish_send_count_;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -198,12 +207,17 @@ register_packet_id(
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-void
+std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection_impl<Role, PacketIdBytes>::
 release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) {
+    std::vector<basic_event_variant<PacketIdBytes>> events;
     pid_man_.release_id(packet_id);
+    events.emplace_back(
+        event_packet_id_released{packet_id}
+    );
+    return events;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -432,6 +446,15 @@ notify_timer_fired(timer kind) {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection<Role, PacketIdBytes>::
+notify_closed() {
+    BOOST_ASSERT(impl_);
+    return impl_->notify_closed();
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection<Role, PacketIdBytes>::
 set_pingreq_send_interval(
@@ -445,11 +468,11 @@ set_pingreq_send_interval(
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-bool
+std::size_t
 basic_connection<Role, PacketIdBytes>::
-has_receive_maximum_vacancy_for_send() const {
+get_receive_maximum_vacancy_for_send() const {
     BOOST_ASSERT(impl_);
-    return impl_->has_receive_maximum_vacancy_for_send();
+    return impl_->get_receive_maximum_vacancy_for_send();
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -540,7 +563,7 @@ register_packet_id(
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-void
+std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection<Role, PacketIdBytes>::
 release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id

@@ -39,6 +39,8 @@ BOOST_AUTO_TEST_CASE(pingresp_v311) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             ep.set_auto_ping_response(true);
             // prepare connect
             {
@@ -87,6 +89,8 @@ BOOST_AUTO_TEST_CASE(pingresp_v5) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             ep.set_auto_ping_response(true);
             // prepare connect
             {
@@ -135,6 +139,10 @@ BOOST_AUTO_TEST_CASE(pingresp_no_tout_v311) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
@@ -190,6 +198,10 @@ BOOST_AUTO_TEST_CASE(pingresp_no_tout_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
@@ -245,6 +257,10 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v311) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_pingreq_send_interval(std::chrono::milliseconds::zero()); // for coverage
             ep.set_pingresp_recv_timeout(std::chrono::milliseconds::zero()); // for coverage
             ep.set_pingresp_recv_timeout(std::chrono::milliseconds{10});
@@ -300,6 +316,10 @@ BOOST_AUTO_TEST_CASE(pingresp_tout_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_pingresp_recv_timeout(std::chrono::milliseconds{10});
             // prepare connect
             {
@@ -363,6 +383,10 @@ BOOST_AUTO_TEST_CASE(bulk_write) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_bulk_write(true);
             // prepare connect
             {
@@ -419,6 +443,8 @@ BOOST_AUTO_TEST_CASE(remaining_length_error) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             // test scenario
             {
                 co_await ep.next_layer().emulate_recv(
@@ -448,6 +474,8 @@ BOOST_AUTO_TEST_CASE(remaining_length_error_set_buffer_size) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             ep.set_read_buffer_size(4096);
             // test scenario
             {
@@ -480,6 +508,10 @@ BOOST_AUTO_TEST_CASE(sub_send_error_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -541,6 +573,10 @@ BOOST_AUTO_TEST_CASE(unsub_send_error_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -602,6 +638,10 @@ BOOST_AUTO_TEST_CASE(pub_send_error_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -665,6 +705,10 @@ BOOST_AUTO_TEST_CASE(pub_recv_non_exist_ta_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -741,6 +785,10 @@ BOOST_AUTO_TEST_CASE(pub_recv_no_ta_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -814,6 +862,10 @@ BOOST_AUTO_TEST_CASE(pub_recv_max_zero_ta_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -889,6 +941,10 @@ BOOST_AUTO_TEST_CASE(pub_send_max_zero_ta_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -952,6 +1008,10 @@ BOOST_AUTO_TEST_CASE(pub_send_size_over_store_ta_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1035,6 +1095,10 @@ BOOST_AUTO_TEST_CASE(puback_recv_no_pid_v311) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -1088,6 +1152,10 @@ BOOST_AUTO_TEST_CASE(puback_recv_no_pid_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1151,6 +1219,10 @@ BOOST_AUTO_TEST_CASE(pubrec_recv_no_pid_v311) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -1204,6 +1276,10 @@ BOOST_AUTO_TEST_CASE(pubrec_recv_no_pid_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1267,6 +1343,10 @@ BOOST_AUTO_TEST_CASE(pubcomp_recv_no_pid_v311) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -1320,6 +1400,10 @@ BOOST_AUTO_TEST_CASE(pubcomp_recv_no_pid_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1385,6 +1469,10 @@ BOOST_AUTO_TEST_CASE(close_close) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1434,6 +1522,10 @@ BOOST_AUTO_TEST_CASE(connect_bad_version_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -1467,6 +1559,10 @@ BOOST_AUTO_TEST_CASE(connect_bad_timing_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1507,6 +1603,8 @@ BOOST_AUTO_TEST_CASE(connack_bad_version_v5) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             {
                 auto connect = am::v5::connect_packet{
                     true,   // clean_start
@@ -1545,6 +1643,8 @@ BOOST_AUTO_TEST_CASE(connack_bad_timing_v5) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             // prepare connack
             {
                 auto connack = am::v5::connack_packet{true, am::connect_reason_code::success};
@@ -1574,6 +1674,8 @@ BOOST_AUTO_TEST_CASE(auth_bad_version) {
                 version,
                 am::force_move(exe)
             };
+            // connection established as server
+            ep.underlying_accepted();
             {
                 auto connect = am::v3_1_1::connect_packet{
                     true,   // clean_session
@@ -1614,6 +1716,10 @@ BOOST_AUTO_TEST_CASE(general_bad_version) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v3_1_1::connect_packet{
@@ -1670,6 +1776,10 @@ BOOST_AUTO_TEST_CASE(pubrec_as_error_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1733,6 +1843,10 @@ BOOST_AUTO_TEST_CASE(publish_cont_recv_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // prepare connect
             {
                 auto connect = am::v5::connect_packet{
@@ -1834,6 +1948,10 @@ BOOST_AUTO_TEST_CASE(publish_cont_set_buffer_size_recv_v5) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_read_buffer_size(4096);
             // prepare connect
             {
@@ -1923,7 +2041,7 @@ BOOST_AUTO_TEST_CASE(publish_cont_set_buffer_size_recv_v5) {
     ioc.run();
 }
 
-BOOST_AUTO_TEST_CASE(set_buffer_size__recv_chunked) {
+BOOST_AUTO_TEST_CASE(set_buffer_size_recv_chunked) {
     auto version = am::protocol_version::v5;
     as::io_context ioc;
     as::co_spawn(
@@ -1936,6 +2054,10 @@ BOOST_AUTO_TEST_CASE(set_buffer_size__recv_chunked) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_read_buffer_size(4096);
             // prepare connect
             {
@@ -1958,7 +2080,7 @@ BOOST_AUTO_TEST_CASE(set_buffer_size__recv_chunked) {
             // test scenario
             {
                 co_await ep.next_layer().emulate_recv(
-                    "\xe0\x80"sv, // invalid remaining length
+                    "\xe0\x80\x80\x80\x80"sv, // invalid remaining length
                     as::as_tuple(as::deferred)
                 );
                 co_await ep.next_layer().emulate_recv(
@@ -1966,7 +2088,7 @@ BOOST_AUTO_TEST_CASE(set_buffer_size__recv_chunked) {
                     as::as_tuple(as::deferred)
                 );
                 auto [ec, _] = co_await ep.async_recv(as::as_tuple(as::deferred));
-                BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+                BOOST_TEST(ec == am::disconnect_reason_code::packet_too_large);
 
                 co_await ep.async_close(as::deferred);
                 co_await ep.next_layer().wait_response(as::as_tuple(as::deferred));
@@ -1992,6 +2114,10 @@ BOOST_AUTO_TEST_CASE(bulk_set_buffer_size_recv_chunked_halfway_payload) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_read_buffer_size(4096);
             // prepare connect
             {
@@ -2050,6 +2176,10 @@ BOOST_AUTO_TEST_CASE(bulk_write_close) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             ep.set_bulk_write(true);
             // prepare connect
             {
@@ -2107,6 +2237,10 @@ BOOST_AUTO_TEST_CASE(write_close) {
                 version,
                 am::force_move(exe)
             };
+            {
+                auto [ec] = co_await ep.async_underlying_handshake(as::as_tuple(as::deferred));
+                BOOST_TEST(!ec);
+            }
             // test scenario
             {
                 auto connect = am::v3_1_1::connect_packet{

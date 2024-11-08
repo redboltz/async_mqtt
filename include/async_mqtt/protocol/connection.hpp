@@ -31,12 +31,15 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
 
+    void
+    notify_closed();
+
     std::vector<basic_event_variant<PacketIdBytes>>
     set_pingreq_send_interval(
         std::chrono::milliseconds duration
     );
 
-    bool has_receive_maximum_vacancy_for_send() const;
+    std::size_t get_receive_maximum_vacancy_for_send() const;
 
     /**
      * @brief set offline publish support
@@ -107,8 +110,10 @@ public:
     /**
      * @brief release packet_id.
      * @param packet_id packet_id to release
+     * @return event list
      */
-    void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
+    std::vector<basic_event_variant<PacketIdBytes>>
+    release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
      * @brief Get processed but not released QoS2 packet ids

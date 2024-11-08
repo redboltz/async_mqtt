@@ -70,6 +70,7 @@ close_op {
             ASYNC_MQTT_LOG("mqtt_impl", trace)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "process enqueued close";
+            a_ep.con_.notify_closed();
             a_ep.close_queue_.poll();
             self.complete();
             break;

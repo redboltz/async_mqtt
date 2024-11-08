@@ -33,11 +33,25 @@ release_packet_id_op {
                 force_move(self)
             );
         } break;
-        case complete:
-            a_ep.con_.release_packet_id(packet_id);
+        case complete: {
+            auto events = a_ep.con_.release_packet_id(packet_id);
+            for (auto& event : events) {
+                std::visit(
+                    overload {
+                        [&](basic_event_packet_id_released<PacketIdBytes> const& ev) {
+                            // TBD naming? notify_packet_id_released
+                            a_ep.notify_release_pid(ev.get());
+                        },
+                        [](auto const&) {
+                            BOOST_ASSERT(false);
+                        }
+                    },
+                    event
+                );
+            }
             state = complete;
             self.complete();
-            break;
+        } break;
         }
     }
 };

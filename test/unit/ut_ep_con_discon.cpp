@@ -831,6 +831,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
@@ -950,6 +952,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
@@ -1263,6 +1267,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
@@ -2364,6 +2370,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
@@ -2504,6 +2512,8 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
@@ -2855,6 +2865,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();

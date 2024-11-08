@@ -62,6 +62,12 @@ BOOST_AUTO_TEST_CASE(client_send) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -288,6 +294,8 @@ BOOST_AUTO_TEST_CASE(server_send) {
         }
     );
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
@@ -519,6 +527,12 @@ BOOST_AUTO_TEST_CASE(client_recv) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -663,6 +677,12 @@ BOOST_AUTO_TEST_CASE(client_recv) {
             {connack},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(
@@ -839,6 +859,8 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
@@ -984,6 +1006,8 @@ BOOST_AUTO_TEST_CASE(server_recv) {
         }
     );
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();

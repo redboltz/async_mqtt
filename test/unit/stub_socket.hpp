@@ -274,14 +274,14 @@ void async_read(
     socket.async_read_some(mb, std::forward<CompletionToken>(token));
 }
 
-template <>
-struct layer_customize<stub_socket> {
+template <std::size_t PacketIdBytes>
+struct layer_customize<basic_stub_socket<PacketIdBytes>> {
     template <
         typename CompletionToken
     >
     static auto
     async_handshake(
-        stub_socket& stream,
+        basic_stub_socket<PacketIdBytes>& stream,
         CompletionToken&& token
     ) {
         return
@@ -298,13 +298,13 @@ struct layer_customize<stub_socket> {
     }
 
     struct async_handshake_op {
+        basic_stub_socket<PacketIdBytes>& stream;
         enum {dispatch, complete} state = dispatch;
+
         async_handshake_op(
-            stub_socket& stream
+            basic_stub_socket<PacketIdBytes>& stream
         ): stream{stream}
         {}
-
-        stub_socket& stream;
 
         template <typename Self>
         void operator()(
@@ -332,7 +332,7 @@ struct layer_customize<stub_socket> {
     >
     static auto
     async_read(
-        stub_socket& stream,
+        basic_stub_socket<PacketIdBytes>& stream,
         MutableBufferSequence const& mbs,
         CompletionToken&& token
     ) {
@@ -351,14 +351,14 @@ struct layer_customize<stub_socket> {
 
     template <typename MutableBufferSequence>
     struct async_read_op {
+        basic_stub_socket<PacketIdBytes>& stream;
+        MutableBufferSequence mbs;
+
         async_read_op(
-            stub_socket& stream,
+            basic_stub_socket<PacketIdBytes>& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}
         {}
-
-        stub_socket& stream;
-        MutableBufferSequence mbs;
 
         template <typename Self>
         void operator()(
@@ -385,94 +385,7 @@ struct layer_customize<stub_socket> {
     >
     static auto
     async_close(
-        stub_socket& stream,
-        CompletionToken&& token
-    ) {
-        return as::async_compose<
-            CompletionToken,
-            void(error_code const& ec)
-        > (
-            [&stream](auto& self) {
-                error_code ec;
-                if (stream.is_open()) {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "stub close";
-                    stream.close(ec);
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "stub already closed";
-                }
-                self.complete(ec);
-            },
-            token,
-            stream
-        );
-    }
-};
-
-template <>
-struct layer_customize<basic_stub_socket<4>> {
-    template <
-        typename MutableBufferSequence,
-        typename CompletionToken
-    >
-    static auto
-    async_read(
-        basic_stub_socket<4>& stream,
-        MutableBufferSequence const& mbs,
-        CompletionToken&& token
-    ) {
-        return as::async_compose<
-            CompletionToken,
-            void(error_code const& ec, std::size_t)
-        > (
-            async_read_op{
-                stream,
-                mbs
-            },
-            token,
-            stream
-        );
-    }
-
-    template <typename MutableBufferSequence>
-    struct async_read_op {
-        async_read_op(
-            basic_stub_socket<4>& stream,
-            MutableBufferSequence const& mbs
-        ): stream{stream}, mbs{mbs}
-        {}
-
-        basic_stub_socket<4>& stream;
-        MutableBufferSequence mbs;
-
-        template <typename Self>
-        void operator()(
-            Self& self
-        ) {
-            stream.async_read_some(
-                mbs,
-                force_move(self)
-            );
-        }
-
-        template <typename Self>
-        void operator()(
-            Self& self,
-            error_code const& ec,
-            std::size_t size
-        ) {
-            self.complete(ec, size);
-        }
-    };
-
-    template <
-        typename CompletionToken
-    >
-    static auto
-    async_close(
-        basic_stub_socket<4>& stream,
+        basic_stub_socket<PacketIdBytes>& stream,
         CompletionToken&& token
     ) {
         return as::async_compose<

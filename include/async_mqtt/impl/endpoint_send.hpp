@@ -36,6 +36,23 @@ send_op {
         return std::visit(
             overload{
                 [&](error_code ec) {
+                    if (ec == disconnect_reason_code::receive_maximum_exceeded) {
+                        if constexpr (std::is_same_v<Packet, v5::basic_publish_packet<PacketIdBytes>>) {
+                            auto success = a_ep.register_packet_id(packet.packet_id());
+                            if (success) {
+                                a_ep.enqueue_publish(packet);
+                                decided_error.emplace(
+                                    make_error_code(
+                                        mqtt_error::packet_enqueued
+                                    )
+                                );
+                            }
+                            else {
+                                BOOST_ASSERT(false);
+                            }
+                            return true;
+                        }
+                    }
                     decided_error.emplace(ec);
                     return true;
                 },
@@ -51,7 +68,7 @@ send_op {
                         break;
                     case timer::pingresp_recv:
                         if (ev.get_op() == event_timer::op_type::reset) {
-                            // TBD
+                            reset_pingresp_recv_timer(ep, ev.get_ms());
                         }
                         else {
                             BOOST_ASSERT(false);
@@ -105,28 +122,14 @@ send_op {
     ) {
         auto& a_ep{*ep};
         if (ec) {
-            if (ec == disconnect_reason_code::receive_maximum_exceeded) {
-                if constexpr (std::is_same_v<Packet, v5::basic_publish_packet<PacketIdBytes>>) {
-                    a_ep.enqueue_publish(packet);
-                    self.complete(
-                        make_error_code(
-                            mqtt_error::packet_enqueued
-                        )
-                    );
-                    return;
-                }
-                BOOST_ASSERT(false);
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
+                << "send error:" << ec.message();
+            if (release_pid_opt) {
+                a_ep.con_.release_packet_id(*release_pid_opt);
             }
-            else {
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
-                    << "send error:" << ec.message();
-                if (release_pid_opt) {
-                    a_ep.con_.release_packet_id(*release_pid_opt);
-                }
-                self.complete(ec);
-                return;
-            }
+            self.complete(ec);
+            return;
         }
 
         switch (state) {

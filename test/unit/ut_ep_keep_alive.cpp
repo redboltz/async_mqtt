@@ -67,6 +67,12 @@ BOOST_AUTO_TEST_CASE(server_keep_alive) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {

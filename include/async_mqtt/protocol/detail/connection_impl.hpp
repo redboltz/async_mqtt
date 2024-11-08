@@ -43,12 +43,15 @@ public:
     notify_timer_fired(timer kind);
 
     void
+    notify_closed();
+
+    void
     set_pingreq_send_interval(
         std::chrono::milliseconds duration,
         std::vector<basic_event_variant<PacketIdBytes>>& events
     );
 
-    bool has_receive_maximum_vacancy_for_send() const;
+    std::size_t get_receive_maximum_vacancy_for_send() const;
 
     void set_offline_publish(bool val);
 
@@ -66,7 +69,8 @@ public:
 
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
-    void release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
+    std::vector<basic_event_variant<PacketIdBytes>>
+    release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> get_qos2_publish_handled_pids() const;
 

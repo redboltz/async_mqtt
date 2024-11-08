@@ -80,6 +80,12 @@ BOOST_AUTO_TEST_CASE(send_client) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -388,6 +394,8 @@ BOOST_AUTO_TEST_CASE(send_server) {
         }
     );
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
@@ -623,6 +631,12 @@ BOOST_AUTO_TEST_CASE(send_auto_map) {
 
     ep.set_auto_map_topic_alias_send(true);
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -849,6 +863,12 @@ BOOST_AUTO_TEST_CASE(send_auto_replace) {
 
     ep.set_auto_replace_topic_alias_send(true);
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1025,6 +1045,12 @@ BOOST_AUTO_TEST_CASE(recv_client) {
 
     auto init =
         [&] {
+            // underlying handshake
+            {
+                auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+                BOOST_TEST(!ec);
+            }
+
             // send connect
             ep.next_layer().set_write_packet_checker(
                 [&](am::packet_variant wp) {
@@ -1202,7 +1228,7 @@ BOOST_AUTO_TEST_CASE(recv_client) {
             {publish_reg_t2},
             {publish_use_ta2},
             {publish_reg_t3},  // error and disconnect
-            {am::errc::make_error_code(am::errc::connection_reset)},
+
             {connack},
             {publish_use_ta3}, // error and disconnect
             {am::errc::make_error_code(am::errc::connection_reset)},
@@ -1264,13 +1290,6 @@ BOOST_AUTO_TEST_CASE(recv_client) {
         BOOST_TEST(ec == am::disconnect_reason_code::topic_alias_invalid);
     }
     BOOST_TEST(close_called);
-
-    // recv close
-    {
-        auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(!pv);
-        BOOST_TEST(ec == am::errc::connection_reset);
-    }
 
     init();
 
@@ -1377,6 +1396,8 @@ BOOST_AUTO_TEST_CASE(recv_server) {
 
     auto init =
         [&] {
+            // connection established as server
+            ep.underlying_accepted();
             // recv connect
             {
                 auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
@@ -1689,6 +1710,12 @@ BOOST_AUTO_TEST_CASE(send_error) {
             {connack},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(

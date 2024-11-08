@@ -122,6 +122,12 @@ public:
     lowest_layer_type& lowest_layer();
 
     /**
+     * @brief notify underlying layer accepted to the endpoint
+     * \n This function should be called when the underlying server connection is accepted
+     */
+    void underlying_accepted();
+
+    /**
      * @brief set offline publish support
      * \n This function should be called before async_send() call.
      * @note By default offline publish is not supported.

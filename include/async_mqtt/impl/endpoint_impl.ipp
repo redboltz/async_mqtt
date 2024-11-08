@@ -21,6 +21,13 @@ namespace detail {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::underlying_accepted() {
+    status_ = close_status::open;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_offline_publish(bool val) {
     con_.set_offline_publish(val);
 }
@@ -177,15 +184,15 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::enqueue_publish(
     if (packet.opts().get_qos() == qos::at_least_once ||
         packet.opts().get_qos() == qos::exactly_once
     ) {
-        if (con_.has_receive_maximum_vacancy_for_send()) {
+        if (con_.get_receive_maximum_vacancy_for_send() == 0) {
+            publish_queue_.push_back(force_move(packet));
+            return true;
+        }
+        else {
             if (!publish_queue_.empty()) {
                 publish_queue_.push_back(force_move(packet));
                 return true;
             }
-        }
-        else {
-            publish_queue_.push_back(force_move(packet));
-            return true;
         }
     }
     return false;
@@ -266,7 +273,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                     if (!ec) {
                         if (auto ep = wp.lock()) {
                             auto events = ep->con_.notify_timer_fired(timer::pingreq_send);
-                            for (auto const& event : events) {
+                            for (auto& event : events) {
                                 std::visit(
                                     overload {
                                         [&](event_timer const& ev) {
@@ -287,7 +294,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event_send& ev) {
+                                        [&](basic_event_send<PacketIdBytes>& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
@@ -337,7 +344,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
-    if constexpr (Role == role::client || Role == role::any) {
+    if constexpr (Role == role::server || Role == role::any) {
         if (ms) {
             ep->tim_pingreq_recv_.expires_after(
                 *ms
@@ -433,7 +440,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
-    if constexpr (Role == role::server || Role == role::any) {
+    if constexpr (Role == role::client || Role == role::any) {
         if (ms) {
             ep->tim_pingresp_recv_.cancel();
             ep->tim_pingresp_recv_.expires_after(
@@ -572,6 +579,17 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::~basic_endpoint() {
     ASYNC_MQTT_LOG("mqtt_impl", trace)
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "destroy";
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::underlying_accepted() {
+    ASYNC_MQTT_LOG("mqtt_api", info)
+        << ASYNC_MQTT_ADD_VALUE(address, this)
+        << "underlying_accepted";
+    BOOST_ASSERT(impl_);
+    impl_->underlying_accepted();
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

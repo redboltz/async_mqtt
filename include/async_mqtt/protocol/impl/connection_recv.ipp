@@ -37,11 +37,13 @@ std::vector<basic_event_variant<PacketIdBytes>>
 basic_connection_impl<Role, PacketIdBytes>::
 process_recv_packet() {
     std::vector<basic_event_variant<PacketIdBytes>> events;
-    for (; !rpb_.empty(); rpb_.pop_front()) {
+    while (!rpb_.empty()) {
         auto ep = rpb_.front();
+        rpb_.pop_front();
         if (ep.ec) {
             events.emplace_back(ep.ec);
             events.emplace_back(event_close{});
+            status_ = connection_status::disconnected;
             return events;
         }
         auto& buf{ep.packet};
@@ -69,42 +71,55 @@ process_recv_packet() {
         error_code ec;
         auto pv_opt = buffer_to_basic_packet_variant<PacketIdBytes>(buf, protocol_version_, ec);
         if (ec) {
-            if constexpr (can_send_as_server(Role)) {
-                if (ec.category() == get_connect_reason_code_category()) {
-                    status_ = connection_status::connecting;
+            if (status_ == connection_status::disconnected &&
+                ec.category() == get_connect_reason_code_category()
+            ) {
+                // first received connect packet with error
+
+                // packet is error but connack needs to be sent
+                status_ = connection_status::connecting;
+                events.emplace_back(
+                    make_error_code(
+                        static_cast<connect_reason_code>(ec.value())
+                    )
+                );
+                if (protocol_version_ == protocol_version::v5) {
                     events.emplace_back(
-                        make_error_code(
-                            static_cast<connect_reason_code>(ec.value())
-                        )
-                    );
-                    if (protocol_version_ == protocol_version::v5) {
-                        events.emplace_back(
-                            basic_event_send<PacketIdBytes>{
-                                v5::connack_packet{
-                                    false, // session_present
-                                    static_cast<connect_reason_code>(ec.value())
-                                }
+                        basic_event_send<PacketIdBytes>{
+                            v5::connack_packet{
+                                false, // session_present
+                                static_cast<connect_reason_code>(ec.value())
                             }
-                        );
-                    }
-                }
-                else if (ec.category() == get_disconnect_reason_code_category()) {
-                    if (status_ == connection_status::connected) {
-                        events.emplace_back(
-                            make_error_code(
-                                static_cast<disconnect_reason_code>(ec.value())
-                            )
-                        );
-                        if (protocol_version_ == protocol_version::v5) {
-                            events.emplace_back(
-                                basic_event_send<PacketIdBytes>{
-                                    v5::disconnect_packet{
-                                        static_cast<disconnect_reason_code>(ec.value())
-                                    }
-                                }
-                            );
                         }
-                    }
+                    );
+                }
+                else {
+                    events.emplace_back(
+                        basic_event_send<PacketIdBytes>{
+                            v3_1_1::connack_packet{
+                                false, // session_present
+                                static_cast<connect_return_code>(ec.value())
+                            }
+                        }
+                    );
+                }
+            }
+            else {
+                events.emplace_back(
+                    make_error_code(
+                        static_cast<disconnect_reason_code>(ec.value())
+                    )
+                );
+                if (status_ == connection_status::connected &&
+                    protocol_version_ == protocol_version::v5
+                ) {
+                    events.emplace_back(
+                        basic_event_send<PacketIdBytes>{
+                            v5::disconnect_packet{
+                                static_cast<disconnect_reason_code>(ec.value())
+                            }
+                        }
+                    );
                 }
             }
             events.emplace_back(event_close{});
@@ -768,7 +783,7 @@ process_recv_packet() {
                             status_ == connection_status::connected) {
                             events.emplace_back(
                                 event_send{
-                                    v3_1_1::pingreq_packet{}
+                                    v3_1_1::pingresp_packet{}
                                 }
                             );
                         }
@@ -784,7 +799,7 @@ process_recv_packet() {
                             status_ == connection_status::connected) {
                             events.emplace_back(
                                 event_send{
-                                    v5::pingreq_packet{}
+                                    v5::pingresp_packet{}
                                 }
                             );
                         }

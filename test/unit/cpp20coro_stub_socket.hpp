@@ -325,8 +325,57 @@ private:
 
 using cpp20coro_stub_socket = cpp20coro_basic_stub_socket<2>;
 
-template <>
-struct layer_customize<cpp20coro_stub_socket> {
+template <std::size_t PacketIdBytes>
+struct layer_customize<cpp20coro_basic_stub_socket<PacketIdBytes>> {
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_handshake(
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            async_handshake_op{
+                stream
+            },
+            token,
+            stream
+        );
+    }
+
+    struct async_handshake_op {
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream;
+        enum {dispatch, complete} state = dispatch;
+
+        async_handshake_op(
+            cpp20coro_basic_stub_socket<PacketIdBytes>& stream
+        ): stream{stream}
+        {}
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            switch (state) {
+            case dispatch: {
+                state = complete;
+                auto& a_stream{stream};
+                as::dispatch(
+                    a_stream.get_executor(),
+                    force_move(self)
+                );
+            } break;
+            case complete:
+                self.complete(error_code{});
+                break;
+            }
+        }
+    };
 
     template <
         typename MutableBufferSequence,
@@ -334,7 +383,7 @@ struct layer_customize<cpp20coro_stub_socket> {
     >
     static auto
     async_read(
-        cpp20coro_stub_socket& stream,
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
         MutableBufferSequence const& mbs,
         CompletionToken&& token
     ) {
@@ -354,12 +403,12 @@ struct layer_customize<cpp20coro_stub_socket> {
     template <typename MutableBufferSequence>
     struct async_read_op {
         async_read_op(
-            cpp20coro_stub_socket& stream,
+            cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
             MutableBufferSequence const& mbs
         ): stream{stream}, mbs{mbs}
         {}
 
-        cpp20coro_stub_socket& stream;
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream;
         MutableBufferSequence mbs;
 
         template <typename Self>
@@ -388,7 +437,7 @@ struct layer_customize<cpp20coro_stub_socket> {
     >
     static auto
     async_write(
-        cpp20coro_stub_socket& stream,
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
         ConstBufferSequence const& cbs,
         CompletionToken&& token
     ) {
@@ -408,12 +457,12 @@ struct layer_customize<cpp20coro_stub_socket> {
     template <typename ConstBufferSequence>
     struct async_write_op {
         async_write_op(
-            cpp20coro_stub_socket& stream,
+            cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
             ConstBufferSequence const& cbs
         ): stream{stream}, cbs{cbs}
         {}
 
-        cpp20coro_stub_socket& stream;
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream;
         ConstBufferSequence cbs;
 
         template <typename Self>
@@ -441,7 +490,7 @@ struct layer_customize<cpp20coro_stub_socket> {
     >
     static auto
     async_close(
-        cpp20coro_stub_socket& stream,
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream,
         CompletionToken&& token
     ) {
         return as::async_compose<
@@ -456,11 +505,11 @@ struct layer_customize<cpp20coro_stub_socket> {
 
     struct async_close_op {
         async_close_op(
-            cpp20coro_stub_socket& stream
+            cpp20coro_basic_stub_socket<PacketIdBytes>& stream
         ):stream{stream}
         {}
 
-        cpp20coro_stub_socket& stream;
+        cpp20coro_basic_stub_socket<PacketIdBytes>& stream;
         enum {wait1, wait2, complete} state = wait1;
         template <typename Self>
         void operator()(
@@ -501,94 +550,6 @@ struct layer_customize<cpp20coro_stub_socket> {
             }
         }
     };
-};
-
-template <>
-struct layer_customize<cpp20coro_basic_stub_socket<4>> {
-    template <
-        typename MutableBufferSequence,
-        typename CompletionToken
-    >
-    static auto
-    async_read(
-        cpp20coro_basic_stub_socket<4>& stream,
-        MutableBufferSequence const& mbs,
-        CompletionToken&& token
-    ) {
-        return as::async_compose<
-            CompletionToken,
-            void(error_code const& ec, std::size_t)
-        > (
-            async_read_op{
-                stream,
-                mbs
-            },
-            token,
-            stream
-        );
-    }
-
-    template <typename MutableBufferSequence>
-    struct async_read_op {
-        async_read_op(
-            cpp20coro_basic_stub_socket<4>& stream,
-            MutableBufferSequence const& mbs
-        ): stream{stream}, mbs{mbs}
-        {}
-
-        cpp20coro_basic_stub_socket<4>& stream;
-        MutableBufferSequence mbs;
-
-        template <typename Self>
-        void operator()(
-            Self& self
-        ) {
-            return stream.async_read_some(
-                mbs,
-                force_move(self)
-            );
-        }
-
-        template <typename Self>
-        void operator()(
-            Self& self,
-            error_code const& ec,
-            std::size_t size
-        ) {
-            self.complete(ec, size);
-        }
-    };
-
-
-    template <
-        typename CompletionToken
-    >
-    static auto
-    async_close(
-        cpp20coro_basic_stub_socket<4>& stream,
-        CompletionToken&& token
-    ) {
-        return as::async_compose<
-            CompletionToken,
-            void(error_code const& ec)
-        > (
-            [&stream](auto& self) {
-                error_code ec;
-                if (stream.is_open()) {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "stub close";
-                    stream.close(ec);
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", info)
-                        << "stub already closed";
-                }
-                self.complete(ec);
-            },
-            token,
-            stream
-        );
-    }
 };
 
 } // namespace async_mqtt

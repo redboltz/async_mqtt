@@ -65,6 +65,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -180,6 +186,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -254,6 +266,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -302,6 +320,11 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -400,6 +423,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
@@ -530,6 +555,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
@@ -614,6 +641,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep3.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep3.async_recv(as::as_tuple(as::use_future)).get();
@@ -672,6 +701,8 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep4.underlying_accepted();
     // recv connect_clean
     {
         auto [ec, pv] = ep4.async_recv(as::as_tuple(as::use_future)).get();
@@ -761,6 +792,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
             {connack_sp_false},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(
@@ -880,6 +917,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -954,6 +997,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1000,6 +1049,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -1106,6 +1161,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
@@ -1239,6 +1296,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
@@ -1381,6 +1440,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep4.underlying_accepted();
     // recv connect_clean
     {
         auto [ec, pv] = ep4.async_recv(as::as_tuple(as::use_future)).get();
@@ -1472,6 +1533,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
             {connack_sp_false},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(
@@ -1611,6 +1678,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1685,6 +1758,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1731,6 +1810,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
