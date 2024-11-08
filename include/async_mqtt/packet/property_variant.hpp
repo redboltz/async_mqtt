@@ -197,12 +197,6 @@ public:
     template <typename T>
     decltype(auto) get_if() const;
 
-    /**
-     * @brief Check the property is valid
-     * @return true if the property is valid, other
-     */
-    operator bool();
-
     friend bool operator==(property_variant const& lhs, property_variant const& rhs);
     friend bool operator<(property_variant const& lhs, property_variant const& rhs);
     friend std::ostream& operator<<(std::ostream& o, property_variant const& v);
