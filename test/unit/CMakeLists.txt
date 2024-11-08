@@ -65,7 +65,6 @@ list(APPEND check_PROGRAMS
     ut_packet_variant.cpp
     ut_property.cpp
     ut_prop_variant.cpp
-    ut_prop_variant_no_assert.cpp
     ut_retained_topic_map.cpp
     ut_retained_topic_map_broker.cpp
     ut_strm.cpp
