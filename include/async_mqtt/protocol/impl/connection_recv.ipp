@@ -64,7 +64,6 @@ process_recv_packet() {
                     }
                 }
             );
-            events.emplace_back(event_close{});
             return events;
         }
 
@@ -121,8 +120,10 @@ process_recv_packet() {
                         }
                     );
                 }
+                else {
+                    events.emplace_back(event_close{});
+                }
             }
-            events.emplace_back(event_close{});
             return events;
         }
 
@@ -148,6 +149,9 @@ process_recv_packet() {
                     }
                     if (p.clean_session()) {
                         need_store_ = false;
+                        pid_puback_.clear();
+                        pid_pubrec_.clear();
+                        pid_pubcomp_.clear();
                     }
                     else {
                         need_store_ = true;
@@ -168,6 +172,11 @@ process_recv_packet() {
                                 keep_alive * 1000 * 3 / 2
                             }
                         );
+                    }
+                    if (p.clean_start()) {
+                        pid_puback_.clear();
+                        pid_pubrec_.clear();
+                        pid_pubcomp_.clear();
                     }
                     for (auto const& prop : p.props()) {
                         prop.visit(
@@ -209,6 +218,9 @@ process_recv_packet() {
                         else {
                             pid_man_.clear();
                             store_.clear();
+                            pid_puback_.clear();
+                            pid_pubrec_.clear();
+                            pid_pubcomp_.clear();
                         }
                     }
                     events.emplace_back(
@@ -255,6 +267,9 @@ process_recv_packet() {
                         else {
                             pid_man_.clear();
                             store_.clear();
+                            pid_puback_.clear();
+                            pid_pubrec_.clear();
+                            pid_pubcomp_.clear();
                         }
                     }
                     events.emplace_back(
@@ -322,7 +337,6 @@ process_recv_packet() {
                                     }
                                 }
                             );
-                            events.emplace_back(event_close{});
                             return false;
                         }
                         publish_recv_.insert(packet_id);
@@ -349,7 +363,6 @@ process_recv_packet() {
                                     }
                                 }
                             );
-                            events.emplace_back(event_close{});
                             return false;
                         }
                         publish_recv_.insert(packet_id);
@@ -395,7 +408,6 @@ process_recv_packet() {
                                         }
                                     }
                                 );
-                                events.emplace_back(event_close{});
                                 return false;
                             }
                             BOOST_ASSERT(topic_alias_recv_);
@@ -416,7 +428,6 @@ process_recv_packet() {
                                         }
                                     }
                                 );
-                                events.emplace_back(event_close{});
                                 return false;
                             }
                             else {
@@ -438,7 +449,6 @@ process_recv_packet() {
                                     }
                                 }
                             );
-                            events.emplace_back(event_close{});
                             return false;
                         }
                     }
@@ -459,7 +469,6 @@ process_recv_packet() {
                                         }
                                     }
                                 );
-                                events.emplace_back(event_close{});
                                 return false;
                             }
                             BOOST_ASSERT(topic_alias_recv_);
@@ -532,7 +541,6 @@ process_recv_packet() {
                                 }
                             }
                         );
-                        events.emplace_back(event_close{});
                         return false;
                     }
                     return true;
@@ -603,7 +611,6 @@ process_recv_packet() {
                                 }
                             }
                         );
-                        events.emplace_back(event_close{});
                         return false;
                     }
                     return true;
@@ -693,7 +700,6 @@ process_recv_packet() {
                                 }
                             }
                         );
-                        events.emplace_back(event_close{});
                         return false;
                     }
                     return true;

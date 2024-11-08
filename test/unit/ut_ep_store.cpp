@@ -1383,6 +1383,8 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep3.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep3.async_recv(as::as_tuple(as::use_future)).get();

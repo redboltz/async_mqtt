@@ -245,16 +245,45 @@ basic_connection_impl<Role, PacketIdBytes>::
 restore_packets(
     std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
 ) {
+    auto add_publish =
+        [&](auto const& p) {
+            if (p.opts().get_qos() == qos::at_least_once) {
+                pid_puback_.insert(p.packet_id());
+            }
+            else if (p.opts().get_qos() == qos::exactly_once) {
+                pid_pubrec_.insert(p.packet_id());
+            }
+        };
+    auto add_store =
+        [&] (auto&& p) {
+            if (pid_man_.register_id(p.packet_id())) {
+                store_.add(std::forward<decltype(p)>(p));
+            }
+            else {
+                ASYNC_MQTT_LOG("mqtt_impl", error)
+                    << "packet_id:" << p.packet_id()
+                    << " has already been used. Skip it";
+            }
+        };
+
     for (auto& pv : pvs) {
         pv.visit(
-            [&](auto& p) {
-                if (pid_man_.register_id(p.packet_id())) {
-                    store_.add(force_move(p));
-                }
-                else {
-                    ASYNC_MQTT_LOG("mqtt_impl", error)
-                        << "packet_id:" << p.packet_id()
-                        << " has already been used. Skip it";
+            overload {
+                [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
+                    add_publish(p);
+                    add_store(force_move(p));
+                },
+                [&](v5::basic_publish_packet<PacketIdBytes>& p) {
+                    add_publish(p);
+                    add_store(force_move(p));
+                },
+                [&](v3_1_1::basic_pubrel_packet<PacketIdBytes>& p) {
+                    pid_pubcomp_.insert(p.packet_id());
+                    add_store(force_move(p));
+                },
+                [&](v5::basic_pubrel_packet<PacketIdBytes>& p) {
+                    pid_pubcomp_.insert(p.packet_id());
+                    add_store(force_move(p));
                 }
             }
         );
@@ -330,9 +359,6 @@ initialize(bool is_client) {
     need_store_ = false;
     pid_suback_.clear();
     pid_unsuback_.clear();
-    pid_puback_.clear();
-    pid_pubrec_.clear();
-    pid_pubcomp_.clear();
     is_client_ = is_client;
 }
 

@@ -213,6 +213,9 @@ process_send_packet(
             pid_man_.clear();
             store_.clear();
             need_store_ = false;
+            pid_puback_.clear();
+            pid_pubrec_.clear();
+            pid_pubcomp_.clear();
         }
         else {
             need_store_ = true;
@@ -230,6 +233,9 @@ process_send_packet(
         if (actual_packet.clean_start()) {
             pid_man_.clear();
             store_.clear();
+            pid_puback_.clear();
+            pid_pubrec_.clear();
+            pid_pubcomp_.clear();
         }
         for (auto const& prop : actual_packet.props()) {
             prop.visit(
