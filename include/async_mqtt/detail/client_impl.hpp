@@ -48,6 +48,14 @@ public:
     this_type& operator=(this_type const&) = delete;
     this_type& operator=(this_type&&) = delete;
 
+    template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
+
     template <typename... Args>
     auto async_start(Args&&... args);
 

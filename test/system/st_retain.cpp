@@ -54,8 +54,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                     )
                 );
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -120,8 +119,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_none) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -234,8 +232,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                     )
                 );
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -301,8 +298,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_no_exp) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -417,8 +413,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                     )
                 );
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -487,8 +482,7 @@ BOOST_AUTO_TEST_CASE(v5_mei_exp) {
                 std::this_thread::sleep_for(std::chrono::seconds(2));
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -613,8 +607,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                     )
                 );
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -667,8 +660,7 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

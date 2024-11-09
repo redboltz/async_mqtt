@@ -80,8 +80,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                 );
                 BOOST_TEST(!ec);
 
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -210,9 +209,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                 );
                 BOOST_TEST(!ec);
 
-                yield am::async_underlying_handshake(
-
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -306,8 +303,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                     )
                 );
 
-                yield am::async_underlying_handshake(
-
+                yield ep().async_underlying_handshake(
                     ep().next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -375,8 +371,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                 );
                 BOOST_TEST(!ec);
 
-                yield am::async_underlying_handshake(
-
+                yield ep().async_underlying_handshake(
                     ep().next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -462,7 +457,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
+                yield ep(sub).async_underlying_handshake(
                     ep(sub).next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -518,7 +513,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
+                yield ep(pub).async_underlying_handshake(
                     ep(pub).next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -587,7 +582,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
+                yield ep(sub).async_underlying_handshake(
                     ep(sub).next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -698,7 +693,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
+                yield ep(sub).async_underlying_handshake(
                     ep(sub).next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -755,7 +750,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
+                yield ep(pub).async_underlying_handshake(
                     ep(pub).next_layer(),
                     "127.0.0.1",
                     "1883",
@@ -829,7 +824,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                 std::this_thread::sleep_for(std::chrono::seconds(2));
 
                 // connect sub
-                yield am::async_underlying_handshake(
+                yield ep(sub).async_underlying_handshake(
                     ep(sub).next_layer(),
                     "127.0.0.1",
                     "1883",

@@ -46,6 +46,133 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         );
     }
 
+    // async_handshake
+
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_handshake(
+        bs::websocket::stream<NextLayer>& stream,
+        std::string_view host,
+        std::string_view port,
+        std::string_view path,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            handshake_op{
+                stream,
+                host,
+                port,
+                path
+            },
+            token,
+            stream
+        );
+    }
+
+    template <
+        typename CompletionToken
+    >
+    static auto
+    async_handshake(
+        bs::websocket::stream<NextLayer>& stream,
+        std::string_view host,
+        std::string_view port,
+        CompletionToken&& token
+    ) {
+        return
+            as::async_compose<
+                CompletionToken,
+            void(error_code)
+        >(
+            handshake_op{
+                stream,
+                host,
+                port,
+                "/"
+            },
+            token,
+            stream
+        );
+    }
+
+    struct handshake_op {
+        handshake_op(
+            bs::websocket::stream<NextLayer>& stream,
+            std::string_view host,
+            std::string_view port,
+            std::string_view path
+        ):stream{stream},
+          host{host},
+          port{port},
+          path{path}
+        {}
+
+        bs::websocket::stream<NextLayer>& stream;
+        std::string host;
+        std::string port;
+        std::string path;
+        enum {dispatch, under, handshake, complete} state = dispatch;
+
+        template <typename Self>
+        void operator()(
+            Self& self
+        ) {
+            if (state == dispatch) {
+                state = under;
+                auto& a_stream{stream};
+                as::dispatch(
+                    a_stream.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                BOOST_ASSERT(state == under);
+                state = handshake;
+                auto& a_stream{stream};
+                auto a_host{host};
+                auto a_port{port};
+                layer_customize<NextLayer>::async_handshake(
+                    a_stream.next_layer(),
+                    a_host,
+                    a_port,
+                    force_move(self)
+                );
+            }
+        }
+
+        template <typename Self>
+        void operator()(
+            Self& self,
+            error_code ec
+        ) {
+            if (state == handshake) {
+                state = complete;
+                if (ec) {
+                    self.complete(ec);
+                    return;
+                }
+                auto& a_stream{stream};
+                auto a_host{host};
+                auto a_path{path};
+                a_stream.async_handshake(
+                    a_host,
+                    a_path,
+                    force_move(self)
+                );
+            }
+            else {
+                BOOST_ASSERT(state == complete);
+                self.complete(ec);
+            }
+        }
+    };
+
     // async_write
 
     template <

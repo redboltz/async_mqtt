@@ -44,8 +44,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

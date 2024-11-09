@@ -34,8 +34,7 @@ BOOST_AUTO_TEST_CASE(v311) {
             );
 
             // Handshake undlerying layer (Name resolution and TCP handshaking)
-            auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl.next_layer(),
+            auto [ec_und] = co_await amcl.async_underlying_handshake(
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::use_awaitable)
@@ -190,8 +189,7 @@ BOOST_AUTO_TEST_CASE(v5) {
             );
 
             // Handshake undlerying layer (Name resolution and TCP handshaking)
-            auto [ec_und] = co_await am::async_underlying_handshake(
-                amcl.next_layer(),
+            auto [ec_und] = co_await amcl.async_underlying_handshake(
                 "127.0.0.1",
                 "1883",
                 as::as_tuple(as::use_awaitable)

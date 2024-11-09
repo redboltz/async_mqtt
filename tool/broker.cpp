@@ -291,6 +291,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                             else {
                                 apply_socket_opts(lowest_layer);
+                                epsp->underlying_accepted();
                                 brk.handle_accept(epv_type{force_move(epsp)});
                             }
                             mqtt_async_accept();
@@ -344,6 +345,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "WS accept error:" << ec.message();
                                         }
                                         else {
+                                            epsp->underlying_accepted();
                                             brk.handle_accept(epv_type{force_move(epsp)});
                                         }
                                     }
@@ -442,6 +444,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "TLS handshake error:" << ec.message();
                                         }
                                         else {
+                                            epsp->underlying_accepted();
                                             brk.handle_accept(epv_type{force_move(epsp)}, *username);
                                         }
                                     }
@@ -548,6 +551,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                             << "WS accept error:" << ec.message();
                                                     }
                                                     else {
+                                                        epsp->underlying_accepted();
                                                         brk.handle_accept(epv_type{force_move(epsp)}, *username);
                                                     }
                                                 }

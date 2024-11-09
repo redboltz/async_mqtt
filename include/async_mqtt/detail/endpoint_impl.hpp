@@ -117,6 +117,20 @@ private: // compose operation impl
     static constexpr bool can_send_as_server(role r);
     static std::optional<topic_alias_type> get_topic_alias(properties const& props);
 
+#if 0
+    template <
+        typename TupleArgs,
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+    static
+    auto
+    async_underlying_handshake_impl(
+        this_type_sp impl,
+        TupleArgs&& tuple_args,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+#endif
+
     template <typename ArgsTuple>  struct underlying_handshake_op;
     struct acquire_unique_packet_id_op;
     struct acquire_unique_packet_id_wait_until_op;

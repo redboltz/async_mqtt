@@ -40,13 +40,13 @@ private:
         void operator()(am::error_code const& ec) const {
             proc(ec, std::nullopt);
         }
-        void operator()(am::error_code const& ec, std::optional<am::packet_variant> pv) const {
-            proc(ec, am::force_move(pv));
+        void operator()(am::error_code const& ec, std::optional<am::packet_variant> pv_opt) const {
+            proc(ec, am::force_move(pv_opt));
         }
     private:
         void proc(
             am::error_code const& ec,
-            std::optional<am::packet_variant> pv
+            std::optional<am::packet_variant> pv_opt
         ) const {
 
             reenter (coro_) {
@@ -89,8 +89,8 @@ private:
                     std::cout << "MQTT CONNACK recv error:" << ec.message() << std::endl;
                     return;
                 }
-                BOOST_ASSERT(pv);
-                pv->visit(
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             std::cout
@@ -120,8 +120,8 @@ private:
                     std::cout << "MQTT SUBACK recv error:" << ec.message() << std::endl;
                     return;
                 }
-                BOOST_ASSERT(pv);
-                pv->visit(
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::suback_packet const& p) {
                             std::cout
@@ -158,8 +158,8 @@ private:
                         std::cout << "MQTT recv error:" << ec.message() << std::endl;
                         return;
                     }
-                    BOOST_ASSERT(pv);
-                    pv->visit(
+                    BOOST_ASSERT(pv_opt);
+                    pv_opt->visit(
                         am::overload {
                             [&](am::v3_1_1::publish_packet const& p) {
                                 std::cout

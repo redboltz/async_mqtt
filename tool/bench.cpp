@@ -281,8 +281,7 @@ private:
             }
 
             // Handshake underlying layer
-            yield am::async_underlying_handshake(
-                pci->c.next_layer(),
+            yield pci->c.async_underlying_handshake(
                 pci->host,
                 pci->port,
                 as::append(

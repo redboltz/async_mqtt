@@ -50,8 +50,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c1).next_layer(),
+                yield ep(c1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -87,8 +86,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c2).next_layer(),
+                yield ep(c2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -164,8 +162,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c1).next_layer(),
+                yield ep(c1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -201,8 +198,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c2).next_layer(),
+                yield ep(c2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -278,8 +274,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c1).next_layer(),
+                yield ep(c1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -315,8 +310,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c2).next_layer(),
+                yield ep(c2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -392,8 +386,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c1).next_layer(),
+                yield ep(c1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -430,8 +423,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(c2).next_layer(),
+                yield ep(c2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

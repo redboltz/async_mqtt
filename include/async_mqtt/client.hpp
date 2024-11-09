@@ -674,6 +674,15 @@ public:
      */
     void set_bulk_read_buffer_size(std::size_t val);
 
+    // TBD doc later
+    template <
+        typename... Args
+    >
+    auto
+    async_underlying_handshake(
+        Args&&... args
+    );
+
     /**
      * @brief acuire unique packet_id.
      * @param token see Signature
@@ -899,6 +908,7 @@ private:
 } // namespace async_mqtt
 
 #include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/impl/client_underlying_handshake.hpp>
 #include <async_mqtt/impl/client_start.hpp>
 #include <async_mqtt/impl/client_subscribe.hpp>
 #include <async_mqtt/impl/client_unsubscribe.hpp>

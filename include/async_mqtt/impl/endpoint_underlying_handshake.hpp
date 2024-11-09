@@ -7,9 +7,13 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP
 
+#include <boost/asio/any_completion_handler.hpp>
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/back.hpp>
 #include <boost/hana/drop_back.hpp>
+#include <boost/hana/type.hpp>
+#include <boost/hana/unpack.hpp>
+#include <boost/hana/or.hpp>
 
 #include <async_mqtt/endpoint.hpp>
 
@@ -60,6 +64,32 @@ underlying_handshake_op {
     }
 };
 
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <
+    typename TupleArgs,
+    typename CompletionToken
+>
+auto
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+async_underlying_handshake_impl(
+    this_type_sp impl,
+    TupleArgs&& tuple_args,
+    CompletionToken&& token
+) {
+    auto exe = impl->get_executor();
+    return as::async_compose<
+        CompletionToken,
+        void(error_code)
+    >(
+        underlying_handshake_op<TupleArgs>{
+            force_move(impl),
+            std::forward<TupleArgs>(tuple_args)
+        },
+        token,
+        exe
+    );
+}
+
 } // namespace detail
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
@@ -69,21 +99,78 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
     Args&&... args
 ) {
     BOOST_ASSERT(impl_);
-    auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
-    auto rest = hana::drop_back(force_move(t), hana::size_c<1>);
-    auto&& back = hana::back(t);
+    auto t = hana::make_tuple(std::forward<Args>(args)...);
+    auto back = hana::back(t);
+    auto rest = hana::drop_back(t, hana::size_c<1>);
+#if 0
+    auto const is_callable =
+        [](auto&& callable, auto&& args) {
+            return hana::unpack(
+                args,
+                hana::is_valid(
+                    [](auto&&... args)
+                    -> decltype(callable(args...))
+                    {}
+                )
+            );
+        };
+#endif
 
-    return as::async_compose<
-        decltype(back),
-        void(error_code)
-    >(
-        typename impl_type::template underlying_handshake_op<decltype(rest)>{
+    constexpr auto const is_callable2 =
+        hana::is_valid(
+            [](auto&& token)
+            -> decltype(token(error_code{}))
+            {}
+        );
+    constexpr auto const is_callable3 =
+        hana::is_valid(
+            [](auto&& as_tuple)
+            -> decltype(as_tuple.token_(error_code{}))
+            {}
+        );
+#if 0
+    auto const is_callable_with_nl =
+        [](auto&& callable, auto&& args) {
+            return hana::unpack(
+                args,
+                hana::is_valid(
+                    [](auto&&... args)
+                    -> decltype(callable(std::declval<next_layer_type&>(), args...))
+                    {}
+                )
+            );
+        };
+#endif
+    if constexpr(
+        hana::or_(
+        is_callable2(
+            back
+        )
+        ,
+        is_callable3(
+            back
+        )
+        )
+        || std::
+#if 0
+        is_callable(
+            layer_customize<next_layer_type>::template async_handshake<decltype(back)>,
+            t
+        )
+#endif
+    ) {
+        return impl_type::async_underlying_handshake_impl(
             impl_,
-            force_move(rest)
-        },
-        back,
-        get_executor()
-    );
+            force_move(rest),
+            force_move(back)
+        );
+    }
+    else {
+        return impl_type::async_underlying_handshake_impl(
+            impl_,
+            force_move(t)
+        );
+    }
 }
 
 } // namespace async_mqtt

@@ -66,8 +66,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(sub1).next_layer(),
+                yield ep(sub1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -107,8 +106,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 BOOST_TEST(pv.get_if<am::v5::suback_packet>());
 
                 // connect sub2
-                yield am::async_underlying_handshake(
-                    ep(sub2).next_layer(),
+                yield ep(sub2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -161,8 +159,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(sub3).next_layer(),
+                yield ep(sub3).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -209,8 +206,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -530,8 +526,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
                 // connect sub1
-                yield am::async_underlying_handshake(
-                    ep(sub1).next_layer(),
+                yield ep(sub1).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -573,8 +568,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
                 // connect sub2
-                yield am::async_underlying_handshake(
-                    ep(sub2).next_layer(),
+                yield ep(sub2).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -616,8 +610,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
                 // connect sub3
-                yield am::async_underlying_handshake(
-                    ep(sub3).next_layer(),
+                yield ep(sub3).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -659,8 +652,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

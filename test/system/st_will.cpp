@@ -52,8 +52,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -104,8 +103,7 @@ BOOST_AUTO_TEST_CASE(v311_will) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -197,8 +195,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -249,8 +246,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -345,8 +341,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -397,8 +392,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -493,8 +487,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -545,8 +538,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_send_sei_disconnect) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -650,8 +642,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -702,8 +693,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_sei_disconnect) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -819,8 +809,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -871,8 +860,7 @@ BOOST_AUTO_TEST_CASE(v5_will_wd_not_send_mei) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

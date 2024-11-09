@@ -41,8 +41,7 @@ BOOST_AUTO_TEST_CASE(v311_to_broker) {
                 );
 
                 // connect 1
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -98,8 +97,7 @@ BOOST_AUTO_TEST_CASE(v311_to_broker) {
                 yield ep().async_close(*this);
 
                 // connect 2
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -140,8 +138,7 @@ BOOST_AUTO_TEST_CASE(v311_to_broker) {
                 yield ep().async_close(*this);
 
                 // connect 3
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -214,8 +211,7 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                 );
 
                 // connect 1
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -272,8 +268,7 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                 yield ep().async_close(*this);
 
                 // connect 2
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -319,8 +314,7 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                 yield ep().async_close(*this);
 
                 // connect 3
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -403,8 +397,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     )
                 );
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -457,8 +450,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -513,8 +505,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                 yield ep(sub).async_close(*this);
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -626,8 +617,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     )
                 );
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -679,8 +669,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     )
                 );
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -735,8 +724,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 yield ep(sub).async_close(*this);
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -855,8 +843,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                     )
                 );
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -909,8 +896,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -975,8 +961,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker_mei) {
                 yield ep(sub).async_close(*this);
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

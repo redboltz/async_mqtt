@@ -34,8 +34,7 @@ BOOST_AUTO_TEST_CASE(cb) {
         ctx
     };
 
-    am::async_underlying_handshake(
-        amep.next_layer(),
+    amep.async_underlying_handshake(
         "127.0.0.1",
         "10443",
         [&](am::error_code const& ec) {
@@ -106,8 +105,7 @@ BOOST_AUTO_TEST_CASE(fut) {
     );
 
     {
-        auto fut = am::async_underlying_handshake(
-            amep.next_layer(),
+        auto fut = amep.async_underlying_handshake(
             "127.0.0.1",
             "10443",
             "/",
@@ -189,8 +187,7 @@ BOOST_AUTO_TEST_CASE(coro) {
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "10443",
                     "/",

@@ -45,9 +45,7 @@ BOOST_AUTO_TEST_CASE(v311_pub_to_broker) {
                     )
                 );
 
-                yield am::async_underlying_handshake(
-
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -155,9 +153,7 @@ BOOST_AUTO_TEST_CASE(v5_pub_to_broker) {
                     )
                 );
 
-                yield am::async_underlying_handshake(
-
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -279,8 +275,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -332,8 +327,7 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -500,8 +494,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 );
 
                 // connect sub
-                yield am::async_underlying_handshake(
-                    ep(sub).next_layer(),
+                yield ep(sub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -553,8 +546,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                 );
 
                 // connect pub
-                yield am::async_underlying_handshake(
-                    ep(pub).next_layer(),
+                yield ep(pub).async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

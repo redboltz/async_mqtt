@@ -43,9 +43,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                     )
                 );
 
-                yield am::async_underlying_handshake(
-
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -93,8 +91,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                 yield ep().async_close(*this);
 
                 // reconnect inherit
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -143,8 +140,7 @@ BOOST_AUTO_TEST_CASE(generate_reuse_renew) {
                 yield ep().async_close(*this);
 
                 // reconnect no inherit (clean_start)
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this

@@ -28,8 +28,7 @@ BOOST_AUTO_TEST_CASE(ep) {
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
-    am::async_underlying_handshake(
-        amep.next_layer(),
+    amep.async_underlying_handshake(
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
@@ -122,8 +121,7 @@ BOOST_AUTO_TEST_CASE(cl) {
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
-    am::async_underlying_handshake(
-        amcl.next_layer(),
+    amep.async_underlying_handshake(
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {

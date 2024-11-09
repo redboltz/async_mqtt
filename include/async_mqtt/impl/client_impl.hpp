@@ -79,7 +79,7 @@ struct client_impl<Version, NextLayer>::recv_type {
     {
     }
     error_code ec = error_code{};
-    packet_variant pv;
+    std::optional<packet_variant> pv;
 };
 
 

@@ -91,9 +91,9 @@ int main(int argc, char* argv[]) {
         // Recv MQTT CONNACK
         {
             auto fut = amep.async_recv(as::use_future);
-            auto pv = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
-            if (pv) {
-                pv->visit(
+            auto pv_opt = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
+            if (pv_opt) {
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             std::cout
@@ -124,9 +124,9 @@ int main(int argc, char* argv[]) {
         // Recv MQTT SUBACK
         {
             auto fut = amep.async_recv(as::use_future);
-            auto pv = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
-            if (pv) {
-                pv->visit(
+            auto pv_opt = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
+            if (pv_opt) {
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::suback_packet const& p) {
                             std::cout
@@ -164,9 +164,9 @@ int main(int argc, char* argv[]) {
         {
             for (std::size_t count = 0; count != 2; ++count) {
                 auto fut =  amep.async_recv(as::use_future);
-                auto pv = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
-                if (pv) {
-                    pv->visit(
+                auto pv_opt = fut.get(); // get std::optional<am::packet_variant>, throw if error_code is not success
+                if (pv_opt) {
+                    pv_opt->visit(
                         am::overload {
                             [&](am::v3_1_1::publish_packet const& p) {
                                 std::cout
