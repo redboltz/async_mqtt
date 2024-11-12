@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
         };
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c1).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1to1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c2).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
         };
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c1).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c2).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
         };
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c1).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0to0) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c2).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(p.session_present());
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
         };
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c1).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0offto1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep(c2).async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());

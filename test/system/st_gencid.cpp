@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(v5_cs1) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(v5_cs0) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v5::connack_packet const& p) {
                             BOOST_TEST(p.session_present());

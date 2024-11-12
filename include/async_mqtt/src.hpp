@@ -52,4 +52,7 @@
 #include <async_mqtt/impl/endpoint_impl.ipp>
 #include <async_mqtt/impl/endpoint_recv.ipp>
 
+#include <async_mqtt/protocol/impl/connection_impl.ipp>
+#include <async_mqtt/protocol/impl/timer_impl.ipp>
+
 #endif // ASYNC_MQTT_SRC_HPP

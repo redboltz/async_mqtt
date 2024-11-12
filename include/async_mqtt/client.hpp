@@ -663,16 +663,14 @@ public:
     void set_bulk_write(bool val);
 
     /**
-     * @brief Set the bulk read buffer size.
+     * @brief Set read buffer size.
      * If bulk read is enabled, the `val` parameter specifies the size of the internal
-     * `async_read_some()` buffer.
-     * Enabling bulk read can improve throughput but may increase latency.
-     * Disabling bulk read can reduce latency but may lower throughput.
-     * By default, bulk read is disabled.
+     * prepared `async_read_some()` streambuf.
+     * By default, read buffer size is 65535.
      *
      * @param val If set to 0, bulk read is disabled. Otherwise, it specifies the buffer size.
      */
-    void set_bulk_read_buffer_size(std::size_t val);
+    void set_read_buffer_size(std::size_t val);
 
     // TBD doc later
     template <

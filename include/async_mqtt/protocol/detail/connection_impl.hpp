@@ -121,8 +121,16 @@ private:
     std::optional<topic_alias_type>
     static get_topic_alias(properties const& props);
 
-    static constexpr bool can_send_as_client(role r);
-    static constexpr bool can_send_as_server(role r);
+    static constexpr bool can_send_as_client(role r) {
+        return
+            static_cast<int>(r) &
+            static_cast<int>(role::client);
+    }
+    static constexpr bool can_send_as_server(role r) {
+        return
+            static_cast<int>(r) &
+            static_cast<int>(role::server);
+    }
 
 private:
     protocol_version protocol_version_;

@@ -102,7 +102,7 @@ public:
     void set_auto_replace_topic_alias_send(bool val);
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
     void set_bulk_write(bool val);
-    void set_bulk_read_buffer_size(std::size_t val);
+    void set_read_buffer_size(std::size_t val);
 
     template <
         typename CompletionToken = as::default_completion_token_t<executor_type>

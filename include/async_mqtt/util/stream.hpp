@@ -80,13 +80,11 @@ public:
     }
 
     template <
-        typename ArgsTuple,
-        typename CompletionToken = as::default_completion_token_t<executor_type>
+        typename... Args
     >
     auto
     async_underlying_handshake(
-        ArgsTuple&& args_tuple,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+        Args&&... args
     );
 
     template <
@@ -132,8 +130,8 @@ public:
         >;
     };
 
-    void set_bulk_read_buffer_size(std::size_t size) {
-        impl_->set_bulk_read_buffer_size(size);
+    void set_read_buffer_size(std::size_t size) {
+        impl_->set_read_buffer_size(size);
     }
 
 private:

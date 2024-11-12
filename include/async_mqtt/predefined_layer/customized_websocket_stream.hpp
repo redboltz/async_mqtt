@@ -49,7 +49,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
     // async_handshake
 
     template <
-        typename CompletionToken
+        typename CompletionToken = as::default_completion_token_t<typename bs::websocket::stream<NextLayer>::executor_type>
     >
     static auto
     async_handshake(
@@ -57,7 +57,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         std::string_view host,
         std::string_view port,
         std::string_view path,
-        CompletionToken&& token
+        CompletionToken&& token = as::default_completion_token_t<typename bs::websocket::stream<NextLayer>::executor_type>{}
     ) {
         return
             as::async_compose<

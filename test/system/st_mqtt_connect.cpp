@@ -43,9 +43,9 @@ BOOST_AUTO_TEST_CASE(cb) {
                 [&](am::error_code const& ec) {
                     BOOST_TEST(!ec);
                     amep.async_recv(
-                        [&](am::error_code const& ec, am::packet_variant pv) {
+                        [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                             BOOST_TEST(!ec);
-                            pv.visit(
+                            pv_opt->visit(
                                 am::overload {
                                     [&](am::v3_1_1::connack_packet const& p) {
                                         BOOST_TEST(!p.session_present());
@@ -127,8 +127,8 @@ BOOST_AUTO_TEST_CASE(fut) {
         auto fut =
             amep.async_recv(as::use_future);
         try {
-            auto pv = fut.get();
-            pv.visit(
+            auto pv_opt = fut.get();
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
                         BOOST_TEST(!p.session_present());
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(coro) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(coro) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv(*this);
-                pv.visit(
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             BOOST_TEST(!p.session_present());

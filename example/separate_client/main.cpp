@@ -135,7 +135,7 @@ proc(
         }
         // recv (callback) before sending
         amcl.async_recv(
-            [] (am::error_code ec, am::packet_variant pv_opt) {
+            [] (am::error_code ec, std::optional<am::packet_variant> pv_opt) {
                 std::cout << ec.message() << std::endl;
                 BOOST_ASSERT(pv_opt);
                 pv_opt->visit(

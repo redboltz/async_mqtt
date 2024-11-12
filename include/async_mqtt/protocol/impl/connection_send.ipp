@@ -12,54 +12,34 @@
 
 namespace async_mqtt::detail {
 
-template <role Role, std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_connection_impl<Role, PacketIdBytes>::
-send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events) {
-    store_.for_each(
-        [&](basic_store_packet_variant<PacketIdBytes> const& pv) mutable {
-            if (pv.size() > maximum_packet_size_send_) {
-                pid_man_.release_id(pv.packet_id());
-                // TBD some event should be pushed (size error not send id reusable)
-                // Or perhaps nothing is required
-                return false;
-            }
-            pv.visit(
-                // copy packet because the stored packets need to be preserved
-                // until receiving puback/pubrec/pubcomp
-                [&](auto const& p) {
-                    events.emplace_back(
-                        event_send{
-                            p
-                        }
-                    );
-                }
-            );
-            return true;
-        }
-   );
-}
-
-template <role Role, std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-constexpr bool
-basic_connection_impl<Role, PacketIdBytes>::can_send_as_client(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::client);
-}
-
-template <role Role, std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-constexpr bool
-basic_connection_impl<Role, PacketIdBytes>::can_send_as_server(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::server);
-}
 
 } // namespace async_mqtt::detail
 
+#if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+
+#include <async_mqtt/detail/instantiate_helper.hpp>
+
+
+#define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size) \
+namespace async_mqtt { \
+namespace detail { \
+template \
+class basic_connection_impl<a_role, a_size>; \
+}
+
+#define ASYNC_MQTT_PP_GENERATE(r, product) \
+    BOOST_PP_EXPAND( \
+        ASYNC_MQTT_INSTANTIATE_EACH \
+        BOOST_PP_SEQ_TO_TUPLE( \
+            product \
+        ) \
+    )
+
+BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC_MQTT_PP_SIZE))
+
+#undef ASYNC_MQTT_PP_GENERATE
+#undef ASYNC_MQTT_INSTANTIATE_EACH
+
+#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_IPP

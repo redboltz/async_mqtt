@@ -157,26 +157,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-std::optional<topic_alias_type>
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_topic_alias(properties const& props) {
-    std::optional<topic_alias_type> ta_opt;
-    for (auto const& prop : props) {
-        prop.visit(
-            overload {
-                [&](property::topic_alias const& p) {
-                    ta_opt.emplace(p.val());
-                },
-                [](auto const&) {
-                }
-            }
-        );
-        if (ta_opt) return ta_opt;
-    }
-    return ta_opt;
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::enqueue_publish(
     v5::basic_publish_packet<PacketIdBytes>& packet
@@ -196,56 +176,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::enqueue_publish(
         }
     }
     return false;
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::send_stored(this_type_sp ep) {
-    ep->store_.for_each(
-        [&](basic_store_packet_variant<PacketIdBytes> const& pv) {
-            if (pv.size() > ep->maximum_packet_size_send_) {
-                ep->release_pid(pv.packet_id());
-                return false;
-            }
-            pv.visit(
-                // copy packet because the stored packets need to be preserved
-                // until receiving puback/pubrec/pubcomp
-                overload {
-                    [&](v3_1_1::basic_publish_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v5::basic_publish_packet<PacketIdBytes> p) {
-                        if (ep->enqueue_publish(p)) return;
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    },
-                    [&](v5::basic_pubrel_packet<PacketIdBytes> p) {
-                        async_send(
-                            ep,
-                            p,
-                            as::detached
-                        );
-                    }
-                }
-            );
-            return true;
-        }
-    );
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

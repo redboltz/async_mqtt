@@ -568,7 +568,7 @@ process_send_packet(
         // pingreq packet send
         // if success, pingresp timer set
         events.emplace_back(
-            event_send{
+            basic_event_send<PacketIdBytes>{
                 force_move(actual_packet),
                 release_packet_id_if_send_error
             }

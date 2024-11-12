@@ -34,30 +34,8 @@ namespace as = boost::asio;
  */
 template <typename Protocol, typename Executor>
 struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
-    static auto
-    test(
-        as::basic_stream_socket<Protocol, Executor>&,
-        std::string_view,
-        std::string_view
-    ) {
-        return 32;
-    }
-
     template <
-        typename CompletionToken
-    >
-    static auto
-    test2(
-        as::basic_stream_socket<Protocol, Executor>&,
-        std::string_view,
-        std::string_view,
-        CompletionToken&&
-    ) {
-        return 32;
-    }
-
-    template <
-        typename CompletionToken
+        typename CompletionToken = as::default_completion_token_t<Executor>
     >
     static auto
     async_handshake(

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_CLOSE_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_CLOSE_HPP
+#if !defined(ASYNC_MQTT_IMPL_CLIENT_UNDERLYING_HANDSHAKE_HPP)
+#define ASYNC_MQTT_IMPL_CLIENT_UNDERLYING_HANDSHAKE_HPP
 
 #include <async_mqtt/client.hpp>
 
@@ -36,4 +36,4 @@ client<Version, NextLayer>::async_underlying_handshake(
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_CLOSE_HPP
+#endif // ASYNC_MQTT_IMPL_CLIENT_UNDERLYING_HANDSHAKE_HPP

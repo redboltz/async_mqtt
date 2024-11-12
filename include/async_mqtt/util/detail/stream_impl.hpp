@@ -115,10 +115,17 @@ private:
 
     void parse_packet();
 
+    template <
+        typename... Args
+    >
+    static auto
+    async_underlying_handshake(
+        this_type_sp impl,
+        Args&&... args
+    );
+
     // async operations
 
-    template <typename ArgsTuple>
-    struct stream_underlying_handshake_op;
     template <typename Packet>
     struct stream_write_packet_op;
     template <typename MutableBufferSequence>

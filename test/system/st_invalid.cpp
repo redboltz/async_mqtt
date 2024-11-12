@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(remaining_length) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant /*pv*/,
+            std::optional<am::packet_variant> /*pv_opt*/,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {

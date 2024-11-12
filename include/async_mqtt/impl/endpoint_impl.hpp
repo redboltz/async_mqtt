@@ -86,22 +86,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::lowest_layer() {
 // private
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_client(role r) {
-    return
-        static_cast<int>(r) &
-        static_cast<int>(role::client);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-constexpr bool
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::can_send_as_server(role r) {
-    return static_cast<int>(r) & static_cast<int>(role::server);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename Other>
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
     basic_endpoint_impl<Role, PacketIdBytes, Other>&& other

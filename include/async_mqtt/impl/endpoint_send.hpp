@@ -238,14 +238,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_send(
         << ASYNC_MQTT_ADD_VALUE(address, this)
         << "send:" << packet;
     BOOST_ASSERT(impl_);
-    if constexpr(!std::is_same_v<Packet, basic_packet_variant<PacketIdBytes>>) {
-        static_assert(
-            (impl_type::can_send_as_client(Role) && is_client_sendable<std::decay_t<Packet>>()) ||
-            (impl_type::can_send_as_server(Role) && is_server_sendable<std::decay_t<Packet>>()),
-            "Packet cannot be send by MQTT protocol"
-        );
-    }
-
     return
         impl_type::async_send(
             impl_,

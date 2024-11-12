@@ -66,27 +66,16 @@ underlying_handshake_op {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <
-    typename TupleArgs,
-    typename CompletionToken
+    typename... Args
 >
 auto
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 async_underlying_handshake_impl(
     this_type_sp impl,
-    TupleArgs&& tuple_args,
-    CompletionToken&& token
+    Args&&... args
 ) {
-    auto exe = impl->get_executor();
-    return as::async_compose<
-        CompletionToken,
-        void(error_code)
-    >(
-        underlying_handshake_op<TupleArgs>{
-            force_move(impl),
-            std::forward<TupleArgs>(tuple_args)
-        },
-        token,
-        exe
+    return impl->stream_.async_underlying_handshake(
+        std::forward<Args>(args)...
     );
 }
 
@@ -99,78 +88,10 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
     Args&&... args
 ) {
     BOOST_ASSERT(impl_);
-    auto t = hana::make_tuple(std::forward<Args>(args)...);
-    auto back = hana::back(t);
-    auto rest = hana::drop_back(t, hana::size_c<1>);
-#if 0
-    auto const is_callable =
-        [](auto&& callable, auto&& args) {
-            return hana::unpack(
-                args,
-                hana::is_valid(
-                    [](auto&&... args)
-                    -> decltype(callable(args...))
-                    {}
-                )
-            );
-        };
-#endif
-
-    constexpr auto const is_callable2 =
-        hana::is_valid(
-            [](auto&& token)
-            -> decltype(token(error_code{}))
-            {}
-        );
-    constexpr auto const is_callable3 =
-        hana::is_valid(
-            [](auto&& as_tuple)
-            -> decltype(as_tuple.token_(error_code{}))
-            {}
-        );
-#if 0
-    auto const is_callable_with_nl =
-        [](auto&& callable, auto&& args) {
-            return hana::unpack(
-                args,
-                hana::is_valid(
-                    [](auto&&... args)
-                    -> decltype(callable(std::declval<next_layer_type&>(), args...))
-                    {}
-                )
-            );
-        };
-#endif
-    if constexpr(
-        hana::or_(
-        is_callable2(
-            back
-        )
-        ,
-        is_callable3(
-            back
-        )
-        )
-        || std::
-#if 0
-        is_callable(
-            layer_customize<next_layer_type>::template async_handshake<decltype(back)>,
-            t
-        )
-#endif
-    ) {
-        return impl_type::async_underlying_handshake_impl(
-            impl_,
-            force_move(rest),
-            force_move(back)
-        );
-    }
-    else {
-        return impl_type::async_underlying_handshake_impl(
-            impl_,
-            force_move(t)
-        );
-    }
+    return impl_type::async_underlying_handshake_impl(
+        impl_,
+        std::forward<Args>(args)...
+    );
 }
 
 } // namespace async_mqtt

@@ -64,6 +64,14 @@ recv_op {
                     recv_packet.emplace(force_move(ev.get()));
                     return true;
                 },
+                [&](event_recv) {
+                    state = read;
+                    as::dispatch(
+                        a_ep.get_executor(),
+                        force_move(self)
+                    );
+                    return false;
+                },
                 [&](event_timer ev) {
                     switch (ev.get_timer_for()) {
                     case timer::pingreq_send:

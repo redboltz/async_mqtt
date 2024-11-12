@@ -113,23 +113,15 @@ private: // compose operation impl
         basic_endpoint_impl<Role, PacketIdBytes, Other>&& other
     );
 
-    static constexpr bool can_send_as_client(role r);
-    static constexpr bool can_send_as_server(role r);
-    static std::optional<topic_alias_type> get_topic_alias(properties const& props);
-
-#if 0
     template <
-        typename TupleArgs,
-        typename CompletionToken = as::default_completion_token_t<executor_type>
+        typename... Args
     >
     static
     auto
     async_underlying_handshake_impl(
         this_type_sp impl,
-        TupleArgs&& tuple_args,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+        Args&&... args
     );
-#endif
 
     template <typename ArgsTuple>  struct underlying_handshake_op;
     struct acquire_unique_packet_id_op;
@@ -192,7 +184,6 @@ private:
     );
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet);
-    static void send_stored(this_type_sp ep);
     void initialize();
 
     static void set_pingreq_send_timer(
@@ -239,7 +230,7 @@ private:
     std::size_t read_buffer_size_ = 65535; // TBD define constant
     as::streambuf read_buf_;
     as::streambuf::mutable_buffers_type mbs_;
-    connection<Role> con_;
+    basic_connection<Role, PacketIdBytes> con_;
 
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
     ioc_queue close_queue_;

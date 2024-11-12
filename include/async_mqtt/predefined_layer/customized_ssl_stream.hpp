@@ -35,14 +35,14 @@ static constexpr auto shutdown_timeout = std::chrono::seconds(3);
 template <typename NextLayer>
 struct layer_customize<as::ssl::stream<NextLayer>> {
     template <
-        typename CompletionToken
+        typename CompletionToken = as::default_completion_token_t<typename as::ssl::stream<NextLayer>::executor_type>
     >
     static auto
     async_handshake(
         as::ssl::stream<NextLayer>& stream,
         std::string_view host,
         std::string_view port,
-        CompletionToken&& token
+        CompletionToken&& token = as::default_completion_token_t<typename as::ssl::stream<NextLayer>::executor_type>{}
     ) {
         return
             as::async_compose<
