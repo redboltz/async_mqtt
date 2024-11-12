@@ -20,7 +20,6 @@ enum class timer {
 constexpr
 char const* timer_to_string(timer v);
 
-constexpr
 std::ostream& operator<<(std::ostream& o, timer v);
 
 } // namespace async_mqtt

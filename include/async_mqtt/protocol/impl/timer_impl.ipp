@@ -23,7 +23,6 @@ char const* timer_to_string(timer v) {
 }
 
 inline
-constexpr
 std::ostream& operator<<(std::ostream& o, timer v)
 {
     o << timer_to_string(v);

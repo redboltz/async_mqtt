@@ -105,22 +105,24 @@ public:
         >;
     };
 
+    template <
+        typename ArgsTuple,
+        typename CompletionToken = as::default_completion_token_t<executor_type>
+    >
+    static
+    auto
+    async_underlying_handshake_impl(
+        this_type_sp impl,
+        ArgsTuple&& args_tuple,
+        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+    );
+
 private: // compose operation impl
 
     template <typename Other>
     explicit
     basic_endpoint_impl(
         basic_endpoint_impl<Role, PacketIdBytes, Other>&& other
-    );
-
-    template <
-        typename... Args
-    >
-    static
-    auto
-    async_underlying_handshake_impl(
-        this_type_sp impl,
-        Args&&... args
     );
 
     template <typename ArgsTuple>  struct underlying_handshake_op;
