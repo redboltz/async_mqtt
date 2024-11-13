@@ -445,7 +445,7 @@ struct layer_customize<cpp20coro_basic_stub_socket<PacketIdBytes>> {
             CompletionToken,
             void(error_code const& ec, std::size_t)
         > (
-            async_write_op{
+            async_write_op<ConstBufferSequence>{
                 stream,
                 cbs
             },
