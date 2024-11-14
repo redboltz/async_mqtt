@@ -25,19 +25,17 @@ recv_op {
     std::set<control_packet_type> types = {};
     std::optional<error_code> decided_error = std::nullopt;
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
-    using events_type = std::vector<basic_event_variant<PacketIdBytes>>;
-    using events_it_type = typename events_type::iterator;
-    std::shared_ptr<events_type> events = nullptr;
-    events_it_type it = events_it_type{};
     bool try_resend_from_queue = false;
-    enum { dispatch, read, protocol_read, sent, complete } state = dispatch;
+    bool auto_pubrel_reading = false;
+    enum { dispatch, prev, read, protocol_read, sent, complete } state = dispatch;
 
     template <typename Self>
     bool process_one_event(
         Self& self
     ) {
         auto& a_ep{*ep};
-        auto& event{*it++};
+        auto event{force_move(a_ep.recv_events_.front())};
+        a_ep.recv_events_.pop_front();
         return std::visit(
             overload{
                 [&](error_code ec) {
@@ -61,11 +59,45 @@ recv_op {
                     return true;
                 },
                 [&](basic_event_packet_received<PacketIdBytes> ev) {
-                    recv_packet.emplace(force_move(ev.get()));
+                    if (recv_packet) {
+                        // recv_packet has already been set if publish(QoS2)
+                        // is received, and then pubrec is received by auto_pub_response.
+                        // In this case, the first publish(QoS2) should be reported to the user.
+                        if (!auto_pubrel_reading ||
+                            !ev.get().visit(
+                                overload{
+                                    [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> const&) {
+                                        return true;
+                                    },
+                                    [&](v5::basic_pubrel_packet<PacketIdBytes> const&) {
+                                        return true;
+                                    },
+                                    [&](auto const&) {
+                                        return false;
+                                    },
+                                }
+                            )
+                        ) {
+                            // rest evens would be processed the next async_recv call
+                            // back the event to the recv_events_ for the next async_recv
+                            a_ep.recv_events_.push_front(force_move(event));
+                            state = complete;
+                            as::dispatch(
+                                a_ep.get_executor(),
+                                force_move(self)
+                            );
+                            return false;
+                        }
+                    }
+                    else {
+                        recv_packet.emplace(force_move(ev.get()));
+                    }
                     return true;
                 },
                 [&](event_recv) {
+                    // For auto read pubrel
                     state = read;
+                    auto_pubrel_reading = true;
                     as::dispatch(
                         a_ep.get_executor(),
                         force_move(self)
@@ -119,7 +151,7 @@ recv_op {
                     );
                     return false;
                 },
-                [](auto const&) {
+                [&](auto const&) {
                     BOOST_ASSERT(false);
                     return false;
                 }
@@ -160,11 +192,32 @@ recv_op {
 
         switch (state) {
         case dispatch: {
-            state = read;
+            state = prev;
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
+        } break;
+        case prev: {
+            while (!a_ep.recv_events_.empty()) {
+                if (!process_one_event(self)) return;
+            }
+            // all previous events processed
+            // and receive event is included in them
+            if (recv_packet) {
+                state = complete;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
         } break;
         case read: {
             state = protocol_read;
@@ -177,9 +230,10 @@ recv_op {
         case protocol_read: {
             auto b = as::buffers_iterator<as::streambuf::mutable_buffers_type>::begin(a_ep.mbs_);
             auto e = std::next(b, std::ptrdiff_t(bytes_transferred));
-            events = std::make_shared<events_type>(a_ep.con_.recv(b, e));
+            auto events{a_ep.con_.recv(b, e)};
+            std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
             a_ep.read_buf_.commit(bytes_transferred);
-            if (events->empty()) {
+            if (a_ep.recv_events_.empty()) {
                 // required more bytes
                 state = read;
                 as::dispatch(
@@ -188,8 +242,7 @@ recv_op {
                 );
             }
             else {
-                it = events->begin();
-                while (it != events->end()) {
+                while (!a_ep.recv_events_.empty()) {
                     if (!process_one_event(self)) return;
                 }
                 state = complete; // all events processed
@@ -200,7 +253,7 @@ recv_op {
             }
         } break;
         case sent: {
-            while (it != events->end()) {
+            while (!a_ep.recv_events_.empty()) {
                 if (!process_one_event(self)) return;
             }
             state = complete; // all events processed

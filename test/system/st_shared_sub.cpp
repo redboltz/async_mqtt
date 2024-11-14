@@ -862,13 +862,12 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     )
                 );
 
-                yield ep(sub3).async_recv(*this); // recv pubrel
                 yield ep(sub3).async_recv(*this);
                 BOOST_TEST(
                     *pv_opt
                     ==
                     (am::v5::publish_packet{
-                        2,
+                        1,
                         "topic1",
                         "payload5",
                         am::qos::at_least_once,

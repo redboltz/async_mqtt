@@ -44,6 +44,7 @@ BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
                     )
                 );
 
+                ep().set_offline_publish(true);
 
                 // publish QoS0
                 yield ep().async_send(
@@ -174,6 +175,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp0) {
                     )
                 );
 
+                ep().set_offline_publish(true);
+
                 // publish QoS0
                 yield ep().async_send(
                     am::v3_1_1::publish_packet{
@@ -302,6 +305,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
                         *this
                     )
                 );
+
+                ep().set_offline_publish(true);
 
                 yield ep().async_underlying_handshake(
                     "127.0.0.1",
@@ -453,6 +458,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                         *this
                     )
                 );
+
+                ep(pub).set_offline_publish(true);
 
                 // connect sub
                 yield ep(sub).async_underlying_handshake(
@@ -686,6 +693,8 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
                         *this
                     )
                 );
+
+                ep(pub).set_offline_publish(true);
 
                 // connect sub
                 yield ep(sub).async_underlying_handshake(

@@ -251,6 +251,7 @@ private:
         closed
     };
     close_status status_{close_status::closed};
+    std::deque<basic_event_variant<PacketIdBytes>> recv_events_;
 };
 
 } // namespace async_mqtt::detail

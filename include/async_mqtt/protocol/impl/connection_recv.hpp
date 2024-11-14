@@ -76,6 +76,7 @@ public:
                             read_packets_.emplace_back(
                                 buffer{raw_buf_.get(), raw_buf_size_, force_move(raw_buf_)}
                             );
+                            initialize();
                             return;
                         }
                         else {
