@@ -26,7 +26,6 @@ recv_op {
     std::optional<error_code> decided_error = std::nullopt;
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
     bool try_resend_from_queue = false;
-    bool auto_pubrel_reading = false;
     enum { dispatch, prev, read, protocol_read, sent, complete } state = dispatch;
 
     template <typename Self>
@@ -60,34 +59,15 @@ recv_op {
                 },
                 [&](basic_event_packet_received<PacketIdBytes> ev) {
                     if (recv_packet) {
-                        // recv_packet has already been set if publish(QoS2)
-                        // is received, and then pubrec is received by auto_pub_response.
-                        // In this case, the first publish(QoS2) should be reported to the user.
-                        if (!auto_pubrel_reading ||
-                            !ev.get().visit(
-                                overload{
-                                    [&](v3_1_1::basic_pubrel_packet<PacketIdBytes> const&) {
-                                        return true;
-                                    },
-                                    [&](v5::basic_pubrel_packet<PacketIdBytes> const&) {
-                                        return true;
-                                    },
-                                    [&](auto const&) {
-                                        return false;
-                                    },
-                                }
-                            )
-                        ) {
-                            // rest evens would be processed the next async_recv call
-                            // back the event to the recv_events_ for the next async_recv
-                            a_ep.recv_events_.push_front(force_move(event));
-                            state = complete;
-                            as::dispatch(
-                                a_ep.get_executor(),
-                                force_move(self)
-                            );
-                            return false;
-                        }
+                        // rest evens would be processed the next async_recv call
+                        // back the event to the recv_events_ for the next async_recv
+                        a_ep.recv_events_.push_front(force_move(event));
+                        state = complete;
+                        as::dispatch(
+                            a_ep.get_executor(),
+                            force_move(self)
+                        );
+                        return false;
                     }
                     else {
                         recv_packet.emplace(force_move(ev.get()));
@@ -97,7 +77,6 @@ recv_op {
                 [&](event_recv) {
                     // For auto read pubrel
                     state = read;
-                    auto_pubrel_reading = true;
                     as::dispatch(
                         a_ep.get_executor(),
                         force_move(self)
@@ -271,6 +250,21 @@ recv_op {
             }
             else {
                 BOOST_ASSERT(recv_packet);
+                if (fil) {
+                    auto type = recv_packet->type();
+                    if ((*fil == filter::match  && types.find(type) == types.end()) ||
+                        (*fil == filter::except && types.find(type) != types.end())
+                    ) {
+                        // read the next packet
+                        state = prev;
+                        recv_packet.reset();
+                        as::dispatch(
+                            a_ep.get_executor(),
+                            force_move(self)
+                        );
+                        return;
+                    }
+                }
                 if (try_resend_from_queue) {
                     send_publish_from_queue();
                 }

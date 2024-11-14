@@ -430,6 +430,8 @@ BOOST_AUTO_TEST_CASE(v311_from_broker) {
                     })
                 );
 
+                yield ep(sub).async_recv(*this);
+                BOOST_TEST(pv_opt->get_if<am::v3_1_1::pubrel_packet>());
                 yield ep(sub).async_send(am::v3_1_1::disconnect_packet{}, *this);
                 BOOST_TEST(!ec);
                 yield ep(sub).async_recv(am::filter::match, {}, *this);
@@ -647,6 +649,8 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                     })
                 );
 
+                yield ep(sub).async_recv(*this);
+                BOOST_TEST(pv_opt->get_if<am::v5::pubrel_packet>());
                 yield ep(sub).async_send(am::v5::disconnect_packet{}, *this);
                 BOOST_TEST(!ec);
                 yield ep(sub).async_recv(am::filter::match, {}, *this);

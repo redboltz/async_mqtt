@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub1).async_recv(*this);
+                yield ep(sub1).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub2).async_recv(*this);
+                yield ep(sub2).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -367,7 +367,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub3).async_recv(*this);
+                yield ep(sub3).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub1).async_recv(*this);
+                yield ep(sub1).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -402,7 +402,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub2).async_recv(*this);
+                yield ep(sub2).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -420,7 +420,7 @@ BOOST_AUTO_TEST_CASE(v5_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub3).async_recv(*this);
+                yield ep(sub3).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     )
                 );
 
-                yield ep(sub1).async_recv(*this);
+                yield ep(sub1).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -737,7 +737,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     )
                 );
 
-                yield ep(sub2).async_recv(*this);
+                yield ep(sub2).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -756,7 +756,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub3).async_recv(*this);
+                yield ep(sub3).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -843,7 +843,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     )
                 );
 
-                yield ep(sub2).async_recv(*this);
+                yield ep(sub2).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
@@ -862,12 +862,12 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                     )
                 );
 
-                yield ep(sub3).async_recv(*this);
+                yield ep(sub3).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
                     (am::v5::publish_packet{
-                        1,
+                        2,
                         "topic1",
                         "payload5",
                         am::qos::at_least_once,
@@ -881,7 +881,7 @@ BOOST_AUTO_TEST_CASE(v5_unsub_from_broker) {
                         *this
                     )
                 );
-                yield ep(sub2).async_recv(*this);
+                yield ep(sub2).async_recv(am::filter::match, {am::control_packet_type::publish}, *this);
                 BOOST_TEST(
                     *pv_opt
                     ==
