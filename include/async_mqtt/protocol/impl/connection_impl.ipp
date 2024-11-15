@@ -14,6 +14,7 @@
 #include <async_mqtt/protocol/event_packet_id_released.hpp>
 #include <async_mqtt/protocol/event_send.hpp>
 #include <async_mqtt/protocol/event_recv.hpp>
+#include <async_mqtt/protocol/event_timer.hpp>
 #include <async_mqtt/protocol/event_close.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
