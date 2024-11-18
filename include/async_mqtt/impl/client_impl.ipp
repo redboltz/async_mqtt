@@ -35,6 +35,7 @@ client_impl<Version, NextLayer>::recv_loop(this_type_sp impl) {
                 impl->recv_queue_.emplace_back(ec);
                 impl->recv_queue_inserted_  = true;
                 impl->tim_notify_publish_recv_.cancel();
+                impl->pid_tim_pv_res_col_.clear();
                 return;
             }
             BOOST_ASSERT(pv_opt);

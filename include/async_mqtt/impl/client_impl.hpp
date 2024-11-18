@@ -52,6 +52,12 @@ struct client_impl<Version, NextLayer>::pid_tim_pv_res_col {
     auto& get_tim_idx() {
         return elems.template get<tag_tim>();
     }
+    void clear() {
+        for (auto& elem : elems) {
+            const_cast<as::steady_timer&>(*elem.tim).cancel();
+        }
+        elems.clear();
+    }
     using mi_elem_type = mi::multi_index_container<
         elem_type,
         mi::indexed_by<

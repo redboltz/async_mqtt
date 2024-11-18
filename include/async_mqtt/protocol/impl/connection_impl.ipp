@@ -864,7 +864,7 @@ process_recv_packet() {
                         );
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id puback received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -890,7 +890,7 @@ process_recv_packet() {
                         --publish_send_count_;
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id puback received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -924,7 +924,7 @@ process_recv_packet() {
                         }
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubrec received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -960,7 +960,7 @@ process_recv_packet() {
                         }
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubrec received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -1022,7 +1022,7 @@ process_recv_packet() {
                         qos2_publish_processing_.erase(packet_id);
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubcomp received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -1049,7 +1049,7 @@ process_recv_packet() {
                         --publish_send_count_;
                     }
                     else {
-                        ASYNC_MQTT_LOG("mqtt_impl", info)
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubcomp received packet_id:" << packet_id;
                         events.emplace_back(
                             make_error_code(
@@ -1090,6 +1090,17 @@ process_recv_packet() {
                             basic_event_packet_id_released<PacketIdBytes>{packet_id}
                         );
                     }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
+                            << "invalid packet_id suback received packet_id:" << packet_id;
+                        events.emplace_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.emplace_back(event_close{});
+                        return false;
+                    }
                     return true;
                 },
                 [&](v5::basic_suback_packet<PacketIdBytes>& p) {
@@ -1102,6 +1113,24 @@ process_recv_packet() {
                         events.emplace_back(
                             basic_event_packet_id_released<PacketIdBytes>{packet_id}
                         );
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
+                            << "invalid packet_id suback received packet_id:" << packet_id;
+                        events.emplace_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.emplace_back(
+                            basic_event_send<PacketIdBytes>{
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::protocol_error
+                                }
+                            }
+                        );
+                        events.emplace_back(event_close{});
+                        return false;
                     }
                     return true;
                 },
@@ -1128,6 +1157,17 @@ process_recv_packet() {
                             basic_event_packet_id_released<PacketIdBytes>{packet_id}
                         );
                     }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
+                            << "invalid packet_id unsuback received packet_id:" << packet_id;
+                        events.emplace_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.emplace_back(event_close{});
+                        return false;
+                    }
                     return true;
                 },
                 [&](v5::basic_unsuback_packet<PacketIdBytes>& p) {
@@ -1140,6 +1180,24 @@ process_recv_packet() {
                         events.emplace_back(
                             basic_event_packet_id_released<PacketIdBytes>{packet_id}
                         );
+                    }
+                    else {
+                        ASYNC_MQTT_LOG("mqtt_impl", error)
+                            << "invalid packet_id unsuback received packet_id:" << packet_id;
+                        events.emplace_back(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        events.emplace_back(
+                            basic_event_send<PacketIdBytes>{
+                                v5::disconnect_packet{
+                                    disconnect_reason_code::protocol_error
+                                }
+                            }
+                        );
+                        events.emplace_back(event_close{});
+                        return false;
                     }
                     return true;
                 },
