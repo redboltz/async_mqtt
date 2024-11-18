@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_RECV_HPP
 
 #include <async_mqtt/endpoint.hpp>
+#include <iostream>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 #include <async_mqtt/impl/buffer_to_packet_variant.ipp>
@@ -185,6 +186,7 @@ recv_op {
             // and receive event is included in them
             if (recv_packet) {
                 state = complete;
+                std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                 as::post(
                     a_ep.get_executor(),
                     force_move(self)
@@ -214,6 +216,7 @@ recv_op {
             a_ep.read_buf_.commit(bytes_transferred);
             if (a_ep.recv_events_.empty()) {
                 // required more bytes
+                std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                 state = read;
                 as::dispatch(
                     a_ep.get_executor(),
@@ -256,6 +259,7 @@ recv_op {
                         (*fil == filter::except && types.find(type) != types.end())
                     ) {
                         // read the next packet
+                        std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                         state = prev;
                         recv_packet.reset();
                         as::dispatch(
@@ -268,6 +272,7 @@ recv_op {
                 if (try_resend_from_queue) {
                     send_publish_from_queue();
                 }
+                std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                 self.complete(
                     error_code{},
                     force_move(recv_packet)
