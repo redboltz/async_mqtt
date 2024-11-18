@@ -204,6 +204,7 @@ recv_op {
             }
         } break;
         case read: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             state = protocol_read;
             a_ep.mbs_ = a_ep.read_buf_.prepare(a_ep.read_buffer_size_);
             a_ep.stream_.async_read_some(
@@ -215,6 +216,7 @@ recv_op {
             auto b = as::buffers_iterator<as::streambuf::mutable_buffers_type>::begin(a_ep.mbs_);
             auto e = std::next(b, std::ptrdiff_t(bytes_transferred));
             auto events{a_ep.con_.recv(b, e)};
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << ":" << events.size() << std::endl;
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
             a_ep.read_buf_.commit(bytes_transferred);
             if (a_ep.recv_events_.empty()) {
