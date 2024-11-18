@@ -644,7 +644,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                         am::qos::at_least_once | am::pub::dup::no
                     })
                 );
-                std::cout << __LINE__ << std::endl;
+                std::cout << __LINE__ << std::endl; // passed
                 yield ep(sub).async_recv(*this);
 
                 BOOST_TEST(
@@ -657,7 +657,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                         am::qos::exactly_once | am::pub::dup::no
                     })
                 );
-                std::cout << __LINE__ << std::endl;
+                std::cout << __LINE__ << std::endl; // not passed
                 yield ep(sub).async_close(*this);
 
                 set_finish();
