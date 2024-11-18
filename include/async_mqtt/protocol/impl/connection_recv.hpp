@@ -73,8 +73,9 @@ public:
                         );
                         raw_buf_ptr_ += header_remaining_length_buf_.size();
                         if (remaining_length_ == 0) {
+                            auto ptr = raw_buf_.get();
                             read_packets_.emplace_back(
-                                buffer{raw_buf_.get(), raw_buf_size_, force_move(raw_buf_)}
+                                buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                             );
                             initialize();
                             return;
