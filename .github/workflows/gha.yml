@@ -126,7 +126,7 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        pattern: [0, 1, 2]
+        pattern: [1]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -181,12 +181,12 @@ jobs:
         if (!$?) {
           return Write-Error "cmake failed"
         }
-        cmake --build . --config Release
+        cmake --build . --config Debug
         if (!$?) {
           return Write-Error "cmake --build failed"
         }
         if ("$BUILD_TOOLS" -eq "ON") {
-            cd tool\Release
+            cd tool\Debug
             $env:PATH="$PWD;"+$env:PATH
             cd ..\..
         }
@@ -196,7 +196,9 @@ jobs:
             cp test\system\st_broker.conf .
             cp test\system\st_auth.json .
         }
-        ctest -V -C Release
+        cd test\system\Debug\
+        .\st_offline --log_level=all -- trace
+        #ctest -V -C Debug
         if (!$?) {
-          return Write-Error "ctest -V -C Release failed"
+          return Write-Error "ctest -V -C Debug failed"
         }

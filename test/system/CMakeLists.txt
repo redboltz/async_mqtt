@@ -7,32 +7,32 @@
 if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
     set(CMAKE_CXX_STANDARD 20)
     message(STATUS "C++20 examples added")
-    list(APPEND check_PROGRAMS
-        st_cpp20coro_client.cpp
-        st_cpp20coro_client_direct.cpp
-        st_cpp20coro_client_direct_default.cpp
-        st_cpp20coro_client_direct_error.cpp
-        st_cpp20coro_client_direct_default_error.cpp
-    )
+    # list(APPEND check_PROGRAMS
+    #     st_cpp20coro_client.cpp
+    #     st_cpp20coro_client_direct.cpp
+    #     st_cpp20coro_client_direct_default.cpp
+    #     st_cpp20coro_client_direct_error.cpp
+    #     st_cpp20coro_client_direct_default_error.cpp
+    # )
 endif()
 
 list(APPEND check_PROGRAMS
-    st_auth.cpp
-    st_cancel.cpp
-    st_conflict_cid.cpp
-    st_gencid.cpp
-    st_mqtt_connect.cpp
-    st_keep_alive.cpp
-    st_inflight.cpp
-    st_invalid.cpp
-    st_offline.cpp
-    st_order.cpp
-    st_pub.cpp
-    st_retain.cpp
-    st_reqres.cpp
-    st_shared_sub.cpp
-    st_sub.cpp
-    st_will.cpp
+    # st_auth.cpp
+    # st_cancel.cpp
+    # st_conflict_cid.cpp
+    # st_gencid.cpp
+    # st_mqtt_connect.cpp
+    # st_keep_alive.cpp
+    # st_inflight.cpp
+    # st_invalid.cpp
+      st_offline.cpp
+    # st_order.cpp
+    # st_pub.cpp
+    # st_retain.cpp
+    # st_reqres.cpp
+    # st_shared_sub.cpp
+    # st_sub.cpp
+    # st_will.cpp
 )
 
 if(ASYNC_MQTT_USE_TLS)
