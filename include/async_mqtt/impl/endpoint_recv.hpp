@@ -45,6 +45,7 @@ recv_op {
                 [&](basic_event_send<PacketIdBytes>& ev) {
                     state = sent;
                     auto ep_copy{ep};
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     async_send(
                         force_move(ep_copy),
                         force_move(ev.get()),
@@ -60,6 +61,7 @@ recv_op {
                 },
                 [&](basic_event_packet_received<PacketIdBytes> ev) {
                     if (recv_packet) {
+                        std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                         // rest events would be processed the next async_recv call
                         // back the event to the recv_events_ for the next async_recv
                         a_ep.recv_events_.push_front(force_move(event));
@@ -71,6 +73,7 @@ recv_op {
                         return false;
                     }
                     else {
+                        std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                         recv_packet.emplace(force_move(ev.get()));
                     }
                     return true;
