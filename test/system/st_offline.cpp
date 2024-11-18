@@ -574,7 +574,7 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 BOOST_TEST(!ec);
                 yield ep(pub).async_send(am::v3_1_1::disconnect_packet{}, *this);
                 BOOST_TEST(!ec);
-                yield ep(pub).async_recv(am::filter::match, {}, *this);
+                yield ep(pub).async_recv(*this);
                 BOOST_TEST(!pv_opt); // wait and check close by broker
 
                 yield as::dispatch(
