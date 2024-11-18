@@ -196,9 +196,9 @@ jobs:
             cp test\system\st_broker.conf .
             cp test\system\st_auth.json .
         }
-        cd test\system\Debug\
-        .\st_offline --log_level=all -- trace
-        #ctest -V -C Debug
+        #cd test\system\Debug\
+        #.\st_offline --log_level=all -- trace
+        ctest -V -C Debug
         if (!$?) {
           return Write-Error "ctest -V -C Debug failed"
         }
