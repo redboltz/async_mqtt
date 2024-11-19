@@ -33,7 +33,6 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
         auto& a_strm{*strm};
         switch (state) {
         case dispatch: {
-            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             state = post;
             as::dispatch(
                 a_strm.get_executor(),
@@ -151,7 +150,6 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
     ) {
         auto& a_strm{*strm};
         if (ec) {
-            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.stop_work();
             as::post(
                 a_strm.get_executor(),
@@ -164,7 +162,6 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
         }
         switch (state) {
         case complete: {
-            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.stop_work();
             a_strm.sending_cbs_.clear();
             as::post(
