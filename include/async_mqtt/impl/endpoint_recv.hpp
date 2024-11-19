@@ -63,7 +63,7 @@ recv_op {
                         // back the event to the recv_events_ for the next async_recv
                         a_ep.recv_events_.push_front(force_move(event));
                         state = complete;
-                        as::dispatch(
+                        as::post(
                             a_ep.get_executor(),
                             force_move(self)
                         );
@@ -225,7 +225,7 @@ recv_op {
                     if (!process_one_event(self)) return;
                 }
                 state = complete; // all events processed
-                as::dispatch(
+                as::post(
                     a_ep.get_executor(),
                     force_move(self)
                 );
@@ -236,7 +236,7 @@ recv_op {
                 if (!process_one_event(self)) return;
             }
             state = complete; // all events processed
-            as::dispatch(
+            as::post(
                 a_ep.get_executor(),
                 force_move(self)
             );
