@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP
 
 #include <async_mqtt/util/stream.hpp>
+#include <iostream>
 
 namespace async_mqtt {
 
@@ -32,6 +33,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
         auto& a_strm{*strm};
         switch (state) {
         case dispatch: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             state = post;
             as::dispatch(
                 a_strm.get_executor(),
@@ -39,6 +41,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
             );
         } break;
         case post: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             auto& a_packet{*packet};
             if (!a_strm.bulk_write_ || a_strm.write_queue_.immediate_executable()) {
                 state = write;
@@ -54,6 +57,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
             a_strm.write_queue_.try_execute();
         } break;
         case write: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.start_work();
             if (a_strm.lowest_layer().is_open()) {
                 state = complete;
@@ -87,6 +91,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
             }
         } break;
         case bulk_write: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.start_work();
             if (a_strm.lowest_layer().is_open()) {
                 state = complete;
@@ -146,6 +151,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
     ) {
         auto& a_strm{*strm};
         if (ec) {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.stop_work();
             as::post(
                 a_strm.get_executor(),
@@ -158,6 +164,7 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
         }
         switch (state) {
         case complete: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << *packet << std::endl;
             a_strm.write_queue_.stop_work();
             a_strm.sending_cbs_.clear();
             as::post(
