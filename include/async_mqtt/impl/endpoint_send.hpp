@@ -25,6 +25,7 @@ send_op {
     using events_it_type = typename events_type::iterator;
     std::shared_ptr<events_type> events = nullptr;
     events_it_type it = events_it_type{};
+    bool disconnect_sent_just_before = false;
     enum { dispatch, write, sent, close, complete } state = dispatch;
 
     template <typename Self>
@@ -86,6 +87,7 @@ send_op {
                 },
                 [&](event_send& ev) {
                     state = sent;
+                    disconnect_sent_just_before = ev.get().type() == control_packet_type::disconnect;
                     a_ep.stream_.async_write_packet(
                         force_move(ev.get()),
                         as::append(
@@ -97,10 +99,18 @@ send_op {
                 },
                 [&](event_close) {
                     state = close;
-                    as::post(
-                        a_ep.get_executor(),
-                        force_move(self)
-                    );
+                    if (disconnect_sent_just_before) {
+                        a_ep.tim_close_by_disconnect_.expires_after(std::chrono::milliseconds{10});
+                        a_ep.tim_close_by_disconnect_.async_wait(
+                            force_move(self)
+                        );
+                    }
+                    else {
+                        as::post(
+                            a_ep.get_executor(),
+                            force_move(self)
+                        );
+                    }
                     return false;
                 },
                 [&](auto const&) {

@@ -39,7 +39,8 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
    con_{ver},
    tim_pingreq_send_{stream_.get_executor()},
    tim_pingreq_recv_{stream_.get_executor()},
-   tim_pingresp_recv_{stream_.get_executor()}
+   tim_pingresp_recv_{stream_.get_executor()},
+   tim_close_by_disconnect_{stream_.get_executor()}
 {
     BOOST_ASSERT(
         (Role == role::client && ver != protocol_version::undetermined) ||

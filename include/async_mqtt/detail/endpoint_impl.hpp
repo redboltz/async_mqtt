@@ -240,6 +240,7 @@ private:
     as::steady_timer tim_pingreq_send_;
     as::steady_timer tim_pingreq_recv_;
     as::steady_timer tim_pingresp_recv_;
+    as::steady_timer tim_close_by_disconnect_;
 
     struct tim_cancelled;
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
