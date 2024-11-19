@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_SEND_HPP
 
 #include <async_mqtt/endpoint.hpp>
+#include <iostream>
 
 namespace async_mqtt {
 
@@ -36,6 +37,7 @@ send_op {
         return std::visit(
             overload{
                 [&](error_code ec) {
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     if (ec == disconnect_reason_code::receive_maximum_exceeded) {
                         if constexpr (std::is_same_v<Packet, v5::basic_publish_packet<PacketIdBytes>>) {
                             auto success = a_ep.register_packet_id(packet.packet_id());
@@ -57,6 +59,7 @@ send_op {
                     return true;
                 },
                 [&](event_timer const& ev) {
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     switch (ev.get_timer_for()) {
                     case timer::pingreq_send:
                         if (ev.get_op() == event_timer::op_type::reset) {
@@ -81,10 +84,12 @@ send_op {
                     return true;
                 },
                 [&](basic_event_packet_id_released<PacketIdBytes> const& ev) {
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     a_ep.notify_release_pid(ev.get());
                     return true;
                 },
                 [&](event_send& ev) {
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     state = sent;
                     a_ep.stream_.async_write_packet(
                         force_move(ev.get()),
@@ -96,6 +101,7 @@ send_op {
                     return false;
                 },
                 [&](event_close) {
+                    std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                     state = complete;
                     auto ep_copy{ep};
                     async_close(
@@ -134,6 +140,7 @@ send_op {
 
         switch (state) {
         case dispatch: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             state = write;
             as::dispatch(
                 a_ep.get_executor(),
@@ -141,11 +148,13 @@ send_op {
             );
         } break;
         case write: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             events = std::make_shared<events_type>(a_ep.con_.send(packet));
             it = events->begin();
             while (it != events->end()) {
                 if (!process_one_event(self)) return;
             }
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             state = complete; // all events processed
             as::dispatch(
                 a_ep.get_executor(),
@@ -153,10 +162,12 @@ send_op {
             );
         } break;
         case sent: {
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             while (it != events->end()) {
                 if (!process_one_event(self)) return;
             }
             state = complete; // all events processed
+            std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
@@ -164,9 +175,11 @@ send_op {
         } break;
         case complete: {
             if (decided_error) {
+                std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                 self.complete(*decided_error);
             }
             else {
+                std::cout << __FILE__ << ":" << __LINE__ << ":" << &a_ep << std::endl;
                 self.complete(ec);
             }
         } break;
