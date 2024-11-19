@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include <set>
+#include <iostream>
 
 #include <boost/asio/io_context.hpp>
 #include <boost/multi_index_container.hpp>
@@ -172,6 +173,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 }
             );
 
+            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             insert_inflight_message(
                 force_move(store),
                 force_move(tim_message_expiry)
@@ -311,6 +313,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         }
 
         // offline_messages_ is not empty or packet_id_exhausted
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         offline_messages_.push_back(
             timer_ioc,
             force_move(pub_topic),
@@ -339,6 +342,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         }
         else {
             std::lock_guard<mutex> g(mtx_offline_messages_);
+            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             offline_messages_.push_back(
                 timer_ioc,
                 force_move(pub_topic),
@@ -362,10 +366,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         will_value_ = std::nullopt;
         {
             std::lock_guard<mutex> g(mtx_inflight_messages_);
+            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             inflight_messages_.clear();
         }
         {
             std::lock_guard<mutex> g(mtx_offline_messages_);
+            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             offline_messages_.clear();
         }
         unsubscribe_all();
@@ -558,6 +564,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     }
 
     void send_all_offline_messages() {
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.send_until_fail(epsp, get_protocol_version());

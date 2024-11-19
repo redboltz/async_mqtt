@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_BROKER_OFFLINE_MESSAGE_HPP
 
 #include <optional>
+#include <iostream>
 
 #include <boost/asio/steady_timer.hpp>
 #include <boost/multi_index_container.hpp>
@@ -150,6 +151,7 @@ public:
                     // See https://github.com/boostorg/multi_index/issues/50
                     auto& m = const_cast<offline_message&>(*it);
                     if (m.send(epsp, ver)) {
+                        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
                         idx.pop_front();
                     }
                     else {
