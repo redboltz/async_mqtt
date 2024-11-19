@@ -1,7 +1,7 @@
 list(APPEND exec_PROGRAMS
-    bench.cpp
+#    bench.cpp
     broker.cpp
-    client_cli.cpp
+#    client_cli.cpp
 )
 
 find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
