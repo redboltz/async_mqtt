@@ -542,7 +542,6 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 yield ep(pub).async_recv(*this);
                 BOOST_TEST(pv_opt->get_if<am::v3_1_1::connack_packet>());
 
-                std::cout << __LINE__ << " pub QoS0" << std::endl;
                 // publish QoS0
                 yield ep(pub).async_send(
                     am::v3_1_1::publish_packet{
@@ -553,7 +552,6 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     *this
                 );
                 BOOST_TEST(!ec);
-                std::cout << __LINE__ << " pub QoS1" << std::endl;
                 // publish QoS1
                 yield ep(pub).async_send(
                     am::v3_1_1::publish_packet{
@@ -566,7 +564,6 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                 );
                 BOOST_TEST(!ec);
 
-                std::cout << __LINE__ << " pub QoS2" << std::endl;
                 // publish QoS2
                 yield ep(pub).async_send(
                     am::v3_1_1::publish_packet{
@@ -577,7 +574,6 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     },
                     *this
                 );
-                std::cout << __LINE__ << "back" << std::endl;
 
                 BOOST_TEST(!ec);
                 yield ep(pub).async_send(am::v3_1_1::disconnect_packet{}, *this);
