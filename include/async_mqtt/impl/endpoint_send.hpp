@@ -25,7 +25,7 @@ send_op {
     using events_it_type = typename events_type::iterator;
     std::shared_ptr<events_type> events = nullptr;
     events_it_type it = events_it_type{};
-    enum { dispatch, write, sent, complete } state = dispatch;
+    enum { dispatch, write, sent, close, complete } state = dispatch;
 
     template <typename Self>
     bool process_one_event(
@@ -96,10 +96,9 @@ send_op {
                     return false;
                 },
                 [&](event_close) {
-                    state = complete;
-                    auto ep_copy{ep};
-                    async_close(
-                        force_move(ep_copy),
+                    state = close;
+                    as::post(
+                        a_ep.get_executor(),
                         force_move(self)
                     );
                     return false;
@@ -159,6 +158,14 @@ send_op {
             state = complete; // all events processed
             as::dispatch(
                 a_ep.get_executor(),
+                force_move(self)
+            );
+        } break;
+        case close: {
+            state = complete;
+            auto ep_copy{ep};
+            async_close(
+                force_move(ep_copy),
                 force_move(self)
             );
         } break;
