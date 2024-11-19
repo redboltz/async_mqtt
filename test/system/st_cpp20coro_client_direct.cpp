@@ -40,7 +40,8 @@ BOOST_AUTO_TEST_CASE(v311) {
                 as::as_tuple(as::use_awaitable)
             );
             BOOST_TEST(!ec_und);
-
+            // Not mandatory, to increase coverage
+            amcl.set_close_delay_after_disconnect_sent(std::chrono::milliseconds{10});
             // MQTT connect and receive loop start
             auto [ec_con, connack_opt] = co_await amcl.async_start(
                 true,   // clean_session

@@ -72,6 +72,15 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingresp_recv_timeout(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    duration_close_by_disconnect_ = duration;
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_bulk_write(bool val) {
     stream_.set_bulk_write(val);
 }
@@ -585,6 +594,16 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::set_pingresp_recv_timeout(
 ) {
     BOOST_ASSERT(impl_);
     impl_->set_pingresp_recv_timeout(duration);
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint<Role, PacketIdBytes, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_close_delay_after_disconnect_sent(duration);
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

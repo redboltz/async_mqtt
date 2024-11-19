@@ -99,8 +99,10 @@ send_op {
                 },
                 [&](event_close) {
                     state = close;
-                    if (disconnect_sent_just_before) {
-                        a_ep.tim_close_by_disconnect_.expires_after(std::chrono::milliseconds{10});
+                    if (disconnect_sent_just_before &&
+                        a_ep.duration_close_by_disconnect_ != std::chrono::milliseconds::zero()
+                    ) {
+                        a_ep.tim_close_by_disconnect_.expires_after(a_ep.duration_close_by_disconnect_);
                         a_ep.tim_close_by_disconnect_.async_wait(
                             force_move(self)
                         );

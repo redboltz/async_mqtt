@@ -71,6 +71,7 @@ public:
     void set_auto_map_topic_alias_send(bool val);
     void set_auto_replace_topic_alias_send(bool val);
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
+    void set_close_delay_after_disconnect_sent(std::chrono::milliseconds duration);
     void set_bulk_write(bool val);
     void set_read_buffer_size(std::size_t val);
 
@@ -241,7 +242,7 @@ private:
     as::steady_timer tim_pingreq_recv_;
     as::steady_timer tim_pingresp_recv_;
     as::steady_timer tim_close_by_disconnect_;
-
+    std::chrono::milliseconds duration_close_by_disconnect_{std::chrono::milliseconds::zero()};
     struct tim_cancelled;
     std::deque<tim_cancelled> tim_retry_acq_pid_queue_;
     bool packet_id_released_ = false;

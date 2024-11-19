@@ -523,6 +523,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
                     *this
                 );
                 BOOST_TEST(ec == am::error_code{});
+                // To avoid windows environment close just after sent problem.
+                ep(pub).set_close_delay_after_disconnect_sent(std::chrono::milliseconds{10});
                 yield ep(pub).async_send(
                     am::v3_1_1::connect_packet{
                         true,   // clean_session

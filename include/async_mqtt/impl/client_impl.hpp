@@ -188,6 +188,15 @@ client_impl<Version, NextLayer>::set_pingresp_recv_timeout(
 template <protocol_version Version, typename NextLayer>
 inline
 void
+client_impl<Version, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    ep_.set_close_delay_after_disconnect_sent(duration);
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
 client_impl<Version, NextLayer>::set_bulk_write(bool val) {
     ep_.set_bulk_write(val);
 }
@@ -299,6 +308,16 @@ client<Version, NextLayer>::set_pingresp_recv_timeout(
 ) {
     BOOST_ASSERT(impl_);
     impl_->set_pingresp_recv_timeout(duration);
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client<Version, NextLayer>::set_close_delay_after_disconnect_sent(
+    std::chrono::milliseconds duration
+) {
+    BOOST_ASSERT(impl_);
+    impl_->set_close_delay_after_disconnect_sent(duration);
 }
 
 template <protocol_version Version, typename NextLayer>

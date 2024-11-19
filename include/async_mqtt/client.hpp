@@ -652,6 +652,17 @@ public:
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
     /**
+     * @brief Sets the delay duration for closing the stream after sending the DISCONNECT packet.
+     * If the timer expires, the underlying layer stream will begin closing.
+     * \n This function should be called before async_start() call.
+     * @note By default, no delay is set.
+     * @param duration If set to zero, the timer is not activated, and the close process starts immediately.
+     *                 Otherwise, the close process begins after the specified duration has elapsed.
+     *                 The minimum resolution is in milliseconds.
+     */
+    void set_close_delay_after_disconnect_sent(std::chrono::milliseconds duration);
+
+    /**
      * @brief Set bulk write mode.
      * If true, then concatenate multiple packets' const buffer sequence
      * when send() is called before the previous send() is not completed.
