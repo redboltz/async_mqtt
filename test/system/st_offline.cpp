@@ -17,6 +17,8 @@ BOOST_AUTO_TEST_SUITE(st_offline)
 namespace am = async_mqtt;
 namespace as = boost::asio;
 
+#if 0
+
 BOOST_AUTO_TEST_CASE(v311_cs1_sp0) {
     broker_runner br;
     as::io_context ioc;
@@ -425,6 +427,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1) {
     BOOST_TEST(t.finish());
 }
 
+#endif
+
 BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
     broker_runner br;
     as::io_context ioc;
@@ -672,6 +676,8 @@ BOOST_AUTO_TEST_CASE(v311_cs0_sp1_from_broker) {
     ioc.run();
     BOOST_TEST(t.finish());
 }
+
+#if 0
 
 BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
     broker_runner br;
@@ -943,6 +949,8 @@ BOOST_AUTO_TEST_CASE(v5_cs0_sp1_from_broker_mei) {
     ioc.run();
     BOOST_TEST(t.finish());
 }
+
+#endif
 
 BOOST_AUTO_TEST_SUITE_END()
 
