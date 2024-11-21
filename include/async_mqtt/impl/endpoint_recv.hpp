@@ -207,11 +207,11 @@ recv_op {
             );
         } break;
         case protocol_read: {
+            a_ep.read_buf_.commit(bytes_transferred);
             auto b = as::buffers_iterator<as::streambuf::mutable_buffers_type>::begin(*a_ep.mbs_);
             auto e = std::next(b, std::ptrdiff_t(bytes_transferred));
             auto events{a_ep.con_.recv(b, e)};
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
-            a_ep.read_buf_.commit(bytes_transferred);
             if (a_ep.recv_events_.empty()) {
                 // required more bytes
                 state = read;
