@@ -24,9 +24,8 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
 
-    template <typename Begin, typename End>
     std::vector<basic_event_variant<PacketIdBytes>>
-    recv(Begin b, End d);
+    recv(std::istream& is);
 
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
@@ -181,7 +180,6 @@ private:
 } // namespace async_mqtt
 
 #include <async_mqtt/protocol/impl/connection_send.hpp>
-#include <async_mqtt/protocol/impl/connection_recv.hpp>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 #include <async_mqtt/protocol/impl/connection_impl.ipp>

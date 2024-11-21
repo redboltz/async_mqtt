@@ -36,8 +36,7 @@ public:
     std::vector<basic_event_variant<PacketIdBytes>>
     send(Packet packet);
 
-    template <typename Begin, typename End>
-    std::vector<basic_event_variant<PacketIdBytes>> recv(Begin b, End e);
+    std::vector<basic_event_variant<PacketIdBytes>> recv(std::istream& is);
 
     std::vector<basic_event_variant<PacketIdBytes>>
     notify_timer_fired(timer kind);
