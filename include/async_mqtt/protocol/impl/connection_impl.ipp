@@ -14,7 +14,6 @@
 #include <async_mqtt/protocol/event_packet_received.hpp>
 #include <async_mqtt/protocol/event_packet_id_released.hpp>
 #include <async_mqtt/protocol/event_send.hpp>
-#include <async_mqtt/protocol/event_recv.hpp>
 #include <async_mqtt/protocol/event_timer.hpp>
 #include <async_mqtt/protocol/event_close.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -815,7 +814,6 @@ process_recv_packet() {
                                     v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id)
                                 }
                             );
-                            events.emplace_back(event_recv{}); // recv pubrel
                         }
                     } break;
                     default:
@@ -887,7 +885,6 @@ process_recv_packet() {
                                     v5::basic_pubrec_packet<PacketIdBytes>(packet_id)
                                 }
                             );
-                            additional_events.emplace_back(event_recv{}); // recv pubrel
                         }
                     } break;
                     default:

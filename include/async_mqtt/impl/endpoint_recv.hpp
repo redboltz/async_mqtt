@@ -74,15 +74,6 @@ recv_op {
                     }
                     return true;
                 },
-                [&](event_recv) {
-                    // For auto read pubrel
-                    state = read;
-                    as::dispatch(
-                        a_ep.get_executor(),
-                        force_move(self)
-                    );
-                    return false;
-                },
                 [&](event_timer ev) {
                     switch (ev.get_timer_for()) {
                     case timer::pingreq_send:

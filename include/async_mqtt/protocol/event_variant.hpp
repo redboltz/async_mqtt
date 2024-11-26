@@ -34,7 +34,6 @@ class basic_event_packet_received;
 
 class event_timer;
 class event_close;
-class event_recv;
 
 /**
  * @ingroup packet_variant_detail
@@ -87,7 +86,6 @@ using basic_event_variant = std::variant<
     basic_event_send<PacketIdBytes>,
     basic_event_packet_id_released<PacketIdBytes>,
     basic_event_packet_received<PacketIdBytes>,
-    event_recv,
     event_timer,
     event_close
 >;
