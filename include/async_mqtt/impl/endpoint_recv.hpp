@@ -138,7 +138,7 @@ recv_op {
     ) {
         auto& a_ep{*ep};
         if (ec) {
-            ASYNC_MQTT_LOG("mqtt_impl", error)
+            ASYNC_MQTT_LOG("mqtt_impl", info)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "recv error:" << ec.message();
             if (ec == as::error::operation_aborted) {
@@ -224,11 +224,23 @@ recv_op {
             while (!a_ep.recv_events_.empty()) {
                 if (!process_one_event(self)) return;
             }
-            state = complete; // all events processed
-            as::post(
-                a_ep.get_executor(),
-                force_move(self)
-            );
+            // all events processed
+            if (recv_packet || decided_error) {
+                state = complete;
+                as::post(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                // auto response send but no received packet
+                // (PUBLISH QoS2 received again after PUBREC sent)
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
         } break;
         case complete: {
             if (decided_error) {

@@ -46,7 +46,6 @@ public:
     void recv(std::istream& is) {
         BOOST_ASSERT(is);
         auto size = static_cast<std::size_t>(is.rdbuf()->in_avail());
-
         while (size != 0) {
             switch (read_state_) {
             case read_state::fixed_header: {
@@ -781,11 +780,16 @@ process_recv_packet() {
                     return true;
                 },
                 [&](v3_1_1::basic_publish_packet<PacketIdBytes>& p) {
-                    events.emplace_back(
-                        basic_event_packet_received<PacketIdBytes>{p}
-                    );
                     switch (p.opts().get_qos()) {
+                    case qos::at_most_once:
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                        break;
                     case qos::at_least_once: {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
                         auto packet_id = p.packet_id();
                         if (auto_pub_response_ &&
                             status_ == connection_status::connected) {
@@ -805,6 +809,11 @@ process_recv_packet() {
                         else {
                             already_handled = true;
                         }
+                        if (!already_handled) {
+                            events.emplace_back(
+                                basic_event_packet_received<PacketIdBytes>{p}
+                            );
+                        }
                         if (status_ == connection_status::connected &&
                             (auto_pub_response_ ||
                              already_handled) // already_handled is true only if the pubrec packet
@@ -822,6 +831,7 @@ process_recv_packet() {
                     return true;
                 },
                 [&](v5::basic_publish_packet<PacketIdBytes>& p) {
+                    bool already_handled = false;
                     std::vector<basic_event_variant<PacketIdBytes>> additional_events;
                     switch (p.opts().get_qos()) {
                     case qos::at_least_once: {
@@ -869,7 +879,6 @@ process_recv_packet() {
                         }
                         publish_recv_.insert(packet_id);
 
-                        bool already_handled = false;
                         if (qos2_publish_handled_.find(packet_id) == qos2_publish_handled_.end()) {
                             qos2_publish_handled_.emplace(packet_id);
                         }
@@ -978,9 +987,11 @@ process_recv_packet() {
                         }
                     }
                     // received event first
-                    events.emplace_back(
-                        basic_event_packet_received<PacketIdBytes>{p}
-                    );
+                    if (!already_handled) {
+                        events.emplace_back(
+                            basic_event_packet_received<PacketIdBytes>{p}
+                        );
+                    }
                     // followed by additional event
                     std::move(
                         additional_events.begin(),

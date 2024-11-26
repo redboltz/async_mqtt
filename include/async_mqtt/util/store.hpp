@@ -36,17 +36,21 @@ public:
         if constexpr(is_publish<Packet>()) {
             if (packet.opts().get_qos() == qos::at_least_once ||
                 packet.opts().get_qos() == qos::exactly_once) {
+                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                    << "[store] add pid:" << packet.packet_id();
                 return elems_.emplace_back(packet).second;
             }
         }
         else if constexpr(is_pubrel<Packet>()) {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << "[store] add pid:" << packet.packet_id();
             return elems_.emplace_back(packet).second;
         }
         return false;
     }
 
     bool erase(response_packet r, typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
-        ASYNC_MQTT_LOG("mqtt_impl", info)
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "[store] erase pid:" << packet_id;
         auto& idx = elems_.template get<tag_res_id>();
         auto it = idx.find(std::make_tuple(r, packet_id));
@@ -56,7 +60,7 @@ public:
     }
 
     bool erase_publish(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
-        ASYNC_MQTT_LOG("mqtt_impl", info)
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "[store] erase_publish pid:" << packet_id;
         auto& idx = elems_.template get<tag_id>();
         auto [b, e] = idx.equal_range(packet_id);
@@ -77,14 +81,14 @@ public:
     }
 
     void clear() {
-        ASYNC_MQTT_LOG("mqtt_impl", info)
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "[store] clear";
         elems_.clear();
     }
 
     template <typename Func>
     void for_each(Func func) {
-        ASYNC_MQTT_LOG("mqtt_impl", info)
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "[store] for_each";
         for (auto it = elems_.begin(); it != elems_.end();) {
             if (func(it->packet)) {
@@ -97,7 +101,7 @@ public:
     }
 
     std::vector<store_packet_type> get_stored() const {
-        ASYNC_MQTT_LOG("mqtt_impl", info)
+        ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "[store] get_stored";
         std::vector<store_packet_type> ret;
         ret.reserve(elems_.size());
