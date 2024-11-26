@@ -129,10 +129,6 @@ BOOST_AUTO_TEST_CASE(v311_to_broker) {
                         }
                    }
                 );
-                static std::set<am::packet_variant> exp {
-                    am::v3_1_1::puback_packet{1},
-                    am::v3_1_1::pubrec_packet{2}
-                };
                 // recv puback or pubrec
                 yield ep().async_recv(*this);
                 BOOST_TEST(exp.erase(*pv_opt) == 1);
@@ -183,6 +179,11 @@ BOOST_AUTO_TEST_CASE(v311_to_broker) {
                 guard.reset();
             }
         }
+
+        std::set<am::packet_variant> exp {
+            am::v3_1_1::puback_packet{1},
+            am::v3_1_1::pubrec_packet{2}
+        };
     };
 
     tc t{amep};
@@ -309,13 +310,6 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                         }
                    }
                 );
-
-                static std::set<am::packet_variant> exp {
-                    am::v5::puback_packet{1, am::puback_reason_code::no_matching_subscribers},
-                    am::v5::pubrec_packet{2, am::pubrec_reason_code::no_matching_subscribers},
-                    am::v5::pubrec_packet{2} // already handled in the broker
-                };
-
                 // recv puback
                 yield ep().async_recv(*this);
                 BOOST_TEST(exp.erase(*pv_opt) == 1);
@@ -367,6 +361,12 @@ BOOST_AUTO_TEST_CASE(v5_to_broker) {
                 guard.reset();
             }
         }
+
+        std::set<am::packet_variant> exp {
+            am::v5::puback_packet{1, am::puback_reason_code::no_matching_subscribers},
+            am::v5::pubrec_packet{2, am::pubrec_reason_code::no_matching_subscribers},
+            am::v5::pubrec_packet{2} // already handled in the broker
+        };
     };
 
     tc t{amep};
