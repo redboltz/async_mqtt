@@ -510,30 +510,20 @@ struct layer_customize<cpp20coro_basic_stub_socket<PacketIdBytes>> {
         {}
 
         cpp20coro_basic_stub_socket<PacketIdBytes>& stream;
-        enum {wait1, wait2, complete} state = wait1;
+        enum {dispatch, complete} state = dispatch;
         template <typename Self>
         void operator()(
             Self& self
         ) {
             switch (state) {
-            case wait1:
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << "stub close wait1";
-                state = wait2;
-                as::post(
-                    stream.get_executor(),
-                    force_move(self)
-                );
-                break;
-            case wait2:
-                ASYNC_MQTT_LOG("mqtt_impl", info)
-                    << "stub close wait2";
+            case dispatch: {
                 state = complete;
-                as::post(
-                    stream.get_executor(),
+                auto& a_stream{stream};
+                as::dispatch(
+                    a_stream.get_executor(),
                     force_move(self)
                 );
-                break;
+            } break;
             case complete: {
                 error_code ec;
                 if (stream.is_open()) {
