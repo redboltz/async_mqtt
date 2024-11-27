@@ -13,19 +13,36 @@ namespace async_mqtt {
 
 ASYNC_MQTT_HEADER_ONLY_INLINE
 constexpr
-char const* timer_to_string(timer v) {
+char const* timer_kind_to_string(timer_kind v) {
     switch (v) {
-    case timer::pingreq_send:                 return "pingreq_send";
-    case timer::pingreq_recv:                 return "pingreq_recv";
-    case timer::pingresp_recv:                return "pingresp_recv";
-    default:                                  return "unknown_timer";
+    case timer_kind::pingreq_send:  return "pingreq_send";
+    case timer_kind::pingreq_recv:  return "pingreq_recv";
+    case timer_kind::pingresp_recv: return "pingresp_recv";
+    default:                        return "unknown_timer";
     }
 }
 
 inline
-std::ostream& operator<<(std::ostream& o, timer v)
+std::ostream& operator<<(std::ostream& o, timer_kind v)
 {
-    o << timer_to_string(v);
+    o << timer_kind_to_string(v);
+    return o;
+}
+
+constexpr
+char const* event_timer_op_to_string(timer_op const& v) {
+    switch (v) {
+    case timer_op::set:    return "set";
+    case timer_op::reset:  return "reset";
+    case timer_op::cancel: return "cancel";
+    default:               return "unknown_event_timer";
+    }
+}
+
+inline
+std::ostream& operator<<(std::ostream& o, timer_op v)
+{
+    o << event_timer_op_to_string(v);
     return o;
 }
 

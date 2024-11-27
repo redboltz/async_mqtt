@@ -7,7 +7,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/protocol/connection.hpp>
+#include <async_mqtt/protocol/event_connection.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_connection)
 
@@ -15,7 +15,7 @@ namespace am = async_mqtt;
 
 
 BOOST_AUTO_TEST_CASE(v5_connect_connack) {
-    am::connection<am::role::client> c{am::protocol_version::v5};
+    am::event_connection<am::role::client> c{am::protocol_version::v5};
 
     auto w = am::will{
         "topic1",
@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     std::visit(
         am::overload{
             [&](am::event_timer const& ev) {
-                BOOST_TEST(ev.get_op() == am::event_timer::op_type::reset);
-                BOOST_TEST(ev.get_timer_for() == am::timer::pingreq_send);
+                BOOST_TEST(ev.get_op() == am::timer_op::reset);
+                BOOST_TEST(ev.get_kind() == am::timer_kind::pingreq_send);
                 BOOST_CHECK(ev.get_ms() == std::chrono::seconds{0x1234});
             },
             [](auto const&...) {

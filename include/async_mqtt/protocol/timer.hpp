@@ -11,16 +11,27 @@
 
 namespace async_mqtt {
 
-enum class timer {
+enum class timer_kind {
     pingreq_send,
     pingreq_recv,
     pingresp_recv,
 };
 
-constexpr
-char const* timer_to_string(timer v);
+enum class timer_op {
+    set,
+    reset,
+    cancel
+};
 
-std::ostream& operator<<(std::ostream& o, timer v);
+constexpr
+char const* timer_kind_to_string(timer_kind v);
+
+std::ostream& operator<<(std::ostream& o, timer_kind v);
+
+constexpr
+char const* timer_op_to_string(timer_op v);
+
+std::ostream& operator<<(std::ostream& o, timer_op v);
 
 } // namespace async_mqtt
 

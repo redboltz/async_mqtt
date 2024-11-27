@@ -136,15 +136,15 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
         std::visit(
             overload {
                 [&](event_timer const& ev) {
-                    if (ev.get_timer_for() == timer::pingreq_send) {
+                    if (ev.get_kind() == timer_kind::pingreq_send) {
                         switch (ev.get_op()) {
-                        case event_timer::op_type::set:
+                        case timer_op::set:
                             set_pingreq_send_timer(ep, ev.get_ms());
                             break;
-                        case event_timer::op_type::reset:
+                        case timer_op::reset:
                             reset_pingreq_send_timer(ep, ev.get_ms());
                             break;
-                        case event_timer::op_type::cancel:
+                        case timer_op::cancel:
                             cancel_pingreq_send_timer(ep);
                             break;
                         }
@@ -211,20 +211,20 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                 [wp = std::weak_ptr{ep}](error_code const& ec) {
                     if (!ec) {
                         if (auto ep = wp.lock()) {
-                            auto events = ep->con_.notify_timer_fired(timer::pingreq_send);
+                            auto events = ep->con_.notify_timer_fired(timer_kind::pingreq_send);
                             for (auto& event : events) {
                                 std::visit(
                                     overload {
                                         [&](event_timer const& ev) {
-                                            if (ev.get_timer_for() == timer::pingreq_send) {
+                                            if (ev.get_kind() == timer_kind::pingreq_send) {
                                                 switch (ev.get_op()) {
-                                                case event_timer::op_type::set:
+                                                case timer_op::set:
                                                     reset_pingreq_send_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::reset:
+                                                case timer_op::reset:
                                                     reset_pingreq_send_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::cancel:
+                                                case timer_op::cancel:
                                                     ep->tim_pingreq_send_.cancel();
                                                     break;
                                                 }
@@ -293,21 +293,21 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                 [wp = std::weak_ptr{ep}](error_code const& ec) {
                     if (!ec) {
                         if (auto ep = wp.lock()) {
-                            auto events = ep->con_.notify_timer_fired(timer::pingreq_recv);
+                            auto events = ep->con_.notify_timer_fired(timer_kind::pingreq_recv);
                             for (auto it = events.begin(); it != events.end();) {
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
                                         [&](event_timer const& ev) {
-                                            if (ev.get_timer_for() == timer::pingreq_recv) {
+                                            if (ev.get_kind() == timer_kind::pingreq_recv) {
                                                 switch (ev.get_op()) {
-                                                case event_timer::op_type::set:
+                                                case timer_op::set:
                                                     reset_pingreq_recv_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::reset:
+                                                case timer_op::reset:
                                                     reset_pingreq_recv_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::cancel:
+                                                case timer_op::cancel:
                                                     ep->tim_pingreq_recv_.cancel();
                                                     break;
                                                 }
@@ -390,21 +390,21 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                 [wp = std::weak_ptr{ep}](error_code const& ec) {
                     if (!ec) {
                         if (auto ep = wp.lock()) {
-                            auto events = ep->con_.notify_timer_fired(timer::pingresp_recv);
+                            auto events = ep->con_.notify_timer_fired(timer_kind::pingresp_recv);
                             for (auto it = events.begin(); it != events.end();) {
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
                                         [&](event_timer const& ev) {
-                                            if (ev.get_timer_for() == timer::pingresp_recv) {
+                                            if (ev.get_kind() == timer_kind::pingresp_recv) {
                                                 switch (ev.get_op()) {
-                                                case event_timer::op_type::set:
+                                                case timer_op::set:
                                                     reset_pingresp_recv_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::reset:
+                                                case timer_op::reset:
                                                     reset_pingresp_recv_timer(ep, ev.get_ms());
                                                     break;
-                                                case event_timer::op_type::cancel:
+                                                case timer_op::cancel:
                                                     ep->tim_pingresp_recv_.cancel();
                                                     break;
                                                 }

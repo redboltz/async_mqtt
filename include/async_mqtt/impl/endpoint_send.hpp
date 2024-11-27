@@ -58,17 +58,17 @@ send_op {
                     return true;
                 },
                 [&](event_timer const& ev) {
-                    switch (ev.get_timer_for()) {
-                    case timer::pingreq_send:
-                        if (ev.get_op() == event_timer::op_type::reset) {
+                    switch (ev.get_kind()) {
+                    case timer_kind::pingreq_send:
+                        if (ev.get_op() == timer_op::reset) {
                             reset_pingreq_send_timer(ep, ev.get_ms());
                         }
                         else {
                             BOOST_ASSERT(false);
                         }
                         break;
-                    case timer::pingresp_recv:
-                        if (ev.get_op() == event_timer::op_type::reset) {
+                    case timer_kind::pingresp_recv:
+                        if (ev.get_op() == timer_op::reset) {
                             reset_pingresp_recv_timer(ep, ev.get_ms());
                         }
                         else {

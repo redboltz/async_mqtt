@@ -17,26 +17,21 @@ namespace async_mqtt {
 
 class event_timer {
 public:
-    enum class op_type {
-        set,
-        reset,
-        cancel
-    };
     event_timer(
-        op_type op,
-        timer timer_for,
+        timer_op op,
+        timer_kind kind,
         std::optional<std::chrono::milliseconds> ms = std::nullopt
     )
-        :op_{op}, timer_for_{timer_for}, ms_{ms}
+        :op_{op}, kind_{kind}, ms_{ms}
     {
     }
 
-    op_type get_op() const {
+    timer_op get_op() const {
         return op_;
     }
 
-    timer get_timer_for() const {
-        return timer_for_;
+    timer_kind get_kind() const {
+        return kind_;
     }
 
     std::optional<std::chrono::milliseconds> get_ms() const {
@@ -44,27 +39,10 @@ public:
     }
 
 private:
-    op_type op_;
-    timer timer_for_;
+    timer_op op_;
+    timer_kind kind_;
     std::optional<std::chrono::milliseconds> ms_;
 };
-
-constexpr
-char const* event_timer_op_type_to_string(event_timer::op_type const& v) {
-    switch (v) {
-    case event_timer::op_type::set:        return "set";
-    case event_timer::op_type::reset:      return "reset";
-    case event_timer::op_type::cancel:     return "cancel";
-    default:                               return "unknown_event_timer";
-    }
-}
-
-inline
-std::ostream& operator<<(std::ostream& o, event_timer::op_type v)
-{
-    o << event_timer_op_type_to_string(v);
-    return o;
-}
 
 } // namespace async_mqtt
 

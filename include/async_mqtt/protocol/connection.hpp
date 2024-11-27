@@ -21,19 +21,19 @@ public:
     basic_connection(protocol_version ver);
 
     template <typename Packet>
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     send(Packet packet);
 
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     recv(std::istream& is);
 
-    std::vector<basic_event_variant<PacketIdBytes>>
-    notify_timer_fired(timer kind);
+    void
+    notify_timer_fired(timer_kind kind);
 
     void
     notify_closed();
 
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     set_pingreq_send_interval(
         std::chrono::milliseconds duration
     );
@@ -111,7 +111,7 @@ public:
      * @param packet_id packet_id to release
      * @return event list
      */
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
@@ -174,8 +174,32 @@ public:
     connection_status get_connection_status() const;
 
 private:
+    virtual void on_error(error_code ec) = 0;
+    virtual void on_send(
+        basic_packet_variant<PacketIdBytes> packet,
+        std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
+        release_packet_id_if_send_error = std::nullopt
+    ) = 0;
+    virtual void on_packet_id_release(
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id
+    ) = 0;
+    virtual void on_receive(
+        basic_packet_variant<PacketIdBytes> packet
+    ) = 0;
+    virtual void on_timer_op(
+        timer_op op,
+        timer_kind kind,
+          std::optional<std::chrono::milliseconds> ms = std::nullopt
+    ) = 0;
+    virtual void on_close() = 0;
+
+private:
+    friend class detail::basic_connection_impl<Role, PacketIdBytes>;
     std::shared_ptr<impl_type> impl_;
 };
+
+template <role Role>
+using connection = basic_connection<Role, 2>;
 
 } // namespace async_mqtt
 

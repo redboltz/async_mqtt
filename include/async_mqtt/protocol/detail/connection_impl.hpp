@@ -28,26 +28,25 @@ class basic_connection_impl {
     using basic_pid_type = typename basic_packet_id_type<PacketIdBytes>::type;
 
 public:
-    explicit basic_connection_impl(protocol_version ver);
+    explicit basic_connection_impl(protocol_version ver, basic_connection<Role, PacketIdBytes>& con);
 
     void notify_handshaked();
 
     template <typename Packet>
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     send(Packet packet);
 
-    std::vector<basic_event_variant<PacketIdBytes>> recv(std::istream& is);
+    void recv(std::istream& is);
 
-    std::vector<basic_event_variant<PacketIdBytes>>
-    notify_timer_fired(timer kind);
+    void
+    notify_timer_fired(timer_kind kind);
 
     void
     notify_closed();
 
     void
     set_pingreq_send_interval(
-        std::chrono::milliseconds duration,
-        std::vector<basic_event_variant<PacketIdBytes>>& events
+        std::chrono::milliseconds duration
     );
 
     std::size_t get_receive_maximum_vacancy_for_send() const;
@@ -68,7 +67,7 @@ public:
 
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> get_qos2_publish_handled_pids() const;
@@ -95,14 +94,13 @@ private:
     template <typename ActualPacket>
     bool
     process_send_packet(
-        ActualPacket actual_packet,
-        std::vector<basic_event_variant<PacketIdBytes>>& events
+        ActualPacket actual_packet
     );
 
     void
-    send_stored(std::vector<basic_event_variant<PacketIdBytes>>& events);
+    send_stored();
 
-    std::vector<basic_event_variant<PacketIdBytes>>
+    void
     process_recv_packet();
 
     void
@@ -132,6 +130,7 @@ private:
     }
 
 private:
+    basic_connection<Role, PacketIdBytes>& con_;
     protocol_version protocol_version_;
 
     packet_id_manager<basic_pid_type> pid_man_;

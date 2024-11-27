@@ -8,11 +8,7 @@
 #define ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_HPP
 
 #include <async_mqtt/protocol/connection.hpp>
-#include <async_mqtt/protocol/event_variant.hpp>
 #include <async_mqtt/protocol/event_send.hpp>
-#include <async_mqtt/protocol/event_close.hpp>
-#include <async_mqtt/protocol/event_timer.hpp>
-#include <async_mqtt/protocol/event_packet_id_released.hpp>
 
 namespace async_mqtt {
 
@@ -21,28 +17,23 @@ namespace detail {
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
 inline
-std::vector<basic_event_variant<PacketIdBytes>>
+void
 basic_connection_impl<Role, PacketIdBytes>::
 send(Packet packet) {
-    std::vector<basic_event_variant<PacketIdBytes>> events;
-
     auto send_and_post_process =
         [&](auto&& actual_packet) {
-            if (process_send_packet(actual_packet, events)) {
+            if (process_send_packet(actual_packet)) {
                 if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
                     // server send stored packets after connack sent
-                    send_stored(events);
+                    send_stored();
                 }
                 if constexpr(Role == role::client || Role == role::any) {
                     if (is_client_ && pingreq_send_interval_ms_) {
                         if (status_ == connection_status::disconnected) return;
-
-                        events.emplace_back(
-                            event_timer{
-                                event_timer::op_type::reset,
-                                timer::pingreq_send,
-                                *pingreq_send_interval_ms_
-                            }
+                        con_.on_timer_op(
+                            timer_op::reset,
+                            timer_kind::pingreq_send,
+                            *pingreq_send_interval_ms_
                         );
                     }
                 }
@@ -65,8 +56,6 @@ send(Packet packet) {
     else {
         send_and_post_process(std::forward<Packet>(packet));
     }
-
-    return events;
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -75,8 +64,7 @@ inline
 bool
 basic_connection_impl<Role, PacketIdBytes>::
 process_send_packet(
-    ActualPacket actual_packet,
-    std::vector<basic_event_variant<PacketIdBytes>>& events
+    ActualPacket actual_packet
 ) {
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> release_packet_id_if_send_error;
     // MQTT protocol sendable packet check
@@ -86,7 +74,7 @@ process_send_packet(
             (can_send_as_server(Role) && is_server_sendable<std::decay_t<ActualPacket>>())
         )
     ) {
-        events.emplace_back(
+        con_.on_error(
             make_error_code(
                 mqtt_error::packet_not_allowed_to_send
             )
@@ -108,7 +96,7 @@ process_send_packet(
     // connection status check
     if constexpr(is_connect<ActualPacket>()) {
         if (status_ != connection_status::disconnected) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -116,7 +104,7 @@ process_send_packet(
             return false;
         }
         if (!version_check()) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -126,7 +114,7 @@ process_send_packet(
     }
     else if constexpr(is_connack<ActualPacket>()) {
         if (status_ != connection_status::connecting) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -134,7 +122,7 @@ process_send_packet(
             return false;
         }
         if (!version_check()) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -144,7 +132,7 @@ process_send_packet(
     }
     else if constexpr(std::is_same_v<v5::auth_packet, ActualPacket>) {
         if (status_ == connection_status::disconnected) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -152,7 +140,7 @@ process_send_packet(
             return false;
         }
         if (!version_check()) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -163,7 +151,7 @@ process_send_packet(
     else {
         if (status_ != connection_status::connected) {
             if constexpr(!is_publish<std::decay_t<ActualPacket>>()) {
-                events.emplace_back(
+                con_.on_error(
                     make_error_code(
                         mqtt_error::packet_not_allowed_to_send
                     )
@@ -172,7 +160,7 @@ process_send_packet(
             }
         }
         if (!version_check()) {
-            events.emplace_back(
+            con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
@@ -185,7 +173,7 @@ process_send_packet(
     bool topic_alias_validated = false;
 
     if (!validate_maximum_packet_size(actual_packet.size())) {
-        events.emplace_back(
+        con_.on_error(
             make_error_code(
                 mqtt_error::packet_not_allowed_to_send
             )
@@ -194,9 +182,7 @@ process_send_packet(
             auto packet_id = actual_packet.packet_id();
             if (packet_id != 0) {
                 pid_man_.release_id(packet_id);
-                events.emplace_back(
-                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                );
+                con_.on_packet_id_release(packet_id);
             }
         }
         return false;
@@ -321,16 +307,14 @@ process_send_packet(
                     if (actual_packet.topic().empty()) {
                         auto topic_opt = validate_topic_alias(ta_opt);
                         if (!topic_opt) {
-                            events.emplace_back(
+                            con_.on_error(
                                 make_error_code(
                                     mqtt_error::packet_not_allowed_to_send
                                 )
                             );
                             if (packet_id != 0) {
                                 pid_man_.release_id(packet_id);
-                                events.emplace_back(
-                                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                                );
+                                con_.on_packet_id_release(packet_id);
                             }
                             return false;
                         }
@@ -354,16 +338,14 @@ process_send_packet(
                                 force_move(props)
                             );
                         if (!validate_maximum_packet_size(store_packet.size())) {
-                            events.emplace_back(
+                            con_.on_error(
                                 make_error_code(
                                     mqtt_error::packet_not_allowed_to_send
                                 )
                             );
                             if (packet_id != 0) {
                                 pid_man_.release_id(packet_id);
-                                events.emplace_back(
-                                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                                );
+                                con_.on_packet_id_release(packet_id);
                             }
                             return false;
                         }
@@ -392,16 +374,14 @@ process_send_packet(
                                 force_move(props)
                             );
                         if (!validate_maximum_packet_size(store_packet.size())) {
-                            events.emplace_back(
+                            con_.on_error(
                                 make_error_code(
                                     mqtt_error::packet_not_allowed_to_send
                                 )
                             );
                             if (packet_id != 0) {
                                 pid_man_.release_id(packet_id);
-                                events.emplace_back(
-                                    basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                                );
+                                con_.on_packet_id_release(packet_id);
                             }
                             return false;
                         }
@@ -437,16 +417,14 @@ process_send_packet(
         if (actual_packet.topic().empty()) {
             if (!topic_alias_validated &&
                 !validate_topic_alias(ta_opt)) {
-                events.emplace_back(
+                con_.on_error(
                     make_error_code(
                         mqtt_error::packet_not_allowed_to_send
                     )
                 );
                 if (packet_id != 0) {
                     pid_man_.release_id(packet_id);
-                    events.emplace_back(
-                        basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                    );
+                    con_.on_packet_id_release(packet_id);
                 }
                 return false;
             }
@@ -464,16 +442,14 @@ process_send_packet(
                 }
                 else {
                     auto packet_id = actual_packet.packet_id();
-                    events.emplace_back(
+                    con_.on_error(
                         make_error_code(
                             mqtt_error::packet_not_allowed_to_send
                         )
                     );
                     if (packet_id != 0) {
                         pid_man_.release_id(packet_id);
-                        events.emplace_back(
-                            basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                        );
+                        con_.on_packet_id_release(packet_id);
                     }
                     return false;
                 }
@@ -510,16 +486,14 @@ process_send_packet(
             actual_packet.opts().get_qos() == qos::exactly_once
         ) {
             if (publish_send_count_ == publish_send_max_) {
-                events.emplace_back(
+                con_.on_error(
                     make_error_code(
                         disconnect_reason_code::receive_maximum_exceeded
                     )
                 );
                 if (packet_id != 0) {
                     pid_man_.release_id(packet_id);
-                    events.emplace_back(
-                        basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                    );
+                    con_.on_packet_id_release(packet_id);
                 }
                 return false;
             }
@@ -564,22 +538,18 @@ process_send_packet(
     }
 
     if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {
-        // events order
+        // handler call order
         // pingreq packet send
         // if success, pingresp timer set
-        events.emplace_back(
-            basic_event_send<PacketIdBytes>{
-                force_move(actual_packet),
-                release_packet_id_if_send_error
-            }
+        con_.on_send(
+            force_move(actual_packet),
+            release_packet_id_if_send_error
         );
         if (pingresp_recv_timeout_ms_) {
-            events.emplace_back(
-                event_timer{
-                    event_timer::op_type::reset,
-                    timer::pingresp_recv,
-                    *pingresp_recv_timeout_ms_
-                }
+            con_.on_timer_op(
+                timer_op::reset,
+                timer_kind::pingresp_recv,
+                *pingresp_recv_timeout_ms_
             );
         }
         return true;
@@ -587,13 +557,11 @@ process_send_packet(
 
     if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
         status_ = connection_status::disconnected;
-        events.emplace_back(
-            basic_event_send<PacketIdBytes>{
-                force_move(actual_packet),
-                release_packet_id_if_send_error
-            }
+        con_.on_send(
+            force_move(actual_packet),
+            release_packet_id_if_send_error
         );
-        events.emplace_back(event_close{});
+        con_.on_close();
         return true;
     }
 
@@ -608,7 +576,7 @@ process_send_packet(
             else {
                 ASYNC_MQTT_LOG("mqtt_impl", error)
                     << "publish message try to send but not connected";
-                events.emplace_back(
+                con_.on_error(
                     make_error_code(
                         mqtt_error::packet_not_allowed_to_send
                     )
@@ -617,9 +585,7 @@ process_send_packet(
                     auto packet_id = actual_packet.packet_id();
                     if (packet_id != 0) {
                         pid_man_.release_id(packet_id);
-                        events.emplace_back(
-                            basic_event_packet_id_released<PacketIdBytes>{packet_id}
-                        );
+                        con_.on_packet_id_release(packet_id);
                     }
                 }
                 return false;
@@ -627,11 +593,9 @@ process_send_packet(
         }
     }
 
-    events.emplace_back(
-        basic_event_send<PacketIdBytes>{
-            force_move(actual_packet),
-            release_packet_id_if_send_error
-        }
+    con_.on_send(
+        force_move(actual_packet),
+        release_packet_id_if_send_error
     );
     return true;
 }
@@ -643,7 +607,7 @@ process_send_packet(
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
 inline
-std::vector<basic_event_variant<PacketIdBytes>>
+void
 basic_connection<Role, PacketIdBytes>::
 send(Packet packet) {
     BOOST_ASSERT(impl_);
