@@ -213,7 +213,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                     if (!ec) {
                         if (auto ep = wp.lock()) {
                             auto events = ep->con_.notify_timer_fired(timer_kind::pingreq_send);
-                            for (auto& event : events) {
+                            for (auto& ev : events) {
                                 std::visit(
                                     overload {
                                         [&](event::timer const& ev) {
@@ -234,7 +234,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](typename event::basic_send<PacketIdBytes>& ev) {
+                                        [&](event::basic_send<PacketIdBytes>& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
@@ -246,7 +246,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                             BOOST_ASSERT(false);
                                         }
                                     },
-                                    event
+                                    ev
                                 );
                             }
                         }
