@@ -10,7 +10,6 @@
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
-#include <async_mqtt/protocol/event/event_variant.hpp>
 
 namespace async_mqtt {
 
@@ -235,7 +234,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event::basic_send<PacketIdBytes>& ev) {
+                                        [&](typename event::basic_send<PacketIdBytes>& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
