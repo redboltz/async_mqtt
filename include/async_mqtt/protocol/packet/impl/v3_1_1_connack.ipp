@@ -10,15 +10,15 @@
 #include <utility>
 #include <numeric>
 
-#include <async_mqtt/packet/v3_1_1_connack.hpp>
-#include <async_mqtt/packet/impl/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_connack.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
 
 #include <async_mqtt/util/inline.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/detail/fixed_header.hpp>
-#include <async_mqtt/packet/impl/session_present.hpp>
+#include <async_mqtt/protocol/packet/detail/fixed_header.hpp>
+#include <async_mqtt/protocol/packet/impl/session_present.hpp>
 
 namespace async_mqtt::v3_1_1 {
 

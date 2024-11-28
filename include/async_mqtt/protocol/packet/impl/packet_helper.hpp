@@ -11,11 +11,11 @@
 #include <ostream>
 #include <iomanip>
 #include <algorithm>
-#include <async_mqtt/packet/packet_helper.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
-#include <async_mqtt/packet/packet_fwd.hpp>
-#include <async_mqtt/packet/packet_variant_fwd.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/packet_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
 
 namespace async_mqtt {
 

@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_QOS_UTIL_HPP
 
 #include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/qos.hpp>
+#include <async_mqtt/protocol/packet/qos.hpp>
 
 namespace async_mqtt {
 
@@ -19,7 +19,7 @@ namespace async_mqtt {
  * @return suback_retun_code
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/qos_util.hpp
+ * @li Header: async_mqtt/protocol/packet/qos_util.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -34,7 +34,7 @@ constexpr suback_return_code qos_to_suback_return_code(qos q) {
  * @return suback_reason_code
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/qos_util.hpp
+ * @li Header: async_mqtt/protocol/packet/qos_util.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

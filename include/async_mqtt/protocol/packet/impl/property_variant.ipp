@@ -11,10 +11,10 @@
 
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/util/inline.hpp>
-#include <async_mqtt/packet/property.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/impl/property_variant.hpp>
-#include <async_mqtt/packet/impl/validate_property.hpp>
+#include <async_mqtt/protocol/packet/property.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/property_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/validate_property.hpp>
 
 namespace async_mqtt {
 

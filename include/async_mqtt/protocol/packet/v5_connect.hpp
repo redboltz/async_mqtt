@@ -13,9 +13,9 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/will.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/will.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
@@ -42,7 +42,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -248,7 +248,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -262,7 +262,7 @@ bool operator<(connect_packet const& lhs, connect_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -276,7 +276,7 @@ bool operator==(connect_packet const& lhs, connect_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -285,7 +285,7 @@ std::ostream& operator<<(std::ostream& o, connect_packet const& v);
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_connect.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_connect.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_CONNECT_HPP

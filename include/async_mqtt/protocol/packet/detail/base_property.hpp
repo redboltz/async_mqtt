@@ -16,7 +16,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/property_id.hpp>
+#include <async_mqtt/protocol/packet/property_id.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/endian_convert.hpp>

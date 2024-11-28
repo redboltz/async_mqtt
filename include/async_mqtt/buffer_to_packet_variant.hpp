@@ -9,7 +9,7 @@
 
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 namespace async_mqtt {

@@ -14,9 +14,9 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/topic_sharename.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/topic_sharename.hpp>
 
 /**
  * @defgroup unsubscribe_v3_1_1 UNSUBSCRIBE packet (v3.1.1)
@@ -45,7 +45,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -135,7 +135,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -150,7 +150,7 @@ bool operator<(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubsc
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -165,7 +165,7 @@ bool operator==(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubs
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -178,7 +178,7 @@ std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes
  * @brief Type alias of basic_unsubscribe_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -187,7 +187,7 @@ using unsubscribe_packet = basic_unsubscribe_packet<2>;
 } // namespace async_mqtt::v3_1_1
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v3_1_1_unsubscribe.ipp>
+#include <async_mqtt/protocol/packet/impl/v3_1_1_unsubscribe.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_UNSUBSCRIBE_HPP

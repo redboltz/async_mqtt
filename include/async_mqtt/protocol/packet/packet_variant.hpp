@@ -11,38 +11,38 @@
 
 #include <boost/asio/buffer.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/packet_variant_fwd.hpp>
-#include <async_mqtt/packet/packet_fwd.hpp>
-#include <async_mqtt/packet/v3_1_1_connect.hpp>
-#include <async_mqtt/packet/v3_1_1_connack.hpp>
-#include <async_mqtt/packet/v3_1_1_publish.hpp>
-#include <async_mqtt/packet/v3_1_1_puback.hpp>
-#include <async_mqtt/packet/v3_1_1_pubrec.hpp>
-#include <async_mqtt/packet/v3_1_1_pubrel.hpp>
-#include <async_mqtt/packet/v3_1_1_pubcomp.hpp>
-#include <async_mqtt/packet/v3_1_1_subscribe.hpp>
-#include <async_mqtt/packet/v3_1_1_suback.hpp>
-#include <async_mqtt/packet/v3_1_1_unsubscribe.hpp>
-#include <async_mqtt/packet/v3_1_1_unsuback.hpp>
-#include <async_mqtt/packet/v3_1_1_pingreq.hpp>
-#include <async_mqtt/packet/v3_1_1_pingresp.hpp>
-#include <async_mqtt/packet/v3_1_1_disconnect.hpp>
-#include <async_mqtt/packet/v5_connect.hpp>
-#include <async_mqtt/packet/v5_connack.hpp>
-#include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/packet/v5_puback.hpp>
-#include <async_mqtt/packet/v5_pubrec.hpp>
-#include <async_mqtt/packet/v5_pubrel.hpp>
-#include <async_mqtt/packet/v5_pubcomp.hpp>
-#include <async_mqtt/packet/v5_subscribe.hpp>
-#include <async_mqtt/packet/v5_suback.hpp>
-#include <async_mqtt/packet/v5_unsubscribe.hpp>
-#include <async_mqtt/packet/v5_unsuback.hpp>
-#include <async_mqtt/packet/v5_pingreq.hpp>
-#include <async_mqtt/packet/v5_pingresp.hpp>
-#include <async_mqtt/packet/v5_disconnect.hpp>
-#include <async_mqtt/packet/v5_auth.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_fwd.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_connect.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_connack.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_puback.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pubrec.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pubrel.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pubcomp.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_subscribe.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_suback.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_unsubscribe.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_unsuback.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pingreq.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pingresp.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_disconnect.hpp>
+#include <async_mqtt/protocol/packet/v5_connect.hpp>
+#include <async_mqtt/protocol/packet/v5_connack.hpp>
+#include <async_mqtt/protocol/packet/v5_publish.hpp>
+#include <async_mqtt/protocol/packet/v5_puback.hpp>
+#include <async_mqtt/protocol/packet/v5_pubrec.hpp>
+#include <async_mqtt/protocol/packet/v5_pubrel.hpp>
+#include <async_mqtt/protocol/packet/v5_pubcomp.hpp>
+#include <async_mqtt/protocol/packet/v5_subscribe.hpp>
+#include <async_mqtt/protocol/packet/v5_suback.hpp>
+#include <async_mqtt/protocol/packet/v5_unsubscribe.hpp>
+#include <async_mqtt/protocol/packet/v5_unsuback.hpp>
+#include <async_mqtt/protocol/packet/v5_pingreq.hpp>
+#include <async_mqtt/protocol/packet/v5_pingresp.hpp>
+#include <async_mqtt/protocol/packet/v5_disconnect.hpp>
+#include <async_mqtt/protocol/packet/v5_auth.hpp>
 
 #include <async_mqtt/util/overload.hpp>
 
@@ -206,10 +206,10 @@ std::ostream& operator<<(std::ostream& o, basic_packet_variant<PacketIdBytes> co
 
 } // namespace async_mqtt
 
-#include <async_mqtt/packet/impl/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_variant.hpp>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/packet_variant.ipp>
+#include <async_mqtt/protocol/packet/impl/packet_variant.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_PACKET_VARIANT_HPP

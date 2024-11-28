@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_IMPL_VALIDATE_PROPERTY_HPP
 
 
-#include <async_mqtt/packet/property_id.hpp>
+#include <async_mqtt/protocol/packet/property_id.hpp>
 
 namespace async_mqtt {
 

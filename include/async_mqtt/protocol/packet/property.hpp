@@ -22,8 +22,8 @@
 
 #include <async_mqtt/util/json_like_out.hpp>
 
-#include <async_mqtt/packet/qos.hpp>
-#include <async_mqtt/packet/detail/base_property.hpp>
+#include <async_mqtt/protocol/packet/qos.hpp>
+#include <async_mqtt/protocol/packet/detail/base_property.hpp>
 
 /**
  * @defgroup property Property for MQTT v5.0 packets
@@ -49,7 +49,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
  * @brief payload_format
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -63,7 +63,7 @@ enum class payload_format {
  * @brief type of the session expiry interval (seconds)
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -74,7 +74,7 @@ using session_expiry_interval_type = std::uint32_t;
  * @brief type of the topic alias value
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -85,7 +85,7 @@ using topic_alias_type = std::uint16_t;
  * @brief type of the receive maximum value
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -96,7 +96,7 @@ using receive_maximum_type = std::uint16_t;
  * @brief the special session_expiry_interval value that session is never expire.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -107,7 +107,7 @@ static constexpr session_expiry_interval_type session_never_expire = 0xffffffffU
  * @brief the maximum topic_alias value
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -118,7 +118,7 @@ static constexpr topic_alias_type topic_alias_max = 0xffff;
  * @brief the maximum receive_maximum value
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -129,7 +129,7 @@ static constexpr receive_maximum_type receive_maximum_max = 0xffff;
  * @brief the maximum maximum_packet_size value
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -149,7 +149,7 @@ namespace property {
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -184,7 +184,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -199,7 +199,7 @@ std::ostream& operator<<(std::ostream& o, payload_format_indicator const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -233,7 +233,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -248,7 +248,7 @@ std::ostream& operator<<(std::ostream& o, message_expiry_interval const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -279,7 +279,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -294,7 +294,7 @@ std::ostream& operator<<(std::ostream& o, content_type const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -325,7 +325,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -340,7 +340,7 @@ std::ostream& operator<<(std::ostream& o, response_topic const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -371,7 +371,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -386,7 +386,7 @@ std::ostream& operator<<(std::ostream& o, correlation_data const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -412,7 +412,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -427,7 +427,7 @@ std::ostream& operator<<(std::ostream& o, subscription_identifier const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -461,7 +461,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -476,7 +476,7 @@ std::ostream& operator<<(std::ostream& o, session_expiry_interval const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -507,7 +507,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -522,7 +522,7 @@ std::ostream& operator<<(std::ostream& o, assigned_client_identifier const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -556,7 +556,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -571,7 +571,7 @@ std::ostream& operator<<(std::ostream& o, server_keep_alive const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -602,7 +602,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -617,7 +617,7 @@ std::ostream& operator<<(std::ostream& o, authentication_method const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -648,7 +648,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -663,7 +663,7 @@ std::ostream& operator<<(std::ostream& o, authentication_data const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -697,7 +697,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -712,7 +712,7 @@ std::ostream& operator<<(std::ostream& o, request_problem_information const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -746,7 +746,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -761,7 +761,7 @@ std::ostream& operator<<(std::ostream& o, will_delay_interval const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -795,7 +795,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -810,7 +810,7 @@ std::ostream& operator<<(std::ostream& o, request_response_information const& v)
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -841,7 +841,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -856,7 +856,7 @@ std::ostream& operator<<(std::ostream& o, response_information const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -887,7 +887,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -902,7 +902,7 @@ std::ostream& operator<<(std::ostream& o, server_reference const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -933,7 +933,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -948,7 +948,7 @@ std::ostream& operator<<(std::ostream& o, reason_string const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -982,7 +982,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -997,7 +997,7 @@ std::ostream& operator<<(std::ostream& o, receive_maximum const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1031,7 +1031,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1046,7 +1046,7 @@ std::ostream& operator<<(std::ostream& o, topic_alias_maximum const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1080,7 +1080,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1095,7 +1095,7 @@ std::ostream& operator<<(std::ostream& o, topic_alias const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1129,7 +1129,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1144,7 +1144,7 @@ std::ostream& operator<<(std::ostream& o, maximum_qos const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1178,7 +1178,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1193,7 +1193,7 @@ std::ostream& operator<<(std::ostream& o, retain_available const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1286,7 +1286,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1301,7 +1301,7 @@ std::ostream& operator<<(std::ostream& o, user_property const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1335,7 +1335,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1350,7 +1350,7 @@ std::ostream& operator<<(std::ostream& o, maximum_packet_size const& v);
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1384,7 +1384,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1399,7 +1399,7 @@ std::ostream& operator<<(std::ostream& o, wildcard_subscription_available const&
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1433,7 +1433,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1448,7 +1448,7 @@ std::ostream& operator<<(std::ostream& o, subscription_identifier_available cons
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1482,7 +1482,7 @@ private:
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property.hpp
+ * @li Header: async_mqtt/protocol/packet/property.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -1492,10 +1492,10 @@ std::ostream& operator<<(std::ostream& o, shared_subscription_available const& v
 
 } // namespace async_mqtt
 
-#include <async_mqtt/packet/impl/property.hpp>
+#include <async_mqtt/protocol/packet/impl/property.hpp>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/property.ipp>
+#include <async_mqtt/protocol/packet/impl/property.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_PROPERTY_HPP

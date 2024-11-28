@@ -12,8 +12,8 @@
 
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/will.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/will.hpp>
 
 /**
  * @defgroup connect_v3_1_1 CONNECT packet (v3.1.1)
@@ -36,7 +36,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  */
 class connect_packet {
@@ -221,7 +221,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  */
 bool operator<(connect_packet const& lhs, connect_packet const& rhs);
@@ -234,7 +234,7 @@ bool operator<(connect_packet const& lhs, connect_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  */
 bool operator==(connect_packet const& lhs, connect_packet const& rhs);
@@ -247,7 +247,7 @@ bool operator==(connect_packet const& lhs, connect_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connect.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  */
 std::ostream& operator<<(std::ostream& o, connect_packet const& v);
@@ -255,7 +255,7 @@ std::ostream& operator<<(std::ostream& o, connect_packet const& v);
 } // namespace async_mqtt::v3_1_1
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v3_1_1_connect.ipp>
+#include <async_mqtt/protocol/packet/impl/v3_1_1_connect.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_CONNECT_HPP

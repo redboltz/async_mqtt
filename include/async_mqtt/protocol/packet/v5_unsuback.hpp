@@ -10,9 +10,9 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -44,7 +44,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsuback.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -145,7 +145,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsuback.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -160,7 +160,7 @@ bool operator<(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_p
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsuback.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -175,7 +175,7 @@ bool operator==(basic_unsuback_packet<PacketIdBytes> const& lhs, basic_unsuback_
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsuback.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -188,7 +188,7 @@ std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdBytes> c
  * @brief Type alias of basic_unsuback_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsuback.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsuback.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -197,7 +197,7 @@ using unsuback_packet = basic_unsuback_packet<2>;
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_unsuback.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_unsuback.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP

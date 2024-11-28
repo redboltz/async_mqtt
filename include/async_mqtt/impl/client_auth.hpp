@@ -14,7 +14,7 @@
 
 #include <async_mqtt/client.hpp>
 #include <async_mqtt/util/log.hpp>
-#include <async_mqtt/packet/v5_auth.hpp>
+#include <async_mqtt/protocol/packet/v5_auth.hpp>
 
 namespace async_mqtt {
 

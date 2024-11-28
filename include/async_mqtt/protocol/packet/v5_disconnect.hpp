@@ -10,8 +10,8 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -43,7 +43,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_disconnect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -179,7 +179,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_disconnect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -193,7 +193,7 @@ bool operator<(disconnect_packet const& lhs, disconnect_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_disconnect.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_disconnect.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -202,7 +202,7 @@ bool operator==(disconnect_packet const& lhs, disconnect_packet const& rhs);
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_disconnect.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_disconnect.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_DISCONNECT_HPP

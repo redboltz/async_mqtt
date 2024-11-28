@@ -10,9 +10,9 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -47,7 +47,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pubrec.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -200,7 +200,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pubrec.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -215,7 +215,7 @@ bool operator<(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_packe
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pubrec.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -228,7 +228,7 @@ bool operator==(basic_pubrec_packet<PacketIdBytes> const& lhs, basic_pubrec_pack
  * @brief Type alias of basic_pubrec_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pubrec.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pubrec.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -237,7 +237,7 @@ using pubrec_packet = basic_pubrec_packet<2>;
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_pubrec.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_pubrec.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_PUBREC_HPP

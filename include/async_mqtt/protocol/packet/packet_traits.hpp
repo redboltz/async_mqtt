@@ -10,9 +10,9 @@
 #include <cstdint>
 #include <type_traits>
 
-#include <async_mqtt/packet/packet_fwd.hpp>
-#include <async_mqtt/packet/packet_variant_fwd.hpp>
-#include <async_mqtt/packet/store_packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant_fwd.hpp>
 
 namespace async_mqtt {
 

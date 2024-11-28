@@ -8,8 +8,8 @@
 #define ASYNC_MQTT_PACKET_WILL_HPP
 
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/pubopts.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 #include <async_mqtt/util/json_like_out.hpp>
 
 namespace async_mqtt {
@@ -24,7 +24,7 @@ namespace async_mqtt {
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/will.hpp
+ * @li Header: async_mqtt/protocol/packet/will.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -184,7 +184,7 @@ private:
  * @return output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/will.hpp
+ * @li Header: async_mqtt/protocol/packet/will.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

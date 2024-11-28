@@ -8,9 +8,9 @@
 #define ASYNC_MQTT_PACKET_PACKET_HELPER_HPP
 
 #include <iosfwd>
-#include <async_mqtt/packet/packet_traits.hpp>
-#include <async_mqtt/packet/packet_fwd.hpp>
-#include <async_mqtt/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/packet_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
 
 namespace async_mqtt {
 
@@ -32,7 +32,7 @@ std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
  * @return id
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/packet_helper.hpp
+ * @li Header: async_mqtt/protocol/packet/packet_helper.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -43,6 +43,6 @@ hex_dump_t<Packet> hex_dump(Packet const& p) {
 
 } // namespace async_mqtt
 
-#include <async_mqtt/packet/impl/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
 
 #endif // ASYNC_MQTT_PACKET_PACKET_HELPER_HPP

@@ -10,7 +10,7 @@
 #include <variant>
 
 #include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/packet/property.hpp>
+#include <async_mqtt/protocol/packet/property.hpp>
 
 namespace async_mqtt {
 
@@ -26,7 +26,7 @@ namespace async_mqtt {
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -39,7 +39,7 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -52,7 +52,7 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @return output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -97,7 +97,7 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
  * @li @ref property::shared_subscription_available
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -240,7 +240,7 @@ private:
  * @brief property variant collection type
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -254,7 +254,7 @@ using properties = std::vector<property_variant>;
  * @return output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -268,7 +268,7 @@ std::ostream& operator<<(std::ostream& o, properties const& props);
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -282,7 +282,7 @@ bool operator<(property_variant const& lhs, property_variant const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -296,7 +296,7 @@ bool operator==(property_variant const& lhs, property_variant const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/property_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/property_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -304,6 +304,6 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
 
 } // namespace async_mqtt
 
-#include <async_mqtt/packet/impl/property_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/property_variant.hpp>
 
 #endif // ASYNC_MQTT_PACKET_PROPERTY_VARIANT_HPP

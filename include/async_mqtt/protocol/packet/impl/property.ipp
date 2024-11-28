@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_IMPL_PROPERTY_IPP)
 #define ASYNC_MQTT_PACKET_IMPL_PROPERTY_IPP
 
-#include <async_mqtt/packet/property.hpp>
+#include <async_mqtt/protocol/packet/property.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt::property {

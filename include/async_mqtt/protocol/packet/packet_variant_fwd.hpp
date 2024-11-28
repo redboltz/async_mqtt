@@ -62,7 +62,7 @@ namespace async_mqtt {
  * @li @ref v5::auth_packet
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/packet_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/packet_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -75,7 +75,7 @@ class basic_packet_variant;
  * @brief type alias of basic_packet_variant (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/packet_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/packet_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

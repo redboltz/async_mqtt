@@ -10,7 +10,7 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/move.hpp>
@@ -43,7 +43,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pingreq.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -110,7 +110,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pingreq.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -124,7 +124,7 @@ bool operator<(pingreq_packet const& lhs, pingreq_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pingreq.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -138,7 +138,7 @@ bool operator==(pingreq_packet const& lhs, pingreq_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_pingreq.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_pingreq.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -147,7 +147,7 @@ std::ostream& operator<<(std::ostream& o, pingreq_packet const& v);
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_pingreq.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_pingreq.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_PINGREQ_HPP

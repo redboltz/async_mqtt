@@ -19,7 +19,7 @@ namespace async_mqtt {
  * @brief MQTT control packet type
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/control_packet_type.hpp
+ * @li Header: async_mqtt/protocol/packet/control_packet_type.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -51,7 +51,7 @@ enum class control_packet_type : std::uint8_t {
  * @return control_packet_type
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/control_packet_type.hpp
+ * @li Header: async_mqtt/protocol/packet/control_packet_type.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -87,7 +87,7 @@ char const* control_packet_type_to_str(control_packet_type v) {
  * @return output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/control_packet_type.hpp
+ * @li Header: async_mqtt/protocol/packet/control_packet_type.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

@@ -20,7 +20,7 @@ namespace async_mqtt {
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/topic_sharename.hpp
+ * @li Header: async_mqtt/protocol/packet/topic_sharename.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

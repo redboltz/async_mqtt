@@ -10,12 +10,12 @@
 #include <variant>
 
 #include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/packet/store_packet_variant_fwd.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/v3_1_1_publish.hpp>
-#include <async_mqtt/packet/v3_1_1_pubrel.hpp>
-#include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/packet/v5_pubrel.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_publish.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_pubrel.hpp>
+#include <async_mqtt/protocol/packet/v5_publish.hpp>
+#include <async_mqtt/protocol/packet/v5_pubrel.hpp>
 
 namespace async_mqtt {
 
@@ -24,7 +24,7 @@ namespace async_mqtt {
  * @brief corresponding response packet
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/store_packet_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

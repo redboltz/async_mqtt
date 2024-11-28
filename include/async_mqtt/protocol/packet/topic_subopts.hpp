@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_PACKET_TOPIC_SUBOPTS_HPP)
 #define ASYNC_MQTT_PACKET_TOPIC_SUBOPTS_HPP
 
-#include <async_mqtt/packet/topic_sharename.hpp>
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/packet/topic_sharename.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 
 namespace async_mqtt {
 
@@ -21,7 +21,7 @@ namespace async_mqtt {
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/topic_subopts.hpp
+ * @li Header: async_mqtt/protocol/packet/topic_subopts.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

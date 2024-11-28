@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_IMPL_GET_PROTOCOL_VERSION_HPP
 
 #include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/protocol/packet/impl/copy_to_static_vector.hpp>
 
 namespace async_mqtt {
 

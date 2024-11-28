@@ -10,9 +10,9 @@
 #include <variant>
 
 #include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/packet/property.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/impl/validate_property.hpp>
+#include <async_mqtt/protocol/packet/property.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/validate_property.hpp>
 
 namespace async_mqtt {
 
@@ -90,7 +90,7 @@ std::size_t num_of_const_buffer_sequence(properties const& props);
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/property_variant.ipp>
+#include <async_mqtt/protocol/packet/impl/property_variant.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_IMPL_PROPERTY_VARIANT_HPP

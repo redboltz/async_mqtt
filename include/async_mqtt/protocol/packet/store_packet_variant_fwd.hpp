@@ -33,7 +33,7 @@ namespace async_mqtt {
  * @li @ref v5::basic_pubrel_packet<PacketIdBytes>
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/store_packet_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -45,7 +45,7 @@ class basic_store_packet_variant;
  * @brief Type alias of basic_store_packet_variant (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/store_packet_variant.hpp
+ * @li Header: async_mqtt/protocol/packet/store_packet_variant.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */

@@ -19,16 +19,16 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
-#include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/packet/impl/packet_helper.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/detail/fixed_header.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/v5_publish.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/detail/fixed_header.hpp>
+#include <async_mqtt/protocol/packet/pubopts.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
 
-#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
-#include <async_mqtt/packet/impl/validate_property.hpp>
+#include <async_mqtt/protocol/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/protocol/packet/impl/validate_property.hpp>
 
 #if defined(ASYNC_MQTT_PRINT_PAYLOAD)
 #include <async_mqtt/util/json_like_out.hpp>

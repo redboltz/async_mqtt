@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_DETAIL_FIXED_HEADER_HPP)
 #define ASYNC_MQTT_PACKET_DETAIL_FIXED_HEADER_HPP
 
-#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
 
 namespace async_mqtt::detail {
 

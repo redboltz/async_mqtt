@@ -11,10 +11,10 @@
 #include <async_mqtt/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/topic_sharename.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/topic_sharename.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
@@ -46,7 +46,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -149,7 +149,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -164,7 +164,7 @@ bool operator<(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubsc
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -179,7 +179,7 @@ bool operator==(basic_unsubscribe_packet<PacketIdBytes> const& lhs, basic_unsubs
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -192,7 +192,7 @@ std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes
  * @brief Type alias of basic_unsubscribe_packet (PacketIdBytes=2).
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v5_unsubscribe.hpp
+ * @li Header: async_mqtt/protocol/packet/v5_unsubscribe.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -201,7 +201,7 @@ using unsubscribe_packet = basic_unsubscribe_packet<2>;
 } // namespace async_mqtt::v5
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v5_unsubscribe.ipp>
+#include <async_mqtt/protocol/packet/impl/v5_unsubscribe.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V5_UNSUBSCRIBE_HPP

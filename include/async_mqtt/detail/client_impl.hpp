@@ -15,9 +15,9 @@
 #include <boost/asio/steady_timer.hpp>
 
 #include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/client_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
 
 namespace async_mqtt::detail {

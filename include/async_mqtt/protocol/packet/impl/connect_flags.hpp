@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_IMPL_CONNECT_FLAGS_HPP
 
 #include <cstdint>
-#include <async_mqtt/packet/pubopts.hpp>
+#include <async_mqtt/protocol/packet/pubopts.hpp>
 
 namespace async_mqtt {
 

@@ -15,8 +15,8 @@
 #include <boost/multi_index/hashed_index.hpp>
 
 #include <async_mqtt/util/log.hpp>
-#include <async_mqtt/packet/store_packet_variant.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 
 namespace async_mqtt {

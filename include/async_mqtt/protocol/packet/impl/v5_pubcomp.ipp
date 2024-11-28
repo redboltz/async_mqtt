@@ -12,8 +12,8 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/packet/v5_pubcomp.hpp>
-#include <async_mqtt/packet/impl/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/v5_pubcomp.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/buffer.hpp>
 
 #include <async_mqtt/util/inline.hpp>
@@ -22,11 +22,11 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 
-#include <async_mqtt/packet/detail/fixed_header.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
-#include <async_mqtt/packet/impl/validate_property.hpp>
+#include <async_mqtt/protocol/packet/detail/fixed_header.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/protocol/packet/impl/validate_property.hpp>
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 #include <async_mqtt/detail/instantiate_helper.hpp>

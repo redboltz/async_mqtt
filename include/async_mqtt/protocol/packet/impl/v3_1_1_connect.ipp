@@ -12,8 +12,8 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/packet/v3_1_1_connect.hpp>
-#include <async_mqtt/packet/impl/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_connect.hpp>
+#include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
 #include <async_mqtt/util/inline.hpp>
@@ -22,10 +22,10 @@
 #include <async_mqtt/util/endian_convert.hpp>
 #include <async_mqtt/util/utf8validate.hpp>
 
-#include <async_mqtt/packet/detail/fixed_header.hpp>
-#include <async_mqtt/packet/impl/copy_to_static_vector.hpp>
+#include <async_mqtt/protocol/packet/detail/fixed_header.hpp>
+#include <async_mqtt/protocol/packet/impl/copy_to_static_vector.hpp>
 
-#include <async_mqtt/packet/impl/connect_flags.hpp>
+#include <async_mqtt/protocol/packet/impl/connect_flags.hpp>
 
 namespace async_mqtt::v3_1_1 {
 

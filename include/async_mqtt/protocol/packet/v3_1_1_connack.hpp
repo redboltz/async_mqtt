@@ -14,7 +14,7 @@
 
 #include <async_mqtt/util/static_vector.hpp>
 
-#include <async_mqtt/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
 
 /**
  * @defgroup connack_v3_1_1 CONNACK packet (v3.1.1)
@@ -37,7 +37,7 @@ namespace as = boost::asio;
  *    @li Shared objects: Unsafe
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connack.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connack.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -123,7 +123,7 @@ private:
  * @return true if the lhs less than the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connack.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connack.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -137,7 +137,7 @@ bool operator<(connack_packet const& lhs, connack_packet const& rhs);
  * @return true if the lhs equal to the rhs, otherwise false.
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connack.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connack.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -151,7 +151,7 @@ bool operator==(connack_packet const& lhs, connack_packet const& rhs);
  * @return  output stream
  *
  * #### Requirements
- * @li Header: async_mqtt/packet/v3_1_1_connack.hpp
+ * @li Header: async_mqtt/protocol/packet/v3_1_1_connack.hpp
  * @li Convenience header: async_mqtt/all.hpp
  *
  */
@@ -160,7 +160,7 @@ std::ostream& operator<<(std::ostream& o, connack_packet const& v);
 } // namespace async_mqtt::v3_1_1
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/packet/impl/v3_1_1_connack.ipp>
+#include <async_mqtt/protocol/packet/impl/v3_1_1_connack.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP

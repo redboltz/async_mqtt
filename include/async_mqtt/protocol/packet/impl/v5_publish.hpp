@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_IMPL_V5_PUBLISH_HPP
 
 #include <utility>
-#include <async_mqtt/packet/v5_publish.hpp>
+#include <async_mqtt/protocol/packet/v5_publish.hpp>
 #include <async_mqtt/util/move.hpp>
 
 namespace async_mqtt::v5 {

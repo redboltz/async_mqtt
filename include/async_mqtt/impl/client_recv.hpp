@@ -9,7 +9,7 @@
 
 #include <boost/asio/dispatch.hpp>
 
-#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 
