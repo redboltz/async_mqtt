@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_CLIENT_IMPL_IPP)
-#define ASYNC_MQTT_CLIENT_IMPL_IPP
+#if !defined(ASYNC_MQTT_IMPL_CLIENT_MISC_IPP)
+#define ASYNC_MQTT_IMPL_CLIENT_MISC_IPP
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -168,4 +168,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_VERSION)(AS
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 
-#endif // ASYNC_MQTT_CLIENT_IMPL_IPP
+#endif // ASYNC_MQTT_IMPL_CLIENT_MISC_IPP

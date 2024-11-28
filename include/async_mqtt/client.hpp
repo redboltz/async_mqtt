@@ -7,7 +7,16 @@
 #if !defined(ASYNC_MQTT_CLIENT_HPP)
 #define ASYNC_MQTT_CLIENT_HPP
 
-#include <async_mqtt/detail/client_impl.hpp>
+#include <optional>
+#include <boost/asio/async_result.hpp>
+
+#include <async_mqtt/detail/client_impl_fwd.hpp>
+#include <async_mqtt/detail/client_packet_type_getter.hpp>
+#include <async_mqtt/detail/stream_layer.hpp>
+#include <async_mqtt/protocol/error.hpp>
+#include <async_mqtt/protocol/role.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/endpoint_fwd.hpp>
 
 /**
  * @defgroup client client (High level MQTT client)
@@ -28,13 +37,13 @@ public:
     using endpoint_type = basic_endpoint<role::client, 2, NextLayer>;
 
     /// @brief type of the given NextLayer
-    using next_layer_type = typename endpoint_type::next_layer_type;
+    using next_layer_type = NextLayer;
 
     /// @brief lowest_layer_type of the given NextLayer
-    using lowest_layer_type = typename endpoint_type::lowest_layer_type;
+    using lowest_layer_type = detail::lowest_layer_type<next_layer_type>;
 
     /// @brief executor_type of the given NextLayer
-    using executor_type = typename endpoint_type::executor_type;
+    using executor_type = typename next_layer_type::executor_type;
 
     /// @brief connect packet type
     ///
