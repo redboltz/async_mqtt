@@ -14,7 +14,7 @@
 #include <async_mqtt/util/store.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/util/topic_alias_recv.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/connection_fwd.hpp>
 #include <async_mqtt/protocol/connection_status.hpp>

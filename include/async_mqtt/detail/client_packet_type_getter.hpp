@@ -9,7 +9,7 @@
 
 #include <boost/preprocessor/cat.hpp>
 
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/packet/packet_fwd.hpp>
 
 namespace async_mqtt::detail {

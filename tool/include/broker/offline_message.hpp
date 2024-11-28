@@ -17,7 +17,7 @@
 
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/log.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/packet/property_variant.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_pubrel.hpp>

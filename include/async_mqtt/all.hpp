@@ -13,7 +13,7 @@
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/error.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/role.hpp>
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 #include <async_mqtt/protocol/packet/packet_fwd.hpp>

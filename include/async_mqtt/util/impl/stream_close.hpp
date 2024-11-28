@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_UTIL_IMPL_STREAM_CLOSE_HPP
 
 #include <async_mqtt/util/stream.hpp>
-#include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
 
 namespace async_mqtt {
 
