@@ -9,10 +9,6 @@
 
 #include <async_mqtt/endpoint.hpp>
 
-#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/buffer_to_packet_variant.ipp>
-#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-
 namespace async_mqtt {
 
 namespace detail {

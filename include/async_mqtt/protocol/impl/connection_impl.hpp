@@ -11,7 +11,6 @@
 
 #include <async_mqtt/error.hpp>
 #include <async_mqtt/util/packet_id_manager.hpp>
-#include <async_mqtt/util/store.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/util/topic_alias_recv.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
@@ -20,6 +19,7 @@
 #include <async_mqtt/protocol/connection_status.hpp>
 #include <async_mqtt/protocol/event_variant.hpp>
 #include <async_mqtt/protocol/timer.hpp>
+#include <async_mqtt/protocol/impl//store.hpp>
 
 namespace async_mqtt::detail {
 

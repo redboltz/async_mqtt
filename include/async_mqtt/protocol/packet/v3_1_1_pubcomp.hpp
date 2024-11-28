@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBCOMP_HPP)
 #define ASYNC_MQTT_PACKET_V3_1_1_PUBCOMP_HPP
 
-#include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>

@@ -17,7 +17,6 @@
 #include <async_mqtt/protocol/packet/packet_traits.hpp>
 #include <async_mqtt/util/value_allocator.hpp>
 #include <async_mqtt/util/stream.hpp>
-#include <async_mqtt/util/store.hpp>
 #include <async_mqtt/protocol/role.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>

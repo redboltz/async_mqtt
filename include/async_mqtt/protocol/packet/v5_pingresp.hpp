@@ -12,7 +12,7 @@
 
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/buffer_to_packet_variant.hpp>
+#include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 #include <async_mqtt/error.hpp>
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>

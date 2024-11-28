@@ -8,9 +8,13 @@
 #define ASYNC_MQTT_PROTOCOL_CONNECTION_HPP
 
 #include <memory>
+#include <chrono>
 
-#include <async_mqtt/protocol/detail/connection_impl.hpp>
-
+#include <async_mqtt/protocol/detail/connection_impl_fwd.hpp>
+#include <async_mqtt/protocol/connection_status.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
+#include <async_mqtt/protocol/timer.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes>

@@ -11,12 +11,13 @@
 #include <istream>
 
 #include <async_mqtt/protocol/connection.hpp>
+#include <async_mqtt/protocol/impl/connection_impl.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/buffer_to_packet_variant.ipp>
+#include <async_mqtt/protocol/impl/buffer_to_packet_variant.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 namespace async_mqtt {
