@@ -10,12 +10,12 @@
 #include <set>
 
 #include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/packet_id_type.hpp>
 #include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/util/store.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/util/topic_alias_recv.hpp>
 #include <async_mqtt/protocol_version.hpp>
+#include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/connection_fwd.hpp>
 #include <async_mqtt/protocol/connection_status.hpp>
 #include <async_mqtt/protocol/event_variant.hpp>

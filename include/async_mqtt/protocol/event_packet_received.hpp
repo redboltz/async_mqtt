@@ -9,7 +9,7 @@
 
 #include <cstddef>
 
-#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
 
 namespace async_mqtt {
 
