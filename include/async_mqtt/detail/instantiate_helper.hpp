@@ -18,7 +18,7 @@
 #include <boost/preprocessor/arithmetic/dec.hpp>
 #include <boost/preprocessor/cat.hpp>
 
-#include <async_mqtt/role.hpp>
+#include <async_mqtt/protocol/role.hpp>
 
 #if !defined(ASYNC_MQTT_PP_ROLE)
 #define ASYNC_MQTT_PP_ROLE (role::client)(role::server)(role::any)
