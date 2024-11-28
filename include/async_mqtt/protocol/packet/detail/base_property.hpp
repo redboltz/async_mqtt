@@ -15,7 +15,7 @@
 #include <boost/operators.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/packet/property_id.hpp>
 
 #include <async_mqtt/util/buffer.hpp>

@@ -11,7 +11,7 @@
 #include <async_mqtt/client_fwd.hpp>
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/role.hpp>
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>

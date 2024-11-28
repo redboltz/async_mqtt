@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_V3_1_1_CONNACK_HPP
 
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 #include <async_mqtt/util/buffer.hpp>
 

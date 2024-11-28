@@ -9,7 +9,7 @@
 
 #include <variant>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 
 namespace async_mqtt {
 

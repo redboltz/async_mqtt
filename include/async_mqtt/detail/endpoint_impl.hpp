@@ -11,18 +11,14 @@
 #include <deque>
 
 #include <async_mqtt/endpoint_fwd.hpp>
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/event_connection.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/packet_traits.hpp>
-#include <async_mqtt/util/value_allocator.hpp>
-#include <async_mqtt/util/stream.hpp>
-#include <async_mqtt/protocol/role.hpp>
-#include <async_mqtt/util/log.hpp>
-#include <async_mqtt/util/topic_alias_send.hpp>
-#include <async_mqtt/util/topic_alias_recv.hpp>
-#include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
+#include <async_mqtt/protocol/role.hpp>
+#include <async_mqtt/util/stream.hpp>
+#include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt::detail {
 

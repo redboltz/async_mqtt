@@ -9,7 +9,7 @@
 
 #include <set>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>
 #include <async_mqtt/util/topic_alias_recv.hpp>

@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_PACKET_QOS_UTIL_HPP)
 #define ASYNC_MQTT_PACKET_QOS_UTIL_HPP
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/packet/qos.hpp>
 
 namespace async_mqtt {

@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PACKET_V3_1_1_SUBACK_HPP
 
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 #include <async_mqtt/protocol/packet/topic_subopts.hpp>

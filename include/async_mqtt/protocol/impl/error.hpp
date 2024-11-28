@@ -16,7 +16,7 @@
 #include <boost/assert.hpp>
 #include <boost/operators.hpp>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 
 namespace async_mqtt {
 
