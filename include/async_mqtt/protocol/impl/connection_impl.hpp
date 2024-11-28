@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_IMPL_HPP
 
 #include <set>
+#include <deque>
 
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/util/topic_alias_send.hpp>

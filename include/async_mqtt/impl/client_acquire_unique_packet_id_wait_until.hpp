@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_IMPL_CLIENT_ACQUIRE_UNIQUE_PACKET_ID_WAIT_UNTIL_HPP
 
 #include <async_mqtt/client.hpp>
+#include <async_mqtt/impl/client_impl.hpp>
 
 namespace async_mqtt {
 

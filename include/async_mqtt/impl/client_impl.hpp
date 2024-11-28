@@ -20,6 +20,7 @@
 #include <async_mqtt/detail/client_impl_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
 #include <async_mqtt/client_fwd.hpp>
+#include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
@@ -37,9 +38,9 @@ class client_impl {
 
 public:
     using endpoint_type = basic_endpoint<role::client, 2, NextLayer>;
-    using next_layer_type = typename endpoint_type::next_layer_type;
-    using lowest_layer_type = typename endpoint_type::lowest_layer_type;
-    using executor_type = typename endpoint_type::executor_type;
+    using next_layer_type = NextLayer;
+    using lowest_layer_type = detail::lowest_layer_type<next_layer_type>;
+    using executor_type = typename next_layer_type::executor_type;
 
     template <typename... Args>
     explicit

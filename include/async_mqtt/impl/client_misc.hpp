@@ -8,7 +8,6 @@
 #define ASYNC_MQTT_IMPL_CLIENT_MISC_HPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/client_impl.hpp>
 
 namespace async_mqtt {

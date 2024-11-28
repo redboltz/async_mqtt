@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_IMPL_IPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_IMPL_IPP
 
+#include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 

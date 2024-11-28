@@ -15,6 +15,7 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/unpack.hpp>
 
+#include <async_mqtt/client.hpp>
 #include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 

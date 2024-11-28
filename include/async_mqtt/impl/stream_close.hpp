@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_UTIL_IMPL_STREAM_CLOSE_HPP)
 #define ASYNC_MQTT_UTIL_IMPL_STREAM_CLOSE_HPP
 
+#include <async_mqtt/impl/stream.hpp>
 #include <async_mqtt/impl/stream_impl.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
 

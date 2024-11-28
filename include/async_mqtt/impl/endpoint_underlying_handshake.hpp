@@ -13,6 +13,7 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/unpack.hpp>
 
+#include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
