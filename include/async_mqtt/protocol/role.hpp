@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_ROLE_HPP)
-#define ASYNC_MQTT_ROLE_HPP
+#if !defined(ASYNC_MQTT_ASYNC_MQTT_ROLE_HPP)
+#define ASYNC_MQTT_ASYNC_MQTT_ROLE_HPP
 
 /**
  * @defgroup role MQTT connection role (client, server or both)
@@ -32,4 +32,4 @@ enum class role {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_ROLE_HPP
+#endif // ASYNC_MQTT_ASYNC_MQTT_ROLE_HPP

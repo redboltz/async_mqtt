@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PROTOCOL_VERSION_HPP)
-#define ASYNC_MQTT_PROTOCOL_VERSION_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PROTOCOL_VERSION_HPP)
+#define ASYNC_MQTT_PROTOCOL_PROTOCOL_VERSION_HPP
 
 #include <cstdint>
 #include <ostream>
@@ -73,4 +73,4 @@ std::ostream& operator<<(std::ostream& os, protocol_version val)
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PROTOCOL_VERSION_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PROTOCOL_VERSION_HPP

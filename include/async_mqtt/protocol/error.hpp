@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_ERROR_HPP)
-#define ASYNC_MQTT_ERROR_HPP
+#if !defined(ASYNC_MQTT_ASYNC_MQTT_ERROR_HPP)
+#define ASYNC_MQTT_ASYNC_MQTT_ERROR_HPP
 
 #include <exception>
 #include <sstream>
@@ -1122,4 +1122,4 @@ struct is_error_code_enum<async_mqtt::auth_reason_code> : public std::true_type 
 
 #include <async_mqtt/protocol/impl/error.hpp>
 
-#endif // ASYNC_MQTT_ERROR_HPP
+#endif // ASYNC_MQTT_ASYNC_MQTT_ERROR_HPP
