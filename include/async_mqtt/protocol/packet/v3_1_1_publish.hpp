@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBLISH_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBLISH_HPP
 
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 
@@ -305,4 +305,4 @@ using publish_packet = basic_publish_packet<2>;
 #include <async_mqtt/protocol/packet/impl/v3_1_1_publish.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_PUBLISH_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBLISH_HPP

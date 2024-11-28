@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP)
-#define ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_CONTROL_PACKET_TYPE_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_CONTROL_PACKET_TYPE_HPP
 
 #include <cstdint>
 #include <ostream>
@@ -166,4 +166,4 @@ inline std::optional<control_packet_type> get_control_packet_type_with_check(std
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_CONTROL_PACKET_TYPE_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_CONTROL_PACKET_TYPE_HPP

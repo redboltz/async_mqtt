@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_HPP)
-#define ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_HPP
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 
@@ -89,4 +89,4 @@ decltype(auto) basic_packet_variant<PacketIdBytes>::get_if() const {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_HPP

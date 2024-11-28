@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_PROPERTY_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_PROPERTY_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_IPP
 
 #include <async_mqtt/protocol/packet/property.hpp>
 #include <async_mqtt/util/inline.hpp>
@@ -197,4 +197,4 @@ std::ostream& operator<<(std::ostream& o, shared_subscription_available const& v
 
 } // namespace async_mqtt::property
 
-#endif // ASYNC_MQTT_PACKET_IMPL_PROPERTY_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_IPP

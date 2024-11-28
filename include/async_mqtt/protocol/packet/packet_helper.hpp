@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_PACKET_HELPER_HPP)
-#define ASYNC_MQTT_PACKET_PACKET_HELPER_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_PACKET_HELPER_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_PACKET_HELPER_HPP
 
 #include <iosfwd>
 #include <async_mqtt/protocol/packet/packet_traits.hpp>
@@ -45,4 +45,4 @@ hex_dump_t<Packet> hex_dump(Packet const& p) {
 
 #include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
 
-#endif // ASYNC_MQTT_PACKET_PACKET_HELPER_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_PACKET_HELPER_HPP

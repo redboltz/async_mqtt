@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_V5_CONNECT_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_V5_CONNECT_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_CONNECT_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_CONNECT_IPP
 
 #include <utility>
 #include <numeric>
@@ -643,4 +643,4 @@ std::ostream& operator<<(std::ostream& o, connect_packet const& v) {
 
 } // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_IMPL_V5_CONNECT_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_CONNECT_IPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_PUBOPTS_HPP)
-#define ASYNC_MQTT_PACKET_PUBOPTS_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_PUBOPTS_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_PUBOPTS_HPP
 
 #include <boost/assert.hpp>
 
@@ -443,4 +443,4 @@ std::ostream& operator<<(std::ostream& o, dup v)
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_PUBOPTS_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_PUBOPTS_HPP

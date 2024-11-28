@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP)
-#define ASYNC_MQTT_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP
 
 #include <algorithm>
 
@@ -62,4 +62,4 @@ std::optional<std::uint32_t> insert_advance_variable_length(buffer& buf, static_
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_COPY_TO_STATIC_VECTOR_HPP

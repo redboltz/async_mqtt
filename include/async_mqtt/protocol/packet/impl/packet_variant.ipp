@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_IPP
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/util/inline.hpp>
@@ -84,4 +84,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_SIZE))
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_IMPL_PACKET_VARIANT_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_IPP

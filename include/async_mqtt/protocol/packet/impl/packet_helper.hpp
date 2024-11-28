@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_PACKET_HELPER_HPP)
-#define ASYNC_MQTT_PACKET_IMPL_PACKET_HELPER_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_HELPER_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_HELPER_HPP
 
 #include <utility>
 #include <ostream>
@@ -75,4 +75,4 @@ inline std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_IMPL_PACKET_HELPER_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_HELPER_HPP

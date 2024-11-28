@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V5_PINGRESP_HPP)
-#define ASYNC_MQTT_PACKET_V5_PINGRESP_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_V5_PINGRESP_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_V5_PINGRESP_HPP
 
 #include <utility>
 #include <numeric>
@@ -157,4 +157,4 @@ std::ostream& operator<<(std::ostream& o, pingresp_packet const& v);
 #include <async_mqtt/protocol/packet/impl/v5_pingresp.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PACKET_V5_PINGRESP_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_V5_PINGRESP_HPP

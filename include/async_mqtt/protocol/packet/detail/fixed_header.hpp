@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_DETAIL_FIXED_HEADER_HPP)
-#define ASYNC_MQTT_PACKET_DETAIL_FIXED_HEADER_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_DETAIL_FIXED_HEADER_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_DETAIL_FIXED_HEADER_HPP
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 
@@ -17,4 +17,4 @@ constexpr std::uint8_t make_fixed_header(control_packet_type type, std::uint8_t 
 
 } // namespace async_mqtt::detail
 
-#endif // ASYNC_MQTT_PACKET_DETAIL_FIXED_HEADER_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_DETAIL_FIXED_HEADER_HPP

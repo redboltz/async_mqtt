@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_QOS_UTIL_HPP)
-#define ASYNC_MQTT_PACKET_QOS_UTIL_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_QOS_UTIL_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_QOS_UTIL_HPP
 
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/packet/qos.hpp>
@@ -44,4 +44,4 @@ constexpr suback_reason_code qos_to_suback_reason_code(qos q) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_QOS_UTIL_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_QOS_UTIL_HPP

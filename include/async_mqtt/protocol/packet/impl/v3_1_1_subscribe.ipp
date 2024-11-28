@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP
 
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -339,4 +339,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_SIZE))
 
 } // namespace async_mqtt::v3_1_1
 
-#endif // ASYNC_MQTT_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V3_1_1_SUBSCRIBE_IPP

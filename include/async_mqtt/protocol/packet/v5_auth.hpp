@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V5_AUTH_HPP)
-#define ASYNC_MQTT_PACKET_V5_AUTH_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_V5_AUTH_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_V5_AUTH_HPP
 
 #include <utility>
 #include <numeric>
@@ -201,4 +201,4 @@ bool operator==(auth_packet const& lhs, auth_packet const& rhs);
 #include <async_mqtt/protocol/packet/impl/v5_auth.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PACKET_V5_AUTH_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_V5_AUTH_HPP

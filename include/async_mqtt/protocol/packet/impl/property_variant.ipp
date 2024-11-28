@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_PROPERTY_VARIANT_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_PROPERTY_VARIANT_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_VARIANT_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_VARIANT_IPP
 
 #include <variant>
 
@@ -587,4 +587,4 @@ std::size_t num_of_const_buffer_sequence(properties const& props) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_IMPL_PROPERTY_VARIANT_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PROPERTY_VARIANT_IPP

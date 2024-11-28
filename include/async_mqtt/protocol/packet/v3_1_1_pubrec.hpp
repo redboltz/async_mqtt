@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V3_1_1_PUBREC_HPP)
-#define ASYNC_MQTT_PACKET_V3_1_1_PUBREC_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBREC_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBREC_HPP
 
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 
@@ -178,4 +178,4 @@ using pubrec_packet = basic_pubrec_packet<2>;
 #include <async_mqtt/protocol/packet/impl/v3_1_1_pubrec.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PACKET_V3_1_1_PUBREC_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_V3_1_1_PUBREC_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP)
-#define ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_V5_UNSUBACK_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_V5_UNSUBACK_HPP
 
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 #include <async_mqtt/protocol/error.hpp>
@@ -200,4 +200,4 @@ using unsuback_packet = basic_unsuback_packet<2>;
 #include <async_mqtt/protocol/packet/impl/v5_unsuback.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PACKET_V5_UNSUBACK_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_V5_UNSUBACK_HPP

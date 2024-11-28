@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_IMPL_V5_UNSUBACK_IPP)
-#define ASYNC_MQTT_PACKET_IMPL_V5_UNSUBACK_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_UNSUBACK_IPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_UNSUBACK_IPP
 
 #include <async_mqtt/protocol/packet/v5_unsuback.hpp>
 #include <async_mqtt/protocol/packet/impl/packet_helper.hpp>
@@ -287,4 +287,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_SIZE))
 
 } // namespace async_mqtt::v5
 
-#endif // ASYNC_MQTT_PACKET_IMPL_V5_UNSUBACK_IPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_IMPL_V5_UNSUBACK_IPP

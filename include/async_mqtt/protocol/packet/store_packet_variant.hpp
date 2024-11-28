@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PACKET_STORE_PACKET_VARIANT_HPP)
-#define ASYNC_MQTT_PACKET_STORE_PACKET_VARIANT_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_PACKET_STORE_PACKET_VARIANT_HPP)
+#define ASYNC_MQTT_PROTOCOL_PACKET_STORE_PACKET_VARIANT_HPP
 
 #include <variant>
 
@@ -288,4 +288,4 @@ inline std::ostream& operator<<(std::ostream& o, basic_store_packet_variant<Pack
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PACKET_STORE_PACKET_VARIANT_HPP
+#endif // ASYNC_MQTT_PROTOCOL_PACKET_STORE_PACKET_VARIANT_HPP
