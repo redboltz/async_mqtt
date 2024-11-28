@@ -9,14 +9,13 @@
 
 #include <cstddef>
 
-namespace async_mqtt {
+namespace async_mqtt::event {
 
-class event_close {
+class close {
 public:
-    constexpr event_close() = default;
+    constexpr close() = default;
 };
 
-
-} // namespace async_mqtt
+} // namespace async_mqtt::event
 
 #endif // ASYNC_MQTT_PROTOCOL_EVENT_CLOSE_HPP

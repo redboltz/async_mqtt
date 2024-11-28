@@ -912,7 +912,6 @@ process_recv_packet() {
                             topic_alias_recv_->insert_or_update(p.topic(), *ta_opt);
                         }
                     }
-                    // received event first
                     if (!already_handled) {
                         con_.on_receive(p);
                     }

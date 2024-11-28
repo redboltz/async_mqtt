@@ -17,7 +17,7 @@
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/connection_fwd.hpp>
 #include <async_mqtt/protocol/connection_status.hpp>
-#include <async_mqtt/protocol/event_variant.hpp>
+#include <async_mqtt/protocol/event/event_variant.hpp>
 #include <async_mqtt/protocol/timer.hpp>
 #include <async_mqtt/protocol/impl/packet_id_manager.hpp>
 #include <async_mqtt/protocol/impl/store.hpp>

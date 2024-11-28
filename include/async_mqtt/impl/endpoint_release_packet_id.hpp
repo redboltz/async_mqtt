@@ -9,7 +9,7 @@
 
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
-#include <async_mqtt/protocol/event_packet_id_released.hpp>
+#include <async_mqtt/protocol/event/packet_id_released.hpp>
 
 namespace async_mqtt {
 
@@ -40,7 +40,7 @@ release_packet_id_op {
             for (auto& event : events) {
                 std::visit(
                     overload {
-                        [&](basic_event_packet_id_released<PacketIdBytes> const& ev) {
+                        [&](event::basic_packet_id_released<PacketIdBytes> const& ev) {
                             // TBD naming? notify_packet_id_released
                             a_ep.notify_release_pid(ev.get());
                         },

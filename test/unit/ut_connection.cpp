@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     BOOST_TEST(events.size() == 2);
     std::visit(
         am::overload{
-            [&](am::event_send const& ev) {
+            [&](am::event::send const& ev) {
                 BOOST_TEST(!ev.get_release_packet_id_if_send_error());
                 BOOST_TEST(ev.get() == p);
             },
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     );
     std::visit(
         am::overload{
-            [&](am::event_timer const& ev) {
+            [&](am::event::timer const& ev) {
                 BOOST_TEST(ev.get_op() == am::timer_op::reset);
                 BOOST_TEST(ev.get_kind() == am::timer_kind::pingreq_send);
                 BOOST_CHECK(ev.get_ms() == std::chrono::seconds{0x1234});
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
             } ();
         std::visit(
             am::overload{
-                [&](am::event_packet_received const& ev) {
+                [&](am::event::packet_received const& ev) {
                     BOOST_TEST(ev.get() == expected);
                 },
                 [](auto const&...) {

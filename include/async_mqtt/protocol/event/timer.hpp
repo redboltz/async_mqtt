@@ -13,11 +13,11 @@
 
 #include <async_mqtt/protocol/timer.hpp>
 
-namespace async_mqtt {
+namespace async_mqtt::event {
 
-class event_timer {
+class timer {
 public:
-    event_timer(
+    timer(
         timer_op op,
         timer_kind kind,
         std::optional<std::chrono::milliseconds> ms = std::nullopt
@@ -44,6 +44,6 @@ private:
     std::optional<std::chrono::milliseconds> ms_;
 };
 
-} // namespace async_mqtt
+} // namespace async_mqtt::event
 
 #endif // ASYNC_MQTT_PROTOCOL_EVENT_TIMER_HPP

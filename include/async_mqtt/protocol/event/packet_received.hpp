@@ -11,12 +11,12 @@
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 
-namespace async_mqtt {
+namespace async_mqtt::event {
 
 template <std::size_t PacketIdBytes>
-class basic_event_packet_received {
+class basic_packet_received {
 public:
-    basic_event_packet_received(
+    basic_packet_received(
         basic_packet_variant<PacketIdBytes> packet
     )
         :packet_{force_move(packet)}
@@ -35,8 +35,8 @@ private:
     basic_packet_variant<PacketIdBytes> packet_;
 };
 
-using event_packet_received = basic_event_packet_received<2>;
+using packet_received = basic_packet_received<2>;
 
-} // namespace async_mqtt
+} // namespace async_mqtt::event
 
 #endif // ASYNC_MQTT_PROTOCOL_EVENT_SEND_HPP

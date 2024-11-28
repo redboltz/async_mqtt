@@ -10,6 +10,11 @@
 #include <variant>
 
 #include <async_mqtt/protocol/error.hpp>
+#include <async_mqtt/protocol/event/send.hpp>
+#include <async_mqtt/protocol/event/packet_id_released.hpp>
+#include <async_mqtt/protocol/event/packet_received.hpp>
+#include <async_mqtt/protocol/event/timer.hpp>
+#include <async_mqtt/protocol/event/close.hpp>
 
 namespace async_mqtt {
 
@@ -22,18 +27,6 @@ namespace async_mqtt {
  * @defgroup packet_variant_detail implementation class
  * @ingroup packet_variant
  */
-
-template <std::size_t PacketIdBytes>
-class basic_event_send;
-
-template <std::size_t PacketIdBytes>
-class basic_event_packet_id_released;
-
-template <std::size_t PacketIdBytes>
-class basic_event_packet_received;
-
-class event_timer;
-class event_close;
 
 /**
  * @ingroup packet_variant_detail
@@ -83,11 +76,11 @@ class event_close;
 template <std::size_t PacketIdBytes>
 using basic_event_variant = std::variant<
     error_code,
-    basic_event_send<PacketIdBytes>,
-    basic_event_packet_id_released<PacketIdBytes>,
-    basic_event_packet_received<PacketIdBytes>,
-    event_timer,
-    event_close
+    event::basic_send<PacketIdBytes>,
+    event::basic_packet_id_released<PacketIdBytes>,
+    event::basic_packet_received<PacketIdBytes>,
+    event::timer,
+    event::close
 >;
 
 /**

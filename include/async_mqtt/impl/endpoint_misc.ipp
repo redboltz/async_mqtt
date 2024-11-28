@@ -136,7 +136,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
     for (auto& event : events) {
         std::visit(
             overload {
-                [&](event_timer const& ev) {
+                [&](event::timer const& ev) {
                     if (ev.get_kind() == timer_kind::pingreq_send) {
                         switch (ev.get_op()) {
                         case timer_op::set:
@@ -154,7 +154,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
                         BOOST_ASSERT(false);
                     }
                 },
-                [&](auto const&...) {
+                [&](auto const&) {
                     BOOST_ASSERT(false);
                 }
             },
@@ -216,7 +216,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                             for (auto& event : events) {
                                 std::visit(
                                     overload {
-                                        [&](event_timer const& ev) {
+                                        [&](event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_send) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -234,7 +234,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](basic_event_send<PacketIdBytes>& ev) {
+                                        [&](event::basic_send<PacketIdBytes>& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
@@ -242,7 +242,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 as::detached
                                             );
                                         },
-                                        [&](auto const&...) {
+                                        [&](auto const&) {
                                             BOOST_ASSERT(false);
                                         }
                                     },
@@ -299,7 +299,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](event_timer const& ev) {
+                                        [&](event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_recv) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -317,13 +317,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event_send& ev) {
+                                        [&](event::basic_send<PacketIdBytes>& ev) {
                                             auto pv{force_move(ev.get())};
-                                            BOOST_ASSERT(pv.get_if<v5::disconnect_packet>());
+                                            BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
                                             BOOST_ASSERT(it == events.end());
-                                            BOOST_ASSERT(std::get_if<event_close>(&ev_close));
+                                            BOOST_ASSERT(std::get_if<event::close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
                                                 [ep]
@@ -335,10 +335,10 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                                 }
                                             );
                                         },
-                                        [&](event_close const&) {
+                                        [&](event::close const&) {
                                             async_close(ep, as::detached);
                                         },
-                                        [&](auto const&...) {
+                                        [&](auto const&) {
                                             BOOST_ASSERT(false);
                                         }
                                     },
@@ -396,7 +396,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](event_timer const& ev) {
+                                        [&](event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingresp_recv) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -414,13 +414,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event_send& ev) {
+                                        [&](event::basic_send<PacketIdBytes>& ev) {
                                             auto pv{force_move(ev.get())};
-                                            BOOST_ASSERT(pv.get_if<v5::disconnect_packet>());
+                                            BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
                                             BOOST_ASSERT(it == events.end());
-                                            BOOST_ASSERT(std::get_if<event_close>(&ev_close));
+                                            BOOST_ASSERT(std::get_if<event::close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
                                                 [ep]
@@ -432,10 +432,10 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 }
                                             );
                                         },
-                                        [&](event_close const&) {
+                                        [&](event::close const&) {
                                             async_close(ep, as::detached);
                                         },
-                                        [&](auto const&...) {
+                                        [&](auto const&) {
                                             BOOST_ASSERT(false);
                                         }
                                     },

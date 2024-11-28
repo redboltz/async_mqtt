@@ -9,7 +9,6 @@
 
 #include <async_mqtt/protocol/connection.hpp>
 #include <async_mqtt/protocol/impl/connection_impl.hpp>
-#include <async_mqtt/protocol/event_send.hpp>
 
 namespace async_mqtt {
 

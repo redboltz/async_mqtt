@@ -38,7 +38,7 @@ recv_op {
                     decided_error.emplace(ec);
                     return true;
                 },
-                [&](basic_event_send<PacketIdBytes>& ev) {
+                [&](event::basic_send<PacketIdBytes>& ev) {
                     state = sent;
                     auto ep_copy{ep};
                     async_send(
@@ -49,12 +49,12 @@ recv_op {
                     BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                     return false;
                 },
-                [&](basic_event_packet_id_released<PacketIdBytes> ev) {
+                [&](event::basic_packet_id_released<PacketIdBytes> ev) {
                     a_ep.notify_release_pid(ev.get());
                     try_resend_from_queue = true;
                     return true;
                 },
-                [&](basic_event_packet_received<PacketIdBytes> ev) {
+                [&](event::basic_packet_received<PacketIdBytes> ev) {
                     if (recv_packet) {
                         // rest events would be processed the next async_recv call
                         // back the event to the recv_events_ for the next async_recv
@@ -71,7 +71,7 @@ recv_op {
                     }
                     return true;
                 },
-                [&](event_timer ev) {
+                [&](event::timer ev) {
                     switch (ev.get_kind()) {
                     case timer_kind::pingreq_send:
                         // receive server keep alive property in connack
@@ -109,7 +109,7 @@ recv_op {
                     }
                     return true;
                 },
-                [&](event_close) {
+                [&](event::close) {
                     state = complete;
                     auto ep_copy{ep};
                     async_close(

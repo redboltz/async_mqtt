@@ -11,12 +11,12 @@
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 
-namespace async_mqtt {
+namespace async_mqtt::event {
 
 template <std::size_t PacketIdBytes>
-class basic_event_send {
+class basic_send {
 public:
-    basic_event_send(
+    basic_send(
         basic_packet_variant<PacketIdBytes> packet,
         std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
         release_packet_id_if_send_error = std::nullopt
@@ -40,8 +40,8 @@ private:
     release_packet_id_if_send_error_;
 };
 
-using event_send = basic_event_send<2>;
+using send = basic_send<2>;
 
-} // namespace async_mqtt
+} // namespace async_mqtt::event
 
 #endif // ASYNC_MQTT_PROTOCOL_EVENT_SEND_HPP

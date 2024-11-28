@@ -8,10 +8,11 @@
 #define ASYNC_MQTT_PROTOCOL_IMPL_EVENT_CONNECTION_IPP
 
 #include <async_mqtt/protocol/event_connection.hpp>
-#include <async_mqtt/protocol/event_close.hpp>
-#include <async_mqtt/protocol/event_timer.hpp>
-#include <async_mqtt/protocol/event_packet_id_released.hpp>
-#include <async_mqtt/protocol/event_packet_received.hpp>
+#include <async_mqtt/protocol/event/close.hpp>
+#include <async_mqtt/protocol/event/send.hpp>
+#include <async_mqtt/protocol/event/timer.hpp>
+#include <async_mqtt/protocol/event/packet_id_released.hpp>
+#include <async_mqtt/protocol/event/packet_received.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt {
@@ -81,7 +82,7 @@ on_send(
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
     release_packet_id_if_send_error
 ) {
-    events_.emplace_back(basic_event_send<PacketIdBytes>{force_move(packet), release_packet_id_if_send_error});
+    events_.emplace_back(event::basic_send<PacketIdBytes>{force_move(packet), release_packet_id_if_send_error});
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -91,7 +92,7 @@ basic_event_connection<Role, PacketIdBytes>::
 on_packet_id_release(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) {
-    events_.emplace_back(basic_event_packet_id_released<PacketIdBytes>{packet_id});
+    events_.emplace_back(event::basic_packet_id_released<PacketIdBytes>{packet_id});
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -101,7 +102,7 @@ basic_event_connection<Role, PacketIdBytes>::
 on_receive(
     basic_packet_variant<PacketIdBytes> packet
 ) {
-    events_.emplace_back(basic_event_packet_received<PacketIdBytes>{force_move(packet)});
+    events_.emplace_back(event::basic_packet_received<PacketIdBytes>{force_move(packet)});
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -113,7 +114,7 @@ on_timer_op(
     timer_kind kind,
     std::optional<std::chrono::milliseconds> ms
 ) {
-    events_.emplace_back(event_timer{op, kind, ms});
+    events_.emplace_back(event::timer{op, kind, ms});
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -121,7 +122,7 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_event_connection<Role, PacketIdBytes>::
 on_close() {
-    events_.emplace_back(event_close{});
+    events_.emplace_back(event::close{});
 }
 
 } // namespace async_mqtt

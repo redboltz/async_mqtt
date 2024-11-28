@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_PROTOCOL_EVENT_CONNECTION_HPP
 
 #include <async_mqtt/protocol/connection.hpp>
-#include <async_mqtt/protocol/event_variant.hpp>
+#include <async_mqtt/protocol/event/event_variant.hpp>
 
 namespace async_mqtt {
 
