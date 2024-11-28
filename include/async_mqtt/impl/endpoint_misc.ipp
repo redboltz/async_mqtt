@@ -213,10 +213,11 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                     if (!ec) {
                         if (auto ep = wp.lock()) {
                             auto events = ep->con_.notify_timer_fired(timer_kind::pingreq_send);
-                            for (auto& ev : events) {
+                            for (auto& event : events) {
+                                namespace event_ns = async_mqtt::event;
                                 std::visit(
                                     overload {
-                                        [&](event::timer const& ev) {
+                                        [&](event_ns::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_send) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -234,7 +235,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event::basic_send<PacketIdBytes>& ev) {
+                                        [&](event_ns::basic_send<PacketIdBytes>& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
@@ -246,7 +247,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                             BOOST_ASSERT(false);
                                         }
                                     },
-                                    ev
+                                    event
                                 );
                             }
                         }
