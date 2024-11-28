@@ -7,7 +7,12 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
-#include <async_mqtt/detail/endpoint_impl.hpp>
+#include <boost/asio/any_io_executor.hpp>
+
+#include <async_mqtt/detail/endpoint_impl_fwd.hpp>
+#include <async_mqtt/detail/stream_layer.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 
 /**
  * @defgroup connection MQTT connection
@@ -33,16 +38,12 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint {
     using this_type = basic_endpoint<Role, PacketIdBytes, NextLayer>;
     using impl_type = detail::basic_endpoint_impl<Role, PacketIdBytes, NextLayer>;
-    using stream_type =
-        stream<
-            NextLayer
-        >;
 public:
     /// @brief type of the given NextLayer
-    using next_layer_type = typename stream_type::next_layer_type;
+    using next_layer_type = NextLayer;
 
     /// @brief lowest_layer_type of the given NextLayer
-    using lowest_layer_type = typename stream_type::lowest_layer_type;
+    using lowest_layer_type = detail::lowest_layer_type<next_layer_type>;
 
     /// @brief executor_type of the given NextLayer
     using executor_type = typename next_layer_type::executor_type;
@@ -744,7 +745,7 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/impl/endpoint_misc.hpp>
 #include <async_mqtt/impl/endpoint_underlying_handshake.hpp>
 #include <async_mqtt/impl/endpoint_acquire_unique_packet_id.hpp>
 #include <async_mqtt/impl/endpoint_acquire_unique_packet_id_wait_until.hpp>

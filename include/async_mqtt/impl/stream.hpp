@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_UTIL_STREAM_HPP)
-#define ASYNC_MQTT_UTIL_STREAM_HPP
+#if !defined(ASYNC_MQTT_IMPL_STREAM_HPP)
+#define ASYNC_MQTT_IMPL_STREAM_HPP
 
 #include <utility>
 #include <type_traits>
@@ -13,14 +13,14 @@
 
 #include <boost/asio/async_result.hpp>
 
-#include <async_mqtt/util/stream_traits.hpp>
+#include <async_mqtt/detail/stream_layer.hpp>
+#include <async_mqtt/impl/stream_impl_fwd.hpp>
+#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/util/log.hpp>
 
-#include <async_mqtt/util/detail/stream_impl.hpp>
 
 namespace async_mqtt {
 namespace as = boost::asio;
@@ -31,12 +31,9 @@ class stream {
 public:
     using this_type = stream<NextLayer>;
     using impl_type = detail::stream_impl<NextLayer>;
-    using next_layer_type = typename std::remove_reference<NextLayer>::type;
-    using lowest_layer_type =
-        typename std::remove_reference<
-            decltype(get_lowest_layer(std::declval<next_layer_type&>()))
-        >::type;
-    using executor_type = async_mqtt::executor_type<next_layer_type>;
+    using next_layer_type = NextLayer;
+    using lowest_layer_type = detail::lowest_layer_type<next_layer_type>;
+    using executor_type = typename next_layer_type::executor_type;
 
     template <
         typename T,
@@ -151,9 +148,9 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/util/impl/stream_underlying_handshake.hpp>
-#include <async_mqtt/util/impl/stream_read.hpp>
-#include <async_mqtt/util/impl/stream_write_packet.hpp>
-#include <async_mqtt/util/impl/stream_close.hpp>
+#include <async_mqtt/impl/stream_underlying_handshake.hpp>
+#include <async_mqtt/impl/stream_read.hpp>
+#include <async_mqtt/impl/stream_write_packet.hpp>
+#include <async_mqtt/impl/stream_close.hpp>
 
-#endif // ASYNC_MQTT_UTIL_STREAM_HPP
+#endif // ASYNC_MQTT_IMPL_STREAM_HPP

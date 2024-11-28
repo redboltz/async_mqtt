@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_HPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_HPP
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 

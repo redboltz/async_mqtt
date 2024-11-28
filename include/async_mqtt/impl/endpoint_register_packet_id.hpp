@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 

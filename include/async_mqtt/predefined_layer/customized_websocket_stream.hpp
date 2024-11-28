@@ -10,7 +10,7 @@
 #include <boost/asio.hpp>
 #include <boost/beast/websocket/stream.hpp>
 
-#include <async_mqtt/util/stream_traits.hpp>
+#include <async_mqtt/stream_customize.hpp>
 #include <async_mqtt/util/log.hpp>
 
 /// @file

@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_UTIL_IMPL_STREAM_UNDERLYING_HANDSHAKE_HPP)
 #define ASYNC_MQTT_UTIL_IMPL_STREAM_UNDERLYING_HANDSHAKE_HPP
 
+#include <async_mqtt/impl/stream_impl.hpp>
 #include <async_mqtt/protocol/error.hpp>
-#include <async_mqtt/util/stream.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
 
 #include <boost/hana/tuple.hpp>
