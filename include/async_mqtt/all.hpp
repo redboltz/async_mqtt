@@ -73,7 +73,6 @@
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/util/packet_id_manager.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/util/setup_log.hpp>
 #include <async_mqtt/util/shared_ptr_array.hpp>
