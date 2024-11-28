@@ -61,7 +61,7 @@ send_op {
                     decided_error.emplace(ec);
                     return true;
                 },
-                [&](event::timer const& ev) {
+                [&](async_mqtt::event::timer const& ev) {
                     switch (ev.get_kind()) {
                     case timer_kind::pingreq_send:
                         if (ev.get_op() == timer_op::reset) {
@@ -85,11 +85,11 @@ send_op {
                     }
                     return true;
                 },
-                [&](event::basic_packet_id_released<PacketIdBytes> const& ev) {
+                [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> const& ev) {
                     a_ep.notify_release_pid(ev.get());
                     return true;
                 },
-                [&](event::basic_send<PacketIdBytes>& ev) {
+                [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
                     state = sent;
                     disconnect_sent_just_before = ev.get().type() == control_packet_type::disconnect;
                     a_ep.stream_.async_write_packet(
@@ -101,7 +101,7 @@ send_op {
                     );
                     return false;
                 },
-                [&](event::close) {
+                [&](async_mqtt::event::close) {
                     state = close;
                     if (disconnect_sent_just_before &&
                         a_ep.duration_close_by_disconnect_ != std::chrono::milliseconds::zero()

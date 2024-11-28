@@ -136,7 +136,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
     for (auto& event : events) {
         std::visit(
             overload {
-                [&](event::timer const& ev) {
+                [&](async_mqtt::event::timer const& ev) {
                     if (ev.get_kind() == timer_kind::pingreq_send) {
                         switch (ev.get_op()) {
                         case timer_op::set:
@@ -300,7 +300,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](event::timer const& ev) {
+                                        [&](async_mqtt::event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_recv) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -318,13 +318,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event::basic_send<PacketIdBytes>& ev) {
+                                        [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
                                             auto pv{force_move(ev.get())};
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
                                             BOOST_ASSERT(it == events.end());
-                                            BOOST_ASSERT(std::get_if<event::close>(&ev_close));
+                                            BOOST_ASSERT(std::get_if<async_mqtt::event::close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
                                                 [ep]
@@ -336,7 +336,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                                 }
                                             );
                                         },
-                                        [&](event::close const&) {
+                                        [&](async_mqtt::event::close const&) {
                                             async_close(ep, as::detached);
                                         },
                                         [&](auto const&) {
@@ -397,7 +397,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](event::timer const& ev) {
+                                        [&](async_mqtt::event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingresp_recv) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
@@ -415,13 +415,13 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](event::basic_send<PacketIdBytes>& ev) {
+                                        [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
                                             auto pv{force_move(ev.get())};
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
                                             BOOST_ASSERT(it == events.end());
-                                            BOOST_ASSERT(std::get_if<event::close>(&ev_close));
+                                            BOOST_ASSERT(std::get_if<async_mqtt::event::close>(&ev_close));
                                             ep->stream_.async_write_packet(
                                                 force_move(pv),
                                                 [ep]
@@ -433,7 +433,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 }
                                             );
                                         },
-                                        [&](event::close const&) {
+                                        [&](async_mqtt::event::close const&) {
                                             async_close(ep, as::detached);
                                         },
                                         [&](auto const&) {

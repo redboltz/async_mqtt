@@ -40,8 +40,7 @@ release_packet_id_op {
             for (auto& event : events) {
                 std::visit(
                     overload {
-                        [&](event::basic_packet_id_released<PacketIdBytes> const& ev) {
-                            // TBD naming? notify_packet_id_released
+                        [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> const& ev) {
                             a_ep.notify_release_pid(ev.get());
                         },
                         [](auto const&) {
