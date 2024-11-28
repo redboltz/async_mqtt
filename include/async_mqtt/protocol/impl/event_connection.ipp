@@ -134,8 +134,6 @@ on_close() {
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size) \
 namespace async_mqtt { \
 template \
-class basic_event_connection_impl<a_role, a_size>; \
-template \
 class basic_event_connection<a_role, a_size>; \
 } // namespace async_mqtt
 

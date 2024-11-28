@@ -12,11 +12,11 @@
 #include <boost/asio.hpp>
 #include <boost/asio/experimental/concurrent_channel.hpp>
 
-#include <async_mqtt/buffer_to_packet_variant.hpp>
-#include <async_mqtt/packet/packet_variant.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/stream_customize.hpp>
+#include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
 #include <async_mqtt/util/log.hpp>
-#include <async_mqtt/util/stream_traits.hpp>
 
 #include "test_allocate_buffer.hpp"
 

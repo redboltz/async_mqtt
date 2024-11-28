@@ -10,8 +10,8 @@
 #include <boost/lexical_cast.hpp>
 
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/packet/property_variant.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/property_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_prop_variant)
 

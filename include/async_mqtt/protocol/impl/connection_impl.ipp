@@ -24,132 +24,124 @@ namespace async_mqtt {
 
 namespace detail {
 
-struct error_packet {
-    error_packet(error_code ec)
-        :ec{ec} {}
-    error_packet(buffer packet)
-        :packet{force_move(packet)} {}
-
-    error_code ec;
-    buffer packet;
-};
-
 template <role Role, std::size_t PacketIdBytes>
-class
-basic_connection_impl<Role, PacketIdBytes>::
-recv_packet_builder {
-public:
-    void recv(std::istream& is) {
-        BOOST_ASSERT(is);
-        auto size = static_cast<std::size_t>(is.rdbuf()->in_avail());
-        while (size != 0) {
-            switch (read_state_) {
-            case read_state::fixed_header: {
-                char fixed_header;
-                auto ret = is.readsome(&fixed_header, 1);
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+recv(std::istream& is) {
+    BOOST_ASSERT(is);
+    auto size = static_cast<std::size_t>(is.rdbuf()->in_avail());
+    while (size != 0) {
+        switch (read_state_) {
+        case read_state::fixed_header: {
+            char fixed_header;
+            auto ret = is.readsome(&fixed_header, 1);
+            BOOST_ASSERT(ret == 1);
+            --size;
+            header_remaining_length_buf_.push_back(fixed_header);
+            read_state_ = read_state::remaining_length;
+        } break;
+        case read_state::remaining_length: {
+            while (size != 0) {
+                char encoded_byte;
+                auto ret = is.readsome(&encoded_byte, 1);
                 BOOST_ASSERT(ret == 1);
                 --size;
-                header_remaining_length_buf_.push_back(fixed_header);
-                read_state_ = read_state::remaining_length;
-            } break;
-            case read_state::remaining_length: {
-                while (size != 0) {
-                    char encoded_byte;
-                    auto ret = is.readsome(&encoded_byte, 1);
-                    BOOST_ASSERT(ret == 1);
-                    --size;
-                    header_remaining_length_buf_.push_back(encoded_byte);
-                    remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
-                    multiplier_ *= 128;
-                    if ((encoded_byte & 0b1000'0000) == 0) {
-                        raw_buf_size_ = header_remaining_length_buf_.size() + remaining_length_;
-                        raw_buf_ = make_shared_ptr_char_array(raw_buf_size_);
-                        raw_buf_ptr_ = raw_buf_.get();
-                        std::copy_n(
-                            header_remaining_length_buf_.data(),
-                            header_remaining_length_buf_.size(),
-                            raw_buf_ptr_
+                header_remaining_length_buf_.push_back(encoded_byte);
+                remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
+                multiplier_ *= 128;
+                if ((encoded_byte & 0b1000'0000) == 0) {
+                    raw_buf_size_ = header_remaining_length_buf_.size() + remaining_length_;
+                    raw_buf_ = make_shared_ptr_char_array(raw_buf_size_);
+                    raw_buf_ptr_ = raw_buf_.get();
+                    std::copy_n(
+                        header_remaining_length_buf_.data(),
+                        header_remaining_length_buf_.size(),
+                        raw_buf_ptr_
+                    );
+                    raw_buf_ptr_ += header_remaining_length_buf_.size();
+                    if (remaining_length_ == 0) {
+                        auto ptr = raw_buf_.get();
+                        read_packets_.emplace_back(
+                            buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                         );
-                        raw_buf_ptr_ += header_remaining_length_buf_.size();
-                        if (remaining_length_ == 0) {
-                            auto ptr = raw_buf_.get();
-                            read_packets_.emplace_back(
-                                buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
-                            );
-                            initialize();
-                            return;
-                        }
-                        else {
-                            read_state_ = read_state::payload;
-                        }
-                        break;
-                    }
-                    if (multiplier_ == 128 * 128 * 128 * 128) {
-                        read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
                         initialize();
                         return;
                     }
+                    else {
+                        read_state_ = read_state::payload;
+                    }
+                    break;
                 }
-                if (read_state_ != read_state::payload) {
-                    return;
-                }
-            } break;
-            case read_state::payload: {
-                auto copied = is.readsome(raw_buf_ptr_, static_cast<std::streamsize>(remaining_length_));
-                BOOST_ASSERT(copied > 0);
-                auto copied_size = static_cast<std::size_t>(copied);
-                size -= copied_size;
-                if (copied_size == remaining_length_) {
-                    auto ptr = raw_buf_.get();
-                    read_packets_.emplace_back(
-                        buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
-                    );
+                if (multiplier_ == 128 * 128 * 128 * 128) {
+                    read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
                     initialize();
-                }
-                else {
-                    raw_buf_ptr_ += copied_size;
-                    remaining_length_ -= copied_size;
                     return;
                 }
-            } break;
             }
+            if (read_state_ != read_state::payload) {
+                return;
+            }
+        } break;
+        case read_state::payload: {
+            auto copied = is.readsome(raw_buf_ptr_, static_cast<std::streamsize>(remaining_length_));
+            BOOST_ASSERT(copied > 0);
+            auto copied_size = static_cast<std::size_t>(copied);
+            size -= copied_size;
+            if (copied_size == remaining_length_) {
+                auto ptr = raw_buf_.get();
+                read_packets_.emplace_back(
+                    buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
+                );
+                initialize();
+            }
+            else {
+                raw_buf_ptr_ += copied_size;
+                remaining_length_ -= copied_size;
+                return;
+            }
+        } break;
         }
     }
+}
 
-    error_packet front() const {
-        return read_packets_.front();
-    }
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+typename basic_connection_impl<Role, PacketIdBytes>::error_packet
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+front() const {
+    return read_packets_.front();
+}
 
-    void pop_front() {
-        read_packets_.pop_front();
-    }
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+pop_front() {
+    read_packets_.pop_front();
+}
 
-    bool empty() const {
-        return read_packets_.empty();
-    }
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+bool
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+empty() const {
+    return read_packets_.empty();
+}
 
-    void initialize() {
-        read_state_ = read_state::fixed_header;
-        header_remaining_length_buf_.clear();
-        remaining_length_ = 0;
-        multiplier_ = 1;
-        raw_buf_.reset();
-        raw_buf_size_ = 0;
-        raw_buf_ptr_ = nullptr;
-    }
-
-
-private:
-    enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
-    std::size_t remaining_length_ = 0;
-    std::size_t multiplier_ = 1;
-    static_vector<char, 5> header_remaining_length_buf_;
-    std::shared_ptr<char []> raw_buf_;
-    std::size_t raw_buf_size_ = 0;
-    char* raw_buf_ptr_ = nullptr;
-    std::deque<error_packet> read_packets_;
-
-};
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+initialize() {
+    read_state_ = read_state::fixed_header;
+    header_remaining_length_buf_.clear();
+    remaining_length_ = 0;
+    multiplier_ = 1;
+    raw_buf_.reset();
+    raw_buf_size_ = 0;
+    raw_buf_ptr_ = nullptr;
+}
 
 // public
 template <role Role, std::size_t PacketIdBytes>

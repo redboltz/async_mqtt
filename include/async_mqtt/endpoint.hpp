@@ -7,6 +7,7 @@
 #if !defined(ASYNC_MQTT_ENDPOINT_HPP)
 #define ASYNC_MQTT_ENDPOINT_HPP
 
+#include <set>
 #include <boost/asio/any_io_executor.hpp>
 
 #include <async_mqtt/detail/endpoint_impl_fwd.hpp>

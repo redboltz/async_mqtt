@@ -7,87 +7,14 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_MISC_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_MISC_HPP
 
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/key.hpp>
-
 #include <async_mqtt/client.hpp>
 #include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/impl/client_impl.hpp>
 
 namespace async_mqtt {
 namespace mi = boost::multi_index;
 
 namespace detail {
-
-// classes
-
-template <protocol_version Version, typename NextLayer>
-struct client_impl<Version, NextLayer>::pid_tim_pv_res_col {
-    struct elem_type {
-        explicit elem_type(
-            packet_id_type pid,
-            std::shared_ptr<as::steady_timer> tim
-        ): pid{pid},
-           tim{force_move(tim)}
-        {
-        }
-        explicit elem_type(
-            std::shared_ptr<as::steady_timer> tim
-        ): tim{force_move(tim)}
-        {
-        }
-
-        packet_id_type pid = 0;
-        std::shared_ptr<as::steady_timer> tim;
-        std::optional<packet_variant> pv;
-        typename client_type::pubres_type res;
-    };
-
-    struct tag_pid {};
-    struct tag_tim {};
-
-    auto& get_pid_idx() {
-        return elems.template get<tag_pid>();
-    }
-    auto& get_tim_idx() {
-        return elems.template get<tag_tim>();
-    }
-    void clear() {
-        for (auto& elem : elems) {
-            const_cast<as::steady_timer&>(*elem.tim).cancel();
-        }
-        elems.clear();
-    }
-    using mi_elem_type = mi::multi_index_container<
-        elem_type,
-        mi::indexed_by<
-            mi::ordered_unique<
-                mi::tag<tag_pid>,
-                mi::key<&elem_type::pid>
-            >,
-            mi::ordered_unique<
-                mi::tag<tag_tim>,
-                mi::key<&elem_type::tim>
-            >
-        >
-    >;
-    mi_elem_type elems;
-};
-
-template <protocol_version Version, typename NextLayer>
-struct client_impl<Version, NextLayer>::recv_type {
-    explicit recv_type(packet_variant packet)
-        :pv{force_move(packet)}
-    {
-    }
-    explicit recv_type(error_code ec)
-        :ec{ec}
-    {
-    }
-    error_code ec = error_code{};
-    std::optional<packet_variant> pv;
-};
-
 
 // member functions
 
@@ -339,7 +266,7 @@ client<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/client_impl.ipp>
+#include <async_mqtt/impl/client_misc.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_MISC_HPP

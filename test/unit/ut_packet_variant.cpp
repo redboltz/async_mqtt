@@ -10,7 +10,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet_variant)
 

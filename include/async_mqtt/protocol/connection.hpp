@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <chrono>
+#include <set>
 
 #include <async_mqtt/protocol/detail/connection_impl_fwd.hpp>
 #include <async_mqtt/protocol/connection_status.hpp>

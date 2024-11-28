@@ -9,6 +9,7 @@
 
 #include <optional>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/any_io_executor.hpp>
 
 #include <async_mqtt/detail/client_impl_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
@@ -925,7 +926,7 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/impl/client_misc.hpp>
 #include <async_mqtt/impl/client_underlying_handshake.hpp>
 #include <async_mqtt/impl/client_start.hpp>
 #include <async_mqtt/impl/client_subscribe.hpp>

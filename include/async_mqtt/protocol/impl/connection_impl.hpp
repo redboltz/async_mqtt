@@ -170,7 +170,34 @@ private:
     std::set<basic_pid_type> qos2_publish_handled_;
     std::set<basic_pid_type> qos2_publish_processing_;
 
-    class recv_packet_builder;
+    struct error_packet {
+        error_packet(error_code ec)
+            :ec{ec} {}
+        error_packet(buffer packet)
+            :packet{force_move(packet)} {}
+
+        error_code ec;
+        buffer packet;
+    };
+
+    class recv_packet_builder {
+    public:
+        void recv(std::istream& is);
+        error_packet front() const;
+        void pop_front();
+        bool empty() const;
+        void initialize();
+    private:
+        enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
+        std::size_t remaining_length_ = 0;
+        std::size_t multiplier_ = 1;
+        static_vector<char, 5> header_remaining_length_buf_;
+        std::shared_ptr<char []> raw_buf_;
+        std::size_t raw_buf_size_ = 0;
+        char* raw_buf_ptr_ = nullptr;
+        std::deque<error_packet> read_packets_;
+    };
+
     recv_packet_builder rpb_;
     bool is_client_ = true;
 };
