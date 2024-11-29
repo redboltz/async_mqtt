@@ -71,6 +71,15 @@ public:
     void set_bulk_write(bool val);
     void set_read_buffer_size(std::size_t val);
 
+    // async funcs
+    static void
+    async_acquire_unique_packet_id(
+        this_type_sp impl,
+        as::any_completion_handler<
+            void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
+        > handler
+    );
+
     // sync funcs
 
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
