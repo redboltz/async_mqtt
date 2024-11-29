@@ -13,7 +13,7 @@
 #include <async_mqtt/detail/endpoint_impl_fwd.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 #include <async_mqtt/protocol/error.hpp>
-#include <async_mqtt/protocol/event_connection.hpp>
+#include <async_mqtt/protocol/rv_connection.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/packet_traits.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
@@ -228,7 +228,7 @@ private:
     stream_type stream_;
     std::size_t read_buffer_size_ = 65535; // TBD define constant
     as::streambuf read_buf_;
-    basic_event_connection<Role, PacketIdBytes> con_;
+    basic_rv_connection<Role, PacketIdBytes> con_;
 
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;
     ioc_queue close_queue_;

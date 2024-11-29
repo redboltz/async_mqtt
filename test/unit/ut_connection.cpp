@@ -7,7 +7,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/protocol/event_connection.hpp>
+#include <async_mqtt/protocol/rv_connection.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_connection)
 
@@ -15,7 +15,7 @@ namespace am = async_mqtt;
 
 
 BOOST_AUTO_TEST_CASE(v5_connect_connack) {
-    am::event_connection<am::role::client> c{am::protocol_version::v5};
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
 
     auto w = am::will{
         "topic1",

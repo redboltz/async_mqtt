@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PROTOCOL_EVENT_CONNECTION_HPP)
-#define ASYNC_MQTT_PROTOCOL_EVENT_CONNECTION_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_RV_CONNECTION_HPP)
+#define ASYNC_MQTT_PROTOCOL_RV_CONNECTION_HPP
 
 #include <async_mqtt/protocol/connection.hpp>
 #include <async_mqtt/protocol/event/event_variant.hpp>
@@ -13,11 +13,11 @@
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes>
-class basic_event_connection : public basic_connection<Role, PacketIdBytes> {
+class basic_rv_connection : public basic_connection<Role, PacketIdBytes> {
     using base_type = basic_connection<Role, PacketIdBytes>;
 
 public:
-    basic_event_connection(protocol_version ver);
+    basic_rv_connection(protocol_version ver);
 
     template <typename Packet>
     std::vector<basic_event_variant<PacketIdBytes>>
@@ -73,13 +73,13 @@ private:
 };
 
 template <role Role>
-using event_connection = basic_event_connection<Role, 2>;
+using rv_connection = basic_rv_connection<Role, 2>;
 
 } // namespace async_mqtt
 
-#include <async_mqtt/protocol/impl/event_connection.hpp>
+#include <async_mqtt/protocol/impl/rv_connection.hpp>
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/protocol/impl/event_connection.ipp>
+#include <async_mqtt/protocol/impl/rv_connection.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PROTOCOL_EVENT_CONNECTION_HPP
+#endif // ASYNC_MQTT_PROTOCOL_RV_CONNECTION_HPP

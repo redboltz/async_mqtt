@@ -4,10 +4,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PROTOCOL_IMPL_EVENT_CONNECTION_IPP)
-#define ASYNC_MQTT_PROTOCOL_IMPL_EVENT_CONNECTION_IPP
+#if !defined(ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_IPP)
+#define ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_IPP
 
-#include <async_mqtt/protocol/event_connection.hpp>
+#include <async_mqtt/protocol/rv_connection.hpp>
 #include <async_mqtt/protocol/event/close.hpp>
 #include <async_mqtt/protocol/event/send.hpp>
 #include <async_mqtt/protocol/event/timer.hpp>
@@ -21,8 +21,8 @@ namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-basic_event_connection<Role, PacketIdBytes>::
-basic_event_connection(protocol_version ver)
+basic_rv_connection<Role, PacketIdBytes>::
+basic_rv_connection(protocol_version ver)
     :base_type{ver}
 {
 }
@@ -30,7 +30,7 @@ basic_event_connection(protocol_version ver)
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 recv(std::istream& is) {
     base_type::recv(is);
     return force_move(events_);
@@ -39,7 +39,7 @@ recv(std::istream& is) {
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 notify_timer_fired(timer_kind kind) {
     base_type::notify_timer_fired(kind);
     return force_move(events_);
@@ -48,7 +48,7 @@ notify_timer_fired(timer_kind kind) {
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 set_pingreq_send_interval(
     std::chrono::milliseconds duration
 ) {
@@ -59,7 +59,7 @@ set_pingreq_send_interval(
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
     base_type::release_packet_id(packet_id);
     return force_move(events_);
@@ -68,7 +68,7 @@ release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_error(error_code ec) {
     events_.emplace_back(ec);
 }
@@ -76,7 +76,7 @@ on_error(error_code ec) {
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_send(
     basic_packet_variant<PacketIdBytes> packet,
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
@@ -88,7 +88,7 @@ on_send(
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_packet_id_release(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) {
@@ -98,7 +98,7 @@ on_packet_id_release(
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_receive(
     basic_packet_variant<PacketIdBytes> packet
 ) {
@@ -108,7 +108,7 @@ on_receive(
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_timer_op(
     timer_op op,
     timer_kind kind,
@@ -120,7 +120,7 @@ on_timer_op(
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_event_connection<Role, PacketIdBytes>::
+basic_rv_connection<Role, PacketIdBytes>::
 on_close() {
     events_.emplace_back(event::close{});
 }
@@ -135,7 +135,7 @@ on_close() {
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size) \
 namespace async_mqtt { \
 template \
-class basic_event_connection<a_role, a_size>; \
+class basic_rv_connection<a_role, a_size>; \
 } // namespace async_mqtt
 
 #define ASYNC_MQTT_PP_GENERATE(r, product) \
@@ -153,4 +153,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC
 
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PROTOCOL_IMPL_EVENT_CONNECTION_IPP
+#endif // ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_IPP
