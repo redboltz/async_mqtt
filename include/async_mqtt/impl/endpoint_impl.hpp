@@ -90,6 +90,15 @@ public:
     );
 
     static void
+    async_register_packet_id(
+        this_type_sp impl,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id,
+        as::any_completion_handler<
+            void(error_code)
+        > handler
+    );
+
+    static void
     async_recv(
         this_type_sp impl,
         std::optional<filter> fil,
