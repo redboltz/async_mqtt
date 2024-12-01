@@ -24,16 +24,24 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
         << "register_packet_id pid:" << packet_id;
     BOOST_ASSERT(impl_);
     return
-        as::async_compose<
+        as::async_initiate<
             CompletionToken,
             void(error_code)
         >(
-            typename impl_type::register_packet_id_op{
-                impl_,
-                packet_id
+            [](
+                auto handler,
+                std::shared_ptr<impl_type> impl,
+                typename basic_packet_id_type<PacketIdBytes>::type packet_id
+            ) {
+                impl_type::async_register_packet_id(
+                    force_move(impl),
+                    force_move(handler),
+                    packet_id
+                );
             },
             token,
-            get_executor()
+            impl_,
+            packet_id
         );
 }
 
