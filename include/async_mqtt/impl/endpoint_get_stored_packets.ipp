@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_ADD_RETRY_IPP)
-#define ASYNC_MQTT_IMPL_ENDPOINT_ADD_RETRY_IPP
+#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP)
+#define ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP
 
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
@@ -15,73 +15,63 @@ namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-add_retry_op {
+get_stored_packets_op {
     this_type_sp ep;
+    std::vector<basic_store_packet_variant<PacketIdBytes>> packets = {};
+    enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
     void operator()(
         Self& self
     ) {
         auto& a_ep{*ep};
-        auto tim = std::make_shared<as::steady_timer>(a_ep.stream_.get_executor());
-        tim->expires_at(std::chrono::steady_clock::time_point::max());
-        tim->async_wait(
-            as::append(
-                force_move(self),
-                tim
-            )
-        );
-        a_ep.tim_retry_acq_pid_queue_.emplace_back(force_move(tim));
-    }
-
-    template <typename Self>
-    void operator()(
-        Self& self,
-        error_code ec,
-        std::shared_ptr<as::steady_timer> tim
-    ) {
-        auto& a_ep{*ep};
-        if (!a_ep.packet_id_released_) {
-            // intentional cancel
-            auto it = std::find_if(
-                a_ep.tim_retry_acq_pid_queue_.begin(),
-                a_ep.tim_retry_acq_pid_queue_.end(),
-                [&](auto const& elem) {
-                    return elem.tim == tim;
-                }
+        switch (state) {
+        case dispatch: {
+            state = complete;
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
             );
-            if (it != a_ep.tim_retry_acq_pid_queue_.end()) {
-                a_ep.tim_retry_acq_pid_queue_.erase(it);
-            }
+        } break;
+        case complete:
+            packets = a_ep.con_.get_stored_packets();
+            self.complete(error_code{}, force_move(packets));
+            break;
         }
-        self.complete(ec);
     }
 };
-
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_add_retry(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_get_stored_packets(
     this_type_sp impl,
     as::any_completion_handler<
-        void(error_code)
+        void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
     > handler
 ) {
-    BOOST_ASSERT(impl);
     auto exe = impl->get_executor();
     as::async_compose<
         as::any_completion_handler<
-            void(error_code)
+            void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
         >,
-        void(error_code)
+        void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
     >(
-        add_retry_op{
+        get_stored_packets_op{
             force_move(impl)
         },
         handler,
         exe
     );
+}
+
+// sync version
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::vector<basic_store_packet_variant<PacketIdBytes>>
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const {
+    return con_.get_stored_packets();
 }
 
 } // namespace async_mqtt::detail
@@ -115,4 +105,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC
 
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_ENDPOINT_ADD_RETRY_IPP
+#endif // ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP

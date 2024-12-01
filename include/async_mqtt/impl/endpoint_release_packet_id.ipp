@@ -56,10 +56,37 @@ release_packet_id_op {
     }
 };
 
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
+async_release_packet_id(
+    this_type_sp impl,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id,
+    as::any_completion_handler<
+        void()
+    > handler
+) {
+    auto exe = impl->get_executor();
+    as::async_compose<
+        as::any_completion_handler<
+            void()
+        >,
+        void()
+    >(
+        release_packet_id_op{
+            force_move(impl),
+            packet_id
+        },
+        handler,
+        exe
+    );
+}
+
 // sync version
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {

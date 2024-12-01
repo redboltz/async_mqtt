@@ -117,6 +117,13 @@ public:
         > handler
     );
 
+    static void
+    async_get_stored_packets(
+        this_type_sp impl,
+        as::any_completion_handler<
+            void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
+        > handler
+    );
     // sync funcs
 
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();

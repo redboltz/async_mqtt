@@ -50,7 +50,7 @@ register_packet_id_op {
 };
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 async_register_packet_id(
@@ -61,26 +61,25 @@ async_register_packet_id(
     > handler
 ) {
     auto exe = impl->get_executor();
-    return
-        as::async_compose<
-            as::any_completion_handler<
-                void(error_code)
-            >,
+    as::async_compose<
+        as::any_completion_handler<
             void(error_code)
-        >(
-            register_packet_id_op{
-                force_move(impl),
-                packet_id
-            },
-            handler,
-            exe
-        );
+        >,
+        void(error_code)
+    >(
+        register_packet_id_op{
+            force_move(impl),
+            packet_id
+        },
+        handler,
+        exe
+    );
 }
 
 // sync version
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
 register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) {
