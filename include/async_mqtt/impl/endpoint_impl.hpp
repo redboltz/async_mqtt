@@ -200,6 +200,14 @@ private:
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
+    static void
+    async_close_impl(
+        this_type_sp impl,
+        as::any_completion_handler<
+            void()
+        > handler
+    );
+
     static
     void
     async_add_retry(
