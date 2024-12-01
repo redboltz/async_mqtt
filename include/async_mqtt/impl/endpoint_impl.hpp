@@ -124,6 +124,16 @@ public:
             void(error_code, std::vector<basic_store_packet_variant<PacketIdBytes>>)
         > handler
     );
+
+    static void
+    async_regulate_for_store(
+        this_type_sp impl,
+        v5::basic_publish_packet<PacketIdBytes> packet,
+        as::any_completion_handler<
+            void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+        > handler
+    );
+
     // sync funcs
 
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
