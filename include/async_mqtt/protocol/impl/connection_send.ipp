@@ -4,11 +4,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_HPP)
-#define ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_HPP
+#if !defined(ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_IPP)
+#define ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_IPP
 
 #include <async_mqtt/protocol/connection.hpp>
 #include <async_mqtt/protocol/impl/connection_impl.hpp>
+#include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt {
 
@@ -16,7 +17,7 @@ namespace detail {
 
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
 send(Packet packet) {
@@ -60,7 +61,7 @@ send(Packet packet) {
 
 template <role Role, std::size_t PacketIdBytes>
 template <typename ActualPacket>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
 basic_connection_impl<Role, PacketIdBytes>::
 process_send_packet(
@@ -606,7 +607,7 @@ process_send_packet(
 
 template <role Role, std::size_t PacketIdBytes>
 template <typename Packet>
-inline
+ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection<Role, PacketIdBytes>::
 send(Packet packet) {
@@ -616,5 +617,67 @@ send(Packet packet) {
 
 } // namespace async_mqtt
 
+#if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_HPP
+#include <async_mqtt/detail/instantiate_helper.hpp>
+
+#define ASYNC_MQTT_INSTANTIATE_EACH_PACKET(a_role, a_size, a_packet) \
+namespace async_mqtt { \
+namespace detail { \
+template \
+void \
+basic_connection_impl<a_role, a_size>:: \
+send(a_packet); \
+\
+template \
+bool \
+basic_connection_impl<a_role, a_size>:: \
+process_send_packet(a_packet); \
+} \
+template \
+void \
+basic_connection<a_role, a_size>:: \
+send(a_packet); \
+}
+
+#define ASYNC_MQTT_PP_GENERATE(r, product)      \
+    BOOST_PP_EXPAND( \
+        ASYNC_MQTT_INSTANTIATE_EACH_PACKET \
+        BOOST_PP_SEQ_TO_TUPLE( \
+            product \
+        ) \
+    )
+
+BOOST_PP_SEQ_FOR_EACH_PRODUCT(
+    ASYNC_MQTT_PP_GENERATE,
+    (ASYNC_MQTT_PP_ROLE)(ASYNC_MQTT_PP_SIZE)(ASYNC_MQTT_PP_PACKET)
+)
+
+#define ASYNC_MQTT_PP_GENERATE_BASIC(r, product) \
+    BOOST_PP_EXPAND( \
+        ASYNC_MQTT_INSTANTIATE_EACH_PACKET \
+        BOOST_PP_SEQ_TO_TUPLE( \
+            BOOST_PP_SEQ_REPLACE( \
+                product, \
+                BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(product)), \
+                ASYNC_MQTT_PP_BASIC_PACKET_INSTANTIATE( \
+                    BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(product)), product), \
+                    BOOST_PP_SEQ_ELEM(1, product) \
+                ) \
+            ) \
+        ) \
+    )
+
+BOOST_PP_SEQ_FOR_EACH_PRODUCT(
+    ASYNC_MQTT_PP_GENERATE_BASIC,
+    (ASYNC_MQTT_PP_ROLE)(ASYNC_MQTT_PP_SIZE)(ASYNC_MQTT_PP_BASIC_PACKET)
+)
+
+
+#undef ASYNC_MQTT_PP_GENERATE
+#undef ASYNC_MQTT_PP_GENERATE_BASIC
+#undef ASYNC_MQTT_INSTANTIATE_EACH_PACKET
+
+#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+
+#endif // ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_SEND_IPP
