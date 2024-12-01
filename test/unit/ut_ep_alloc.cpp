@@ -40,13 +40,17 @@ struct my_alloc_read : std::allocator<T> {
 
     T* allocate(std::size_t n, void const* hint = nullptr) {
         (void)hint;
-        if (n == check_digit_read) {
+        if (n == check_digit_read ||
+            n == check_digit_read + sizeof(std::ptrdiff_t) // any_completion_handler
+        ) {
             allocate_called_read = true;
         }
         return base_type::allocate(n);
     }
     void deallocate(T* p, std::size_t n) {
-        if (n == check_digit_read) {
+        if (n == check_digit_read ||
+            n == check_digit_read + sizeof(std::ptrdiff_t) // any_completion_handler
+        ) {
             deallocate_called_read = true;
         }
         return base_type::deallocate(p, n);

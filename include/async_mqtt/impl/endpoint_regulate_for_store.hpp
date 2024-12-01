@@ -26,7 +26,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
     return
         as::async_initiate<
             CompletionToken,
-            void(error_code)
+            void(error_code, v5::basic_publish_packet<PacketIdBytes>)
         >(
             [](
                 auto handler,
@@ -35,8 +35,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
             ) {
                 impl_type::async_regulate_for_store(
                     force_move(impl),
-                    force_move(handler),
-                    force_move(packet)
+                    force_move(packet),
+                    force_move(handler)
                 );
             },
             token,

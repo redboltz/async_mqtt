@@ -35,8 +35,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_register_packet_id(
             ) {
                 impl_type::async_register_packet_id(
                     force_move(impl),
-                    force_move(handler),
-                    packet_id
+                    packet_id,
+                    force_move(handler)
                 );
             },
             token,

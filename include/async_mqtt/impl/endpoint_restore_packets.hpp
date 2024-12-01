@@ -33,10 +33,10 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_restore_packets(
                 std::shared_ptr<impl_type> impl,
                 std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
             ) {
-                impl_type::async_regulate_for_store(
+                impl_type::async_restore_packets(
                     force_move(impl),
-                    force_move(handler),
-                    force_move(pvs)
+                    force_move(pvs),
+                    force_move(handler)
                 );
             },
             token,
