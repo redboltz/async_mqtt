@@ -171,5 +171,4 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
 
 } // namespace async_mqtt
 
-
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP

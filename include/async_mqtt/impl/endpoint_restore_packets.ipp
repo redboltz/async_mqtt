@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_IPP)
-#define ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_IPP
+#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_RESTORE_PACKETS_IPP)
+#define ASYNC_MQTT_IMPL_ENDPOINT_RESTORE_PACKETS_IPP
 
 #include <async_mqtt/endpoint.hpp>
 #include <async_mqtt/impl/endpoint_impl.hpp>
@@ -15,9 +15,9 @@ namespace async_mqtt::detail {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-regulate_for_store_op {
+restore_packets_op {
     this_type_sp ep;
-    v5::basic_publish_packet<PacketIdBytes> packet;
+    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
     enum { dispatch, complete } state = dispatch;
 
     template <typename Self>
@@ -33,10 +33,10 @@ regulate_for_store_op {
                 force_move(self)
             );
         } break;
-        case complete: {
-            error_code ec = a_ep.con_.regulate_for_store(packet);
-            self.complete(ec, force_move(packet));
-        } break;
+        case complete:
+            a_ep.con_.restore_packets(force_move(pvs));
+            self.complete();
+            break;
         }
     }
 };
@@ -44,23 +44,23 @@ regulate_for_store_op {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_restore_packets(
     this_type_sp impl,
-    v5::basic_publish_packet<PacketIdBytes> packet,
+    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
     as::any_completion_handler<
-        void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+        void()
     > handler
 ) {
     auto exe = impl->get_executor();
     as::async_compose<
         as::any_completion_handler<
-            void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+            void()
         >,
-        void(error_code, v5::basic_publish_packet<PacketIdBytes>)
+        void()
     >(
-        regulate_for_store_op{
+        restore_packets_op{
             force_move(impl),
-            force_move(packet)
+            force_move(pvs)
         },
         handler,
         exe
@@ -72,11 +72,10 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_regulate_for_store(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::regulate_for_store(
-    v5::basic_publish_packet<PacketIdBytes>& packet,
-    error_code& ec
-) const {
-    ec = con_.regulate_for_store(packet);
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::restore_packets(
+    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+) {
+    con_.restore_packets(force_move(pvs));
 }
 
 } // namespace async_mqtt::detail
@@ -110,4 +109,4 @@ BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC
 
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_IPP
+#endif // ASYNC_MQTT_IMPL_ENDPOINT_RESTORE_PACKETS_IPP

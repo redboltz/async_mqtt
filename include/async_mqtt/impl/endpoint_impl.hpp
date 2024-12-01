@@ -134,6 +134,15 @@ public:
         > handler
     );
 
+    static void
+    async_restore_packets(
+        this_type_sp impl,
+        std::vector<basic_store_packet_variant<PacketIdBytes>> pvs,
+        as::any_completion_handler<
+            void()
+        > handler
+    );
+
     // sync funcs
 
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();

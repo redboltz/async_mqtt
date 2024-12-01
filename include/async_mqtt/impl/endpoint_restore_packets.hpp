@@ -12,49 +12,6 @@
 
 namespace async_mqtt {
 
-namespace detail {
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-struct basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::
-restore_packets_op {
-    this_type_sp ep;
-    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs;
-    enum { dispatch, complete } state = dispatch;
-
-    template <typename Self>
-    void operator()(
-        Self& self
-    ) {
-        auto& a_ep{*ep};
-        switch (state) {
-        case dispatch: {
-            state = complete;
-            as::dispatch(
-                a_ep.get_executor(),
-                force_move(self)
-            );
-        } break;
-        case complete:
-            a_ep.con_.restore_packets(force_move(pvs));
-            self.complete();
-            break;
-        }
-    }
-};
-
-// sync version
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-inline
-void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::restore_packets(
-    std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
-) {
-    con_.restore_packets(force_move(pvs));
-}
-
-} // namespace detail
-
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 template <typename CompletionToken>
 auto
@@ -67,16 +24,24 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_restore_packets(
         << "restore_packets";
     BOOST_ASSERT(impl_);
     return
-        as::async_compose<
+        as::async_initiate<
             CompletionToken,
             void()
         >(
-            typename impl_type::restore_packets_op{
-                impl_,
-                force_move(pvs)
+            [](
+                auto handler,
+                std::shared_ptr<impl_type> impl,
+                std::vector<basic_store_packet_variant<PacketIdBytes>> pvs
+            ) {
+                impl_type::async_regulate_for_store(
+                    force_move(impl),
+                    force_move(handler),
+                    force_move(pvs)
+                );
             },
             token,
-            get_executor()
+            impl_,
+            force_move(pvs)
         );
 }
 
@@ -96,5 +61,9 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::restore_packets(
 }
 
 } // namespace async_mqtt
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/endpoint_restore_packets.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RESTORE_PACKETS_HPP
