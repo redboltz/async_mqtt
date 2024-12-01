@@ -12,6 +12,7 @@
 
 #include <async_mqtt/detail/endpoint_impl_fwd.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
+#include <async_mqtt/filter.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/rv_connection.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
@@ -77,6 +78,24 @@ public:
         this_type_sp impl,
         as::any_completion_handler<
             void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
+        > handler
+    );
+
+    static void
+    async_acquire_unique_packet_id_wait_until(
+        this_type_sp impl,
+        as::any_completion_handler<
+            void(error_code, typename basic_packet_id_type<PacketIdBytes>::type)
+        > handler
+    );
+
+    static void
+    async_recv(
+        this_type_sp impl,
+        std::optional<filter> fil,
+        std::set<control_packet_type> types,
+        as::any_completion_handler<
+            void(error_code, std::optional<packet_variant_type>)
         > handler
     );
 
@@ -181,14 +200,13 @@ private:
         CompletionToken&& token = as::default_completion_token_t<executor_type>{}
     );
 
-    template <
-        typename CompletionToken = as::default_completion_token_t<executor_type>
-    >
     static
-    auto
+    void
     async_add_retry(
         this_type_sp impl,
-        CompletionToken&& token = as::default_completion_token_t<executor_type>{}
+        as::any_completion_handler<
+            void(error_code)
+        > handler
     );
 
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet);

@@ -12,6 +12,7 @@
 
 #include <async_mqtt/detail/endpoint_impl_fwd.hpp>
 #include <async_mqtt/detail/stream_layer.hpp>
+#include <async_mqtt/filter.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 
@@ -25,15 +26,6 @@
  */
 
 namespace async_mqtt {
-
-/**
- * @ingroup endpoint
- * @brief receive packet filter
- */
-enum class filter {
-    match,  ///< matched control_packet_type is target
-    except  ///< no matched control_packet_type is target
-};
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint {
@@ -758,6 +750,5 @@ private:
 #include <async_mqtt/impl/endpoint_restore_packets.hpp>
 #include <async_mqtt/impl/endpoint_get_stored_packets.hpp>
 #include <async_mqtt/impl/endpoint_regulate_for_store.hpp>
-#include <async_mqtt/impl/endpoint_add_retry.hpp>
 
 #endif // ASYNC_MQTT_ENDPOINT_HPP
