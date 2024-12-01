@@ -95,6 +95,9 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::async_add_retry(
 namespace async_mqtt { \
 namespace detail { \
 template \
+class basic_endpoint_impl<a_role, a_size, a_protocol>; \
+} \
+template \
 class basic_endpoint<a_role, a_size, a_protocol>; \
 } // namespace async_mqtt
 

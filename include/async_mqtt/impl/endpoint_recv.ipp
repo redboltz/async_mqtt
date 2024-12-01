@@ -328,9 +328,13 @@ async_recv(
 #include <async_mqtt/detail/instantiate_helper.hpp>
 
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size, a_protocol) \
-namespace async_mqtt::detail { \
+namespace async_mqtt { \
+namespace detail { \
 template \
 class basic_endpoint_impl<a_role, a_size, a_protocol>; \
+} \
+template \
+class basic_endpoint<a_role, a_size, a_protocol>; \
 } // namespace async_mqtt
 
 #define ASYNC_MQTT_PP_GENERATE(r, product) \
