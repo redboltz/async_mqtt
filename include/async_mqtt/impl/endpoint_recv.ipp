@@ -323,4 +323,6 @@ async_recv(
 
 } // namespace async_mqtt::detail
 
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
+
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RECV_IPP

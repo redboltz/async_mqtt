@@ -110,4 +110,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id() {
 
 } // namespace async_mqtt
 
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
+
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_IPP

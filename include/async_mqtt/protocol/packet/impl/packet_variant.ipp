@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_IPP
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)

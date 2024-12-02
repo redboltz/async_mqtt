@@ -8,6 +8,7 @@
 #define ASYNC_MQTT_PROTOCOL_PACKET_IMPL_PACKET_VARIANT_HPP
 
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 
 namespace async_mqtt {
 
@@ -18,6 +19,10 @@ template <
         !std::is_same_v<
             std::decay_t<Packet>,
             basic_packet_variant<PacketIdBytes>
+        > &&
+        !std::is_same_v<
+            std::decay_t<Packet>,
+            basic_store_packet_variant<PacketIdBytes>
         >,
         std::nullptr_t
     >

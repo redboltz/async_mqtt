@@ -76,4 +76,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const 
 
 } // namespace async_mqtt::detail
 
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
+
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP

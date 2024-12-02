@@ -13,6 +13,7 @@
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 #include <async_mqtt/protocol/packet/packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant_fwd.hpp>
 #include <async_mqtt/protocol/packet/packet_fwd.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_connect.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_connack.hpp>
@@ -43,7 +44,6 @@
 #include <async_mqtt/protocol/packet/v5_pingresp.hpp>
 #include <async_mqtt/protocol/packet/v5_disconnect.hpp>
 #include <async_mqtt/protocol/packet/v5_auth.hpp>
-
 #include <async_mqtt/util/overload.hpp>
 
 namespace async_mqtt {
@@ -63,6 +63,10 @@ public:
             !std::is_same_v<
                 std::decay_t<Packet>,
                 basic_packet_variant<PacketIdBytes>
+            > &&
+            !std::is_same_v<
+                std::decay_t<Packet>,
+                basic_store_packet_variant<PacketIdBytes>
             >,
             std::nullptr_t
         > = nullptr

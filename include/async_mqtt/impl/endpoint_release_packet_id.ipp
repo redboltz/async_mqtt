@@ -95,4 +95,6 @@ release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) 
 
 } // namespace async_mqtt::detail
 
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
+
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RELEASE_PACKET_ID_IPP

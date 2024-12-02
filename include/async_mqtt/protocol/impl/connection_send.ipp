@@ -612,10 +612,15 @@ void
 basic_connection<Role, PacketIdBytes>::
 send(Packet packet) {
     BOOST_ASSERT(impl_);
+    if constexpr(std::is_same_v<Packet, basic_store_packet_variant<PacketIdBytes>>) {
+        return impl_->send(static_cast<basic_packet_variant<PacketIdBytes>>(packet));
+    }
     return impl_->send(std::forward<Packet>(packet));
 }
 
 } // namespace async_mqtt
+
+#include <async_mqtt/protocol/impl/connection_instantiate.hpp>
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 

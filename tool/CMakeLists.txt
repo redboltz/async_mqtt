@@ -47,6 +47,30 @@ foreach(source_file ${exec_PROGRAMS})
     target_link_libraries(${source_file_we} Boost::program_options cli::cli)
 endforeach()
 
+# Separate compiled broker
+add_executable(broker_separate broker.cpp)
+add_dependencies(broker_separate async_mqtt_asio_bind async_mqtt_protocol)
+target_compile_definitions(broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
+target_include_directories(broker_separate PRIVATE include)
+target_link_libraries(broker_separate async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
+if(ASYNC_MQTT_USE_LOG)
+    target_compile_definitions(
+        broker_separate
+        PUBLIC
+        $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+    )
+    target_link_libraries(
+        broker_separate Boost::log
+    )
+endif()
+target_compile_definitions(
+    broker_separate
+    PUBLIC
+    $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>
+)
+target_link_libraries(broker_separate Boost::program_options)
+
+
 if(UNIX)
     file(COPY broker.conf DESTINATION "${CMAKE_CURRENT_BINARY_DIR}" )
     file(COPY auth.json DESTINATION "${CMAKE_CURRENT_BINARY_DIR}" )

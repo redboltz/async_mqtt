@@ -81,4 +81,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::regulate_for_store(
 
 } // namespace async_mqtt::detail
 
+#include <async_mqtt/impl/endpoint_instantiate.hpp>
+
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_IPP

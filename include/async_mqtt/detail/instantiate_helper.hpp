@@ -71,7 +71,7 @@
     (async_mqtt::v5::pingreq_packet) \
     (async_mqtt::v5::pingresp_packet) \
     (async_mqtt::v5::disconnect_packet) \
-    (async_mqtt::v5::auth_packet) \
+    (async_mqtt::v5::auth_packet)
 
 #define ASYNC_MQTT_PP_BASIC_PACKET \
     (async_mqtt::v3_1_1::basic_publish_packet) \
@@ -92,7 +92,8 @@
     (async_mqtt::v5::basic_suback_packet) \
     (async_mqtt::v5::basic_unsubscribe_packet) \
     (async_mqtt::v5::basic_unsuback_packet) \
-    (async_mqtt::basic_packet_variant)
+    (async_mqtt::basic_packet_variant) \
+    (async_mqtt::basic_store_packet_variant) \
 
 #define ASYNC_MQTT_PP_BASIC_PACKET_INSTANTIATE(name, n) name<n>
 

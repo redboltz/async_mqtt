@@ -11,6 +11,7 @@
 
 #include <async_mqtt/util/overload.hpp>
 #include <async_mqtt/protocol/packet/store_packet_variant_fwd.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_publish.hpp>
 #include <async_mqtt/protocol/packet/v3_1_1_pubrel.hpp>
@@ -260,6 +261,14 @@ public:
      */
     response_packet response_packet_type() const {
         return res_;
+    }
+
+    operator basic_packet_variant<PacketIdBytes>() const {
+        return visit(
+            [](auto const& p) {
+                return basic_packet_variant<PacketIdBytes>(p);
+            }
+        );
     }
 
 private:
