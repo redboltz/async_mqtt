@@ -48,6 +48,8 @@ foreach(source_file ${exec_PROGRAMS})
 endforeach()
 
 # Separate compiled broker
+if(ASYNC_MQTT_BUILD_LIB)
+
 add_executable(broker_separate broker.cpp)
 add_dependencies(broker_separate async_mqtt_asio_bind async_mqtt_protocol)
 target_compile_definitions(broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
@@ -70,6 +72,7 @@ target_compile_definitions(
 )
 target_link_libraries(broker_separate Boost::program_options)
 
+endif()
 
 if(UNIX)
     file(COPY broker.conf DESTINATION "${CMAKE_CURRENT_BINARY_DIR}" )
