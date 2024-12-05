@@ -19,4 +19,13 @@ if(ASYNC_MQTT_USE_LOG)
 endif()
 target_compile_definitions(async_mqtt_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
 
+macro(fix_msvc_build)
+    message(STATUS "MSVC build fix applied")
+    target_compile_options(async_mqtt_separate PRIVATE "/Zc:preprocessor" "/bigobj")
+endmacro()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    fix_msvc_build()
+endif()
+
 target_link_libraries(async_mqtt_separate async_mqtt_iface)
