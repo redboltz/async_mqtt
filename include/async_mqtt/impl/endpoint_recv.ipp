@@ -57,7 +57,7 @@ recv_op {
                     if (recv_packet) {
                         // rest events would be processed the next async_recv call
                         // back the event to the recv_events_ for the next async_recv
-                        BOOST_ASSERT(a_ep.recv_events_.size() < 100000);
+                        BOOST_ASSERT(a_ep.recv_events_.size() < 1000);
                         a_ep.recv_events_.push_front(force_move(event));
                         state = complete;
                         as::post(
@@ -198,7 +198,7 @@ recv_op {
             std::istream is{&a_ep.read_buf_};
             auto events{a_ep.con_.recv(is)};
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
-            BOOST_ASSERT(a_ep.recv_events_.size() < 100000);
+            BOOST_ASSERT(a_ep.recv_events_.size() < 1000);
             if (a_ep.recv_events_.empty()) {
                 // required more bytes
                 state = read;

@@ -40,12 +40,13 @@ public:
             queue_,
             std::forward<CompletionToken>(token)
         );
+        ++size_;
     }
 
     void try_execute() {
         if (immediate_executable()) {
             queue_.restart();
-            queue_.poll_one();
+            size_ -= queue_.poll_one();
         }
     }
 
@@ -56,19 +57,28 @@ public:
     std::size_t poll_one() {
         working_ = false;
         if (queue_.stopped()) queue_.restart();
-        return queue_.poll_one();
+        auto ret = queue_.poll_one();
+        size_ -= ret;
+        return ret;
     }
 
     std::size_t poll() {
         working_ = false;
         if (queue_.stopped()) queue_.restart();
-        return queue_.poll();
+        auto ret = queue_.poll();
+        size_ -= ret;
+        return ret;
+    }
+
+    std::size_t size() const {
+        return size_;
     }
 
 private:
     as::io_context queue_{BOOST_ASIO_CONCURRENCY_HINT_UNSAFE};
     bool working_ = false;
     std::optional<as::executor_work_guard<as::io_context::executor_type>> guard_;
+    std::size_t size_ = 0;
 };
 
 } // namespace async_mqtt
