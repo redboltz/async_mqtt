@@ -49,7 +49,6 @@ recv(std::istream& is) {
                 --size;
                 header_remaining_length_buf_.push_back(encoded_byte);
                 remaining_length_ += (std::uint8_t(encoded_byte) & 0b0111'1111) * multiplier_;
-                BOOST_ASSERT(remaining_length_ < 2000);
                 multiplier_ *= 128;
                 if ((encoded_byte & 0b1000'0000) == 0) {
                     raw_buf_size_ = header_remaining_length_buf_.size() + remaining_length_;
@@ -63,7 +62,6 @@ recv(std::istream& is) {
                     raw_buf_ptr_ += header_remaining_length_buf_.size();
                     if (remaining_length_ == 0) {
                         auto ptr = raw_buf_.get();
-                        BOOST_ASSERT(read_packets_.size() < 1000);
                         read_packets_.emplace_back(
                             buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                         );
@@ -76,7 +74,6 @@ recv(std::istream& is) {
                     break;
                 }
                 if (multiplier_ == 128 * 128 * 128 * 128) {
-                    BOOST_ASSERT(read_packets_.size() < 1000);
                     read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
                     initialize();
                     return;
@@ -93,7 +90,6 @@ recv(std::istream& is) {
             size -= copied_size;
             if (copied_size == remaining_length_) {
                 auto ptr = raw_buf_.get();
-                BOOST_ASSERT(read_packets_.size() < 1000);
                 read_packets_.emplace_back(
                     buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                 );

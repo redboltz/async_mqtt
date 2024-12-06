@@ -49,7 +49,6 @@ struct stream_impl<NextLayer>::stream_write_packet_op {
                 auto cbs = a_packet.const_buffer_sequence();
                 std::copy(cbs.begin(), cbs.end(), std::back_inserter(a_strm.storing_cbs_));
             }
-            BOOST_ASSERT(a_strm.write_queue_.size() < 1000);
             a_strm.write_queue_.post(
                 force_move(self)
             );
