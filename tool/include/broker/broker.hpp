@@ -878,7 +878,7 @@ private:
         properties props
     ) {
         auto usg = unique_scope_guard(
-            [&] {
+            [this, epsp] () mutable {
                 async_read_packet(force_move(epsp));
             }
         );
@@ -1105,7 +1105,9 @@ private:
             force_move(topic),
             force_move(payload),
             opts.get_qos() | opts.get_retain(), // remove dup flag
-            force_move(forward_props)
+            force_move(forward_props),
+            [usg = force_move(usg)] {
+            }
         );
 
         send_pubres(true, matched);
@@ -1125,7 +1127,8 @@ private:
         std::string topic,
         std::vector<buffer> payload,
         pub::opts opts,
-        properties props
+        properties props,
+        as::any_completion_handler<void()> finish = []{}
     ) {
         bool matched = false;
 
@@ -1161,7 +1164,8 @@ private:
                         topic,
                         payload,
                         new_opts,
-                        props
+                        props,
+                        force_move(finish)
                     );
                     props.pop_back();
                 }
@@ -1171,7 +1175,8 @@ private:
                         topic,
                         payload,
                         new_opts,
-                        props
+                        props,
+                        force_move(finish)
                     );
                 }
                 return true;

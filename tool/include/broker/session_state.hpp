@@ -237,10 +237,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
-        properties props) {
+        properties props,
+        as::any_completion_handler<void()> finish = []{}
+    ) {
 
         auto send_publish =
-            [this, epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this()]
+            [this, epsp, pub_topic, payload = payload, pubopts, props, wp = this->weak_from_this(), finish = force_move(finish)]
             (packet_id_type pid) mutable {
                 if (auto sp = wp.lock()) {
                     switch (version_) {
@@ -252,13 +254,14 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                                 force_move(payload),
                                 pubopts
                             },
-                            [this, epsp](error_code const& ec) {
+                            [this, epsp, finish = force_move(finish)](error_code const& ec) mutable {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, this)
                                         << "epsp:" << epsp.get_address() << " "
                                         << ec.message();
                                 }
+                                finish();
                             }
                         );
                         break;
@@ -271,13 +274,14 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                                 pubopts,
                                 force_move(props)
                             },
-                            [this, epsp](error_code const& ec) {
+                            [this, epsp, finish = force_move(finish)](error_code const& ec) mutable {
                                 if (ec) {
                                     ASYNC_MQTT_LOG("mqtt_broker", info)
                                         << ASYNC_MQTT_ADD_VALUE(address, this)
                                         << "epsp:" << epsp.get_address() << " "
                                         << ec.message();
                                 }
+                                finish();
                             }
                         );
                         break;
@@ -318,6 +322,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             pubopts,
             force_move(props)
         );
+        finish();
     }
 
     void deliver(
@@ -325,7 +330,8 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
-        properties props) {
+        properties props,
+        as::any_completion_handler<void()> finish) {
 
         if (auto epsp = lock()) {
             publish(
@@ -334,7 +340,8 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 force_move(pub_topic),
                 force_move(payload),
                 pubopts,
-                force_move(props)
+                force_move(props),
+                force_move(finish)
             );
         }
         else {
@@ -346,6 +353,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 pubopts,
                 force_move(props)
             );
+            finish();
         }
     }
 
