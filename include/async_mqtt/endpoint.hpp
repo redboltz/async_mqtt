@@ -699,11 +699,14 @@ public:
     ) const;
 
     /**
-     * @brief Set PINGREQ packet sending interval.
-     * @note By default, PINGREQ packet sending interval is set the same value as
-     *       CONNECT packet keep alive seconds.
-     *       This function overrides it.
-     * @param duration if zero, timer is not set; otherwise duration is set.
+     * @brief Set the PINGREQ packet sending interval.
+     *
+     * @note By default, the PINGREQ packet sending interval is set to the same value as the
+     *       CONNECT packet's keep-alive duration in seconds. If the CONNACK packet includes
+     *       the Server Keep Alive property, its value (in seconds) is used instead.
+     *       This function overrides the default value.
+     *
+     * @param duration If set to zero, the timer is disabled; otherwise, the specified duration is used.
      *                 The minimum resolution is in milliseconds.
      */
     void set_pingreq_send_interval(std::chrono::milliseconds duration);

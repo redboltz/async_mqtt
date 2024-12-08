@@ -11,9 +11,9 @@
 
 |
 
-**Classes**
+*Classes*
 
-**Protocol machines**
+*Protocol machines*
 
 xref:reference:async_mqtt/connection.adoc[`connection`]
 

@@ -344,8 +344,10 @@ basic_connection_impl<Role, PacketIdBytes>::
 release_packet_id(
     typename basic_packet_id_type<PacketIdBytes>::type packet_id
 ) {
-    pid_man_.release_id(packet_id);
-    con_.on_packet_id_release(packet_id);
+    if (pid_man_.is_used_id(packet_id)) {
+        pid_man_.release_id(packet_id);
+        con_.on_packet_id_release(packet_id);
+    }
 }
 
 template <role Role, std::size_t PacketIdBytes>

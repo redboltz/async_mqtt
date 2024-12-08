@@ -28,25 +28,49 @@ public:
     virtual ~basic_connection() = default;
 
     /**
-     * @brief packet sending request.
+     * @brief Packet sending request.
      *
-     * @li if the packet can't send @ref on_error is called.
-     * @li if the packet is @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet,
+     * @li If the packet cannot be sent, @ref on_error is called.
+     * @li If the packet is a @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet
      *     and Keep Alive is set, then @ref on_timer_op for @ref timer_kind::pingreq_send is called.
      *
-     * @param packet The packet to send.
+     * @param packet The packet to be sent.
      */
     template <typename Packet>
     void
     send(Packet packet);
 
+    /**
+     * @brief Notify that some bytes of the packet have been received.
+     *
+     * All bytes will be processed in the input stream.
+     *
+     * @li If the packet is malformed or a protocol error occurs, @ref on_error is called.
+     *     If the protocol_version is v5, then @ref on_send() is called with either
+     *     a @ref v5::connack_packet or @ref v5::disconnect_packet .
+     *     Finally, @ref on_close() is called.
+     * @li If a complete and valid packet is constructed, @ref on_receive() is called with
+     *     the constructed packet.
+     * @li If the packet_id becomes reusable, @ref on_packet_id_release() is called with
+     *     the packet_id.
+     * @li If a timer operation is required, @ref on_timer_op() is called.
+     *     - If the connection acts as a client, a timer operation is required when a
+     *       PINGRESP packet is received or a CONNACK packet with @ref property::server_keep_alive
+     *       is received.
+     *     - If the connection acts as a server, a timer operation is required whenever
+     *       a packet is received, provided that Keep Alive is activated.
+     * @li If the bytes are incomplete for a packet, they are stored and processed during
+     *     the next @ref recv() call.
+     *
+     * @param is Input stream containing some bytes of the packet.
+     */
     void
     recv(std::istream& is);
 
     /**
      * @brief notify timer is fired
      *
-     * @ref on_close,
+     * @param kind The timer kind.
      */
     void
     notify_timer_fired(timer_kind kind);
@@ -64,6 +88,17 @@ public:
     void
     notify_closed();
 
+    /**
+     * @brief Set the PINGREQ packet sending interval.
+     *
+     * @note By default, the PINGREQ packet sending interval is set to the same value as the
+     *       CONNECT packet's keep-alive duration in seconds. If the CONNACK packet includes
+     *       the Server Keep Alive property, its value (in seconds) is used instead.
+     *       This function overrides the default value.
+     *
+     * @param duration If set to zero, the timer is disabled; otherwise, the specified duration is used.
+     *                 The minimum resolution is in milliseconds.
+     */
     void
     set_pingreq_send_interval(
         std::chrono::milliseconds duration
@@ -198,7 +233,7 @@ public:
      * @param packet packet to regulate
      * @return error_code for repoting error
      */
-    error_code  regulate_for_store(
+    error_code regulate_for_store(
         v5::basic_publish_packet<PacketIdBytes>& packet
     ) const;
 
@@ -213,20 +248,30 @@ private:
     /**
      * @brief Handler for error notifications.
      *
-     * This function is called when an error occurs in @ref send, @ref recv, @ref notify_timer_fired,
-     * @ref set_pingreq_send_interval, or @ref release_packet_id **before these functions return**.
+     * This function is called when an error occurs in @ref send(), @ref recv(), @ref notify_timer_fired(),
+     * @ref set_pingreq_send_interval(), or @ref release_packet_id() **before these functions return**.
      *
      * @param ec The error_code indicating the error.
      */
     virtual void on_error(error_code ec) = 0;
 
     /**
-     * @brief Handler for error notifications.
+     * @brief Handler for send requests.
      *
-     * This function is called when an error occurs in @ref send, @ref recv, @ref notify_timer_fired,
-     * @ref set_pingreq_send_interval, or @ref release_packet_id **before these functions return**.
+     * This function is called when a packet needs to be sent due to a situation arising in
+     * @ref send() or @ref recv() **before these functions return**.
+     * The implementation is responsible for sending the packet to the socket in its specific environment.
+     * If a send failure occurs and `release_packet_id_if_send_error` has a value,
+     * the implementation must call @ref release_packet_id() with the value of `release_packet_id_if_send_error`.
      *
-     * @param ec The error_code indicating the error.
+     * @param packet The packet to send. You can retrieve a `ConstBufferSequence` using
+     *               @ref basic_packet_variant::const_buffer_sequence().
+     *               If a continuous buffer is required, you can use
+     *               <a href="../to_string-0d.html">to_string</a>() to the result of
+     *               @ref basic_packet_variant::const_buffer_sequence().
+     * @param release_packet_id_if_send_error
+     *        Specifies the packet_id to release if a send error occurs during implementation.
+     *        If `std::nullopt`, no action is taken.
      */
     virtual void on_send(
         basic_packet_variant<PacketIdBytes> packet,
@@ -234,17 +279,52 @@ private:
         release_packet_id_if_send_error = std::nullopt
     ) = 0;
 
+    /**
+     * @brief Handler for packet_id release notifications.
+     *
+     * This function is called when a packet_id is released in
+     * @ref release_packet_id(), @ref send(), or @ref recv() **before these functions return**.
+     * After this notification, the packet_id becomes reusable.
+     *
+     * @param packet_id The packet_id that was released.
+     */
     virtual void on_packet_id_release(
         typename basic_packet_id_type<PacketIdBytes>::type packet_id
     ) = 0;
+
+    /**
+     * @brief Handler for packet received notifications.
+     *
+     * This function is called when a complete packet is received in
+     * @ref recv() **before the function returns**.
+     *
+     * @param packet_id The packet_id associated with the received packet.
+     */
     virtual void on_receive(
         basic_packet_variant<PacketIdBytes> packet
     ) = 0;
+
+    /**
+     * @brief Handler for timer operation requests.
+     *
+     * This function is called when a timer operation is required in situations arising from
+     * @ref set_pingreq_send_interval(), @ref send(), or @ref recv() **before these functions return**.
+     *
+     * @param timer_op The type of operation (set, reset, or cancel).
+     * @param kind     The kind of timer.
+     */
     virtual void on_timer_op(
         timer_op op,
         timer_kind kind,
           std::optional<std::chrono::milliseconds> ms = std::nullopt
     ) = 0;
+
+    /**
+     * @brief Handler for socket closing requests.
+     *
+     * This function is called when a socket closing operation is required due to a situation arising in
+     * @ref notify_timer_fired(), @ref send(), or @ref recv() **before these functions return**.
+     */
     virtual void on_close() = 0;
 
 private:
