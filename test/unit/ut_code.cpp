@@ -10,11 +10,11 @@
 #include <string_view>
 #include <sstream>
 
-#include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
+#include <async_mqtt/protocol/error.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/pubopts.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_code)
 

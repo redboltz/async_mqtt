@@ -15,7 +15,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/packet/will.hpp>
+#include <async_mqtt/protocol/packet/will.hpp>
 
 #include <broker/sub_con_map.hpp>
 #include <broker/shared_target.hpp>

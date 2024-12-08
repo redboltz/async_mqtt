@@ -33,8 +33,7 @@ struct app {
 
         std::cout << "start" << std::endl;
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        am::async_underlying_handshake(
-            amep_.next_layer(),
+        amep_.async_underlying_handshake(
             host_,
             port_,
             [this]
@@ -82,13 +81,13 @@ struct app {
         // Recv MQTT CONNACK
         amep_.async_recv(
             [this]
-            (am::error_code const& ec, am::packet_variant pv) {
-                handle_recv_connack(ec, am::force_move(pv));
+            (am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
+                handle_recv_connack(ec, am::force_move(pv_opt));
             }
         );
     }
 
-    void handle_recv_connack(am::error_code const& ec, am::packet_variant pv) {
+    void handle_recv_connack(am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
         if (ec) {
             std::cout
                 << "MQTT CONNACK recv error:"
@@ -96,7 +95,8 @@ struct app {
                 << std::endl;
         }
         else {
-            pv.visit(
+            BOOST_ASSERT(pv_opt);
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
                         std::cout
@@ -129,13 +129,13 @@ struct app {
         // Recv MQTT SUBACK
         amep_.async_recv(
             [this]
-            (am::error_code const& ec, am::packet_variant pv) {
-                handle_recv_suback(ec, am::force_move(pv));
+            (am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
+                handle_recv_suback(ec, am::force_move(pv_opt));
             }
         );
     }
 
-    void handle_recv_suback(am::error_code const& ec, am::packet_variant pv) {
+    void handle_recv_suback(am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
         if (ec) {
             std::cout
                 << "MQTT SUBACK recv error:"
@@ -143,7 +143,8 @@ struct app {
                 << std::endl;
         }
         else {
-            pv.visit(
+            BOOST_ASSERT(pv_opt);
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
                         std::cout
@@ -182,13 +183,13 @@ struct app {
         // Recv MQTT PUBACK or (echobacked) PUBLISH
         amep_.async_recv(
             [this]
-            (am::error_code const& ec, am::packet_variant pv) {
-                handle_recv_puback_or_publish(ec, am::force_move(pv));
+            (am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
+                handle_recv_puback_or_publish(ec, am::force_move(pv_opt));
             }
         );
     }
 
-    void handle_recv_puback_or_publish(am::error_code const& ec, am::packet_variant pv) {
+    void handle_recv_puback_or_publish(am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
         if (ec) {
             std::cout
                 << "MQTT recv error:"
@@ -196,7 +197,8 @@ struct app {
                 << std::endl;
         }
         else {
-            pv.visit(
+            BOOST_ASSERT(pv_opt);
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::publish_packet const& p) {
                         std::cout
@@ -221,8 +223,8 @@ struct app {
             if (++count_ < 2) {
                 amep_.async_recv(
                     [this]
-                    (am::error_code const& ec, am::packet_variant pv) {
-                        handle_recv_puback_or_publish(ec, am::force_move(pv));
+                    (am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
+                        handle_recv_puback_or_publish(ec, am::force_move(pv_opt));
                     }
                 );
             }

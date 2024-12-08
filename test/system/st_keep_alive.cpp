@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -42,8 +42,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -62,7 +61,7 @@ BOOST_AUTO_TEST_CASE(v311_timeout) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv({am::control_packet_type::connack}, *this);
-                BOOST_TEST(pv.get_if<am::v3_1_1::connack_packet>());
+                BOOST_TEST(pv_opt->get_if<am::v3_1_1::connack_packet>());
                 ep().set_pingreq_send_interval(std::chrono::seconds{10});
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(ec);
@@ -93,7 +92,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
     private:
         void proc(
             am::error_code ec,
-            am::packet_variant pv,
+            std::optional<am::packet_variant> pv_opt,
             am::packet_id_type /*pid*/
         ) override {
             reenter(this) {
@@ -103,8 +102,7 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                         *this
                     )
                 );
-                yield am::async_underlying_handshake(
-                    ep().next_layer(),
+                yield ep().async_underlying_handshake(
                     "127.0.0.1",
                     "1883",
                     *this
@@ -124,10 +122,10 @@ BOOST_AUTO_TEST_CASE(v5_timeout) {
                 );
                 BOOST_TEST(!ec);
                 yield ep().async_recv({am::control_packet_type::connack}, *this);
-                BOOST_TEST(pv.get_if<am::v5::connack_packet>());
+                BOOST_TEST(pv_opt->get_if<am::v5::connack_packet>());
                 ep().set_pingreq_send_interval(std::chrono::seconds{10});
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
-                BOOST_TEST(pv.get_if<am::v5::disconnect_packet>());
+                BOOST_TEST(pv_opt->get_if<am::v5::disconnect_packet>());
                 yield ep().async_recv(am::filter::except, {am::control_packet_type::pingresp}, *this);
                 BOOST_TEST(ec);
                 set_finish();
