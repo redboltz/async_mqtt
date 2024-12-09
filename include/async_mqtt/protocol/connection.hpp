@@ -135,34 +135,44 @@ public:
     void set_offline_publish(bool val);
 
     /**
-     * @brief auto publish response setter.
-     * @note By default not automatically sending.
-     * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
+     * @brief Enable or disable automatic responses to PUBLISH packets.
+     *
+     * @note By default, automatic response sending is disabled.
+     *
+     * @param val If `true`, PUBACK, PUBREC, PUBREL, and PUBCOMP packets will be sent automatically.
      */
     void set_auto_pub_response(bool val);
 
     /**
-     * @brief auto publish response setter.
-     * @note By default not automatically sending.
-     * @param val if true, puback, pubrec, pubrel, and pubcomp are automatically sent
+     * @brief Enable or disable automatic responses to PINGREQ packets.
+     *
+     * @note By default, automatic response sending is disabled.
+     *
+     * @param val If `true`, PINGRESP packets will be sent automatically.
      */
     void set_auto_ping_response(bool val);
 
     /**
-     * @brief auto map (allocate) topic alias on send PUBLISH packet.
-     * If all topic aliases are used, then overwrite by LRU algorithm.
-     * \n This function should be called before async_send() call.
-     * @note By default not automatically mapping.
-     * @param val if true, enable auto mapping, otherwise disable.
+     * @brief Enable or disable automatic mapping (allocation) of topic aliases when sending PUBLISH packets.
+     *
+     * If all topic aliases are in use, the least recently used (LRU) alias will be overwritten.
+     *
+     * @note By default, automatic mapping is disabled.
+     *
+     * @param val If `true`, automatic mapping is enabled; otherwise, it is disabled.
      */
     void set_auto_map_topic_alias_send(bool val);
 
     /**
-     * @brief auto replace topic with corresponding topic alias on send PUBLISH packet.
-     * Registering topic alias need to do manually.
-     * \n This function should be called before async_send() call.
-     * @note By default not automatically replacing.
-     * @param val if true, enable auto replacing, otherwise disable.
+     * @brief Enable or disable automatic replacement of topics with corresponding topic aliases
+     *        when sending PUBLISH packets.
+     *
+     * Topic aliases must be registered manually prior to use.
+     * \n This function should be called before calling `async_send()`.
+     *
+     * @note By default, automatic replacement is disabled.
+     *
+     * @param val If `true`, automatic replacement is enabled; otherwise, it is disabled.
      */
     void set_auto_replace_topic_alias_send(bool val);
 
