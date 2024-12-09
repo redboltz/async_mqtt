@@ -20,9 +20,9 @@ struct v5_publish_topic_alias;
 struct v5_publish_error;
 BOOST_AUTO_TEST_SUITE_END()
 
-#include <async_mqtt/packet/v5_publish.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/v5_publish.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

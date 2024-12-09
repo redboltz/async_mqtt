@@ -33,7 +33,6 @@ namespace protocol {
  */
 using mqtts = as::ssl::stream<mqtt>;
 
-} // namespace protocol
 
 /**
  * @ingroup predefined_layer_mqtts
@@ -65,8 +64,8 @@ async_underlying_handshake(
     >{}
 );
 
-} // namespace async_mqtt
+} // namespace protocol
 
-#include <async_mqtt/predefined_layer/impl/mqtts_handshake.hpp>
+} // namespace async_mqtt
 
 #endif // ASYNC_MQTT_PREDEFINED_LAYER_MQTTS_HPP

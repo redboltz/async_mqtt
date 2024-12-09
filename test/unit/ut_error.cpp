@@ -9,7 +9,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/error.hpp>
+#include <async_mqtt/protocol/error.hpp>
 
 
 BOOST_AUTO_TEST_SUITE(ut_error)

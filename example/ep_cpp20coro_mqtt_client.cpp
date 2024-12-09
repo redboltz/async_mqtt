@@ -25,7 +25,7 @@ proc(
 
     try {
         // Handshake undlerying layer (Name resolution and TCP handshaking)
-        co_await am::async_underlying_handshake(amep.next_layer(), host, port, as::use_awaitable);
+        co_await amep.async_underlying_handshake(host, port, as::use_awaitable);
         std::cout << "Underlying layer handshaked" << std::endl;
 
         // prepare will message if you need.
@@ -53,8 +53,8 @@ proc(
         );
 
         // Recv MQTT CONNACK
-        if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
-            pv.visit(
+        if (std::optional<am::packet_variant> pv_opt = co_await amep.async_recv(as::use_awaitable)) {
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::connack_packet const& p) {
                         std::cout
@@ -80,8 +80,8 @@ proc(
         );
 
         // Recv MQTT SUBACK
-        if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
-            pv.visit(
+        if (std::optional<am::packet_variant> pv_opt = co_await amep.async_recv(as::use_awaitable)) {
+            pv_opt->visit(
                 am::overload {
                     [&](am::v3_1_1::suback_packet const& p) {
                         std::cout
@@ -111,8 +111,8 @@ proc(
 
         // Recv MQTT PUBLISH and PUBACK (order depends on broker)
         for (std::size_t count = 0; count != 2; ++count) {
-            if (am::packet_variant pv = co_await amep.async_recv(as::use_awaitable)) {
-                pv.visit(
+            if (std::optional<am::packet_variant> pv_opt = co_await amep.async_recv(as::use_awaitable)) {
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::publish_packet const& p) {
                             std::cout

@@ -7,7 +7,7 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
-#include <async_mqtt/packet/topic_subopts.hpp>
+#include <async_mqtt/protocol/packet/topic_subopts.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_topic_subopts)
 

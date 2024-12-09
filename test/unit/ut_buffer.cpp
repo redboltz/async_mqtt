@@ -9,9 +9,9 @@
 
 #include <vector>
 #include <async_mqtt/util/buffer.hpp>
-#include <async_mqtt/packet/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/packet_helper.hpp>
 
-#include <async_mqtt/impl/buffer_to_packet_variant.ipp>
+#include <async_mqtt/protocol/impl/buffer_to_packet_variant.ipp>
 
 BOOST_AUTO_TEST_SUITE(ut_buffer)
 
