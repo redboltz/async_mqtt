@@ -19,7 +19,7 @@
 #include <boost/multi_index/key.hpp>
 
 #include <async_mqtt/util/overload.hpp>
-#include <async_mqtt/packet/store_packet_variant.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 #include <async_mqtt/util/log.hpp>
 
 #include <broker/tags.hpp>

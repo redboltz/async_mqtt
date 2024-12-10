@@ -16,7 +16,7 @@
 #include <boost/multi_index/identity.hpp>
 
 #include <broker/subscription_map.hpp>
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_subscription_map_broker)
 

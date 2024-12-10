@@ -2,16 +2,16 @@ project(separate_client)
 
 add_executable(
    separate_client
-   async_mqtt.cpp
    main.cpp
 )
+add_dependencies(separate_client async_mqtt_asio_bind async_mqtt_protocol)
 
 # Without this setting added, azure pipelines completely fails to find the boost libraries. No idea why.
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 endif()
 
-target_link_libraries(separate_client PRIVATE async_mqtt_iface)
+target_link_libraries(separate_client PRIVATE async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
 target_compile_definitions(separate_client PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
 
 if(ASYNC_MQTT_USE_LOG)

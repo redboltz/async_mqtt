@@ -13,6 +13,7 @@
 #include <boost/hana/unpack.hpp>
 
 #include <async_mqtt/client.hpp>
+#include <async_mqtt/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
@@ -22,41 +23,9 @@ namespace hana = boost::hana;
 namespace detail {
 
 template <protocol_version Version, typename NextLayer>
-struct client_impl<Version, NextLayer>::
-disconnect_op {
-    this_type_sp cl;
-    error_code ec;
-    std::optional<typename client_type::disconnect_packet> packet;
-
-    template <typename Self>
-    void operator()(
-        Self& self
-    ) {
-        auto& a_cl{*cl};
-        if (ec) {
-            self.complete(ec);
-            return;
-        }
-        auto a_packet{force_move(*packet)};
-        a_cl.ep_.async_send(
-            force_move(a_packet),
-            force_move(self)
-        );
-    }
-
-    template <typename Self>
-    void operator()(
-        Self& self,
-        error_code const& ec
-    ) {
-        self.complete(ec);
-    }
-};
-
-template <protocol_version Version, typename NextLayer>
 template <typename CompletionToken>
 auto
-client_impl<Version, NextLayer>::async_disconnect_impl(
+client_impl<Version, NextLayer>::async_disconnect(
     this_type_sp impl,
     error_code ec,
     std::optional<typename client_type::disconnect_packet> packet,
@@ -70,17 +39,27 @@ client_impl<Version, NextLayer>::async_disconnect_impl(
     }
     auto exe = impl->get_executor();
     return
-        as::async_compose<
+        as::async_initiate<
             CompletionToken,
             void(error_code)
         >(
-            disconnect_op{
-                force_move(impl),
-                ec,
-                force_move(packet)
+            [](
+                auto handler,
+                this_type_sp impl,
+                error_code ec,
+                std::optional<typename client_type::disconnect_packet> packet
+            ) {
+                async_disconnect_impl(
+                    force_move(impl),
+                    ec,
+                    force_move(packet),
+                    force_move(handler)
+                );
             },
             token,
-            exe
+            force_move(impl),
+            ec,
+            force_move(packet)
         );
 }
 
@@ -93,14 +72,14 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
     BOOST_ASSERT(impl_);
     if constexpr (std::is_constructible_v<disconnect_packet, decltype(std::forward<Args>(args))...>) {
         try {
-            return impl_type::async_disconnect_impl(
+            return impl_type::async_disconnect(
                 impl_,
                 error_code{},
                 disconnect_packet{std::forward<Args>(args)...}
             );
         }
         catch (system_error const& se) {
-            return impl_type::async_disconnect_impl(
+            return impl_type::async_disconnect(
                 impl_,
                 se.code(),
                 std::nullopt
@@ -108,9 +87,9 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
         }
     }
     else {
-        auto t = hana::tuple<Args...>(std::forward<Args>(args)...);
-        auto rest = hana::drop_back(std::move(t), hana::size_c<1>);
-        auto&& back = hana::back(t);
+        auto all = hana::tuple<Args...>(std::forward<Args>(args)...);
+        auto back = hana::back(all);
+        auto rest = hana::drop_back(all, hana::size_c<1>);
         return hana::unpack(
             std::move(rest),
             [&](auto&&... rest_args) {
@@ -122,19 +101,19 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
                     "disconnect_packet is not constructible"
                 );
                 try {
-                    return impl_type::async_disconnect_impl(
+                    return impl_type::async_disconnect(
                         impl_,
                         error_code{},
                         disconnect_packet{std::forward<decltype(rest_args)>(rest_args)...},
-                        std::forward<decltype(back)>(back)
+                        force_move(back)
                     );
                 }
                 catch (system_error const& se) {
-                    return impl_type::async_disconnect_impl(
+                    return impl_type::async_disconnect(
                         impl_,
                         se.code(),
                         std::nullopt,
-                        std::forward<decltype(back)>(back)
+                        force_move(back)
                     );
                 }
             }
@@ -143,5 +122,9 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
 }
 
 } // namespace async_mqtt
+
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/impl/client_disconnect.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_HPP

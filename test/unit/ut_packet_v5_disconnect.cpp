@@ -19,9 +19,9 @@ struct v5_disconnect_prop_len_last;
 struct v5_disconnect_error;
 BOOST_AUTO_TEST_SUITE_END()
 
-#include <async_mqtt/packet/v5_disconnect.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/v5_disconnect.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

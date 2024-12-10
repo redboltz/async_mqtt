@@ -16,9 +16,9 @@ struct v311_connack;
 struct v311_connack_error;
 BOOST_AUTO_TEST_SUITE_END()
 
-#include <async_mqtt/packet/v3_1_1_connack.hpp>
-#include <async_mqtt/packet/packet_helper.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/v3_1_1_connack.hpp>
+#include <async_mqtt/protocol/packet/packet_helper.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 
