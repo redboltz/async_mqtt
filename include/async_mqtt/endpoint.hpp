@@ -163,7 +163,7 @@ public:
      * @brief Enable or disable automatic replacement of topics with corresponding topic aliases
      *        when sending PUBLISH packets.
      *
-     * Topic aliases must be registered manually prior to use.
+     * Topic aliases must be registered prior to use.
      * \n This function should be called before calling `async_send()`.
      *
      * @note By default, automatic replacement is disabled.

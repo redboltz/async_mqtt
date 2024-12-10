@@ -68,13 +68,24 @@ public:
     recv(std::istream& is);
 
     /**
-     * @brief Notify that a timer has been fired.
+     * @brief Notify that a timer has fired.
      *
      * Timer operations are requested through @ref on_timer_op().
      * Users are responsible for setting, resetting, or canceling the timer. When the timer fires,
      * this function is expected to be called.
      *
-     * @param kind The kind of timer.
+     * @li If the kind is @ref timer_kind::pingreq_send, @ref on_send() is called with
+     *     a PINGREQ packet.
+     * @li If the kind is @ref timer_kind::pingreq_recv :
+     *     - If the protocol_version is v5, @ref on_send() is called with
+     *       a @ref v5::disconnect_packet .
+     *     - Finally, @ref on_close() is called.
+     * @li If the kind is @ref timer_kind::pingresp_recv :
+     *     - If the protocol_version is v5, @ref on_send() is called with
+     *       a @ref v5::disconnect_packet .
+     *     - Finally, @ref on_close() is called.
+     *
+     * @param kind The type of timer that has fired.
      */
     void
     notify_timer_fired(timer_kind kind);
@@ -167,8 +178,7 @@ public:
      * @brief Enable or disable automatic replacement of topics with corresponding topic aliases
      *        when sending PUBLISH packets.
      *
-     * Topic aliases must be registered manually prior to use.
-     * \n This function should be called before calling `async_send()`.
+     * Topic aliases must be registered prior to use.
      *
      * @note By default, automatic replacement is disabled.
      *
@@ -203,9 +213,12 @@ public:
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
-     * @brief release packet_id.
-     * @param packet_id packet_id to release
-     * @return event list
+     * @brief Release a packet_id.
+     *
+     * @li If the packet_id is currently in use, it will be released, and
+     *     @ref on_packet_id_release() will be called. Otherwise, no action is taken.
+     *
+     * @param packet_id The packet_id to release.
      */
     void
     release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
