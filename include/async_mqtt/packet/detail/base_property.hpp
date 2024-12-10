@@ -260,7 +260,7 @@ struct string_property : binary_property {
         }
         else {
             return make_error_code(
-                disconnect_reason_code::protocol_error
+                disconnect_reason_code::malformed_packet
             );
         }
     }
@@ -370,7 +370,7 @@ struct len_str {
         }
         else {
             return make_error_code(
-                disconnect_reason_code::protocol_error
+                disconnect_reason_code::malformed_packet
             );
         }
     }

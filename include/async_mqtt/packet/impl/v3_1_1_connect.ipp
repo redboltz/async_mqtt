@@ -82,7 +82,7 @@ connect_packet::connect_packet(
     if (!utf8string_check(client_id_)) {
         throw system_error(
             make_error_code(
-                connect_reason_code::client_identifier_not_valid
+                connect_reason_code::malformed_packet
             )
         );
     }
@@ -92,7 +92,7 @@ connect_packet::connect_packet(
         if (!utf8string_check(*user_name)) {
             throw system_error(
                 make_error_code(
-                    connect_reason_code::bad_user_name_or_password
+                    connect_reason_code::malformed_packet
                 )
             );
         }
@@ -114,7 +114,7 @@ connect_packet::connect_packet(
         if (!utf8string_check(w->topic())) {
             throw system_error(
                 make_error_code(
-                    connect_reason_code::topic_name_invalid
+                    connect_reason_code::malformed_packet
                 )
             );
         }
@@ -365,7 +365,7 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
     client_id_ = buf.substr(0, client_id_length);
     if (!utf8string_check(client_id_)) {
         ec = make_error_code(
-            connect_reason_code::client_identifier_not_valid
+            connect_reason_code::malformed_packet
         );
         return;
     }
@@ -401,7 +401,7 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
         will_topic_ = buf.substr(0, will_topic_length);
         if (!utf8string_check(will_topic_)) {
             ec = make_error_code(
-                connect_reason_code::topic_name_invalid
+                connect_reason_code::malformed_packet
             );
             return;
         }
@@ -463,7 +463,7 @@ connect_packet::connect_packet(buffer buf, error_code& ec) {
         user_name_ = buf.substr(0, user_name_length);
         if (!utf8string_check(user_name_)) {
             ec = make_error_code(
-                connect_reason_code::bad_user_name_or_password
+                connect_reason_code::malformed_packet
             );
             return;
         }
