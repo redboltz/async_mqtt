@@ -135,7 +135,7 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
         if (!utf8string_check(e.all_topic())) {
             throw system_error{
                 make_error_code(
-                    disconnect_reason_code::topic_filter_invalid
+                    disconnect_reason_code::malformed_packet
                 )
             };
         }
@@ -313,7 +313,7 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_
 
         if (!utf8string_check(topic)) {
             ec = make_error_code(
-                disconnect_reason_code::topic_filter_invalid
+                disconnect_reason_code::malformed_packet
             );
             return;
         }

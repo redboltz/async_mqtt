@@ -89,7 +89,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(
     if (!utf8string_check(topic_name_)) {
         throw system_error(
             make_error_code(
-                disconnect_reason_code::topic_name_invalid
+                disconnect_reason_code::malformed_packet
             )
         );
     }
@@ -436,7 +436,7 @@ basic_publish_packet<PacketIdBytes>::basic_publish_packet(buffer buf, error_code
 
     if (!utf8string_check(topic_name_)) {
         ec = make_error_code(
-            disconnect_reason_code::topic_name_invalid
+            disconnect_reason_code::malformed_packet
         );
         return;
     }

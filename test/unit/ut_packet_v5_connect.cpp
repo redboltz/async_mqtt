@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::connect_reason_code::client_identifier_not_valid);
+        BOOST_TEST(se.code() == am::connect_reason_code::malformed_packet);
     }
 
     try {
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::connect_reason_code::bad_user_name_or_password);
+        BOOST_TEST(se.code() == am::connect_reason_code::malformed_packet);
     }
 
     try {
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(v5_connect) {
         BOOST_TEST(false);
     }
     catch (am::system_error const& se) {
-        BOOST_TEST(se.code() == am::connect_reason_code::topic_name_invalid);
+        BOOST_TEST(se.code() == am::connect_reason_code::malformed_packet);
     }
 
     try {
@@ -357,10 +357,10 @@ BOOST_AUTO_TEST_CASE(v5_connect_error) {
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI
-        am::buffer buf{"\x10\x0f\x00\x04MQTT\x05\x00\x11\x22\x00\x00\x02\xc2\xc0"sv}; // invalid client identifier
+        am::buffer buf{"\x10\x0f\x00\x04MQTT\x05\x00\x11\x22\x00\x00\x02\xc2\xc0"sv}; // invalid utf8 client identifier
         am::error_code ec;
         am::v5::connect_packet{buf, ec};
-        BOOST_TEST(ec == am::connect_reason_code::client_identifier_not_valid);
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI
@@ -406,10 +406,10 @@ BOOST_AUTO_TEST_CASE(v5_connect_error) {
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI WPL  WTL   WT
-        am::buffer buf{"\x10\x14\x00\x04MQTT\x05\x04\x11\x22\x00\x00\x02II\x00\x00\x02\xc2\xc0"sv}; // invalid will topic
+        am::buffer buf{"\x10\x14\x00\x04MQTT\x05\x04\x11\x22\x00\x00\x02II\x00\x00\x02\xc2\xc0"sv}; // invalid utf8 will topic
         am::error_code ec;
         am::v5::connect_packet{buf, ec};
-        BOOST_TEST(ec == am::connect_reason_code::topic_name_invalid);
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI WPL  WTL   WT  WML   WM
@@ -469,10 +469,10 @@ BOOST_AUTO_TEST_CASE(v5_connect_error) {
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI  UNL   UN
-        am::buffer buf{"\x10\x13\x00\x04MQTT\x05\x80\x11\x22\x00\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid username length
+        am::buffer buf{"\x10\x13\x00\x04MQTT\x05\x80\x11\x22\x00\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid utf8 username
         am::error_code ec;
         am::v5::connect_packet{buf, ec};
-        BOOST_TEST(ec == am::connect_reason_code::bad_user_name_or_password);
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  PL  CIDL  CI  PWL

@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                 "u1",
                 "passforu1"
             );
-            BOOST_TEST(ec_con == am::connect_reason_code::client_identifier_not_valid);
+            BOOST_TEST(ec_con == am::connect_reason_code::malformed_packet);
 
             // MQTT send subscribe and wait suback
             std::vector<am::topic_subopts> sub_entry{
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(v311) {
                 *pid_sub_opt,
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
             );
-            BOOST_TEST(ec_sub == am::disconnect_reason_code::topic_filter_invalid);
+            BOOST_TEST(ec_sub == am::disconnect_reason_code::malformed_packet);
 
             // MQTT send unsubscribe and wait unsuback
             std::vector<am::topic_sharename> unsub_entry{
@@ -77,14 +77,14 @@ BOOST_AUTO_TEST_CASE(v311) {
                 *pid_unsub_opt,
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
             );
-            BOOST_TEST(ec_unsub == am::disconnect_reason_code::topic_filter_invalid);
+            BOOST_TEST(ec_unsub == am::disconnect_reason_code::malformed_packet);
 
             auto [ec_pub0, pubres0] = co_await amcl.async_publish(
                 ng_str,
                 "payload1",
                 am::qos::at_most_once
             );
-            BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
+            BOOST_TEST(ec_pub0 == am::disconnect_reason_code::malformed_packet);
             co_return;
         },
         as::detached
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 "u1",
                 "passforu1"
             );
-            BOOST_TEST(ec_con == am::connect_reason_code::client_identifier_not_valid);
+            BOOST_TEST(ec_con == am::connect_reason_code::malformed_packet);
 
             // MQTT send subscribe and wait suback
             std::vector<am::topic_subopts> sub_entry{
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(v5) {
                 *pid_sub_opt,
                 am::force_move(sub_entry) // sub_entry variable is required to avoid g++ bug
             );
-            BOOST_TEST(ec_sub == am::disconnect_reason_code::topic_filter_invalid);
+            BOOST_TEST(ec_sub == am::disconnect_reason_code::malformed_packet);
 
             // MQTT send unsubscribe and wait unsuback
             std::vector<am::topic_sharename> unsub_entry{
@@ -151,14 +151,14 @@ BOOST_AUTO_TEST_CASE(v5) {
                 *pid_unsub_opt,
                 am::force_move(unsub_entry) // unsub_entry variable is required to avoid g++ bug
             );
-            BOOST_TEST(ec_unsub == am::disconnect_reason_code::topic_filter_invalid);
+            BOOST_TEST(ec_unsub == am::disconnect_reason_code::malformed_packet);
 
             auto [ec_pub0, pubres0] = co_await amcl.async_publish(
                 ng_str,
                 "payload1",
                 am::qos::at_most_once
             );
-            BOOST_TEST(ec_pub0 == am::disconnect_reason_code::topic_name_invalid);
+            BOOST_TEST(ec_pub0 == am::disconnect_reason_code::malformed_packet);
 
             am::properties props{property::content_type{"test"}}; // invalid property
             auto [ec_disconnect] = co_await amcl.async_disconnect(
