@@ -138,10 +138,11 @@ public:
     get_receive_maximum_vacancy_for_send() const;
 
     /**
-     * @brief set offline publish support
-     * \n This function should be called before async_send() call.
-     * @note By default offline publish is not supported.
-     * @param val if true, offline publish is supported, otherwise not supported
+     * @brief Enable or disable offline publish support.
+     *
+     * @note Offline publishing is not defined in the MQTT specification. By default, this feature is disabled.
+     *
+     * @param val If set to `true`, offline publishing is enabled. Otherwise, it remains disabled.
      */
     void set_offline_publish(bool val);
 
@@ -187,28 +188,32 @@ public:
     void set_auto_replace_topic_alias_send(bool val);
 
     /**
-     * @brief Set timeout for receiving PINGRESP packet after PINGREQ packet is sent.
-     * If the timer is fired, then the underlying layer is closed from the client side.
-     * If the protocol_version is v5, then send DISCONNECT packet with the reason code
-     * disconnect_reason_code::keep_alive_timeout automatically before underlying layer is closed.
-     * \n This function should be called before async_send() call.
-     * @note By default timeout is not set.
-     * @param duration if zero, timer is not set; otherwise duration is set.
-     *                 The minimum resolution is in milliseconds.
+     * @brief Set a timeout for receiving a PINGRESP packet after sending a PINGREQ packet.
+     *
+     * If the timer expires, the underlying layer is closed from the client side.
+     * For protocol version v5, a DISCONNECT packet with the reason code
+     * @ref disconnect_reason_code::keep_alive_timeout is automatically sent before the underlying layer is closed.
+     *
+     * @param duration If set to zero, the timer is not set, and no timeout is applied.
+     *                 Otherwise, the timeout duration is set, with a minimum resolution of milliseconds.
      */
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
     /**
-     * @brief acuire unique packet_id.
+     * @brief Acquire a unique packet_id.
+     *
      * @return std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
-     * if acquired return acquired packet id, otherwise std::nullopt
+     *         If a packet_id is successfully acquired, the acquired packet_id is returned.
+     *         Otherwise, `std::nullopt` is returned.
      */
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
 
     /**
-     * @brief register packet_id.
-     * @param packet_id packet_id to register
-     * @return If true, success, otherwise the packet_id has already been used.
+     * @brief Register a packet_id.
+     *
+     * @param packet_id The packet_id to register.
+     * @return `true` if the registration is successful;
+     *         otherwise, `false` indicating the packet_id is already in use.
      */
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
@@ -224,23 +229,31 @@ public:
     release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
     /**
-     * @brief Get processed but not released QoS2 packet ids
-     *        This function should be called after disconnection
-     * @return set of packet_ids
+     * @brief Get processed but not released QoS2 packet_ids.
+     *
+     * This function should be called after disconnection.
+     *
+     * @return A set of packet_ids that have been processed but not released.
      */
     std::set<typename basic_packet_id_type<PacketIdBytes>::type> get_qos2_publish_handled_pids() const;
 
     /**
-     * @brief Restore processed but not released QoS2 packet ids
-     *        This function should be called before receive the first publish
-     * @param pids packet ids
+     * @brief Restore processed but not released QoS2 packet_ids.
+     *
+     * This function should be called before starting a connection.
+     *
+     * @param pids The packet_ids to restore.
      */
     void restore_qos2_publish_handled_pids(std::set<typename basic_packet_id_type<PacketIdBytes>::type> pids);
 
     /**
-     * @brief restore packets
-     *        the restored packets would automatically send when CONNACK packet is received
-     * @param pvs packets to restore
+     * @brief Restore packets.
+     *
+     * The restored packets will be automatically sent when a CONNACK packet is received or sent,
+     * provided the session is kept.
+     * This function should be called before starting a connection.
+     *
+     * @param pvs The packets to restore.
      */
     void restore_packets(
         std::vector<basic_store_packet_variant<PacketIdBytes>> pvs

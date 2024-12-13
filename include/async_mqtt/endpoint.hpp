@@ -122,10 +122,17 @@ public:
     void underlying_accepted();
 
     /**
-     * @brief set offline publish support
-     * \n This function should be called before async_send() call.
-     * @note By default offline publish is not supported.
-     * @param val if true, offline publish is supported, otherwise not supported
+     * @brief Enable or disable offline publish support.
+     *
+     * If enabled, as long as the session is maintained between the connection and the counterpart (broker),
+     * you can send PUBLISH packets with QoS 1 or QoS 2 even if the connection is closed.
+     * These packets are considered inflight packets.
+     *
+     * \n This function should be called before calling @ref async_send().
+     *
+     * @note Offline publishing is not defined in the MQTT specification. By default, this feature is disabled.
+     *
+     * @param val If set to `true`, offline publishing is supported. Otherwise, it is not supported.
      */
     void set_offline_publish(bool val);
 
@@ -181,6 +188,18 @@ public:
      * @note By default timeout is not set.
      * @param duration if zero, timer is not set; otherwise duration is set.
      *                 The minimum resolution is in milliseconds.
+     */
+    /**
+     * @brief Set a timeout for receiving a PINGRESP packet after sending a PINGREQ packet.
+     *
+     * If the timer expires, the underlying layer is closed from the client side.
+     * For protocol version v5, a DISCONNECT packet with the reason code
+     * @ref disconnect_reason_code::keep_alive_timeout is automatically sent before the underlying layer is closed.
+     *
+     * @note This function should be called before invoking @ref async_send(). By default, no timeout is set.
+     *
+     * @param duration If set to zero, the timer is not set, and no timeout is applied.
+     *                 Otherwise, the timeout duration is set, with a minimum resolution of milliseconds.
      */
     void set_pingresp_recv_timeout(std::chrono::milliseconds duration);
 
@@ -632,16 +651,20 @@ public:
     // sync APIs
 
     /**
-     * @brief acuire unique packet_id.
+     * @brief Acquire a unique packet_id.
+     *
      * @return std::optional<typename basic_packet_id_type<PacketIdBytes>::type>
-     * if acquired return acquired packet id, otherwise std::nullopt
+     *         If a packet_id is successfully acquired, the acquired packet_id is returned.
+     *         Otherwise, `std::nullopt` is returned.
      */
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> acquire_unique_packet_id();
 
     /**
-     * @brief register packet_id.
-     * @param packet_id packet_id to register
-     * @return If true, success, otherwise the packet_id has already been used.
+     * @brief Register a packet_id.
+     *
+     * @param packet_id The packet_id to register.
+     * @return `true` if the registration is successful;
+     *         otherwise, `false` indicating the packet_id is already in use.
      */
     bool register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id);
 
