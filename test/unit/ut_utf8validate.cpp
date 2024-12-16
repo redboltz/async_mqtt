@@ -18,13 +18,13 @@ using namespace std::string_view_literals;
 
 BOOST_AUTO_TEST_CASE( one_byte ) {
     // nul charactor
-    BOOST_TEST(am::utf8string_check("\x0"sv));
+    BOOST_TEST(!am::utf8string_check("\x0"sv));
 
     // control charactor
-    BOOST_TEST(am::utf8string_check("\x1"sv));
+    BOOST_TEST(!am::utf8string_check("\x1"sv));
 
     // control charactor
-    BOOST_TEST(am::utf8string_check("\x1f"sv));
+    BOOST_TEST(!am::utf8string_check("\x1f"sv));
 
     // valid charactor(0x20)
     BOOST_TEST(am::utf8string_check(" "sv));
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( one_byte ) {
     BOOST_TEST(am::utf8string_check("~"sv));
 
     // control charactor
-    BOOST_TEST(am::utf8string_check("\x7f"sv));
+    BOOST_TEST(!am::utf8string_check("\x7f"sv));
 }
 
 BOOST_AUTO_TEST_CASE( two_bytes ) {
@@ -444,9 +444,18 @@ BOOST_AUTO_TEST_CASE( four_bytes ) {
 }
 
 BOOST_AUTO_TEST_CASE( combination ) {
+    // included invalid charactor
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{
+                'a', '\x01', '\x00'
+            }
+        )
+    );
+
     // included non charactor
     BOOST_TEST(
-        am::utf8string_check(
+        !am::utf8string_check(
             std::string{
                 'a', '\x01'
             }

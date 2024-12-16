@@ -402,10 +402,10 @@ BOOST_AUTO_TEST_CASE(v311_publish_error) {
     }
     {
         //                CP  RL  TPL     TP      PID
-        am::buffer buf{"\x32\x06\x00\x02\xc2\xc0\x12\x34"sv}; // invalid topic
+        am::buffer buf{"\x32\x06\x00\x02\xc2\xc0\x12\x34"sv}; // invalid utf8 topic
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
-        BOOST_TEST(ec == am::disconnect_reason_code::topic_name_invalid);
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL   TP PID
