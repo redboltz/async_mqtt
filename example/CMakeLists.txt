@@ -18,6 +18,8 @@ if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
         ep_cpp20coro_mqtt_client.cpp
     )
     if(ASYNC_MQTT_BUILD_EXAMPLE_SEPARATE)
+        add_subdirectory(separate_client_manual)
+        add_subdirectory(separate_endpoint_manual)
         if(ASYNC_MQTT_BUILD_LIB)
             add_subdirectory(separate_client)
             add_subdirectory(separate_endpoint)

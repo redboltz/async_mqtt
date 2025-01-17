@@ -7,33 +7,10 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_INSTANTIATE_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_INSTANTIATE_HPP
 
-#if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#if defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/impl/client_instantiate_direct.hpp>
 
-#define ASYNC_MQTT_INSTANTIATE_EACH(a_version, a_protocol) \
-namespace async_mqtt { \
-namespace detail { \
-template \
-class client_impl<a_version, a_protocol>; \
-} \
-template \
-class client<a_version, a_protocol>; \
-} // namespace async_mqtt
-
-#define ASYNC_MQTT_PP_GENERATE(r, product) \
-    BOOST_PP_EXPAND( \
-        ASYNC_MQTT_INSTANTIATE_EACH \
-        BOOST_PP_SEQ_TO_TUPLE( \
-            product \
-        ) \
-    )
-
-BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_VERSION)(ASYNC_MQTT_PP_PROTOCOL))
-
-#undef ASYNC_MQTT_PP_GENERATE
-#undef ASYNC_MQTT_INSTANTIATE_EACH
-
-#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_INSTANTIATE_HPP

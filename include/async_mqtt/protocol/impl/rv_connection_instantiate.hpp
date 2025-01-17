@@ -7,29 +7,10 @@
 #if !defined(ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_INSTANTIATE_HPP)
 #define ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_INSTANTIATE_HPP
 
-#if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#if defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/protocol/impl/rv_connection_instantiate_direct.hpp>
 
-#define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size) \
-namespace async_mqtt { \
-template \
-class basic_rv_connection<a_role, a_size>; \
-} // namespace async_mqtt
-
-#define ASYNC_MQTT_PP_GENERATE(r, product) \
-    BOOST_PP_EXPAND( \
-        ASYNC_MQTT_INSTANTIATE_EACH \
-        BOOST_PP_SEQ_TO_TUPLE( \
-            product \
-        ) \
-    )
-
-BOOST_PP_SEQ_FOR_EACH_PRODUCT(ASYNC_MQTT_PP_GENERATE, (ASYNC_MQTT_PP_ROLE)(ASYNC_MQTT_PP_SIZE))
-
-#undef ASYNC_MQTT_PP_GENERATE
-#undef ASYNC_MQTT_INSTANTIATE_EACH
-
-#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 
 #endif // ASYNC_MQTT_PROTOCOL_IMPL_RV_CONNECTION_INSTANTIATE_HPP
