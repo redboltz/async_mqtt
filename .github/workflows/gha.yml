@@ -141,7 +141,7 @@ jobs:
       shell: powershell
       run: |
 
-        $Url = "https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.7z"
+        $Url = "https://archives.boost.io/release/1.85.0/source/boost_1_85_0.7z"
          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost_1_85_0.7z")
         7z.exe x "$env:TEMP\boost_1_85_0.7z"
         cd boost_1_85_0
