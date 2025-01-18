@@ -20,12 +20,18 @@ BOOST_AUTO_TEST_CASE(basic) {
         BOOST_TEST(hp.host == "hostname");
         BOOST_TEST(hp.port == 1234);
         BOOST_TEST(am::to_string(hp) == "hostname:1234");
+        std::stringstream ss;
+        ss << hp;
+        BOOST_TEST(ss.str() == "hostname:1234");
     }
     {
         auto hp = am::host_port("123.45.67.89", 1234);
         BOOST_TEST(hp.host == "123.45.67.89");
         BOOST_TEST(hp.port == 1234);
         BOOST_TEST(am::to_string(hp) == "123.45.67.89:1234");
+        std::stringstream ss;
+        ss << hp;
+        BOOST_TEST(ss.str() == "123.45.67.89:1234");
     }
     {
         auto hp = am::host_port("1fff:0:a88:85a3::ac1f", 1234);
@@ -34,6 +40,9 @@ BOOST_AUTO_TEST_CASE(basic) {
         // intentionally not [1fff:0:a88:85a3::ac1f]:1234
         // because it is not a URL
         BOOST_TEST(am::to_string(hp) == "1fff:0:a88:85a3::ac1f:1234");
+        std::stringstream ss;
+        ss << hp;
+        BOOST_TEST(ss.str() == "1fff:0:a88:85a3::ac1f:1234");
     }
 }
 

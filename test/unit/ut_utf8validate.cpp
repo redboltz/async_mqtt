@@ -17,6 +17,9 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 BOOST_AUTO_TEST_CASE( one_byte ) {
+    // valid
+    BOOST_TEST(am::utf8string_check("\x20"sv));
+
     // nul charactor
     BOOST_TEST(!am::utf8string_check("\x0"sv));
 
@@ -37,6 +40,20 @@ BOOST_AUTO_TEST_CASE( one_byte ) {
 }
 
 BOOST_AUTO_TEST_CASE( two_bytes ) {
+    // valid
+    BOOST_TEST(
+        am::utf8string_check(
+            std::string{static_cast<char>(0b1101'1111u), static_cast<char>(0b1011'1111u)}
+        )
+    );
+
+    // insufficient bytes
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{static_cast<char>(0b1100'0000u)}
+        )
+    );
+
     // valid encoded string case 110XXXXx 10xxxxxx
     // included invalid encoded utf8
     // case 110XXXXx 11xxxxxx
@@ -44,6 +61,14 @@ BOOST_AUTO_TEST_CASE( two_bytes ) {
     BOOST_TEST(
         !am::utf8string_check(
             std::string{static_cast<char>(0b1100'0010u), static_cast<char>(0b1100'0000u)}
+        )
+    );
+
+    // valid encoded string case
+    // but contains no charactor
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{static_cast<char>(0b1100'0010u), static_cast<char>(0b1000'0000u)}
         )
     );
 
@@ -104,6 +129,17 @@ BOOST_AUTO_TEST_CASE( three_bytes ) {
 
     // three bytes charactor
 
+    // valid
+    BOOST_TEST(
+        am::utf8string_check(
+            std::string{
+                static_cast<char>(0b1110'0000u),
+                static_cast<char>(0b1010'0000u),
+                static_cast<char>(0b1000'0000u)
+            }
+        )
+    );
+
     // valid encoded string case 1110XXXX 10Xxxxxx 10xxxxxx
     // included invalid encoded utf8
     // case 1110XXXX 10Xxxxxx 11xxxxxx
@@ -114,6 +150,18 @@ BOOST_AUTO_TEST_CASE( three_bytes ) {
                 static_cast<char>(0b1110'0000u),
                 static_cast<char>(0b1010'0000u),
                 static_cast<char>(0b1100'0000u)
+            }
+        )
+    );
+
+    // valid encoded string case
+    // but contains no charactor
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{
+                static_cast<char>(0b1110'1111u),
+                static_cast<char>(0b1011'1111u),
+                static_cast<char>(0b1011'1110u)
             }
         )
     );
@@ -261,6 +309,18 @@ BOOST_AUTO_TEST_CASE( three_bytes ) {
 }
 
 BOOST_AUTO_TEST_CASE( four_bytes ) {
+    // valid
+    BOOST_TEST(
+        am::utf8string_check(
+            std::string{
+                static_cast<char>(0b1111'0000u),
+                static_cast<char>(0b1001'0000u),
+                static_cast<char>(0b1000'0000u),
+                static_cast<char>(0b1000'0000u)
+            }
+        )
+    );
+
     // valid encoded string case 11110XXX 10XXxxxx 10xxxxxx 10xxxxxx
     // included invalid encoded utf8
     // case 11110XXX 10XXxxxx 10xxxxxx 11xxxxxx
@@ -272,6 +332,32 @@ BOOST_AUTO_TEST_CASE( four_bytes ) {
                 static_cast<char>(0b1001'0000u),
                 static_cast<char>(0b1000'0000u),
                 static_cast<char>(0b1100'0000u)
+            }
+        )
+    );
+
+    // valid encoded string case
+    // but contains no charactor
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{
+                static_cast<char>(0b1111'0100u),
+                static_cast<char>(0b1001'0000u), // over 1000'1111
+                static_cast<char>(0b1000'0000u), // padding
+                static_cast<char>(0b1000'0000u)  // padding
+            }
+        )
+    );
+
+    // valid encoded string case
+    // but contains no charactor
+    BOOST_TEST(
+        !am::utf8string_check(
+            std::string{
+                static_cast<char>(0b1111'0001u),
+                static_cast<char>(0b1000'1111u),
+                static_cast<char>(0b1011'1111u),
+                static_cast<char>(0b1011'1110u)
             }
         )
     );

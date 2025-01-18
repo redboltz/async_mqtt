@@ -28,6 +28,7 @@ inline bool utf8string_check(std::string_view str) {
                  static_cast<unsigned char>(*(it + 0)) <= 0x1f) ||
                 static_cast<unsigned char>(*(it + 0)) == 0x7f) {
                 result = false; // well_formed but contains non charactor
+                break;
             }
             ++it;
         }
@@ -46,6 +47,7 @@ inline bool utf8string_check(std::string_view str) {
                 static_cast<unsigned char>(*(it + 1)) >= 0b1000'0000 &&
                 static_cast<unsigned char>(*(it + 1)) <= 0b1001'1111) {
                 result = false; // well_formed but contains non charactor
+                break;
             }
             it += 2;
         }
@@ -69,6 +71,7 @@ inline bool utf8string_check(std::string_view str) {
                 (static_cast<unsigned char>(*(it + 2)) & 0b1111'1110) == 0b1011'1110) {
                 // U+FFFE or U+FFFF?
                 result = false; // well_formed but contains non charactor
+                break;
             }
             it += 3;
         }
@@ -94,6 +97,7 @@ inline bool utf8string_check(std::string_view str) {
                 (static_cast<unsigned char>(*(it + 3)) & 0b1111'1110) == 0b1011'1110) {
                 // U+nFFFE or U+nFFFF?
                 result = false; // well_formed but contains non charactor
+                break;
             }
             it += 4;
         }
