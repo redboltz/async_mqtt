@@ -372,7 +372,7 @@ private:
     virtual void on_timer_op(
         timer_op op,
         timer_kind kind,
-          std::optional<std::chrono::milliseconds> ms = std::nullopt
+        std::optional<std::chrono::milliseconds> ms = std::nullopt
     ) = 0;
 
     /**

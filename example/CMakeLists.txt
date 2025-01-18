@@ -1,4 +1,6 @@
 list(APPEND exec_PROGRAMS
+    cn_mqtt_client.cpp
+    rvcn_mqtt_client.cpp
     ep_cb_mqtt_client.cpp
     ep_future_mqtt_client.cpp
     ep_slcoro_mqtt_client.cpp
