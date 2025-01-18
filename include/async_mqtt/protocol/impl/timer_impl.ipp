@@ -18,7 +18,7 @@ char const* timer_kind_to_string(timer_kind v) {
     case timer_kind::pingreq_send:  return "pingreq_send";
     case timer_kind::pingreq_recv:  return "pingreq_recv";
     case timer_kind::pingresp_recv: return "pingresp_recv";
-    default:                        return "unknown_timer";
+    default:                        return "unknown_timer_kind";
     }
 }
 
@@ -35,7 +35,7 @@ char const* event_timer_op_to_string(timer_op const& v) {
     case timer_op::set:    return "set";
     case timer_op::reset:  return "reset";
     case timer_op::cancel: return "cancel";
-    default:               return "unknown_event_timer";
+    default:               return "unknown_timer_op";
     }
 }
 

@@ -32,6 +32,7 @@ list(APPEND check_PROGRAMS
     ut_ep_packet_error.cpp
     ut_ep_store.cpp
     ut_host_port.cpp
+    ut_timer.cpp
     ut_packet_id.cpp
     ut_packet_v3_1_1_connect.cpp
     ut_packet_v3_1_1_connack.cpp
