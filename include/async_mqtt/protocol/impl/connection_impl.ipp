@@ -62,7 +62,8 @@ recv(std::istream& is) {
                     raw_buf_ptr_ += header_remaining_length_buf_.size();
                     if (remaining_length_ == 0) {
                         auto ptr = raw_buf_.get();
-                        read_packets_.emplace_back(
+                        BOOST_ASSERT(!read_packet_);
+                        read_packet_.emplace(
                             buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                         );
                         initialize();
@@ -74,7 +75,8 @@ recv(std::istream& is) {
                     break;
                 }
                 if (multiplier_ == 128 * 128 * 128 * 128) {
-                    read_packets_.emplace_back(make_error_code(disconnect_reason_code::packet_too_large));
+                    BOOST_ASSERT(!read_packet_);
+                    read_packet_.emplace(make_error_code(disconnect_reason_code::packet_too_large));
                     initialize();
                     return;
                 }
@@ -90,7 +92,8 @@ recv(std::istream& is) {
             size -= copied_size;
             if (copied_size == remaining_length_) {
                 auto ptr = raw_buf_.get();
-                read_packets_.emplace_back(
+                BOOST_ASSERT(!read_packet_);
+                read_packet_.emplace(
                     buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                 );
                 initialize();
@@ -110,24 +113,24 @@ template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 typename basic_connection_impl<Role, PacketIdBytes>::error_packet&
 basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
-front() {
-    return read_packets_.front();
-}
-
-template <role Role, std::size_t PacketIdBytes>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
-pop_front() {
-    read_packets_.pop_front();
+get() {
+    return *read_packet_;
 }
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 bool
 basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
-empty() const {
-    return read_packets_.empty();
+has_value() const {
+    return read_packet_.has_value();
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
+clear() {
+    return read_packet_.reset();
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -523,9 +526,9 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
 process_recv_packet() {
-    while (!rpb_.empty()) {
-        auto ep = rpb_.front();
-        rpb_.pop_front();
+    if (rpb_.has_value()) {
+        auto ep = force_move(rpb_.get());
+        rpb_.clear();
         if (ep.ec) {
             status_ = connection_status::disconnected;
             cancel_timers();

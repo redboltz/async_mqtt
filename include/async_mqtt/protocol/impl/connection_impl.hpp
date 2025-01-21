@@ -191,9 +191,9 @@ private:
     class recv_packet_builder {
     public:
         void recv(std::istream& is);
-        error_packet& front();
-        void pop_front();
-        bool empty() const;
+        error_packet& get();
+        bool has_value() const;
+        void clear();
         void initialize();
     private:
         enum class read_state{fixed_header, remaining_length, payload} read_state_ = read_state::fixed_header;
@@ -203,7 +203,7 @@ private:
         std::shared_ptr<char []> raw_buf_;
         std::size_t raw_buf_size_ = 0;
         char* raw_buf_ptr_ = nullptr;
-        std::deque<error_packet> read_packets_;
+        std::optional<error_packet> read_packet_;
     };
 
     recv_packet_builder rpb_;
