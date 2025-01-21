@@ -94,6 +94,7 @@ recv(std::istream& is) {
                     buffer{ptr, raw_buf_size_, force_move(raw_buf_)}
                 );
                 initialize();
+                return;
             }
             else {
                 raw_buf_ptr_ += copied_size;
@@ -107,9 +108,9 @@ recv(std::istream& is) {
 
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
-typename basic_connection_impl<Role, PacketIdBytes>::error_packet
+typename basic_connection_impl<Role, PacketIdBytes>::error_packet&
 basic_connection_impl<Role, PacketIdBytes>::recv_packet_builder::
-front() const {
+front() {
     return read_packets_.front();
 }
 

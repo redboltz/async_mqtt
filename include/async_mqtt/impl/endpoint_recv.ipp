@@ -22,7 +22,7 @@ recv_op {
     std::optional<error_code> decided_error = std::nullopt;
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
     bool try_resend_from_queue = false;
-    enum { dispatch, prev, read, protocol_read, sent, complete } state = dispatch;
+    enum { dispatch, prev, instream, read, protocol_read, sent, complete } state = dispatch;
 
     template <typename Self>
     bool process_one_event(
@@ -174,7 +174,7 @@ recv_op {
                 if (!process_one_event(self)) return;
             }
             // all previous events processed
-            // and receive event is included in them
+            // and they include a receive event
             if (recv_packet) {
                 state = complete;
                 as::post(
@@ -183,8 +183,30 @@ recv_op {
                 );
             }
             else {
+                state = instream;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+        } break;
+        case instream: {
+            auto events{a_ep.con_.recv(a_ep.is_)};
+            std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
+            if (a_ep.recv_events_.empty()) {
+                // required more bytes
                 state = read;
                 as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                while (!a_ep.recv_events_.empty()) {
+                    if (!process_one_event(self)) return;
+                }
+                state = complete; // all events processed
+                as::post(
                     a_ep.get_executor(),
                     force_move(self)
                 );
@@ -199,8 +221,7 @@ recv_op {
         } break;
         case protocol_read: {
             a_ep.read_buf_.commit(bytes_transferred);
-            std::istream is{&a_ep.read_buf_};
-            auto events{a_ep.con_.recv(is)};
+            auto events{a_ep.con_.recv(a_ep.is_)};
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
             if (a_ep.recv_events_.empty()) {
                 // required more bytes

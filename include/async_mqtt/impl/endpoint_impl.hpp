@@ -311,6 +311,7 @@ private:
     stream_type stream_;
     std::size_t read_buffer_size_ = 65535; // TBD define constant
     as::streambuf read_buf_;
+    std::istream is_{&read_buf_};
     basic_rv_connection<Role, PacketIdBytes> con_;
 
     std::deque<v5::basic_publish_packet<PacketIdBytes>> publish_queue_;

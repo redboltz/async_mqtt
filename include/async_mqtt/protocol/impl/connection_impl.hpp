@@ -191,7 +191,7 @@ private:
     class recv_packet_builder {
     public:
         void recv(std::istream& is);
-        error_packet front() const;
+        error_packet& front();
         void pop_front();
         bool empty() const;
         void initialize();
