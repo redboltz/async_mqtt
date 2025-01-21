@@ -130,6 +130,9 @@ private:
             static_cast<int>(role::server);
     }
 
+    void
+    cancel_timers();
+
 private:
     basic_connection<Role, PacketIdBytes>& con_;
     protocol_version protocol_version_;
@@ -170,6 +173,10 @@ private:
 
     std::set<basic_pid_type> qos2_publish_handled_;
     std::set<basic_pid_type> qos2_publish_processing_;
+
+    bool pingreq_send_set_{false};
+    bool pingreq_recv_set_{false};
+    bool pingresp_recv_set_{false};
 
     struct error_packet {
         error_packet(error_code ec)

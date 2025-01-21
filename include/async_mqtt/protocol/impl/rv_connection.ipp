@@ -49,6 +49,15 @@ template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<basic_event_variant<PacketIdBytes>>
 basic_rv_connection<Role, PacketIdBytes>::
+notify_closed() {
+    base_type::notify_closed();
+    return force_move(events_);
+}
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+std::vector<basic_event_variant<PacketIdBytes>>
+basic_rv_connection<Role, PacketIdBytes>::
 set_pingreq_send_interval(
     std::chrono::milliseconds duration
 ) {

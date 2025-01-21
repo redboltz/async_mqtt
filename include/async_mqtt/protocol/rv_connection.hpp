@@ -30,6 +30,9 @@ public:
     notify_timer_fired(timer_kind kind);
 
     std::vector<basic_event_variant<PacketIdBytes>>
+    notify_closed();
+
+    std::vector<basic_event_variant<PacketIdBytes>>
     set_pingreq_send_interval(
         std::chrono::milliseconds duration
     );

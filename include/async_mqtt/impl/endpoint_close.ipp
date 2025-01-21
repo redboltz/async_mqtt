@@ -59,21 +59,43 @@ close_op {
                     << "already closed";
                 self.complete();
             } break;
-        case complete:
+        case complete: {
             ASYNC_MQTT_LOG("mqtt_impl", trace)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "close complete status:" << static_cast<int>(a_ep.status_);
-            a_ep.tim_pingreq_send_.cancel();
-            a_ep.tim_pingreq_recv_.cancel();
-            a_ep.tim_pingresp_recv_.cancel();
             a_ep.status_ = close_status::closed;
             ASYNC_MQTT_LOG("mqtt_impl", trace)
                 << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
                 << "process enqueued close";
-            a_ep.con_.notify_closed();
+            auto events = a_ep.con_.notify_closed();
+            for (auto& event : events) {
+                std::visit(
+                    overload {
+                        [&](async_mqtt::event::timer const& ev) {
+                            auto op = ev.get_op();
+                            BOOST_ASSERT(op == timer_op::cancel);
+                            switch (ev.get_kind()) {
+                            case timer_kind::pingreq_send:
+                                cancel_pingreq_send_timer(ep);
+                                break;
+                            case timer_kind::pingreq_recv:
+                                cancel_pingreq_recv_timer(ep);
+                                break;
+                            case timer_kind::pingresp_recv:
+                                cancel_pingresp_recv_timer(ep);
+                                break;
+                            }
+                        },
+                        [&](auto const&) {
+                            BOOST_ASSERT(false);
+                        }
+                    },
+                    event
+                );
+            }
             a_ep.close_queue_.poll();
             self.complete();
-            break;
+        } break;
         }
     }
 };

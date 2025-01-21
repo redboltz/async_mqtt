@@ -64,23 +64,37 @@ send_op {
                 [&](async_mqtt::event::timer const& ev) {
                     switch (ev.get_kind()) {
                     case timer_kind::pingreq_send:
-                        if (ev.get_op() == timer_op::reset) {
+                        switch (ev.get_op()) {
+                        case timer_op::reset:
                             reset_pingreq_send_timer(ep, ev.get_ms());
-                        }
-                        else {
+                            break;
+                        case timer_op::cancel:
+                            cancel_pingreq_send_timer(ep);
+                            break;
+                        default:
                             BOOST_ASSERT(false);
+                            break;
+                        }
+                        break;
+                    case timer_kind::pingreq_recv:
+                        switch (ev.get_op()) {
+                        case timer_op::cancel:
+                            cancel_pingreq_recv_timer(ep);
+                            break;
+                        default:
+                            BOOST_ASSERT(false);
+                            break;
                         }
                         break;
                     case timer_kind::pingresp_recv:
-                        if (ev.get_op() == timer_op::reset) {
+                        switch (ev.get_op()) {
+                        case timer_op::reset:
                             reset_pingresp_recv_timer(ep, ev.get_ms());
-                        }
-                        else {
+                            break;
+                        default:
                             BOOST_ASSERT(false);
+                            break;
                         }
-                        break;
-                    default:
-                        BOOST_ASSERT(false);
                         break;
                     }
                     return true;

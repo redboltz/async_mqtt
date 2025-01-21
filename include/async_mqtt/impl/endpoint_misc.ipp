@@ -394,7 +394,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
 ) {
     if constexpr (Role == role::client || Role == role::any) {
         if (ms) {
-            ep->tim_pingresp_recv_.cancel();
+            cancel_pingresp_recv_timer(ep);
             ep->tim_pingresp_recv_.expires_after(
                 *ms
             );
@@ -409,7 +409,8 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                 std::visit(
                                     overload {
                                         [&](async_mqtt::event::timer const& ev) {
-                                            if (ev.get_kind() == timer_kind::pingresp_recv) {
+                                            switch (ev.get_kind()) {
+                                            case timer_kind::pingresp_recv:
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
                                                     reset_pingresp_recv_timer(ep, ev.get_ms());
@@ -421,9 +422,20 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                     ep->tim_pingresp_recv_.cancel();
                                                     break;
                                                 }
-                                            }
-                                            else {
+                                                break;
+                                            case timer_kind::pingreq_send:
+                                                switch (ev.get_op()) {
+                                                case timer_op::cancel:
+                                                    ep->tim_pingreq_send_.cancel();
+                                                    break;
+                                                default:
+                                                    BOOST_ASSERT(false);
+                                                    break;
+                                                }
+                                                break;
+                                            default:
                                                 BOOST_ASSERT(false);
+                                                break;
                                             }
                                         },
                                         [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
@@ -461,6 +473,16 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
         }
     }
 }
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingresp_recv_timer(
+    this_type_sp ep
+) {
+    ep->tim_pingresp_recv_.cancel();
+}
+
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE

@@ -31,6 +31,7 @@ send(Packet packet) {
                 if constexpr(Role == role::client || Role == role::any) {
                     if (is_client_ && pingreq_send_interval_ms_) {
                         if (status_ == connection_status::disconnected) return;
+                        pingreq_send_set_ = true;
                         con_.on_timer_op(
                             timer_op::reset,
                             timer_kind::pingreq_send,
@@ -257,6 +258,7 @@ process_send_packet(
         }
         else {
             status_ = connection_status::disconnected;
+            cancel_timers();
         }
     }
 
@@ -286,6 +288,7 @@ process_send_packet(
         }
         else {
             status_ = connection_status::disconnected;
+            cancel_timers();
         }
     }
 
@@ -549,6 +552,7 @@ process_send_packet(
             release_packet_id_if_send_error
         );
         if (pingresp_recv_timeout_ms_) {
+            pingresp_recv_set_ = true;
             con_.on_timer_op(
                 timer_op::reset,
                 timer_kind::pingresp_recv,
@@ -560,6 +564,7 @@ process_send_packet(
 
     if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
         status_ = connection_status::disconnected;
+        cancel_timers();
         con_.on_send(
             force_move(actual_packet),
             release_packet_id_if_send_error

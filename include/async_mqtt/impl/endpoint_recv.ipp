@@ -73,12 +73,17 @@ recv_op {
                 [&](async_mqtt::event::timer ev) {
                     switch (ev.get_kind()) {
                     case timer_kind::pingreq_send:
-                        // receive server keep alive property in connack
-                        if (ev.get_op() == timer_op::reset) {
+                        switch (ev.get_op()) {
+                        case timer_op::reset:
+                            // receive server keep alive property in connack
                             reset_pingreq_send_timer(ep, ev.get_ms());
-                        }
-                        else {
+                            break;
+                        case timer_op::cancel:
+                            cancel_pingreq_send_timer(ep);
+                            break;
+                        default:
                             BOOST_ASSERT(false);
+                            break;
                         }
                         break;
                     case timer_kind::pingreq_recv:

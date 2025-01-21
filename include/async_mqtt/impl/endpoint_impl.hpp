@@ -293,6 +293,10 @@ private:
         std::optional<std::chrono::milliseconds> ms
     );
 
+    static void cancel_pingresp_recv_timer(
+        this_type_sp ep
+    );
+
     void notify_retry_one();
     void complete_retry_one();
     void notify_retry_all();

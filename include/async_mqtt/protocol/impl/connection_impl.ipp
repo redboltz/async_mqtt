@@ -172,6 +172,7 @@ basic_connection_impl<Role, PacketIdBytes>::
 notify_timer_fired(timer_kind kind) {
     switch (kind) {
     case timer_kind::pingreq_send:
+        pingreq_send_set_ = false;
         switch (protocol_version_) {
         case protocol_version::v3_1_1:
             send(v3_1_1::pingreq_packet{});
@@ -185,6 +186,7 @@ notify_timer_fired(timer_kind kind) {
         }
         break;
     case timer_kind::pingreq_recv:
+        pingreq_recv_set_ = false;
         switch (protocol_version_) {
         case protocol_version::v3_1_1:
             con_.on_close();
@@ -203,6 +205,7 @@ notify_timer_fired(timer_kind kind) {
         }
         break;
     case timer_kind::pingresp_recv:
+        pingresp_recv_set_ = false;
         switch (protocol_version_) {
         case protocol_version::v3_1_1:
             con_.on_close();
@@ -232,6 +235,7 @@ void
 basic_connection_impl<Role, PacketIdBytes>::
 notify_closed() {
     status_ = connection_status::disconnected;
+    cancel_timers();
 }
 
 template <role Role, std::size_t PacketIdBytes>
@@ -243,6 +247,7 @@ set_pingreq_send_interval(
 ) {
     if (duration == std::chrono::milliseconds::zero()) {
         pingreq_send_interval_ms_.reset();
+        pingreq_send_set_ = false;
         con_.on_timer_op(
             timer_op::cancel,
             timer_kind::pingreq_send
@@ -250,6 +255,7 @@ set_pingreq_send_interval(
     }
     else {
         pingreq_send_interval_ms_.emplace(duration);
+        pingreq_send_set_ = true;
         con_.on_timer_op(
             timer_op::reset,
             timer_kind::pingreq_send,
@@ -520,9 +526,10 @@ process_recv_packet() {
         auto ep = rpb_.front();
         rpb_.pop_front();
         if (ep.ec) {
+            status_ = connection_status::disconnected;
+            cancel_timers();
             con_.on_error(ep.ec);
             con_.on_close();
-            status_ = connection_status::disconnected;
             return;
         }
         auto& buf{ep.packet};
@@ -1245,29 +1252,33 @@ process_recv_packet() {
                     return true;
                 },
                 [&](v3_1_1::pingresp_packet& p) {
-                    con_.on_receive(p);
+                    pingresp_recv_set_ = false;
                     con_.on_timer_op(
                         timer_op::cancel,
                         timer_kind::pingresp_recv
                     );
+                    con_.on_receive(p);
                     return true;
                 },
                 [&](v5::pingresp_packet& p) {
-                    con_.on_receive(p);
+                    pingresp_recv_set_ = false;
                     con_.on_timer_op(
                         timer_op::cancel,
                         timer_kind::pingresp_recv
                     );
+                    con_.on_receive(p);
                     return true;
                 },
                 [&](v3_1_1::disconnect_packet& p) {
                     con_.on_receive(p);
                     status_ = connection_status::disconnected;
+                    cancel_timers();
                     return true;
                 },
                 [&](v5::disconnect_packet& p) {
                     con_.on_receive(p);
                     status_ = connection_status::disconnected;
+                    cancel_timers();
                     return true;
                 },
                 [&](v5::auth_packet& p) {
@@ -1282,6 +1293,7 @@ process_recv_packet() {
 
         if (!result) return;
         if (pingreq_recv_timeout_ms_) {
+            pingreq_recv_set_ = false;
             con_.on_timer_op(
                 timer_op::cancel,
                 timer_kind::pingreq_recv
@@ -1289,6 +1301,7 @@ process_recv_packet() {
             if (status_ == connection_status::connecting ||
                 status_ == connection_status::connected
             ) {
+                pingreq_recv_set_ = true;
                 con_.on_timer_op(
                     timer_op::set,
                     timer_kind::pingreq_recv,
@@ -1400,6 +1413,35 @@ basic_connection_impl<Role, PacketIdBytes>::
 get_connection_status() const {
     return status_;
 }
+
+template <role Role, std::size_t PacketIdBytes>
+ASYNC_MQTT_HEADER_ONLY_INLINE
+void
+basic_connection_impl<Role, PacketIdBytes>::
+cancel_timers() {
+    if (pingreq_send_set_) {
+        pingreq_send_set_ = false;
+        con_.on_timer_op(
+            timer_op::cancel,
+            timer_kind::pingreq_send
+        );
+    }
+    if (pingreq_recv_set_) {
+        pingreq_recv_set_ = false;
+        con_.on_timer_op(
+            timer_op::cancel,
+            timer_kind::pingreq_recv
+        );
+    }
+    if (pingresp_recv_set_) {
+        pingresp_recv_set_ = false;
+        con_.on_timer_op(
+            timer_op::cancel,
+            timer_kind::pingresp_recv
+        );
+    }
+}
+
 
 } // namespace detail
 
