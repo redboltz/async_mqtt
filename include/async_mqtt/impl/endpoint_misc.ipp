@@ -219,11 +219,10 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                 std::visit(
                                     overload {
                                         [&](event_ns::timer const& ev) {
-                                            if (ev.get_kind() == timer_kind::pingreq_send) {
+                                            switch (ev.get_kind()) {
+                                            case timer_kind::pingreq_send:
                                                 switch (ev.get_op()) {
                                                 case timer_op::set:
-                                                    reset_pingreq_send_timer(ep, ev.get_ms());
-                                                    break;
                                                 case timer_op::reset:
                                                     reset_pingreq_send_timer(ep, ev.get_ms());
                                                     break;
@@ -231,9 +230,20 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                     ep->tim_pingreq_send_.cancel();
                                                     break;
                                                 }
-                                            }
-                                            else {
+                                                break;
+                                            case timer_kind::pingresp_recv:
+                                                switch (ev.get_op()) {
+                                                case timer_op::set:
+                                                case timer_op::reset:
+                                                    reset_pingresp_recv_timer(ep, ev.get_ms());
+                                                    break;
+                                                default:
+                                                    BOOST_ASSERT(false);
+                                                }
+                                                break;
+                                            default:
                                                 BOOST_ASSERT(false);
+                                                break;
                                             }
                                         },
                                         [&](event_ns::basic_send<PacketIdBytes>& ev) {
