@@ -179,10 +179,14 @@ notify_timer_fired(timer_kind kind) {
         pingreq_send_set_ = false;
         switch (protocol_version_) {
         case protocol_version::v3_1_1:
-            send(v3_1_1::pingreq_packet{});
+            if (status_ == connection_status::connected) {
+                send(v3_1_1::pingreq_packet{});
+            }
             break;
         case protocol_version::v5:
-            send(v5::pingreq_packet{});
+            if (status_ == connection_status::connected) {
+                send(v5::pingreq_packet{});
+            }
             break;
         default:
             BOOST_ASSERT(false);
@@ -196,12 +200,14 @@ notify_timer_fired(timer_kind kind) {
             con_.on_close();
             break;
         case protocol_version::v5:
-            send(
-                v5::disconnect_packet{
-                    disconnect_reason_code::keep_alive_timeout,
-                    properties{}
-                }
-            );
+            if (status_ == connection_status::connected) {
+                send(
+                    v5::disconnect_packet{
+                        disconnect_reason_code::keep_alive_timeout,
+                        properties{}
+                    }
+                );
+            }
             break;
         default:
             BOOST_ASSERT(false);
@@ -215,12 +221,14 @@ notify_timer_fired(timer_kind kind) {
             con_.on_close();
             break;
         case protocol_version::v5:
-            send(
-                v5::disconnect_packet{
-                    disconnect_reason_code::keep_alive_timeout,
-                    properties{}
-                }
-            );
+            if (status_ == connection_status::connected) {
+                send(
+                    v5::disconnect_packet{
+                        disconnect_reason_code::keep_alive_timeout,
+                        properties{}
+                    }
+                );
+            }
             break;
         default:
             BOOST_ASSERT(false);
