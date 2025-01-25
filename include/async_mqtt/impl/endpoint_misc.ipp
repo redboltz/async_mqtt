@@ -139,9 +139,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
                 [&](async_mqtt::event::timer const& ev) {
                     if (ev.get_kind() == timer_kind::pingreq_send) {
                         switch (ev.get_op()) {
-                        case timer_op::set:
-                            set_pingreq_send_timer(ep, ev.get_ms());
-                            break;
                         case timer_op::reset:
                             reset_pingreq_send_timer(ep, ev.get_ms());
                             break;
@@ -200,10 +197,11 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::initialize() {
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
+    cancel_pingreq_send_timer(ep);
     if constexpr (Role == role::client || Role == role::any) {
         if (ms) {
             ep->tim_pingreq_send_.expires_after(
@@ -222,7 +220,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                             switch (ev.get_kind()) {
                                             case timer_kind::pingreq_send:
                                                 switch (ev.get_op()) {
-                                                case timer_op::set:
                                                 case timer_op::reset:
                                                     reset_pingreq_send_timer(ep, ev.get_ms());
                                                     break;
@@ -233,7 +230,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
                                                 break;
                                             case timer_kind::pingresp_recv:
                                                 switch (ev.get_op()) {
-                                                case timer_op::set:
                                                 case timer_op::reset:
                                                     reset_pingresp_recv_timer(ep, ev.get_ms());
                                                     break;
@@ -272,17 +268,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_timer(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
-    this_type_sp ep,
-    std::optional<std::chrono::milliseconds> ms
-) {
-    cancel_pingreq_send_timer(ep);
-    set_pingreq_send_timer(ep, ms);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_send_timer(
     this_type_sp ep
 ) {
@@ -292,10 +277,11 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_send_timer(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
     this_type_sp ep,
     std::optional<std::chrono::milliseconds> ms
 ) {
+    cancel_pingreq_recv_timer(ep);
     if constexpr (Role == role::server || Role == role::any) {
         if (ms) {
             ep->tim_pingreq_recv_.expires_after(
@@ -314,9 +300,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
                                         [&](async_mqtt::event::timer const& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_recv) {
                                                 switch (ev.get_op()) {
-                                                case timer_op::set:
-                                                    reset_pingreq_recv_timer(ep, ev.get_ms());
-                                                    break;
                                                 case timer_op::reset:
                                                     reset_pingreq_recv_timer(ep, ev.get_ms());
                                                     break;
@@ -368,17 +351,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_recv_timer(
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 void
-basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
-    this_type_sp ep,
-    std::optional<std::chrono::milliseconds> ms
-) {
-    cancel_pingreq_recv_timer(ep);
-    set_pingreq_recv_timer(ep, ms);
-}
-
-template <role Role, std::size_t PacketIdBytes, typename NextLayer>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::cancel_pingreq_recv_timer(
     this_type_sp ep
 ) {
@@ -412,9 +384,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                             switch (ev.get_kind()) {
                                             case timer_kind::pingresp_recv:
                                                 switch (ev.get_op()) {
-                                                case timer_op::set:
-                                                    reset_pingresp_recv_timer(ep, ev.get_ms());
-                                                    break;
                                                 case timer_op::reset:
                                                     reset_pingresp_recv_timer(ep, ev.get_ms());
                                                     break;

@@ -264,10 +264,6 @@ private:
     bool enqueue_publish(v5::basic_publish_packet<PacketIdBytes>& packet);
     void initialize();
 
-    static void set_pingreq_send_timer(
-        this_type_sp ep,
-        std::optional<std::chrono::milliseconds> ms
-    );
     static void reset_pingreq_send_timer(
         this_type_sp ep,
         std::optional<std::chrono::milliseconds> ms
@@ -276,10 +272,6 @@ private:
         this_type_sp ep
     );
 
-    static void set_pingreq_recv_timer(
-        this_type_sp ep,
-        std::optional<std::chrono::milliseconds> ms
-    );
     static void reset_pingreq_recv_timer(
         this_type_sp ep,
         std::optional<std::chrono::milliseconds> ms

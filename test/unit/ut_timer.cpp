@@ -40,11 +40,6 @@ BOOST_AUTO_TEST_CASE(kind) {
 BOOST_AUTO_TEST_CASE(op) {
     {
         std::stringstream ss;
-        ss << am::timer_op::set;
-        BOOST_TEST(ss.str() == "set");
-    }
-    {
-        std::stringstream ss;
         ss << am::timer_op::reset;
         BOOST_TEST(ss.str() == "reset");
     }

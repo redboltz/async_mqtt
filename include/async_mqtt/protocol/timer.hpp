@@ -18,7 +18,6 @@ enum class timer_kind {
 };
 
 enum class timer_op {
-    set,
     reset,
     cancel
 };

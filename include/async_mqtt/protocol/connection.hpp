@@ -71,7 +71,7 @@ public:
      * @brief Notify that a timer has fired.
      *
      * Timer operations are requested through @ref on_timer_op().
-     * Users are responsible for setting, resetting, or canceling the timer. When the timer fires,
+     * Users are responsible for resetting (cancel and then set) or canceling the timer. When the timer fires,
      * this function is expected to be called.
      *
      * @li If the kind is @ref timer_kind::pingreq_send, @ref on_send() is called with
@@ -366,7 +366,7 @@ private:
      * This function is called when a timer operation is required in situations arising from
      * @ref set_pingreq_send_interval(), @ref send(), or @ref recv() **before these functions return**.
      *
-     * @param timer_op The type of operation (set, reset, or cancel).
+     * @param timer_op The type of operation (reset or cancel).
      * @param kind     The kind of timer.
      */
     virtual void on_timer_op(

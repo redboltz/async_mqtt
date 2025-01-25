@@ -32,7 +32,6 @@ std::ostream& operator<<(std::ostream& o, timer_kind v)
 constexpr
 char const* event_timer_op_to_string(timer_op const& v) {
     switch (v) {
-    case timer_op::set:    return "set";
     case timer_op::reset:  return "reset";
     case timer_op::cancel: return "cancel";
     default:               return "unknown_timer_op";

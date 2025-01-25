@@ -1305,19 +1305,21 @@ process_recv_packet() {
 
         if (!result) return;
         if (pingreq_recv_timeout_ms_) {
-            pingreq_recv_set_ = false;
-            con_.on_timer_op(
-                timer_op::cancel,
-                timer_kind::pingreq_recv
-            );
             if (status_ == connection_status::connecting ||
                 status_ == connection_status::connected
             ) {
                 pingreq_recv_set_ = true;
                 con_.on_timer_op(
-                    timer_op::set,
+                    timer_op::reset,
                     timer_kind::pingreq_recv,
                     *pingreq_recv_timeout_ms_
+                );
+            }
+            else {
+                pingreq_recv_set_ = false;
+                con_.on_timer_op(
+                    timer_op::cancel,
+                    timer_kind::pingreq_recv
                 );
             }
         }
