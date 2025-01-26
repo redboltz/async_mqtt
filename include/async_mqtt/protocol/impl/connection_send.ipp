@@ -361,6 +361,8 @@ process_send_packet(
                             }
                         }
 
+                        // Topic Alias is removed but Topic Name is added
+                        // so the size of packet could become larger
                         auto store_packet =
                             ActualPacket(
                                 packet_id,
@@ -397,6 +399,10 @@ process_send_packet(
                             }
                         }
 
+                        // Topic Alias is removed.
+                        // So the size of packet couldn't become larger.
+                        // validate_maximum_packet_size(store_packet.size())
+                        // is not required here.
                         auto store_packet =
                             ActualPacket(
                                 packet_id,
@@ -405,18 +411,6 @@ process_send_packet(
                                 actual_packet.opts(),
                                 force_move(props)
                             );
-                        if (!validate_maximum_packet_size(store_packet.size())) {
-                            con_.on_error(
-                                make_error_code(
-                                    mqtt_error::packet_not_allowed_to_send
-                                )
-                            );
-                            if (packet_id != 0) {
-                                pid_man_.release_id(packet_id);
-                                con_.on_packet_id_release(packet_id);
-                            }
-                            return false;
-                        }
                         store_packet.set_dup(true);
                         store_.add(force_move(store_packet));
                     }

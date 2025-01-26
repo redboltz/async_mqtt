@@ -109,6 +109,42 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(v5_offline_send_fail) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    c.set_offline_publish(false); // default
+    auto pid_opt = c.acquire_unique_packet_id();
+    auto publish_reg_t1 = am::v5::publish_packet(
+        *pid_opt,
+        "topic1",
+        "payload1",
+        am::qos::at_least_once
+    );
+    auto events = c.send(publish_reg_t1);
+    BOOST_TEST(events.size() == 2);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::mqtt_error::packet_not_allowed_to_send);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+    std::visit(
+        am::overload {
+            [&](am::event::packet_id_released const& ev) {
+                BOOST_TEST(ev.get() == *pid_opt);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[1]
+    );
+}
+
 BOOST_AUTO_TEST_CASE(v5_topic_alias_offline_fail) {
     am::rv_connection<am::role::client> c{am::protocol_version::v5};
     c.set_offline_publish(true);
