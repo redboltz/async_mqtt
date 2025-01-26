@@ -126,11 +126,7 @@ BOOST_AUTO_TEST_CASE(v5_non_allocate_pid_fail) {
     {
         auto connack = am::v5::connack_packet{
             false,   // session_present
-            am::connect_reason_code::success,
-            am::properties{
-                am::property::maximum_packet_size{33},
-                am::property::topic_alias_maximum{0xffff}
-            }
+            am::connect_reason_code::success
         };
         c.send(connect);
 
@@ -329,6 +325,129 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias_size_over_resend) {
             events[1]
         );
     }
+}
+
+BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto connect = am::v5::connect_packet{
+        false,   // clean_start
+        0, // keep_alive
+        "cid1",
+        std::nullopt, // will
+        "user1",
+        "pass1"
+    };
+
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success
+        };
+        c.send(connect);
+
+        auto connack_str{am::to_string(connack.const_buffer_sequence())};
+        std::istringstream is{connack_str};
+        c.recv(is);
+    }
+    {
+        auto suback = am::v5::suback_packet{
+            0x1234,         // packet_id
+            {
+                am::suback_reason_code::granted_qos_0
+            }
+        };
+        auto suback_str{am::to_string(suback.const_buffer_sequence())};
+        std::istringstream is{suback_str};
+
+        auto disconnect = am::v5::disconnect_packet{
+            am::disconnect_reason_code::protocol_error
+        };
+        auto events = c.recv(is);
+        BOOST_TEST(events.size() == 3);
+        std::visit(
+            am::overload {
+                [&](am::error_code const& e) {
+                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[0]
+        );
+        std::visit(
+            am::overload {
+                [&](am::event::send const& ev) {
+                    BOOST_TEST(ev.get() == disconnect);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[1]
+        );
+        std::visit(
+            am::overload {
+                [&](am::event::close const&) {
+                    BOOST_TEST(true);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[2]
+        );
+    }
+    {
+        auto unsuback = am::v5::unsuback_packet(
+            0x1234,         // packet_id
+            std::vector<am::unsuback_reason_code> {
+                am::unsuback_reason_code::no_subscription_existed
+            }
+        );
+        auto unsuback_str{am::to_string(unsuback.const_buffer_sequence())};
+        std::istringstream is{unsuback_str};
+
+        auto disconnect = am::v5::disconnect_packet{
+            am::disconnect_reason_code::protocol_error
+        };
+        auto events = c.recv(is);
+        BOOST_TEST(events.size() == 3);
+        std::visit(
+            am::overload {
+                [&](am::error_code const& e) {
+                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[0]
+        );
+        std::visit(
+            am::overload {
+                [&](am::event::send const& ev) {
+                    BOOST_TEST(ev.get() == disconnect);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[1]
+        );
+        std::visit(
+            am::overload {
+                [&](am::event::close const&) {
+                    BOOST_TEST(true);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[2]
+        );
+    }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
