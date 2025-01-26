@@ -317,8 +317,17 @@ process_send_packet(
             actual_packet.opts().get_qos() == qos::exactly_once
         ) {
             auto packet_id = actual_packet.packet_id();
-            // TBD use error report instead of assert
-            BOOST_ASSERT(pid_man_.is_used_id(packet_id));
+            if (!pid_man_.is_used_id(packet_id)) {
+                ASYNC_MQTT_LOG("mqtt_impl", error)
+                    << "packet_id:" << packet_id
+                    << " is neither allocated nor registerd.";
+                con_.on_error(
+                    make_error_code(
+                        mqtt_error::packet_identifier_invalid
+                    )
+                );
+                return false;
+            }
             if (need_store_ &&
                 (
                     status_ != connection_status::disconnected ||

@@ -29,6 +29,7 @@ char const* mqtt_error_to_string(mqtt_error v) {
     case mqtt_error::all_error_detected:                     return "all_error_detected";
     case mqtt_error::packet_identifier_fully_used:           return "packet_identifier_fully_used";
     case mqtt_error::packet_identifier_conflict:             return "packet_identifier_conflict";
+    case mqtt_error::packet_identifier_invalid:              return "packet_identifier_invalid";
     case mqtt_error::packet_not_allowed_to_send:             return "packet_not_allowed_to_send";
     case mqtt_error::packet_not_allowed_to_store:            return "packet_not_allowed_to_store";
     case mqtt_error::packet_not_regulated:                   return "packet_not_regulated";

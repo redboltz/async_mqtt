@@ -153,8 +153,20 @@ BOOST_AUTO_TEST_CASE(category_detail) {
         BOOST_TEST(e.message() == "partial_error_detected");
     }
     {
+        am::error_code e = am::make_error_code(am::mqtt_error::all_error_detected);
+        BOOST_TEST(e.message() == "all_error_detected");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_fully_used);
+        BOOST_TEST(e.message() == "packet_identifier_fully_used");
+    }
+    {
         am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_conflict);
         BOOST_TEST(e.message() == "packet_identifier_conflict");
+    }
+    {
+        am::error_code e = am::make_error_code(am::mqtt_error::packet_identifier_invalid);
+        BOOST_TEST(e.message() == "packet_identifier_invalid");
     }
     {
         am::error_code e = am::make_error_code(am::mqtt_error::packet_not_allowed_to_send);
