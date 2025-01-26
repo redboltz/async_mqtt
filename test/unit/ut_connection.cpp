@@ -109,6 +109,57 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(v5_non_allocate_pid_fail) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto connect = am::v5::connect_packet{
+        false,   // clean_start
+        0, // keep_alive
+        "cid1",
+        std::nullopt, // will
+        "user1",
+        "pass1",
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
+    };
+
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success,
+            am::properties{
+                am::property::maximum_packet_size{33},
+                am::property::topic_alias_maximum{0xffff}
+            }
+        };
+        c.send(connect);
+
+        auto connack_str{am::to_string(connack.const_buffer_sequence())};
+        std::istringstream is{connack_str};
+        c.recv(is);
+    }
+
+    auto publish = am::v5::publish_packet(
+        1,
+        "topic1",
+        "payload1",
+        am::qos::at_least_once
+    );
+    auto events = c.send(publish);
+    BOOST_TEST(events.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::mqtt_error::packet_identifier_invalid);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+}
+
 BOOST_AUTO_TEST_CASE(v5_offline_send_fail) {
     am::rv_connection<am::role::client> c{am::protocol_version::v5};
     c.set_offline_publish(false); // default
