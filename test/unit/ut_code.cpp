@@ -480,6 +480,18 @@ BOOST_AUTO_TEST_CASE( disconnect_reason_code ) {
         BOOST_TEST(ss.str() == std::string_view("topic_name_invalid"));
     }
     {
+        auto c = am::disconnect_reason_code::receive_maximum_exceeded;
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("receive_maximum_exceeded"));
+    }
+    {
+        auto c = am::disconnect_reason_code::topic_alias_invalid;
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("topic_alias_invalid"));
+    }
+    {
         auto c = am::disconnect_reason_code::packet_too_large;
         std::stringstream ss;
         ss << c;

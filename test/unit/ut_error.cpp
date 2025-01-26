@@ -192,4 +192,13 @@ BOOST_AUTO_TEST_CASE(category_detail) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(unknown) {
+    {
+        auto c = am::mqtt_error(99);
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("unknown_mqtt_error"));
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
