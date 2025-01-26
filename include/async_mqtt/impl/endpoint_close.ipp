@@ -86,6 +86,9 @@ close_op {
                                 break;
                             }
                         },
+                        [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> const& ev) {
+                            a_ep.notify_release_pid(ev.get());
+                        },
                         [&](auto const&) {
                             BOOST_ASSERT(false);
                         }

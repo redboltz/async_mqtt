@@ -339,7 +339,7 @@ private:
      * @brief Handler for packet_id release notifications.
      *
      * This function is called when a packet_id is released in
-     * @ref release_packet_id(), @ref send(), or @ref recv() **before these functions return**.
+     * @ref release_packet_id(), @ref send(), @ref notify_closed(), or @ref recv() **before these functions return**.
      * After this notification, the packet_id becomes reusable.
      *
      * @param packet_id The packet_id that was released.

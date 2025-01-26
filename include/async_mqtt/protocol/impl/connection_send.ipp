@@ -292,6 +292,25 @@ process_send_packet(
         }
     }
 
+    // reject offline topic_alias
+    if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
+        if (status_ != connection_status::connected &&
+            get_topic_alias(actual_packet.props())
+        ) {
+            con_.on_error(
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
+                )
+            );
+            auto packet_id = actual_packet.packet_id();
+            if (packet_id != 0) {
+                pid_man_.release_id(packet_id);
+                con_.on_packet_id_release(packet_id);
+            }
+            return false;
+        }
+    }
+
     // store publish/pubrel packet
     if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
         if (actual_packet.opts().get_qos() == qos::at_least_once ||
@@ -458,28 +477,30 @@ process_send_packet(
                     return false;
                 }
             }
-            else if (auto_map_topic_alias_send_) {
-                if (topic_alias_send_) {
-                    if (auto ta_opt = topic_alias_send_->find(actual_packet.topic())) {
-                        ASYNC_MQTT_LOG("mqtt_impl", trace)
-                            << "topia alias : " << actual_packet.topic() << " - " << *ta_opt
-                            << " is found." ;
-                        actual_packet.remove_topic_add_topic_alias(*ta_opt);
-                    }
-                    else {
-                        auto lru_ta = topic_alias_send_->get_lru_alias();
-                        topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alias
-                        actual_packet.add_topic_alias(lru_ta);
+            else if (status_ == connection_status::connected) {
+                if (auto_map_topic_alias_send_) {
+                    if (topic_alias_send_) {
+                        if (auto ta_opt = topic_alias_send_->find(actual_packet.topic())) {
+                            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                << "topia alias : " << actual_packet.topic() << " - " << *ta_opt
+                                << " is found." ;
+                            actual_packet.remove_topic_add_topic_alias(*ta_opt);
+                        }
+                        else {
+                            auto lru_ta = topic_alias_send_->get_lru_alias();
+                            topic_alias_send_->insert_or_update(actual_packet.topic(), lru_ta); // remap topic alias
+                            actual_packet.add_topic_alias(lru_ta);
+                        }
                     }
                 }
-            }
-            else if (auto_replace_topic_alias_send_) {
-                if (topic_alias_send_) {
-                    if (auto ta_opt = topic_alias_send_->find(actual_packet.topic())) {
-                        ASYNC_MQTT_LOG("mqtt_impl", trace)
-                            << "topia alias : " << actual_packet.topic() << " - " << *ta_opt
-                            << " is found." ;
-                        actual_packet.remove_topic_add_topic_alias(*ta_opt);
+                else if (auto_replace_topic_alias_send_) {
+                    if (topic_alias_send_) {
+                        if (auto ta_opt = topic_alias_send_->find(actual_packet.topic())) {
+                            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                                << "topia alias : " << actual_packet.topic() << " - " << *ta_opt
+                                << " is found." ;
+                            actual_packet.remove_topic_add_topic_alias(*ta_opt);
+                        }
                     }
                 }
             }

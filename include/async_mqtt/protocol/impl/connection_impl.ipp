@@ -246,7 +246,42 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 void
 basic_connection_impl<Role, PacketIdBytes>::
 notify_closed() {
+    maximum_packet_size_send_ = packet_size_no_limit;
+    maximum_packet_size_recv_ = packet_size_no_limit;
     status_ = connection_status::disconnected;
+    topic_alias_send_ = std::nullopt;
+    topic_alias_recv_ = std::nullopt;
+
+    for (auto packet_id : pid_suback_) {
+        release_packet_id(packet_id);
+    }
+    pid_suback_.clear();
+
+    for (auto packet_id : pid_unsuback_) {
+        release_packet_id(packet_id);
+    }
+    pid_unsuback_.clear();
+
+    if (!need_store_) {
+        qos2_publish_processing_.clear();
+        qos2_publish_handled_.clear();
+
+        for (auto packet_id : pid_puback_) {
+            release_packet_id(packet_id);
+        }
+        pid_puback_.clear();
+
+        for (auto packet_id : pid_pubrec_) {
+            release_packet_id(packet_id);
+        }
+        pid_pubrec_.clear();
+
+        for (auto packet_id : pid_pubcomp_) {
+            release_packet_id(packet_id);
+        }
+        pid_pubcomp_.clear();
+    }
+
     cancel_timers();
 }
 
