@@ -657,6 +657,55 @@ process_recv_packet() {
         auto& pv{*pv_opt};
         ASYNC_MQTT_LOG("mqtt_impl", trace)
             << "recv:" << pv;
+
+        auto protocol_satisfied = pv.visit(
+            [this](auto const& p) {
+                using packet_type = std::decay_t<decltype(p)>;
+                if constexpr (is_connect<packet_type>()) {
+                    if (status_ != connection_status::disconnected) {
+                        con_.on_error(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        return false;
+                    }
+                }
+                else if constexpr (is_connack<packet_type>()) {
+                    if (status_ != connection_status::connecting) {
+                        con_.on_error(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        return false;
+                    }
+                }
+                else if constexpr (is_auth<packet_type>()) {
+                    if (status_ == connection_status::disconnected) {
+                        con_.on_error(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        return false;
+                    }
+                }
+                else {
+                    if (status_ != connection_status::connected) {
+                        con_.on_error(
+                            make_error_code(
+                                disconnect_reason_code::protocol_error
+                            )
+                        );
+                        return false;
+                    }
+                }
+                return true;
+            }
+        );
+        if (!protocol_satisfied) return;
+
         auto result = pv.visit(
             // do internal protocol processing
             overload {

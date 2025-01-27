@@ -68,12 +68,13 @@ basic_connection_impl<Role, PacketIdBytes>::
 process_send_packet(
     ActualPacket actual_packet
 ) {
+    using packet_type = std::decay_t<ActualPacket>;
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> release_packet_id_if_send_error;
     // MQTT protocol sendable packet check
     if (
         !(
-            (can_send_as_client(Role) && is_client_sendable<std::decay_t<ActualPacket>>()) ||
-            (can_send_as_server(Role) && is_server_sendable<std::decay_t<ActualPacket>>())
+            (can_send_as_client(Role) && is_client_sendable<packet_type>()) ||
+            (can_send_as_server(Role) && is_server_sendable<packet_type>())
         )
     ) {
         con_.on_error(
@@ -86,17 +87,17 @@ process_send_packet(
 
     auto version_check =
         [&] {
-            if (protocol_version_ == protocol_version::v3_1_1 && is_v3_1_1<ActualPacket>()) {
+            if (protocol_version_ == protocol_version::v3_1_1 && is_v3_1_1<packet_type>()) {
                 return true;
             }
-            if (protocol_version_ == protocol_version::v5 && is_v5<ActualPacket>()) {
+            if (protocol_version_ == protocol_version::v5 && is_v5<packet_type>()) {
                 return true;
             }
             return false;;
         };
 
     // connection status check
-    if constexpr(is_connect<ActualPacket>()) {
+    if constexpr(is_connect<packet_type>()) {
         if (status_ != connection_status::disconnected) {
             con_.on_error(
                 make_error_code(
@@ -114,7 +115,7 @@ process_send_packet(
             return false;
         }
     }
-    else if constexpr(is_connack<ActualPacket>()) {
+    else if constexpr(is_connack<packet_type>()) {
         if (status_ != connection_status::connecting) {
             con_.on_error(
                 make_error_code(
@@ -132,7 +133,7 @@ process_send_packet(
             return false;
         }
     }
-    else if constexpr(std::is_same_v<v5::auth_packet, ActualPacket>) {
+    else if constexpr(is_auth<packet_type>()) {
         if (status_ == connection_status::disconnected) {
             con_.on_error(
                 make_error_code(
@@ -152,7 +153,7 @@ process_send_packet(
     }
     else {
         if (status_ != connection_status::connected) {
-            if constexpr(!is_publish<std::decay_t<ActualPacket>>()) {
+            if constexpr(!is_publish<packet_type>()) {
                 con_.on_error(
                     make_error_code(
                         mqtt_error::packet_not_allowed_to_send
@@ -180,7 +181,7 @@ process_send_packet(
                 mqtt_error::packet_not_allowed_to_send
             )
         );
-        if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
+        if constexpr(own_packet_id<packet_type>()) {
             auto packet_id = actual_packet.packet_id();
             if (packet_id != 0) {
                 pid_man_.release_id(packet_id);
@@ -190,7 +191,7 @@ process_send_packet(
         return false;
     }
 
-    if constexpr(std::is_same_v<v3_1_1::connect_packet, std::decay_t<ActualPacket>>) {
+    if constexpr(std::is_same_v<v3_1_1::connect_packet, packet_type>) {
         initialize(true);
         status_ = connection_status::connecting;
         auto keep_alive = actual_packet.keep_alive();
@@ -211,7 +212,7 @@ process_send_packet(
         topic_alias_send_ = std::nullopt;
     }
 
-    if constexpr(std::is_same_v<v5::connect_packet, std::decay_t<ActualPacket>>) {
+    if constexpr(std::is_same_v<v5::connect_packet, packet_type>) {
         initialize(true);
         status_ = connection_status::connecting;
         auto keep_alive = actual_packet.keep_alive();
@@ -252,7 +253,7 @@ process_send_packet(
         }
     }
 
-    if constexpr(std::is_same_v<v3_1_1::connack_packet, std::decay_t<ActualPacket>>) {
+    if constexpr(std::is_same_v<v3_1_1::connack_packet, packet_type>) {
         if (actual_packet.code() == connect_return_code::accepted) {
             status_ = connection_status::connected;
         }
@@ -262,7 +263,7 @@ process_send_packet(
         }
     }
 
-    if constexpr(std::is_same_v<v5::connack_packet, std::decay_t<ActualPacket>>) {
+    if constexpr(std::is_same_v<v5::connack_packet, packet_type>) {
         if (actual_packet.code() == connect_reason_code::success) {
             status_ = connection_status::connected;
             for (auto const& prop : actual_packet.props()) {
@@ -293,7 +294,7 @@ process_send_packet(
     }
 
     // reject offline topic_alias
-    if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
+    if constexpr(is_instance_of<v5::basic_publish_packet, packet_type>::value) {
         if (status_ != connection_status::connected &&
             get_topic_alias(actual_packet.props())
         ) {
@@ -312,7 +313,7 @@ process_send_packet(
     }
 
     // store publish/pubrel packet
-    if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_publish<packet_type>()) {
         if (actual_packet.opts().get_qos() == qos::at_least_once ||
             actual_packet.opts().get_qos() == qos::exactly_once
         ) {
@@ -334,7 +335,7 @@ process_send_packet(
                     offline_publish_
                 )
             ) {
-                if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
+                if constexpr(is_instance_of<v5::basic_publish_packet, packet_type>::value) {
                     auto ta_opt = get_topic_alias(actual_packet.props());
                     if (actual_packet.topic().empty()) {
                         auto topic_opt = validate_topic_alias(ta_opt);
@@ -364,7 +365,7 @@ process_send_packet(
                         // Topic Alias is removed but Topic Name is added
                         // so the size of packet could become larger
                         auto store_packet =
-                            ActualPacket(
+                            packet_type(
                                 packet_id,
                                 force_move(*topic_opt),
                                 actual_packet.payload_as_buffer(),
@@ -404,7 +405,7 @@ process_send_packet(
                         // validate_maximum_packet_size(store_packet.size())
                         // is not required here.
                         auto store_packet =
-                            ActualPacket(
+                            packet_type(
                                 packet_id,
                                 actual_packet.topic(),
                                 actual_packet.payload_as_buffer(),
@@ -436,7 +437,7 @@ process_send_packet(
         }
     }
 
-    if constexpr(is_instance_of<v5::basic_publish_packet, std::decay_t<ActualPacket>>::value) {
+    if constexpr(is_instance_of<v5::basic_publish_packet, packet_type>::value) {
         auto packet_id = actual_packet.packet_id();
         // apply topic_alias
         auto ta_opt = get_topic_alias(actual_packet.props());
@@ -531,43 +532,43 @@ process_send_packet(
         }
     }
 
-    if constexpr(is_instance_of<v5::basic_puback_packet, std::decay_t<ActualPacket>>::value) {
+    if constexpr(is_instance_of<v5::basic_puback_packet, packet_type>::value) {
         publish_recv_.erase(actual_packet.packet_id());
     }
 
-    if constexpr(is_instance_of<v5::basic_pubrec_packet, std::decay_t<ActualPacket>>::value) {
+    if constexpr(is_instance_of<v5::basic_pubrec_packet, packet_type>::value) {
         if (make_error_code(actual_packet.code())) {
             publish_recv_.erase(actual_packet.packet_id());
             qos2_publish_handled_.erase(actual_packet.packet_id());
         }
     }
 
-    if constexpr(is_pubrel<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_pubrel<packet_type>()) {
         auto packet_id = actual_packet.packet_id();
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         if (need_store_) store_.add(actual_packet);
         pid_pubcomp_.insert(packet_id);
     }
 
-    if constexpr(is_instance_of<v5::basic_pubcomp_packet, std::decay_t<ActualPacket>>::value) {
+    if constexpr(is_instance_of<v5::basic_pubcomp_packet, packet_type>::value) {
         publish_recv_.erase(actual_packet.packet_id());
     }
 
-    if constexpr(is_subscribe<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_subscribe<packet_type>()) {
         auto packet_id = actual_packet.packet_id();
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         pid_suback_.insert(packet_id);
         release_packet_id_if_send_error.emplace(packet_id);
     }
 
-    if constexpr(is_unsubscribe<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_unsubscribe<packet_type>()) {
         auto packet_id = actual_packet.packet_id();
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         pid_unsuback_.insert(packet_id);
         release_packet_id_if_send_error.emplace(packet_id);
     }
 
-    if constexpr(is_pingreq<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_pingreq<packet_type>()) {
         // handler call order
         // pingreq packet send
         // if success, pingresp timer set
@@ -586,7 +587,7 @@ process_send_packet(
         return true;
     }
 
-    if constexpr(is_disconnect<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_disconnect<packet_type>()) {
         status_ = connection_status::disconnected;
         cancel_timers();
         con_.on_send(
@@ -597,7 +598,7 @@ process_send_packet(
         return true;
     }
 
-    if constexpr(is_publish<std::decay_t<ActualPacket>>()) {
+    if constexpr(is_publish<packet_type>()) {
         if (status_ != connection_status::connected) {
             if (offline_publish_) {
                 ASYNC_MQTT_LOG("mqtt_impl", trace)
@@ -613,7 +614,7 @@ process_send_packet(
                         mqtt_error::packet_not_allowed_to_send
                     )
                 );
-                if constexpr(own_packet_id<std::decay_t<ActualPacket>>()) {
+                if constexpr(own_packet_id<packet_type>()) {
                     auto packet_id = actual_packet.packet_id();
                     if (packet_id != 0) {
                         pid_man_.release_id(packet_id);
