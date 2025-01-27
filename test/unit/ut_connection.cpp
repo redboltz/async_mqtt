@@ -450,4 +450,112 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
 
 }
 
+BOOST_AUTO_TEST_CASE(v5_invalid_connect_recv) {
+    am::rv_connection<am::role::server> c{am::protocol_version::v5};
+    auto connect = am::v5::connect_packet{
+        false,   // clean_start
+        0, // keep_alive
+        "cid1",
+        std::nullopt, // will
+        "user1",
+        "pass1"
+    };
+    auto connect_str{am::to_string(connect.const_buffer_sequence())};
+
+    {
+        std::istringstream is{connect_str};
+        c.recv(is);
+    }
+    {
+        std::istringstream is{connect_str};
+        auto events = c.recv(is);
+        // recv connect while connecting
+        BOOST_TEST(events.size() == 1);
+        std::visit(
+            am::overload {
+                [&](am::error_code const& e) {
+                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            },
+            events[0]
+        );
+    }
+}
+
+BOOST_AUTO_TEST_CASE(v5_invalid_connack_recv) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto connack = am::v5::connack_packet{
+        false,   // session_present
+        am::connect_reason_code::success
+    };
+    auto connack_str{am::to_string(connack.const_buffer_sequence())};
+
+    std::istringstream is{connack_str};
+    auto events = c.recv(is);
+    // recv connack while disconnected
+    BOOST_TEST(events.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+}
+
+BOOST_AUTO_TEST_CASE(v5_invalid_auth_recv) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto auth = am::v5::auth_packet{};
+    auto auth_str{am::to_string(auth.const_buffer_sequence())};
+
+    std::istringstream is{auth_str};
+    auto events = c.recv(is);
+    // recv auth while disconnected
+    BOOST_TEST(events.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+}
+
+BOOST_AUTO_TEST_CASE(v5_invalid_publish_recv) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto publish = am::v5::publish_packet(
+        "topic1",
+        "payload1",
+        am::qos::at_most_once
+    );
+    auto publish_str{am::to_string(publish.const_buffer_sequence())};
+
+    std::istringstream is{publish_str};
+    auto events = c.recv(is);
+    // recv publish while disconnected
+    BOOST_TEST(events.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+}
+
 BOOST_AUTO_TEST_SUITE_END()
