@@ -47,11 +47,8 @@ send(Packet packet) {
         std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
     ) {
         force_move(packet).visit(
-            overload{
-                [&](auto actual_packet) {
-                    send_and_post_process(force_move(actual_packet));
-                },
-                [&](std::monostate const&) {}
+            [&](auto actual_packet) {
+                send_and_post_process(force_move(actual_packet));
             }
         );
     }

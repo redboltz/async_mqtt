@@ -42,7 +42,7 @@ namespace as = boost::asio;
 // forward declarations
 class property_variant;
 enum class property_location;
-property_variant make_property_variant(buffer& buf, property_location loc, error_code& ec);
+std::optional<property_variant> make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
 /**
  * @ingroup property
@@ -169,7 +169,9 @@ public:
 
 private:
 
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -218,7 +220,9 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -261,7 +265,9 @@ public:
     explicit content_type(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -307,7 +313,9 @@ public:
     explicit response_topic(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -353,7 +361,9 @@ public:
     explicit correlation_data(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -399,7 +409,9 @@ public:
     explicit subscription_identifier(std::uint32_t val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     explicit subscription_identifier(std::uint32_t val, error_code& ec);
 };
@@ -446,7 +458,9 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It>
@@ -489,7 +503,9 @@ public:
     explicit assigned_client_identifier(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -541,7 +557,9 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -584,7 +602,9 @@ public:
     explicit authentication_method(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -630,7 +650,9 @@ public:
     explicit authentication_data(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -682,7 +704,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -731,7 +755,9 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -780,7 +806,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -823,7 +851,9 @@ public:
     explicit response_information(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -869,7 +899,9 @@ public:
     explicit server_reference(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -915,7 +947,9 @@ public:
     explicit reason_string(std::string val);
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -967,7 +1001,9 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1016,7 +1052,9 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1065,7 +1103,9 @@ public:
     std::uint16_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1114,7 +1154,9 @@ public:
     qos val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1163,7 +1205,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1263,7 +1307,9 @@ public:
     }
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <
@@ -1320,7 +1366,9 @@ public:
     std::uint32_t val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1369,7 +1417,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1418,7 +1468,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>
@@ -1467,7 +1519,9 @@ public:
     bool val() const;
 
 private:
-    friend property_variant async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
+    friend
+    std::optional<property_variant>
+    async_mqtt::make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
     // private constructor for internal use
     template <typename It, typename End>

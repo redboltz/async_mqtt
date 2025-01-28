@@ -30,7 +30,6 @@ namespace async_mqtt {
  * @li Shared objects: Unsafe
  *
  * #### variants
- * @li @ref std::monostate
  * @li @ref v3_1_1::connect_packet
  * @li @ref v3_1_1::connack_packet
  * @li @ref v3_1_1::basic_publish_packet<PacketIdBytes>

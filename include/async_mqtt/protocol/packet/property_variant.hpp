@@ -118,12 +118,6 @@ public:
     property_variant(Property&& property);
 
     /**
-     * @brief constructor
-     *        property variant value is std::monostate
-     */
-    explicit property_variant() = default;
-
-    /**
      * @brief visit to variant
      * @param func Visitor function
      */

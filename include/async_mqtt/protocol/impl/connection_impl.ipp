@@ -1380,9 +1380,6 @@ process_recv_packet() {
                 [&](v5::auth_packet& p) {
                     con_.on_receive(p);
                     return true;
-                },
-                [&](std::monostate&) {
-                    return false;
                 }
             }
         );

@@ -18,6 +18,26 @@
 
 namespace async_mqtt {
 
+/**
+ * @brief The varaint type of all packets and system_error
+ *
+ * #### Thread Safety
+ * @li Distinct objects: Safe
+ * @li Shared objects: Unsafe
+ *
+ * #### variants
+ * @li @ref error_code,
+ * @li @ref event::basic_send<PacketIdBytes>
+ * @li @ref event::basic_packet_id_released<PacketIdBytes>
+ * @li @ref event::basic_packet_received<PacketIdBytes>
+ * @li @ref event::timer
+ * @li @ref event::close
+ *
+ * #### Requirements
+ * @li Header: async_mqtt/packet/packet_variant.hpp
+ * @li Convenience header: async_mqtt/all.hpp
+ *
+ */
 template <std::size_t PacketIdBytes>
 using basic_event_variant = std::variant<
     error_code,

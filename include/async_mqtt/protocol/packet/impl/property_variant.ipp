@@ -21,14 +21,8 @@ namespace async_mqtt {
 ASYNC_MQTT_HEADER_ONLY_INLINE
 property::id property_variant::id() const {
     return visit(
-        overload {
-            [] (auto const& p) {
-                return p.id();
-            },
-            [] (std::monostate const&) {
-                BOOST_ASSERT(false);
-                return property::id(0);
-            }
+        [] (auto const& p) {
+            return p.id();
         }
     );
 }
@@ -37,14 +31,8 @@ property::id property_variant::id() const {
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::size_t property_variant::num_of_const_buffer_sequence() const {
     return visit(
-        overload {
-            [] (auto const& p) {
-                return p.num_of_const_buffer_sequence();
-            },
-            [] (std::monostate const&) {
-                BOOST_ASSERT(false);
-                return std::size_t(0);
-            }
+        [] (auto const& p) {
+            return p.num_of_const_buffer_sequence();
         }
     );
 }
@@ -52,14 +40,8 @@ std::size_t property_variant::num_of_const_buffer_sequence() const {
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::vector<as::const_buffer> property_variant::const_buffer_sequence() const {
     return visit(
-        overload {
-            [] (auto const& p) {
-                return p.const_buffer_sequence();
-            },
-            [] (std::monostate const&) {
-                BOOST_ASSERT(false);
-                return std::vector<as::const_buffer>{};
-            }
+        [] (auto const& p) {
+            return p.const_buffer_sequence();
         }
     );
 }
@@ -67,14 +49,8 @@ std::vector<as::const_buffer> property_variant::const_buffer_sequence() const {
 ASYNC_MQTT_HEADER_ONLY_INLINE
 std::size_t property_variant::size() const {
     return visit(
-        overload {
-            [] (auto const& p) {
-                return p.size();
-            },
-            [] (std::monostate const&) {
-                BOOST_ASSERT(false);
-                return std::size_t(0);
-            }
+        [] (auto const& p) {
+            return p.size();
         }
     );
 }
@@ -115,12 +91,13 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v) {
 
 
 ASYNC_MQTT_HEADER_ONLY_INLINE
-property_variant make_property_variant(buffer& buf, property_location loc, error_code& ec) {
+std::optional<property_variant>
+make_property_variant(buffer& buf, property_location loc, error_code& ec) {
     if (buf.empty()) {
         ec = make_error_code(
             disconnect_reason_code::malformed_packet
         );
-        return property_variant{};
+        return std::nullopt;
     }
 
     using namespace std::literals;
@@ -129,7 +106,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
         ec = make_error_code(
             disconnect_reason_code::malformed_packet
         );
-        return property_variant{};
+        return std::nullopt;
      }
     buf.remove_prefix(1);
     switch (id) {
@@ -138,10 +115,10 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::payload_format_indicator(buf.begin(), std::next(buf.begin(), 1), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(1);
         return property_variant(p);
     } break;
@@ -150,7 +127,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::message_expiry_interval(buf.begin(), std::next(buf.begin(), 4));
         buf.remove_prefix(4);
@@ -161,17 +138,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::content_type(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -180,17 +157,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::response_topic(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -199,17 +176,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::correlation_data(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -217,21 +194,21 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
         auto it = buf.begin();
         if (auto val_opt = variable_bytes_to_val(it, buf.end())) {
             auto p = property::subscription_identifier(*val_opt, ec);
-            if (ec) return property_variant{};
+            if (ec) return std::nullopt;
             buf.remove_prefix(std::size_t(std::distance(buf.begin(), it)));
             return property_variant(p);
         }
         ec = make_error_code(
             disconnect_reason_code::malformed_packet
         );
-        return property_variant{};
+        return std::nullopt;
     } break;
     case property::id::session_expiry_interval: {
         if (buf.size() < 4) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::session_expiry_interval(buf.begin(), std::next(buf.begin(), 4));
         buf.remove_prefix(4);
@@ -242,17 +219,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::assigned_client_identifier(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -261,7 +238,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::server_keep_alive(buf.begin(), std::next(buf.begin(), 2));
         buf.remove_prefix(2);
@@ -272,17 +249,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::authentication_method(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -291,17 +268,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::authentication_data(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -310,7 +287,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::request_problem_information(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -321,7 +298,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::will_delay_interval(buf.begin(), std::next(buf.begin(), 4));
         buf.remove_prefix(4);
@@ -332,7 +309,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::request_response_information(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -343,17 +320,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::response_information(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -362,17 +339,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::server_reference(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -381,17 +358,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto len = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + len) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::reason_string(buf.substr(2, len), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + len);
         return property_variant(p);
     } break;
@@ -400,10 +377,10 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::receive_maximum(buf.begin(), std::next(buf.begin(), 2), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2);
         return property_variant(p);
     } break;
@@ -412,7 +389,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::topic_alias_maximum(buf.begin(), std::next(buf.begin(), 2));
         buf.remove_prefix(2);
@@ -423,7 +400,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::topic_alias(buf.begin(), std::next(buf.begin(), 2));
         buf.remove_prefix(2);
@@ -434,10 +411,10 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::maximum_qos(buf.begin(), std::next(buf.begin(), 1), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(1);
         return property_variant(p);
     } break;
@@ -446,7 +423,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::retain_available(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -457,14 +434,14 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto keylen = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + keylen) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto key = buf.substr(2, keylen);
         buf.remove_prefix(2 + keylen);
@@ -472,18 +449,18 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto vallen = endian_load<std::uint16_t>(buf.data());
         if (buf.size() < 2U + vallen) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto val = buf.substr(2, vallen);
         auto p = property::user_property(force_move(key), force_move(val), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(2 + vallen);
          return property_variant(p);
     } break;
@@ -492,10 +469,10 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::maximum_packet_size(buf.begin(), std::next(buf.begin(), 4), ec);
-        if (ec) return property_variant{};
+        if (ec) return std::nullopt;
         buf.remove_prefix(4);
         return property_variant(p);
     } break;
@@ -504,7 +481,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::wildcard_subscription_available(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -515,7 +492,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::subscription_identifier_available(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -526,7 +503,7 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
             );
-            return property_variant{};
+            return std::nullopt;
         }
         auto p = property::shared_subscription_available(buf.begin(), std::next(buf.begin(), 1));
         buf.remove_prefix(1);
@@ -534,16 +511,17 @@ property_variant make_property_variant(buffer& buf, property_location loc, error
     } break;
     }
     BOOST_ASSERT(false);
-    return property_variant{};
+    return std::nullopt;
 }
 
 ASYNC_MQTT_HEADER_ONLY_INLINE
 properties make_properties(buffer buf, property_location loc, error_code& ec) {
     properties props;
     while (!buf.empty()) {
-        auto pv = make_property_variant(buf, loc, ec);
+        auto pv_opt = make_property_variant(buf, loc, ec);
         if (ec) return properties{};
-        props.push_back(force_move(pv));
+        BOOST_ASSERT(pv_opt);
+        props.push_back(force_move(*pv_opt));
     }
 
     return props;
