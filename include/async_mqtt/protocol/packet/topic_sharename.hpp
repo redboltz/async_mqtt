@@ -19,10 +19,6 @@ namespace async_mqtt {
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/topic_sharename.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 class topic_sharename {
 public:

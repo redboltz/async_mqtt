@@ -31,10 +31,6 @@ std::ostream& operator<< (std::ostream& o, hex_dump_t<Packet> const& v);
  * @param p packet to dump. p must be valid packet. packet_variant system_error cannot be accepted.
  * @return id
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/packet_helper.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <typename Packet>
 hex_dump_t<Packet> hex_dump(Packet const& p) {

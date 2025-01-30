@@ -35,10 +35,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
- * @li Convenience header: async_mqtt/all.hpp
- */
 class connect_packet {
 public:
     /**
@@ -220,9 +216,6 @@ private:
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
- * @li Convenience header: async_mqtt/all.hpp
  */
 bool operator<(connect_packet const& lhs, connect_packet const& rhs);
 
@@ -233,9 +226,6 @@ bool operator<(connect_packet const& lhs, connect_packet const& rhs);
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
- * @li Convenience header: async_mqtt/all.hpp
  */
 bool operator==(connect_packet const& lhs, connect_packet const& rhs);
 
@@ -246,9 +236,6 @@ bool operator==(connect_packet const& lhs, connect_packet const& rhs);
  * @param v target
  * @return  output stream
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_connect.hpp
- * @li Convenience header: async_mqtt/all.hpp
  */
 std::ostream& operator<<(std::ostream& o, connect_packet const& v);
 

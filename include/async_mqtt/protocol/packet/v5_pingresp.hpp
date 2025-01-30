@@ -49,10 +49,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_pingresp.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 class pingresp_packet {
 public:
@@ -116,10 +112,6 @@ private:
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_pingresp.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 bool operator<(pingresp_packet const& lhs, pingresp_packet const& rhs);
 
@@ -130,10 +122,6 @@ bool operator<(pingresp_packet const& lhs, pingresp_packet const& rhs);
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_pingresp.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 bool operator==(pingresp_packet const& lhs, pingresp_packet const& rhs);
 
@@ -143,10 +131,6 @@ bool operator==(pingresp_packet const& lhs, pingresp_packet const& rhs);
  * @param o output stream
  * @param v target
  * @return  output stream
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_pingresp.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 std::ostream& operator<<(std::ostream& o, pingresp_packet const& v);

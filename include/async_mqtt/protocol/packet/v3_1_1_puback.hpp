@@ -45,10 +45,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_puback.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 class basic_puback_packet {
@@ -123,10 +119,6 @@ private:
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_puback.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_packet<PacketIdBytes> const& rhs);
@@ -137,10 +129,6 @@ bool operator<(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_packe
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_puback.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -153,10 +141,6 @@ bool operator==(basic_puback_packet<PacketIdBytes> const& lhs, basic_puback_pack
  * @param v target
  * @return  output stream
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_puback.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_puback_packet<PacketIdBytes> const& v);
@@ -165,10 +149,6 @@ std::ostream& operator<<(std::ostream& o, basic_puback_packet<PacketIdBytes> con
  * @ingroup puback_v3_1_1
  * @related basic_puback_packet
  * @brief Type alias of basic_puback_packet (PacketIdBytes=2).
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_puback.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using puback_packet = basic_puback_packet<2>;

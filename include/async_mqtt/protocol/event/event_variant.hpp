@@ -33,10 +33,6 @@ namespace async_mqtt {
  * @li @ref event::timer
  * @li @ref event::close
  *
- * #### Requirements
- * @li Header: async_mqtt/packet/packet_variant.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 using basic_event_variant = std::variant<
@@ -52,10 +48,6 @@ using basic_event_variant = std::variant<
  * @ingroup event_variant
  * @related basic_event_variant
  * @brief type alias of basic_event_variant (PacketIdBytes=2).
- *
- * #### Requirements
- * @li Header: async_mqtt/packet/packet_variant.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using event_variant = basic_event_variant<2>;

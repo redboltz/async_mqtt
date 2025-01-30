@@ -60,10 +60,6 @@ namespace async_mqtt {
  * @li @ref v5::disconnect_packet
  * @li @ref v5::auth_packet
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/packet_variant.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 class basic_packet_variant;
@@ -72,10 +68,6 @@ class basic_packet_variant;
  * @ingroup packet_variant
  * @related basic_packet_variant
  * @brief type alias of basic_packet_variant (PacketIdBytes=2).
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/packet_variant.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using packet_variant = basic_packet_variant<2>;

@@ -18,10 +18,6 @@ namespace async_mqtt {
  * @param q QoS
  * @return suback_retun_code
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/qos_util.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr suback_return_code qos_to_suback_return_code(qos q) {
     return static_cast<suback_return_code>(q);
@@ -32,10 +28,6 @@ constexpr suback_return_code qos_to_suback_return_code(qos q) {
  * @brief create suback_reason_code corresponding to the QoS
  * @param q QoS
  * @return suback_reason_code
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/qos_util.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr suback_reason_code qos_to_suback_reason_code(qos q) {

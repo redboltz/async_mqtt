@@ -27,10 +27,6 @@ namespace sub {
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 enum class retain_handling : std::uint8_t
 {
@@ -45,10 +41,6 @@ enum class retain_handling : std::uint8_t
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 enum class rap : std::uint8_t
 {
@@ -61,10 +53,6 @@ enum class rap : std::uint8_t
  * @brief MQTT NoLocal
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 enum class nl : std::uint8_t
@@ -82,10 +70,6 @@ enum class nl : std::uint8_t
  *    @li Shared objects: Unsafe
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 struct opts final {
@@ -260,10 +244,6 @@ private:
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(retain_handling lhs, rap rhs) { return opts(lhs) | rhs; }
 
@@ -273,10 +253,6 @@ constexpr opts operator|(retain_handling lhs, rap rhs) { return opts(lhs) | rhs;
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(retain_handling lhs, nl rhs)  { return opts(lhs) | rhs; }
@@ -288,10 +264,6 @@ constexpr opts operator|(retain_handling lhs, nl rhs)  { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(retain_handling lhs, qos rhs) { return opts(lhs) | rhs; }
 
@@ -301,10 +273,6 @@ constexpr opts operator|(retain_handling lhs, qos rhs) { return opts(lhs) | rhs;
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(rap lhs, retain_handling rhs) { return opts(lhs) | rhs; }
@@ -316,10 +284,6 @@ constexpr opts operator|(rap lhs, retain_handling rhs) { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(rap lhs, nl rhs)              { return opts(lhs) | rhs; }
 
@@ -329,10 +293,6 @@ constexpr opts operator|(rap lhs, nl rhs)              { return opts(lhs) | rhs;
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(rap lhs, qos rhs)             { return opts(lhs) | rhs; }
@@ -344,10 +304,6 @@ constexpr opts operator|(rap lhs, qos rhs)             { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(nl lhs, retain_handling rhs)  { return opts(lhs) | rhs; }
 
@@ -357,10 +313,6 @@ constexpr opts operator|(nl lhs, retain_handling rhs)  { return opts(lhs) | rhs;
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(nl lhs, rap rhs)              { return opts(lhs) | rhs; }
@@ -372,10 +324,6 @@ constexpr opts operator|(nl lhs, rap rhs)              { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(nl lhs, qos rhs)              { return opts(lhs) | rhs; }
 
@@ -385,10 +333,6 @@ constexpr opts operator|(nl lhs, qos rhs)              { return opts(lhs) | rhs;
  * @param lhs combined target
  * @param rhs combined target
  * @return conbined opts
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr opts operator|(qos lhs, retain_handling rhs) { return opts(lhs) | rhs; }
@@ -400,10 +344,6 @@ constexpr opts operator|(qos lhs, retain_handling rhs) { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(qos lhs, rap rhs)             { return opts(lhs) | rhs; }
 
@@ -414,10 +354,6 @@ constexpr opts operator|(qos lhs, rap rhs)             { return opts(lhs) | rhs;
  * @param rhs combined target
  * @return conbined opts
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 constexpr opts operator|(qos lhs, nl rhs)              { return opts(lhs) | rhs; }
 
@@ -427,10 +363,6 @@ constexpr opts operator|(qos lhs, nl rhs)              { return opts(lhs) | rhs;
  * @brief stringize retain_handling
  * @param v target
  * @return retain_handling string
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* retain_handling_to_str(retain_handling v) {
@@ -450,10 +382,6 @@ constexpr char const* retain_handling_to_str(retain_handling v) {
  * @param v  target
  * @return output stream
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 inline
 std::ostream& operator<<(std::ostream& o, retain_handling v)
@@ -468,10 +396,6 @@ std::ostream& operator<<(std::ostream& o, retain_handling v)
  * @brief stringize rap(retain as published)
  * @param v target
  * @return rap(retain as published) string
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* rap_to_str(rap v) {
@@ -490,10 +414,6 @@ constexpr char const* rap_to_str(rap v) {
  * @param v  target
  * @return output stream
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 inline
 std::ostream& operator<<(std::ostream& o, rap v)
@@ -508,10 +428,6 @@ std::ostream& operator<<(std::ostream& o, rap v)
  * @brief stringize nl(no local)
  * @param v target
  * @return nl(no local) string
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* nl_to_str(nl v) {
@@ -529,10 +445,6 @@ constexpr char const* nl_to_str(nl v) {
  * @param o output stream
  * @param v  target
  * @return output stream
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/subopts.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

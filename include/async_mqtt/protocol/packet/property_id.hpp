@@ -20,10 +20,6 @@ namespace property {
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029"></a>
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/property_id.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 enum class id {
     payload_format_indicator          =  1, ///< Payload Format Indicator
@@ -60,10 +56,6 @@ enum class id {
  * @brief stringize packet identifier
  * @param v target
  * @return packet identifier
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/property_id.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* id_to_str(id v) {
@@ -105,10 +97,6 @@ constexpr char const* id_to_str(id v) {
  * @param o output stream
  * @param v  target
  * @return output stream
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/property_id.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

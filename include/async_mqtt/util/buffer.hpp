@@ -38,10 +38,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/util/buffer.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 class buffer {
 public:
@@ -965,10 +961,6 @@ private:
  * @param v target
  * @return hash value
  *
- * #### Requirements
- * @li Header: async_mqtt/util/buffer.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 inline std::size_t hash_value(buffer const& v) noexcept {
     std::size_t result = 0;
@@ -991,10 +983,6 @@ namespace asio {
  * @param  data  source async_mqtt::buffer
  * @return boost::asio::const_buffer
  *
- * #### Requirements
- * @li Header: async_mqtt/util/buffer.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 inline const_buffer buffer(async_mqtt::buffer const& data) {
     return buffer(data.data(), data.size());
@@ -1008,10 +996,6 @@ namespace std {
 /**
  * @ingroup buffer
  * @brief class template hash specilization for the buffer
- *
- * #### Requirements
- * @li Header: async_mqtt/util/buffer.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <>

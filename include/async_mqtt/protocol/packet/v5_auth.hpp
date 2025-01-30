@@ -39,10 +39,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_auth.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 class auth_packet {
 public:
@@ -174,10 +170,6 @@ private:
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_auth.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 bool operator<(auth_packet const& lhs, auth_packet const& rhs);
 
@@ -187,10 +179,6 @@ bool operator<(auth_packet const& lhs, auth_packet const& rhs);
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v5_auth.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 bool operator==(auth_packet const& lhs, auth_packet const& rhs);

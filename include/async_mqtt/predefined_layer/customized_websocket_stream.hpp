@@ -24,9 +24,6 @@ namespace bs = boost::beast;
  * @ingroup predefined_customize
  * @brief customization class template specialization for boost::beast::websocket::stream
  *
- * #### Requirements
- * @li Header: async_mqtt/predefined_layer/customized_websocket_stream.hpp
- *
  * @see
  *   <a href="../../customize.html">Layor customize</a>
  */

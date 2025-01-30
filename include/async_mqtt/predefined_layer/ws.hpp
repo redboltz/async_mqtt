@@ -39,9 +39,6 @@ using ws = bs::websocket::stream<mqtt>;
  * @param token  completion token. signature is void(error_code)
  * @return deduced by token
  *
- * #### Requirements
- * @li Header: async_mqtt/predefined_layer/ws.hpp
- *
  */
 template <
     typename NextLayer,
@@ -70,9 +67,6 @@ async_underlying_handshake(
  * @param port   port number to connect
  * @param token  completion token. signature is void(error_code)
  * @return deduced by token
- *
- * #### Requirements
- * @li Header: async_mqtt/predefined_layer/ws.hpp
  *
  */
 template <

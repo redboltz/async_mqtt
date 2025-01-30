@@ -20,10 +20,6 @@ namespace async_mqtt {
  * @li `std::uint16_t` if PacketIdBytes is 2. For MQTT specification.
  * @li `std::uint32_t` if PacketIdBytes is 4. For expanded specification for inter broker communication.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/packet_id_type.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 struct basic_packet_id_type;
@@ -41,10 +37,6 @@ struct basic_packet_id_type<4> {
 /**
  * @ingroup packet
  * @brief packet idenfitifer type
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/packet_id_type.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using packet_id_type = typename basic_packet_id_type<2>::type;

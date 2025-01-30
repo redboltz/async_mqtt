@@ -24,10 +24,6 @@ namespace async_mqtt {
  * @ingroup store_packet_variant
  * @brief corresponding response packet
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/store_packet_variant.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 enum class response_packet {
     v3_1_1_puback,  ///< stored packet is v3_1_1_basic_publish_packet QoS1

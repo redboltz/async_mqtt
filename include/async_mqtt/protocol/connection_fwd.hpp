@@ -14,7 +14,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup connection
  * @brief MQTT connection
  *
  * I/O independent MQTT protocol state machine.
@@ -41,7 +40,6 @@ template <role Role, std::size_t PacketIdBytes>
 class basic_connection;
 
 /**
- * @ingroup connection
  * @related basic_connection
  * @brief Type alias of basic_connection (PacketIdBytes=2).
  *        This is for typical usecase (e.g. MQTT client).

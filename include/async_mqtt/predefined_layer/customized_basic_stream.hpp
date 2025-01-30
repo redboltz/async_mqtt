@@ -25,10 +25,6 @@ namespace as = boost::asio;
  * @ingroup predefined_customize
  * @brief customization class template specialization for boost::asio::basic_stream_socket
  *
- * #### Requirements
- * @li Header: async_mqtt/predefined_layer/customized_basic_stream.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  * @see
  *   <a href="../../customize.html">Layor customize</a>
  */

@@ -52,10 +52,6 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_publish.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 class basic_publish_packet {
@@ -247,10 +243,6 @@ private:
  * @param rhs compare target
  * @return true if the lhs less than the rhs, otherwise false.
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_publish.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_packet<PacketIdBytes> const& rhs);
@@ -261,10 +253,6 @@ bool operator<(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pac
  * @param lhs compare target
  * @param rhs compare target
  * @return true if the lhs equal to the rhs, otherwise false.
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_publish.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 template <std::size_t PacketIdBytes>
@@ -277,10 +265,6 @@ bool operator==(basic_publish_packet<PacketIdBytes> const& lhs, basic_publish_pa
  * @param v target
  * @return  output stream
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_publish.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v);
@@ -289,10 +273,6 @@ std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> co
  * @ingroup publish_v3_1_1
  * @related basic_publish_packet
  * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/packet/v3_1_1_publish.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 using publish_packet = basic_publish_packet<2>;

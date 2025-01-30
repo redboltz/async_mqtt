@@ -28,10 +28,6 @@ namespace async_mqtt {
  *    @li @ref protocol::ws
  *    @li @ref protocol::wss
  *
- * #### Requirements
- * @li Header: async_mqtt/client.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  * @tparam Version       MQTT protocol version.
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.
  */

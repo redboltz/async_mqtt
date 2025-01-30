@@ -21,10 +21,6 @@ namespace async_mqtt {
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * #### Requirements
- * @li Header: async_mqtt/endpoint.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  * #### predefined next layer types for NextLayer:
  *    @li @ref protocol::mqtt
  *    @li @ref protocol::mqtts
@@ -53,10 +49,6 @@ class basic_endpoint;
  *    @li @ref protocol::mqtts
  *    @li @ref protocol::ws
  *    @li @ref protocol::wss
- *
- * #### Requirements
- * @li Header: async_mqtt/endpoint.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.

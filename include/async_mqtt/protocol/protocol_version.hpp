@@ -21,10 +21,6 @@ namespace async_mqtt {
  * @ingroup mqtt
  * @brief MQTT protocol version
  *
- * #### Requirements
- * @li Header: async_mqtt/protocol/protocol_version.hpp
- * @li Convenience header: async_mqtt/all.hpp
- *
  */
 enum class protocol_version {
     undetermined  = 0, ///< both v3.1.1 and v5.0 are accepted for broker (server)
@@ -37,10 +33,6 @@ enum class protocol_version {
  * @brief stringize protocol_version
  * @param v target
  * @return  version string
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/protocol_version.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 constexpr char const* protocol_version_to_str(protocol_version v) {
@@ -58,10 +50,6 @@ constexpr char const* protocol_version_to_str(protocol_version v) {
  * @param os  output stream
  * @param val target
  * @return output stream
- *
- * #### Requirements
- * @li Header: async_mqtt/protocol/protocol_version.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline
