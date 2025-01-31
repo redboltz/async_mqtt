@@ -17,23 +17,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-/**
- * @defgroup pubcomp_v5 PUBCOMP packet (v5.0)
- * @ingroup packet_v5
- */
-
-/**
- * @defgroup pubcomp_v5_detail implementation class
- * @ingroup pubcomp_v5
- */
-
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup pubcomp_v5_detail
  * @brief MQTT PUBCOMP packet (v5)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -211,7 +199,6 @@ template <std::size_t PacketIdBytes>
 bool operator==(basic_pubcomp_packet<PacketIdBytes> const& lhs, basic_pubcomp_packet<PacketIdBytes> const& rhs);
 
 /**
- * @ingroup pubcomp_v5
  * @related basic_pubcomp_packet
  * @brief Type alias of basic_pubcomp_packet (PacketIdBytes=2).
  *

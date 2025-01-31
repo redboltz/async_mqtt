@@ -9,20 +9,9 @@
 
 #include <cstddef>
 
-/**
- * @defgroup packet_variant variant class for all packets
- * @ingroup packet
- */
-
-/**
- * @defgroup packet_variant_detail implementation class
- * @ingroup packet_variant
- */
-
 namespace async_mqtt {
 
 /**
- * @ingroup packet_variant_detail
  * @brief The varaint type of all packets and system_error
  *
  * #### Thread Safety
@@ -65,7 +54,6 @@ template <std::size_t PacketIdBytes>
 class basic_packet_variant;
 
 /**
- * @ingroup packet_variant
  * @related basic_packet_variant
  * @brief type alias of basic_packet_variant (PacketIdBytes=2).
  *

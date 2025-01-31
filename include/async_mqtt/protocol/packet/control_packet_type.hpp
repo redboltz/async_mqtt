@@ -15,7 +15,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup packet
  * @brief MQTT control packet type
  *
  */
@@ -41,7 +40,6 @@ enum class control_packet_type : std::uint8_t {
 };
 
 /**
- * @ingroup packet
  * @brief stringize control_packet_type
  * @param v target
  * @return control_packet_type
@@ -72,7 +70,6 @@ char const* control_packet_type_to_str(control_packet_type v) {
 }
 
 /**
- * @ingroup packet
  * @brief output to the stream
  * @param o output stream
  * @param v  target

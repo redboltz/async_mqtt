@@ -11,18 +11,11 @@
 
 #include <async_mqtt/protocol/packet/qos.hpp>
 
-/**
- * @defgroup publish_options PUBLISH packet flags
- * @ingroup publish_v5
- * @ingroup publish_v3_1_1
- */
-
 namespace async_mqtt {
 
 namespace pub {
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief Check fixed header is DUP
  * @param v fixed_header byte
@@ -34,7 +27,6 @@ constexpr bool is_dup(std::uint8_t v) {
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief Get qos from the fixed header
  * @param v fixed_header byte
@@ -46,7 +38,6 @@ constexpr qos get_qos(std::uint8_t v) {
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief Check fixed header is RETAIN
  * @param v fixed_header byte
@@ -58,7 +49,6 @@ constexpr bool is_retain(std::uint8_t v) {
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief Set DUP to the fixed header
  * @param fixed_header fixed_header byte
@@ -71,7 +61,6 @@ constexpr void set_dup(std::uint8_t& fixed_header, bool dup) {
 }
 
 /**
- * @ingroup publish_options
  * @brief MQTT RETAIN
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104"></a>
@@ -84,7 +73,6 @@ enum class retain : std::uint8_t {
 
 
 /**
- * @ingroup publish_options
  * @brief MQTT DUP
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102"></a>
@@ -96,7 +84,6 @@ enum class dup : std::uint8_t {
 };
 
 /**
- * @ingroup publish_options
  * @brief MQTT PublishOptions
  *
  * #### Thread Safety
@@ -308,7 +295,6 @@ constexpr opts operator|(qos lhs, dup rhs)    { return opts(lhs) | rhs; }
 
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief stringize retain
  * @param v target
@@ -324,7 +310,6 @@ constexpr char const* retain_to_str(retain v) {
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief output to the stream
  * @param o output stream
@@ -340,7 +325,6 @@ std::ostream& operator<<(std::ostream& o, retain v)
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief stringize dup
  * @param v target
@@ -356,7 +340,6 @@ constexpr char const* dup_to_str(dup v) {
 }
 
 /**
- * @ingroup publish_options
  * @related opts
  * @brief output to the stream
  * @param o output stream

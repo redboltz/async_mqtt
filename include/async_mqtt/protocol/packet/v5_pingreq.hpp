@@ -16,18 +16,11 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-
-/**
- * @defgroup pingreq_v5 PINGREQ packet (v5.0)
- * @ingroup packet_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup pingreq_v5
  * @brief MQTT PINGREQ packet (v5)
  *
  * Only MQTT client can send this packet.

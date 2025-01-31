@@ -13,7 +13,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup suback_v3_1_1
  * @brief create suback_return_code corresponding to the QoS
  * @param q QoS
  * @return suback_retun_code
@@ -24,7 +23,6 @@ constexpr suback_return_code qos_to_suback_return_code(qos q) {
 }
 
 /**
- * @ingroup suback_v5
  * @brief create suback_reason_code corresponding to the QoS
  * @param q QoS
  * @return suback_reason_code

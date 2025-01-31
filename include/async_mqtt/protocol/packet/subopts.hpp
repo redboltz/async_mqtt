@@ -12,17 +12,11 @@
 
 #include <async_mqtt/protocol/packet/qos.hpp>
 
-/**
- * @defgroup subscribe_options SUBSCRIBE packet flags
- * @ingroup subscribe_v5
- */
-
 namespace async_mqtt {
 
 namespace sub {
 
 /**
- * @ingroup subscribe_options
  * @brief MQTT RetainHandling
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
@@ -36,7 +30,6 @@ enum class retain_handling : std::uint8_t
 };
 
 /**
- * @ingroup subscribe_options
  * @brief MQTT RetainAsPublished
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
@@ -49,7 +42,6 @@ enum class rap : std::uint8_t
 };
 
 /**
- * @ingroup subscribe_options
  * @brief MQTT NoLocal
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901169"></a>
@@ -62,7 +54,6 @@ enum class nl : std::uint8_t
 };
 
 /**
- * @ingroup subscribe_options
  * @brief MQTT SubscribeOptions
  *
  * #### Thread Safety
@@ -358,7 +349,6 @@ constexpr opts operator|(qos lhs, rap rhs)             { return opts(lhs) | rhs;
 constexpr opts operator|(qos lhs, nl rhs)              { return opts(lhs) | rhs; }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief stringize retain_handling
  * @param v target
@@ -375,7 +365,6 @@ constexpr char const* retain_handling_to_str(retain_handling v) {
 }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief output to the stream
  * @param o output stream
@@ -391,7 +380,6 @@ std::ostream& operator<<(std::ostream& o, retain_handling v)
 }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief stringize rap(retain as published)
  * @param v target
@@ -407,7 +395,6 @@ constexpr char const* rap_to_str(rap v) {
 }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief output to the stream
  * @param o output stream
@@ -423,7 +410,6 @@ std::ostream& operator<<(std::ostream& o, rap v)
 }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief stringize nl(no local)
  * @param v target
@@ -439,7 +425,6 @@ constexpr char const* nl_to_str(nl v) {
 }
 
 /**
- * @ingroup subscribe_options
  * @related opts
  * @brief output to the stream
  * @param o output stream

@@ -40,7 +40,6 @@ static constexpr char const* log_color_table[] {
 };
 
 /**
- * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level by channel
@@ -129,7 +128,6 @@ void setup_log(std::map<std::string, severity_level> threshold, bool colored = t
 }
 
 /**
- * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level for all channels

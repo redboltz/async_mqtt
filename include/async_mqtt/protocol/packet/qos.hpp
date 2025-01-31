@@ -10,18 +10,9 @@
 #include <cstdint>
 #include <ostream>
 
-/**
- * @defgroup qos QoS
- * @ingroup subscribe_v3_1_1
- * @ingroup subscribe_v5
- * @ingroup publish_v3_1_1
- * @ingroup publish_v5
- */
-
 namespace async_mqtt {
 
 /**
- * @ingroup qos
  * @brief MQTT QoS
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901234"></a>
@@ -35,7 +26,6 @@ enum class qos : std::uint8_t
 };
 
 /**
- * @ingroup qos
  * @brief stringize qos
  * @param v target
  * @return QoS string
@@ -51,7 +41,6 @@ constexpr char const* qos_to_str(qos v) {
 }
 
 /**
- * @ingroup qos
  * @brief output to the stream
  * @param o output stream
  * @param v  target

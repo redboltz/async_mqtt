@@ -15,17 +15,11 @@
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 #include <async_mqtt/protocol/packet/will.hpp>
 
-/**
- * @defgroup connect_v3_1_1 CONNECT packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup connect_v3_1_1
  * @brief MQTT CONNECT packet (v3.1.1)
  *
  * Only MQTT client can send this packet.

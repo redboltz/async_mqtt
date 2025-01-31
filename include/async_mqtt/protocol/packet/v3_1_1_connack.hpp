@@ -16,17 +16,11 @@
 
 #include <async_mqtt/protocol/packet/control_packet_type.hpp>
 
-/**
- * @defgroup connack_v3_1_1 CONNACK packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup connack_v3_1_1
  * @brief MQTT CONNACK packet (v3.1.1)
  *
  * Only MQTT broker(sever) can send this packet.

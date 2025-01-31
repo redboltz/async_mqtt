@@ -21,7 +21,6 @@ namespace as = boost::asio;
 namespace bs = boost::beast;
 
 /**
- * @ingroup predefined_customize
  * @brief customization class template specialization for boost::beast::websocket::stream
  *
  * @see

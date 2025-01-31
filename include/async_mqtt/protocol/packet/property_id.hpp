@@ -15,7 +15,6 @@ namespace async_mqtt {
 namespace property {
 
 /**
- * @ingroup property
  * @brief MQTT property identifier
  *
  * \n See <a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901029"></a>
@@ -52,7 +51,6 @@ enum class id {
 };
 
 /**
- * @ingroup property
  * @brief stringize packet identifier
  * @param v target
  * @return packet identifier
@@ -92,7 +90,6 @@ constexpr char const* id_to_str(id v) {
 }
 
 /**
- * @ingroup property
  * @brief output to the stream
  * @param o output stream
  * @param v  target

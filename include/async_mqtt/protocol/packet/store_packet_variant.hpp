@@ -21,7 +21,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup store_packet_variant
  * @brief corresponding response packet
  *
  */

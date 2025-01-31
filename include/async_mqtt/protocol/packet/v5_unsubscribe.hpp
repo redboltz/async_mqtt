@@ -19,22 +19,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-/**
- * @defgroup unsubscribe_v5 UNSUBSCRIBE packet (v5.0)
- * @ingroup packet_v5
- */
-
-/**
- * @defgroup unsubscribe_v5_detail implementation class
- * @ingroup unsubscribe_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup unsubscribe_v5_detail
  * @brief MQTT UNSUBSCRIBE packet (v5)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -171,7 +160,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup unsubscribe_v5
  * @related basic_unsubscribe_packet
  * @brief Type alias of basic_unsubscribe_packet (PacketIdBytes=2).
  *

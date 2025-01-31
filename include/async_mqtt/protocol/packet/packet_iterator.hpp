@@ -21,7 +21,6 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @ingroup packet
  * @brief iterator type of buffer sequence
  *
  */
@@ -29,7 +28,6 @@ template <template <typename...> typename Container, typename Buffer>
 using packet_iterator = as::buffers_iterator<Container<Buffer>>;
 
 /**
- * @ingroup packet
  * @brief create packet iterator range
  * @param cbs collection of th buffer
  * @return the pair of packet_iterator
@@ -45,7 +43,6 @@ make_packet_range(Container<Buffer> const& cbs) {
 }
 
 /**
- * @ingroup packet
  * @brief convert buffer sequence to the string
  * @param cbs collection of th buffer
  * @return string that all buffers are concatenated

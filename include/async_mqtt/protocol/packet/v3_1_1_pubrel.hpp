@@ -15,23 +15,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-
-/**
- * @defgroup pubrel_v3_1_1 PUBREL packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup pubrel_v3_1_1_detail implementation class
- * @ingroup pubrel_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup pubrel_v3_1_1_detail
  * @brief MQTT PUBREL packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -147,7 +135,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_pubrel_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup pubrel_v3_1_1
  * @related basic_pubrel_packet
  * @brief Type alias of basic_pubrel_packet (PacketIdBytes=2).
  *

@@ -17,17 +17,11 @@
 #include <async_mqtt/util/move.hpp>
 #include <async_mqtt/util/detail/is_iterator.hpp>
 
-/**
- * @defgroup buffer Reference counting immutable buffer
- * @ingroup packet_detail
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup buffer
  * @brief buffer that has string_view interface and shared ownership
  * This class is only for advanced usecase such as developping high performance MQTT broker.
  * Typical MQTT client developpers don't need to care about the buffer.
@@ -974,7 +968,6 @@ namespace boost {
 namespace asio {
 
 /**
- * @ingroup buffer
  * @brief create boost::asio::const_buffer from the async_mqtt::buffer
  * boost::asio::const_buffer is a kind of view class.
  * So the class doesn't hold any lifetimes.
@@ -994,7 +987,6 @@ inline const_buffer buffer(async_mqtt::buffer const& data) {
 namespace std {
 
 /**
- * @ingroup buffer
  * @brief class template hash specilization for the buffer
  *
  */

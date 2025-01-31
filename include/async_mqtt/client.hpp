@@ -19,11 +19,6 @@
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/endpoint_fwd.hpp>
 
-/**
- * @defgroup client client (High level MQTT client)
- * @ingroup connection
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;

@@ -13,7 +13,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup packet
  * @brief subsscription entry
  *
  * #### Thread Safety

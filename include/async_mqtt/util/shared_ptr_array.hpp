@@ -12,7 +12,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup buffer
  * @brief shared_ptr<char[]> creating function.
  * You can choose the target type.
  *   - if your compiler setting is C++20 or later, then `std::make_shared<char[]>(size)` is used.

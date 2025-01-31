@@ -10,7 +10,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup endpoint
  * @brief receive packet filter
  */
 enum class filter {

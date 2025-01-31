@@ -15,11 +15,6 @@
 namespace async_mqtt {
 
 /**
- * @defgroup property_variant variant class for all properties
- * @ingroup property
- */
-
-/**
  * @brief equal operator
  * @param lhs compare target
  * @param rhs compare target
@@ -48,7 +43,6 @@ std::ostream& operator<<(std::ostream& o, property_variant const& v);
 
 
 /**
- * @ingroup property_variant
  * @brief property variant
  *
  * #### Thread Safety
@@ -214,14 +208,12 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief property variant collection type
  *
  */
 using properties = std::vector<property_variant>;
 
 /*
- * @ingroup property
  * @brief output to the stream
  * @param os output stream
  * @param v  target

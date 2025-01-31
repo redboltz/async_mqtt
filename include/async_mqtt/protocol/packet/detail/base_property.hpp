@@ -36,7 +36,6 @@ enum class ostream_format {
 };
 
 /**
- * @ingroup property_internal
  * @brief N bytes_property
  *
  * N is 1,2, or 4 in property usecases
@@ -124,7 +123,6 @@ protected:
 };
 
 /**
- * @ingroup property_internal
  * @brief binary_property
  */
 struct binary_property : private boost::totally_ordered<binary_property> {
@@ -238,7 +236,6 @@ struct binary_property : private boost::totally_ordered<binary_property> {
 };
 
 /**
- * @ingroup property_internal
  * @brief string_property
  */
 struct string_property : binary_property {
@@ -267,7 +264,6 @@ struct string_property : binary_property {
 };
 
 /**
- * @ingroup property_internal
  * @brief variable property
  *
  * The length is 1 to 4.

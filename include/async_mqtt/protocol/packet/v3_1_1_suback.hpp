@@ -17,23 +17,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-
-/**
- * @defgroup suback_v3_1_1 SUBACK packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup suback_v3_1_1_detail implementation class
- * @ingroup suback_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup suback_v3_1_1_detail
  * @brief MQTT SUBACK packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -161,7 +149,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_suback_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup suback_v3_1_1
  * @related basic_suback_packet
  * @brief Type alias of basic_suback_packet (PacketIdBytes=2).
  *

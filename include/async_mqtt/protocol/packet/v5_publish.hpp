@@ -24,22 +24,11 @@
 #include <async_mqtt/util/json_like_out.hpp>
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
-/**
- * @defgroup publish_v5 PUBLISH packet (v5.0)
- * @ingroup packet_v5
- */
-
-/**
- * @defgroup publish_v5_detail implementation class
- * @ingroup publish_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup publish_v5_detail
  * @brief MQTT PUBLISH packet (v5)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -337,7 +326,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_publish_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup publish_v5
  * @related basic_publish_packet
  * @brief Type alias of basic_publish_packet (PacketIdBytes=2).
  *

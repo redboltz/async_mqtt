@@ -12,7 +12,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup packet
  * @brief topic and sharename
  *
  * #### Thread Safety

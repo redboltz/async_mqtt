@@ -7,15 +7,9 @@
 #if !defined(ASYNC_MQTT_ASYNC_MQTT_ROLE_HPP)
 #define ASYNC_MQTT_ASYNC_MQTT_ROLE_HPP
 
-/**
- * @defgroup role MQTT connection role (client, server or both)
- * @ingroup connection
- */
-
 namespace async_mqtt {
 
 /**
- * @ingroup role
  * @brief MQTT endpoint connection role
  *
  */

@@ -13,12 +13,6 @@
 #include <async_mqtt/predefined_layer/ws.hpp>
 #include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
-/**
- * @defgroup predefined_layer_wss predefined underlying layer (Websocket on TLS)
- * @ingroup predefined_layer
- *
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -27,7 +21,6 @@ namespace bs = boost::beast;
 namespace protocol {
 
 /**
- * @ingroup predefined_layer_wss
  * @brief Type alias of boost::beast::websocket::stream of mqtts
  * async_underlying_handshake function can be called with wss.
  * You can call the following functions to handshake.

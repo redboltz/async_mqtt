@@ -18,22 +18,11 @@
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/packet/topic_sharename.hpp>
 
-/**
- * @defgroup unsubscribe_v3_1_1 UNSUBSCRIBE packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup unsubscribe_v3_1_1_detail implementation class
- * @ingroup unsubscribe_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup unsubscribe_v3_1_1_detail
  * @brief MQTT UNSUBSCRIBE packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -157,7 +146,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_unsubscribe_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup unsubscribe_v3_1_1
  * @related basic_unsubscribe_packet
  * @brief Type alias of basic_unsubscribe_packet (PacketIdBytes=2).
  *

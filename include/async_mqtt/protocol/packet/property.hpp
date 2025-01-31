@@ -25,16 +25,6 @@
 #include <async_mqtt/protocol/packet/qos.hpp>
 #include <async_mqtt/protocol/packet/detail/base_property.hpp>
 
-/**
- * @defgroup property Property for MQTT v5.0 packets
- * @ingroup packet_v5
- */
-
-/**
- * @defgroup property_internal implementation class
- * @ingroup property
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -45,7 +35,6 @@ enum class property_location;
 std::optional<property_variant> make_property_variant(buffer& buf, property_location loc, error_code& ec);
 
 /**
- * @ingroup property
  * @brief payload_format
  *
  */
@@ -55,49 +44,42 @@ enum class payload_format {
 };
 
 /**
- * @ingroup property
  * @brief type of the session expiry interval (seconds)
  *
  */
 using session_expiry_interval_type = std::uint32_t;
 
 /**
- * @ingroup property
  * @brief type of the topic alias value
  *
  */
 using topic_alias_type = std::uint16_t;
 
 /**
- * @ingroup property
  * @brief type of the receive maximum value
  *
  */
 using receive_maximum_type = std::uint16_t;
 
 /**
- * @ingroup property
  * @brief the special session_expiry_interval value that session is never expire.
  *
  */
 static constexpr session_expiry_interval_type session_never_expire = 0xffffffffUL;
 
 /**
- * @ingroup property
  * @brief the maximum topic_alias value
  *
  */
 static constexpr topic_alias_type topic_alias_max = 0xffff;
 
 /**
- * @ingroup property
  * @brief the maximum receive_maximum value
  *
  */
 static constexpr receive_maximum_type receive_maximum_max = 0xffff;
 
 /**
- * @ingroup property
  * @brief the maximum maximum_packet_size value
  *
  */
@@ -109,7 +91,6 @@ static constexpr std::uint32_t packet_size_no_limit =
 namespace property {
 
 /**
- * @ingroup property
  * @brief payload_format_indicator property
  *
  * #### Thread Safety
@@ -143,7 +124,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -153,7 +133,6 @@ private:
 std::ostream& operator<<(std::ostream& o, payload_format_indicator const& v);
 
 /**
- * @ingroup property
  * @brief message_expiry_interval property
  *
  * #### Thread Safety
@@ -186,7 +165,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -196,7 +174,6 @@ private:
 std::ostream& operator<<(std::ostream& o, message_expiry_interval const& v);
 
 /**
- * @ingroup property
  * @brief content_type property
  *
  * #### Thread Safety
@@ -226,7 +203,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -236,7 +212,6 @@ private:
 std::ostream& operator<<(std::ostream& o, content_type const& v);
 
 /**
- * @ingroup property
  * @brief response_topic property
  *
  * #### Thread Safety
@@ -266,7 +241,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -276,7 +250,6 @@ private:
 std::ostream& operator<<(std::ostream& o, response_topic const& v);
 
 /**
- * @ingroup property
  * @brief correlation_data property
  *
  * #### Thread Safety
@@ -306,7 +279,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -316,7 +288,6 @@ private:
 std::ostream& operator<<(std::ostream& o, correlation_data const& v);
 
 /**
- * @ingroup property
  * @brief subscription_identifier property
  *
  * #### Thread Safety
@@ -341,7 +312,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -351,7 +321,6 @@ private:
 std::ostream& operator<<(std::ostream& o, subscription_identifier const& v);
 
 /**
- * @ingroup property
  * @brief session_expiry_interval property
  *
  * #### Thread Safety
@@ -384,7 +353,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -394,7 +362,6 @@ private:
 std::ostream& operator<<(std::ostream& o, session_expiry_interval const& v);
 
 /**
- * @ingroup property
  * @brief assigned_client_identifier property
  *
  * #### Thread Safety
@@ -424,7 +391,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -434,7 +400,6 @@ private:
 std::ostream& operator<<(std::ostream& o, assigned_client_identifier const& v);
 
 /**
- * @ingroup property
  * @brief server_keep_alive property
  *
  * #### Thread Safety
@@ -467,7 +432,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -477,7 +441,6 @@ private:
 std::ostream& operator<<(std::ostream& o, server_keep_alive const& v);
 
 /**
- * @ingroup property
  * @brief authentication_method property
  *
  * #### Thread Safety
@@ -507,7 +470,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -517,7 +479,6 @@ private:
 std::ostream& operator<<(std::ostream& o, authentication_method const& v);
 
 /**
- * @ingroup property
  * @brief authentication_data property
  *
  * #### Thread Safety
@@ -547,7 +508,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -557,7 +517,6 @@ private:
 std::ostream& operator<<(std::ostream& o, authentication_data const& v);
 
 /**
- * @ingroup property
  * @brief request_problem_information property
  *
  * #### Thread Safety
@@ -590,7 +549,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -600,7 +558,6 @@ private:
 std::ostream& operator<<(std::ostream& o, request_problem_information const& v);
 
 /**
- * @ingroup property
  * @brief will_delay_interval property
  *
  * #### Thread Safety
@@ -633,7 +590,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -643,7 +599,6 @@ private:
 std::ostream& operator<<(std::ostream& o, will_delay_interval const& v);
 
 /**
- * @ingroup property
  * @brief request_response_information property
  *
  * #### Thread Safety
@@ -676,7 +631,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -686,7 +640,6 @@ private:
 std::ostream& operator<<(std::ostream& o, request_response_information const& v);
 
 /**
- * @ingroup property
  * @brief response_information property
  *
  * #### Thread Safety
@@ -716,7 +669,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -726,7 +678,6 @@ private:
 std::ostream& operator<<(std::ostream& o, response_information const& v);
 
 /**
- * @ingroup property
  * @brief server_reference property
  *
  * #### Thread Safety
@@ -756,7 +707,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -766,7 +716,6 @@ private:
 std::ostream& operator<<(std::ostream& o, server_reference const& v);
 
 /**
- * @ingroup property
  * @brief reason_string property
  *
  * #### Thread Safety
@@ -796,7 +745,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -806,7 +754,6 @@ private:
 std::ostream& operator<<(std::ostream& o, reason_string const& v);
 
 /**
- * @ingroup property
  * @brief receive_maximum property
  *
  * #### Thread Safety
@@ -839,7 +786,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -849,7 +795,6 @@ private:
 std::ostream& operator<<(std::ostream& o, receive_maximum const& v);
 
 /**
- * @ingroup property
  * @brief topic_alias_maximum property
  *
  * #### Thread Safety
@@ -882,7 +827,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -892,7 +836,6 @@ private:
 std::ostream& operator<<(std::ostream& o, topic_alias_maximum const& v);
 
 /**
- * @ingroup property
  * @brief topic_alias property
  *
  * #### Thread Safety
@@ -925,7 +868,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -935,7 +877,6 @@ private:
 std::ostream& operator<<(std::ostream& o, topic_alias const& v);
 
 /**
- * @ingroup property
  * @brief maximum_qos property
  *
  * #### Thread Safety
@@ -968,7 +909,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -978,7 +918,6 @@ private:
 std::ostream& operator<<(std::ostream& o, maximum_qos const& v);
 
 /**
- * @ingroup property
  * @brief retain_available property
  *
  * #### Thread Safety
@@ -1011,7 +950,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -1021,7 +959,6 @@ private:
 std::ostream& operator<<(std::ostream& o, retain_available const& v);
 
 /**
- * @ingroup property
  * @brief user property
  *
  * #### Thread Safety
@@ -1113,7 +1050,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -1123,7 +1059,6 @@ private:
 std::ostream& operator<<(std::ostream& o, user_property const& v);
 
 /**
- * @ingroup property
  * @brief maximum_packet_size property
  *
  * #### Thread Safety
@@ -1156,7 +1091,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -1166,7 +1100,6 @@ private:
 std::ostream& operator<<(std::ostream& o, maximum_packet_size const& v);
 
 /**
- * @ingroup property
  * @brief wildcard_subscription_available property
  *
  * #### Thread Safety
@@ -1199,7 +1132,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -1209,7 +1141,6 @@ private:
 std::ostream& operator<<(std::ostream& o, wildcard_subscription_available const& v);
 
 /**
- * @ingroup property
  * @brief subscription_identifier_available property
  *
  * #### Thread Safety
@@ -1242,7 +1173,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target
@@ -1252,7 +1182,6 @@ private:
 std::ostream& operator<<(std::ostream& o, subscription_identifier_available const& v);
 
 /**
- * @ingroup property
  * @brief shared_subscription_available property
  *
  * #### Thread Safety
@@ -1285,7 +1214,6 @@ private:
 };
 
 /**
- * @ingroup property
  * @brief stream output operator
  * @param o output stream
  * @param v target

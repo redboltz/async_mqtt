@@ -20,12 +20,6 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @defgroup underlying_customize underlying layer customization
- * @ingroup underlying_layer
- */
-
-/**
- * @ingroup underlying_customize
  * @brief customization class template for underlying layer
  * In order to adapt your layer to async_mqtt, specialize the class template.
  * @tparam Layer Specialized parameter for your own layer

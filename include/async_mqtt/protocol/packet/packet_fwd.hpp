@@ -9,25 +9,6 @@
 
 #include <cstddef>
 
-/**
- * @defgroup packet MQTT packets
- */
-
-/**
- * @defgroup packet_v3_1_1 protocol version 3.1.1
- * @ingroup packet
- */
-
-/**
- * @defgroup packet_v5 protocol version 5.0
- * @ingroup packet
- */
-
-/**
- * @defgroup packet_detail implementation class
- * @ingroup packet
- */
-
 namespace async_mqtt {
 
 namespace v3_1_1 {

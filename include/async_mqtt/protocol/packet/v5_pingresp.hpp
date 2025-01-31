@@ -22,18 +22,11 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/endian_convert.hpp>
 
-
-/**
- * @defgroup pingresp_v5 PINGRESP packet (v5.0)
- * @ingroup packet_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup pingresp_v5
  * @brief MQTT PINGRESP packet (v5)
  *
  * Only MQTT broker(sever) can send this packet.

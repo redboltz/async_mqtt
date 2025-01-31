@@ -32,10 +32,6 @@
 
 #include <async_mqtt/util/log_severity.hpp>
 
-/**
- * @defgroup log logging
- */
-
 namespace async_mqtt {
 
 struct channel : std::string {

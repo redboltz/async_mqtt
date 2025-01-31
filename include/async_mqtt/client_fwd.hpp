@@ -15,7 +15,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup client
  * @brief MQTT client for casual usecases
  *
  * #### Thread Safety

@@ -14,18 +14,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-
-/**
- * @defgroup pingresp_v3_1_1 PINGRESP packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup pingresp_v3_1_1
  * @brief MQTT PINGRESP packet (v3.1.1)
  *
  * Only MQTT broker(sever) can send this packet.

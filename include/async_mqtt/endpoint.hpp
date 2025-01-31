@@ -16,15 +16,6 @@
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/store_packet_variant.hpp>
 
-/**
- * @defgroup connection MQTT connection
- */
-
-/**
- * @defgroup endpoint endpoint (Packet level MQTT endpoint for client/server,broker)
- * @ingroup connection
- */
-
 namespace async_mqtt {
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>

@@ -14,7 +14,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup endpoint
  * @brief MQTT endpoint corresponding to the connection
  *
  * #### Thread Safety
@@ -35,7 +34,6 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint;
 
 /**
- * @ingroup endpoint
  * @related basic_endpoint
  * @brief Type alias of basic_endpoint (PacketIdBytes=2).
  *        This is for typical usecase.

@@ -13,7 +13,6 @@
 namespace async_mqtt {
 
 /**
- * @ingroup packet
  * @brief packet idenfitifer type class template
  *
  * #### Actual Types
@@ -35,7 +34,6 @@ struct basic_packet_id_type<4> {
 };
 
 /**
- * @ingroup packet
  * @brief packet idenfitifer type
  *
  */

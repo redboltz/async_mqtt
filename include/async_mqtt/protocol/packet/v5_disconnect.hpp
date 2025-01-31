@@ -16,17 +16,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-/**
- * @defgroup disconnect_v5 DISCONNECT packet (v5.0)
- * @ingroup packet_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup disconnect_v5
  * @brief MQTT DISCONNECT packet (v5)
  *
  * When the endpoint sends DISCONNECT packet, then the endpoint become disconnecting status.

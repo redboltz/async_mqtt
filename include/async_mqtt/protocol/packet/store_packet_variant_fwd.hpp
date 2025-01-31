@@ -9,20 +9,9 @@
 
 #include <cstddef>
 
-/**
- * @defgroup store_packet_variant variant class for stored packets (PUBLISH, PUBREL)
- * @ingroup packet_variant
- */
-
-/**
- * @defgroup store_packet_variant_detail implementation class
- * @ingroup store_packet_variant
- */
-
 namespace async_mqtt {
 
 /**
- * @ingroup store_packet_variant_detail
  * @brief MQTT packet variant for store
  * @tparam PacketIdBytes MQTT spec is 2. You can use `store_packet_variant` for that.
  *
@@ -37,7 +26,6 @@ template <std::size_t PacketIdBytes>
 class basic_store_packet_variant;
 
 /**
- * @ingroup store_packet_variant
  * @brief Type alias of basic_store_packet_variant (PacketIdBytes=2).
  *
  */

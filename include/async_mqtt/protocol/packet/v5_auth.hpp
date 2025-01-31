@@ -19,17 +19,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-/**
- * @defgroup auth_v5 AUTH packet (v5.0)
- * @ingroup packet_v5
- */
-
 namespace async_mqtt::v5 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup auth_v5
  * @brief MQTT AUTH packet (v5)
  *
  * MQTT AUTH packet.

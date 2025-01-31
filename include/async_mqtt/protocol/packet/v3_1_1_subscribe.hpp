@@ -17,22 +17,11 @@
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/variable_bytes.hpp>
 
-/**
- * @defgroup subscribe_v3_1_1 SUBSCRIBE packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup subscribe_v3_1_1_detail implementation class
- * @ingroup subscribe_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup subscribe_v3_1_1_detail
  * @brief MQTT SUBSCRIBE packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -156,7 +145,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_subscribe_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup subscribe_v3_1_1
  * @related basic_subscribe_packet
  * @brief Type alias of basic_subscribe_packet (PacketIdBytes=2).
  *

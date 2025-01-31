@@ -15,23 +15,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-
-/**
- * @defgroup puback_v3_1_1 PUBACK packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup puback_v3_1_1_detail implementation class
- * @ingroup puback_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup puback_v3_1_1_detail
  * @brief MQTT PUBACK packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -146,7 +134,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_puback_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup puback_v3_1_1
  * @related basic_puback_packet
  * @brief Type alias of basic_puback_packet (PacketIdBytes=2).
  *

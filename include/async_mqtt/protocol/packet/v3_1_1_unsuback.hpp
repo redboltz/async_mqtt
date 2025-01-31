@@ -15,22 +15,11 @@
 #include <async_mqtt/util/buffer.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 
-/**
- * @defgroup unsuback_v3_1_1 UNSUBACK packet (v3.1.1)
- * @ingroup packet_v3_1_1
- */
-
-/**
- * @defgroup unsuback_v3_1_1_detail implementation class
- * @ingroup unsuback_v3_1_1
- */
-
 namespace async_mqtt::v3_1_1 {
 
 namespace as = boost::asio;
 
 /**
- * @ingroup unsuback_v3_1_1_detail
  * @brief MQTT UNSUBACK packet (v3.1.1)
  * @tparam PacketIdBytes size of packet_id
  *
@@ -142,7 +131,6 @@ template <std::size_t PacketIdBytes>
 std::ostream& operator<<(std::ostream& o, basic_unsuback_packet<PacketIdBytes> const& v);
 
 /**
- * @ingroup unsuback_v3_1_1
  * @related basic_unsuback_packet
  * @brief Type alias of basic_unsuback_packet (PacketIdBytes=2).
  *

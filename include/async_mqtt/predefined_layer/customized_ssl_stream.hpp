@@ -23,7 +23,6 @@ namespace tls = as::ssl; // for backword compatilibity
 static constexpr auto shutdown_timeout = std::chrono::seconds(3);
 
 /**
- * @ingroup predefined_customize
  * @brief customization class template specialization for boost::asio::ssl::stream
  *
  * @see

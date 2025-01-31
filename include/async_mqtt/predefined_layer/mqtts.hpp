@@ -10,11 +10,6 @@
 #include <async_mqtt/predefined_layer/mqtt.hpp>
 #include <async_mqtt/predefined_layer/customized_ssl_stream.hpp>
 
-/**
- * @defgroup predefined_layer_mqtts predefined underlying layer (TLS)
- * @ingroup predefined_layer
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -23,7 +18,6 @@ namespace tls = as::ssl; // for backword compatilibity
 namespace protocol {
 
 /**
- * @ingroup predefined_layer_mqtts
  * @brief Type alias of boost::asio::ssl::stream of mqtt
  * @brief predefined underlying layer (TLS)
  *
@@ -32,7 +26,6 @@ using mqtts = as::ssl::stream<mqtt>;
 
 
 /**
- * @ingroup predefined_layer_mqtts
  * @brief TLS handshake
  * This function does underlying layers handshaking prior to TLS handshake
  * @param layer  TLS layer

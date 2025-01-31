@@ -11,21 +11,6 @@
 
 #include <async_mqtt/predefined_layer/customized_basic_stream.hpp>
 
-/**
- * @defgroup underlying_layer predefined underlying layers and how to adapt your own layer
- * @ingroup connection
- */
-
-/**
- * @defgroup predefined_layer predefined underlying layers
- * @ingroup underlying_layer
- */
-
-/**
- * @defgroup predefined_layer_mqtt predefined underlying layer (TCP)
- * @ingroup predefined_layer
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -33,7 +18,6 @@ namespace as = boost::asio;
 namespace protocol {
 
 /**
- * @ingroup predefined_layer_mqtt
  * @brief Type alias of Boost.Asio TCP socket
  *
  */
@@ -41,7 +25,6 @@ using mqtt = as::basic_stream_socket<as::ip::tcp, as::any_io_executor>;
 
 
 /**
- * @ingroup predefined_layer_mqtt
  * @brief resovling name and connect TCP layer
  * @param layer  TCP layer
  * @param host   host name or IP address to connect

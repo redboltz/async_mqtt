@@ -10,11 +10,6 @@
 #include <async_mqtt/predefined_layer/mqtt.hpp>
 #include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
 
-/**
- * @defgroup predefined_layer_ws predefined underlying layer (Websocket)
- * @ingroup predefined_layer
- */
-
 namespace async_mqtt {
 
 namespace as = boost::asio;
@@ -23,13 +18,11 @@ namespace bs = boost::beast;
 namespace protocol {
 
 /**
- * @ingroup predefined_layer_ws
  * @brief Type alias of boost::beast::websocket::stream of mqtt
  */
 using ws = bs::websocket::stream<mqtt>;
 
 /**
- * @ingroup predefined_layer_ws
  * @brief Websocket handshake
  * This function does underlying layers handshaking prior to Websocket handshake
  * @param layer  Websocket layer
@@ -58,7 +51,6 @@ async_underlying_handshake(
 );
 
 /**
- * @ingroup predefined_layer_ws
  * @brief Websocket handshake
  * This function does underlying layers handshaking prior to Websocket handshake
  * Websocket path is set as "/".
