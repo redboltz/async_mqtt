@@ -34,14 +34,13 @@ namespace async_mqtt {
  *    @li Shared objects: Unsafe
  *
  * @tparam Role          role for packet sendable checking
- * @tparam PacketIdBytes MQTT spec is 2. You can use `connection` for that.
+ * @tparam PacketIdBytes MQTT spec is 2. You can use @ref connection for that.
  */
 template <role Role, std::size_t PacketIdBytes>
 class basic_connection;
 
 /**
- * @related basic_connection
- * @brief Type alias of basic_connection (PacketIdBytes=2).
+ * @brief Type alias of @ref basic_connection (PacketIdBytes=2).
  *        This is for typical usecase (e.g. MQTT client).
  *
  * #### Thread Safety

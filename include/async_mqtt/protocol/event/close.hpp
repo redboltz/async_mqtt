@@ -11,8 +11,20 @@
 
 namespace async_mqtt::event {
 
+/**
+ * @brief Close event.
+ *
+ * This corresponds to @ref basic_connection::on_close().
+ *
+ * #### Thread Safety
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
+ */
 class close {
 public:
+    /**
+     * @brief Constructor.
+     */
     constexpr close() = default;
 };
 

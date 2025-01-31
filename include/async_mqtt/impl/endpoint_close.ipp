@@ -71,7 +71,7 @@ close_op {
             for (auto& event : events) {
                 std::visit(
                     overload {
-                        [&](async_mqtt::event::timer const& ev) {
+                        [&](async_mqtt::event::timer&& ev) {
                             auto op = ev.get_op();
                             BOOST_ASSERT(op == timer_op::cancel);
                             switch (ev.get_kind()) {
@@ -86,14 +86,14 @@ close_op {
                                 break;
                             }
                         },
-                        [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> const& ev) {
+                        [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes>&& ev) {
                             a_ep.notify_release_pid(ev.get());
                         },
                         [&](auto const&) {
                             BOOST_ASSERT(false);
                         }
                     },
-                    event
+                    force_move(event)
                 );
             }
             a_ep.close_queue_.poll();

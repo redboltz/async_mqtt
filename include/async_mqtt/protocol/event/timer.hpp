@@ -15,25 +15,56 @@
 
 namespace async_mqtt::event {
 
+/**
+ * @brief Timer event.
+ *
+ * This corresponds to @ref basic_connection::on_timer_op().
+ *
+ * #### Thread Safety
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
+ */
 class timer {
 public:
-    timer(
+    /**
+     * @brief Constructor.
+     *
+     * @param op   The type of timer operation.
+     * @param kind The type of timer.
+     * @param ms   The duration of the timer.
+     *             The minimum resolution is in milliseconds.
+     *             If `kind` is @ref timer_op::cancel, `ms` is ignored.
+     */
+    explicit timer(
         timer_op op,
         timer_kind kind,
         std::optional<std::chrono::milliseconds> ms = std::nullopt
     )
-        :op_{op}, kind_{kind}, ms_{ms}
-    {
-    }
+        : op_{op}, kind_{kind}, ms_{ms} {}
 
+    /**
+     * @brief Get the timer operation.
+     *
+     * @return The timer operation.
+     */
     timer_op get_op() const {
         return op_;
     }
 
+    /**
+     * @brief Get the timer type.
+     *
+     * @return The timer type.
+     */
     timer_kind get_kind() const {
         return kind_;
     }
 
+    /**
+     * @brief Get the timer duration in milliseconds.
+     *
+     * @return The timer duration in milliseconds.
+     */
     std::optional<std::chrono::milliseconds> get_ms() const {
         return ms_;
     }

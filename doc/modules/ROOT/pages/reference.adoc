@@ -49,6 +49,8 @@ xref:reference:async_mqtt/protocol_version.adoc[`protocol_version`]
 
 xref:reference:async_mqtt/role.adoc[`role`]
 
+xref:reference:async_mqtt/connection_status.adoc[`connection_status`]
+
 |
 
 **Enums**

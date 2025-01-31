@@ -9,10 +9,15 @@
 
 namespace async_mqtt {
 
+/**
+ * @brief Connection status.
+ */
 enum class connection_status {
-    connecting,
-    connected,
-    disconnected,
+    connecting,   ///< The status after sending or receiving a CONNECT packet,
+                  ///< but before receiving or sending a CONNACK packet.
+    connected,    ///< The status after sending or receiving a CONNACK packet.
+    disconnected, ///< The status after sending or receiving a DISCONNECT packet,
+                  ///< detecting an error, or when the underlying layer is closed.
 };
 
 } // namespace async_mqtt

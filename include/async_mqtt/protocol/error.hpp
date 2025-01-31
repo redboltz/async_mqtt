@@ -98,7 +98,7 @@ enum class mqtt_error {
     all_error_detected                     = 0x0180, ///< All entries have error on suback/unsuback
     packet_identifier_fully_used           = 0x0181, ///< Packet Identifier fully used
     packet_identifier_conflict             = 0x0182, ///< Packet Identifier conflict
-    packet_identifier_invalid              = 0x0183, ///< Packet Identifier is invalid (e.g not allocated packet identifier is used on publish)
+    packet_identifier_invalid              = 0x0183, ///< Packet Identifier is invalid (e.g neither allocated nor registered)
     packet_not_allowed_to_send             = 0x0184, ///< Packet is not allowd to be sent
     packet_not_allowed_to_store            = 0x0185, ///< Packet is not allowd to be stored
     packet_not_regulated                   = 0x0186, ///< Packet is not regulated

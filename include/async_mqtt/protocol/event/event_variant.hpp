@@ -33,6 +33,9 @@ namespace async_mqtt {
  * @li @ref event::timer
  * @li @ref event::close
  *
+ * #### related functions
+ * @li @ref is_error()
+ *
  */
 template <std::size_t PacketIdBytes>
 using basic_event_variant = std::variant<
@@ -45,13 +48,21 @@ using basic_event_variant = std::variant<
 >;
 
 /**
- * @ingroup event_variant
  * @related basic_event_variant
  * @brief type alias of basic_event_variant (PacketIdBytes=2).
  *
  */
 using event_variant = basic_event_variant<2>;
 
+/**
+ * @brief Check whether the event is an error.
+ *
+ * Determines if the given event is an @ref error_code.
+ * Returns `true` if it is an error, otherwise returns `false`.
+ *
+ * @param ev The event to check.
+ * @return `true` if the event is an error, otherwise `false`.
+ */
 template <std::size_t PacketIdBytes>
 inline bool is_error(basic_event_variant<PacketIdBytes> const& ev) {
     return ev.index() == 0;

@@ -136,7 +136,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
     for (auto& event : events) {
         std::visit(
             overload {
-                [&](async_mqtt::event::timer const& ev) {
+                [&](async_mqtt::event::timer&& ev) {
                     if (ev.get_kind() == timer_kind::pingreq_send) {
                         switch (ev.get_op()) {
                         case timer_op::reset:
@@ -155,7 +155,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::set_pingreq_send_interval(
                     BOOST_ASSERT(false);
                 }
             },
-            event
+            force_move(event)
         );
     }
 }
@@ -216,7 +216,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
                                 namespace event_ns = async_mqtt::event;
                                 std::visit(
                                     overload {
-                                        [&](event_ns::timer const& ev) {
+                                        [&](event_ns::timer&& ev) {
                                             switch (ev.get_kind()) {
                                             case timer_kind::pingreq_send:
                                                 switch (ev.get_op()) {
@@ -242,7 +242,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
                                                 break;
                                             }
                                         },
-                                        [&](event_ns::basic_send<PacketIdBytes>& ev) {
+                                        [&](event_ns::basic_send<PacketIdBytes>&& ev) {
                                             // must be pingreq packet here
                                             BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                                             ep->stream_.async_write_packet(
@@ -254,7 +254,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_send_timer(
                                             BOOST_ASSERT(false);
                                         }
                                     },
-                                    event
+                                    force_move(event)
                                 );
                             }
                         }
@@ -297,7 +297,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](async_mqtt::event::timer const& ev) {
+                                        [&](async_mqtt::event::timer&& ev) {
                                             if (ev.get_kind() == timer_kind::pingreq_recv) {
                                                 switch (ev.get_op()) {
                                                 case timer_op::reset:
@@ -312,7 +312,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
                                                 BOOST_ASSERT(false);
                                             }
                                         },
-                                        [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
+                                        [&](async_mqtt::event::basic_send<PacketIdBytes>&& ev) {
                                             auto pv{force_move(ev.get())};
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
@@ -337,7 +337,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
                                             BOOST_ASSERT(false);
                                         }
                                     },
-                                    event
+                                    force_move(event)
                                 );
                             }
                         }
@@ -380,7 +380,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                 auto& event = *it++;
                                 std::visit(
                                     overload {
-                                        [&](async_mqtt::event::timer const& ev) {
+                                        [&](async_mqtt::event::timer&& ev) {
                                             switch (ev.get_kind()) {
                                             case timer_kind::pingresp_recv:
                                                 switch (ev.get_op()) {
@@ -407,7 +407,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 break;
                                             }
                                         },
-                                        [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
+                                        [&](async_mqtt::event::basic_send<PacketIdBytes>&& ev) {
                                             auto pv{force_move(ev.get())};
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
@@ -425,14 +425,14 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                                 }
                                             );
                                         },
-                                        [&](async_mqtt::event::close const&) {
+                                        [&](async_mqtt::event::close&&) {
                                             async_close(ep, as::detached);
                                         },
                                         [&](auto const&) {
                                             BOOST_ASSERT(false);
                                         }
                                     },
-                                    event
+                                    force_move(event)
                                 );
                             }
                         }

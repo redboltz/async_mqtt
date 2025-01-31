@@ -37,7 +37,7 @@ recv_op {
                     decided_error.emplace(ec);
                     return true;
                 },
-                [&](async_mqtt::event::basic_send<PacketIdBytes>& ev) {
+                [&](async_mqtt::event::basic_send<PacketIdBytes>&& ev) {
                     state = sent;
                     auto ep_copy{ep};
                     async_send(
@@ -48,12 +48,12 @@ recv_op {
                     BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                     return false;
                 },
-                [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes> ev) {
+                [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes>&& ev) {
                     a_ep.notify_release_pid(ev.get());
                     try_resend_from_queue = true;
                     return true;
                 },
-                [&](async_mqtt::event::basic_packet_received<PacketIdBytes> ev) {
+                [&](async_mqtt::event::basic_packet_received<PacketIdBytes>&& ev) {
                     if (recv_packet) {
                         // rest events would be processed the next async_recv call
                         // back the event to the recv_events_ for the next async_recv
@@ -70,7 +70,7 @@ recv_op {
                     }
                     return true;
                 },
-                [&](async_mqtt::event::timer ev) {
+                [&](async_mqtt::event::timer&& ev) {
                     switch (ev.get_kind()) {
                     case timer_kind::pingreq_send:
                         switch (ev.get_op()) {
@@ -124,7 +124,7 @@ recv_op {
                     return false;
                 }
             },
-            event
+            force_move(event)
         );
     }
 

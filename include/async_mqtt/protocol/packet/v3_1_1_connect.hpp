@@ -35,6 +35,7 @@ namespace as = boost::asio;
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
+ */
 class connect_packet {
 public:
     /**

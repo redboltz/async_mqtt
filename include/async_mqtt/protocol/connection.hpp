@@ -23,84 +23,107 @@ class basic_connection {
     using impl_type = detail::basic_connection_impl<Role, PacketIdBytes>;
 
 public:
+    /**
+     * @brief Constructor.
+     *
+     * @li If the connection is a client, you must set either @ref protocol_version::v3_1_1
+     *     or @ref protocol_version::v5 .
+     *     - If @ref protocol_version::v3_1_1 or @ref protocol_version::v5 is specified,
+     *       only packets compatible with that
+     *       protocol version can be sent and received.
+     * @li If the connection is a server, you can also set @ref protocol_version::undetermined .
+     *     The protocol version is determined when the CONNECT packet is received.
+     *     Once the protocol version is determined, only packets corresponding to that
+     *     protocol version can be sent and received.
+     *
+     * @param ver The protocol version.
+     */
     basic_connection(protocol_version ver);
 
+    /**
+     * @brief Destructor.
+     */
     virtual ~basic_connection() = default;
 
     /**
      * @brief Packet sending request.
      *
      * @li If the packet cannot be sent, @ref on_error is called.
+     *     - Additionally, if the packet contains a packet_id, it is released, and
+     *       @ref on_packet_id_release() is called.
      * @li If the packet is a @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet
-     *     and Keep Alive is set, then @ref on_timer_op() for @ref timer_kind::pingreq_send is called.
+     *     and Keep Alive is set, then @ref on_timer_op() is called for @ref timer_kind::pingreq_send .
+     *     - Additionally, if @ref set_pingresp_recv_timeout() is set to a nonzero value,
+     *       @ref on_timer_op() is called for @ref timer_kind::pingresp_recv.
+     * @li If a disconnection occurs during the sending process, @ref on_timer_op() is called
+     *     for all @ref timer_kind values to cancel any active timers.
      *
      * @param packet The packet to be sent.
+     * @tparam Packet The type of the packet.
      */
     template <typename Packet>
-    void
-    send(Packet packet);
+    void send(Packet packet);
 
     /**
      * @brief Notify that some bytes of the packet have been received.
      *
-     * All bytes will be processed in the input stream.
+     * At most, the bytes for a single packet are processed from the input stream.
+     * Once one packet has been processed, the function returns, even if additional bytes remain in the stream.
      *
      * @li If the packet is malformed or a protocol error occurs, @ref on_error is called.
-     *     If the protocol_version is v5, then @ref on_send() is called with either
-     *     a @ref v5::connack_packet or @ref v5::disconnect_packet .
+     *     If the protocol_version is v5, @ref on_send() is called with either
+     *     a @ref v5::connack_packet or a @ref v5::disconnect_packet .
      *     Finally, @ref on_close() is called.
      * @li If a complete and valid packet is constructed, @ref on_receive() is called with
      *     the constructed packet.
      * @li If the packet_id becomes reusable, @ref on_packet_id_release() is called with
      *     the packet_id.
      * @li If a timer operation is required, @ref on_timer_op() is called.
-     *     - If the connection acts as a client, a timer operation is required when a
-     *       PINGRESP packet is received or a CONNACK packet with @ref property::server_keep_alive
-     *       is received.
-     *     - If the connection acts as a server, a timer operation is required whenever
+     *     - If the connection acts as a client, a timer operation is triggered when a
+     *       PINGRESP packet is received or a CONNACK packet with the @ref property::server_keep_alive
+     *       property is received.
+     *     - If the connection acts as a server, a timer operation is triggered whenever
      *       a packet is received, provided that Keep Alive is activated.
      * @li If the bytes are incomplete for a packet, they are stored and processed during
      *     the next @ref recv() call.
      *
-     * @param is Input stream containing some bytes of the packet.
+     * @param is The input stream containing some bytes of the packet.
      */
-    void
-    recv(std::istream& is);
+    void recv(std::istream& is);
 
     /**
      * @brief Notify that a timer has fired.
      *
      * Timer operations are requested through @ref on_timer_op().
-     * Users are responsible for resetting (cancel and then set) or canceling the timer. When the timer fires,
-     * this function is expected to be called.
+     * Users are responsible for resetting (canceling and then setting) or canceling the timer.
+     * When the timer fires, this function is expected to be called.
      *
      * @li If the kind is @ref timer_kind::pingreq_send, @ref on_send() is called with
      *     a PINGREQ packet.
-     * @li If the kind is @ref timer_kind::pingreq_recv :
+     * @li If the kind is @ref timer_kind::pingreq_recv
      *     - If the protocol_version is v5, @ref on_send() is called with
      *       a @ref v5::disconnect_packet .
      *     - Finally, @ref on_close() is called.
-     * @li If the kind is @ref timer_kind::pingresp_recv :
+     * @li If the kind is @ref timer_kind::pingresp_recv
      *     - If the protocol_version is v5, @ref on_send() is called with
      *       a @ref v5::disconnect_packet .
      *     - Finally, @ref on_close() is called.
      *
      * @param kind The type of timer that has fired.
      */
-    void
-    notify_timer_fired(timer_kind kind);
+    void notify_timer_fired(timer_kind kind);
 
     /**
-     * @brief notify the connection is closed
+     * @brief Notify that the underlying connection is closed.
      *
-     * @li if the packet can't send @ref on_error is called.
-     * @li if the packet is @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet,
-     *     and Keep Alive is set, then @ref on_timer_op() for @ref timer_kind::pingreq_send is called.
-     *
-     * @param packet The packet to send.
+     * @li If a packet with an acquired or registered packet_id is being processed,
+     *     it is released, and @ref on_packet_id_release() is called.
+     * @li @ref on_timer_op() is called for all @ref timer_kind values to cancel
+     *     any active timers.
+     * @li If the packet is a @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet,
+     *     and Keep Alive is set, then @ref on_timer_op() is called for @ref timer_kind::pingreq_send.
      */
-    void
-    notify_closed();
+    void notify_closed();
 
     /**
      * @brief Set the PINGREQ packet sending interval.
