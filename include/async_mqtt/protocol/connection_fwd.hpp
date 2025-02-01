@@ -14,40 +14,41 @@
 namespace async_mqtt {
 
 /**
- * @brief MQTT connection
+ * @brief MQTT connection.
  *
- * I/O independent MQTT protocol state machine.
- * @li Manage connection status.
- * @li Manage packet identifier.
- * @li Manage Topic Alias.
- * @li Manage resending packets on reconnection.
- * @li Manage PINGREQ/PINGRESP timers.
- * @li Manage automatic sending response packets.
+ * An I/O-independent MQTT protocol state machine.
+ * @li Manages connection status.
+ * @li Manages packet identifiers.
+ * @li Manages Topic Aliases.
+ * @li Manages packet resending on reconnection.
+ * @li Manages PINGREQ/PINGRESP timers.
+ * @li Manages automatic response packet sending.
  *
  * All requests and settings are implemented as synchronous functions.
- * When caller's action is required, virtual function that is corresponding to
- * the action is called **in the synchronous function before the function
- * returns**.
+ * When a caller action is required, the corresponding virtual function
+ * is called **within the synchronous function before it returns**.
  *
  * #### Thread Safety
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * @tparam Role          role for packet sendable checking
- * @tparam PacketIdBytes MQTT spec is 2. You can use @ref connection for that.
+ * @tparam Role          The role used for checking whether packets can be sent.
+ * @tparam PacketIdBytes The number of bytes used for the packet identifier.
+ *                       According to the MQTT specification, this is 2.
+ *                       You can use @ref connection for this.
  */
 template <role Role, std::size_t PacketIdBytes>
 class basic_connection;
 
 /**
- * @brief Type alias of @ref basic_connection (PacketIdBytes=2).
- *        This is for typical usecase (e.g. MQTT client).
+ * @brief Type alias for @ref basic_connection with PacketIdBytes set to 2.
+ *        This is for typical use cases (e.g., MQTT client).
  *
  * #### Thread Safety
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
  *
- * @tparam Role          role for packet sendable checking
+ * @tparam Role The role used for checking whether packets can be sent.
  */
 template <role Role>
 using connection = basic_connection<Role, 2>;

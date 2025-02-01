@@ -101,6 +101,19 @@ endif()
 set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
 add_subdirectory(include)
 
+if(ASYNC_MQTT_BUILD_MRDOCS)
+    message(STATUS "MrDocs generation")
+    set(CMAKE_SYSROOT /usr)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <async_mqtt/all.hpp>\n")
+    add_library(async_mqtt_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
+
+    target_compile_features(async_mqtt_mrdocs PUBLIC cxx_constexpr)
+    target_compile_definitions(async_mqtt_mrdocs PUBLIC ASYNC_MQTT_MRDOCS)
+    set_target_properties(async_mqtt_mrdocs PROPERTIES NO_SYSTEM_FROM_IMPORTED OFF)
+    target_include_directories(async_mqtt_mrdocs PUBLIC include ../doc/emulate/include ${Boost_INCLUDE_DIRS})
+    return()
+endif()
+
 if(ASYNC_MQTT_BUILD_EXAMPLES)
     message(STATUS "Examples enabled")
     add_subdirectory(example)
@@ -149,45 +162,5 @@ foreach(HDR ${ALL_HDR})
     )
     add_dependencies("check_deps" ${TARGET})
 endforeach()
-
-# Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    list(APPEND Doxyfile_CONTENT
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "FILE_PATTERNS          = *.hpp" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "OUTPUT_DIRECTORY       = doc" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NAME           = async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PROJECT_NUMBER         = 10.0.0" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "RECURSIVE              = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "PREDEFINED             = GENERATING_DOCUMENTATION ASYNC_MQTT_USE_TLS ASYNC_MQTT_USE_WS ASYNC_MQTT_USE_LOG" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INPUT                  = ${CMAKE_CURRENT_SOURCE_DIR}/include/async_mqtt" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE_PATTERNS       = */impl/*" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "EXCLUDE_PATTERNS      += */detail/*" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_LATEX         = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_MEMBERS     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HIDE_UNDOC_CLASSES     = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "CLASS_GRAPH            = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDE_GRAPH          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "INCLUDED_BY_GRAPH      = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "GENERATE_TREEVIEW      = YES " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "DISABLE_INDEX          = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "FULL_SIDEBAR           = NO" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HTML_EXTRA_STYLESHEET  = ${CMAKE_CURRENT_SOURCE_DIR}/css/doxygen-awesome.css " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND ${CMAKE_COMMAND} -E echo "HTML_COLORSTYLE        = LIGHT " >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    )
-    if(DOXYGEN_DOT_FOUND)
-        list(APPEND Doxyfile_CONTENT
-            COMMAND ${CMAKE_COMMAND} -E echo "HAVE_DOT       = YES" >> ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        )
-    endif()
-    add_custom_target(
-        doxygen
-        ${Doxyfile_CONTENT}
-        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        VERBATIM
-    )
-    add_compile_definitions(GENERATING_DOCUMENTATION)
-endif()
 
 include(cmake/createcmakeconfig.cmake)

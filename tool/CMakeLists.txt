@@ -15,14 +15,14 @@ include(FetchContent)
 FetchContent_Declare(
   cli
   GIT_REPOSITORY https://github.com/daniele77/cli.git
-  GIT_TAG b3c8f8210e3cede87761865b10c3739a5175a980
+  GIT_TAG 80541c47bc4c7a6baa205136ca558860cb5e61af
 )
 FetchContent_MakeAvailable(cli)
 
 foreach(source_file ${exec_PROGRAMS})
     get_filename_component(source_file_we ${source_file} NAME_WE)
     add_executable(${source_file_we} ${source_file})
-    target_include_directories(${source_file_we} PRIVATE include)
+    target_include_directories(${source_file_we} PRIVATE include ${Boost_INCLUDE_DIRS})
     target_link_libraries(${source_file_we} async_mqtt_iface)
 
     if(ASYNC_MQTT_MRDOCS)
@@ -62,7 +62,7 @@ if(ASYNC_MQTT_BUILD_LIB)
 add_executable(broker_separate broker.cpp)
 add_dependencies(broker_separate async_mqtt_asio_bind async_mqtt_protocol)
 target_compile_definitions(broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
-target_include_directories(broker_separate PRIVATE include)
+target_include_directories(broker_separate PRIVATE include ${Boost_INCLUDE_DIRS})
 target_link_libraries(broker_separate async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
 if(ASYNC_MQTT_USE_LOG)
     target_compile_definitions(

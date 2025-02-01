@@ -316,7 +316,13 @@ public:
         v5::basic_publish_packet<PacketIdBytes>& packet
     ) const;
 
+    /**
+     * @brief Get the current @ref connection_status.
+     *
+     * @return The current @ref connection_status.
+     */
     connection_status get_connection_status() const;
+
 
 #if defined(ASYNC_MQTT_MRDOCS)
 public:

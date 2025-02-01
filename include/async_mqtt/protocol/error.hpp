@@ -38,9 +38,14 @@ namespace errc = sys::errc;
  * or exception @ref system_error code().
  *
  * ##### Underlying errors
- * @li Boost.System Error
- * @li Boost.Asio Error
- * @li Boost.Beast Error
+ * @li <a href="https://www.boost.org/libs/system/doc/html/system.html#ref_errc">Boost.System Error</a>
+ * @li Boost.Asio Error:
+ *     <a href="https://www.boost.org/doc/html/boost_asio/reference/error%5F%5Fbasic_errors.html">boost::asio::error::basic_errors</a>,
+ *     <a href="https://www.boost.org/doc/html/boost_asio/reference/error%5F%5Fnetdb_errors.html">boost::asio::error::netdb_errors</a>,
+ *     <a href="https://www.boost.org/doc/html/boost_asio/reference/error%5F%5Faddrinfo_errors.html">boost::asio::error::addrinfo_errors</a>,
+ *     or <a href="https://www.boost.org/doc/html/boost_asio/reference/error%5F%5Fmisc_errors.html">boost::asio::error::misc_errors</a>.
+ * @li Boost.Beast Error:
+ *     <a href="https://www.boost.org/libs/beast/doc/html/beast/ref/boost%5F%5Fbeast%5F%5Fwebsocket%5F%5Ferror.html">boost::beast::websocket::error</a>.
  *
  * ##### MQTT reason code based errors
  * @li @ref connect_reason_code
