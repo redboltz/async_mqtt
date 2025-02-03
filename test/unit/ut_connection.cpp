@@ -366,8 +366,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         BOOST_TEST(events.size() == 3);
         std::visit(
             am::overload {
-                [&](am::error_code const& e) {
-                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+                [&](am::event::send const& ev) {
+                    BOOST_TEST(ev.get() == disconnect);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);
@@ -377,8 +377,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         );
         std::visit(
             am::overload {
-                [&](am::event::send const& ev) {
-                    BOOST_TEST(ev.get() == disconnect);
+                [&](am::event::close const&) {
+                    BOOST_TEST(true);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);
@@ -388,8 +388,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         );
         std::visit(
             am::overload {
-                [&](am::event::close const&) {
-                    BOOST_TEST(true);
+                [&](am::error_code const& e) {
+                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);
@@ -415,8 +415,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         BOOST_TEST(events.size() == 3);
         std::visit(
             am::overload {
-                [&](am::error_code const& e) {
-                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
+                [&](am::event::send const& ev) {
+                    BOOST_TEST(ev.get() == disconnect);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);
@@ -426,8 +426,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         );
         std::visit(
             am::overload {
-                [&](am::event::send const& ev) {
-                    BOOST_TEST(ev.get() == disconnect);
+                [&](am::event::close const&) {
+                    BOOST_TEST(true);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);
@@ -437,8 +437,8 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
         );
         std::visit(
             am::overload {
-                [&](am::event::close const&) {
-                    BOOST_TEST(true);
+                [&](am::error_code const& e) {
+                    BOOST_TEST(e == am::disconnect_reason_code::protocol_error);
                 },
                 [](auto const&) {
                     BOOST_TEST(false);

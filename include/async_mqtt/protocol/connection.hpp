@@ -128,8 +128,24 @@ public:
     /**
      * @brief Set the PINGREQ packet sending interval.
      *
+     * @li @ref on_timer_op() is called for @ref timer_kind::pingreq_send.
+     *
      * @note By default, the PINGREQ packet sending interval is set to the same value as the
      *       CONNECT packet's keep-alive duration in seconds. If the CONNACK packet includes
+     *       the Server Keep Alive property, its value (in seconds) is used instead.
+     *       This function overrides the default value.
+     *
+     * @param duration If set to zero, the timer is disabled; otherwise, the specified duration is used.
+     *                 The minimum resolution is in milliseconds.
+     */
+
+    /**
+     * @brief Set the PINGREQ packet sending interval.
+     *
+     * Calls @ref on_timer_op() for @ref timer_kind::pingreq_send.
+     *
+     * @note By default, the PINGREQ packet sending interval is set to the same value as the
+     *       CONNECT packet's keep-alive duration (in seconds). If the CONNACK packet includes
      *       the Server Keep Alive property, its value (in seconds) is used instead.
      *       This function overrides the default value.
      *

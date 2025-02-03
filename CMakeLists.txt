@@ -110,7 +110,7 @@ if(ASYNC_MQTT_BUILD_MRDOCS)
     target_compile_features(async_mqtt_mrdocs PUBLIC cxx_constexpr)
     target_compile_definitions(async_mqtt_mrdocs PUBLIC ASYNC_MQTT_MRDOCS)
     set_target_properties(async_mqtt_mrdocs PROPERTIES NO_SYSTEM_FROM_IMPORTED OFF)
-    target_include_directories(async_mqtt_mrdocs PUBLIC include ../doc/emulate/include ${Boost_INCLUDE_DIRS})
+    target_include_directories(async_mqtt_mrdocs PUBLIC include ${Boost_INCLUDE_DIRS})
     return()
 endif()
 

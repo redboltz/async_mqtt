@@ -22,12 +22,10 @@ recv_op {
     std::optional<error_code> decided_error = std::nullopt;
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
     bool try_resend_from_queue = false;
-    enum { dispatch, prev, instream, read, protocol_read, sent, complete } state = dispatch;
+    enum { dispatch, check_istream, process, read, finish_read, sent, closed, complete } state = dispatch;
 
     template <typename Self>
-    bool process_one_event(
-        Self& self
-    ) {
+    bool process_one_event(Self& self) {
         auto& a_ep{*ep};
         auto event{force_move(a_ep.recv_events_.front())};
         a_ep.recv_events_.pop_front();
@@ -38,8 +36,8 @@ recv_op {
                     return true;
                 },
                 [&](async_mqtt::event::basic_send<PacketIdBytes>&& ev) {
-                    state = sent;
                     auto ep_copy{ep};
+                    state = sent;
                     async_send(
                         force_move(ep_copy),
                         force_move(ev.get()),
@@ -54,20 +52,8 @@ recv_op {
                     return true;
                 },
                 [&](async_mqtt::event::basic_packet_received<PacketIdBytes>&& ev) {
-                    if (recv_packet) {
-                        // rest events would be processed the next async_recv call
-                        // back the event to the recv_events_ for the next async_recv
-                        a_ep.recv_events_.push_front(force_move(event));
-                        state = complete;
-                        as::post(
-                            a_ep.get_executor(),
-                            force_move(self)
-                        );
-                        return false;
-                    }
-                    else {
-                        recv_packet.emplace(force_move(ev.get()));
-                    }
+                    BOOST_ASSERT(!recv_packet);
+                    recv_packet.emplace(force_move(ev.get()));
                     return true;
                 },
                 [&](async_mqtt::event::timer&& ev) {
@@ -111,8 +97,8 @@ recv_op {
                     return true;
                 },
                 [&](async_mqtt::event::close) {
-                    state = complete;
                     auto ep_copy{ep};
+                    state = closed;
                     async_close(
                         force_move(ep_copy),
                         force_move(self)
@@ -121,7 +107,7 @@ recv_op {
                 },
                 [&](auto const&) {
                     BOOST_ASSERT(false);
-                    return false;
+                    return true;
                 }
             },
             force_move(event)
@@ -160,34 +146,14 @@ recv_op {
 
         switch (state) {
         case dispatch: {
-            state = prev;
+            state = check_istream;
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
         } break;
-        case prev: {
-            while (!a_ep.recv_events_.empty()) {
-                if (!process_one_event(self)) return;
-            }
-            // all previous events processed
-            // and they include a receive event
-            if (recv_packet) {
-                state = complete;
-                as::post(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
-            else {
-                state = instream;
-                as::dispatch(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
-        } break;
-        case instream: {
+        case check_istream: {
+            // at most one packet is received except QoS2 already received packet
             auto events{a_ep.con_.recv(a_ep.is_)};
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
             if (a_ep.recv_events_.empty()) {
@@ -199,67 +165,79 @@ recv_op {
                 );
             }
             else {
-                while (!a_ep.recv_events_.empty()) {
-                    if (!process_one_event(self)) return;
-                }
-                state = complete; // all events processed
-                as::post(
+                state = process;
+                as::dispatch(
                     a_ep.get_executor(),
                     force_move(self)
                 );
             }
         } break;
+        case process: {
+            // The last event of events_ must be event_received or error
+            bool sent_or_closed = false;
+            while (!a_ep.recv_events_.empty()) {
+                if (!process_one_event(self)) {
+                    sent_or_closed = true;
+                    break;
+                }
+            }
+            if (!sent_or_closed) {
+                // exit the above loop by break;
+                if (!decided_error && !recv_packet) {
+                    // QoS2 already received
+                    state = check_istream;
+                    as::dispatch(
+                        a_ep.get_executor(),
+                        force_move(self)
+                    );
+                }
+                else {
+                    // either packet_received or error
+                    BOOST_ASSERT(
+                        (decided_error && !recv_packet) ||
+                        (!decided_error && recv_packet)
+                    );
+                    state = complete; // all events processed
+                    as::dispatch(
+                        a_ep.get_executor(),
+                        force_move(self)
+                    );
+                }
+            }
+        } break;
         case read: {
-            state = protocol_read;
+            state = finish_read;
             a_ep.stream_.async_read_some(
                 a_ep.read_buf_.prepare(a_ep.read_buffer_size_),
                 force_move(self)
             );
         } break;
-        case protocol_read: {
+        case finish_read: {
             a_ep.read_buf_.commit(bytes_transferred);
-            auto events{a_ep.con_.recv(a_ep.is_)};
-            std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
-            if (a_ep.recv_events_.empty()) {
-                // required more bytes
-                state = read;
-                as::dispatch(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
-            else {
-                while (!a_ep.recv_events_.empty()) {
-                    if (!process_one_event(self)) return;
-                }
-                state = complete; // all events processed
-                as::post(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
+            state = check_istream;
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
         } break;
         case sent: {
-            while (!a_ep.recv_events_.empty()) {
-                if (!process_one_event(self)) return;
+            if (ec) {
+                ASYNC_MQTT_LOG("mqtt_impl", info)
+                    << ASYNC_MQTT_ADD_VALUE(address, &a_ep)
+                    << "send (triggered by recv) error:" << ec.message();
             }
-            // all events processed
-            if (recv_packet || decided_error) {
-                state = complete;
-                as::post(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
-            else {
-                // auto response send but no received packet
-                // (PUBLISH QoS2 received again after PUBREC sent)
-                state = read;
-                as::dispatch(
-                    a_ep.get_executor(),
-                    force_move(self)
-                );
-            }
+            state = process;
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
+        } break;
+        case closed: {
+            state = process;
+            as::dispatch(
+                a_ep.get_executor(),
+                force_move(self)
+            );
         } break;
         case complete: {
             if (decided_error) {
@@ -276,7 +254,7 @@ recv_op {
                         (*fil == filter::except && types.find(type) != types.end())
                     ) {
                         // read the next packet
-                        state = prev;
+                        state = check_istream;
                         recv_packet.reset();
                         as::dispatch(
                             a_ep.get_executor(),
