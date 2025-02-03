@@ -147,7 +147,7 @@ recv_op {
         switch (state) {
         case dispatch: {
             state = check_istream;
-            as::dispatch(
+            as::post(
                 a_ep.get_executor(),
                 force_move(self)
             );
@@ -186,7 +186,7 @@ recv_op {
                 if (!decided_error && !recv_packet) {
                     // QoS2 already received
                     state = check_istream;
-                    as::dispatch(
+                    as::post(
                         a_ep.get_executor(),
                         force_move(self)
                     );
@@ -256,7 +256,7 @@ recv_op {
                         // read the next packet
                         state = check_istream;
                         recv_packet.reset();
-                        as::dispatch(
+                        as::post(
                             a_ep.get_executor(),
                             force_move(self)
                         );
