@@ -51,6 +51,7 @@ public:
      * @li If the packet cannot be sent, @ref on_error is called.
      *     - Additionally, if the packet contains a packet_id, it is released, and
      *       @ref on_packet_id_release() is called.
+     * @li If the packet can be sent, @ref on_send() is called.
      * @li If the packet is a @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet
      *     and Keep Alive is set, then @ref on_timer_op() is called for @ref timer_kind::pingreq_send .
      *     - Additionally, if @ref set_pingresp_recv_timeout() is set to a nonzero value,

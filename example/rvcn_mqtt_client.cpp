@@ -46,10 +46,10 @@ public:
 
     void read() {
         as::streambuf read_buf;
+        std::istream is{&read_buf};
         while (true) {
             auto read_size = socket_.read_some(read_buf.prepare(1024));
             read_buf.commit(read_size);
-            std::istream is{&read_buf};
             auto events = mc_.recv(is);
             handle_events(events);
         }

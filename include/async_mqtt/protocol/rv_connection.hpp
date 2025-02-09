@@ -61,13 +61,12 @@ public:
      * @li If the packet cannot be sent, an @ref error_code is added to the return vector.
      *     - Additionally, if the packet contains a packet_id, it is released, and
      *       an @ref event::packet_id_released is added to the return vector.
-     *
+     * @li If the packet can be sent, @ref event::send is added to the return vector.
      * @li If the packet is a @ref v3_1_1::pingreq_packet or @ref v5::pingreq_packet
      *     and Keep Alive is set, then an @ref event::timer is added to the return vector
      *     for @ref timer_kind::pingreq_send .
      *     - Additionally, if @ref set_pingresp_recv_timeout() is set to a nonzero value,
      *       an @ref event::timer is added to the return vector for @ref timer_kind::pingresp_recv.
-     *
      * @li If a disconnection occurs during the sending process, an @ref event::timer is added to
      *     the return vector for all @ref timer_kind values to cancel any active timers.
      *
@@ -208,6 +207,16 @@ private:
     std::vector<basic_event_variant<PacketIdBytes>> events_;
 };
 
+/**
+ * @brief Type alias for @ref basic_rv_connection with PacketIdBytes set to 2.
+ *        This is for typical use cases (e.g., MQTT client).
+ *
+ * #### Thread Safety
+ *    @li Distinct objects: Safe
+ *    @li Shared objects: Unsafe
+ *
+ * @tparam Role The role used for checking whether packets can be sent.
+ */
 template <role Role>
 using rv_connection = basic_rv_connection<Role, 2>;
 

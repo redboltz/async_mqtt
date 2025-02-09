@@ -181,10 +181,10 @@ int main(int argc, char* argv[]) {
         );
 
         as::streambuf read_buf;
+        std::istream is{&read_buf};
         while (true) {
             auto read_size = mc.socket().read_some(read_buf.prepare(1024));
             read_buf.commit(read_size);
-            std::istream is{&read_buf};
             mc.recv(is);
         }
     }
