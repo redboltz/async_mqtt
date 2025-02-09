@@ -9,7 +9,7 @@
 
 #include <async_mqtt/protocol/rv_connection.hpp>
 
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/asio_bind/detail/instantiate_helper.hpp>
 
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_role, a_size) \
 namespace async_mqtt { \

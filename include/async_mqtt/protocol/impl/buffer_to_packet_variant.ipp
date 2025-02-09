@@ -245,7 +245,7 @@ std::optional<packet_variant> buffer_to_packet_variant(buffer buf, protocol_vers
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/asio_bind/detail/instantiate_helper.hpp>
 
 #define ASYNC_MQTT_INSTANTIATE_EACH(a_size) \
 namespace async_mqtt { \

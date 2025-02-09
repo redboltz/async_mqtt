@@ -17,8 +17,8 @@
 #include <boost/asio/any_io_executor.hpp>
 #include <boost/asio/steady_timer.hpp>
 
-#include <async_mqtt/detail/client_impl_fwd.hpp>
-#include <async_mqtt/detail/client_packet_type_getter.hpp>
+#include <async_mqtt/asio_bind/detail/client_impl_fwd.hpp>
+#include <async_mqtt/asio_bind/detail/client_packet_type_getter.hpp>
 #include <async_mqtt/asio_bind/client_fwd.hpp>
 #include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/protocol/error.hpp>

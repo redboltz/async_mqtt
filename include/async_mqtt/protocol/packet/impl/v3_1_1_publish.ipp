@@ -33,7 +33,7 @@
 #endif // defined(ASYNC_MQTT_PRINT_PAYLOAD)
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/asio_bind/detail/instantiate_helper.hpp>
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 namespace async_mqtt::v3_1_1 {

@@ -653,7 +653,7 @@ send(Packet packet) {
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#include <async_mqtt/detail/instantiate_helper.hpp>
+#include <async_mqtt/asio_bind/detail/instantiate_helper.hpp>
 
 #define ASYNC_MQTT_INSTANTIATE_EACH_PACKET(a_role, a_size, a_packet) \
 namespace async_mqtt { \

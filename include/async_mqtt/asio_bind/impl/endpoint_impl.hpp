@@ -10,9 +10,9 @@
 #include <set>
 #include <deque>
 
-#include <async_mqtt/detail/endpoint_impl_fwd.hpp>
+#include <async_mqtt/asio_bind/detail/endpoint_impl_fwd.hpp>
 #include <async_mqtt/asio_bind/endpoint_fwd.hpp>
-#include <async_mqtt/filter.hpp>
+#include <async_mqtt/asio_bind/filter.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/rv_connection.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>

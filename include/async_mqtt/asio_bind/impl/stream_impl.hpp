@@ -13,7 +13,7 @@
 
 #include <boost/asio/async_result.hpp>
 
-#include <async_mqtt/detail/stream_layer.hpp>
+#include <async_mqtt/asio_bind/detail/stream_layer.hpp>
 #include <async_mqtt/stream_customize.hpp>
 #include <async_mqtt/asio_bind/impl/stream_fwd.hpp>
 #include <async_mqtt/protocol/error.hpp>
