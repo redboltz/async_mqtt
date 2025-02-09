@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP)
 #define ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP
 
-#include <async_mqtt/predefined_layer/mqtt.hpp>
-#include <async_mqtt/predefined_layer/customized_websocket_stream.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtt.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/customized_websocket_stream.hpp>
 
 namespace async_mqtt {
 
