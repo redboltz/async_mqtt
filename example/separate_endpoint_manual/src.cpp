@@ -9,5 +9,5 @@
 #define ASYNC_MQTT_PP_SIZE (2)
 #define ASYNC_MQTT_PP_PROTOCOL (async_mqtt::protocol::mqtt)
 
-#include <async_mqtt/predefined_layer/mqtt.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtt.hpp>
 #include <async_mqtt/separate/src_endpoint.hpp>

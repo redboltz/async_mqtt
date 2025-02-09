@@ -1,6 +1,6 @@
 # Separate compilation library
 
-file(GLOB_RECURSE ASIO_BIND_IPP ${CMAKE_CURRENT_SOURCE_DIR} "../include/async_mqtt/impl/*.ipp")
+file(GLOB_RECURSE ASIO_BIND_IPP ${CMAKE_CURRENT_SOURCE_DIR} "../include/async_mqtt/asio_bind/impl/*.ipp")
 set_source_files_properties(${ASIO_BIND_IPP} PROPERTIES LANGUAGE CXX)
 add_library(async_mqtt_asio_bind ${ASIO_BIND_IPP})
 target_compile_definitions(async_mqtt_asio_bind PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)

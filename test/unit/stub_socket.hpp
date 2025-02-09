@@ -10,7 +10,7 @@
 #include <deque>
 
 #include <boost/asio.hpp>
-#include <async_mqtt/stream_customize.hpp>
+#include <async_mqtt/asio_bind/stream_customize.hpp>
 #include <async_mqtt/protocol/buffer_to_packet_variant.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/protocol/packet/packet_iterator.hpp>

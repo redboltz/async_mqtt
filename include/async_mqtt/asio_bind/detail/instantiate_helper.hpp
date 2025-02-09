@@ -33,12 +33,12 @@
 #if defined(ASYNC_MQTT_USE_TLS)
 #  if defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 #define ASYNC_MQTT_PP_PROTOCOL (async_mqtt::protocol::mqtt)(async_mqtt::protocol::mqtts)(async_mqtt::protocol::ws)(async_mqtt::protocol::wss)
 
 #  else  // defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
 #define ASYNC_MQTT_PP_PROTOCOL (async_mqtt::protocol::mqtt)(async_mqtt::protocol::mqtts)
 
 #  endif // defined(ASYNC_MQTT_USE_WS)
@@ -47,12 +47,12 @@
 
 #  if defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 #define ASYNC_MQTT_PP_PROTOCOL (async_mqtt::protocol::mqtt)(async_mqtt::protocol::ws)
 
 #  else  // defined(ASYNC_MQTT_USE_WS)
 
-#include <async_mqtt/predefined_layer/mqtt.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtt.hpp>
 #define ASYNC_MQTT_PP_PROTOCOL (async_mqtt::protocol::mqtt)
 
 #  endif // defined(ASYNC_MQTT_USE_WS)

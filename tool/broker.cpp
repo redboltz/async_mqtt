@@ -18,15 +18,15 @@
 #include <async_mqtt/all.hpp>
 
 #if defined(ASYNC_MQTT_USE_TLS)
-#include <async_mqtt/predefined_layer/mqtts.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS)
 
 #if defined(ASYNC_MQTT_USE_WS)
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 #endif // defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
 
 #include <broker/endpoint_variant.hpp>

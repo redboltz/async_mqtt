@@ -10,7 +10,7 @@
 #include "coro_base.hpp"
 
 #include <async_mqtt/all.hpp>
-#include <async_mqtt/predefined_layer/ws.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
 
 #include <boost/asio/yield.hpp>
 
