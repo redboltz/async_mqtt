@@ -11,7 +11,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/key.hpp>
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 

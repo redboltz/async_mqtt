@@ -12,7 +12,7 @@
 #include <boost/hana/drop_back.hpp>
 #include <boost/hana/unpack.hpp>
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/protocol/packet/v5_auth.hpp>

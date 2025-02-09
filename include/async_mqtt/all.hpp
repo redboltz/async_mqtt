@@ -7,10 +7,10 @@
 #if !defined(ASYNC_MQTT_ALL_HPP)
 #define ASYNC_MQTT_ALL_HPP
 
-#include <async_mqtt/client.hpp>
-#include <async_mqtt/client_fwd.hpp>
-#include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/endpoint_fwd.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
+#include <async_mqtt/asio_bind/client_fwd.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint_fwd.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/role.hpp>

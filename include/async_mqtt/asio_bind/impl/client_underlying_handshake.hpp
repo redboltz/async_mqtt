@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_UNDERLYING_HANDSHAKE_HPP)
 #define ASYNC_MQTT_IMPL_CLIENT_UNDERLYING_HANDSHAKE_HPP
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
 
 namespace async_mqtt {

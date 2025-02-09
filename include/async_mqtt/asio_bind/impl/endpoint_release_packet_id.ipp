@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_RELEASE_PACKET_ID_IPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_RELEASE_PACKET_ID_IPP
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 #include <async_mqtt/protocol/event/packet_id_released.hpp>
 #include <async_mqtt/util/inline.hpp>

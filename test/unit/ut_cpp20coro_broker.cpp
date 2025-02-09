@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/protocol/packet/packet_helper.hpp>
 #include <broker/endpoint_variant.hpp>
 #include <broker/broker.hpp>

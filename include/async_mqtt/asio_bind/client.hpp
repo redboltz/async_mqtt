@@ -17,7 +17,7 @@
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/role.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
-#include <async_mqtt/endpoint_fwd.hpp>
+#include <async_mqtt/asio_bind/endpoint_fwd.hpp>
 
 namespace async_mqtt {
 

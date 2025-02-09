@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_SEND_HPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_SEND_HPP
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 #include <async_mqtt/protocol/event/timer.hpp>
 #include <async_mqtt/protocol/event/close.hpp>

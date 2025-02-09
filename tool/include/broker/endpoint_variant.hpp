@@ -9,7 +9,7 @@
 
 #include <variant>
 #include <memory>
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 
 namespace async_mqtt {

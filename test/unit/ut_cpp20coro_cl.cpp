@@ -18,7 +18,7 @@
 #include <boost/asio/experimental/use_promise.hpp>
 #endif // !defined(_MSC_VER)
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 

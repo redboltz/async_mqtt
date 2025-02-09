@@ -19,8 +19,8 @@
 
 #include <async_mqtt/detail/client_impl_fwd.hpp>
 #include <async_mqtt/detail/client_packet_type_getter.hpp>
-#include <async_mqtt/client_fwd.hpp>
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/client_fwd.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>

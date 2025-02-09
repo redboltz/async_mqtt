@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/impl/stream.hpp>
+#include <async_mqtt/asio_bind/impl/stream.hpp>
 #include <async_mqtt/util/scope_guard.hpp>
 #include <async_mqtt/protocol/impl/buffer_to_packet_variant.ipp>
 

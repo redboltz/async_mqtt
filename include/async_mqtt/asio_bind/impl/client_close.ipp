@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_IMPL_CLIENT_CLOSE_IPP)
 #define ASYNC_MQTT_IMPL_CLIENT_CLOSE_IPP
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 

@@ -10,7 +10,7 @@
 #include <boost/asio/append.hpp>
 #include <boost/asio/compose.hpp>
 
-#include <async_mqtt/client.hpp>
+#include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/inline.hpp>

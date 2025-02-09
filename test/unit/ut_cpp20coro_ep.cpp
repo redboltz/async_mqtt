@@ -12,7 +12,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/experimental/awaitable_operators.hpp>
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 
 #include "cpp20coro_stub_socket.hpp"
 
