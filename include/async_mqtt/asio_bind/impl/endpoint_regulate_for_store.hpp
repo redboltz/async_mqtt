@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 
@@ -64,7 +64,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::regulate_for_store(
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/endpoint_regulate_for_store.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_regulate_for_store.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_REGULATE_FOR_STORE_HPP

@@ -10,7 +10,7 @@
 #include <boost/asio/dispatch.hpp>
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/protocol/packet/packet_variant.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/inline.hpp>
@@ -111,6 +111,6 @@ client_impl<Version, NextLayer>::async_recv(
 
 } // namespace async_mqtt::detail
 
-#include <async_mqtt/impl/client_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/client_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_RECV_IPP

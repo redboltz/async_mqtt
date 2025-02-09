@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP)
 #define ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP
 
-#include <async_mqtt/impl/stream.hpp>
-#include <async_mqtt/impl/stream_impl.hpp>
+#include <async_mqtt/asio_bind/impl/stream.hpp>
+#include <async_mqtt/asio_bind/impl/stream_impl.hpp>
 
 namespace async_mqtt {
 

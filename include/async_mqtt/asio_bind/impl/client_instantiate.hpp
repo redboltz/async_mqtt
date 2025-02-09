@@ -9,7 +9,7 @@
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 
-#include <async_mqtt/impl/client_instantiate_direct.hpp>
+#include <async_mqtt/asio_bind/impl/client_instantiate_direct.hpp>
 
 #endif // defined(ASYNC_MQTT_SEPARATE_COMPILATION) && defined(ASYNC_MQTT_INDIVIDUAL_INSTANTIATE)
 

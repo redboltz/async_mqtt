@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_CLIENT_CLOSE_HPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 
 namespace async_mqtt {
 
@@ -41,7 +41,7 @@ client<Version, NextLayer>::async_close(
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/client_close.ipp>
+#include <async_mqtt/asio_bind/impl/client_close.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_CLOSE_HPP

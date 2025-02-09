@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_RELEASE_PACKET_ID_IPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 #include <async_mqtt/protocol/event/packet_id_released.hpp>
 #include <async_mqtt/util/inline.hpp>
 
@@ -95,6 +95,6 @@ release_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id) 
 
 } // namespace async_mqtt::detail
 
-#include <async_mqtt/impl/endpoint_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_RELEASE_PACKET_ID_IPP

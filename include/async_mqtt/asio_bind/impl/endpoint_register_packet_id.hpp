@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 
@@ -63,7 +63,7 @@ register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id)
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/endpoint_register_packet_id.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_register_packet_id.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP

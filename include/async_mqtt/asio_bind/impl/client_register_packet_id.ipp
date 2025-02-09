@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_CLIENT_REGISTER_PACKET_ID_IPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt::detail {
@@ -37,6 +37,6 @@ client_impl<Version, NextLayer>::register_packet_id(packet_id_type packet_id) {
 
 } // namespace async_mqtt::detail
 
-#include <async_mqtt/impl/client_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/client_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_REGISTER_PACKET_ID_IPP

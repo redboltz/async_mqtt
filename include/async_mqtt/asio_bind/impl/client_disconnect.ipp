@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_IPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 #include <async_mqtt/util/inline.hpp>
 
@@ -77,6 +77,6 @@ client_impl<Version, NextLayer>::async_disconnect_impl(
 
 } // namespace async_mqtt::detail
 
-#include <async_mqtt/impl/client_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/client_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_IPP

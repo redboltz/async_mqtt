@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_CLOSE_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 
@@ -73,7 +73,7 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_close(CompletionToken&& to
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/endpoint_close.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_close.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_CLOSE_HPP

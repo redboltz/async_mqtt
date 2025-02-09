@@ -766,17 +766,17 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/endpoint_misc.hpp>
-#include <async_mqtt/impl/endpoint_underlying_handshake.hpp>
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id.hpp>
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id_wait_until.hpp>
-#include <async_mqtt/impl/endpoint_register_packet_id.hpp>
-#include <async_mqtt/impl/endpoint_release_packet_id.hpp>
-#include <async_mqtt/impl/endpoint_send.hpp>
-#include <async_mqtt/impl/endpoint_recv.hpp>
-#include <async_mqtt/impl/endpoint_close.hpp>
-#include <async_mqtt/impl/endpoint_restore_packets.hpp>
-#include <async_mqtt/impl/endpoint_get_stored_packets.hpp>
-#include <async_mqtt/impl/endpoint_regulate_for_store.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_misc.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_underlying_handshake.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id_wait_until.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_register_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_release_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_send.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_recv.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_close.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_restore_packets.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_get_stored_packets.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_regulate_for_store.hpp>
 
 #endif // ASYNC_MQTT_ENDPOINT_HPP

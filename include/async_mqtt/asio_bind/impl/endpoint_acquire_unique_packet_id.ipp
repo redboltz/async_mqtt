@@ -7,8 +7,8 @@
 #if !defined(ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_IPP)
 #define ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_IPP
 
-#include <async_mqtt/impl/endpoint_impl.hpp>
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt {
@@ -110,6 +110,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::acquire_unique_packet_id() {
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/endpoint_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_IPP

@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 #include <async_mqtt/util/inline.hpp>
 
 namespace async_mqtt::detail {
@@ -76,6 +76,6 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_stored_packets() const 
 
 } // namespace async_mqtt::detail
 
-#include <async_mqtt/impl/endpoint_instantiate.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_instantiate.hpp>
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_GET_STORED_PACKETS_IPP

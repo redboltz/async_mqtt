@@ -13,7 +13,7 @@
 #include <boost/hana/unpack.hpp>
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt {
@@ -124,7 +124,7 @@ client<Version, NextLayer>::async_unsubscribe(Args&&... args) {
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/client_unsubscribe.ipp>
+#include <async_mqtt/asio_bind/impl/client_unsubscribe.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_UNSUBSCRIBE_HPP

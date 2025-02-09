@@ -19,7 +19,7 @@
 #include <async_mqtt/protocol/packet/packet_traits.hpp>
 #include <async_mqtt/protocol/protocol_version.hpp>
 #include <async_mqtt/protocol/role.hpp>
-#include <async_mqtt/impl/stream.hpp>
+#include <async_mqtt/asio_bind/impl/stream.hpp>
 #include <async_mqtt/util/log.hpp>
 
 namespace async_mqtt::detail {

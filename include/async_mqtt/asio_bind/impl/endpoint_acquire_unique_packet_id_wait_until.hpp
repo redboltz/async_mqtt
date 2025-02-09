@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_WAIT_UNTIL_HPP
 
 #include <async_mqtt/endpoint.hpp>
-#include <async_mqtt/impl/endpoint_impl.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
 
 namespace async_mqtt {
 
@@ -44,8 +44,8 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_acquire_unique_packet_id_w
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id_wait_until.ipp>
-#include <async_mqtt/impl/endpoint_add_retry.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id_wait_until.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_add_retry.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_ENDPOINT_ACQUIRE_UNIQUE_PACKET_ID_WAIT_UNTIL_HPP

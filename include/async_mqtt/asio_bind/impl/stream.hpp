@@ -14,7 +14,7 @@
 #include <boost/asio/async_result.hpp>
 
 #include <async_mqtt/detail/stream_layer.hpp>
-#include <async_mqtt/impl/stream_impl_fwd.hpp>
+#include <async_mqtt/asio_bind/impl/stream_impl_fwd.hpp>
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/util/static_vector.hpp>
 #include <async_mqtt/util/ioc_queue.hpp>
@@ -148,9 +148,9 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/stream_underlying_handshake.hpp>
-#include <async_mqtt/impl/stream_read.hpp>
-#include <async_mqtt/impl/stream_write_packet.hpp>
-#include <async_mqtt/impl/stream_close.hpp>
+#include <async_mqtt/asio_bind/impl/stream_underlying_handshake.hpp>
+#include <async_mqtt/asio_bind/impl/stream_read.hpp>
+#include <async_mqtt/asio_bind/impl/stream_write_packet.hpp>
+#include <async_mqtt/asio_bind/impl/stream_close.hpp>
 
 #endif // ASYNC_MQTT_IMPL_STREAM_HPP

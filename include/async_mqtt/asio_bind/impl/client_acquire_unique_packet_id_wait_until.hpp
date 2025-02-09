@@ -8,7 +8,7 @@
 #define ASYNC_MQTT_IMPL_CLIENT_ACQUIRE_UNIQUE_PACKET_ID_WAIT_UNTIL_HPP
 
 #include <async_mqtt/client.hpp>
-#include <async_mqtt/impl/client_impl.hpp>
+#include <async_mqtt/asio_bind/impl/client_impl.hpp>
 
 namespace async_mqtt {
 
@@ -41,7 +41,7 @@ client<Version, NextLayer>::async_acquire_unique_packet_id_wait_until(
 } // namespace async_mqtt
 
 #if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
-#include <async_mqtt/impl/client_acquire_unique_packet_id_wait_until.ipp>
+#include <async_mqtt/asio_bind/impl/client_acquire_unique_packet_id_wait_until.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
 #endif // ASYNC_MQTT_IMPL_CLIENT_ACQUIRE_UNIQUE_PACKET_ID_WAIT_UNTIL_HPP

@@ -926,19 +926,19 @@ private:
 
 } // namespace async_mqtt
 
-#include <async_mqtt/impl/client_misc.hpp>
-#include <async_mqtt/impl/client_underlying_handshake.hpp>
-#include <async_mqtt/impl/client_start.hpp>
-#include <async_mqtt/impl/client_subscribe.hpp>
-#include <async_mqtt/impl/client_unsubscribe.hpp>
-#include <async_mqtt/impl/client_publish.hpp>
-#include <async_mqtt/impl/client_disconnect.hpp>
-#include <async_mqtt/impl/client_auth.hpp>
-#include <async_mqtt/impl/client_close.hpp>
-#include <async_mqtt/impl/client_recv.hpp>
-#include <async_mqtt/impl/client_acquire_unique_packet_id.hpp>
-#include <async_mqtt/impl/client_acquire_unique_packet_id_wait_until.hpp>
-#include <async_mqtt/impl/client_register_packet_id.hpp>
-#include <async_mqtt/impl/client_release_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/client_misc.hpp>
+#include <async_mqtt/asio_bind/impl/client_underlying_handshake.hpp>
+#include <async_mqtt/asio_bind/impl/client_start.hpp>
+#include <async_mqtt/asio_bind/impl/client_subscribe.hpp>
+#include <async_mqtt/asio_bind/impl/client_unsubscribe.hpp>
+#include <async_mqtt/asio_bind/impl/client_publish.hpp>
+#include <async_mqtt/asio_bind/impl/client_disconnect.hpp>
+#include <async_mqtt/asio_bind/impl/client_auth.hpp>
+#include <async_mqtt/asio_bind/impl/client_close.hpp>
+#include <async_mqtt/asio_bind/impl/client_recv.hpp>
+#include <async_mqtt/asio_bind/impl/client_acquire_unique_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/client_acquire_unique_packet_id_wait_until.hpp>
+#include <async_mqtt/asio_bind/impl/client_register_packet_id.hpp>
+#include <async_mqtt/asio_bind/impl/client_release_packet_id.hpp>
 
 #endif // ASYNC_MQTT_CLIENT_HPP

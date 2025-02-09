@@ -9,18 +9,18 @@
 
 #include <async_mqtt/separate/src_rv_connection.hpp>
 
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id.ipp>
-#include <async_mqtt/impl/endpoint_acquire_unique_packet_id_wait_until.ipp>
-#include <async_mqtt/impl/endpoint_add_retry.ipp>
-#include <async_mqtt/impl/endpoint_close.ipp>
-#include <async_mqtt/impl/endpoint_get_stored_packets.ipp>
-#include <async_mqtt/impl/endpoint_misc.ipp>
-#include <async_mqtt/impl/endpoint_recv.ipp>
-#include <async_mqtt/impl/endpoint_register_packet_id.ipp>
-#include <async_mqtt/impl/endpoint_regulate_for_store.ipp>
-#include <async_mqtt/impl/endpoint_release_packet_id.ipp>
-#include <async_mqtt/impl/endpoint_restore_packets.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_acquire_unique_packet_id_wait_until.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_add_retry.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_close.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_get_stored_packets.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_misc.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_recv.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_register_packet_id.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_regulate_for_store.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_release_packet_id.ipp>
+#include <async_mqtt/asio_bind/impl/endpoint_restore_packets.ipp>
 
-#include <async_mqtt/impl/endpoint_instantiate_direct.hpp>
+#include <async_mqtt/asio_bind/impl/endpoint_instantiate_direct.hpp>
 
 #endif // ASYNC_MQTT_SEPARATE_SRC_ENDPOINT_HPP
