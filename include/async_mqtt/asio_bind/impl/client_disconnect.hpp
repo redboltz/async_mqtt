@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_DISCONNECT_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_DISCONNECT_HPP
 
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/back.hpp>
@@ -127,4 +127,4 @@ client<Version, NextLayer>::async_disconnect(Args&&... args) {
 #include <async_mqtt/asio_bind/impl/client_disconnect.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_DISCONNECT_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_DISCONNECT_HPP

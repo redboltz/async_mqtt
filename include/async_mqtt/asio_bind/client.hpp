@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_CLIENT_HPP)
-#define ASYNC_MQTT_CLIENT_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_CLIENT_HPP)
+#define ASYNC_MQTT_ASIO_BIND_CLIENT_HPP
 
 #include <optional>
 #include <boost/asio/async_result.hpp>
@@ -941,4 +941,4 @@ private:
 #include <async_mqtt/asio_bind/impl/client_register_packet_id.hpp>
 #include <async_mqtt/asio_bind/impl/client_release_packet_id.hpp>
 
-#endif // ASYNC_MQTT_CLIENT_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_CLIENT_HPP

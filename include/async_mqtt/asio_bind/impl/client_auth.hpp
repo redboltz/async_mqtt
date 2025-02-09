@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_AUTH_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_AUTH_HPP
 
 #include <boost/hana/tuple.hpp>
 #include <boost/hana/back.hpp>
@@ -128,4 +128,4 @@ client<Version, NextLayer>::async_auth(Args&&... args) {
 #include <async_mqtt/asio_bind/impl/client_auth.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_AUTH_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_AUTH_HPP

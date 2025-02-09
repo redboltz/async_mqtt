@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_MISC_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_MISC_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_MISC_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_MISC_HPP
 
 #include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
@@ -268,4 +268,4 @@ client<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
 #include <async_mqtt/asio_bind/impl/client_misc.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_MISC_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_MISC_HPP

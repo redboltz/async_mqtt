@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_DETAIL_INSTANTIATE_HELPER_HPP)
-#define ASYNC_MQTT_DETAIL_INSTANTIATE_HELPER_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_DETAIL_INSTANTIATE_HELPER_HPP)
+#define ASYNC_MQTT_ASIO_BIND_DETAIL_INSTANTIATE_HELPER_HPP
 
 #include <boost/preprocessor/seq/for_each_product.hpp>
 #include <boost/preprocessor/seq/to_tuple.hpp>
@@ -103,4 +103,4 @@
     (async_mqtt::protocol_version::v5)
 #endif // !defined(ASYNC_MQTT_PP_VERSION)
 
-#endif // ASYNC_MQTT_DETAIL_INSTANTIATE_HELPER_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_DETAIL_INSTANTIATE_HELPER_HPP

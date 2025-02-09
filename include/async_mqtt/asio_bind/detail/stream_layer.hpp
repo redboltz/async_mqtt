@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_DETAIL_STREAM_LAYER_HPP)
-#define ASYNC_MQTT_DETAIL_STREAM_LAYER_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_DETAIL_STREAM_LAYER_HPP)
+#define ASYNC_MQTT_ASIO_BIND_DETAIL_STREAM_LAYER_HPP
 
 #include <type_traits>
 
@@ -64,4 +64,4 @@ lowest_layer_type<T>& get_lowest_layer(T& t) noexcept {
 } // namespace async_mqtt::detail
 
 
-#endif // ASYNC_MQTT_DETAIL_STREAM_LAYER_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_DETAIL_STREAM_LAYER_HPP

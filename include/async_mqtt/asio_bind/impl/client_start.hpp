@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_START_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_START_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_START_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_START_HPP
 
 #include <boost/asio/append.hpp>
 #include <boost/asio/compose.hpp>
@@ -131,4 +131,4 @@ client<Version, NextLayer>::async_start(Args&&... args) {
 #include <async_mqtt/asio_bind/impl/client_start.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_START_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_START_HPP

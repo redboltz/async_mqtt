@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP)
-#define ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP
 
 #include <boost/asio/any_completion_handler.hpp>
 #include <boost/hana/tuple.hpp>
@@ -171,4 +171,4 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_UNDERLYING_HANDSHAKE_HPP

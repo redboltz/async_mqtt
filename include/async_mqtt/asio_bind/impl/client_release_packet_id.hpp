@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_RELEASE_PACKET_ID_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_RELEASE_PACKET_ID_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RELEASE_PACKET_ID_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RELEASE_PACKET_ID_HPP
 
 #include <async_mqtt/asio_bind/client.hpp>
 #include <async_mqtt/asio_bind/impl/client_impl.hpp>
@@ -54,4 +54,4 @@ client<Version, NextLayer>::release_packet_id(packet_id_type packet_id) {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_RELEASE_PACKET_ID_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RELEASE_PACKET_ID_HPP

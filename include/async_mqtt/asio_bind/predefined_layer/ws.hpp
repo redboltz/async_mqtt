@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP)
-#define ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_WS_HPP)
+#define ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_WS_HPP
 
 #include <async_mqtt/asio_bind/predefined_layer/mqtt.hpp>
 #include <async_mqtt/asio_bind/predefined_layer/customized_websocket_stream.hpp>
@@ -81,4 +81,4 @@ async_underlying_handshake(
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PREDEFINED_LAYER_WS_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_WS_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP)
-#define ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_STREAM_WRITE_PACKET_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_STREAM_WRITE_PACKET_HPP
 
 #include <async_mqtt/asio_bind/impl/stream.hpp>
 #include <async_mqtt/asio_bind/impl/stream_impl.hpp>
@@ -202,4 +202,4 @@ stream<NextLayer>::async_write_packet(
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_IMPL_STREAM_WRITE_PACKET_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_STREAM_WRITE_PACKET_HPP

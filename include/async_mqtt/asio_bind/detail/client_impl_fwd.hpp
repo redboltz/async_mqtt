@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_DETAIL_CLIENT_IMPL_FWD_HPP)
-#define ASYNC_MQTT_DETAIL_CLIENT_IMPL_FWD_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_DETAIL_CLIENT_IMPL_FWD_HPP)
+#define ASYNC_MQTT_ASIO_BIND_DETAIL_CLIENT_IMPL_FWD_HPP
 
 #include <async_mqtt/protocol/protocol_version.hpp>
 
@@ -16,4 +16,4 @@ class client_impl;
 
 } // namespace async_mqtt::detail
 
-#endif // ASYNC_MQTT_DETAIL_CLIENT_IMPL_FWD_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_DETAIL_CLIENT_IMPL_FWD_HPP

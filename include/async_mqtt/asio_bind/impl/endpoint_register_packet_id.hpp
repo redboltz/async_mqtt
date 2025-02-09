@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP)
-#define ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP
 
 #include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/asio_bind/impl/endpoint_impl.hpp>
@@ -66,4 +66,4 @@ register_packet_id(typename basic_packet_id_type<PacketIdBytes>::type packet_id)
 #include <async_mqtt/asio_bind/impl/endpoint_register_packet_id.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_ENDPOINT_REGISTER_PACKET_ID_HPP

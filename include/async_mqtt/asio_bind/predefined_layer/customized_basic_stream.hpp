@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP)
-#define ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP)
+#define ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP
 
 #include <boost/asio.hpp>
 
@@ -165,4 +165,4 @@ struct layer_customize<as::basic_stream_socket<Protocol, Executor>> {
 
 } // namespace async_mqtt
 
-#endif // ASYNC_MQTT_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_PREDEFINED_LAYER_CUSTOMIZED_BASIC_STREAM_HPP

@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_IMPL_CLIENT_RECV_HPP)
-#define ASYNC_MQTT_IMPL_CLIENT_RECV_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RECV_HPP)
+#define ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RECV_HPP
 
 #include <boost/asio/dispatch.hpp>
 
@@ -51,4 +51,4 @@ client<Version, NextLayer>::async_recv(
 #include <async_mqtt/asio_bind/impl/client_recv.ipp>
 #endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
 
-#endif // ASYNC_MQTT_IMPL_CLIENT_RECV_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_IMPL_CLIENT_RECV_HPP

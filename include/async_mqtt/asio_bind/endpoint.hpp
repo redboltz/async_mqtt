@@ -4,8 +4,8 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ASYNC_MQTT_ENDPOINT_HPP)
-#define ASYNC_MQTT_ENDPOINT_HPP
+#if !defined(ASYNC_MQTT_ASIO_BIND_ENDPOINT_HPP)
+#define ASYNC_MQTT_ASIO_BIND_ENDPOINT_HPP
 
 #include <set>
 #include <boost/asio/any_io_executor.hpp>
@@ -779,4 +779,4 @@ private:
 #include <async_mqtt/asio_bind/impl/endpoint_get_stored_packets.hpp>
 #include <async_mqtt/asio_bind/impl/endpoint_regulate_for_store.hpp>
 
-#endif // ASYNC_MQTT_ENDPOINT_HPP
+#endif // ASYNC_MQTT_ASIO_BIND_ENDPOINT_HPP
