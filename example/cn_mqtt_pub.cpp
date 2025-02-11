@@ -16,7 +16,7 @@ class mqtt_connection : public am::connection<am::role::client> {
 public:
     mqtt_connection(as::ip::tcp::socket socket)
         :
-        am::connection<am::role::client>{am::protocol_version::v3_1_1},
+        am::connection<am::role::client>{am::protocol_version::v5},
         socket_{am::force_move(socket)}
     {
         set_auto_pub_response(true);
@@ -44,6 +44,7 @@ private:
         std::optional<am::packet_id_type>
         release_packet_id_if_send_error = std::nullopt
     ) override final {
+        std::cout << "send:" << packet << std::endl;
         try {
             as::write(socket_, packet.const_buffer_sequence());
         }
@@ -64,46 +65,40 @@ private:
         std::cout << "on_receive: " << packet << std::endl;
         packet.visit(
             am::overload {
-                [&](am::v3_1_1::connack_packet const& p) {
+                [&](am::v5::connack_packet const& p) {
                     if (make_error_code(p.code())) {
                         std::cout << p.code() << std::endl;
                         socket_.close();
                         notify_closed();
                     }
                     else {
-                        // Send MQTT SUBSCRIBE
-                        std::vector<am::topic_subopts> sub_entry{
-                            {"topic1", am::qos::at_most_once}
-                        };
+                        // publish
                         send(
-                            am::v3_1_1::subscribe_packet{
+                            am::v5::publish_packet{
+                                "topic1",
+                                "payload1",
+                                am::qos::at_most_once
+                            }
+                        );
+                        send(
+                            am::v5::publish_packet{
                                 *acquire_unique_packet_id(),
-                                am::force_move(sub_entry)
+                                "topic2",
+                                "payload2",
+                                am::qos::at_least_once
+                            }
+                        );
+                        send(
+                            am::v5::publish_packet{
+                                *acquire_unique_packet_id(),
+                                "topic3",
+                                "payload3",
+                                am::qos::exactly_once
                             }
                         );
                     }
                 },
-                [&](am::v3_1_1::suback_packet const& p) {
-                    std::cout
-                        << "MQTT SUBACK recv"
-                        << " pid:" << p.packet_id()
-                        << " entries:";
-                    for (auto const& e : p.entries()) {
-                        std::cout << e << " ";
-                    }
-                    std::cout << std::endl;
-
-                    // Send MQTT PUBLISH
-                    send(
-                        am::v3_1_1::publish_packet{
-                            *acquire_unique_packet_id(),
-                            "topic1",
-                            "payload1",
-                            am::qos::at_least_once
-                        }
-                    );
-                },
-                [&](am::v3_1_1::publish_packet const& p) {
+                [&](am::v5::publish_packet const& p) {
                     std::cout
                         << "MQTT PUBLISH recv"
                         << " pid:" << p.packet_id()
@@ -113,22 +108,30 @@ private:
                         << " retain:" << p.opts().get_retain()
                         << " dup:" << p.opts().get_dup()
                         << std::endl;
-                    publish_received_ = true;
-                    if (puback_received_) {
-                        socket_.close();
-                        notify_closed();
-                    }
                 },
-                [&](am::v3_1_1::puback_packet const& p) {
+                [&](am::v5::puback_packet const& p) {
                     std::cout
                         << "MQTT PUBACK recv"
                         << " pid:" << p.packet_id()
                         << std::endl;
-                    puback_received_ = true;
-                    if (publish_received_) {
-                        socket_.close();
-                        notify_closed();
-                    }
+                },
+                [&](am::v5::pubrec_packet const& p) {
+                    std::cout
+                        << "MQTT PUBREC recv"
+                        << " pid:" << p.packet_id()
+                        << std::endl;
+                },
+                [&](am::v5::pubrel_packet const& p) {
+                    std::cout
+                        << "MQTT PUBREL recv"
+                        << " pid:" << p.packet_id()
+                        << std::endl;
+                },
+                [&](am::v5::pubcomp_packet const& p) {
+                    std::cout
+                        << "MQTT PUBCOMP recv"
+                        << " pid:" << p.packet_id()
+                        << std::endl;
                 },
                 [](auto const&) {
                 }
@@ -137,16 +140,22 @@ private:
     }
 
     void on_timer_op(
-        am::timer_op /*op*/,
-        am::timer_kind /*kind*/,
-        std::optional<std::chrono::milliseconds> /*ms*/
+        am::timer_op op,
+        am::timer_kind kind,
+        std::optional<std::chrono::milliseconds> ms
     ) override final {
+        std::cout
+            << "timer"
+            << " op:" << op
+            << " kind:" << kind;
+        if (ms) {
+            std::cout << " ms:" << ms->count();
+        }
+        std::cout << std::endl;
     }
 
 private:
     as::ip::tcp::socket socket_;
-    bool puback_received_ = false;
-    bool publish_received_ = false;
 };
 
 int main(int argc, char* argv[]) {
@@ -170,11 +179,11 @@ int main(int argc, char* argv[]) {
             am::qos::at_most_once
         };
         mc.send(
-            am::v3_1_1::connect_packet{
-                true,   // clean_session
-                0,      // keep_alive (because no on_timer_op implementation)
-                "ClientIdentifier1",
-                will,   // you can pass std::nullopt if you don't want to set the will message
+            am::v5::connect_packet{
+                true,         // clean_start
+                0,            // keep_alive
+                "",           // Client Identifier, empty means generated by the broker
+                std::nullopt, // will
                 "UserName1",
                 "Password1"
             }
