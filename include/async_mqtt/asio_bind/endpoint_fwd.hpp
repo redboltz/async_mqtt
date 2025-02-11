@@ -34,19 +34,12 @@ template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 class basic_endpoint;
 
 /**
- * @related basic_endpoint
- * @brief Type alias of basic_endpoint (PacketIdBytes=2).
- *        This is for typical usecase.
+ * @brief Type alias for @ref basic_endpoint with PacketIdBytes set to 2.
+ *        This is for typical use cases (e.g., MQTT client).
  *
  * #### Thread Safety
  *    @li Distinct objects: Safe
  *    @li Shared objects: Unsafe
- *
- * #### predefined next layer types for NextLayer:
- *    @li @ref protocol::mqtt
- *    @li @ref protocol::mqtts
- *    @li @ref protocol::ws
- *    @li @ref protocol::wss
  *
  * @tparam Role          role for packet sendable checking
  * @tparam NextLayer     Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.

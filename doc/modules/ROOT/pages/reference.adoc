@@ -249,12 +249,6 @@ xref:reference:async_mqtt/endpoint.adoc[`endpoint`]
 
 xref:reference:async_mqtt/basic_endpoint.adoc[`basic_endpoint`]
 
-**Functions**
-
-xref:reference:async_mqtt/setup_log.adoc[`setup_log`]
-
-xref:reference:async_mqtt/logger.adoc[`log`]
-
 |
 
 **Types**
@@ -274,5 +268,31 @@ xref:reference:async_mqtt/layer_customize-03.adoc[`layer_customize(TCP)`]
 xref:reference:async_mqtt/layer_customize-08.adoc[`layer_customize(TLS)`]
 
 xref:reference:async_mqtt/layer_customize-02.adoc[`layer_customize(WS)`]
+
+|===
+
+== Common utilities
+
+[width=100%]
+|===
+1+| *Logging* | *Buffers*
+
+|
+
+**Types**
+
+xref:reference:async_mqtt/global_logger_type.adoc[`global_logger_type`]
+
+**Functions**
+
+xref:reference:async_mqtt/logger.adoc[`logger`]
+
+xref:reference:async_mqtt/setup_log.adoc[`setup_log`]
+
+|
+
+**Classes**
+
+xref:reference:async_mqtt/buffer.adoc[`buffer`]
 
 |===

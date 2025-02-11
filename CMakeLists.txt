@@ -104,11 +104,18 @@ add_subdirectory(include)
 if(ASYNC_MQTT_BUILD_MRDOCS)
     message(STATUS "MrDocs generation")
     set(CMAKE_SYSROOT /usr)
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp" "#include <async_mqtt/all.hpp>\n")
+    file(
+        WRITE
+        "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp"
+        "#include <async_mqtt/all.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>\n"
+        "#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>\n"
+    )
     add_library(async_mqtt_mrdocs "${CMAKE_CURRENT_BINARY_DIR}/mrdocs.cpp")
 
     target_compile_features(async_mqtt_mrdocs PUBLIC cxx_constexpr)
-    target_compile_definitions(async_mqtt_mrdocs PUBLIC ASYNC_MQTT_MRDOCS)
+    target_compile_definitions(async_mqtt_mrdocs PUBLIC ASYNC_MQTT_MRDOCS ASYNC_MQTT_USE_LOG)
     set_target_properties(async_mqtt_mrdocs PROPERTIES NO_SYSTEM_FROM_IMPORTED OFF)
     target_include_directories(async_mqtt_mrdocs PUBLIC include ${Boost_INCLUDE_DIRS})
     return()
