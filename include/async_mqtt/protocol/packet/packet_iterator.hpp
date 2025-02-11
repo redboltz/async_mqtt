@@ -21,36 +21,39 @@ namespace async_mqtt {
 namespace as = boost::asio;
 
 /**
- * @brief iterator type of buffer sequence
+ * @brief A type alias of Boost.Asio buffers_iterator.
+ * @tparam The type of buffer sequence.
  *
  */
-template <template <typename...> typename Container, typename Buffer>
-using packet_iterator = as::buffers_iterator<Container<Buffer>>;
+template <typename BufferSequence>
+using packet_iterator = as::buffers_iterator<BufferSequence>;
 
 /**
- * @brief create packet iterator range
- * @param cbs collection of th buffer
- * @return the pair of packet_iterator
+ * @brief Create a pair of the const buffer sequence that points begin and end.
+ * @param cbs The sequence of const buffer.
+ * @return The pair of the iterator.
+ * @tparam The type of const buffer sequence.
  *
  */
-template <template <typename...> typename Container, typename Buffer>
-std::pair<packet_iterator<Container, Buffer>, packet_iterator<Container, Buffer>>
-make_packet_range(Container<Buffer> const& cbs) {
+template <typename  ConstBufferSequence>
+std::pair<packet_iterator<ConstBufferSequence>, packet_iterator<ConstBufferSequence>>
+make_packet_range(ConstBufferSequence const& cbs) {
     return {
-        packet_iterator<Container, Buffer>::begin(cbs),
-        packet_iterator<Container, Buffer>::end(cbs)
+        packet_iterator<ConstBufferSequence>::begin(cbs),
+        packet_iterator<ConstBufferSequence>::end(cbs)
     };
 }
 
 /**
- * @brief convert buffer sequence to the string
- * @param cbs collection of th buffer
- * @return string that all buffers are concatenated
+ * @brief Convert const buffer sequence to the string.
+ * @param cbs The sequence of const buffer.
+ * @return The string that all buffers are concatenated.
+ * @tparam The type of const buffer sequence.
  *
  */
-template <template <typename...> typename Container, typename Buffer>
+template <typename ConstBufferSequence>
 std::string
-to_string(Container<Buffer> const& cbs) {
+to_string(ConstBufferSequence const& cbs) {
     auto [b, e] = make_packet_range(cbs);
     return std::string(b, e);
 }
