@@ -585,7 +585,7 @@ process_recv_packet() {
         if (buf.size() > maximum_packet_size_recv_) {
             // on v3.1.1 maximum_packet_size_recv_ is initialized as packet_size_no_limit
             BOOST_ASSERT(protocol_version_ == protocol_version::v5);
-            con_.on_send(
+            send(
                 v5::disconnect_packet{
                     disconnect_reason_code::packet_too_large
                 }
@@ -609,7 +609,7 @@ process_recv_packet() {
                 // packet is error but connack needs to be sent
                 status_ = connection_status::connecting;
                 if (protocol_version_ == protocol_version::v5) {
-                    con_.on_send(
+                    send(
                         v5::connack_packet{
                             false, // session_present
                             static_cast<connect_reason_code>(ec.value())
@@ -617,7 +617,7 @@ process_recv_packet() {
                     );
                 }
                 else {
-                    con_.on_send(
+                    send(
                         v3_1_1::connack_packet{
                             false, // session_present
                             static_cast<connect_return_code>(ec.value())
@@ -634,7 +634,7 @@ process_recv_packet() {
                 if (status_ == connection_status::connected &&
                     protocol_version_ == protocol_version::v5
                 ) {
-                    con_.on_send(
+                    send(
                         v5::disconnect_packet{
                             static_cast<disconnect_reason_code>(ec.value())
                         }
@@ -873,7 +873,7 @@ process_recv_packet() {
                         auto packet_id = p.packet_id();
                         if (auto_pub_response_ &&
                             status_ == connection_status::connected) {
-                            con_.on_send(
+                            send(
                                 v3_1_1::basic_puback_packet<PacketIdBytes>(packet_id)
                             );
                         }
@@ -893,7 +893,7 @@ process_recv_packet() {
                             (auto_pub_response_ ||
                              already_handled) // already_handled is true only if the pubrec packet
                         ) {                   // corresponding to the publish packet has already
-                            con_.on_send(
+                            send(
                                 v3_1_1::basic_pubrec_packet<PacketIdBytes>(packet_id)
                             );
                         }
@@ -914,7 +914,7 @@ process_recv_packet() {
                     switch (p.opts().get_qos()) {
                     case qos::at_least_once: {
                         if (publish_recv_max_ && publish_recv_.size() == *publish_recv_max_) {
-                            con_.on_send(
+                            send(
                                 v5::disconnect_packet{
                                     disconnect_reason_code::receive_maximum_exceeded
                                 }
@@ -934,7 +934,7 @@ process_recv_packet() {
                     case qos::exactly_once: {
                         auto packet_id = p.packet_id();
                         if (publish_recv_max_ && publish_recv_.size() == *publish_recv_max_) {
-                            con_.on_send(
+                            send(
                                 v5::disconnect_packet{
                                     disconnect_reason_code::receive_maximum_exceeded
                                 }
@@ -971,7 +971,7 @@ process_recv_packet() {
                             if (*ta_opt == 0 ||
                                 !topic_alias_recv_ || // topic_alias_maximum is 0
                                 *ta_opt > topic_alias_recv_->max()) {
-                                con_.on_send(
+                                send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
                                     }
@@ -989,7 +989,7 @@ process_recv_packet() {
                                 ASYNC_MQTT_LOG("mqtt_impl", error)
                                     << "no matching topic alias: "
                                     << *ta_opt;
-                                con_.on_send(
+                                send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
                                     }
@@ -1008,7 +1008,7 @@ process_recv_packet() {
                         else {
                             ASYNC_MQTT_LOG("mqtt_impl", error)
                                 << "topic is empty but topic_alias isn't set";
-                            con_.on_send(
+                            send(
                                 v5::disconnect_packet{
                                     disconnect_reason_code::topic_alias_invalid
                                 }
@@ -1026,7 +1026,7 @@ process_recv_packet() {
                             if (*ta_opt == 0 ||
                                 !topic_alias_recv_ || // topic_alias_maximum is 0
                                 *ta_opt > topic_alias_recv_->max()) {
-                                con_.on_send(
+                                send(
                                     v5::disconnect_packet{
                                         disconnect_reason_code::topic_alias_invalid
                                     }
@@ -1044,12 +1044,12 @@ process_recv_packet() {
                         }
                     }
                     if (puback_send) {
-                        con_.on_send(
+                        send(
                             v5::basic_puback_packet<PacketIdBytes>(packet_id)
                         );
                     }
                     if (pubrec_send) {
-                        con_.on_send(
+                        send(
                             v5::basic_pubrec_packet<PacketIdBytes>(packet_id)
                         );
                     }
@@ -1093,7 +1093,7 @@ process_recv_packet() {
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id puback received packet_id:" << packet_id;
-                        con_.on_send(
+                        send(
                             v5::disconnect_packet{
                                 disconnect_reason_code::protocol_error
                             }
@@ -1110,7 +1110,7 @@ process_recv_packet() {
                     if (pid_pubrec_.erase(packet_id)) {
                         store_.erase(response_packet::v3_1_1_pubrec, packet_id);
                         if (auto_pub_response_ && status_ == connection_status::connected) {
-                            con_.on_send(
+                            send(
                                 v3_1_1::basic_pubrel_packet<PacketIdBytes>{packet_id}
                             );
                         }
@@ -1141,7 +1141,7 @@ process_recv_packet() {
                             }
                         }
                         else if (auto_pub_response_ && status_ == connection_status::connected) {
-                            con_.on_send(
+                            send(
                                 v5::basic_pubrel_packet<PacketIdBytes>{packet_id}
                             );
                         }
@@ -1151,7 +1151,7 @@ process_recv_packet() {
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubrec received packet_id:" << packet_id;
-                        con_.on_send(
+                        send(
                             v5::disconnect_packet{
                                 disconnect_reason_code::protocol_error
                             }
@@ -1167,7 +1167,7 @@ process_recv_packet() {
                     auto packet_id = p.packet_id();
                     qos2_publish_handled_.erase(packet_id);
                     if (auto_pub_response_ && status_ == connection_status::connected) {
-                        con_.on_send(
+                        send(
                             v3_1_1::basic_pubcomp_packet<PacketIdBytes>{packet_id}
                         );
                     }
@@ -1178,7 +1178,7 @@ process_recv_packet() {
                     auto packet_id = p.packet_id();
                     qos2_publish_handled_.erase(packet_id);
                     if (auto_pub_response_ && status_ == connection_status::connected) {
-                        con_.on_send(
+                        send(
                             v5::basic_pubcomp_packet<PacketIdBytes>{packet_id}
                         );
                     }
@@ -1222,7 +1222,7 @@ process_recv_packet() {
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id pubcomp received packet_id:" << packet_id;
-                        con_.on_send(
+                        send(
                             v5::disconnect_packet{
                                 disconnect_reason_code::protocol_error
                             }
@@ -1272,12 +1272,11 @@ process_recv_packet() {
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id suback received packet_id:" << packet_id;
-                        con_.on_send(
+                        send(
                             v5::disconnect_packet{
                                 disconnect_reason_code::protocol_error
                             }
                         );
-                        con_.on_close();
                         con_.on_error(
                             make_error_code(
                                 disconnect_reason_code::protocol_error
@@ -1323,12 +1322,11 @@ process_recv_packet() {
                     else {
                         ASYNC_MQTT_LOG("mqtt_impl", error)
                             << "invalid packet_id unsuback received packet_id:" << packet_id;
-                        con_.on_send(
+                        send(
                             v5::disconnect_packet{
                                 disconnect_reason_code::protocol_error
                             }
                         );
-                        con_.on_close();
                         con_.on_error(
                             make_error_code(
                                 disconnect_reason_code::protocol_error
@@ -1340,7 +1338,7 @@ process_recv_packet() {
                     if constexpr(can_send_as_server(Role)) {
                         if (auto_ping_response_ &&
                             status_ == connection_status::connected) {
-                            con_.on_send(
+                            send(
                                 v3_1_1::pingresp_packet{}
                             );
                         }
@@ -1352,7 +1350,7 @@ process_recv_packet() {
                     if constexpr(can_send_as_server(Role)) {
                         if (auto_ping_response_ &&
                             status_ == connection_status::connected) {
-                            con_.on_send(
+                            send(
                                 v5::pingresp_packet{}
                             );
                         }

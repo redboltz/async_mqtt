@@ -22,6 +22,7 @@ recv_op {
     std::optional<error_code> decided_error = std::nullopt;
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
     bool try_resend_from_queue = false;
+    bool disconnect_sent_just_before = false;
     enum { dispatch, check_istream, process, read, finish_read, sent, closed, complete } state = dispatch;
 
     template <typename Self>
@@ -38,12 +39,12 @@ recv_op {
                 [&](async_mqtt::event::basic_send<PacketIdBytes>&& ev) {
                     auto ep_copy{ep};
                     state = sent;
-                    async_send(
-                        force_move(ep_copy),
+                    BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
+                    disconnect_sent_just_before = ev.get().type() == control_packet_type::disconnect;
+                    a_ep.stream_.async_write_packet(
                         force_move(ev.get()),
                         force_move(self)
                     );
-                    BOOST_ASSERT(!ev.get_release_packet_id_if_send_error());
                     return false;
                 },
                 [&](async_mqtt::event::basic_packet_id_released<PacketIdBytes>&& ev) {

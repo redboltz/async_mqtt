@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias_size_over_resend) {
     }
 }
 
-BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
+BOOST_AUTO_TEST_CASE(v5_invalid_suback) {
     am::rv_connection<am::role::client> c{am::protocol_version::v5};
     auto connect = am::v5::connect_packet{
         false,   // clean_start
@@ -397,6 +397,30 @@ BOOST_AUTO_TEST_CASE(v5_invalid_suback_unsuback) {
             },
             events[2]
         );
+    }
+}
+
+BOOST_AUTO_TEST_CASE(v5_invalid_unsuback) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+    auto connect = am::v5::connect_packet{
+        false,   // clean_start
+        0, // keep_alive
+        "cid1",
+        std::nullopt, // will
+        "user1",
+        "pass1"
+    };
+
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success
+        };
+        c.send(connect);
+
+        auto connack_str{am::to_string(connack.const_buffer_sequence())};
+        std::istringstream is{connack_str};
+        c.recv(is);
     }
     {
         auto unsuback = am::v5::unsuback_packet(

@@ -206,10 +206,15 @@ public:
 
     /**
      * @brief Sets the delay duration for closing the stream after sending the DISCONNECT packet.
+     *
      * If the timer expires, the underlying layer stream will begin closing.
-     * \n This function must be called before the `async_send()` function.
+     * \n This function must be called before invoking `async_send()`.
+     * \n Note: This setting affects only user-initiated DISCONNECT packet sending.
+     *       DISCONNECT packets sent automatically due to errors are not delayed.
+     *
      * @note By default, no delay is set.
-     * @param duration If set to zero, the timer is not activated, and the close process starts immediately.
+     *
+     * @param duration If set to zero, the timer is not activated and the close process starts immediately.
      *                 Otherwise, the close process begins after the specified duration has elapsed.
      *                 The minimum resolution is in milliseconds.
      */
