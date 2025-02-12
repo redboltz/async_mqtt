@@ -8,6 +8,7 @@
 
 #include <boost/asio.hpp>
 #include <async_mqtt/protocol/connection.hpp>
+#include <async_mqtt/util/setup_log.hpp>
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
@@ -61,6 +62,18 @@ private:
     }
 
     void on_receive(am::packet_variant packet) override final {
+        auto check_finish =
+            [&] {
+                if (publish_received_ == 3 &&
+                    puback_received_ &&
+                    pubrec_received_ &&
+                    pubcomp_received_
+                ) {
+                    socket_.close();
+                    notify_closed();
+                }
+            };
+
         std::cout << "on_receive: " << packet << std::endl;
         packet.visit(
             am::overload {
@@ -73,7 +86,9 @@ private:
                     else {
                         // Send MQTT SUBSCRIBE
                         std::vector<am::topic_subopts> sub_entry{
-                            {"topic1", am::qos::at_most_once}
+                            {"topic1", am::qos::at_most_once},
+                            {"topic2", am::qos::at_least_once},
+                            {"topic3", am::qos::exactly_once},
                         };
                         send(
                             am::v3_1_1::subscribe_packet{
@@ -96,10 +111,25 @@ private:
                     // Send MQTT PUBLISH
                     send(
                         am::v3_1_1::publish_packet{
-                            *acquire_unique_packet_id(),
                             "topic1",
                             "payload1",
+                            am::qos::at_most_once
+                        }
+                    );
+                    send(
+                        am::v3_1_1::publish_packet{
+                            *acquire_unique_packet_id(),
+                            "topic2",
+                            "payload2",
                             am::qos::at_least_once
+                        }
+                    );
+                    send(
+                        am::v3_1_1::publish_packet{
+                            *acquire_unique_packet_id(),
+                            "topic3",
+                            "payload3",
+                            am::qos::exactly_once
                         }
                     );
                 },
@@ -113,11 +143,8 @@ private:
                         << " retain:" << p.opts().get_retain()
                         << " dup:" << p.opts().get_dup()
                         << std::endl;
-                    publish_received_ = true;
-                    if (puback_received_) {
-                        socket_.close();
-                        notify_closed();
-                    }
+                    ++publish_received_ ;
+                    check_finish();
                 },
                 [&](am::v3_1_1::puback_packet const& p) {
                     std::cout
@@ -125,10 +152,23 @@ private:
                         << " pid:" << p.packet_id()
                         << std::endl;
                     puback_received_ = true;
-                    if (publish_received_) {
-                        socket_.close();
-                        notify_closed();
-                    }
+                    check_finish();
+                },
+                [&](am::v3_1_1::pubrec_packet const& p) {
+                    std::cout
+                        << "MQTT PUBREC recv"
+                        << " pid:" << p.packet_id()
+                        << std::endl;
+                    pubrec_received_ = true;
+                    check_finish();
+                },
+                [&](am::v3_1_1::pubcomp_packet const& p) {
+                    std::cout
+                        << "MQTT PUBCOMP recv"
+                        << " pid:" << p.packet_id()
+                        << std::endl;
+                    pubcomp_received_ = true;
+                    check_finish();
                 },
                 [](auto const&) {
                 }
@@ -146,10 +186,16 @@ private:
 private:
     as::ip::tcp::socket socket_;
     bool puback_received_ = false;
-    bool publish_received_ = false;
+    bool pubrec_received_ = false;
+    bool pubcomp_received_ = false;
+    std::size_t publish_received_ = 0;
 };
 
 int main(int argc, char* argv[]) {
+    am::setup_log(
+        am::severity_level::trace,
+        true // log colored
+    );
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
@@ -185,7 +231,7 @@ int main(int argc, char* argv[]) {
         while (true) {
             auto read_size = mc.socket().read_some(read_buf.prepare(1024));
             read_buf.commit(read_size);
-            mc.recv(is);
+            while (read_buf.size() != 0) mc.recv(is);
         }
     }
     catch (am::system_error const& se) {

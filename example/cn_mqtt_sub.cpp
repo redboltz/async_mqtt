@@ -8,6 +8,7 @@
 
 #include <boost/asio.hpp>
 #include <async_mqtt/protocol/connection.hpp>
+#include <async_mqtt/util/setup_log.hpp>
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
@@ -158,6 +159,10 @@ private:
 };
 
 int main(int argc, char* argv[]) {
+    am::setup_log(
+        am::severity_level::trace,
+        true // log colored
+    );
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
@@ -193,7 +198,7 @@ int main(int argc, char* argv[]) {
         while (true) {
             auto read_size = mc.socket().read_some(read_buf.prepare(1024));
             read_buf.commit(read_size);
-            mc.recv(is);
+            while (read_buf.size() != 0) mc.recv(is);
         }
     }
     catch (am::system_error const& se) {

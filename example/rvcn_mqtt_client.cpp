@@ -8,6 +8,7 @@
 
 #include <boost/asio.hpp>
 #include <async_mqtt/protocol/rv_connection.hpp>
+#include <async_mqtt/util/setup_log.hpp>
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
@@ -16,7 +17,9 @@ class mqtt_connection {
 public:
     mqtt_connection(as::ip::tcp::socket socket)
         :socket_{am::force_move(socket)}
-    {}
+    {
+        mc_.set_auto_pub_response(true);
+    }
 
     as::ip::tcp::socket& socket() {
         return socket_;
@@ -50,8 +53,10 @@ public:
         while (true) {
             auto read_size = socket_.read_some(read_buf.prepare(1024));
             read_buf.commit(read_size);
-            auto events = mc_.recv(is);
-            handle_events(events);
+            while (read_buf.size() != 0) {
+                auto events = mc_.recv(is);
+                handle_events(events);
+            }
         }
     }
 
@@ -83,6 +88,18 @@ private:
                 [&](am::event::packet_id_released const& /*ev*/) {
                 },
                 [&](am::event::packet_received const& ev) {
+                    auto check_finish =
+                        [&] {
+                            if (publish_received_ == 3 &&
+                                puback_received_ &&
+                                pubrec_received_ &&
+                                pubcomp_received_
+                            ) {
+                                socket_.close();
+                                mc_.notify_closed();
+                            }
+                        };
+
                     auto packet = ev.get();
                     std::cout << "on_receive: " << packet << std::endl;
                     packet.visit(
@@ -96,7 +113,9 @@ private:
                                 else {
                                     // Send MQTT SUBSCRIBE
                                     std::vector<am::topic_subopts> sub_entry{
-                                        {"topic1", am::qos::at_most_once}
+                                        {"topic1", am::qos::at_most_once},
+                                        {"topic2", am::qos::at_least_once},
+                                        {"topic3", am::qos::exactly_once},
                                     };
                                     auto events = mc_.send(
                                         am::v3_1_1::subscribe_packet{
@@ -116,16 +135,39 @@ private:
                                     std::cout << e << " ";
                                 }
                                 std::cout << std::endl;
-                                 // Send MQTT PUBLISH
-                                auto events = mc_.send(
-                                    am::v3_1_1::publish_packet{
-                                        *mc_.acquire_unique_packet_id(),
-                                        "topic1",
-                                        "payload1",
-                                        am::qos::at_least_once
-                                    }
-                                );
-                                handle_events(events);
+                                // Send MQTT PUBLISH
+                                {
+                                    auto events = mc_.send(
+                                        am::v3_1_1::publish_packet{
+                                            "topic1",
+                                            "payload1",
+                                            am::qos::at_most_once
+                                        }
+                                    );
+                                    handle_events(events);
+                                }
+                                {
+                                    auto events = mc_.send(
+                                        am::v3_1_1::publish_packet{
+                                            *mc_.acquire_unique_packet_id(),
+                                            "topic2",
+                                            "payload2",
+                                            am::qos::at_least_once
+                                        }
+                                    );
+                                    handle_events(events);
+                                }
+                                {
+                                    auto events = mc_.send(
+                                        am::v3_1_1::publish_packet{
+                                            *mc_.acquire_unique_packet_id(),
+                                            "topic3",
+                                            "payload3",
+                                            am::qos::exactly_once
+                                        }
+                                    );
+                                    handle_events(events);
+                                }
                             },
                             [&](am::v3_1_1::publish_packet const& p) {
                                 std::cout
@@ -137,11 +179,8 @@ private:
                                     << " retain:" << p.opts().get_retain()
                                     << " dup:" << p.opts().get_dup()
                                     << std::endl;
-                                publish_received_ = true;
-                                if (puback_received_) {
-                                    socket_.close();
-                                    mc_.notify_closed();
-                                }
+                                ++publish_received_;
+                                check_finish();
                             },
                             [&](am::v3_1_1::puback_packet const& p) {
                                 std::cout
@@ -149,10 +188,23 @@ private:
                                     << " pid:" << p.packet_id()
                                     << std::endl;
                                 puback_received_ = true;
-                                if (publish_received_) {
-                                    socket_.close();
-                                    mc_.notify_closed();
-                                }
+                                check_finish();
+                            },
+                            [&](am::v3_1_1::pubrec_packet const& p) {
+                                std::cout
+                                    << "MQTT PUBREC recv"
+                                    << " pid:" << p.packet_id()
+                                    << std::endl;
+                                pubrec_received_ = true;
+                                check_finish();
+                            },
+                            [&](am::v3_1_1::pubcomp_packet const& p) {
+                                std::cout
+                                    << "MQTT PUBCOMP recv"
+                                    << " pid:" << p.packet_id()
+                                    << std::endl;
+                                pubcomp_received_ = true;
+                                check_finish();
                             },
                             [](auto const&) {
                             }
@@ -174,11 +226,17 @@ private:
 private:
     as::ip::tcp::socket socket_;
     am::rv_connection<am::role::client> mc_{am::protocol_version::v3_1_1};
-    bool publish_received_ = false;
     bool puback_received_ = false;
+    bool pubrec_received_ = false;
+    bool pubcomp_received_ = false;
+    std::size_t publish_received_ = 0;
 };
 
 int main(int argc, char* argv[]) {
+    am::setup_log(
+        am::severity_level::trace,
+        true // log colored
+    );
     if (argc != 3) {
         std::cout << "Usage: " << argv[0] << " host port" << std::endl;
         return -1;
