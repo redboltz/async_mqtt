@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>I/O Independent MQTT Protocol Machine :: async_mqtt</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/sansio.html">
+    <link rel="prev" href="functionality/error_report.html">
+    <link rel="next" href="customize.html">
+  <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../_/css/boostlook.css">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../_'</script>
+<link rel="icon" href="../_/img/favicons/favicon.ico" type="image/x-icon">
+    <!-- Favicon configuration -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../_/img/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../_/img/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../_/img/favicons/favicon-16x16.png">
+    <link rel="manifest" href="../_/img/favicons/site.webmanifest">
+    <link rel="shortcut icon" href="../_/img/favicons/favicon.ico">
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="index.html">async_mqtt</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="reference.html">Reference</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="CHANGELOG.html">History</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Introduction</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="requirements.html">Requirements</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="goal.html">Design Goal</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Quick Look</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="quicklook.html">Simple Pub/Sub client</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="performance.html">Performance</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="comparison.html">Comparison</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tutorial</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="header.html">Header Files</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tutorial/client.html">Client</a>
+        </li>
+              <li class="" data-depth="2">
+            <span class="nav-text">Endpoint</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/create_endpoint.html">Create endpoint</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/cpp20_coro.html">C++20 coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/sl_coro.html">Stackless coroutine</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="tutorial/send_recv.html">Send/Recv packets</a>
+        </li>
+        </ul>
+  </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Functionality</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_based.html">Packet-Based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/non_packet_based.html">Non packet based APIs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/packet_id.html">Packet Identifier Management</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/connect_timeout.html">Connect Timeout</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/keep_session.html">Keep session</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/resend.html">Resend message</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/topic_alias.html">Topic Alias</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/request_response.html">Request/Response</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/receive_maximum.html">Receive Maximum</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/maximum_packet_size.html">Maximum Packet Size</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/thread_safe.html">Thread Safety</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/logging.html">Logging</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="functionality/error_report.html">Error Reporting</a>
+        </li>
+        </ul>
+        <li class=" is-current-page" data-depth="1">
+            <a class="nav-link" href="sansio.html">I/O Independent MQTT Protocol Machine</a>
+        </li>
+              <li class="" data-depth="1">
+            <span class="nav-text">Customize/Config</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="customize.html">Customize Underlying Layer</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="config.html">Config</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="separate.html">Separate Compilation Mode</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Tools</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="tool/container.html">Run async_mqtt broker/client on the docker container</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/trial.html">Free trial broker on cloud</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/broker.html">broker</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/client_cli.html">client_cli</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="tool/bench.html">bench</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="http://github.com/redboltz/async_mqtt">Repository</a>
+        </li>
+        </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="sansio.html">I/O Independent MQTT Protocol Machine</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="functionality/error_report.html"><span class="material-symbols-outlined" title="Previous: Error Reporting">arrow_back</span></a>
+    <a accesskey="p" href="customize.html"><span class="material-symbols-outlined" title="Next: Customize Underlying Layer">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">I/O Independent MQTT Protocol Machine</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>async_mqtt supports an I/O independent (also known as Sans-I/O) MQTT protocol machine.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_classes"><a class="anchor" href="#_classes"></a>Classes</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="_images/con_rvcon.svg" alt="connection and rv_connection">
+</div>
+</div>
+<div class="sect2">
+<h3 id="_connection_basic_connection"><a class="anchor" href="#_connection_basic_connection"></a><code><a href="reference/async_mqtt/basic_connection.html" class="xref page">connection</a></code> (basic_connection)</h3>
+<div class="paragraph">
+<p>The <code><a href="reference/async_mqtt/basic_connection.html" class="xref page">connection</a></code> class represents the core protocol state machine.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/connection.svg" alt="connection">
+</div>
+</div>
+<div class="paragraph">
+<p>When public member functions are called, the internal state is updated. If caller action is required, the corresponding on_*() virtual function is invoked.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/con_on_x_map.svg" alt="mapping">
+</div>
+</div>
+<div class="paragraph">
+<p>The following is a list of member functions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/send.html" class="xref page">send()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/recv.html" class="xref page">recv()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/release_packet_id.html" class="xref page">release_packet_id()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/notify_timer_fired.html" class="xref page">notify_timer_fired()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/notify_closed.html" class="xref page">notify_closed()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/set_pingreq_send_interval.html" class="xref page">set_pingreq_send_interval()</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Users should override the virtual functions and implement the required actions.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/con_rvcon.svg" alt="connection and rv_connection">
+</div>
+</div>
+<div class="paragraph">
+<p>The following is a list of virtual member functions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_error.html" class="xref page">on_error()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_send.html" class="xref page">on_send()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_packet_id_release.html" class="xref page">on_packet_id_release()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_receive.html" class="xref page">on_receive()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_close.html" class="xref page">on_close()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_connection/on_timer_op.html" class="xref page">on_timer_op()</a></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rv_connection"><a class="anchor" href="#_rv_connection"></a><code>rv_connection</code></h3>
+<div class="paragraph">
+<p>"rv" stands for "return value based". This class inherits from the connection class and overrides all the on_*() virtual functions. Its implementation converts the parameters into a <code><a href="reference/async_mqtt/basic_event_variant.html" class="xref page">event</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>The following functions return a vector of <code><a href="reference/async_mqtt/basic_event_variant.html" class="xref page">event</a></code>s:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/send.html" class="xref page">send()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/recv.html" class="xref page">recv()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/release_packet_id.html" class="xref page">release_packet_id()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/notify_timer_fired.html" class="xref page">notify_timer_fired()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/notify_closed.html" class="xref page">notify_closed()</a></code></p>
+</li>
+<li>
+<p><code><a href="reference/async_mqtt/basic_rv_connection/set_pingreq_send_interval.html" class="xref page">set_pingreq_send_interval()</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This class is used by the Boost.Asio binding&#8217;s basic_endpoint code.</p>
+</div>
+<div class="paragraph">
+<p>Users can also inherit from the connection (basic_connection) class to implement their own custom behavior.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples"><a class="anchor" href="#_examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_connection_based"><a class="anchor" href="#_connection_based"></a>connection based</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>A sequence of subscribe/publish</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/cn_mqtt_client.cpp">cn_mqtt_client.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Publisher</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/cn_mqtt_pub.cpp">cn_mqtt_pub.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Subscriber</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/cn_mqtt_sub.cpp">cn_mqtt_sub.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rc_connection_based"><a class="anchor" href="#_rc_connection_based"></a>rc_connection based</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>A sequence of subscribe/publish</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="example/rvcn_mqtt_client.cpp">rvcn_mqtt_client.cpp</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/sansio.adoc">Edit this Page</a>
+  </div>
+      <nav class="pagination">
+        <span class="prev"><a href="functionality/error_report.html">Error Reporting</a></span>
+        <span class="next"><a href="customize.html">Customize Underlying Layer</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script async src="../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

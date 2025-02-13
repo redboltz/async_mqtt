@@ -136,6 +136,9 @@
         </li>
         </ul>
         <li class="" data-depth="1">
+            <a class="nav-link" href="sansio.html">I/O Independent MQTT Protocol Machine</a>
+        </li>
+              <li class="" data-depth="1">
             <span class="nav-text">Customize/Config</span>
         </li>
         <ul class="nav-list">
@@ -209,6 +212,13 @@
 <ul>
 <li>
 <p>Re-organized include files.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>See <a href="https://redboltz.github.io/async_mqtt/doc/10.0.0/async_mqtt/header.html" class="bare">https://redboltz.github.io/async_mqtt/doc/10.0.0/async_mqtt/header.html</a></p>
+</li>
+</ul>
+</div>
 </li>
 <li>
 <p>Removed non bulk read to meet Sans-I/O interface.</p>
@@ -221,7 +231,7 @@
 <div class="ulist">
 <ul>
 <li>
-<p>Simply replate <code>async_underlying_handshake(your_ep.next_layer(), &#8230;&#8203;)</code> with <code>your_ep.async_underlying_handshake(&#8230;&#8203;)</code>.</p>
+<p>Simply replace <code>async_underlying_handshake(your_ep.next_layer(), &#8230;&#8203;)</code> with <code>your_ep.async_underlying_handshake(&#8230;&#8203;)</code>.</p>
 </li>
 </ul>
 </div>
