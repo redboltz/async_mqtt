@@ -35,9 +35,17 @@
             <a class="nav-link" href="reference.html">Reference</a>
         </li>
               <li class="" data-depth="1">
-            <a class="nav-link" href="CHANGELOG.html">History</a>
+            <span class="nav-text">History</span>
         </li>
-              <li class="" data-depth="1">
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="CHANGELOG.html">Changelog</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="older.html">Older versions' documents</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
             <span class="nav-text">Introduction</span>
         </li>
         <ul class="nav-list">
@@ -196,9 +204,7 @@
 </div>
 </div>
     <h1 class="page">async_mqtt</h1>
-  <div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
+  <div class="paragraph">
 <p><a href="http://github.com/redboltz/async_mqtt" class="bare">http://github.com/redboltz/async_mqtt</a></p>
 </div>
 <div class="paragraph">
@@ -206,168 +212,6 @@
 </div>
 <div class="paragraph">
 <p>Distributed under the Boost Software License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" class="bare">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_table_of_contents"><a class="anchor" href="#_table_of_contents"></a>Table of Contents</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="reference.html" class="xref page">Reference</a></p>
-</li>
-<li>
-<p><a href="CHANGELOG.html" class="xref page">History</a></p>
-</li>
-<li>
-<p>Introduction</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="requirements.html" class="xref page">Requirements</a></p>
-</li>
-<li>
-<p><a href="goal.html" class="xref page">Design Goal</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Quick Look</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="quicklook.html" class="xref page">Simple Pub/Sub client</a></p>
-</li>
-<li>
-<p><a href="performance.html" class="xref page">Performance</a></p>
-</li>
-<li>
-<p><a href="comparison.html" class="xref page">Comparison</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Tutorial</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="tutorial/client.html" class="xref page">Client</a></p>
-</li>
-<li>
-<p>endpoint</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="tutorial/create_endpoint.html" class="xref page">Create endpoint</a></p>
-</li>
-<li>
-<p><a href="tutorial/cpp20_coro.html" class="xref page">C++20 coroutine</a></p>
-</li>
-<li>
-<p><a href="tutorial/sl_coro.html" class="xref page">Stackless coroutine</a></p>
-</li>
-<li>
-<p><a href="tutorial/send_recv.html" class="xref page">Send/Recv packets</a></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Functionality</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="functionality/packet_based.html" class="xref page">Packet-Based APIs</a></p>
-</li>
-<li>
-<p><a href="functionality/non_packet_based.html" class="xref page">Non packet based APIs</a></p>
-</li>
-<li>
-<p><a href="functionality/packet_id.html" class="xref page">Packet Identifier Management</a></p>
-</li>
-<li>
-<p><a href="functionality/connect_timeout.html" class="xref page">Connect Timeout</a></p>
-</li>
-<li>
-<p><a href="functionality/keep_session.html" class="xref page">Keep session</a></p>
-</li>
-<li>
-<p><a href="functionality/resend.html" class="xref page">Resend message</a></p>
-</li>
-<li>
-<p><a href="functionality/topic_alias.html" class="xref page">Topic Alias</a></p>
-</li>
-<li>
-<p><a href="functionality/request_response.html" class="xref page">Request/Response</a></p>
-</li>
-<li>
-<p><a href="functionality/receive_maximum.html" class="xref page">Receive Maximum</a></p>
-</li>
-<li>
-<p><a href="functionality/maximum_packet_size.html" class="xref page">Maximum Packet Size</a></p>
-</li>
-<li>
-<p><a href="functionality/thread_safe.html" class="xref page">Thread Safety</a></p>
-</li>
-<li>
-<p><a href="functionality/logging.html" class="xref page">Logging</a></p>
-</li>
-<li>
-<p><a href="functionality/error_report.html" class="xref page">Error Reporting</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Customize/Config</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="customize.html" class="xref page">Customize Underlying Layer</a></p>
-</li>
-<li>
-<p><a href="config.html" class="xref page">Config</a></p>
-</li>
-<li>
-<p><a href="separate.html" class="xref page">Separate Compilation Mode</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Tools</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="tool/container.html" class="xref page">Run async_mqtt broker/client on the docker container</a></p>
-</li>
-<li>
-<p><a href="tool/trial.html" class="xref page">Free trial broker on cloud</a></p>
-</li>
-<li>
-<p><a href="tool/broker.html" class="xref page">broker</a></p>
-</li>
-<li>
-<p><a href="tool/client_cli.html" class="xref page">client_cli</a></p>
-</li>
-<li>
-<p><a href="tool/bench.html" class="xref page">bench</a></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><a href="http://github.com/redboltz/async_mqtt">Repository</a></p>
-</li>
-</ul>
-</div>
-</div>
 </div>
   <div class="edit-this-page">
       <a href="file:///home/kondo/work/async_mqtt/doc/modules/ROOT/pages/index.adoc">Edit this Page</a>

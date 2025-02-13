@@ -36,9 +36,17 @@
             <a class="nav-link" href="reference.html">Reference</a>
         </li>
               <li class="" data-depth="1">
-            <a class="nav-link" href="CHANGELOG.html">History</a>
+            <span class="nav-text">History</span>
         </li>
-              <li class="" data-depth="1">
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="CHANGELOG.html">Changelog</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="older.html">Older versions' documents</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
             <span class="nav-text">Introduction</span>
         </li>
         <ul class="nav-list">
@@ -219,7 +227,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_connection_basic_connection"><a class="anchor" href="#_connection_basic_connection"></a><code><a href="reference/async_mqtt/basic_connection.html" class="xref page">connection</a></code> (basic_connection)</h3>
+<h3 id="_class_connection_basic_connection"><a class="anchor" href="#_class_connection_basic_connection"></a>Class <code><a href="reference/async_mqtt/basic_connection.html" class="xref page">connection</a></code> (basic_connection)</h3>
 <div class="paragraph">
 <p>The <code><a href="reference/async_mqtt/basic_connection.html" class="xref page">connection</a></code> class represents the core protocol state machine.</p>
 </div>
@@ -264,11 +272,6 @@
 <div class="paragraph">
 <p>Users should override the virtual functions and implement the required actions.</p>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/con_rvcon.svg" alt="connection and rv_connection">
-</div>
-</div>
 <div class="paragraph">
 <p>The following is a list of virtual member functions:</p>
 </div>
@@ -296,9 +299,14 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_rv_connection"><a class="anchor" href="#_rv_connection"></a><code>rv_connection</code></h3>
+<h3 id="_class_rv_connection"><a class="anchor" href="#_class_rv_connection"></a>Class <code><a href="reference/async_mqtt/basic_rv_connection.html" class="xref page">rv_connection</a></code></h3>
 <div class="paragraph">
 <p>"rv" stands for "return value based". This class inherits from the connection class and overrides all the on_*() virtual functions. Its implementation converts the parameters into a <code><a href="reference/async_mqtt/basic_event_variant.html" class="xref page">event</a></code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rv_connection.svg" alt="rv_connection">
+</div>
 </div>
 <div class="paragraph">
 <p>The following functions return a vector of <code><a href="reference/async_mqtt/basic_event_variant.html" class="xref page">event</a></code>s:</p>
