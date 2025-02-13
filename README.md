@@ -3,11 +3,11 @@
 - I/O independent (as known as Sans-I/O) MQTT protocol library for C++17.
 - Asynchronous MQTT communication library using the MQTT protocol library and Boost.Asio.
 
-Version 10.0.0 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
+Version 10.0.1 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
 
 ## Document
 
-[Latest document](https://redboltz.github.io/async_mqtt/doc/latest/index.html)
+See [Document](https://redboltz.github.io/async_mqtt/doc/latest/index.html)
 
 ## I/O independent protocol library
 - connection
