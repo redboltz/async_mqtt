@@ -23,7 +23,7 @@ recv_op {
     std::optional<basic_packet_variant<PacketIdBytes>> recv_packet = std::nullopt;
     bool try_resend_from_queue = false;
     bool disconnect_sent_just_before = false;
-    enum { dispatch, check_istream, process, read, finish_read, sent, closed, complete } state = dispatch;
+    enum { dispatch, check_buf, read_istream, process, read, finish_read, sent, closed, complete } state = dispatch;
 
     template <typename Self>
     bool process_one_event(Self& self) {
@@ -147,13 +147,30 @@ recv_op {
 
         switch (state) {
         case dispatch: {
-            state = check_istream;
-            as::post(
+            state = check_buf;
+            as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
             );
         } break;
-        case check_istream: {
+        case check_buf: {
+            if (a_ep.read_buf_.size() == 0) {
+                // read required
+                state = read;
+                as::dispatch(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+            else {
+                state = read_istream;
+                as::post(
+                    a_ep.get_executor(),
+                    force_move(self)
+                );
+            }
+        } break;
+        case read_istream: {
             // at most one packet is received except QoS2 already received packet
             auto events{a_ep.con_.recv(a_ep.is_)};
             std::move(events.begin(), events.end(), std::back_inserter(a_ep.recv_events_));
@@ -186,8 +203,8 @@ recv_op {
                 // exit the above loop by break;
                 if (!decided_error && !recv_packet) {
                     // QoS2 already received
-                    state = check_istream;
-                    as::post(
+                    state = check_buf;
+                    as::dispatch(
                         a_ep.get_executor(),
                         force_move(self)
                     );
@@ -215,7 +232,7 @@ recv_op {
         } break;
         case finish_read: {
             a_ep.read_buf_.commit(bytes_transferred);
-            state = check_istream;
+            state = read_istream;
             as::dispatch(
                 a_ep.get_executor(),
                 force_move(self)
@@ -255,9 +272,9 @@ recv_op {
                         (*fil == filter::except && types.find(type) != types.end())
                     ) {
                         // read the next packet
-                        state = check_istream;
+                        state = check_buf;
                         recv_packet.reset();
-                        as::post(
+                        as::dispatch(
                             a_ep.get_executor(),
                             force_move(self)
                         );
