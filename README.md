@@ -1,17 +1,23 @@
 # async_mqtt
 
-Asynchronous MQTT communication library.
+- I/O independent (as known as Sans-I/O) MQTT protocol library for C++17.
+- Asynchronous MQTT communication library using the MQTT protocol library and Boost.Asio.
 
-Version 9.1.0 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
+Version 10.0.0 [![Actions Status](https://github.com/redboltz/async_mqtt/workflows/CI/badge.svg)](https://github.com/redboltz/async_mqtt/actions)[![codecov](https://codecov.io/gh/redboltz/async_mqtt/branch/main/graph/badge.svg)](https://codecov.io/gh/redboltz/async_mqtt)
 
-This is Boost.Asio oriented asynchronous MQTT communication library. You can use async_mqtt to develop not only your MQTT client application but also your server (e.g. broker).
-Based on https://github.com/redboltz/mqtt_cpp experience, there are many improvements. See overview.
-
-Document is https://github.com/redboltz/async_mqtt/blob/doc/README.adoc
-
-# Overview
+## Document
 
 [Latest document](https://redboltz.github.io/async_mqtt/doc/latest/index.html)
+
+## I/O independent protocol library
+- connection
+  - Protocol state machine for MQTT connection.
+  - All APIs are implemented as synchronous member functions.
+  - State machine events are implemented as pure virtual functions.
+- rv_connection
+  - Inherits connection.
+  - State machine events are implemented as the return value of APIs.
+    - The type of return value is vector of event_variant.
 
 ## Boost.Asio style asynchronous APIs support
 

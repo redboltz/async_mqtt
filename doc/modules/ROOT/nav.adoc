@@ -8,8 +8,9 @@
 ** xref:performance.adoc[]
 ** xref:comparison.adoc[]
 * Tutorial
+** xref:header.adoc[]
 ** xref:tutorial/client.adoc[]
-** endpoint
+** Endpoint
 *** xref:tutorial/create_endpoint.adoc[]
 *** xref:tutorial/cpp20_coro.adoc[]
 *** xref:tutorial/sl_coro.adoc[]
@@ -28,6 +29,7 @@
 ** xref:functionality/thread_safe.adoc[]
 ** xref:functionality/logging.adoc[]
 ** xref:functionality/error_report.adoc[]
+* xref:sansio.adoc[]
 * Customize/Config
 ** xref:customize.adoc[]
 ** xref:config.adoc[]

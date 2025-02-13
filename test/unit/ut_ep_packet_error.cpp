@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 
 #include "stub_socket.hpp"
 
@@ -55,6 +55,12 @@ BOOST_AUTO_TEST_CASE(v311_before_connected) {
             {am::errc::make_error_code(am::errc::connection_reset)},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(
@@ -117,6 +123,12 @@ BOOST_AUTO_TEST_CASE(v5_before_connected) {
             {am::errc::make_error_code(am::errc::connection_reset)},
         }
     );
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     // send connect
     ep.next_layer().set_write_packet_checker(
@@ -187,6 +199,12 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -202,7 +220,7 @@ BOOST_AUTO_TEST_CASE(v5_after_connected) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // set checker before malformed packet recv
@@ -250,7 +268,8 @@ BOOST_AUTO_TEST_CASE(v5_server_connect) {
         version,
         ioc.get_executor()
     };
-
+    // connection established as server
+    ep.underlying_accepted();
     ep.next_layer().set_recv_packets(
         {
             // receive packets

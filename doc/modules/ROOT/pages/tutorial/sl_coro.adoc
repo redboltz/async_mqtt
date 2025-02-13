@@ -140,8 +140,7 @@ This is the basics of the stackless coroutine approach. Now, let's add a more me
                 std::cout << "start" << std::endl;
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
-                yield am::async_underlying_handshake(
-                    app_.amep_.next_layer(),
+                yield app_.amep_.async_underlying_handshake(
                     app_.host_,
                     app_.port_,
                     *this
@@ -158,15 +157,14 @@ This is the basics of the stackless coroutine approach. Now, let's add a more me
 The important point is
 
 ```cpp
-                yield am::async_underlying_handshake(
-                    app_.amep_.next_layer(),
+                yield app_.amep_.async_underlying_handshake(
                     app_.host_,
                     app_.port_,
                     *this
                 );
 ```
 
-The fourth argument of `underlying_handshake` is `CompletionToken`. When using a stackless coroutine, we pass `*this` as the `CompletionToken`. The function `proc()` is implicitly returned and `underlying_handshake` starts processing. When the asynchronous process is finished, the following `operator()` is called:
+The third argument of `async_underlying_handshake` is `CompletionToken`. When using a stackless coroutine, we pass `*this` as the `CompletionToken`. The function `proc()` is implicitly returned and `async_underlying_handshake` starts processing. When the asynchronous process is finished, the following `operator()` is called:
 
 
 ```cpp
@@ -194,8 +192,7 @@ Even if `proc()` is called again, the following part of the code is skipped:
                 std::cout << "start" << std::endl;
 
                 // Handshake undlerying layer (Name resolution and TCP handshaking)
-                yield am::underlying_handshake(
-                    app_.amep_.next_layer(),
+                yield app_.amep_.underlying_handshake(
                     app_.host_,
                     app_.port_,
                     *this

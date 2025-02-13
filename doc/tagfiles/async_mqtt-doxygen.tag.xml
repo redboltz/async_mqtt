@@ -214,6 +214,109 @@
     </compound>
 
     <compound kind="class">
+        <name>async_mqtt::basic_connection</name>
+        <filename>async_mqtt/basic_connection.adoc</filename>
+        <member kind="function">
+            <name>send</name>
+            <anchorfile>async_mqtt/basic_connection/send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>recv</name>
+            <anchorfile>async_mqtt/basic_connection/recv.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>release_packet_id</name>
+            <anchorfile>async_mqtt/basic_connection/release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>notify_timer_fired</name>
+            <anchorfile>async_mqtt/basic_connection/notify_timer_fired.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>notify_closed</name>
+            <anchorfile>async_mqtt/basic_connection/notify_closed.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_pingreq_send_interval</name>
+            <anchorfile>async_mqtt/basic_connection/set_pingreq_send_interval.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_error</name>
+            <anchorfile>async_mqtt/basic_connection/on_error.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_send</name>
+            <anchorfile>async_mqtt/basic_connection/on_send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_packet_id_release</name>
+            <anchorfile>async_mqtt/basic_connection/on_packet_id_release.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_receive</name>
+            <anchorfile>async_mqtt/basic_connection/on_receive.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_close</name>
+            <anchorfile>async_mqtt/basic_connection/on_close.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>on_timer_op</name>
+            <anchorfile>async_mqtt/basic_connection/on_timer_op.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::basic_rv_connection</name>
+        <filename>async_mqtt/basic_rv_connection.adoc</filename>
+        <member kind="function">
+            <name>send</name>
+            <anchorfile>async_mqtt/basic_rv_connection/send.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>recv</name>
+            <anchorfile>async_mqtt/basic_rv_connection/recv.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>release_packet_id</name>
+            <anchorfile>async_mqtt/basic_rv_connection/release_packet_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>notify_timer_fired</name>
+            <anchorfile>async_mqtt/basic_rv_connection/notify_timer_fired.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>notify_closed</name>
+            <anchorfile>async_mqtt/basic_rv_connection/notify_closed.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_pingreq_send_interval</name>
+            <anchorfile>async_mqtt/basic_rv_connection/set_pingreq_send_interval.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>async_mqtt::basic_event_variant</name>
+        <filename>async_mqtt/basic_event_variant.adoc</filename>
+    </compound>
+
+    <compound kind="class">
         <name>async_mqtt::packet_variant</name>
         <filename>async_mqtt/packet_variant.adoc</filename>
     </compound>

@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 
 #include "stub_socket.hpp"
 
@@ -65,6 +65,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -80,7 +86,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
 
     auto publish0 = am::v3_1_1::publish_packet(
@@ -180,6 +186,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -214,7 +226,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -223,7 +235,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec2 == pv);
+        BOOST_TEST(pubrec2 == *pv);
     }
 
     // send pubrel2
@@ -252,6 +264,12 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -291,7 +309,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -302,6 +320,11 @@ BOOST_AUTO_TEST_CASE(v311_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -323,7 +346,7 @@ BOOST_AUTO_TEST_CASE(v311_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
@@ -400,11 +423,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // send connack_sp_false
@@ -530,11 +555,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // get_stored and restore next endpoint
@@ -583,7 +610,7 @@ BOOST_AUTO_TEST_CASE(v311_server) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec2 == pv);
+        BOOST_TEST(pubrec2 == *pv);
     }
 
     // send pubrel2
@@ -614,11 +641,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep3.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep3.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // get_stored and restore next endpoint
@@ -672,11 +701,13 @@ BOOST_AUTO_TEST_CASE(v311_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep4.underlying_accepted();
     // recv connect_clean
     {
         auto [ec, pv] = ep4.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_clean == pv);
+        BOOST_TEST(connect_clean == *pv);
     }
 
     // no restore because clean_session is true
@@ -762,6 +793,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -777,7 +814,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
 
     auto publish0 = am::v5::publish_packet(
@@ -880,6 +917,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -914,7 +957,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -923,7 +966,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec2 == pv);
+        BOOST_TEST(pubrec2 == *pv);
     }
 
     // send pubrel2
@@ -952,6 +995,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -991,7 +1040,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -1000,6 +1049,12 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -1023,7 +1078,7 @@ BOOST_AUTO_TEST_CASE(v5_client) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();
@@ -1106,11 +1161,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // send connack_sp_false
@@ -1239,11 +1296,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // get_stored and restore next endpoint
@@ -1293,7 +1352,7 @@ BOOST_AUTO_TEST_CASE(v5_server) {
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec2 == pv);
+        BOOST_TEST(pubrec2 == *pv);
     }
 
     // send pubrel2
@@ -1324,10 +1383,12 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep3.underlying_accepted();
     // recv connect_no_clean
     {
         auto [ec, pv] = ep3.async_recv(as::as_tuple(as::use_future)).get();
-        BOOST_TEST(connect_no_clean == pv);
+        BOOST_TEST(connect_no_clean == *pv);
     }
 
     // get_stored and restore next endpoint
@@ -1381,11 +1442,13 @@ BOOST_AUTO_TEST_CASE(v5_server) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // connection established as server
+    ep4.underlying_accepted();
     // recv connect_clean
     {
         auto [ec, pv] = ep4.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect_clean == pv);
+        BOOST_TEST(connect_clean == *pv);
     }
 
     // no restore because clean_session is true
@@ -1473,6 +1536,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1488,7 +1557,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
 
     auto publish0 = am::v5::publish_packet(
@@ -1611,6 +1680,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
         BOOST_TEST(ec == am::errc::connection_reset);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1645,7 +1720,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 2);
@@ -1654,7 +1729,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(pubrec2 == pv);
+        BOOST_TEST(pubrec2 == *pv);
     }
 
     // send pubrel2
@@ -1683,6 +1758,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -1722,7 +1803,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_true == pv);
+        BOOST_TEST(connack_sp_true == *pv);
     }
     f.get();
     BOOST_TEST(index == 3);
@@ -1731,6 +1812,12 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::errc::connection_reset);
+    }
+
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     // send connect
@@ -1754,7 +1841,7 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack_sp_false == pv);
+        BOOST_TEST(connack_sp_false == *pv);
     }
     ep.async_close(as::as_tuple(as::use_future)).get();
     guard.reset();

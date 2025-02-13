@@ -2,7 +2,7 @@
 
 Before thinking about connection timeout, we need to define what a connection is. Here is a typical connection sequence:
 
-1. `am::async_underlying_handshake` (resolves hostname, TCP, TLS, and WebSocket handshake if required)
+1. `async_underlying_handshake` (resolves hostname, TCP, TLS, and WebSocket handshake if required)
 2. Send MQTT CONNECT packet
 3. Receive MQTT CONNACK packet
 

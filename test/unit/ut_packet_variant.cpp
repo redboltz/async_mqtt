@@ -10,18 +10,11 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <async_mqtt/packet/packet_variant.hpp>
+#include <async_mqtt/protocol/packet/packet_variant.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet_variant)
 
 namespace am = async_mqtt;
-
-BOOST_AUTO_TEST_CASE( monostate ) {
-    am::packet_variant v;
-    BOOST_CHECK(!v.type());
-    BOOST_CHECK(v.const_buffer_sequence().empty());
-    BOOST_TEST(boost::lexical_cast<std::string>(v) == "");
-}
 
 BOOST_AUTO_TEST_CASE( stringize ) {
     am::packet_variant v{am::v3_1_1::pingreq_packet{}};

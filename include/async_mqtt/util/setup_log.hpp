@@ -40,17 +40,12 @@ static constexpr char const* log_color_table[] {
 };
 
 /**
- * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level by channel
  *        If the log severity_level >= threshold then log message outputs.
  * @param colored
  *        If true, log is colored corresponding to the severity
- *
- * #### Requirements
- * @li Header: async_mqtt/setup_log.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline
@@ -133,17 +128,12 @@ void setup_log(std::map<std::string, severity_level> threshold, bool colored = t
 }
 
 /**
- * @ingroup log
  * @brief Setup logging
  * @param threshold
  *        Set threshold severity_level for all channels
  *        If the log severity_level >= threshold then log message outputs.
  * @param colored
  *        If true, log is colored corresponding to the severity
- *
- * #### Requirements
- * @li Header: async_mqtt/setup_log.hpp
- * @li Convenience header: async_mqtt/all.hpp
  *
  */
 inline

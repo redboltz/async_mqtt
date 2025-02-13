@@ -20,9 +20,9 @@ struct v5_puback_prop_len_last;
 struct v5_puback_error;
 BOOST_AUTO_TEST_SUITE_END()
 
-#include <async_mqtt/packet/v5_puback.hpp>
-#include <async_mqtt/packet/packet_iterator.hpp>
-#include <async_mqtt/packet/packet_traits.hpp>
+#include <async_mqtt/protocol/packet/v5_puback.hpp>
+#include <async_mqtt/protocol/packet/packet_iterator.hpp>
+#include <async_mqtt/protocol/packet/packet_traits.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
 

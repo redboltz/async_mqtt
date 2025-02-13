@@ -10,7 +10,7 @@
 #include <boost/asio.hpp>
 
 #include <async_mqtt/all.hpp>
-#include <async_mqtt/predefined_layer/wss.hpp>
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
 
 namespace as = boost::asio;
 namespace am = async_mqtt;
@@ -37,26 +37,25 @@ private:
         }
         // forwarding callbacks
         void operator()() const {
-            proc({}, am::packet_variant{});
+            proc({}, std::nullopt);
         }
         void operator()(am::error_code const& ec) const {
-            proc(ec, am::packet_variant{});
+            proc(ec, std::nullopt);
         }
-        void operator()(am::error_code const& ec, am::packet_variant pv) const {
-            proc(ec, am::force_move(pv));
+        void operator()(am::error_code const& ec, std::optional<am::packet_variant> pv_opt) const {
+            proc(ec, am::force_move(pv_opt));
         }
     private:
         void proc(
             boost::system::error_code const& ec,
-            am::packet_variant pv
+            std::optional<am::packet_variant> pv_opt
         ) const {
 
             reenter (coro_) {
                 std::cout << "start" << std::endl;
 
                 // Handshake undlerying layer (Name resolution and TCP, TLS, Websocket handshaking)
-                yield am::async_underlying_handshake(
-                    app_.amep_.next_layer(),
+                yield app_.amep_.async_underlying_handshake(
                     app_.host_,
                     app_.port_,
                     *this
@@ -92,8 +91,8 @@ private:
                     std::cout << "MQTT CONNACK recv error:" << ec.message() << std::endl;
                     return;
                 }
-                BOOST_ASSERT(pv);
-                pv.visit(
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::connack_packet const& p) {
                             std::cout
@@ -123,8 +122,8 @@ private:
                     std::cout << "MQTT SUBACK recv error:" << ec.message() << std::endl;
                     return;
                 }
-                BOOST_ASSERT(pv);
-                pv.visit(
+                BOOST_ASSERT(pv_opt);
+                pv_opt->visit(
                     am::overload {
                         [&](am::v3_1_1::suback_packet const& p) {
                             std::cout
@@ -161,8 +160,8 @@ private:
                         std::cout << "MQTT recv error:" << ec.message() << std::endl;
                         return;
                     }
-                    BOOST_ASSERT(pv);
-                    pv.visit(
+                    BOOST_ASSERT(pv_opt);
+                    pv_opt->visit(
                         am::overload {
                             [&](am::v3_1_1::publish_packet const& p) {
                                 std::cout

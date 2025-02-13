@@ -1,0 +1,78 @@
+= Header Files
+
+== Add Include Path
+
+Add the `async_mqtt/include` directory to your include path.
+
+== Convenient Header
+
+To enable all functionalities (except for specific underlying layers), include:
+
+```cpp
+#include <async_mqtt/all.hpp>
+```
+
+== Underlying Layer Headers
+
+=== For TCP on MQTT
+
+```cpp
+#include <async_mqtt/asio_bind/predefined_layer/mqtt.hpp>
+```
+
+This header is included in `async_mqtt/all.hpp`.
+
+=== For TLS on MQTT
+
+```cpp
+#include <async_mqtt/asio_bind/predefined_layer/mqtts.hpp>
+```
+
+This header is **not** included in `async_mqtt/all.hpp`.
+
+=== For WebSocket on MQTT
+
+```cpp
+#include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
+```
+
+This header is **not** included in `async_mqtt/all.hpp`.
+
+=== For WebSocket/TLS on MQTT
+
+```cpp
+#include <async_mqtt/asio_bind/predefined_layer/wss.hpp>
+```
+
+This header is **not** included in `async_mqtt/all.hpp`.
+
+== Directory Structure
+
+```cpp
+async_mqtt/all.hpp     # Convenient header
+          /asio_bind/  # Boost.Asio binding for endpoint/client
+          /protocol/   # I/O-independent MQTT protocol state machine
+          /separate/   # Headers for separate compilation
+          /util/       # Common utilities
+```
+
+== I/O-Independent MQTT Protocol Machine
+
+If you don't need Boost.Asio bindings, you can include:
+
+```cpp
+#include <async_mqtt/protocol/connection.hpp>
+```
+
+This header is included in `async_mqtt/all.hpp`.
+
+== Logging
+
+To enable logging, include:
+
+```cpp
+#include <async_mqtt/util/log.hpp>
+#include <async_mqtt/util/setup_log.hpp>
+```
+
+These headers are included in `async_mqtt/all.hpp`.

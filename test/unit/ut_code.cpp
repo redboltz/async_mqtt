@@ -10,11 +10,11 @@
 #include <string_view>
 #include <sstream>
 
-#include <async_mqtt/protocol_version.hpp>
-#include <async_mqtt/error.hpp>
-#include <async_mqtt/packet/control_packet_type.hpp>
-#include <async_mqtt/packet/pubopts.hpp>
-#include <async_mqtt/packet/subopts.hpp>
+#include <async_mqtt/protocol/protocol_version.hpp>
+#include <async_mqtt/protocol/error.hpp>
+#include <async_mqtt/protocol/packet/control_packet_type.hpp>
+#include <async_mqtt/protocol/packet/pubopts.hpp>
+#include <async_mqtt/protocol/packet/subopts.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_code)
 
@@ -478,6 +478,18 @@ BOOST_AUTO_TEST_CASE( disconnect_reason_code ) {
         std::stringstream ss;
         ss << c;
         BOOST_TEST(ss.str() == std::string_view("topic_name_invalid"));
+    }
+    {
+        auto c = am::disconnect_reason_code::receive_maximum_exceeded;
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("receive_maximum_exceeded"));
+    }
+    {
+        auto c = am::disconnect_reason_code::topic_alias_invalid;
+        std::stringstream ss;
+        ss << c;
+        BOOST_TEST(ss.str() == std::string_view("topic_alias_invalid"));
     }
     {
         auto c = am::disconnect_reason_code::packet_too_large;

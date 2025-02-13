@@ -11,7 +11,7 @@
 
 #include <boost/asio.hpp>
 
-#include <async_mqtt/endpoint.hpp>
+#include <async_mqtt/asio_bind/endpoint.hpp>
 
 #include "stub_socket.hpp"
 
@@ -110,6 +110,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -125,7 +131,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // register packet_id for testing
@@ -231,6 +237,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
         BOOST_TEST(!pv);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -246,7 +258,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send disconnect
@@ -287,6 +299,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -538,6 +552,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -640,7 +660,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // offline publish success
@@ -811,11 +831,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -930,11 +952,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v3_1_1) {
         }
     );
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -990,6 +1014,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -1241,11 +1267,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // offline publish success
@@ -1534,6 +1562,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         }
     );
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1560,7 +1594,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send valid packets
@@ -1676,6 +1710,12 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         BOOST_TEST(!pv);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -1691,7 +1731,7 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // send disconnect
@@ -1732,6 +1772,8 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -2021,6 +2063,12 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // underlying handshake
+    {
+        auto [ec] = ep.async_underlying_handshake(as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+
     // send connect
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
@@ -2123,7 +2171,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connack == pv);
+        BOOST_TEST(connack == *pv);
     }
 
     // offline publish success
@@ -2322,11 +2370,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
 
+    // connection established as server
+    ep1.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep1.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send auth
@@ -2462,11 +2512,13 @@ BOOST_AUTO_TEST_CASE(valid_server_v5) {
         }
     );
 
+    // connection established as server
+    ep2.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep2.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // send connack
@@ -2522,6 +2574,8 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         version,
         ioc.get_executor()
     };
+
+    ep.set_offline_publish(true);
 
     auto connect = am::v5::connect_packet{
         true,   // clean_start
@@ -2620,8 +2674,6 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         am::auth_reason_code::continue_authentication,
         am::properties{}
     };
-
-    auto close = am::packet_variant{};
 
     ep.next_layer().set_recv_packets(
         {
@@ -2813,11 +2865,13 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // connection established as server
+    ep.underlying_accepted();
     // recv connect
     {
         auto [ec, pv] = ep.async_recv(as::as_tuple(as::use_future)).get();
         BOOST_TEST(!ec);
-        BOOST_TEST(connect == pv);
+        BOOST_TEST(connect == *pv);
     }
 
     // offline publish success

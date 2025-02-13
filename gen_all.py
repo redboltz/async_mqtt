@@ -17,10 +17,10 @@ print(
 '''
 )
 
-for file in sorted(files, key=lambda file: (file.count('/'), file)):
+for file in sorted(files, key=lambda file: (file, file.count('/'))):
     if file.find("/all.hpp") != -1:
         continue
-    if file.find("/src.hpp") != -1:
+    if file.find("/separate/") != -1:
         continue
     if file.find("/broker/") != -1:
         continue

@@ -28,8 +28,7 @@ BOOST_AUTO_TEST_CASE(ep) {
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
-    am::async_underlying_handshake(
-        amep.next_layer(),
+    amep.async_underlying_handshake(
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
@@ -46,9 +45,9 @@ BOOST_AUTO_TEST_CASE(ep) {
                 [&](am::error_code const& ec) {
                     BOOST_TEST(!ec);
                     amep.async_recv(
-                        [&](am::error_code const& ec, am::packet_variant pv) {
+                        [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                             BOOST_TEST(!ec);
-                            pv.visit(
+                            pv_opt->visit(
                                 am::overload {
                                     [&](am::v3_1_1::connack_packet const& p) {
                                         BOOST_TEST(!p.session_present());
@@ -63,16 +62,16 @@ BOOST_AUTO_TEST_CASE(ep) {
                             amep.async_recv(
                                 as::bind_cancellation_slot(
                                     sig1.slot(),
-                                    [&](am::error_code const& ec, am::packet_variant pv) {
+                                    [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                                         BOOST_TEST(ec == as::error::operation_aborted);
-                                        BOOST_TEST(!pv);
+                                        BOOST_TEST(!pv_opt);
                                         ++canceled;
                                         amep.async_recv(
                                             as::bind_cancellation_slot(
                                                 sig1.slot(),
-                                                [&](am::error_code const& ec, am::packet_variant pv) {
+                                                [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                                                     BOOST_TEST(ec == as::error::operation_aborted);
-                                                    BOOST_TEST(!pv);
+                                                    BOOST_TEST(!pv_opt);
                                                     ++canceled;
                                                     amep.async_close(as::detached);
                                                 }
@@ -122,8 +121,7 @@ BOOST_AUTO_TEST_CASE(cl) {
 
     as::cancellation_signal sig1;
     std::size_t canceled = 0;
-    am::async_underlying_handshake(
-        amcl.next_layer(),
+    amcl.async_underlying_handshake(
         "127.0.0.1",
         "1883",
         [&](am::error_code const& ec) {
@@ -144,16 +142,16 @@ BOOST_AUTO_TEST_CASE(cl) {
                     amcl.async_recv(
                         as::bind_cancellation_slot(
                             sig1.slot(),
-                            [&](am::error_code const& ec, am::packet_variant pv) {
+                            [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                                 BOOST_TEST(ec == as::error::operation_aborted);
-                                BOOST_TEST(!pv);
+                                BOOST_TEST(!pv_opt);
                                 ++canceled;
                                 amcl.async_recv(
                                     as::bind_cancellation_slot(
                                         sig1.slot(),
-                                        [&](am::error_code const& ec, am::packet_variant pv) {
+                                        [&](am::error_code const& ec, std::optional<am::packet_variant> pv_opt) {
                                             BOOST_TEST(ec == as::error::operation_aborted);
-                                            BOOST_TEST(!pv);
+                                            BOOST_TEST(!pv_opt);
                                             ++canceled;
                                             amcl.async_close(as::detached);
                                         }
