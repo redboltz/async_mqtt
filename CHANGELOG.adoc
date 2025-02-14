@@ -3,6 +3,8 @@
 = History
 
 == 10.0.1 (undetermined)
+* Fixed broker websocket connection. #393
+** It doesn't affect the library part.
 * Refined documents. #389, #390
 
 == 10.0.0
