@@ -4,6 +4,14 @@ list(APPEND exec_PROGRAMS
     client_cli.cpp
 )
 
+if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+    set(CMAKE_CXX_STANDARD 20)
+    message(STATUS "C++20 tools added")
+    list(APPEND exec_PROGRAMS
+        cpp20coro_broker.cpp
+    )
+endif()
+
 find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
 
 # Without this setting added, azure pipelines completely fails to find the boost libraries. No idea why.
@@ -58,29 +66,53 @@ endforeach()
 
 # Separate compiled broker
 if(ASYNC_MQTT_BUILD_LIB)
-
-add_executable(broker_separate broker.cpp)
-add_dependencies(broker_separate async_mqtt_asio_bind async_mqtt_protocol)
-target_compile_definitions(broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
-target_include_directories(broker_separate PRIVATE include ${Boost_INCLUDE_DIRS})
-target_link_libraries(broker_separate async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
-if(ASYNC_MQTT_USE_LOG)
+    add_executable(broker_separate broker.cpp)
+    add_dependencies(broker_separate async_mqtt_asio_bind async_mqtt_protocol)
+    target_compile_definitions(broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
+    target_include_directories(broker_separate PRIVATE include ${Boost_INCLUDE_DIRS})
+    target_link_libraries(broker_separate async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
+    if(ASYNC_MQTT_USE_LOG)
+        target_compile_definitions(
+            broker_separate
+            PUBLIC
+            $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+        )
+        target_link_libraries(
+            broker_separate Boost::log
+        )
+    endif()
     target_compile_definitions(
         broker_separate
         PUBLIC
-        $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+        $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>
     )
-    target_link_libraries(
-        broker_separate Boost::log
-    )
-endif()
-target_compile_definitions(
-    broker_separate
-    PUBLIC
-    $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>
-)
-target_link_libraries(broker_separate Boost::program_options)
+    target_link_libraries(broker_separate Boost::program_options)
 
+    if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+        set(CMAKE_CXX_STANDARD 20)
+        message(STATUS "C++20 separate broker added")
+        add_executable(cpp20coro_broker_separate cpp20coro_broker.cpp)
+        add_dependencies(cpp20coro_broker_separate async_mqtt_asio_bind async_mqtt_protocol)
+        target_compile_definitions(cpp20coro_broker_separate PRIVATE ASYNC_MQTT_SEPARATE_COMPILATION)
+        target_include_directories(cpp20coro_broker_separate PRIVATE include ${Boost_INCLUDE_DIRS})
+        target_link_libraries(cpp20coro_broker_separate async_mqtt_iface async_mqtt_asio_bind async_mqtt_protocol)
+        if(ASYNC_MQTT_USE_LOG)
+            target_compile_definitions(
+                cpp20coro_broker_separate
+                PUBLIC
+                $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_LOG_DYN_LINK>
+            )
+            target_link_libraries(
+                cpp20coro_broker_separate Boost::log
+            )
+        endif()
+        target_compile_definitions(
+            cpp20coro_broker_separate
+            PUBLIC
+            $<IF:$<BOOL:${ASYNC_MQTT_USE_STATIC_BOOST}>,,BOOST_PROGRAM_OPTIONS_DYN_LINK>
+        )
+        target_link_libraries(cpp20coro_broker_separate Boost::program_options)
+    endif()
 endif()
 
 if(UNIX)
