@@ -50,7 +50,7 @@ I recommend using [Stackless Coroutine (`boost::asio::coroutine`)](https://www.b
 
 ## High level MQTT client APIs support (since 5.1.0)
 
-See [document](https://redboltz.github.io/async_mqtt/doc/latest/tutorial/client.html) and [example](example/cl_cpp20coro_mqtt.cpp).
+See [document](https://redboltz.github.io/async_mqtt/doc/latest/async_mqtt/tutorial/client.html) and [example](example/cl_cpp20coro_mqtt.cpp).
 
 ## Features
 

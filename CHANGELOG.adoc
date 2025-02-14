@@ -2,6 +2,9 @@
 
 = History
 
+== 10.0.1 (undetermined)
+* Refined documents. #389, #390
+
 == 10.0.0
 === breaking changes #388
 * Re-organized include files.
