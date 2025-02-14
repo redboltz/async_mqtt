@@ -31,7 +31,7 @@ class broker {
     using this_type = broker<Epsp>;
 
 public:
-    broker(as::any_io_executor timer_exe,  bool recycling_allocator = false)
+    broker(as::any_io_executor timer_exe, bool recycling_allocator = false)
         :timer_exe_{force_move(timer_exe)},
          tim_disconnect_{timer_exe_},
          recycling_allocator_{recycling_allocator} {
