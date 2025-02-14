@@ -1,5 +1,7 @@
 * xref:reference.adoc[]
-* xref:CHANGELOG.adoc[]
+* History
+** xref:CHANGELOG.adoc[Changelog]
+** xref:older.adoc[]
 * Introduction
 ** xref:requirements.adoc[]
 ** xref:goal.adoc[]
