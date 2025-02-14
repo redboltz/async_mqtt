@@ -23,6 +23,7 @@
 
 #if defined(ASYNC_MQTT_USE_WS)
 #include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
+namespace bs = boost::beast;
 #endif // defined(ASYNC_MQTT_USE_WS)
 
 #if defined(ASYNC_MQTT_USE_TLS) && defined(ASYNC_MQTT_USE_WS)
@@ -337,16 +338,56 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             else {
                                 apply_socket_opts(lowest_layer);
                                 auto& ws_layer = epsp->next_layer();
-                                ws_layer.async_accept(
-                                    [&brk, epsp]
-                                    (boost::system::error_code const& ec) mutable {
+                                auto sb = std::make_shared<boost::asio::streambuf>();
+                                auto request =
+                                    std::make_shared<
+                                        bs::http::request<
+                                            bs::http::string_body
+                                        >
+                                    >();
+                                bs::http::async_read(
+                                    ws_layer.next_layer(),
+                                    *sb,
+                                    *request,
+                                    [&brk, epsp, &ws_layer, sb, request]
+                                    (boost::system::error_code const& ec, std::size_t) mutable {
                                         if (ec) {
                                             ASYNC_MQTT_LOG("mqtt_broker", error)
-                                                << "WS accept error:" << ec.message();
+                                                << "HTTP upgrade error:" << ec.message();
+                                        }
+                                        else if (bs::websocket::is_upgrade(*request)) {
+                                            auto it = request->find("Sec-WebSocket-Protocol");
+                                            if (it != request->end()) {
+                                                ws_layer.set_option(
+                                                    bs::websocket::stream_base::decorator(
+                                                        [
+                                                            name = it->name(),  // enum
+                                                            value = it->value() // string_view
+                                                        ]
+                                                        (bs::websocket::response_type& res) {
+                                                            res.set(name, value);
+                                                        }
+                                                    )
+                                                );
+                                            }
+                                            ws_layer.async_accept(
+                                                *request,
+                                                [&brk, epsp]
+                                                (boost::system::error_code const& ec) mutable {
+                                                    if (ec) {
+                                                        ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                            << "WS accept error:" << ec.message();
+                                                    }
+                                                    else {
+                                                        epsp->underlying_accepted();
+                                                        brk.handle_accept(epv_type{force_move(epsp)});
+                                                    }
+                                                }
+                                            );
                                         }
                                         else {
-                                            epsp->underlying_accepted();
-                                            brk.handle_accept(epv_type{force_move(epsp)});
+                                            ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                << "HTTP upgrade error: non upgrade request received";
                                         }
                                     }
                                 );
@@ -542,17 +583,59 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                         }
                                         else {
                                             auto& ws_layer = epsp->next_layer();
-                                            ws_layer.binary(true);
-                                            ws_layer.async_accept(
-                                                [&brk, epsp, username]
-                                                (boost::system::error_code const& ec) mutable {
+                                            auto sb = std::make_shared<boost::asio::streambuf>();
+                                            auto request =
+                                                std::make_shared<
+                                                    bs::http::request<
+                                                        bs::http::string_body
+                                                    >
+                                                >();
+                                            bs::http::async_read(
+                                                ws_layer.next_layer(),
+                                                *sb,
+                                                *request,
+                                                [&brk, epsp, &ws_layer, sb, request, username]
+                                                (boost::system::error_code const& ec, std::size_t) mutable {
                                                     if (ec) {
                                                         ASYNC_MQTT_LOG("mqtt_broker", error)
-                                                            << "WS accept error:" << ec.message();
+                                                            << "HTTP upgrade error:" << ec.message();
+                                                    }
+                                                    else if (bs::websocket::is_upgrade(*request)) {
+                                                        auto it = request->find("Sec-WebSocket-Protocol");
+                                                        if (it != request->end()) {
+                                                            ws_layer.set_option(
+                                                                bs::websocket::stream_base::decorator(
+                                                                    [
+                                                                        name = it->name(),  // enum
+                                                                        value = it->value() // string_view
+                                                                    ]
+                                                                    (bs::websocket::response_type& res) {
+                                                                        res.set(name, value);
+                                                                    }
+                                                                )
+                                                            );
+                                                        }
+                                                        ws_layer.async_accept(
+                                                            *request,
+                                                            [&brk, epsp, username]
+                                                            (boost::system::error_code const& ec) mutable {
+                                                                if (ec) {
+                                                                    ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                                        << "WS accept error:" << ec.message();
+                                                                }
+                                                                else {
+                                                                    epsp->underlying_accepted();
+                                                                    brk.handle_accept(
+                                                                        epv_type{force_move(epsp)},
+                                                                        *username
+                                                                    );
+                                                                }
+                                                            }
+                                                        );
                                                     }
                                                     else {
-                                                        epsp->underlying_accepted();
-                                                        brk.handle_accept(epv_type{force_move(epsp)}, *username);
+                                                        ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                            << "HTTP upgrade error: non upgrade request received";
                                                     }
                                                 }
                                             );
