@@ -1,5 +1,5 @@
 {
-    # Grant users to connect the broker
+    // Grant users to connect the broker
     "authentication": [
         {
             "name": "u1",
@@ -8,7 +8,7 @@
         }
         ,
         {
-            # Authenticates user by client certificate
+            // Authenticates user by client certificate
             "name": "cid1",
             "method": "client_cert"
         }
@@ -17,17 +17,19 @@
             "name": "u3",
             "method": "sha256",
             "salt": "mysalt",
-            # mysaltpassforu3
-            # you can get it `echo -n mysaltpassforu3 | sha256sum`
-            # don't forget -n
+            /*
+             mysaltpassforu3
+             you can get it `echo -n mysaltpassforu3 | sha256sum`
+             don't forget -n
+            */
             "digest": "9ed77f119f694e5e543201a97cc8db226cf36c814c4406fe2eac5b9b1f084ba9"
         }
     ]
     ,
-    # Grant users an groups to access topics
+    // Grant users an groups to access topics
     "authorization": [
         {
-            # Specified users and groups are denied to subscribe and publish on this topic
+            // Specified users and groups are denied to subscribe and publish on this topic
             "topic": "#",
             "allow": {
                 "sub": ["u1"],

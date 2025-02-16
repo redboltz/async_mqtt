@@ -3,6 +3,11 @@
 = History
 
 == 10.0.1 (undetermined)
+* Changed the broker auth JSON file comment syntax. #394
+** Now supports C/C++-style line and block comments.
+** The `#` line comment syntax is no longer supported.
+** For migrating, simply replace `#` with `//`.
+** *This is a breaking change for the tool (not the library), so the major version remains unchanged.*
 * Fixed broker websocket connection. #393
 ** It doesn't affect the library part.
 * Refined documents. #389, #390
