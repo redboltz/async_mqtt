@@ -26,11 +26,11 @@ std::string json_remove_comments(std::string const& value) {
 
 BOOST_AUTO_TEST_CASE(json_comments) {
     BOOST_CHECK(json_remove_comments("test") == "test");
-    BOOST_CHECK(json_remove_comments("#test\ntest") == "\ntest");
-    BOOST_CHECK(json_remove_comments("'#test'") == "'#test'");
-    BOOST_CHECK(json_remove_comments("\"#test\"") == "\"#test\"");
-    BOOST_CHECK(json_remove_comments("\"'#test'\"") == "\"'#test'\"");
-    BOOST_CHECK(json_remove_comments("'\"#test\"'") == "'\"#test\"'");
+    BOOST_CHECK(json_remove_comments("//test\ntest") == "\ntest");
+    BOOST_CHECK(json_remove_comments("'//test'") == "'//test'");
+    BOOST_CHECK(json_remove_comments("\"//test\"") == "\"//test\"");
+    BOOST_CHECK(json_remove_comments("\"'//test'\"") == "\"'//test'\"");
+    BOOST_CHECK(json_remove_comments("'\"//test\"'") == "'\"//test\"'");
     BOOST_CHECK(json_remove_comments("") == "");
 }
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(json_load) {
     am::security security;
 
     std::string value = R"*(
-        { # JSON Comment
+        { // JSON Comment
             "authentication": [
                 {
                     "name": "u1",
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(check_errors) {
 
     // Group references non-existing user
     std::string nonexisting_1 = R"*(
-            {  # JSON Comment
+            {  // JSON Comment
                 "group": [
                     {
                         "name": "@g1",
@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE(deny_check) {
 BOOST_AUTO_TEST_CASE(auth_check) {
     am::security security;
     std::string test_1 = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -630,7 +630,7 @@ BOOST_AUTO_TEST_CASE(auth_check) {
     BOOST_CHECK(security.get_auth_sub_topics("u1", "example/topic1").empty());
 
     std::string test_2 = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -671,7 +671,7 @@ BOOST_AUTO_TEST_CASE(auth_check) {
 BOOST_AUTO_TEST_CASE(auth_check_dynamic) {
     am::security security;
     std::string test = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -721,7 +721,7 @@ BOOST_AUTO_TEST_CASE(auth_check_plus) {
 
     am::security security_1;
     std::string test_1 = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -747,7 +747,7 @@ BOOST_AUTO_TEST_CASE(auth_check_plus) {
 
     am::security security_2;
     std::string test_2 = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -773,7 +773,7 @@ BOOST_AUTO_TEST_CASE(auth_check_plus) {
 
     am::security security_3;
     std::string test_3 = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -800,7 +800,7 @@ BOOST_AUTO_TEST_CASE(auth_check_plus) {
 BOOST_AUTO_TEST_CASE(priority_test) {
     am::security security;
     std::string test = R"*(
-            # JSON Comment
+            // JSON Comment
             {
                 "authentication": [
                     {
@@ -845,7 +845,7 @@ BOOST_AUTO_TEST_CASE(subscription_level_check) {
     am::security security;
     std::string test = R"*(
         {
-            # Configure username/login
+            // Configure username/login
             "authentication": [
                 {
                     "name": "u1",
@@ -853,7 +853,7 @@ BOOST_AUTO_TEST_CASE(subscription_level_check) {
                     "password": "hoge"
                 }
             ],
-            # Give access to topics
+            // Give access to topics
             "authorization": [
                 {
                     "topic": "#",
@@ -894,7 +894,7 @@ BOOST_AUTO_TEST_CASE(allow_pertial_deny_group) {
     am::security security;
     std::string test = R"*(
         {
-            # Configure username/login
+            // Configure username/login
             "authentication": [
                 {
                     "name": "u1",
@@ -908,7 +908,7 @@ BOOST_AUTO_TEST_CASE(allow_pertial_deny_group) {
                     "password": "hoge"
                 }
             ],
-            # Give access to topics
+            // Give access to topics
             "authorization": [
                 {
                     "topic": "#",
