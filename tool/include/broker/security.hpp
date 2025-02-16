@@ -46,11 +46,12 @@
 
 namespace async_mqtt {
 
-/** Remove comments from a JSON file (comments start with # and are not inside ' ' or " ") */
+/** Remove comments from a JSON file (Single and multi-line comments are allowed) */
 inline std::string json_remove_comments(std::istream& input) {
     bool inside_comment = false;
     bool inside_single_quote = false;
     bool inside_double_quote = false;
+    bool inside_block_comment = false;
 
     std::ostringstream result;
 
@@ -58,12 +59,38 @@ inline std::string json_remove_comments(std::istream& input) {
         char c;
         if (input.get(c).eof()) break;
 
-        if (!inside_double_quote && !inside_single_quote && c == '#') inside_comment = true;
-        if (!inside_comment && !inside_double_quote && c == '\'') inside_single_quote = !inside_single_quote;
-        if (!inside_comment && !inside_single_quote && c == '"') inside_double_quote = !inside_double_quote;
+        if (!inside_comment && !inside_block_comment && !inside_double_quote && !inside_single_quote && c == '/') {
+            char next;
+            if (input.get(next)) {
+                if (next == '/') {
+                    inside_comment = true;
+                }
+                else if (next == '*') {
+                    inside_block_comment = true;
+                }
+                else {
+                    result << c;
+                    result << next;
+                    continue;
+                }
+            }
+        }
+
+        if (inside_block_comment) {
+            if (c == '*' && input.peek() == '/') {
+                input.get(c); // consume '/'
+                inside_block_comment = false;
+            }
+            continue;
+        }
+
         if (c == '\n') inside_comment = false;
 
-        if (!inside_comment) result << c;
+        if (!inside_comment && !inside_block_comment) {
+            if (!inside_double_quote && !inside_single_quote && c == '\'') inside_single_quote = !inside_single_quote;
+            if (!inside_comment && !inside_single_quote && c == '"') inside_double_quote = !inside_double_quote;
+            result << c;
+        }
     }
 
     return result.str();
