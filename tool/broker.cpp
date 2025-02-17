@@ -141,7 +141,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
 
         am::broker<
             epv_type
-        > brk{timer_ioc, vm["recycling_allocator"].as<bool>()};
+        > brk{timer_ioc.get_executor(), vm["recycling_allocator"].as<bool>()};
 
         auto num_of_iocs =
             [&] () -> std::size_t {
@@ -821,7 +821,7 @@ int main(int argc, char *argv[]) {
             )
             (
                 "read_buf_size",
-                boost::program_options::value<std::size_t>()->default_value(65535),
+                boost::program_options::value<std::size_t>()->default_value(4096),
                 "Buffer size of internal async_read_some() buffer"
             )
             (
