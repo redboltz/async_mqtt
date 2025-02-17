@@ -169,7 +169,7 @@ public:
     }
 
     void push_back(
-        as::io_context& timer_ioc,
+        as::any_io_executor exe,
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
@@ -189,7 +189,7 @@ public:
 
         std::shared_ptr<as::steady_timer> tim_message_expiry;
         if (message_expiry_interval) {
-            tim_message_expiry = std::make_shared<as::steady_timer>(timer_ioc, *message_expiry_interval);
+            tim_message_expiry = std::make_shared<as::steady_timer>(exe, *message_expiry_interval);
             tim_message_expiry->async_wait(
                 [this, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)](error_code ec) mutable {
                     if (auto sp = wp.lock()) {

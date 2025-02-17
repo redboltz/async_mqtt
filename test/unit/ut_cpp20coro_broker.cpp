@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(tc1) {
                 >;
                 am::broker<
                     epv_t
-                > brk{ioc};
+                > brk{exe};
 
                 // underlying connect
                 auto ep1 =

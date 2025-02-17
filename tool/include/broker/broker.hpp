@@ -31,9 +31,9 @@ class broker {
     using this_type = broker<Epsp>;
 
 public:
-    broker(as::io_context& timer_ioc, bool recycling_allocator = false)
-        :timer_ioc_{timer_ioc},
-         tim_disconnect_{timer_ioc_},
+    broker(as::any_io_executor timer_exe,  bool recycling_allocator = false)
+        :timer_exe_{force_move(timer_exe)},
+         tim_disconnect_{timer_exe_},
          recycling_allocator_{recycling_allocator} {
         std::unique_lock<mutex> g_sec{mtx_security_};
         security_.default_config();
@@ -405,7 +405,6 @@ private:
             it = idx.emplace_hint(
                 it,
                 session_state<epsp_type>::create(
-                    timer_ioc_,
                     mtx_subs_map_,
                     subs_map_,
                     shared_targets_,
@@ -486,7 +485,6 @@ private:
                         bool inserted;
                         std::tie(it, inserted) = idx.emplace(
                             session_state<epsp_type>::create(
-                                timer_ioc_,
                                 mtx_subs_map_,
                                 subs_map_,
                                 shared_targets_,
@@ -1157,7 +1155,6 @@ private:
                 if (sub.sid) {
                     props.push_back(property::subscription_identifier(boost::numeric_cast<std::uint32_t>(*sub.sid)));
                     ss.deliver(
-                        timer_ioc_,
                         topic,
                         payload,
                         new_opts,
@@ -1167,7 +1164,6 @@ private:
                 }
                 else {
                     ss.deliver(
-                        timer_ioc_,
                         topic,
                         payload,
                         new_opts,
@@ -1252,7 +1248,7 @@ private:
             else {
                 std::shared_ptr<as::steady_timer> tim_message_expiry;
                 if (message_expiry_interval) {
-                    tim_message_expiry = std::make_shared<as::steady_timer>(timer_ioc_, *message_expiry_interval);
+                    tim_message_expiry = std::make_shared<as::steady_timer>(timer_exe_, *message_expiry_interval);
                     tim_message_expiry->async_wait(
                         [this, topic = topic, wp = std::weak_ptr<as::steady_timer>(tim_message_expiry)]
                         (boost::system::error_code const& ec) {
@@ -1571,7 +1567,7 @@ private:
         session_state_ref<epsp_type> ssr {*ssr_opt};
 
         auto publish_proc =
-            [this, &ssr, &epsp](retain_type const& r, qos qos_value, std::optional<std::size_t> sid) {
+            [&ssr, &epsp](retain_type const& r, qos qos_value, std::optional<std::size_t> sid) {
                 auto props = r.props;
                 if (sid) {
                     props.push_back(property::subscription_identifier(std::uint32_t(*sid)));
@@ -1594,7 +1590,6 @@ private:
                 }
                 ssr.get().publish(
                     epsp,
-                    timer_ioc_,
                     r.topic,
                     r.payload,
                     std::min(r.qos_value, qos_value) | pub::retain::yes,
@@ -2198,7 +2193,7 @@ private:
 
 private:
 
-    as::io_context& timer_ioc_; ///< The boost asio context to run this broker on.
+    as::any_io_executor timer_exe_;   ///< The boost asio executor to run this broker on.
     as::steady_timer tim_disconnect_; ///< Used to delay disconnect handling for testing
     std::optional<std::chrono::steady_clock::duration> delay_disconnect_; ///< Used to delay disconnect handling for testing
 

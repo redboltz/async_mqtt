@@ -65,7 +65,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     >;
 
     static std::shared_ptr<session_state<Sp>> create(
-        as::io_context& timer_ioc,
         mutex& mtx_subs_map,
         sub_con_map<epsp_type>& subs_map,
         shared_target<epsp_type>& shared_targets,
@@ -80,7 +79,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     ) {
         struct impl : session_state<Sp> {
             impl(
-                as::io_context& timer_ioc,
                 mutex& mtx_subs_map,
                 sub_con_map<epsp_type>& subs_map,
                 shared_target<epsp_type>& shared_targets,
@@ -92,7 +90,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
                 :
                 session_state<Sp> {
-                    timer_ioc,
                     mtx_subs_map,
                     subs_map,
                     shared_targets,
@@ -106,7 +103,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             {}
         };
         std::shared_ptr<session_state<Sp>> sssp = std::make_shared<impl>(
-            timer_ioc,
             mtx_subs_map,
             subs_map,
             shared_targets,
@@ -117,7 +113,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             clean_start,
             force_move(session_expiry_interval)
         );
-        sssp->update_will(timer_ioc, will, will_expiry_interval);
+        sssp->update_will(will, will_expiry_interval);
         return sssp;
     }
 
@@ -149,7 +145,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                                     [&](property::message_expiry_interval const& v) {
                                         tim_message_expiry =
                                             std::make_shared<as::steady_timer>(
-                                                timer_ioc_,
+                                                exe_,
                                                 std::chrono::seconds(v.val())
                                             );
                                         tim_message_expiry->async_wait(
@@ -187,7 +183,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 << ASYNC_MQTT_ADD_VALUE(address, this)
                 << "session expiry interval timer set";
 
-            tim_session_expiry_ = std::make_shared<as::steady_timer>(timer_ioc_, *session_expiry_interval_);
+            tim_session_expiry_ = std::make_shared<as::steady_timer>(exe_, *session_expiry_interval_);
             tim_session_expiry_->async_wait(
                 [
                     this,
@@ -227,13 +223,12 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 session_expiry_interval_ &&
                 *session_expiry_interval_ != std::chrono::steady_clock::duration::zero();
         }
-        update_will(timer_ioc_, force_move(will), will_expiry_interval);
+        update_will(force_move(will), will_expiry_interval);
         session_expiry_interval_ = force_move(session_expiry_interval);
     }
 
     void publish(
         epsp_type& epsp,
-        as::io_context& timer_ioc,
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
@@ -312,7 +307,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 
         // offline_messages_ is not empty or packet_id_exhausted
         offline_messages_.push_back(
-            timer_ioc,
+            exe_,
             force_move(pub_topic),
             force_move(payload),
             pubopts,
@@ -321,7 +316,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     }
 
     void deliver(
-        as::io_context& timer_ioc,
         std::string pub_topic,
         std::vector<buffer> payload,
         pub::opts pubopts,
@@ -330,7 +324,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         if (auto epsp = lock()) {
             publish(
                 epsp,
-                timer_ioc,
                 force_move(pub_topic),
                 force_move(payload),
                 pubopts,
@@ -340,7 +333,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         else {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.push_back(
-                timer_ioc,
+                exe_,
                 force_move(pub_topic),
                 force_move(payload),
                 pubopts,
@@ -454,14 +447,13 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
     }
 
     void update_will(
-        as::io_context& timer_ioc,
         std::optional<async_mqtt::will> will,
         std::optional<std::chrono::steady_clock::duration> will_expiry_interval) {
         tim_will_expiry_.reset();
         will_value_ = force_move(will);
 
         if (will_value_ && will_expiry_interval) {
-            tim_will_expiry_ = std::make_shared<as::steady_timer>(timer_ioc, *will_expiry_interval);
+            tim_will_expiry_ = std::make_shared<as::steady_timer>(exe_, *will_expiry_interval);
             tim_will_expiry_->async_wait(
                 [this, wp = std::weak_ptr<as::steady_timer>(tim_will_expiry_)]
                 (error_code ec) {
@@ -594,6 +586,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
             << "inherit";
 
         epwp_ = epsp;
+        exe_ = epsp.get_executor();
         auto version = epsp.get_protocol_version();
         if (version == protocol_version::v3_1_1) {
             remain_after_close_= true;
@@ -608,7 +601,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         tim_will_delay_.cancel();
         clear_will();
         // for new will
-        update_will(timer_ioc_, force_move(will), will_expiry_interval);
+        update_will(force_move(will), will_expiry_interval);
 
         session_expiry_interval_ = force_move(session_expiry_interval);
         epsp.restore_qos2_publish_handled_pids(qos2_publish_handled_);
@@ -637,7 +630,6 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
 private:
     // constructor
     session_state(
-        as::io_context& timer_ioc,
         mutex& mtx_subs_map,
         sub_con_map<epsp_type>& subs_map,
         shared_target<epsp_type>& shared_targets,
@@ -647,7 +639,7 @@ private:
         will_sender_type will_sender,
         bool clean_start,
         std::optional<std::chrono::steady_clock::duration> session_expiry_interval)
-        :timer_ioc_(timer_ioc),
+        :exe_(epsp.get_executor()),
          mtx_subs_map_(mtx_subs_map),
          subs_map_(subs_map),
          shared_targets_(shared_targets),
@@ -656,7 +648,7 @@ private:
          client_id_(force_move(client_id)),
          username_(username),
          session_expiry_interval_(force_move(session_expiry_interval)),
-         tim_will_delay_(timer_ioc_),
+         tim_will_delay_(exe_),
          will_sender_(force_move(will_sender)),
          remain_after_close_(
             [&] {
@@ -739,7 +731,7 @@ private:
 private:
     friend class session_states<epsp_type>;
 
-    as::io_context& timer_ioc_;
+    as::any_io_executor exe_;
     std::shared_ptr<as::steady_timer> tim_will_expiry_;
     std::optional<async_mqtt::will> will_value_;
 
