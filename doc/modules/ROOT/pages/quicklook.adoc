@@ -78,7 +78,7 @@ make cn_mqtt_sub
 cd example
 ```
 
-==== Run subscriber
+=== Run subscriber
 
 ```sh
 ./cn_mqtt_sub mqtt.redboltz.net 1883

@@ -3,6 +3,7 @@
 = History
 
 == 10.0.1 (undetermined)
+* Refined documentr. Added coding rule to navigation bar.  #396
 * Refined broker. #395
 * Changed the broker auth JSON file comment syntax. #394
 ** Now supports C/C++-style line and block comments.
