@@ -23,6 +23,7 @@
 
 #if defined(ASYNC_MQTT_USE_WS)
 #include <async_mqtt/asio_bind/predefined_layer/ws.hpp>
+#include <boost/beast/http/field.hpp>
 namespace bs = boost::beast;
 #endif // defined(ASYNC_MQTT_USE_WS)
 
@@ -356,19 +357,25 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                 << "HTTP upgrade error:" << ec.message();
                                         }
                                         else if (bs::websocket::is_upgrade(*request)) {
-                                            auto it = request->find("Sec-WebSocket-Protocol");
-                                            if (it != request->end()) {
-                                                ws_layer.set_option(
-                                                    bs::websocket::stream_base::decorator(
-                                                        [
-                                                            name = it->name(),  // enum
-                                                            value = it->value() // string_view
-                                                        ]
-                                                        (bs::websocket::response_type& res) {
-                                                            res.set(name, value);
-                                                        }
-                                                    )
-                                                );
+                                            for (
+                                                auto it = request->find(bs::http::field::sec_websocket_protocol);
+                                                it != request->end();
+                                                ++it
+                                            ) {
+                                                if (it->value() == "mqtt") {
+                                                    ws_layer.set_option(
+                                                        bs::websocket::stream_base::decorator(
+                                                            [
+                                                                name = it->name(),  // enum
+                                                                value = it->value() // string_view
+                                                            ]
+                                                            (bs::websocket::response_type& res) {
+                                                                res.set(name, value);
+                                                            }
+                                                        )
+                                                    );
+                                                    break;
+                                                }
                                             }
                                             ws_layer.async_accept(
                                                 *request,
@@ -601,19 +608,25 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                                             << "HTTP upgrade error:" << ec.message();
                                                     }
                                                     else if (bs::websocket::is_upgrade(*request)) {
-                                                        auto it = request->find("Sec-WebSocket-Protocol");
-                                                        if (it != request->end()) {
-                                                            ws_layer.set_option(
-                                                                bs::websocket::stream_base::decorator(
-                                                                    [
-                                                                        name = it->name(),  // enum
-                                                                        value = it->value() // string_view
-                                                                    ]
-                                                                    (bs::websocket::response_type& res) {
-                                                                        res.set(name, value);
-                                                                    }
-                                                                )
-                                                            );
+                                                        for (
+                                                            auto it = request->find(bs::http::field::sec_websocket_protocol);
+                                                            it != request->end();
+                                                            ++it
+                                                        ) {
+                                                            if (it->value() == "mqtt") {
+                                                                ws_layer.set_option(
+                                                                    bs::websocket::stream_base::decorator(
+                                                                        [
+                                                                            name = it->name(),  // enum
+                                                                            value = it->value() // string_view
+                                                                        ]
+                                                                        (bs::websocket::response_type& res) {
+                                                                            res.set(name, value);
+                                                                        }
+                                                                    )
+                                                                );
+                                                                break;
+                                                            }
                                                         }
                                                         ws_layer.async_accept(
                                                             *request,
