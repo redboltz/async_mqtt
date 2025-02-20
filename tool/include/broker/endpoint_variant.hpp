@@ -11,6 +11,7 @@
 #include <memory>
 #include <async_mqtt/asio_bind/endpoint.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <broker/session_state_fwd.hpp>
 
 namespace async_mqtt {
 
@@ -398,11 +399,20 @@ public:
         return epsp_;
     }
 
+    session_state<this_type>* get_session_state() const {
+        return session_state_;
+    }
+
+    void set_session_state(session_state<this_type>& ss) {
+        session_state_ = &ss;
+    }
+
 private:
     epsp_type epsp_;
     std::string client_id_;
     std::optional<std::string> preauthed_user_name_;
     mutable std::optional<protocol_version> protocol_version_;
+    session_state<this_type>* session_state_ = nullptr;
 };
 
 } // namespace async_mqtt
