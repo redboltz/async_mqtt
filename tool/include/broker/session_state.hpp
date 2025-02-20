@@ -283,8 +283,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 }
             };
 
-        std::lock_guard<mutex> g(mtx_offline_messages_);
-        if (offline_messages_.empty()) {
+        if (offline_messages_empty_) {
             auto qos_value = pubopts.get_qos();
             if (qos_value == qos::at_least_once ||
                 qos_value == qos::exactly_once) {
@@ -306,6 +305,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         }
 
         // offline_messages_ is not empty or packet_id_exhausted
+        std::lock_guard<mutex> g(mtx_offline_messages_);
         offline_messages_.push_back(
             exe_,
             force_move(pub_topic),
@@ -339,6 +339,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 pubopts,
                 force_move(props)
             );
+            offline_messages_empty_ = false;
         }
     }
 
@@ -360,6 +361,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.clear();
+            offline_messages_empty_ = true;
         }
         unsubscribe_all();
         shared_targets_.erase(*this);
@@ -553,6 +555,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.send_until_fail(epsp, get_protocol_version());
+            offline_messages_empty_ = offline_messages_.empty();
         }
     }
 
@@ -560,6 +563,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
         if (auto epsp = lock()) {
             std::lock_guard<mutex> g(mtx_offline_messages_);
             offline_messages_.send_until_fail(epsp, get_protocol_version());
+            offline_messages_empty_ = offline_messages_.empty();
         }
     }
 
@@ -753,6 +757,7 @@ private:
 
     mutable mutex mtx_offline_messages_;
     offline_messages offline_messages_;
+    std::atomic<bool> offline_messages_empty_ = true;
 
     using elem_type = typename sub_con_map<epsp_type>::handle;
     std::set<elem_type> handles_; // to efficient remove

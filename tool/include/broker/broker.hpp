@@ -402,8 +402,7 @@ private:
                 << ASYNC_MQTT_ADD_VALUE(address, epsp.get_address())
                 << "cid:" << client_id
                 << " new connection inserted.";
-            it = idx.emplace_hint(
-                it,
+            auto ss =
                 session_state<epsp_type>::create(
                     mtx_subs_map_,
                     subs_map_,
@@ -419,7 +418,11 @@ private:
                     clean_start,
                     force_move(will_expiry_interval),
                     force_move(session_expiry_interval)
-                )
+                );
+            epsp.set_session_state(*ss);
+            it = idx.emplace_hint(
+                it,
+                ss
             );
             if (response_topic_requested) {
                 // set_response_topic never modify key part
@@ -483,7 +486,7 @@ private:
                             << "cid:" << client_id
                             << "online connection exists, discard old one due to session_expiry and renew";
                         bool inserted;
-                        std::tie(it, inserted) = idx.emplace(
+                        auto ss =
                             session_state<epsp_type>::create(
                                 mtx_subs_map_,
                                 subs_map_,
@@ -499,7 +502,10 @@ private:
                                 clean_start,
                                 force_move(will_expiry_interval),
                                 force_move(session_expiry_interval)
-                            )
+                            );
+                        epsp.set_session_state(*ss);
+                        std::tie(it, inserted) = idx.emplace(
+                            ss
                         );
                         BOOST_ASSERT(inserted);
                         if (response_topic_requested) {
@@ -565,6 +571,7 @@ private:
                         will_expiry_interval,
                         session_expiry_interval
                     );
+                    epsp.set_session_state(*e);
                 },
                 [](auto&) { BOOST_ASSERT(false); }
             );
@@ -618,6 +625,7 @@ private:
                                 will_expiry_interval,
                                 force_move(session_expiry_interval)
                             );
+                            epsp.set_session_state(*e);
                         },
                         [](auto&) { BOOST_ASSERT(false); }
                     );
@@ -885,16 +893,7 @@ private:
             }
         );
 
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
+        auto& ss = *epsp.get_session_state();
 
         auto send_pubres =
             [&] (bool authorized, bool matched) {
@@ -1071,7 +1070,7 @@ private:
         // See if this session is authorized to publish this topic
         if ([&] {
                 std::shared_lock<mutex> g_sec{mtx_security_};
-                return security_.auth_pub(topic, (*it)->get_username()) != security::authorization::type::allow;
+                return security_.auth_pub(topic, ss.get_username()) != security::authorization::type::allow;
             } ()
         ) {
             // Publish not authorized
@@ -1103,7 +1102,7 @@ private:
         }
 
         bool matched = do_publish(
-            **it,
+            ss,
             force_move(topic),
             force_move(payload),
             opts.get_qos() | opts.get_retain(), // remove dup flag
@@ -1294,20 +1293,7 @@ private:
             }
         );
 
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
-
-        // const_cast is appropriate here
-        // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_type>&>(**it);
+        auto& ss = *epsp.get_session_state();
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
@@ -1324,20 +1310,7 @@ private:
             }
         );
 
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
-
-        // const_cast is appropriate here
-        // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_type>&>(**it);
+        auto& ss = *epsp.get_session_state();
 
         if (make_error_code(reason_code)) return;
         auto rc =
@@ -1430,17 +1403,6 @@ private:
             }
         );
 
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
-
         switch (epsp.get_protocol_version()) {
         case protocol_version::v3_1_1:
             epsp.async_send(
@@ -1518,20 +1480,8 @@ private:
             }
         );
 
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
 
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
-
-        // const_cast is appropriate here
-        // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_type>&>(**it);
+        auto& ss = *epsp.get_session_state();
         ss.erase_inflight_message_by_packet_id(packet_id);
         ss.send_offline_messages_by_packet_id_release();
     }
@@ -1547,25 +1497,13 @@ private:
                 async_read_packet(force_move(epsp));
             }
         );
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
 
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
         std::optional<session_state_ref<epsp_type>> ssr_opt;
 
-        // const_cast is appropriate here
-        // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_type>&>(**it);
+        auto& ss = *epsp.get_session_state();
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
@@ -1761,26 +1699,12 @@ private:
             }
         );
 
-
-        std::shared_lock<mutex> g(mtx_sessions_);
-        auto& idx = sessions_.template get<tag_con>();
-        auto it  = idx.find(epsp);
-
-        // broker uses async_* APIs
-        // If broker erase a connection, then async_force_disconnect()
-        // and/or async_force_disconnect () is called.
-        // During async operation, spep is valid but it has already been
-        // erased from sessions_
-        if (it == idx.end()) return;
-
         // The element of sessions_ must have longer lifetime
         // than corresponding subscription.
         // Because the subscription store the reference of the element.
         std::optional<session_state_ref<epsp_type>> ssr_opt;
 
-        // const_cast is appropriate here
-        // See https://github.com/boostorg/multi_index/issues/50
-        auto& ss = const_cast<session_state<epsp_type>&>(**it);
+        auto& ss = *epsp.get_session_state();
         ssr_opt.emplace(ss);
 
         BOOST_ASSERT(ssr_opt);
