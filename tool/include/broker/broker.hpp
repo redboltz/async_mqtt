@@ -682,10 +682,14 @@ private:
 
         s.set_clean_handler(
             [this, response_topic, rule_nr]() {
-                std::lock_guard<mutex> g(mtx_retains_);
-                retains_.erase(response_topic);
-                std::unique_lock<mutex> g_sec{mtx_security_};
-                security_.remove_auth(rule_nr);
+                {
+                    std::lock_guard<mutex> g(mtx_retains_);
+                    retains_.erase(response_topic);
+                }
+                {
+                    std::unique_lock<mutex> g{mtx_security_};
+                    security_.remove_auth(rule_nr);
+                }
             }
         );
 
@@ -1254,6 +1258,7 @@ private:
                         (boost::system::error_code const& ec) {
                             if (auto sp = wp.lock()) {
                                 if (!ec) {
+                                    std::lock_guard<mutex> g(mtx_retains_);
                                     retains_.erase(topic);
                                 }
                             }
