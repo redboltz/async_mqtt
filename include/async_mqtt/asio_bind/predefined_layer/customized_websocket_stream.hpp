@@ -9,7 +9,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/beast/websocket/stream.hpp>
-
+#include <boost/beast/http/field.hpp>
 #include <async_mqtt/asio_bind/stream_customize.hpp>
 #include <async_mqtt/util/log.hpp>
 
@@ -36,7 +36,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
         stream.set_option(
             bs::websocket::stream_base::decorator(
                 [](bs::websocket::request_type& req) {
-                    req.set("Sec-WebSocket-Protocol", "mqtt");
+                    req.set(bs::http::field::sec_websocket_protocol, "mqtt");
                 }
             )
         );

@@ -10,7 +10,7 @@
 ** The `#` line comment syntax is no longer supported.
 ** For migrating, simply replace `#` with `//`.
 ** *This is a breaking change for the tool (not the library), so the major version remains unchanged.*
-* Fixed broker websocket connection. #393
+* Fixed broker websocket connection. #393, #397
 ** It doesn't affect the library part.
 * Refined documents. #389, #390
 
