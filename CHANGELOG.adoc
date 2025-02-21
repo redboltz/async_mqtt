@@ -3,6 +3,7 @@
 = History
 
 == 10.0.1 (undetermined)
+* Refined CI. #401
 * Refined log level. #399
 * Refined documentr. Added coding rule to navigation bar.  #396
 * Refined broker. #395, #398
