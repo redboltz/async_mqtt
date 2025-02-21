@@ -64,12 +64,13 @@ jobs:
       continue-on-error: true
       run: |
         export PATH="/Library/Developer/CommandLineTools/usr/bin:$PATH"
-        lcov --capture --directory ${{ runner.temp }} --exclude "/usr/*" --exclude "test/*" --exclude "/opt/*" --output-file coverage.info --gcov-tool ${{ github.workspace }}/llvm-gcov.sh --ignore-errors inconsistent,gcov,count,range
+        lcov --capture --directory ${{ runner.temp }} --exclude "/usr/*" --exclude "test/*" --exclude "/opt/*" --output-file coverage.info --gcov-tool ${{ github.workspace }}/llvm-gcov.sh --ignore-errors inconsistent,gcov,count,range,format
         lcov --list coverage.info --ignore-errors inconsistent,count,range # debug info
     - name: Upload coverage to Codecov
       if: matrix.pattern == 3
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
+        fail_ci_if_error: true
         files: ${{ runner.temp }}/coverage.info
         token: ${{ secrets.CODECOV_TOKEN }}
   linux:
