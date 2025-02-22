@@ -183,7 +183,7 @@ struct session_state : std::enable_shared_from_this<session_state<Sp>> {
                 << ASYNC_MQTT_ADD_VALUE(address, this)
                 << "session expiry interval timer set";
 
-            tim_session_expiry_ = std::make_shared<as::steady_timer>(exe_, *session_expiry_interval_);
+            tim_session_expiry_->expires_after(*session_expiry_interval_);
             tim_session_expiry_->async_wait(
                 [
                     this,
@@ -745,7 +745,8 @@ private:
     std::string username_;
 
     std::optional<std::chrono::steady_clock::duration> session_expiry_interval_;
-    std::shared_ptr<as::steady_timer> tim_session_expiry_;
+    std::shared_ptr<as::steady_timer> tim_session_expiry_ =
+        std::make_shared<as::steady_timer>(exe_);
 
     mutable mutex mtx_inflight_messages_;
     inflight_messages inflight_messages_;

@@ -7,8 +7,11 @@
 #if !defined(ASYNC_MQTT_PROTOCOL_IMPL_TIMER_IMPL_IPP)
 #define ASYNC_MQTT_PROTOCOL_IMPL_TIMER_IMPL_IPP
 
+#include <ostream>
+
 #include <async_mqtt/protocol/timer.hpp>
 #include <async_mqtt/util/inline.hpp>
+
 namespace async_mqtt {
 
 ASYNC_MQTT_HEADER_ONLY_INLINE

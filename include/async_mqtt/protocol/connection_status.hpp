@@ -22,4 +22,8 @@ enum class connection_status {
 
 } // namespace async_mqtt
 
+#if !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+#include <async_mqtt/protocol/impl/connection_status_impl.ipp>
+#endif // !defined(ASYNC_MQTT_SEPARATE_COMPILATION)
+
 #endif // ASYNC_MQTT_PROTOCOL_CONNECTION_STATUS_HPP
