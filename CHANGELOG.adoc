@@ -3,8 +3,9 @@
 = History
 
 == 10.0.1 (undetermined)
+* Fixed connection status updating timing. #402
 * Refined CI. #401
-* Refined log level. #399
+* Refined log level. #399, #402
 * Refined documentr. Added coding rule to navigation bar.  #396
 * Refined broker. #395, #398
 * Changed the broker auth JSON file comment syntax. #394

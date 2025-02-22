@@ -109,6 +109,88 @@ BOOST_AUTO_TEST_CASE(v5_connect_connack) {
     }
 }
 
+BOOST_AUTO_TEST_CASE(v5_store_after_error) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+
+    BOOST_TEST(c.get_connection_status() == am::connection_status::disconnected);
+    {
+        // CONNECT
+        auto p = am::v5::connect_packet{
+            true,   // clean_start
+            0, // keep_alive
+            "cid1",
+            std::nullopt,
+            std::nullopt,
+            std::nullopt,
+            am::properties{
+                am::property::session_expiry_interval(am::session_never_expire)
+            }
+        };
+        c.send(p);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connecting);
+    {
+        // CONNACK
+        std::istringstream is{
+            am::to_string(
+                am::v5::connack_packet{
+                    false,   // session_present
+                    am::connect_reason_code::success
+                }.const_buffer_sequence()
+            )
+        };
+        c.recv(is);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connected);
+    {
+        // error packet
+        char too_large[] {
+            0x01, char(0xff), char(0xff), char(0xff), char(0xff),
+        };
+        std::istringstream is{std::string(too_large, sizeof(too_large))};
+        c.recv(is);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connected);
+
+    // PUBLISH QoS1
+    auto pid_opt = c.acquire_unique_packet_id();
+    auto publish = am::v5::publish_packet(
+        *pid_opt,
+        "topic1",
+        "payload1",
+        am::qos::at_least_once
+    );
+    auto events = c.send(publish);
+    BOOST_TEST(events.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::event::send const&) {
+                BOOST_TEST(true);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+    c.notify_closed();
+    BOOST_TEST(c.get_connection_status() == am::connection_status::disconnected);
+    auto packets = c.get_stored_packets();
+    BOOST_TEST(packets.size() == 1);
+    auto dup_publish = publish;
+    dup_publish.set_dup(true);
+    packets[0].visit(
+        am::overload {
+            [&](am::v5::publish_packet const& p) {
+                BOOST_TEST(p == dup_publish);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        }
+    );
+}
+
 BOOST_AUTO_TEST_CASE(v5_non_allocate_pid_fail) {
     am::rv_connection<am::role::client> c{am::protocol_version::v5};
     auto connect = am::v5::connect_packet{

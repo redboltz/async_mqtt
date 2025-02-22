@@ -604,7 +604,7 @@ process_send_packet(
                 return true;
             }
             else {
-                ASYNC_MQTT_LOG("mqtt_impl", trace)
+                ASYNC_MQTT_LOG("mqtt_impl", error)
                     << "publish message try to send but not connected";
                 con_.on_error(
                     make_error_code(

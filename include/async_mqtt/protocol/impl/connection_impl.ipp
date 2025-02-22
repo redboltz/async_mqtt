@@ -573,7 +573,6 @@ process_recv_packet() {
         auto ep = force_move(rpb_.get());
         rpb_.clear();
         if (ep.ec) {
-            status_ = connection_status::disconnected;
             cancel_timers();
             con_.on_close();
             con_.on_error(ep.ec);
@@ -1375,12 +1374,10 @@ process_recv_packet() {
                     con_.on_receive(p);
                 },
                 [&](v3_1_1::disconnect_packet& p) {
-                    status_ = connection_status::disconnected;
                     cancel_timers();
                     con_.on_receive(p);
                 },
                 [&](v5::disconnect_packet& p) {
-                    status_ = connection_status::disconnected;
                     cancel_timers();
                     con_.on_receive(p);
                 },

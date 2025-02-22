@@ -10,6 +10,7 @@
 #include <async_mqtt/protocol/impl/buffer_to_packet_variant.ipp>
 #include <async_mqtt/protocol/impl/connection_impl.ipp>
 #include <async_mqtt/protocol/impl/connection_send.ipp>
+#include <async_mqtt/protocol/impl/connection_status_impl.ipp>
 #include <async_mqtt/protocol/impl/timer_impl.ipp>
 #include <async_mqtt/protocol/packet/impl/packet_variant.ipp>
 #include <async_mqtt/protocol/packet/impl/property.ipp>
