@@ -7,7 +7,7 @@
 #if !defined(ASYNC_MQTT_TEST_MAIN_HPP)
 #define ASYNC_MQTT_TEST_MAIN_HPP
 
-#define BOOST_TEST_MODULE mqtt_client_cpp_test
+#define BOOST_TEST_MODULE async_mqtt_test
 #include <boost/test/unit_test.hpp>
 
 #endif // ASYNC_MQTT_TEST_MAIN_HPP
