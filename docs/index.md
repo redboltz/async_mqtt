@@ -1,6 +1,8 @@
 # Older versions' [async_mqtt](https://github.com/redboltz/async_mqtt) documents
 
 ## releases
+- [10.0.0](doc/10.0.0/index.html)
+- [9.0.2](doc/9.0.2/index.html)
 - [9.0.1](doc/9.0.1/index.html)
 - [9.0.0](doc/9.0.0/index.html)
 - [8.0.1](doc/8.0.1/index.html)
