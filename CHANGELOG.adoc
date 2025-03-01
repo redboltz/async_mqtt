@@ -3,6 +3,7 @@
 = History
 
 == 10.0.1 (undetermined)
+* Added C++20 coroutine version of broker (experimental). #406
 * Fixed connection status updating timing. #402
 * Refined CI. #401
 * Refined log level. #399, #402
