@@ -834,7 +834,7 @@ int main(int argc, char *argv[]) {
             )
             (
                 "read_buf_size",
-                boost::program_options::value<std::size_t>()->default_value(4096),
+                boost::program_options::value<std::size_t>()->default_value(65536),
                 "Buffer size of internal async_read_some() buffer"
             )
             (

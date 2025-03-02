@@ -2,6 +2,10 @@
 
 = History
 
+== 10.1.1 (undetermined)
+* Adjusted and unified broker's `read_buf_size` option's default value. #408
+* Updated docker build. #408
+
 == 10.1.0
 * Added C++20 coroutine version of broker (experimental). #406
 * Fixed connection status updating timing. #402
