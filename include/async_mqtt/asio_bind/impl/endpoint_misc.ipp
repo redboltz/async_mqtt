@@ -317,6 +317,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingreq_recv_timer(
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
+                                            (void)ev_close;
                                             BOOST_ASSERT(it == events.end());
                                             BOOST_ASSERT(std::get_if<async_mqtt::event::close>(&ev_close));
                                             ep->stream_.async_write_packet(
@@ -412,6 +413,7 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::reset_pingresp_recv_timer(
                                             BOOST_ASSERT(pv.template get_if<v5::disconnect_packet>());
                                             BOOST_ASSERT(it != events.end());
                                             auto& ev_close = *it++;
+                                            (void)ev_close;
                                             BOOST_ASSERT(it == events.end());
                                             BOOST_ASSERT(std::get_if<async_mqtt::event::close>(&ev_close));
                                             ep->stream_.async_write_packet(

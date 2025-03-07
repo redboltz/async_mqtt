@@ -36,6 +36,7 @@ recv(std::istream& is) {
         case read_state::fixed_header: {
             char fixed_header;
             auto ret = is.readsome(&fixed_header, 1);
+            (void)ret;
             BOOST_ASSERT(ret == 1);
             --size;
             header_remaining_length_buf_.push_back(fixed_header);
@@ -45,6 +46,7 @@ recv(std::istream& is) {
             while (size != 0) {
                 char encoded_byte;
                 auto ret = is.readsome(&encoded_byte, 1);
+                (void)ret;
                 BOOST_ASSERT(ret == 1);
                 --size;
                 header_remaining_length_buf_.push_back(encoded_byte);
