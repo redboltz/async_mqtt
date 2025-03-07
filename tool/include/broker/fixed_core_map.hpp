@@ -21,6 +21,7 @@ inline void map_core_to_this_thread(std::size_t core) {
     CPU_ZERO(&mask);
     CPU_SET(static_cast<int>(core), &mask);
     int ret = sched_setaffinity(0, sizeof(mask), &mask);
+    (void)ret;
     BOOST_ASSERT(ret == 0);
 }
 

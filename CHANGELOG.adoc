@@ -3,6 +3,8 @@
 = History
 
 == 10.1.1 (undetermined)
+* Refined CI. #409
+* Fixed warnings on release build. #409
 * Adjusted and unified broker's `read_buf_size` option's default value. #408
 * Updated docker build. #408
 

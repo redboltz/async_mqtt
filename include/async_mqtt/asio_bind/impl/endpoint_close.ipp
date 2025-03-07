@@ -73,6 +73,7 @@ close_op {
                     overload {
                         [&](async_mqtt::event::timer&& ev) {
                             auto op = ev.get_op();
+                            (void)op;
                             BOOST_ASSERT(op == timer_op::cancel);
                             switch (ev.get_kind()) {
                             case timer_kind::pingreq_send:
