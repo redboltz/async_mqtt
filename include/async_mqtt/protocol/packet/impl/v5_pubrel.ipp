@@ -252,7 +252,8 @@ basic_pubrel_packet<PacketIdBytes>::basic_pubrel_packet(buffer buf, error_code& 
         return;
     }
 
-    if (remaining_length_ == 3) {
+    //                       packet_id     + reason_code
+    if (remaining_length_ == PacketIdBytes + 1) {
         if (!buf.empty()) {
             ec = make_error_code(
                 disconnect_reason_code::malformed_packet
