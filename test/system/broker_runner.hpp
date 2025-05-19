@@ -11,7 +11,11 @@
 #include <optional>
 
 #include <boost/process.hpp>
+
+#if BOOST_VERSION < 108600
 #include <boost/process/args.hpp>
+#endif // BOOST_VERSION < 108600
+
 #include <boost/asio.hpp>
 #include <boost/predef.h>
 
@@ -20,6 +24,14 @@
 namespace as = boost::asio;
 namespace pr = boost::process;
 namespace am = async_mqtt;
+
+#if BOOST_VERSION < 108600
+using pid_type = pr::pid_t;
+using process = pr::child;
+#else  // BOOST_VERSION < 108600
+using pid_type = pr::pid_type;
+using process = pr::process;
+#endif // BOOST_VERSION < 108600
 
 inline bool launch_broker_required() {
     auto argc = boost::unit_test::framework::master_test_suite().argc;
@@ -33,7 +45,7 @@ inline bool launch_broker_required() {
     return true;
 }
 
-inline void kill_broker(pr::pid_t pid) {
+inline void kill_broker(pid_type pid) {
     if (!launch_broker_required()) return;
 #if _WIN32
     {
@@ -83,6 +95,8 @@ struct broker_runner {
             }
             return std::nullopt;
         } ();
+#if BOOST_VERSION < 108600
+
 #if _WIN32
         if (level_opt) {
             brk.emplace(
@@ -111,6 +125,19 @@ struct broker_runner {
         }
         brk.emplace("../../tool/broker", pr::args(args));
 #endif // _WIN32
+
+#else  // BOOST_VERSION < 108600
+        std::vector<std::string> args;
+        args.emplace_back("--cfg");
+        args.emplace_back(config);
+        args.emplace_back("--auth_file");
+        args.emplace_back(auth);
+        if (level_opt) {
+            args.emplace_back("--verbose");
+            args.emplace_back(std::to_string(*level_opt));
+        }
+        brk.emplace(ioc, "../../tool/broker", args);
+#endif // BOOST_VERSION < 108600
 
         // wait broker's socket ready
         {
@@ -212,10 +239,13 @@ struct broker_runner {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (brk) {
             kill_broker(brk->id());
+#if BOOST_VERSION < 108600
             brk->join();
+#endif // BOOST_VERSION < 108600
         }
     }
-    std::optional<pr::child> brk;
+    as::io_context ioc;
+    std::optional<process> brk;
 };
 
 #endif // ASYNC_MQTT_TEST_SYSTEM_BROKER_RUNNER_HPP

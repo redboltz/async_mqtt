@@ -3,6 +3,7 @@
 = History
 
 == 10.1.1 (undetermined)
+* Supported Boost.1.88.0 defaulted process v2. #414
 * Fixed PacketIdBytes treatment in MQTT v5 publish response packets. #412
 * Refined documents. #410
 * Refined CI. #409

@@ -53,7 +53,14 @@ if(ASYNC_MQTT_USE_TLS AND ASYNC_MQTT_USE_WS)
     )
 endif()
 
-find_package(Boost 1.84.0 REQUIRED COMPONENTS unit_test_framework)
+if (Boost_VERSION_STRING VERSION_GREATER_EQUAL "1.86.0")
+    message(STATUS "Boost Process is available")
+    find_package(Boost 1.86.0 REQUIRED COMPONENTS unit_test_framework process)
+else()
+    message(STATUS "Boost Process is NOT available")
+    find_package(Boost 1.84.0 REQUIRED COMPONENTS unit_test_framework)
+endif()
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     link_directories(${Boost_LIBRARY_DIRS})
 endif()
@@ -67,9 +74,15 @@ foreach(source_file ${check_PROGRAMS})
         PUBLIC
         $<IF:$<BOOL:${ASYMC_MQTT_USE_STATIC_BOOST}>,,BOOST_TEST_DYN_LINK>
     )
-    target_link_libraries(
-        ${source_file_we} Boost::unit_test_framework
-    )
+    if (Boost_VERSION_STRING VERSION_GREATER_EQUAL "1.86.0")
+        target_link_libraries(
+            ${source_file_we} Boost::unit_test_framework Boost::process
+        )
+    else()
+        target_link_libraries(
+            ${source_file_we} Boost::unit_test_framework
+        )
+    endif()
     if(WIN32 AND ASYNC_MQTT_USE_STATIC_OPENSSL)
         TARGET_LINK_LIBRARIES (${source_file_we} Crypt32)
     endif()
