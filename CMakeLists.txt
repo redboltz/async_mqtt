@@ -91,6 +91,7 @@ else()
 endif()
 
 find_package(Boost 1.82.0 REQUIRED COMPONENTS ${ASYNC_MQTT_BOOST_COMPONENTS})
+message(STATUS "Found Boost version: ${Boost_VERSION}")
 
 if(ASYNC_MQTT_USE_TLS)
     find_package(OpenSSL REQUIRED)

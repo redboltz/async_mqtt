@@ -33,3 +33,7 @@
 
 # Backups
 *~
+
+# Build directory
+build/
+node_modules/
