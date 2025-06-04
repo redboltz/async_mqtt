@@ -201,6 +201,13 @@ auth_packet::auth_packet(buffer buf, error_code& ec) {
         return;
     }
 
+    if (buf.empty()) {
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
+    }
+
     // connect_reason_code
     reason_code_.emplace(static_cast<auth_reason_code>(buf.front()));
     buf.remove_prefix(1);
