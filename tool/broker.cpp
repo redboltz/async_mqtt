@@ -47,7 +47,9 @@ bool verify_certificate(
     bool preverified,
     as::ssl::verify_context& ctx,
     std::shared_ptr<std::optional<std::string>> const& username) {
+
     if (!preverified) return false;
+
     int error = X509_STORE_CTX_get_error(ctx.native_handle());
     if (error != X509_V_OK) {
         int depth = X509_STORE_CTX_get_error_depth(ctx.native_handle());
@@ -58,29 +60,49 @@ bool verify_certificate(
     }
 
     X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
-    X509_NAME* name = X509_get_subject_name(cert);
-
     std::string verify_field_value;
-    auto obj = std::unique_ptr<
-        ASN1_OBJECT,
-        decltype(&ASN1_OBJECT_free)
-    >(
-        OBJ_txt2obj(verify_field.c_str(), 0),
-        &ASN1_OBJECT_free
-    );
-    if (obj) { // return nullptr if error
-        verify_field_value.resize(am::max_cn_size);
-        auto size = X509_NAME_get_text_by_OBJ(
-            name,
-            obj.get(),
-            &verify_field_value[0],
-            static_cast<int>(verify_field_value.size())
-        );
-        // Size equals -1 if field is not found, otherwise, length of value
-        verify_field_value.resize(static_cast<std::size_t>(std::max(size, 0)));
-        ASYNC_MQTT_LOG("mqtt_broker", info) << "[clicrt] " << verify_field << ":" << verify_field_value;
-        *username = verify_field_value;
+
+    if (verify_field == "subjectAltName") {
+        // Extract Subject Alternative Name (DNS)
+        GENERAL_NAMES* san_names = static_cast<GENERAL_NAMES*>(X509_get_ext_d2i(cert, NID_subject_alt_name, nullptr, nullptr));
+        if (san_names) {
+            int san_count = sk_GENERAL_NAME_num(san_names);
+            for (int i = 0; i != san_count; ++i) {
+                const GENERAL_NAME* current_name = sk_GENERAL_NAME_value(san_names, i);
+                if (current_name->type == GEN_DNS) {
+                    unsigned char const* dns_name = ASN1_STRING_get0_data(current_name->d.dNSName);
+                    int len = ASN1_STRING_length(current_name->d.dNSName);
+                    verify_field_value.assign(reinterpret_cast<char const*>(dns_name), static_cast<std::size_t>(len));
+                    ASYNC_MQTT_LOG("mqtt_broker", info) << "[clicrt] " << verify_field << ":DNS:" << verify_field_value;
+                    *username = verify_field_value;
+                    break; // the first SAN entry is used
+                }
+            }
+            GENERAL_NAMES_free(san_names);
+        }
     }
+    else {
+        // Extract from Subject DN using provided field (e.g., "CN")
+        X509_NAME* name = X509_get_subject_name(cert);
+        auto obj = std::unique_ptr<ASN1_OBJECT, decltype(&ASN1_OBJECT_free)>(
+            OBJ_txt2obj(verify_field.c_str(), 0),
+            &ASN1_OBJECT_free
+        );
+
+        if (obj) {
+            verify_field_value.resize(am::max_cn_size);
+            int size = X509_NAME_get_text_by_OBJ(
+                name,
+                obj.get(),
+                &verify_field_value[0],
+                static_cast<int>(verify_field_value.size())
+            );
+            verify_field_value.resize(static_cast<std::size_t>(std::max(size, 0)));
+            ASYNC_MQTT_LOG("mqtt_broker", info) << "[clicrt] " << verify_field << ":" << verify_field_value;
+            *username = verify_field_value;
+        }
+    }
+
     return true;
 }
 

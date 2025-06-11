@@ -37,3 +37,6 @@
 # Build directory
 build/
 node_modules/
+
+# Tool
+.vscode/
