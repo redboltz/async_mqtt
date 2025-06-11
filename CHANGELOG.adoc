@@ -3,6 +3,7 @@
 = History
 
 == 10.1.1 (undetermined)
+* Added broker's Client Certificate subjectAltName. #416
 * Fixed invalid remaining length parsing problem on disconnect and auth packet. #415
 * Supported Boost.1.88.0 defaulted process v2. #414
 * Fixed PacketIdBytes treatment in MQTT v5 publish response packets. #412
