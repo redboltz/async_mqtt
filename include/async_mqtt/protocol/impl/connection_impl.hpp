@@ -212,4 +212,6 @@ private:
 
 } // namespace async_mqtt::detail
 
+#include <async_mqtt/protocol/impl/connection_send.hpp>
+
 #endif // ASYNC_MQTT_PROTOCOL_IMPL_CONNECTION_IMPL_HPP
