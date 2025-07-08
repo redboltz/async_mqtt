@@ -22,13 +22,12 @@ BOOST_AUTO_TEST_CASE(tc) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     };
     auto p = am::v3_1_1::connack_packet{
         true,   // session_present
         am::connect_return_code::not_authorized
     };
     // static_assert fail as expected
-    auto ec = ep.async_send(p, as::use_future).get();
-    BOOST_TEST(!ec);
+    ep.async_send(p, [](auto){});
 }

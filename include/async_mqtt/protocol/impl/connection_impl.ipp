@@ -181,13 +181,17 @@ notify_timer_fired(timer_kind kind) {
         pingreq_send_set_ = false;
         switch (protocol_version_) {
         case protocol_version::v3_1_1:
-            if (status_ == connection_status::connected) {
-                send(v3_1_1::pingreq_packet{});
+            if constexpr(can_send_as_client(Role)) {
+                if (status_ == connection_status::connected) {
+                    send(v3_1_1::pingreq_packet{});
+                }
             }
             break;
         case protocol_version::v5:
-            if (status_ == connection_status::connected) {
-                send(v5::pingreq_packet{});
+            if constexpr(can_send_as_client(Role)) {
+                if (status_ == connection_status::connected) {
+                    send(v5::pingreq_packet{});
+                }
             }
             break;
         default:
@@ -609,21 +613,23 @@ process_recv_packet() {
 
                 // packet is error but connack needs to be sent
                 status_ = connection_status::connecting;
-                if (protocol_version_ == protocol_version::v5) {
-                    send(
-                        v5::connack_packet{
-                            false, // session_present
-                            static_cast<connect_reason_code>(ec.value())
-                        }
-                    );
-                }
-                else {
-                    send(
-                        v3_1_1::connack_packet{
-                            false, // session_present
-                            static_cast<connect_return_code>(ec.value())
-                        }
-                    );
+                if constexpr(can_send_as_server(Role)) {
+                    if (protocol_version_ == protocol_version::v5) {
+                        send(
+                            v5::connack_packet{
+                                false, // session_present
+                                static_cast<connect_reason_code>(ec.value())
+                            }
+                        );
+                    }
+                    else {
+                        send(
+                            v3_1_1::connack_packet{
+                                false, // session_present
+                                static_cast<connect_return_code>(ec.value())
+                            }
+                        );
+                    }
                 }
                 con_.on_error(
                     make_error_code(

@@ -16,48 +16,6 @@ namespace async_mqtt {
 namespace detail {
 
 template <role Role, std::size_t PacketIdBytes>
-template <typename Packet>
-ASYNC_MQTT_HEADER_ONLY_INLINE
-void
-basic_connection_impl<Role, PacketIdBytes>::
-send(Packet packet) {
-    auto send_and_post_process =
-        [&](auto&& actual_packet) {
-            if (process_send_packet(actual_packet)) {
-                if constexpr(is_connack<std::remove_reference_t<decltype(actual_packet)>>()) {
-                    // server send stored packets after connack sent
-                    send_stored();
-                }
-                if constexpr(Role == role::client || Role == role::any) {
-                    if (is_client_ && pingreq_send_interval_ms_) {
-                        if (status_ == connection_status::disconnected) return;
-                        pingreq_send_set_ = true;
-                        con_.on_timer_op(
-                            timer_op::reset,
-                            timer_kind::pingreq_send,
-                            *pingreq_send_interval_ms_
-                        );
-                    }
-                }
-            }
-        };
-
-    if constexpr(
-        std::is_same_v<std::decay_t<Packet>, basic_packet_variant<PacketIdBytes>> ||
-        std::is_same_v<std::decay_t<Packet>, basic_store_packet_variant<PacketIdBytes>>
-    ) {
-        force_move(packet).visit(
-            [&](auto actual_packet) {
-                send_and_post_process(force_move(actual_packet));
-            }
-        );
-    }
-    else {
-        send_and_post_process(std::forward<Packet>(packet));
-    }
-}
-
-template <role Role, std::size_t PacketIdBytes>
 template <typename ActualPacket>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 bool

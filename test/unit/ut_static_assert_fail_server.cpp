@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(tc) {
         version,
         // for stub_socket args
         version,
-        ioc
+        ioc.get_executor()
     };
     auto p = am::v3_1_1::connect_packet{
         true,   // clean_session
@@ -33,6 +33,5 @@ BOOST_AUTO_TEST_CASE(tc) {
         "pass1"
     };
     // static_assert fail as expected
-    auto ec = ep.async_send(p, as::use_future).get();
-    BOOST_TEST(!ec);
+    ep.async_send(p, [](auto){});
 }
