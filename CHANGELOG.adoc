@@ -2,7 +2,9 @@
 
 = History
 
-== 10.1.1 (undetermined)
+== 10.2.0 (undetermined)
+* Added packet_id limit functionality for testing. #418
+* Recovered missing compile-time Role-Packet checking functionality. #417
 * Added broker's Client Certificate subjectAltName. #416
 * Fixed invalid remaining length parsing problem on disconnect and auth packet. #415
 * Supported Boost.1.88.0 defaulted process v2. #414

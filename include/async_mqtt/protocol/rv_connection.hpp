@@ -47,13 +47,17 @@ namespace async_mqtt {
 template <role Role, std::size_t PacketIdBytes>
 class basic_rv_connection : public basic_connection<Role, PacketIdBytes> {
     using base_type = basic_connection<Role, PacketIdBytes>;
+    using basic_pid_type = typename basic_packet_id_type<PacketIdBytes>::type;
 
 public:
 
     /**
      * @copydoc basic_connection::basic_connection
      */
-    basic_rv_connection(protocol_version ver);
+    basic_rv_connection(
+        protocol_version ver,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id_max =
+            std::numeric_limits<typename basic_packet_id_type<PacketIdBytes>::type>::max());
 
     /**
      * @brief Packet sending request.

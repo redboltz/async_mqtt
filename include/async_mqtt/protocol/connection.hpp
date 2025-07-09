@@ -23,6 +23,7 @@ class basic_connection {
     using impl_type = detail::basic_connection_impl<Role, PacketIdBytes>;
 
 public:
+
     /**
      * @brief Constructor.
      *
@@ -37,8 +38,15 @@ public:
      *     protocol version can be sent and received.
      *
      * @param ver The protocol version.
+     * @param packet_id_max The maximum packet_id that can be used. It is only for test purpose.
+     *                      By default, it is set to the maximum value of PacketIdBytes type.
+     *                      If PacketIdBytes is 2, the maximum packet_id is 65535. (MQTT protocol)
+     *                      If PacketIdBytes is 4, the maximum packet_id is 4294967295.
      */
-    basic_connection(protocol_version ver);
+    basic_connection(
+        protocol_version ver,
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id_max =
+            std::numeric_limits<typename basic_packet_id_type<PacketIdBytes>::type>::max());
 
     /**
      * @brief Destructor.

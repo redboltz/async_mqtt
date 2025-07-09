@@ -29,7 +29,11 @@ class basic_connection_impl {
     using basic_pid_type = typename basic_packet_id_type<PacketIdBytes>::type;
 
 public:
-    explicit basic_connection_impl(protocol_version ver, basic_connection<Role, PacketIdBytes>& con);
+    explicit basic_connection_impl(
+        protocol_version ver,
+        basic_connection<Role, PacketIdBytes>& con,
+        basic_pid_type packet_id_max
+    );
 
     void notify_handshaked();
 

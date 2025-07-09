@@ -50,6 +50,25 @@ basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
 }
 
 template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename... Args>
+basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::basic_endpoint_impl(
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id_max,
+    protocol_version ver,
+    Args&&... args
+): stream_{std::forward<Args>(args)...},
+   con_{ver, packet_id_max},
+   tim_pingreq_send_{stream_.get_executor()},
+   tim_pingreq_recv_{stream_.get_executor()},
+   tim_pingresp_recv_{stream_.get_executor()},
+   tim_close_by_disconnect_{stream_.get_executor()}
+{
+    BOOST_ASSERT(
+        (Role == role::client && ver != protocol_version::undetermined) ||
+        Role != role::client
+    );
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
 inline
 as::any_io_executor
 basic_endpoint_impl<Role, PacketIdBytes, NextLayer>::get_executor() {
@@ -112,6 +131,22 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
     Args&&... args
 ): impl_{
     std::make_shared<impl_type>(
+        ver,
+        std::forward<Args>(args)...
+    )
+}
+{
+}
+
+template <role Role, std::size_t PacketIdBytes, typename NextLayer>
+template <typename... Args>
+basic_endpoint<Role, PacketIdBytes, NextLayer>::basic_endpoint(
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id_max,
+    protocol_version ver,
+    Args&&... args
+): impl_{
+    std::make_shared<impl_type>(
+        packet_id_max,
         ver,
         std::forward<Args>(args)...
     )
