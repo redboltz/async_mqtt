@@ -32,14 +32,16 @@ BOOST_AUTO_TEST_CASE(wait_until) {
         }
     };
 
+    constexpr am::packet_id_type packet_id_max = 10;
     auto ep = am::endpoint<am::role::client, am::stub_socket>{
+        packet_id_max,
         version,
         // for stub_socket args
         version,
         ioc.get_executor()
     };
 
-    for (std::size_t i = 0; i != 0xffff; ++i) {
+    for (am::packet_id_type i = 0; i != packet_id_max; ++i) {
         ep.async_acquire_unique_packet_id_wait_until(as::use_future).get();
     }
 
@@ -106,9 +108,9 @@ BOOST_AUTO_TEST_CASE(wait_until) {
                 acq_fut1 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
                 acq_fut2 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
                 acq_fut3 = ep.async_acquire_unique_packet_id_wait_until(as::use_future);
-                rel_fut1 = ep.async_release_packet_id(10001, as::use_future);
-                rel_fut2 = ep.async_release_packet_id(10002, as::use_future);
-                rel_fut3 = ep.async_release_packet_id(10003, as::use_future);
+                rel_fut1 = ep.async_release_packet_id(5, as::use_future);
+                rel_fut2 = ep.async_release_packet_id(6, as::use_future);
+                rel_fut3 = ep.async_release_packet_id(7, as::use_future);
                 pro.set_value();
             }
         )
@@ -119,11 +121,11 @@ BOOST_AUTO_TEST_CASE(wait_until) {
     rel_fut3.get();
 
     auto pid2 = acq_fut2.get();
-    BOOST_TEST(pid2 == 10002);
+    BOOST_TEST(pid2 == 6);
     auto pid1 = acq_fut1.get();
-    BOOST_TEST(pid1 == 10001);
+    BOOST_TEST(pid1 == 5);
     auto pid3 = acq_fut3.get();
-    BOOST_TEST(pid3 == 10003);
+    BOOST_TEST(pid3 == 7);
     guard.reset();
     th.join();
 }

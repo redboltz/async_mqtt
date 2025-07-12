@@ -48,6 +48,14 @@ public:
         Args&&... args
     );
 
+    template <typename... Args>
+    explicit
+    basic_endpoint_impl(
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id_max,
+        protocol_version ver,
+        Args&&... args
+    );
+
     ~basic_endpoint_impl() = default;
     basic_endpoint_impl(this_type const&) = delete;
     basic_endpoint_impl(this_type&&) = delete;

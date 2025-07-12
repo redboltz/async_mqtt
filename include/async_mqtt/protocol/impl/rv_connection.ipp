@@ -22,9 +22,8 @@ namespace async_mqtt {
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_rv_connection<Role, PacketIdBytes>::
-basic_rv_connection(protocol_version ver)
-    :base_type{ver}
-{
+basic_rv_connection(protocol_version ver, typename basic_packet_id_type<PacketIdBytes>::type packet_id_max)
+    :base_type{ver, packet_id_max} {
 }
 
 template <role Role, std::size_t PacketIdBytes>

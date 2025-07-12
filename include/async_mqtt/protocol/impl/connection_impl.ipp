@@ -155,10 +155,12 @@ ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_connection_impl<Role, PacketIdBytes>::
 basic_connection_impl(
     protocol_version ver,
-    basic_connection<Role, PacketIdBytes>& con
+    basic_connection<Role, PacketIdBytes>& con,
+    typename basic_packet_id_type<PacketIdBytes>::type packet_id_max
 )
     : con_{con},
-      protocol_version_{ver}
+      protocol_version_{ver},
+      pid_man_{packet_id_max}
 {
 }
 
@@ -1534,12 +1536,13 @@ cancel_timers() {
 template <role Role, std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_connection<Role, PacketIdBytes>::
-basic_connection(protocol_version ver)
+basic_connection(protocol_version ver, typename basic_packet_id_type<PacketIdBytes>::type packet_id_max)
     :
     impl_{
         std::make_shared<impl_type>(
             ver,
-            *this
+            *this,
+            packet_id_max
         )
     }
 {

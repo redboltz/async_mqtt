@@ -50,6 +50,22 @@ public:
     );
 
     /**
+     * @brief constructor (for packet_id limit testing)
+     * @tparam Args Types for the next layer
+     * @param  packet_id_max Maximum packet_id that can be used.
+     * @param  ver  MQTT protocol version client can set v5 or v3_1_1, in addition
+     *              server can set undetermined
+     * @param  args args for the next layer.
+     */
+    template <typename... Args>
+    explicit
+    basic_endpoint(
+        typename basic_packet_id_type<PacketIdBytes>::type packet_id_max,
+        protocol_version ver,
+        Args&&... args
+    );
+
+    /**
      * @brief destructor
      * This function destroys the basic_endpoint,
      * cancelling any outstanding asynchronous operations associated with the basic_endpoint.

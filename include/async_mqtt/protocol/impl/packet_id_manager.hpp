@@ -20,6 +20,15 @@ class packet_id_manager {
 public:
 
     /**
+     * @brief Constructor
+     *
+     * @param max The maximum packet id.
+     */
+    packet_id_manager(packet_id_type max = std::numeric_limits<packet_id_type>::max())
+        : va_(1,  max) {
+    }
+
+    /**
      * @brief Acquire the new unique packet id.
      *        If all packet ids are already in use, then returns std::nullopt
      *        After acquiring the packet id, you can call acquired_* functions.
@@ -68,7 +77,7 @@ public:
     }
 
 private:
-    value_allocator<packet_id_type> va_ {1, std::numeric_limits<packet_id_type>::max()};
+    value_allocator<packet_id_type> va_;
 };
 
 } // namespace async_mqtt
