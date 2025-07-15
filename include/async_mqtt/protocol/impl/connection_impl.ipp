@@ -344,6 +344,10 @@ void
 basic_connection_impl<Role, PacketIdBytes>::
 set_offline_publish(bool val) {
     offline_publish_ = val;
+    if (offline_publish_) {
+        // It will be overwritten when send/recv connect
+        need_store_ = true;
+    }
 }
 
 template <role Role, std::size_t PacketIdBytes>

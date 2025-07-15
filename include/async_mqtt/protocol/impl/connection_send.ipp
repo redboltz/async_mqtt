@@ -25,6 +25,23 @@ process_send_packet(
 ) {
     using packet_type = std::decay_t<ActualPacket>;
     std::optional<typename basic_packet_id_type<PacketIdBytes>::type> release_packet_id_if_send_error;
+
+    auto error_proc =
+        [&] {
+            con_.on_error(
+                make_error_code(
+                    mqtt_error::packet_not_allowed_to_send
+                )
+            );
+            if constexpr(own_packet_id<packet_type>()) {
+                auto packet_id = actual_packet.packet_id();
+                if (packet_id != 0 && pid_man_.is_used_id(packet_id)) {
+                    pid_man_.release_id(packet_id);
+                    con_.on_packet_id_release(packet_id);
+                }
+            }
+        };
+
     // MQTT protocol sendable packet check
     if (
         !(
@@ -32,11 +49,7 @@ process_send_packet(
             (can_send_as_server(Role) && is_server_sendable<packet_type>())
         )
     ) {
-        con_.on_error(
-            make_error_code(
-                mqtt_error::packet_not_allowed_to_send
-            )
-        );
+        error_proc();
         return false;
     }
 
@@ -108,12 +121,28 @@ process_send_packet(
     }
     else {
         if (status_ != connection_status::connected) {
-            if constexpr(!is_publish<packet_type>()) {
-                con_.on_error(
-                    make_error_code(
-                        mqtt_error::packet_not_allowed_to_send
-                    )
-                );
+            if constexpr(is_publish<packet_type>()) {
+                if (need_store_ && offline_publish_) {
+                    ASYNC_MQTT_LOG("mqtt_impl", trace)
+                        << "publish message is not sent but stored if QoS is 1 or 2";
+                }
+                else {
+                    ASYNC_MQTT_LOG("mqtt_impl", error)
+                        << "publish message try to send but not connected";
+                    error_proc();
+                    return false;
+                }
+            }
+            else if constexpr(is_pubrel<packet_type>()) {
+                if (!need_store_) {
+                    ASYNC_MQTT_LOG("mqtt_impl", error)
+                        << "pubrel message try to send but not connected";
+                    error_proc();
+                    return false;
+                }
+            }
+            else {
+                error_proc();
                 return false;
             }
         }
@@ -123,6 +152,13 @@ process_send_packet(
                     mqtt_error::packet_not_allowed_to_send
                 )
             );
+            if constexpr(own_packet_id<packet_type>()) {
+                auto packet_id = actual_packet.packet_id();
+                if (packet_id != 0) {
+                    pid_man_.release_id(packet_id);
+                    con_.on_packet_id_release(packet_id);
+                }
+            }
             return false;
         }
     }
@@ -503,6 +539,11 @@ process_send_packet(
         BOOST_ASSERT(pid_man_.is_used_id(packet_id));
         if (need_store_) store_.add(actual_packet);
         pid_pubcomp_.insert(packet_id);
+        if (status_ != connection_status::connected) {
+            ASYNC_MQTT_LOG("mqtt_impl", trace)
+                << "pubrel message is not sent but stored";
+            return true;
+        }
     }
 
     if constexpr(is_instance_of<v5::basic_pubcomp_packet, packet_type>::value) {
@@ -555,29 +596,8 @@ process_send_packet(
 
     if constexpr(is_publish<packet_type>()) {
         if (status_ != connection_status::connected) {
-            if (offline_publish_) {
-                ASYNC_MQTT_LOG("mqtt_impl", trace)
-                    << "publish message is not sent but stored";
-
-                return true;
-            }
-            else {
-                ASYNC_MQTT_LOG("mqtt_impl", error)
-                    << "publish message try to send but not connected";
-                con_.on_error(
-                    make_error_code(
-                        mqtt_error::packet_not_allowed_to_send
-                    )
-                );
-                if constexpr(own_packet_id<packet_type>()) {
-                    auto packet_id = actual_packet.packet_id();
-                    if (packet_id != 0) {
-                        pid_man_.release_id(packet_id);
-                        con_.on_packet_id_release(packet_id);
-                    }
-                }
-                return false;
-            }
+            BOOST_ASSERT(offline_publish_);
+            return true;
         }
     }
 

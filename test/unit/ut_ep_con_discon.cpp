@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
-        true,   // clean_session
+        false,  // clean_session
         0x1234, // keep_alive
         "cid1",
         std::nullopt, // will
@@ -502,6 +502,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -509,7 +510,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -606,6 +607,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -613,7 +615,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -635,6 +637,11 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         auto [ec] = ep.async_send(subscribe, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -644,6 +651,11 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     {
         auto [ec] = ep.async_send(unsubscribe, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -695,6 +707,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -702,7 +715,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -1018,7 +1031,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     ep.set_offline_publish(true);
 
     auto connect = am::v3_1_1::connect_packet{
-        true,   // clean_session
+        false,  // clean_session
         0x1234, // keep_alive
         "cid1",
         std::nullopt, // will
@@ -1217,6 +1230,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -1224,7 +1238,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -1308,6 +1322,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -1315,7 +1330,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -1359,9 +1374,23 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     }
 
     // send connack
+    int count = 0;
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(connack == wp);
+            switch (count++) {
+            case 0:
+                BOOST_TEST(connack == wp);
+                break;
+            case 1:
+                BOOST_TEST(publish == wp);
+                break;
+            case 2:
+                BOOST_TEST(pubrel == wp);
+                break;
+            default:
+                BOOST_TEST(false);
+                break;
+            }
         }
     );
     {
@@ -1401,6 +1430,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -1408,7 +1438,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v3_1_1) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -1481,7 +1511,9 @@ BOOST_AUTO_TEST_CASE(valid_client_v5) {
         std::nullopt, // will
         "user1",
         "pass1",
-        am::properties{}
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
     };
 
     auto connack = am::v5::connack_packet{
@@ -1782,7 +1814,9 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         std::nullopt, // will
         "user1",
         "pass1",
-        am::properties{}
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
     };
 
     auto connack = am::v5::connack_packet{
@@ -2003,6 +2037,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -2010,7 +2045,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2117,6 +2152,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -2124,7 +2160,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2146,6 +2182,11 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         auto [ec] = ep.async_send(subscribe, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
 
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -2155,6 +2196,11 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     {
         auto [ec] = ep.async_send(unsubscribe, as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2206,6 +2252,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -2213,7 +2260,7 @@ BOOST_AUTO_TEST_CASE(invalid_client_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2584,7 +2631,9 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         std::nullopt, // will
         "user1",
         "pass1",
-        am::properties{}
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire},
+        }
     };
 
     auto connack = am::v5::connack_packet{
@@ -2746,8 +2795,18 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         }
     );
     {
+        // register packet_id for testing
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
+    }
+    {
         auto [ec] = ep.async_send(am::packet_variant(subscribe), as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2758,6 +2817,11 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     {
         auto [ec] = ep.async_send(am::packet_variant(unsubscribe), as::as_tuple(as::use_future)).get();
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+    }
+    {
+        // register packet_id due to the error just before
+        auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2770,9 +2834,6 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
-    // register packet_id for testing
-    auto [ec] = ep.async_register_packet_id(0x1, as::as_tuple(as::use_future)).get();
-    BOOST_TEST(!ec);
     // offline publish success
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
@@ -2815,6 +2876,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -2822,7 +2884,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2906,6 +2968,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -2913,7 +2976,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
@@ -2957,9 +3020,23 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     }
 
     // send connack
+    int count = 0;
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant wp) {
-            BOOST_TEST(connack == wp);
+            switch (count++) {
+            case 0:
+                BOOST_TEST(connack == wp);
+                break;
+            case 1:
+                BOOST_TEST(publish == wp);
+                break;
+            case 2:
+                BOOST_TEST(pubrel == wp);
+                break;
+            default:
+                BOOST_TEST(false);
+                break;
+            }
         }
     );
     {
@@ -2999,6 +3076,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
         BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
     }
 
+    // stored but not sent
     ep.next_layer().set_write_packet_checker(
         [&](am::packet_variant) {
             BOOST_TEST(false);
@@ -3006,7 +3084,7 @@ BOOST_AUTO_TEST_CASE(invalid_server_v5) {
     );
     {
         auto [ec] = ep.async_send(pubrel, as::as_tuple(as::use_future)).get();
-        BOOST_TEST(ec == am::mqtt_error::packet_not_allowed_to_send);
+        BOOST_TEST(!ec);
     }
 
     ep.next_layer().set_write_packet_checker(
