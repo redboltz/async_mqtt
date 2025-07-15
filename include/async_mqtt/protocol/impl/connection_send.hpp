@@ -57,6 +57,13 @@ send(Packet packet) {
                             mqtt_error::packet_not_allowed_to_send
                         )
                     );
+                    if constexpr(own_packet_id<packet_type>()) {
+                        auto packet_id = actual_packet.packet_id();
+                        if (packet_id != 0 && pid_man_.is_used_id(packet_id)) {
+                            pid_man_.release_id(packet_id);
+                            con_.on_packet_id_release(packet_id);
+                        }
+                    }
                     return;
                 }
                 send_and_post_process(force_move(actual_packet));
@@ -64,21 +71,26 @@ send(Packet packet) {
         );
     }
     else {
-    // MQTT protocol sendable packet check (Compile time)
-    using packet_type = std::decay_t<Packet>;
+        // MQTT protocol sendable packet check (Compile time)
+        using packet_type = std::decay_t<Packet>;
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
         if constexpr (
-            !(
-                (can_send_as_client(Role) && is_client_sendable<packet_type>()) ||
-                (can_send_as_server(Role) && is_server_sendable<packet_type>())
-            )
+            (can_send_as_client(Role) && is_client_sendable<packet_type>()) ||
+            (can_send_as_server(Role) && is_server_sendable<packet_type>())
         ) {
             con_.on_error(
                 make_error_code(
                     mqtt_error::packet_not_allowed_to_send
                 )
             );
+            if constexpr(own_packet_id<packet_type>()) {
+                auto packet_id = packet.packet_id();
+                if (packet_id != 0 && pid_man_.is_used_id(packet_id)) {
+                    pid_man_.release_id(packet_id);
+                    con_.on_packet_id_release(packet_id);
+                }
+            }
             return;
         }
 #else  // defined(ASYNC_MQTT_SEPARATE_COMPILATION)

@@ -3,6 +3,7 @@
 = History
 
 == 10.2.0 (undetermined)
+* Fixed offline publish/pubrel packet_id management. #419
 * Added packet_id limit functionality for testing. #418
 * Recovered missing compile-time Role-Packet checking functionality. #417
 * Added broker's Client Certificate subjectAltName. #416
