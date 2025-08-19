@@ -313,6 +313,7 @@ recv_op {
                 as::detached
             );
             ep->publish_queue_.pop_front();
+            vacancy_opt = ep->con_.get_receive_maximum_vacancy_for_send();
         }
     }
 };
