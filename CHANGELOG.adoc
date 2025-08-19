@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.1
+* Fixed receive_maximum invalid handling issue. #422
+
 == 10.2.0
 * Fixed offline publish/pubrel packet_id management. #419
 * Added packet_id limit functionality for testing. #418
