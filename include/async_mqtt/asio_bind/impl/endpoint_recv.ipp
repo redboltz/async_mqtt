@@ -85,7 +85,7 @@ recv_op {
                         break;
                     case timer_kind::pingresp_recv:
                         if (ev.get_op() == timer_op::cancel) {
-                            reset_pingresp_recv_timer(ep, ev.get_ms());
+                            cancel_pingresp_recv_timer(ep);
                         }
                         else {
                             BOOST_ASSERT(false);
