@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.2
+* Fixed pingresp timer management. #423
+
 == 10.2.1
 * Fixed receive_maximum invalid handling issue. #422
 
