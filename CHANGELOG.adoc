@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.3 undetermined
+* Added missing pingresp timer cancel request hanndling on asio_bind sending. #426
+
 == 10.2.2
 * Fixed pingresp timer management. #423
 

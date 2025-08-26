@@ -91,6 +91,9 @@ send_op {
                         case timer_op::reset:
                             reset_pingresp_recv_timer(ep, ev.get_ms());
                             break;
+                        case timer_op::cancel:
+                            cancel_pingresp_recv_timer(ep);
+                            break;
                         default:
                             BOOST_ASSERT(false);
                             break;
