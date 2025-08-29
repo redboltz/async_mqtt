@@ -2,7 +2,7 @@
 
 = History
 
-== 10.2.3 undetermined
+== 10.2.3
 * Added missing pingresp timer cancel request hanndling on asio_bind sending. #426
 
 == 10.2.2
