@@ -76,8 +76,10 @@ send(Packet packet) {
 
 #if defined(ASYNC_MQTT_SEPARATE_COMPILATION)
         if constexpr (
-            (can_send_as_client(Role) && is_client_sendable<packet_type>()) ||
-            (can_send_as_server(Role) && is_server_sendable<packet_type>())
+            !(
+                (can_send_as_client(Role) && is_client_sendable<packet_type>()) ||
+                (can_send_as_server(Role) && is_server_sendable<packet_type>())
+            )
         ) {
             con_.on_error(
                 make_error_code(

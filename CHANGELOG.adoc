@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.4
+* Fixed invalid sendable packet checking whne ASYNC_MQTT_SEPARATE_COMPILATION is defined. #428
+
 == 10.2.3
 * Added missing pingresp timer cancel request hanndling on asio_bind sending. #426
 
