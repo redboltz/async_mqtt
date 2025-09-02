@@ -273,6 +273,32 @@ process_send_packet(
                             BOOST_ASSERT(p.val() != 0);
                             maximum_packet_size_recv_ = p.val();
                         },
+                        [&](property::server_keep_alive const& p) {
+                            auto val = p.val();
+                            if (val == 0) {
+                                if (pingreq_recv_set_) {
+                                    pingreq_recv_set_ = false;
+                                    con_.on_timer_op(
+                                        timer_op::cancel,
+                                        timer_kind::pingreq_recv
+                                    );
+                                }
+                                pingreq_recv_timeout_ms_.reset();
+                            }
+                            else {
+                                pingreq_recv_timeout_ms_.emplace(
+                                    std::chrono::milliseconds{
+                                        val * 1000 * 3 / 2
+                                    }
+                                );
+                                pingreq_recv_set_ = true;
+                                con_.on_timer_op(
+                                    timer_op::reset,
+                                    timer_kind::pingreq_recv,
+                                    *pingreq_recv_timeout_ms_
+                                );
+                            }
+                        },
                         [](auto const&){}
                     }
                 );

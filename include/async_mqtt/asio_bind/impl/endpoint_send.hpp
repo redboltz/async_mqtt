@@ -78,6 +78,9 @@ send_op {
                         break;
                     case timer_kind::pingreq_recv:
                         switch (ev.get_op()) {
+                        case timer_op::reset:
+                            reset_pingreq_recv_timer(ep, ev.get_ms());
+                            break;
                         case timer_op::cancel:
                             cancel_pingreq_recv_timer(ep);
                             break;
