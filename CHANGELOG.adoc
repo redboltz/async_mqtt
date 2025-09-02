@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.5
+* Fixed missing server_keep_alive timer operation for CONNACK packet sending. #429
+
 == 10.2.4
 * Fixed invalid sendable packet checking whne ASYNC_MQTT_SEPARATE_COMPILATION is defined. #428
 
