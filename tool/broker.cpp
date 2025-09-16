@@ -112,10 +112,15 @@ std::shared_ptr<as::ssl::context> init_ctx(
     std::string const& key_filename,
     std::optional<std::string> const& verify_file
 ) {
-    auto ctx = std::make_shared<as::ssl::context>(as::ssl::context::tlsv12);
+    auto ctx = std::make_shared<as::ssl::context>(as::ssl::context::tls);
     ctx->set_options(
         as::ssl::context::default_workarounds |
-        as::ssl::context::single_dh_use);
+        as::ssl::context::single_dh_use |
+        as::ssl::context::no_sslv2 |
+        as::ssl::context::no_sslv3 |
+        as::ssl::context::no_tlsv1 |
+        as::ssl::context::no_tlsv1_1
+    );
     boost::system::error_code ec;
     ctx->use_certificate_chain_file(certificate_filename, ec);
     if (ec) {
