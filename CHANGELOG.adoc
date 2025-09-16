@@ -2,6 +2,12 @@
 
 = History
 
+== 10.2.6
+* Changed trial broker on `mqtt.redboltz.net` ws and wss port. #430
+  * ws was 10080 but Chrome block it by default. Updated to 80.
+  * wss was 10443 but Chrome doesn't block it by default. But for consistency, updated to 443.
+  * system_test still uses 10080 and 10443 to avoid conflict.
+
 == 10.2.5
 * Fixed missing server_keep_alive timer operation for CONNACK packet sending. #429
 

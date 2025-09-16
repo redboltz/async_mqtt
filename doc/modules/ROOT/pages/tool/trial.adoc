@@ -7,8 +7,8 @@ You can connect to the broker `async-mqtt.redboltz.net` for testing.
 
 |1883|MQTT on TCP|./client_cli.sh --host async-mqtt.redboltz.net --port 1883 --protocol mqtt
 |8883|MQTT on TLS|./client_cli.sh --host async-mqtt.redboltz.net --port 8883 --protocol mqtts
-|10080|MQTT on Websocket|./client_cli.sh --host async-mqtt.redboltz.net --port 10080 --protocol ws
-|10443|MQTT on Websocket(TLS)|./client_cli.sh --host async-mqtt.redboltz.net --port 10443 --protocol wss
+|80|MQTT on Websocket|./client_cli.sh --host async-mqtt.redboltz.net --port 80 --protocol ws
+|443|MQTT on Websocket(TLS)|./client_cli.sh --host async-mqtt.redboltz.net --port 443 --protocol wss
 |===
 
 == Important notice

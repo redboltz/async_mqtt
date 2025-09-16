@@ -89,8 +89,8 @@ Protocol | Host | Container
 ---|---|---
 mqtt|1883|1883
 mqtts|8883|8883
-ws|10080|10080
-wss|10443|10443
+ws|80|80
+wss|443|443
 
 The ports on the host need to be usable.
 You can change the ports of the host by editing `broker.sh`.
