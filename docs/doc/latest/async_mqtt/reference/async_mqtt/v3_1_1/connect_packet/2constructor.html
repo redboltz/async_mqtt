@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::v3_1_1::connect_packet::connect_packet :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/v3_1_1/connect_packet/2constructor.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../../_/css/boostlook.css">
@@ -202,101 +202,54 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="2constructor.html"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v3_1_1.html">v3_1_1</a>::<a href="../../../async_mqtt/v3_1_1/connect_packet.html">connect_packet</a>::connect_packet</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v3_1_1.html">v3_1_1</a>::<a href="../../../async_mqtt/v3_1_1/connect_packet.html">connect_packet</a>::connect_packet</h1>
   <div class="sect1">
-<h2 id="async_mqtt-v3_1_1-connect_packet-2constructor"><a class="anchor" href="#async_mqtt-v3_1_1-connect_packet-2constructor"></a><a href="../../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../../v3_1_1.html" class="xref page">v3_1_1</a>::<a href="../connect_packet.html" class="xref page">connect_packet</a>::connect_packet</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>constructor</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-0a.html" class="xref page">connect_packet</a>(
+<a href="2constructor-07.html" class="xref page">connect_packet</a>(
     bool clean_session,
     <a href="../../../std.html" class="xref page">std</a>::uint16_t keep_alive_sec,
     <a href="../../../std.html" class="xref page">std</a>::string client_id,
     <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; user_name = std::nullopt,
-    <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; password = std::nullopt);</code></pre>
+    <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; password = std::nullopt);
+  <a href="2constructor-07.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-0c.html" class="xref page">connect_packet</a>(
+<a href="2constructor-0f.html" class="xref page">connect_packet</a>(
     bool clean_session,
     <a href="../../../std.html" class="xref page">std</a>::uint16_t keep_alive_sec,
     <a href="../../../std.html" class="xref page">std</a>::string client_id,
     <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../will.html" class="xref page">will</a>&gt; w,
     <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; user_name = std::nullopt,
-    <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; password = std::nullopt);</code></pre>
+    <a href="../../../std.html" class="xref page">std</a>::optional&lt;<a href="../../../std.html" class="xref page">std</a>::string&gt; password = std::nullopt);
+  <a href="2constructor-0f.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>clean_session</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">When the endpoint sends CONNECT packet with clean_session is true,
-then stored packets are erased.
-When the endpoint receives CONNECT packet with clean_session is false,
-then the endpoint start storing PUBLISH packet (QoS1 and QoS2) and PUBREL packet
-that would send by the endpoint until the corresponding response would be received.</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349231</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>keep_alive_sec</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">When the endpoint sends CONNECT packet with keep_alive_sec,
-then the endpoint start sending PINGREQ packet keep_alive_sec after the last
-packet is sent.
-When the endpoint receives CONNECT packet with keep_alive_sec,
-then start keep_alive_sec * 1.5 timer.
-The timer is reset if any packet is received. If the timer is fired, then
-the endpoint close the underlying layer automatically.
-At that time, if the endpoint recv() is called, then the CompletionToken is
-invoked with system_error.</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349237</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>client_id</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT ClientIdentifier. It is the request to the broker for generating ClientIdentifier
-if it is empty string and clean_session is true, If false then protocol error.</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349242</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>user_name</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT UserName. It is often used for authentication.</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349245</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>password</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT Password. It is often used for authentication.</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349246</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>w</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT Will</p>
-<p class="tableblock">See http:&sol;&sol;docs.oasis-open.org&sol;mqtt&sol;mqtt&sol;v3.1.1&sol;os&sol;mqtt-v3.1.1-os.html#_Toc385349243</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>

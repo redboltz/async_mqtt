@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::protocol::async_underlying_handshake :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/protocol/async_underlying_handshake.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../_/css/boostlook.css">
@@ -202,18 +202,27 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="async_underlying_handshake.html"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/protocol.html">protocol</a>::async_underlying_handshake</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/protocol.html">protocol</a>::async_underlying_handshake</h1>
   <div class="sect1">
-<h2 id="async_mqtt-protocol-async_underlying_handshake"><a class="anchor" href="#async_mqtt-protocol-async_underlying_handshake"></a><a href="../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../protocol.html" class="xref page">protocol</a>::async_underlying_handshake</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>resovling name and connect TCP layer</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;
@@ -221,12 +230,17 @@
     typename Executor,
     typename CompletionToken = <a href="../as.html" class="xref page">as</a>::default_completion_token_t&lt;Executor&gt;&gt;
 auto
-<a href="async_underlying_handshake-01.html" class="xref page">async_underlying_handshake</a>(
+<a href="async_underlying_handshake-03.html" class="xref page">async_underlying_handshake</a>(
     <a href="../as.html" class="xref page">as</a>::basic_stream_socket&lt;Socket, Executor&gt;&amp; layer,
     <a href="../../std.html" class="xref page">std</a>::string_view host,
     <a href="../../std.html" class="xref page">std</a>::string_view port,
-    CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;Executor&gt;{});</code></pre>
+    CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;Executor&gt;{});
+  <a href="async_underlying_handshake-03.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>TLS handshake
+This function does underlying layers handshaking prior to TLS handshake</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -234,14 +248,19 @@ auto
     typename NextLayer,
     typename CompletionToken = <a href="../as.html" class="xref page">as</a>::default_completion_token_t&lt;<a href="../as.html" class="xref page">as</a>::ssl::stream&lt;NextLayer&gt;::executor_type&gt;&gt;
 auto
-<a href="async_underlying_handshake-07.html" class="xref page">async_underlying_handshake</a>(
+<a href="async_underlying_handshake-0f.html" class="xref page">async_underlying_handshake</a>(
     <a href="../as.html" class="xref page">as</a>::ssl::stream&lt;NextLayer&gt;&amp; layer,
     <a href="../../std.html" class="xref page">std</a>::string_view host,
     <a href="../../std.html" class="xref page">std</a>::string_view port,
     CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;
         typename as::ssl::stream&lt;NextLayer&gt;::executor_type
-    &gt;{});</code></pre>
+    &gt;{});
+  <a href="async_underlying_handshake-0f.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Websocket handshake
+This function does underlying layers handshaking prior to Websocket handshake</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -249,15 +268,21 @@ auto
     typename NextLayer,
     typename CompletionToken = <a href="../as.html" class="xref page">as</a>::default_completion_token_t&lt;<a href="../bs.html" class="xref page">bs</a>::websocket::stream&lt;NextLayer&gt;::executor_type&gt;&gt;
 auto
-<a href="async_underlying_handshake-02.html" class="xref page">async_underlying_handshake</a>(
+<a href="async_underlying_handshake-05.html" class="xref page">async_underlying_handshake</a>(
     <a href="../bs.html" class="xref page">bs</a>::websocket::stream&lt;NextLayer&gt;&amp; layer,
     <a href="../../std.html" class="xref page">std</a>::string_view host,
     <a href="../../std.html" class="xref page">std</a>::string_view port,
     <a href="../../std.html" class="xref page">std</a>::string_view path,
     CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;
         typename bs::websocket::stream&lt;NextLayer&gt;::executor_type
-    &gt;{});</code></pre>
+    &gt;{});
+  <a href="async_underlying_handshake-05.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Websocket handshake
+This function does underlying layers handshaking prior to Websocket handshake
+Websocket path is set as "&sol;".</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -265,58 +290,15 @@ auto
     typename NextLayer,
     typename CompletionToken = <a href="../as.html" class="xref page">as</a>::default_completion_token_t&lt;<a href="../bs.html" class="xref page">bs</a>::websocket::stream&lt;NextLayer&gt;::executor_type&gt;&gt;
 auto
-<a href="async_underlying_handshake-0a.html" class="xref page">async_underlying_handshake</a>(
+<a href="async_underlying_handshake-04.html" class="xref page">async_underlying_handshake</a>(
     <a href="../bs.html" class="xref page">bs</a>::websocket::stream&lt;NextLayer&gt;&amp; layer,
     <a href="../../std.html" class="xref page">std</a>::string_view host,
     <a href="../../std.html" class="xref page">std</a>::string_view port,
     CompletionToken&amp;&amp; token = as::default_completion_token_t&lt;
         typename bs::websocket::stream&lt;NextLayer&gt;::executor_type
-    &gt;{});</code></pre>
+    &gt;{});
+  <a href="async_underlying_handshake-04.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_return_value"><a class="anchor" href="#_return_value"></a>Return Value</h3>
-<div class="paragraph">
-<p>deduced by token</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>layer</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TCP layer</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>host</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">host name or IP address to connect</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>port</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">port number to connect</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>token</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">completion token. signature is void(error_code)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>path</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">websocket path</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>

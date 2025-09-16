@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::buffer::buffer :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/buffer/2constructor.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../_/css/boostlook.css">
@@ -202,147 +202,156 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="2constructor.html"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/buffer.html">buffer</a>::buffer</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/buffer.html">buffer</a>::buffer</h1>
   <div class="sect1">
-<h2 id="async_mqtt-buffer-2constructor"><a class="anchor" href="#async_mqtt-buffer-2constructor"></a><a href="../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../buffer.html" class="xref page">buffer</a>::buffer</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>default constructor</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr
-<a href="2constructor-047.html" class="xref page">buffer</a>() noexcept = default;</code></pre>
+<a href="2constructor-047.html" class="xref page">buffer</a>() noexcept = default;
+  <a href="2constructor-047.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>copy constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-0d4.html" class="xref page">buffer</a>(<a href="../buffer.html" class="xref page">buffer</a> const&amp; other) = default;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-0d46.html" class="xref page">buffer</a>(<a href="../buffer.html" class="xref page">buffer</a> const&amp; other) = default;
+  <a href="2constructor-0d46.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>move constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-0f.html" class="xref page">buffer</a>(<a href="../buffer.html" class="xref page">buffer</a>&amp;&amp; other) = default;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-0f8.html" class="xref page">buffer</a>(<a href="../buffer.html" class="xref page">buffer</a>&amp;&amp; other) = default;
+  <a href="2constructor-0f8.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor
+The buffer doesn&#8217;t manage the lifetime</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr
 <a href="2constructor-02.html" class="xref page">buffer</a>(
     char const* s,
-    <a href="../../std.html" class="xref page">std</a>::size_t count);</code></pre>
+    <a href="../../std.html" class="xref page">std</a>::size_t count);
+  <a href="2constructor-02.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor
+The buffer doesn&#8217;t manage the lifetime</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr
-<a href="2constructor-03c.html" class="xref page">buffer</a>(char const* s);</code></pre>
+<a href="2constructor-03.html" class="xref page">buffer</a>(char const* s);
+  <a href="2constructor-03.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>move assign operator
+The buffer doesn&#8217;t manage the lifetime.
+The memory between first and last must be continuous.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;
     typename It,
     typename End,
-    <a href="../../std.html" class="xref page">std</a>::void* = nullptr&gt;
+    <a href="../../std.html" class="xref page">std</a>::enable_if_t&lt;detail::is_input_iterator&lt;It&gt;::value &amp;&amp; detail::is_input_iterator&lt;End&gt;::value&gt;* = nullptr&gt;
 constexpr
 <a href="2constructor-05.html" class="xref page">buffer</a>(
     It first,
-    End last);</code></pre>
+    End last);
+  <a href="2constructor-05.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>std::string_view constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr
 explicit
-<a href="2constructor-09.html" class="xref page">buffer</a>(<a href="../../std.html" class="xref page">std</a>::string_view sv);</code></pre>
+<a href="2constructor-0d42.html" class="xref page">buffer</a>(<a href="../../std.html" class="xref page">std</a>::string_view sv);
+  <a href="2constructor-0d42.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-0dc.html" class="xref page">buffer</a>(<a href="../../std.html" class="xref page">std</a>::string s);</code></pre>
-</div>
+<div class="paragraph">
+<p>string constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-01.html" class="xref page">buffer</a>(
+<a href="2constructor-0fd.html" class="xref page">buffer</a>(<a href="../../std.html" class="xref page">std</a>::string s);
+  <a href="2constructor-0fd.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>std::string_view and lifetime constructor</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
+<a href="2constructor-04b.html" class="xref page">buffer</a>(
     <a href="../../std.html" class="xref page">std</a>::string_view sv,
-    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);</code></pre>
+    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);
+  <a href="2constructor-04b.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>pointer, size,  and lifetime constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-03b.html" class="xref page">buffer</a>(
+<a href="2constructor-0a.html" class="xref page">buffer</a>(
     char const* s,
     <a href="../../std.html" class="xref page">std</a>::size_t count,
-    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);</code></pre>
+    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);
+  <a href="2constructor-0a.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>range and lifetime constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;
     typename It,
     typename End,
-    <a href="../../std.html" class="xref page">std</a>::void* = nullptr&gt;
+    <a href="../../std.html" class="xref page">std</a>::enable_if_t&lt;detail::is_input_iterator&lt;It&gt;::value &amp;&amp; detail::is_input_iterator&lt;End&gt;::value&gt;* = nullptr&gt;
 explicit
-<a href="2constructor-04d.html" class="xref page">buffer</a>(
+<a href="2constructor-0c.html" class="xref page">buffer</a>(
     It first,
     End last,
-    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);</code></pre>
+    <a href="../../std.html" class="xref page">std</a>::shared_ptr&lt;void&gt; life);
+  <a href="2constructor-0c.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>s</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the begin pointer of continuous  memory that contains characters</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>count</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the length of the continuours memory</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>first</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the begin pointer of continuous  memory that contains characters</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>last</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the end pointer of continuous  memory that contains characters</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>sv</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">std::string_view
-This constructor doesn&#8217;t hold the sv target&#8217;s lifetime.
-It behaves as std::string_view. Caller needs to manage the target lifetime.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>life</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sv target&#8217;s lifetime keeping object by shared ownership
-If user creates buffer via this constructor, sp&#8217;s lifetime is held by the buffer.</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>

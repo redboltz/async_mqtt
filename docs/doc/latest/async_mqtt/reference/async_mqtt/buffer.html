@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::buffer :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/buffer.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/boostlook.css">
@@ -202,12 +202,22 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="buffer.html"><a href="../async_mqtt.html">async_mqtt</a>::buffer</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
-  <div class="sect1">
-<h2 id="async_mqtt-buffer"><a class="anchor" href="#async_mqtt-buffer"></a><a href="../async_mqtt.html" class="xref page">async_mqtt</a>::buffer</h2>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../async_mqtt.html">async_mqtt</a>::buffer</h1>
+  <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>buffer that has string_view interface and shared ownership
@@ -216,8 +226,11 @@ Typical MQTT client developpers don&#8217;t need to care about the buffer.
 This class provides string_view interface.
 This class holds string_view pointee&#8217;s lifetime optionally.</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Declared in header <code>&lt;<a href="https://www.github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/util/buffer.hpp#L36" target="blank_">async_mqtt/util/buffer.hpp</a>&gt;</code></p>
 </div>
@@ -227,8 +240,10 @@ This class holds string_view pointee&#8217;s lifetime optionally.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_types"><a class="anchor" href="#_types"></a>Types</h3>
+</div>
+<div class="sect1">
+<h2 id="_types"><a class="anchor" href="#_types"></a>Types</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -294,8 +309,10 @@ This class holds string_view pointee&#8217;s lifetime optionally.</p>
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_member_functions"><a class="anchor" href="#_member_functions"></a>Member Functions</h3>
+</div>
+<div class="sect1">
+<h2 id="_member_functions"><a class="anchor" href="#_member_functions"></a>Member Functions</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -408,11 +425,11 @@ Compare only the view.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">get the largeset possible number of the buffer</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/2conversion-0f.html" class="xref page"><code>operator std::string_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/2conversion-0d.html" class="xref page"><code>operator as::const_buffer</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">conversion operator to the buffer as asio const_buffer</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/2conversion-0d.html" class="xref page"><code>operator as::const_buffer</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/2conversion-0f.html" class="xref page"><code>operator std::string_view</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">conversion operator to the buffer as asio const_buffer</p></td>
 </tr>
 <tr>
@@ -464,8 +481,10 @@ In addition the lifetime is shared between returned buffer and this buffer.</p><
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_static_data_members"><a class="anchor" href="#_static_data_members"></a>Static Data Members</h3>
+</div>
+<div class="sect1">
+<h2 id="_static_data_members"><a class="anchor" href="#_static_data_members"></a>Static Data Members</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -483,8 +502,10 @@ In addition the lifetime is shared between returned buffer and this buffer.</p><
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_friends"><a class="anchor" href="#_friends"></a>Friends</h3>
+</div>
+<div class="sect1">
+<h2 id="_friends"><a class="anchor" href="#_friends"></a>Friends</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -506,7 +527,7 @@ comparison target is the view of the buffer. life holder is not compared.</p></t
 comparison target is the view of the buffer. life holder is not compared.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0a6.html" class="xref page"><code>operator&lt;&lt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0cf.html" class="xref page"><code>operator&lt;&lt;</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">output to the stream</p></td>
 </tr>
 <tr>
@@ -520,20 +541,22 @@ comparison target is the view of the buffer. life holder is not compared.</p></t
 comparison target is the view of the buffer. life holder is not compared.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0a0.html" class="xref page"><code>operator&gt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0a.html" class="xref page"><code>operator&gt;</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">greater than operator
 comparison target is the view of the buffer. life holder is not compared.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0c.html" class="xref page"><code>operator&gt;=</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="buffer/08friend-0c8.html" class="xref page"><code>operator&gt;=</code></a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">greater than or equal to operator
 comparison target is the view of the buffer. life holder is not compared.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sect2">
-<h3 id="_description"><a class="anchor" href="#_description"></a>Description</h3>
+</div>
+<div class="sect1">
+<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
+<div class="sectionbody">
 <div class="sect3">
 <h4 id="_thread_safety"><a class="anchor" href="#_thread_safety"></a>Thread Safety</h4>
 <div class="ulist">
@@ -545,7 +568,6 @@ comparison target is the view of the buffer. life holder is not compared.</p></t
 <p>Shared objects: Unsafe</p>
 </li>
 </ul>
-</div>
 </div>
 </div>
 </div>

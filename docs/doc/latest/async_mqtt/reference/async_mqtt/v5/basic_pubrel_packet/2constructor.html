@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::v5::basic_pubrel_packet::basic_pubrel_packet :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/v5/basic_pubrel_packet/2constructor.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../../_/css/boostlook.css">
@@ -202,74 +202,58 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="2constructor.html"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v5.html">v5</a>::<a href="../../../async_mqtt/v5/basic_pubrel_packet.html">basic_pubrel_packet</a>::basic_pubrel_packet</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v5.html">v5</a>::<a href="../../../async_mqtt/v5/basic_pubrel_packet.html">basic_pubrel_packet</a>::basic_pubrel_packet</h1>
   <div class="sect1">
-<h2 id="async_mqtt-v5-basic_pubrel_packet-2constructor"><a class="anchor" href="#async_mqtt-v5-basic_pubrel_packet-2constructor"></a><a href="../../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../../v5.html" class="xref page">v5</a>::<a href="../basic_pubrel_packet.html" class="xref page">basic_pubrel_packet</a>::basic_pubrel_packet</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>constructor</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-0c.html" class="xref page">basic_pubrel_packet</a>(
+<a href="2constructor-06.html" class="xref page">basic_pubrel_packet</a>(
     <a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id,
     <a href="../../pubrel_reason_code.html" class="xref page">pubrel_reason_code</a> reason_code,
-    <a href="../../properties.html" class="xref page">properties</a> props);</code></pre>
+    <a href="../../properties.html" class="xref page">properties</a> props);
+  <a href="2constructor-06.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
-<a href="2constructor-0de.html" class="xref page">basic_pubrel_packet</a>(<a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id);</code></pre>
+<a href="2constructor-0de.html" class="xref page">basic_pubrel_packet</a>(<a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id);
+  <a href="2constructor-0de.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">explicit
 <a href="2constructor-0d1.html" class="xref page">basic_pubrel_packet</a>(
     <a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id,
-    <a href="../../pubrel_reason_code.html" class="xref page">pubrel_reason_code</a> reason_code);</code></pre>
+    <a href="../../pubrel_reason_code.html" class="xref page">pubrel_reason_code</a> reason_code);
+  <a href="2constructor-0d1.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>packet_id</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT PacketIdentifier that is corresponding to the PUBREC packet</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>reason_code</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PubrelReasonCode</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901144</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>props</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">properties.</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901145" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901145</a></p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>

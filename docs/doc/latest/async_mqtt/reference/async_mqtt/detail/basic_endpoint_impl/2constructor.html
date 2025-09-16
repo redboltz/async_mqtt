@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::detail::basic_endpoint_impl::basic_endpoint_impl :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/detail/basic_endpoint_impl/2constructor.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../../_/css/boostlook.css">
@@ -202,33 +202,55 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="2constructor.html"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/detail.html">detail</a>::<a href="../../../async_mqtt/detail/basic_endpoint_impl.html">basic_endpoint_impl</a>::basic_endpoint_impl</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/detail.html">detail</a>::<a href="../../../async_mqtt/detail/basic_endpoint_impl.html">basic_endpoint_impl</a>::basic_endpoint_impl</h1>
   <div class="sect1">
-<h2 id="async_mqtt-detail-basic_endpoint_impl-2constructor"><a class="anchor" href="#async_mqtt-detail-basic_endpoint_impl-2constructor"></a><a href="../../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../../detail.html" class="xref page">detail</a>::<a href="../basic_endpoint_impl.html" class="xref page">basic_endpoint_impl</a>::basic_endpoint_impl</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;typename... Args&gt;
 explicit
 <a href="2constructor-0a.html" class="xref page">basic_endpoint_impl</a>(
     <a href="../../protocol_version.html" class="xref page">protocol_version</a> ver,
-    Args&amp;&amp;... args);</code></pre>
+    Args&amp;&amp;... args);
+  <a href="2constructor-0a.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-05c.html" class="xref page">basic_endpoint_impl</a>(this_type const&amp;) = delete;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;typename... Args&gt;
+explicit
+<a href="2constructor-04.html" class="xref page">basic_endpoint_impl</a>(
+    <a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id_max,
+    <a href="../../protocol_version.html" class="xref page">protocol_version</a> ver,
+    Args&amp;&amp;... args);
+  <a href="2constructor-04.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-05b.html" class="xref page">basic_endpoint_impl</a>(this_type&amp;&amp;) = delete;</code></pre>
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-05c.html" class="xref page">basic_endpoint_impl</a>(this_type const&amp;) = delete;
+  <a href="2constructor-05c.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="2constructor-05b.html" class="xref page">basic_endpoint_impl</a>(this_type&amp;&amp;) = delete;
+  <a href="2constructor-05b.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
 </div>
 </div>

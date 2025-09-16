@@ -215,12 +215,144 @@
   </ul>
 </nav>
 <div class="spirit-nav">
-    <a accesskey="p" href="reference.html"><span class="material-symbols-outlined" title="Previous: Reference">arrow_back</span></a>
-    <a accesskey="p" href="older.html"><span class="material-symbols-outlined" title="Next: Older versions' documents">arrow_forward</span></a>
-</div>
-</div>
+    <a accesskey="p" href="reference.html">
+      <span class="material-symbols-outlined" title="Previous: Reference">arrow_back</span>
+    </a>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+    <a accesskey="n" href="older.html">
+      <span class="material-symbols-outlined" title="Next: Older versions' documents">arrow_forward</span>
+    </a>
+</div></div>
     <h1 class="page">History</h1>
   <div class="sect1">
+<h2 id="_10_2_6"><a class="anchor" href="#_10_2_6"></a>10.2.6</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Changed trial broker on <code>mqtt.redboltz.net</code> ws and wss port. #430</p>
+</li>
+<li>
+<p>ws was 10080 but Chrome block it by default. Updated to 80.</p>
+</li>
+<li>
+<p>wss was 10443 but Chrome doesn&#8217;t block it by default. But for consistency, updated to 443.</p>
+</li>
+<li>
+<p>system_test still uses 10080 and 10443 to avoid conflict.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_5"><a class="anchor" href="#_10_2_5"></a>10.2.5</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed missing server_keep_alive timer operation for CONNACK packet sending. #429</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_4"><a class="anchor" href="#_10_2_4"></a>10.2.4</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed invalid sendable packet checking whne ASYNC_MQTT_SEPARATE_COMPILATION is defined. #428</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_3"><a class="anchor" href="#_10_2_3"></a>10.2.3</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Added missing pingresp timer cancel request hanndling on asio_bind sending. #426</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_2"><a class="anchor" href="#_10_2_2"></a>10.2.2</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed pingresp timer management. #423</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_1"><a class="anchor" href="#_10_2_1"></a>10.2.1</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed receive_maximum invalid handling issue. #422</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_10_2_0"><a class="anchor" href="#_10_2_0"></a>10.2.0</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Fixed offline publish/pubrel packet_id management. #419</p>
+</li>
+<li>
+<p>Added packet_id limit functionality for testing. #418</p>
+</li>
+<li>
+<p>Recovered missing compile-time Role-Packet checking functionality. #417</p>
+</li>
+<li>
+<p>Added broker&#8217;s Client Certificate subjectAltName. #416</p>
+</li>
+<li>
+<p>Fixed invalid remaining length parsing problem on disconnect and auth packet. #415</p>
+</li>
+<li>
+<p>Supported Boost.1.88.0 defaulted process v2. #414</p>
+</li>
+<li>
+<p>Fixed PacketIdBytes treatment in MQTT v5 publish response packets. #412</p>
+</li>
+<li>
+<p>Refined documents. #410</p>
+</li>
+<li>
+<p>Refined CI. #409</p>
+</li>
+<li>
+<p>Fixed warnings on release build. #409</p>
+</li>
+<li>
+<p>Adjusted and unified broker&#8217;s <code>read_buf_size</code> option&#8217;s default value. #408</p>
+</li>
+<li>
+<p>Updated docker build. #408</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_10_1_0"><a class="anchor" href="#_10_1_0"></a>10.1.0</h2>
 <div class="sectionbody">
 <div class="ulist">

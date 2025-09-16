@@ -3,7 +3,7 @@
   <head>
         <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: async_mqtt</title>
+    <title>async_mqtt::v5::basic_publish_packet::basic_publish_packet :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/v5/basic_publish_packet/2constructor.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../../_/css/boostlook.css">
@@ -202,18 +202,27 @@
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../../index.html" aria-label="Home: async_mqtt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="2constructor.html"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v5.html">v5</a>::<a href="../../../async_mqtt/v5/basic_publish_packet.html">basic_publish_packet</a>::basic_publish_packet</a></li>
+  </ul>
 </nav>
 <div class="spirit-nav">
-</div>
-</div>
+    <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
+      <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
+    </a>
+</div></div>
+    <h1 class="page"><a href="../../../async_mqtt.html">async_mqtt</a>::<a href="../../../async_mqtt/v5.html">v5</a>::<a href="../../../async_mqtt/v5/basic_publish_packet.html">basic_publish_packet</a>::basic_publish_packet</h1>
   <div class="sect1">
-<h2 id="async_mqtt-v5-basic_publish_packet-2constructor"><a class="anchor" href="#async_mqtt-v5-basic_publish_packet-2constructor"></a><a href="../../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../../v5.html" class="xref page">v5</a>::<a href="../basic_publish_packet.html" class="xref page">basic_publish_packet</a>::basic_publish_packet</h2>
+<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>constructor</p>
 </div>
-<div class="sect2">
-<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;
@@ -221,13 +230,17 @@
     typename Payload,
     <a href="../../../std.html" class="xref page">std</a>::nullptr_t = nullptr&gt;
 explicit
-<a href="2constructor-08.html" class="xref page">basic_publish_packet</a>(
+<a href="2constructor-05.html" class="xref page">basic_publish_packet</a>(
     <a href="../../basic_packet_id_type-07.html" class="xref page">basic_packet_id_type</a>&lt;PacketIdBytes&gt;::type packet_id,
     StringViewLike&amp;&amp; topic_name,
     Payload&amp;&amp; payloads,
     <a href="../../pub.html" class="xref page">pub</a>::<a href="../../pub/opts.html" class="xref page">opts</a> pubopts,
-    <a href="../../properties.html" class="xref page">properties</a> props = = {});</code></pre>
+    <a href="../../properties.html" class="xref page">properties</a> props = = {});
+  <a href="2constructor-05.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>constructor for QoS0</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -236,68 +249,13 @@ explicit
     typename Payload,
     <a href="../../../std.html" class="xref page">std</a>::nullptr_t = nullptr&gt;
 explicit
-<a href="2constructor-04.html" class="xref page">basic_publish_packet</a>(
+<a href="2constructor-09.html" class="xref page">basic_publish_packet</a>(
     StringViewLike&amp;&amp; topic_name,
     Payload&amp;&amp; payloads,
     <a href="../../pub.html" class="xref page">pub</a>::<a href="../../pub/opts.html" class="xref page">opts</a> pubopts,
-    <a href="../../properties.html" class="xref page">properties</a> props = = {});</code></pre>
+    <a href="../../properties.html" class="xref page">properties</a> props = = {});
+  <a href="2constructor-09.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Name</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>packet_id</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT PacketIdentifier. If QoS0 then it must be 0. You can use no packet_id version constructor.
-If QoS is 0 or 1 then, the packet_id must be acquired by
-basic_endpoint::acquire_unique_packet_id(), or must be registered by
-basic_endpoint::register_packet_id().</p>
-<p class="tableblock">If QoS0, the packet_id is not sent actually.</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901108" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901108</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>topic_name</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT TopicName</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901107</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>payloads</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The body message of the packet. It could be a single buffer of multiple buffer sequence.</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901119</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>pubopts</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Publish Options. It contains the following elements:</p>
-<p class="tableblock">DUP See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901102</a></p>
-<p class="tableblock">QoS See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901103</a></p>
-<p class="tableblock">RETAIN See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901104</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>props</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Publish properties.</p>
-<p class="tableblock">See
-<a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109" class="bare">https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html#_Toc3901109</a></p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
