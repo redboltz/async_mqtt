@@ -567,7 +567,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     );
                     // shared_ptr for username
                     auto username = std::make_shared<std::optional<std::string>>();
-                    wss_ctx->set_verify_mode(as::ssl::verify_peer);
+                    wss_ctx->set_verify_mode(as::ssl::verify_none);
                     wss_ctx->set_verify_callback(
                         [username, &vm]
                         (bool preverified, boost::asio::ssl::verify_context& ctx) {
