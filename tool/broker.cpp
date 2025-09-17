@@ -567,19 +567,32 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     );
                     // shared_ptr for username
                     auto username = std::make_shared<std::optional<std::string>>();
-                    wss_ctx->set_verify_mode(as::ssl::verify_none);
+                    wss_ctx->set_verify_mode(as::ssl::verify_peer);
                     wss_ctx->set_verify_callback(
                         [username, &vm]
                         (bool preverified, boost::asio::ssl::verify_context& ctx) {
                             ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Client certificate verification called - preverified: " << preverified;
-                            // user can set username in the callback
-                            return
-                                verify_certificate(
+
+                            // Check if client certificate is present
+                            X509_STORE_CTX* store_ctx = ctx.native_handle();
+                            X509* cert = X509_STORE_CTX_get_current_cert(store_ctx);
+
+                            if (cert == nullptr) {
+                                // No client certificate provided - allow connection, will use MQTT username/password
+                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: No client certificate provided, proceeding with MQTT authentication";
+                                return true;
+                            } else {
+                                // Client certificate provided - must be valid
+                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Client certificate provided, verifying...";
+                                bool result = verify_certificate(
                                     vm["verify_field"].as<std::string>(),
                                     preverified,
                                     ctx,
                                     username
                                 );
+                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Certificate verification result: " << result;
+                                return result;
+                            }
                         }
                     );
                     auto epsp =
