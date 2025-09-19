@@ -567,34 +567,23 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     );
                     // shared_ptr for username
                     auto username = std::make_shared<std::optional<std::string>>();
-                    // Use verify_none to avoid browser compatibility issues
-                    // We'll manually check certificates in the callback after TLS handshake succeeds
-                    wss_ctx->set_verify_mode(as::ssl::verify_none);
+                    wss_ctx->set_verify_mode(as::ssl::verify_peer);
                     wss_ctx->set_verify_callback(
                         [username, &vm]
                         (bool preverified, boost::asio::ssl::verify_context& ctx) {
-                            ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Client certificate verification called - preverified: " << preverified;
-
-                            // Check if client certificate is present
-                            X509_STORE_CTX* store_ctx = ctx.native_handle();
-                            X509* cert = X509_STORE_CTX_get_current_cert(store_ctx);
-
-                            if (cert == nullptr) {
-                                // No client certificate provided - allow connection, will use MQTT username/password
-                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: No client certificate provided, proceeding with MQTT authentication";
-                                return true;
-                            } else {
-                                // Client certificate provided - must be valid
-                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Client certificate provided, verifying...";
-                                bool result = verify_certificate(
+                            // user can set username in the callback
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << "verify_callback preverified:" << preverified;
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << "host_name_verification:"
+                                << as::ssl::host_name_verification("redboltz.net")(preverified, ctx);
+                            return
+                                verify_certificate(
                                     vm["verify_field"].as<std::string>(),
                                     preverified,
                                     ctx,
                                     username
                                 );
-                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Certificate verification result: " << result;
-                                return result;
-                            }
                         }
                     );
                     auto epsp =
@@ -614,7 +603,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     auto& lowest_layer = epsp->lowest_layer();
                     wss_ac->async_accept(
                         lowest_layer,
-                        [&wss_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp, username, wss_ctx, &vm]
+                        [&wss_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp, username, wss_ctx]
                         (boost::system::error_code const& ec) mutable {
                             if (ec) {
                                 ASYNC_MQTT_LOG("mqtt_broker", error)
@@ -626,58 +615,13 @@ void run_broker(boost::program_options::variables_map const& vm) {
                                 apply_socket_opts(lowest_layer);
                                 epsp->next_layer().next_layer().async_handshake(
                                     as::ssl::stream_base::server,
-                                    [&brk, epsp, username, wss_ctx, &vm]
+                                    [&brk, epsp, username, wss_ctx]
                                     (boost::system::error_code const& ec) mutable {
                                         if (ec) {
                                             ASYNC_MQTT_LOG("mqtt_broker", error)
                                                 << "TLS handshake error: " << ec.message() << " (category: " << ec.category().name() << ", value: " << ec.value() << ")";
                                         }
                                         else {
-                                            ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: TLS handshake successful, checking for client certificate";
-
-                                            // Check for client certificate manually
-                                            SSL* ssl = epsp->next_layer().next_layer().native_handle();
-                                            auto peer_cert = std::unique_ptr<X509, decltype(&X509_free)>(
-                                                SSL_get_peer_certificate(ssl),
-                                                &X509_free
-                                            );
-
-                                            if (peer_cert) {
-                                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Client certificate found, verifying...";
-
-                                                // Create a temporary SSL verify context for verify_certificate call
-                                                X509_STORE* store = SSL_CTX_get_cert_store(SSL_get_SSL_CTX(ssl));
-                                                auto store_ctx = std::unique_ptr<X509_STORE_CTX, decltype(&X509_STORE_CTX_free)>(
-                                                    X509_STORE_CTX_new(),
-                                                    &X509_STORE_CTX_free
-                                                );
-
-                                                if (store_ctx && X509_STORE_CTX_init(store_ctx.get(), store, peer_cert.get(), nullptr)) {
-                                                    // Create boost ssl verify_context wrapper
-                                                    boost::asio::ssl::verify_context verify_ctx(store_ctx.get());
-
-                                                    // Call verify_certificate
-                                                    bool cert_valid = verify_certificate(
-                                                        vm["verify_field"].as<std::string>(),
-                                                        true, // preverified (we're doing manual verification)
-                                                        verify_ctx,
-                                                        username
-                                                    );
-
-                                                    ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Certificate verification result: " << cert_valid;
-
-                                                    if (!cert_valid) {
-                                                        ASYNC_MQTT_LOG("mqtt_broker", error) << "WSS: Invalid client certificate, closing connection";
-                                                        return; // Close connection
-                                                    }
-                                                } else {
-                                                    ASYNC_MQTT_LOG("mqtt_broker", error) << "WSS: Failed to create certificate verification context";
-                                                    return; // Close connection on verification setup failure
-                                                }
-                                            } else {
-                                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: No client certificate provided, will use MQTT authentication";
-                                            }
-
                                             ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS: Waiting for HTTP upgrade request";
                                             auto& ws_layer = epsp->next_layer();
                                             auto sb = std::make_shared<boost::asio::streambuf>();
