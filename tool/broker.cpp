@@ -567,6 +567,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     );
                     // shared_ptr for username
                     auto username = std::make_shared<std::optional<std::string>>();
+#if 0
                     // Use verify_none to avoid browser compatibility issues
                     // We'll manually check certificates in the callback after TLS handshake succeeds
                     wss_ctx->set_verify_mode(as::ssl::verify_none);
@@ -597,6 +598,27 @@ void run_broker(boost::program_options::variables_map const& vm) {
                             }
                         }
                     );
+#else
+                    wss_ctx->set_verify_mode(as::ssl::verify_peer);
+                    wss_ctx->set_verify_callback(
+                        [username, &vm]
+                        (bool preverified, boost::asio::ssl::verify_context& ctx) {
+                            // user can set username in the callback
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << "verify_callback preverified:" << preverified;
+                            ASYNC_MQTT_LOG("mqtt_broker", trace)
+                                << "host_name_verification:"
+                                << as::ssl::host_name_verification("redboltz.net")(preverified, ctx);
+                            return
+                                verify_certificate(
+                                    vm["verify_field"].as<std::string>(),
+                                    preverified,
+                                    ctx,
+                                    username
+                                );
+                        }
+                    );
+#endif
                     auto epsp =
                         std::make_shared<
                             am::basic_endpoint<
