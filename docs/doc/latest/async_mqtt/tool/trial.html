@@ -252,7 +252,7 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">8883</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT on TLS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT on TLS(verify_peer)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">./client_cli.sh --host async-mqtt.redboltz.net --port 8883 --protocol mqtts</p></td>
 </tr>
 <tr>
@@ -262,11 +262,42 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">443</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT on Websocket(TLS)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT on Websocket(TLS, verify_none)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">./client_cli.sh --host async-mqtt.redboltz.net --port 443 --protocol wss</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10443</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT on Websocket(TLS, verify_peer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">./client_cli.sh --host async-mqtt.redboltz.net --port 10443 --protocol wss</p></td>
 </tr>
 </tbody>
 </table>
+<div class="ulist">
+<ul>
+<li>
+<p>verify_peer: If a client prepare to send Client Certificate, the broker verify it.</p>
+</li>
+<li>
+<p>verify_none: Even if a client prepare to send Client Certificate, the client doesn&#8217;t send it during TLS handshaking.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If a browser find Client Certificates, direct accessing to wss:// would error. See <a href="https://github.com/redboltz/async_mqtt/pull/433" class="bare">https://github.com/redboltz/async_mqtt/pull/433</a> This setting can avoid the error.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>verify_peer: If a client is prepared to send a client certificate, the broker will verify it.</p>
+</li>
+<li>
+<p>verify_none: Even if a client is prepared to send a client certificate, it will not be sent during the TLS handshake.</p>
+</li>
+<li>
+<p>If a browser detects available client certificates, directly accessing. See <a href="https://github.com/redboltz/async_mqtt/pull/433" class="bare">https://github.com/redboltz/async_mqtt/pull/433</a> . This setting prevents that error.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect1">
