@@ -534,7 +534,7 @@ void run_broker(boost::program_options::variables_map const& vm) {
         }
 
 #if defined(ASYNC_MQTT_USE_WS)
-        // wss (MQTT on WebScoket TLS TCP)
+        // wss (MQTT on WebScoket TLS TCP verify_peer)
         std::optional<as::ip::tcp::endpoint> wss_endpoint;
         std::optional<as::ip::tcp::acceptor> wss_ac;
         std::function<void()> wss_async_accept;
@@ -700,6 +700,145 @@ void run_broker(boost::program_options::variables_map const& vm) {
                 };
 
             wss_async_accept();
+        }
+
+        // wss (MQTT on WebScoket TLS TCP verify_none)
+        std::optional<as::ip::tcp::endpoint> wss_vn_endpoint;
+        std::optional<as::ip::tcp::acceptor> wss_vn_ac;
+        std::function<void()> wss_vn_async_accept;
+        std::optional<as::steady_timer> wss_vn_timer;
+        wss_vn_timer.emplace(accept_ioc);
+        if (vm.count("wss_vn.port")) {
+            wss_vn_endpoint.emplace(as::ip::tcp::v4(), vm["wss_vn.port"].as<std::uint16_t>());
+            wss_vn_ac.emplace(accept_ioc, *wss_vn_endpoint);
+            wss_vn_async_accept =
+                [&] {
+                    std::optional<std::string> verify_file;
+                    if (vm.count("verify_file")) {
+                        verify_file = vm["verify_file"].as<std::string>();
+                    }
+                    auto wss_vn_ctx = init_ctx(
+                        vm["certificate"].as<std::string>(),
+                        vm["private_key"].as<std::string>(),
+                        verify_file
+                    );
+                    // shared_ptr for username
+                    auto username = std::make_shared<std::optional<std::string>>();
+                    wss_vn_ctx->set_verify_mode(as::ssl::verify_none);
+                    auto epsp =
+                        std::make_shared<
+                            am::basic_endpoint<
+                                am::role::server,
+                                2,
+                               am::protocol::wss
+                            >
+                        >(
+                            am::protocol_version::undetermined,
+                            as::make_strand(con_ioc_getter().get_executor()),
+                            *wss_vn_ctx
+                        );
+                    epsp->set_bulk_write(vm["bulk_write"].as<bool>());
+                    epsp->set_read_buffer_size(vm["read_buf_size"].as<std::size_t>());
+                    auto& lowest_layer = epsp->lowest_layer();
+                    wss_vn_ac->async_accept(
+                        lowest_layer,
+                        [&wss_vn_async_accept, &apply_socket_opts, &lowest_layer, &brk, epsp, username, wss_vn_ctx]
+                        (boost::system::error_code const& ec) mutable {
+                            if (ec) {
+                                ASYNC_MQTT_LOG("mqtt_broker", error)
+                                    << "TCP accept error:" << ec.message();
+                            }
+                            else {
+                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): TCP connection accepted, starting TLS handshake";
+                                // TBD insert underlying timeout here
+                                apply_socket_opts(lowest_layer);
+                                epsp->next_layer().next_layer().async_handshake(
+                                    as::ssl::stream_base::server,
+                                    [&brk, epsp, username, wss_vn_ctx]
+                                    (boost::system::error_code const& ec) mutable {
+                                        if (ec) {
+                                            ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                << "TLS handshake error: " << ec.message() << " (category: " << ec.category().name() << ", value: " << ec.value() << ")";
+                                        }
+                                        else {
+                                            ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): Waiting for HTTP upgrade request";
+                                            auto& ws_layer = epsp->next_layer();
+                                            auto sb = std::make_shared<boost::asio::streambuf>();
+                                            auto request =
+                                                std::make_shared<
+                                                    bs::http::request<
+                                                        bs::http::string_body
+                                                    >
+                                                >();
+                                            bs::http::async_read(
+                                                ws_layer.next_layer(),
+                                                *sb,
+                                                *request,
+                                                [&brk, epsp, &ws_layer, sb, request, username]
+                                                (boost::system::error_code const& ec, std::size_t) mutable {
+                                                    if (ec) {
+                                                        ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                            << "HTTP upgrade error: " << ec.message() << " (category: " << ec.category().name() << ", value: " << ec.value() << ")";
+                                                    }
+                                                    else if (bs::websocket::is_upgrade(*request)) {
+                                                        ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): HTTP upgrade request received, method: " << request->method_string() << ", target: " << request->target();
+                                                        for (
+                                                            auto it = request->find(bs::http::field::sec_websocket_protocol);
+                                                            it != request->end();
+                                                            ++it
+                                                        ) {
+                                                            if (it->value() == "mqtt") {
+                                                                ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): MQTT subprotocol found, setting response header";
+                                                                ws_layer.set_option(
+                                                                    bs::websocket::stream_base::decorator(
+                                                                        [
+                                                                            name = it->name(),  // enum
+                                                                            value = it->value() // string_view
+                                                                        ]
+                                                                        (bs::websocket::response_type& res) {
+                                                                            res.set(name, value);
+                                                                        }
+                                                                    )
+                                                                );
+                                                                break;
+                                                            }
+                                                        }
+                                                        ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): Starting WebSocket accept";
+                                                        ws_layer.async_accept(
+                                                            *request,
+                                                            [&brk, epsp, username]
+                                                            (boost::system::error_code const& ec) mutable {
+                                                                if (ec) {
+                                                                    ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                                        << "WS accept error: " << ec.message() << " (category: " << ec.category().name() << ", value: " << ec.value() << ")";
+                                                                }
+                                                                else {
+                                                                    ASYNC_MQTT_LOG("mqtt_broker", trace) << "WSS(verify_none): WebSocket connection established successfully";
+                                                                    epsp->underlying_accepted();
+                                                                    brk.handle_accept(
+                                                                        epv_type{force_move(epsp)},
+                                                                        *username
+                                                                    );
+                                                                }
+                                                            }
+                                                        );
+                                                    }
+                                                    else {
+                                                        ASYNC_MQTT_LOG("mqtt_broker", error)
+                                                            << "HTTP upgrade error: non upgrade request received";
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }
+                                );
+                            }
+                            wss_vn_async_accept();
+                        }
+                    );
+                };
+
+            wss_vn_async_accept();
         }
 
 #endif // defined(ASYNC_MQTT_USE_WS)
@@ -907,8 +1046,8 @@ int main(int argc, char *argv[]) {
             )
             (
                 "verify_field",
-                boost::program_options::value<std::string>()->default_value("CN"),
-                "Field to be used from certificate for authenticating clients"
+                boost::program_options::value<std::string>()->default_value("subjectAltName"),
+                "Field to be used from certificate for authenticating clients. subjectAltName or CN is commonly used"
             )
             (
                 "auth_file",
@@ -935,18 +1074,24 @@ int main(int argc, char *argv[]) {
 
         desc.add(ws_desc);
 
-        boost::program_options::options_description tls_desc("TLS Server options");
+        boost::program_options::options_description tls_desc("TLS Server options (verify_peer)");
         tls_desc.add_options()
             ("tls.port", boost::program_options::value<std::uint16_t>(), "default port (TLS)")
         ;
 
         desc.add(tls_desc);
 
-        boost::program_options::options_description tlsws_desc("TLS Websocket Server options");
+        boost::program_options::options_description tlsws_desc("TLS Websocket Server options (verify_peer)");
         tlsws_desc.add_options()
             ("wss.port", boost::program_options::value<std::uint16_t>(), "default port (TLS)")
         ;
         desc.add(tlsws_desc);
+
+        boost::program_options::options_description tlsws_vn_desc("TLS Websocket Server options (verify_none)");
+        tlsws_vn_desc.add_options()
+            ("wss_vn.port", boost::program_options::value<std::uint16_t>(), "default port (TLS)")
+        ;
+        desc.add(tlsws_vn_desc);
 
         boost::program_options::variables_map vm;
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
