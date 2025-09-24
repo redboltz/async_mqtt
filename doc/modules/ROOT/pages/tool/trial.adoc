@@ -12,13 +12,9 @@ You can connect to the broker `async-mqtt.redboltz.net` for testing.
 |10443|MQTT on Websocket(TLS, verify_peer)|./client_cli.sh --host async-mqtt.redboltz.net --port 10443 --protocol wss
 |===
 
-* verify_peer: If a client prepare to send Client Certificate, the broker verify it.
-* verify_none: Even if a client prepare to send Client Certificate, the client doesn't send it during TLS handshaking.
-** If a browser find Client Certificates, direct accessing to wss:// would error. See https://github.com/redboltz/async_mqtt/pull/433 This setting can avoid the error.
-
 * verify_peer: If a client is prepared to send a client certificate, the broker will verify it.
 * verify_none: Even if a client is prepared to send a client certificate, it will not be sent during the TLS handshake.
-  * If a browser detects available client certificates, directly accessing. See https://github.com/redboltz/async_mqtt/pull/433 . This setting prevents that error.
+** If a browser detects available client certificates, directly accessing. See https://github.com/redboltz/async_mqtt/pull/433 . This setting prevents that error.
 
 == Important notice
 
