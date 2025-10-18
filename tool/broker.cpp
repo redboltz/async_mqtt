@@ -167,10 +167,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
 #endif // defined(ASYNC_MQTT_USE_TLS)
         >;
 
-        am::broker<
-            epv_type
-        > brk{timer_ioc.get_executor(), vm["recycling_allocator"].as<bool>()};
-
         auto num_of_iocs =
             [&] () -> std::size_t {
                 if (vm.count("iocs")) {
@@ -206,31 +202,6 @@ void run_broker(boost::program_options::variables_map const& vm) {
             << " threads_per_ioc:" << threads_per_ioc
             << " total threads:" << num_of_iocs * threads_per_ioc;
 
-        auto set_auth =
-            [&] {
-                if (vm.count("auth_file")) {
-                    std::string auth_file = vm["auth_file"].as<std::string>();
-                    if (!auth_file.empty()) {
-                        ASYNC_MQTT_LOG("mqtt_broker", info)
-                            << "auth_file:" << auth_file;
-
-                        std::ifstream input(auth_file);
-
-                        if (input) {
-                            am::security security;
-                            security.load_json(input);
-                            brk.set_security(am::force_move(security));
-                        }
-                        else {
-                            ASYNC_MQTT_LOG("mqtt_broker", warning)
-                                << "Authorization file '"
-                                << auth_file
-                                << "' not found,  broker doesn't use authorization file.";
-                        }
-                    }
-                }
-            };
-        set_auth();
         as::io_context accept_ioc;
 
         int concurrency_hint = boost::numeric_cast<int>(threads_per_ioc);
@@ -290,6 +261,36 @@ void run_broker(boost::program_options::variables_map const& vm) {
                     );
                 }
             };
+
+        am::broker<
+            epv_type
+        > brk{timer_ioc.get_executor(), vm["recycling_allocator"].as<bool>()};
+
+        auto set_auth =
+            [&] {
+                if (vm.count("auth_file")) {
+                    std::string auth_file = vm["auth_file"].as<std::string>();
+                    if (!auth_file.empty()) {
+                        ASYNC_MQTT_LOG("mqtt_broker", info)
+                            << "auth_file:" << auth_file;
+
+                        std::ifstream input(auth_file);
+
+                        if (input) {
+                            am::security security;
+                            security.load_json(input);
+                            brk.set_security(am::force_move(security));
+                        }
+                        else {
+                            ASYNC_MQTT_LOG("mqtt_broker", warning)
+                                << "Authorization file '"
+                                << auth_file
+                                << "' not found,  broker doesn't use authorization file.";
+                        }
+                    }
+                }
+            };
+        set_auth();
 
         if (vm.count("tcp.port")) {
             mqtt_endpoint.emplace(as::ip::tcp::v4(), vm["tcp.port"].as<std::uint16_t>());
