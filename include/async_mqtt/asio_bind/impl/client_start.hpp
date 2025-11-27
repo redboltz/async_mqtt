@@ -89,13 +89,11 @@ client<Version, NextLayer>::async_start(Args&&... args) {
         }
     }
     else {
-        return [this](auto&&... all_args) {
-            auto all = hana::make_tuple(std::forward<decltype(all_args)>(all_args)...);
-            constexpr auto N = sizeof...(all_args);
-            auto back = hana::at_c<N - 1>(force_move(all));
-            return hana::unpack(
-                hana::drop_back(force_move(all), hana::size_c<1>),
-                [this, back = force_move(back)](auto&&... rest_args) mutable {
+        auto all = hana::make_tuple(std::forward<Args>(args)...);
+        auto back = hana::at_c<sizeof...(Args) - 1>(force_move(all));
+        return hana::unpack(
+            hana::drop_back(force_move(all), hana::size_c<1>),
+            [this, back = force_move(back)](auto&&... rest_args) mutable {
                     static_assert(
                         std::is_constructible_v<
                             connect_packet,
@@ -123,7 +121,6 @@ client<Version, NextLayer>::async_start(Args&&... args) {
                     }
                 }
             );
-        }(std::forward<Args>(args)...);
     }
 }
 
