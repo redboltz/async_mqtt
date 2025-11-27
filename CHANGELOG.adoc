@@ -2,6 +2,12 @@
 
 = History
 
+== 10.2.7
+* Removed unintentional copy requiment from some of async functions parameter. #437
+* Rifined documents. #435
+* Added TLS Websocket verify none port to broker for browser. #434
+* Added Cerfiticate file's digitalSignature to keyUsage. #432
+
 == 10.2.6
 * Fixed wss connection from Web Browser handshake failed problem. #431
 * Changed trial broker on `mqtt.redboltz.net` ws and wss port. #430

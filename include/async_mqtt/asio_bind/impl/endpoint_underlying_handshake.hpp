@@ -145,9 +145,6 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
     Args&&... args
 ) {
     BOOST_ASSERT(impl_);
-    auto all = hana::tuple<Args...>(std::forward<Args>(args)...);
-    auto back = hana::back(all);
-    auto rest = hana::drop_back(all, hana::size_c<1>);
 
     if constexpr(
         detail::is_customize_handshake_callable<
@@ -155,13 +152,18 @@ basic_endpoint<Role, PacketIdBytes, NextLayer>::async_underlying_handshake(
             Args...
         >::value
     ) {
-        return impl_type::async_underlying_handshake_impl(
-            impl_,
-            force_move(rest),
-            force_move(back) // token
-        );
+        return [this](auto&&... all_args) {
+            auto all = hana::make_tuple(std::forward<decltype(all_args)>(all_args)...);
+            constexpr auto N = sizeof...(all_args);
+            return impl_type::async_underlying_handshake_impl(
+                impl_,
+                hana::drop_back(force_move(all), hana::size_c<1>),
+                hana::at_c<N - 1>(force_move(all)) // token
+            );
+        }(std::forward<Args>(args)...);
     }
     else {
+        auto all = hana::tuple<Args...>(std::forward<Args>(args)...);
         return impl_type::async_underlying_handshake_impl(
             impl_,
             force_move(all)

@@ -87,37 +87,39 @@ client<Version, NextLayer>::async_subscribe(Args&&... args) {
         }
     }
     else {
-        auto all = hana::tuple<Args...>(std::forward<Args>(args)...);
-        auto back = hana::back(all);
-        auto rest = hana::drop_back(all, hana::size_c<1>);
-        return hana::unpack(
-            std::move(rest),
-            [&](auto&&... rest_args) {
-                static_assert(
-                    std::is_constructible_v<
-                        subscribe_packet,
-                        decltype(rest_args)...
-                    >,
-                    "subscribe_packet is not constructible"
-                );
-                try {
-                    return impl_type::async_subscribe(
-                        impl_,
-                        error_code{},
-                        subscribe_packet{std::forward<decltype(rest_args)>(rest_args)...},
-                        force_move(back)
+        return [this](auto&&... all_args) {
+            auto all = hana::make_tuple(std::forward<decltype(all_args)>(all_args)...);
+            constexpr auto N = sizeof...(all_args);
+            auto back = hana::at_c<N - 1>(force_move(all));
+            return hana::unpack(
+                hana::drop_back(force_move(all), hana::size_c<1>),
+                [this, back = force_move(back)](auto&&... rest_args) mutable {
+                    static_assert(
+                        std::is_constructible_v<
+                            subscribe_packet,
+                            decltype(rest_args)...
+                        >,
+                        "subscribe_packet is not constructible"
                     );
+                    try {
+                        return impl_type::async_subscribe(
+                            impl_,
+                            error_code{},
+                            subscribe_packet{std::forward<decltype(rest_args)>(rest_args)...},
+                            force_move(back)
+                        );
+                    }
+                    catch (system_error const& se) {
+                        return impl_type::async_subscribe(
+                            impl_,
+                            se.code(),
+                            std::nullopt,
+                            force_move(back)
+                        );
+                    }
                 }
-                catch (system_error const& se) {
-                    return impl_type::async_subscribe(
-                        impl_,
-                        se.code(),
-                        std::nullopt,
-                        force_move(back)
-                    );
-                }
-            }
-        );
+            );
+        }(std::forward<Args>(args)...);
     }
 }
 
