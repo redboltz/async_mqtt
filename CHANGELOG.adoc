@@ -2,16 +2,14 @@
 
 = History
 
-== 10.2.7
+== 10.2.6
 * Removed unintentional copy requiment from some of async functions parameter. #439, #440
 * Fixed Heap-use-after-free during broker shutdown. #437
 * Rifined documents. #435
 * Added TLS Websocket verify none port to broker for browser. #434
 * Added Cerfiticate file's digitalSignature to keyUsage. #432
-
-== 10.2.6
 * Fixed wss connection from Web Browser handshake failed problem. #431
-* Changed trial broker on `mqtt.redboltz.net` ws and wss port. #430
+* Changed trial broker on `async-mqtt.redboltz.net` ws and wss port. #430
   * ws was 10080 but Chrome block it by default. Updated to 80.
   * wss was 10443 but Chrome doesn't block it by default. But for consistency, updated to 443.
   * system_test still uses 10080 and 10443 to avoid conflict.
