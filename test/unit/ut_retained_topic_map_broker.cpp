@@ -228,4 +228,157 @@ BOOST_AUTO_TEST_CASE( multi_wc_crud ) {
     }
 }
 
+BOOST_AUTO_TEST_CASE( wildcard_multiple_matches ) {
+    // Test for issue #442: Multiple retained messages should be delivered
+    // when subscribing with wildcard that matches multiple topics
+    retained_messages m;
+
+    // Publish retained message 1: a/x/b/c
+    {
+        retain r {
+            "a/x/b/c",
+            "message1",
+            am::properties {},
+            am::qos::at_most_once
+        };
+        m.insert_or_assign(r.topic, r);
+    }
+
+    // Publish retained message 2: a/y/b/c
+    {
+        retain r {
+            "a/y/b/c",
+            "message2",
+            am::properties {},
+            am::qos::at_most_once
+        };
+        m.insert_or_assign(r.topic, r);
+    }
+
+    BOOST_TEST(m.size() == 2);
+
+    // Subscribe with wildcard a/+/b/# should match both
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+            "message2",
+        };
+        m.find(
+            "a/+/b/#",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+
+    // Subscribe with wildcard a/+/b/c should also match both
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+            "message2",
+        };
+        m.find(
+            "a/+/b/c",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+
+    // Subscribe with exact topic should match only one
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+        };
+        m.find(
+            "a/x/b/c",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+
+    // Add more topics to test comprehensive wildcard matching
+    {
+        retain r {
+            "a/x/b/d",
+            "message3",
+            am::properties {},
+            am::qos::at_most_once
+        };
+        m.insert_or_assign(r.topic, r);
+    }
+    {
+        retain r {
+            "a/y/b/d",
+            "message4",
+            am::properties {},
+            am::qos::at_most_once
+        };
+        m.insert_or_assign(r.topic, r);
+    }
+    {
+        retain r {
+            "a/z/b/e",
+            "message5",
+            am::properties {},
+            am::qos::at_most_once
+        };
+        m.insert_or_assign(r.topic, r);
+    }
+
+    BOOST_TEST(m.size() == 5);
+
+    // Subscribe with a/+/b/# should match all 5 messages
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+            "message2",
+            "message3",
+            "message4",
+            "message5",
+        };
+        m.find(
+            "a/+/b/#",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+
+    // Subscribe with a/+/b/c should match only message1 and message2
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+            "message2",
+        };
+        m.find(
+            "a/+/b/c",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+
+    // Subscribe with a/x/b/# should match message1 and message3
+    {
+        std::set<std::string_view> msgs {
+            "message1",
+            "message3",
+        };
+        m.find(
+            "a/x/b/#",
+            [&](retain const& v) {
+                BOOST_TEST(msgs.erase(v.contents) == 1);
+            }
+        );
+        BOOST_TEST(msgs.empty());
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

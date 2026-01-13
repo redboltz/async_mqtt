@@ -747,6 +747,210 @@ BOOST_AUTO_TEST_CASE(v5_clear) {
     BOOST_TEST(t.finish());
 }
 
+BOOST_AUTO_TEST_CASE(wildcard_multiple_matches) {
+    // Test for issue #442: Multiple retained messages should be delivered
+    // when subscribing with wildcard that matches multiple topics
+    broker_runner br;
+    as::io_context ioc;
+    static auto guard{as::make_work_guard(ioc.get_executor())};
+    using ep_t = am::endpoint<am::role::client, am::protocol::mqtt>;
+    auto amep_pub = ep_t{
+        am::protocol_version::v5,
+        ioc.get_executor()
+    };
+    auto amep_sub = ep_t{
+        am::protocol_version::v5,
+        ioc.get_executor()
+    };
+
+    static std::set<std::string> received_messages;
+    struct tc : coro_base<ep_t> {
+        using coro_base<ep_t>::coro_base;
+    private:
+        enum : std::size_t {
+            pub,
+            sub
+        };
+        void proc(
+            am::error_code ec,
+            std::optional<am::packet_variant> pv_opt,
+            am::packet_id_type /*pid*/
+        ) override {
+            reenter(this) {
+                ep(pub).set_auto_pub_response(true);
+                ep(sub).set_auto_pub_response(true);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                // connect pub
+                yield ep(pub).async_underlying_handshake(
+                    "127.0.0.1",
+                    "1883",
+                    *this
+                );
+                BOOST_TEST(ec == am::error_code{});
+                yield ep(pub).async_send(
+                    am::v5::connect_packet{
+                        true,   // clean_start
+                        0, // keep_alive
+                        "pub",
+                        std::nullopt, // will
+                        "u1",
+                        "passforu1"
+                    },
+                    *this
+                );
+                BOOST_TEST(!ec);
+                yield ep(pub).async_recv(*this);
+                BOOST_TEST(pv_opt->get_if<am::v5::connack_packet>());
+
+                // publish retained message 1: a/x/b/c
+                yield ep(pub).async_send(
+                    am::v5::publish_packet{
+                        "a/x/b/c",
+                        "message1",
+                        am::qos::at_most_once | am::pub::retain::yes
+                    },
+                    *this
+                );
+                BOOST_TEST(!ec);
+
+                // publish retained message 2: a/y/b/c
+                yield ep(pub).async_send(
+                    am::v5::publish_packet{
+                        "a/y/b/c",
+                        "message2",
+                        am::qos::at_most_once | am::pub::retain::yes
+                    },
+                    *this
+                );
+                BOOST_TEST(!ec);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(sub).get_executor(),
+                        *this
+                    )
+                );
+
+                // connect sub
+                yield ep(sub).async_underlying_handshake(
+                    "127.0.0.1",
+                    "1883",
+                    *this
+                );
+                BOOST_TEST(ec == am::error_code{});
+                yield ep(sub).async_send(
+                    am::v5::connect_packet{
+                        true,   // clean_start
+                        0, // keep_alive
+                        "sub",
+                        std::nullopt, // will
+                        "u1",
+                        "passforu1"
+                    },
+                    *this
+                );
+                BOOST_TEST(!ec);
+                yield ep(sub).async_recv(*this);
+                pv_opt->visit(
+                    am::overload {
+                        [&](am::v5::connack_packet const& p) {
+                            BOOST_TEST(!p.session_present());
+                        },
+                        [](auto const&) {
+                            BOOST_TEST(false);
+                        }
+                   }
+                );
+
+                // wait retain data stored (pub/sub are different endpoint so timing adjustment is required)
+                yield {
+                    auto tim = std::make_shared<as::steady_timer>(ep(sub).get_executor());
+                    tim->expires_after(std::chrono::seconds(1));
+                    tim->async_wait(
+                        as::consign(
+                            *this,
+                            tim
+                        )
+                    );
+                }
+                // Subscribe with wildcard a/+/b/#
+                yield ep(sub).async_send(
+                    am::v5::subscribe_packet{
+                        *ep(sub).acquire_unique_packet_id(),
+                        {
+                            {"a/+/b/#", am::qos::at_most_once},
+                        }
+                    },
+                    *this
+                );
+                BOOST_TEST(!ec);
+                yield ep(sub).async_recv(*this);
+                BOOST_TEST(pv_opt->get_if<am::v5::suback_packet>());
+
+                // Receive first retained message
+                yield ep(sub).async_recv(*this);
+                BOOST_TEST(pv_opt.has_value());
+                pv_opt->visit(
+                    am::overload {
+                        [&](am::v5::publish_packet const& p) {
+                            BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+                            std::string msg = std::string(p.topic()) + ":" + std::string(p.payload());
+                            received_messages.insert(msg);
+                        },
+                        [](auto const&) {
+                            BOOST_TEST(false);
+                        }
+                    }
+                );
+
+                // Receive second retained message
+                yield ep(sub).async_recv(*this);
+                BOOST_TEST(pv_opt.has_value());
+                pv_opt->visit(
+                    am::overload {
+                        [&](am::v5::publish_packet const& p) {
+                            BOOST_TEST(p.opts().get_retain() == am::pub::retain::yes);
+                            std::string msg = std::string(p.topic()) + ":" + std::string(p.payload());
+                            received_messages.insert(msg);
+                        },
+                        [](auto const&) {
+                            BOOST_TEST(false);
+                        }
+                    }
+                );
+
+                // Verify we received exactly 2 messages with expected content
+                BOOST_TEST(received_messages.size() == 2);
+                BOOST_TEST(received_messages.count("a/x/b/c:message1") == 1);
+                BOOST_TEST(received_messages.count("a/y/b/c:message2") == 1);
+
+                yield ep(sub).async_close(*this);
+
+                yield as::dispatch(
+                    as::bind_executor(
+                        ep(pub).get_executor(),
+                        *this
+                    )
+                );
+                yield ep(pub).async_close(*this);
+                set_finish();
+                guard.reset();
+            }
+        }
+    };
+
+    tc t{{amep_pub, amep_sub}};
+    t();
+    ioc.run();
+    BOOST_TEST(t.finish());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 #include <boost/asio/unyield.hpp>

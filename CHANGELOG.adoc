@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.7
+* Fixed broker tool not delivering all retained messages when wildcard subscription matches multiple topics. #442, #443
+
 == 10.2.6
 * Removed unintentional copy requiment from some of async functions parameter. #439, #440
 * Fixed Heap-use-after-free during broker shutdown. #437
