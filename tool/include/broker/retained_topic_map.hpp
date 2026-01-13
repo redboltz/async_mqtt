@@ -197,6 +197,11 @@ class retained_topic_map {
 
     }
 
+    // Check if topic filter contains wildcards
+    static bool has_wildcard(std::string_view topic_filter) {
+        return topic_filter.find_first_of("+#") != std::string_view::npos;
+    }
+
     // Find all topics that match the specified topic filter
     template<typename Output>
     void find_match(std::string_view topic_filter, Output&& callback) const {
@@ -204,9 +209,11 @@ class retained_topic_map {
         entries.push_back(root);
 
         std::deque<direct_const_iterator> new_entries;
+        bool const contains_wildcard = has_wildcard(topic_filter);
+
         topic_filter_tokenizer(
             topic_filter,
-            [this, &entries, &new_entries, &callback](std::string_view t) {
+            [this, &entries, &new_entries, &callback, contains_wildcard](std::string_view t) {
                 auto const& direct_index = map.template get<direct_index_tag>();
                 auto const& wildcard_index = map.template get<wildcard_index_tag>();
                 new_entries.resize(0);
@@ -225,13 +232,22 @@ class retained_topic_map {
                         }
                     }
                     else if (t == std::string_view("#")) {
-                        match_hash_entries(parent, callback, parent == root_node_id);
+                        // Process all entries when # wildcard is encountered
+                        for (auto const& e : entries) {
+                            match_hash_entries(e->id, callback, e->id == root_node_id);
+                        }
                         return false;
                     }
                     else {
                         direct_const_iterator i = direct_index.find(std::make_tuple(parent, t));
                         if (i != direct_index.end()) {
                             new_entries.push_back(i);
+                        }
+                        // Optimization: for non-wildcard topic filters, at most one topic can match
+                        // If no wildcard and no match found, we can stop early
+                        if (!contains_wildcard && new_entries.empty()) {
+                            std::swap(new_entries, entries);
+                            return false;
                         }
                     }
                 }

@@ -256,4 +256,48 @@ BOOST_AUTO_TEST_CASE(large_number_of_topics) {
     BOOST_TEST(map.internal_size() == 1);
 }
 
+BOOST_AUTO_TEST_CASE(wildcard_multiple_matches) {
+    // Test case for issue #442: Multiple retained messages should be delivered
+    // when subscribing with wildcard that matches multiple topics
+    am::retained_topic_map<std::string> map;
+
+    // Insert two retained messages
+    map.insert_or_assign("a/x/b/c", "message1");
+    map.insert_or_assign("a/y/b/c", "message2");
+
+    BOOST_TEST(map.size() == 2);
+
+    // Subscribe with wildcard a/+/b/# should match both
+    std::vector<std::string> matches;
+    map.find("a/+/b/#", [&matches](std::string const &a) {
+        matches.push_back(a);
+    });
+
+    // Both messages should be delivered
+    BOOST_TEST(matches.size() == 2);
+    std::sort(matches.begin(), matches.end());
+    BOOST_TEST(matches[0] == "message1");
+    BOOST_TEST(matches[1] == "message2");
+
+    // Also test a/+/b/c pattern
+    matches.clear();
+    map.find("a/+/b/c", [&matches](std::string const &a) {
+        matches.push_back(a);
+    });
+
+    BOOST_TEST(matches.size() == 2);
+    std::sort(matches.begin(), matches.end());
+    BOOST_TEST(matches[0] == "message1");
+    BOOST_TEST(matches[1] == "message2");
+
+    // Test non-wildcard exact match (should return only one)
+    matches.clear();
+    map.find("a/x/b/c", [&matches](std::string const &a) {
+        matches.push_back(a);
+    });
+
+    BOOST_TEST(matches.size() == 1);
+    BOOST_TEST(matches[0] == "message1");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
