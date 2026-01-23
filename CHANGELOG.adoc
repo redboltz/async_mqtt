@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.8
+* Added Share Name character check. #445
+
 == 10.2.7
 * Implemented cmake package version checking. #124, #444,
 * Fixed broker tool not delivering all retained messages when wildcard subscription matches multiple topics. #442, #443

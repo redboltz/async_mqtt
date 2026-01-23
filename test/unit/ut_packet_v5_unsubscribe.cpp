@@ -149,6 +149,40 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe) {
     catch (am::system_error const& se) {
         BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
     }
+
+    // ShareName must not contain "+"
+    try {
+        std::vector<am::topic_sharename> args {
+            "$share/sn+/topic"
+        };
+
+        auto p = am::v5::unsubscribe_packet{
+            0x1234,         // packet_id
+            args,
+            am::properties{}
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
+    // ShareName must not contain "#"
+    try {
+        std::vector<am::topic_sharename> args {
+            "$share/sn#/topic"
+        };
+
+        auto p = am::v5::unsubscribe_packet{
+            0x1234,         // packet_id
+            args,
+            am::properties{}
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(v5_unsubscribe_pid4) {
@@ -297,6 +331,20 @@ BOOST_AUTO_TEST_CASE(v5_unsubscribe_error) {
     {
         //                CP  RL  PID     PL  TPL    TP
         am::buffer buf{"\xa2\x07\x12\x34\x00\x00\x02\xc0\x00"sv}; // invalid utf8 topic
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL  TPL   TP
+        am::buffer buf{"\xa2\x15\x12\x34\x00\x00\x10$share/sn+/topic"sv}; // sharename contains +
+        am::error_code ec;
+        am::v5::unsubscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL  TPL   TP
+        am::buffer buf{"\xa2\x15\x12\x34\x00\x00\x10$share/sn#/topic"sv}; // sharename contains #
         am::error_code ec;
         am::v5::unsubscribe_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

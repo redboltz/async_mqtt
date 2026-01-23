@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     try {
         std::vector<am::topic_subopts> args {
             {
-                std::string("$share/topic1"), // too long
+                std::string("$share/topic1"),
                 am::sub::nl::yes
             }
         };
@@ -200,6 +200,46 @@ BOOST_AUTO_TEST_CASE(v5_subscribe) {
     }
     catch (am::system_error const& se) {
         BOOST_TEST(se.code() == am::disconnect_reason_code::protocol_error);
+    }
+
+    // ShareName must not contain "+"
+    try {
+        std::vector<am::topic_subopts> args {
+            {
+                std::string("$share/sn+/topic"),
+                am::qos::at_most_once
+            }
+        };
+
+        auto p = am::v5::subscribe_packet{
+            0x1234,         // packet_id
+            args,
+            am::properties{}
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
+    }
+
+    // ShareName must not contain "#"
+    try {
+        std::vector<am::topic_subopts> args {
+            {
+                std::string("$share/sn#/topic"),
+                am::qos::at_most_once
+            }
+        };
+
+        auto p = am::v5::subscribe_packet{
+            0x1234,         // packet_id
+            args,
+            am::properties{}
+        };
+        BOOST_TEST(false);
+    }
+    catch (am::system_error const& se) {
+        BOOST_TEST(se.code() == am::disconnect_reason_code::malformed_packet);
     }
 
 }
@@ -384,10 +424,24 @@ BOOST_AUTO_TEST_CASE(v5_subscribe_error) {
     }
     {
         //                CP  RL  PID     PL  TPL   TP      OPT
-        am::buffer buf{"\x82\x0e\x12\x34\x00\x00\x08$share/T\x04"sv}; // invalid sharenme + nl
+        am::buffer buf{"\x82\x0e\x12\x34\x00\x00\x08$share/T\x04"sv}; // invalid sharename + nl
         am::error_code ec;
         am::v5::subscribe_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::protocol_error);
+    }
+    {
+        //                CP  RL  PID     PL  TPL   TP               OPT
+        am::buffer buf{"\x82\x16\x12\x34\x00\x00\x10$share/sn+/topic\x00"sv}; // sharename contains +
+        am::error_code ec;
+        am::v5::subscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL  PID     PL  TPL   TP               OPT
+        am::buffer buf{"\x82\x16\x12\x34\x00\x00\x10$share/sn#/topic\x00"sv}; // sharename contains #
+        am::error_code ec;
+        am::v5::subscribe_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
 }
 
