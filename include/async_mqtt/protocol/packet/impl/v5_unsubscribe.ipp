@@ -97,6 +97,16 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(
                 )
             );
         }
+        // MQTT v5.0 spec: ShareName must not contain "/", "+", or "#"
+        if (!e.sharename().empty()) {
+            if (e.sharename().find_first_of("/#+"sv) != std::string_view::npos) {
+                throw system_error{
+                    make_error_code(
+                        disconnect_reason_code::malformed_packet
+                    )
+                };
+            }
+        }
     }
 
     remaining_length_buf_ = val_to_variable_bytes(boost::numeric_cast<std::uint32_t>(remaining_length_));
@@ -176,6 +186,7 @@ properties const& basic_unsubscribe_packet<PacketIdBytes>::props() const {
 template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(buffer buf, error_code& ec) {
+    using namespace std::literals;
     // fixed_header
     if (buf.empty()) {
         ec = make_error_code(
@@ -275,7 +286,17 @@ basic_unsubscribe_packet<PacketIdBytes>::basic_unsubscribe_packet(buffer buf, er
             return;
         }
         buf.remove_prefix(topic_length);
-        entries_.emplace_back(std::string{topic});
+        auto entry = topic_sharename{std::string{topic}};
+        // MQTT v5.0 spec: ShareName must not contain "/", "+", or "#"
+        if (!entry.sharename().empty()) {
+            if (entry.sharename().find_first_of("/#+"sv) != std::string_view::npos) {
+                ec = make_error_code(
+                    disconnect_reason_code::malformed_packet
+                );
+                return;
+            }
+        }
+        entries_.push_back(force_move(entry));
     }
 }
 

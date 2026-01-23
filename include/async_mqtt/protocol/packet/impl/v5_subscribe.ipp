@@ -119,12 +119,24 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(
             };
             break;
         }
-        if (e.opts().get_nl() == sub::nl::yes && !e.sharename().empty()) {
-            throw system_error{
-                make_error_code(
-                    disconnect_reason_code::protocol_error
-                )
-            };
+        if (!e.sharename().empty()) {
+            // MQTT v5.0 spec: It is a Protocol Error to set the No Local bit to 1
+            // on a Shared Subscription
+            if (e.opts().get_nl() == sub::nl::yes) {
+                throw system_error{
+                    make_error_code(
+                        disconnect_reason_code::protocol_error
+                    )
+                };
+            }
+            // MQTT v5.0 spec: ShareName must not contain "/", "+", or "#"
+            if (e.sharename().find_first_of("/#+"sv) != std::string_view::npos) {
+                throw system_error{
+                    make_error_code(
+                        disconnect_reason_code::malformed_packet
+                    )
+                };
+            }
         }
         auto size = e.all_topic().size();
         remaining_length_ +=
@@ -218,6 +230,7 @@ properties const& basic_subscribe_packet<PacketIdBytes>::props() const {
 template <std::size_t PacketIdBytes>
 ASYNC_MQTT_HEADER_ONLY_INLINE
 basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_code& ec) {
+    using namespace std::literals;
     // fixed_header
     if (buf.empty()) {
         ec = make_error_code(
@@ -358,11 +371,22 @@ basic_subscribe_packet<PacketIdBytes>::basic_subscribe_packet(buffer buf, error_
             return;
         }
         auto entry = topic_subopts{std::string{topic}, opts};
-        if (entry.opts().get_nl() == sub::nl::yes && !entry.sharename().empty()) {
-            ec = make_error_code(
-                disconnect_reason_code::protocol_error
-            );
-            return;
+        if (!entry.sharename().empty()) {
+            // MQTT v5.0 spec: It is a Protocol Error to set the No Local bit to 1
+            // on a Shared Subscription
+            if (entry.opts().get_nl() == sub::nl::yes) {
+                ec = make_error_code(
+                    disconnect_reason_code::protocol_error
+                );
+                return;
+            }
+            // MQTT v5.0 spec: ShareName must not contain "/", "+", or "#"
+            if (entry.sharename().find_first_of("/#+"sv) != std::string_view::npos) {
+                ec = make_error_code(
+                    disconnect_reason_code::malformed_packet
+                );
+                return;
+            }
         }
 
         entries_.push_back(force_move(entry));
