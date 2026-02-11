@@ -25,6 +25,15 @@ static constexpr auto shutdown_timeout = std::chrono::seconds(3);
 /**
  * @brief customization class template specialization for boost::asio::ssl::stream
  *
+ * @note The ssl::stream cannot be reused for reconnection after disconnection.
+ *       Once SSL_shutdown() has been performed during async_close(), the internal
+ *       SSL state becomes invalid and async_handshake() on the same object will fail.
+ *       To reconnect with TLS (mqtts, wss), create a new basic_endpoint or client
+ *       and migrate the MQTT session state using get_stored_packets(),
+ *       get_qos2_publish_handled_pids(), restore_packets(), and
+ *       restore_qos2_publish_handled_pids().
+ *       See https://github.com/chriskohlhoff/asio/issues/804
+ *
  * @see
  *   <a href="../../customize.html">Layor customize</a>
  */

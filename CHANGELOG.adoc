@@ -2,6 +2,9 @@
 
 = History
 
+== 10.2.9
+* Added documentation regarding stream reuse restrictions for TLS-related streams. #447
+
 == 10.2.8
 * Added Share Name character check. #445
 

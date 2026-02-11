@@ -21,3 +21,37 @@ Here are examples for reconnection:
 ** link:../example/cl_cpp20coro_mqtt_sub.cpp[cl_cpp20coro_mqtt_sub.cpp]
 * C++17 callback based
 ** link:../example/cl_cpp17_mqtt_sub.cpp[cl_cpp17_mqtt_sub.cpp]
+
+== Reconnection with TLS (mqtts, wss)
+
+When the underlying layer involves TLS (i.e., `mqtts` or `wss`), you **cannot** reuse the same `basic_endpoint`, `endpoint`  or `client` object for reconnection by simply calling `async_underlying_handshake()` again.
+
+This is because `boost::asio::ssl::stream` becomes invalid after `SSL_shutdown()` is performed during disconnection. The SSL internal state cannot be reset for a new handshake on the same object.
+See https://github.com/chriskohlhoff/asio/issues/804
+
+For non-TLS layers (TCP `mqtt`, WebSocket `ws`), the simple reconnection approach described above works as expected.
+
+=== Reconnection procedure for TLS layers
+
+The simplest approach is to create a new `basic_endpoint`, `endpoint` or `client` object. If you need to maintain the MQTT session state across the reconnection, you must migrate the session state from the old object to the new one before performing the handshake.
+
+In this example, `am_opt` is assumed to be `std::optional<basic_endpoint<...>>`, `std::optional<endpoint<...>>`, or `std::optional<client<...>>`, so that `emplace()` can be used to reconstruct the object in place.
+
+[source,cpp]
+----
+// 1. Retrieve session state from the old endpoint/client
+auto storedPackets = am_opt->get_endpoint().get_stored_packets();
+auto storedPids = am_opt->get_endpoint().get_qos2_publish_handled_pids();
+
+// 2. Create a new endpoint/client
+am_opt.emplace(exec, ctx);
+
+// 3. Restore session state to the new endpoint/client
+am_opt->get_endpoint().restore_packets(std::move(storedPackets));
+am_opt->get_endpoint().restore_qos2_publish_handled_pids(std::move(storedPids));
+
+// 4. Perform the underlying handshake and send CONNECT with clean_start=false
+co_await am_opt->async_underlying_handshake(host, port);
+----
+
+`get_stored_packets()` retrieves the halfway PUBLISH (QoS1, QoS2) and PUBREL packets that have not yet been acknowledged. `get_qos2_publish_handled_pids()` retrieves the packet IDs of QoS2 PUBLISH packets that have been processed but not yet released (PUBCOMP not yet sent). These must be restored to the new object using `restore_packets()` and `restore_qos2_publish_handled_pids()` respectively, before calling `async_underlying_handshake()` and sending the `CONNECT` packet.
