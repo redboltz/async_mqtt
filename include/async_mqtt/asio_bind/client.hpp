@@ -8,6 +8,8 @@
 #define ASYNC_MQTT_ASIO_BIND_CLIENT_HPP
 
 #include <optional>
+#include <set>
+#include <vector>
 #include <boost/asio/async_result.hpp>
 #include <boost/asio/any_io_executor.hpp>
 
@@ -17,6 +19,7 @@
 #include <async_mqtt/protocol/error.hpp>
 #include <async_mqtt/protocol/role.hpp>
 #include <async_mqtt/protocol/packet/packet_id_type.hpp>
+#include <async_mqtt/protocol/packet/store_packet_variant_fwd.hpp>
 #include <async_mqtt/asio_bind/endpoint_fwd.hpp>
 
 namespace async_mqtt {
@@ -834,6 +837,39 @@ public:
      * @param packet_id packet_id to release
      */
     void release_packet_id(packet_id_type packet_id);
+
+    /**
+     * @brief Get processed but not released QoS2 packet ids
+     *        This function should be called after disconnection
+     * @return set of packet_ids
+     */
+    std::set<packet_id_type> get_qos2_publish_handled_pids() const;
+
+    /**
+     * @brief Restore processed but not released QoS2 packet ids
+     *        This function should be called before receive the first publish
+     * @param pids packet ids
+     */
+    void restore_qos2_publish_handled_pids(std::set<packet_id_type> pids);
+
+    /**
+     * @brief restore packets
+     *        the restored packets would automatically send when CONNACK packet is received
+     * @param pvs packets to restore
+     */
+    void restore_packets(
+        std::vector<store_packet_variant> pvs
+    );
+
+    /**
+     * @brief get stored packets
+     *        sotred packets mean inflight packets.
+     *        @li PUBLISH packet (QoS1) not received PUBACK packet
+     *        @li PUBLISH packet (QoS1) not received PUBREC packet
+     *        @li PUBREL  packet not received PUBCOMP packet
+     * @return std::vector<store_packet_variant>
+     */
+    std::vector<store_packet_variant> get_stored_packets() const;
 
     /**
      * @brief rebinds the client type to another executor

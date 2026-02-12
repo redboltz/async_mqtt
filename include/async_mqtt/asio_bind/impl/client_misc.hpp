@@ -134,6 +134,34 @@ client_impl<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
     ep_.set_read_buffer_size(val);
 }
 
+template <protocol_version Version, typename NextLayer>
+inline
+std::set<packet_id_type>
+client_impl<Version, NextLayer>::get_qos2_publish_handled_pids() const {
+    return ep_.get_qos2_publish_handled_pids();
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client_impl<Version, NextLayer>::restore_qos2_publish_handled_pids(std::set<packet_id_type> pids) {
+    ep_.restore_qos2_publish_handled_pids(force_move(pids));
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client_impl<Version, NextLayer>::restore_packets(std::vector<store_packet_variant> pvs) {
+    ep_.restore_packets(force_move(pvs));
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+std::vector<store_packet_variant>
+client_impl<Version, NextLayer>::get_stored_packets() const {
+    return ep_.get_stored_packets();
+}
+
 } // namespace detail
 
 // member functions
@@ -260,6 +288,38 @@ void
 client<Version, NextLayer>::set_read_buffer_size(std::size_t val) {
     BOOST_ASSERT(impl_);
     impl_->set_read_buffer_size(val);
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+std::set<packet_id_type>
+client<Version, NextLayer>::get_qos2_publish_handled_pids() const {
+    BOOST_ASSERT(impl_);
+    return impl_->get_qos2_publish_handled_pids();
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client<Version, NextLayer>::restore_qos2_publish_handled_pids(std::set<packet_id_type> pids) {
+    BOOST_ASSERT(impl_);
+    impl_->restore_qos2_publish_handled_pids(force_move(pids));
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+void
+client<Version, NextLayer>::restore_packets(std::vector<store_packet_variant> pvs) {
+    BOOST_ASSERT(impl_);
+    impl_->restore_packets(force_move(pvs));
+}
+
+template <protocol_version Version, typename NextLayer>
+inline
+std::vector<store_packet_variant>
+client<Version, NextLayer>::get_stored_packets() const {
+    BOOST_ASSERT(impl_);
+    return impl_->get_stored_packets();
 }
 
 } // namespace async_mqtt
