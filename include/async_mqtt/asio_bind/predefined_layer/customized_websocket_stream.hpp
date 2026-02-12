@@ -20,6 +20,8 @@ namespace async_mqtt {
 namespace as = boost::asio;
 namespace bs = boost::beast;
 
+static constexpr auto ws_shutdown_timeout = std::chrono::seconds(3);
+
 /**
  * @brief customization class template specialization for boost::beast::websocket::stream
  *
@@ -243,14 +245,45 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
 
     struct async_close_impl {
         bs::websocket::stream<NextLayer>& stream;
+        enum {
+            close,
+            read,
+            complete
+        } state = close;
 
         template <typename Self>
         void operator()(
             Self& self
         ) {
-            stream.async_close(
+            BOOST_ASSERT(state == close);
+            auto tim = std::make_shared<as::steady_timer>(
+                stream.get_executor(),
+                ws_shutdown_timeout
+            );
+            auto sig = std::make_shared<as::cancellation_signal>();
+            tim->async_wait(
+                [sig, wp = std::weak_ptr<as::steady_timer>(tim)]
+                (error_code const& ec) {
+                    if (!ec) {
+                        if (auto sp = wp.lock()) {
+                            ASYNC_MQTT_LOG("mqtt_impl", info)
+                                << "WebSocket async_close timeout";
+                            sig->emit(as::cancellation_type::terminal);
+                        }
+                    }
+                }
+            );
+            auto& a_stream{stream};
+            a_stream.async_close(
                 bs::websocket::close_code::none,
-                force_move(self)
+                as::bind_cancellation_slot(
+                    sig->slot(),
+                    as::consign(
+                        force_move(self),
+                        tim,
+                        sig
+                    )
+                )
             );
         }
 
@@ -259,10 +292,14 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
             Self& self,
             error_code const& ec
         ) {
+            ASYNC_MQTT_LOG("mqtt_impl", info)
+                << "WebSocket async_close ec:" << ec.message();
             if (ec) {
+                state = complete;
                 self.complete(ec);
             }
             else {
+                state = read;
                 auto buffer = std::make_shared<bs::flat_buffer>();
                 stream.async_read(
                     *buffer,
@@ -289,6 +326,7 @@ struct layer_customize<bs::websocket::stream<NextLayer>> {
                     ASYNC_MQTT_LOG("mqtt_impl", info)
                         << "ws async_read (for close):" << ec.message();
                 }
+                state = complete;
                 self.complete(ec);
             }
             else {

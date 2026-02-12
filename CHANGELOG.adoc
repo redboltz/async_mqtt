@@ -3,6 +3,7 @@
 = History
 
 == 10.2.9
+* Added websocket async_close timeout. #448
 * Added documentation regarding stream reuse restrictions for TLS-related streams. #447
 
 == 10.2.8
