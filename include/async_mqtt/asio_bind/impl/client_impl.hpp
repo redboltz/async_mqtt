@@ -81,6 +81,11 @@ public:
     bool register_packet_id(packet_id_type packet_id);
     void release_packet_id(packet_id_type packet_id);
 
+    std::set<packet_id_type> get_qos2_publish_handled_pids() const;
+    void restore_qos2_publish_handled_pids(std::set<packet_id_type> pids);
+    void restore_packets(std::vector<store_packet_variant> pvs);
+    std::vector<store_packet_variant> get_stored_packets() const;
+
     template <typename Executor1>
     struct rebind_executor {
         using other = client_impl<

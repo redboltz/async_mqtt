@@ -5,7 +5,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required (VERSION 3.13.0)
-project(async_mqtt_iface VERSION 10.2.9)
+project(async_mqtt_iface VERSION 10.3.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

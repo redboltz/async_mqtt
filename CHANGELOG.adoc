@@ -2,7 +2,10 @@
 
 = History
 
-== 10.2.9
+== 10.3.0
+* Added get_qos2_publish_handled_pids(), restore_qos2_publish_handled_pids(), restore_packets(), and get_stored_packets() to client for convenient. #449
+  * get_endpoint() can be omitted now.
+* Refined reconnect examples. #449
 * Added websocket async_close timeout. #448
 * Added documentation regarding stream reuse restrictions for TLS-related streams. #447
 
