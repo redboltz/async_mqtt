@@ -2,13 +2,95 @@
 <html lang="en">
   <head>
         <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>async_mqtt::basic_endpoint :: async_mqtt</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<style>html.fonts-loading{visibility:hidden;opacity:0}</style>
+<script>document.documentElement.classList.add('fonts-loading');</script>
+
+<link rel="preload" href="../../../_/font/NotoSansDisplay.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../_/font/NotoSansDisplay-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../_/font/MonaspaceNeon-Var.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../_/font/MonaspaceXenon-Var.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+<script>
+(function() {
+  'use strict';
+  
+  var revealed = false;
+  
+  var reveal = function() {
+    if (revealed) return;
+    revealed = true;
+    document.documentElement.classList.remove('fonts-loading');
+  };
+  
+  setTimeout(reveal, 3000);
+  
+  if (!('FontFace' in window) || !('fonts' in document)) {
+    setTimeout(reveal, 100);
+    return;
+  }
+  
+  var uiRoot = '../../../_';
+  var fonts = [
+    { 
+      family: 'Noto Sans', 
+      url: uiRoot + '/font/NotoSansDisplay.woff2',
+      descriptors: { style: 'normal', weight: '100 900', stretch: '62.5% 100%' }
+    },
+    { 
+      family: 'Noto Sans', 
+      url: uiRoot + '/font/NotoSansDisplay-Italic.woff2',
+      descriptors: { style: 'italic', weight: '100 900', stretch: '62.5% 100%' }
+    },
+    { 
+      family: 'Monaspace Neon', 
+      url: uiRoot + '/font/MonaspaceNeon-Var.woff2',
+      descriptors: { style: 'normal', weight: '400' }
+    },
+    { 
+      family: 'Monaspace Xenon', 
+      url: uiRoot + '/font/MonaspaceXenon-Var.woff2',
+      descriptors: { style: 'italic', weight: '400' }
+    }
+  ];
+  
+  var loadPromises = fonts.map(function(f) {
+    try {
+      var face = new FontFace(f.family, 'url("' + f.url + '")', f.descriptors);
+      return face.load().then(function(loaded) {
+        document.fonts.add(loaded);
+        return loaded;
+      }).catch(function() {
+        return null;
+      });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  });
+  
+  Promise.all(loadPromises)
+    .then(function() {
+      return document.fonts.ready;
+    })
+    .then(reveal)
+    .catch(reveal);
+})();
+</script>    <title>Untitled :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/basic_endpoint.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/boostlook.css">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+    <script>
+    (function() {
+      if (window.self !== window.top) return;
+      var theme = localStorage.getItem('antora-theme');
+      if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme = 'dark';
+      }
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    })();
+    </script>
     <script>var uiRootPath = '../../../_'</script>
 <link rel="icon" href="../../../_/img/favicons/favicon.ico" type="image/x-icon">
     <!-- Favicon configuration -->
@@ -20,14 +102,19 @@
   </head>
   <body class="article toc2 toc-left">
     <div class="boostlook">
-  <div id="header">
-    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+   <div id="header">
+      <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
   <aside class="nav">
     <button class="nav-close"></button>
     <div class="panels">
       <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-      <h3 class="title"><a href="../../index.html">async_mqtt</a></h3>
+      <div class="title-row">
+        <h3 class="title"><a href="../../index.html">async_mqtt</a></h3>
+        <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme" style="display:none">
+  <i class="fas fa-sun theme-icon-light"></i>
+  <i class="fas fa-moon theme-icon-dark"></i>
+</button>      </div>
       <ul class="nav-list">
         <ul class="nav-list">
         <li class="" data-depth="1">
@@ -196,37 +283,30 @@
     </div>
   </aside>
 </div>
-</div>
-  <div id="content">
+  </div>  <div id="content">
     <article class="doc max-width-reset">
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li>
-      <a href="../../index.html" aria-label="Home: async_mqtt">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
-      </a>
-    </li>
-    <li><a href="basic_endpoint.html"><a href="../async_mqtt.html">async_mqtt</a>::basic_endpoint</a></li>
-  </ul>
 </nav>
+  <div class="search-container">
+    <div id="search-field" class="field has-filter">
+      <input id="search-input" type="text" placeholder="Search the docs" >
+    </div>
+  </div>
 <div class="spirit-nav">
     <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
       <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
     </a>
 </div></div>
-    <h1 class="page"><a href="../async_mqtt.html">async_mqtt</a>::basic_endpoint</h1>
-  <div id="preamble">
+  <div class="sect1">
+<h2 id="async_mqtt-basic_endpoint"><a class="anchor" href="#async_mqtt-basic_endpoint"></a><a href="../async_mqtt.html" class="xref page">async_mqtt</a>::basic_endpoint</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>MQTT endpoint corresponding to the connection</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="paragraph">
 <p>Declared in header <code>&lt;<a href="https://www.github.com/redboltz/async_mqtt/blob/main/include/async_mqtt/asio_bind/endpoint.hpp#L22" target="blank_">async_mqtt/asio_bind/endpoint.hpp</a>&gt;</code></p>
 </div>
@@ -240,10 +320,8 @@ class basic_endpoint;</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_types"><a class="anchor" href="#_types"></a>Types</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_types"><a class="anchor" href="#_types"></a>Types</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -277,10 +355,8 @@ class basic_endpoint;</code></pre>
 </tbody>
 </table>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_member_functions"><a class="anchor" href="#_member_functions"></a>Member Functions</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_member_functions"><a class="anchor" href="#_member_functions"></a>Member Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -479,10 +555,8 @@ cancelling any outstanding asynchronous operations associated with the basic_end
 </tbody>
 </table>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_description"><a class="anchor" href="#_description"></a>Description</h3>
 <div class="sect3">
 <h4 id="_thread_safety"><a class="anchor" href="#_thread_safety"></a>Thread Safety</h4>
 <div class="ulist">
@@ -516,6 +590,36 @@ cancelling any outstanding asynchronous operations associated with the basic_end
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_template_parameters"><a class="anchor" href="#_template_parameters"></a>Template Parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Role</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">role for packet sendable checking</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>PacketIdBytes</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT spec is 2. You can use <code>endpoint</code> for that.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>NextLayer</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Just next layer for basic_endpoint. mqtt, mqtts, ws, and wss are predefined.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
   <div class="edit-this-page">
   </div>
@@ -525,6 +629,10 @@ cancelling any outstanding asynchronous operations associated with the basic_end
   <script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
 <script async src="../../../_/js/vendor/highlight.js"></script>
 <script async src="../../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+<script async src="../../../_/js/vendor/lunr.js"></script>
+<script async src="../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../.."
+  data-ui-root-path="../../../_"></script>
+<script async src="../../../search-index.js"></script>
 </div>
 </div>
   </body>

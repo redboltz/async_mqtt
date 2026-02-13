@@ -2,13 +2,95 @@
 <html lang="en">
   <head>
         <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>async_mqtt::property::operator&lt;&lt; :: async_mqtt</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<style>html.fonts-loading{visibility:hidden;opacity:0}</style>
+<script>document.documentElement.classList.add('fonts-loading');</script>
+
+<link rel="preload" href="../../../../_/font/NotoSansDisplay.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../../_/font/NotoSansDisplay-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../../_/font/MonaspaceNeon-Var.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+<link rel="preload" href="../../../../_/font/MonaspaceXenon-Var.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+<script>
+(function() {
+  'use strict';
+  
+  var revealed = false;
+  
+  var reveal = function() {
+    if (revealed) return;
+    revealed = true;
+    document.documentElement.classList.remove('fonts-loading');
+  };
+  
+  setTimeout(reveal, 3000);
+  
+  if (!('FontFace' in window) || !('fonts' in document)) {
+    setTimeout(reveal, 100);
+    return;
+  }
+  
+  var uiRoot = '../../../../_';
+  var fonts = [
+    { 
+      family: 'Noto Sans', 
+      url: uiRoot + '/font/NotoSansDisplay.woff2',
+      descriptors: { style: 'normal', weight: '100 900', stretch: '62.5% 100%' }
+    },
+    { 
+      family: 'Noto Sans', 
+      url: uiRoot + '/font/NotoSansDisplay-Italic.woff2',
+      descriptors: { style: 'italic', weight: '100 900', stretch: '62.5% 100%' }
+    },
+    { 
+      family: 'Monaspace Neon', 
+      url: uiRoot + '/font/MonaspaceNeon-Var.woff2',
+      descriptors: { style: 'normal', weight: '400' }
+    },
+    { 
+      family: 'Monaspace Xenon', 
+      url: uiRoot + '/font/MonaspaceXenon-Var.woff2',
+      descriptors: { style: 'italic', weight: '400' }
+    }
+  ];
+  
+  var loadPromises = fonts.map(function(f) {
+    try {
+      var face = new FontFace(f.family, 'url("' + f.url + '")', f.descriptors);
+      return face.load().then(function(loaded) {
+        document.fonts.add(loaded);
+        return loaded;
+      }).catch(function() {
+        return null;
+      });
+    } catch (e) {
+      return Promise.resolve(null);
+    }
+  });
+  
+  Promise.all(loadPromises)
+    .then(function() {
+      return document.fonts.ready;
+    })
+    .then(reveal)
+    .catch(reveal);
+})();
+</script>    <title>Untitled :: async_mqtt</title>
   <link rel="canonical" href="https://antora.cppalliance.org/develop/lib/doc/async_mqtt/reference/async_mqtt/property/operator_lshift.html">
   <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../../_/css/boostlook.css">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+    <script>
+    (function() {
+      if (window.self !== window.top) return;
+      var theme = localStorage.getItem('antora-theme');
+      if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme = 'dark';
+      }
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+    })();
+    </script>
     <script>var uiRootPath = '../../../../_'</script>
 <link rel="icon" href="../../../../_/img/favicons/favicon.ico" type="image/x-icon">
     <!-- Favicon configuration -->
@@ -20,14 +102,19 @@
   </head>
   <body class="article toc2 toc-left">
     <div class="boostlook">
-  <div id="header">
-    <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
+   <div id="header">
+      <div id="toc" class="nav-container toc2" data-component="async_mqtt" data-version="">
   <aside class="nav">
     <button class="nav-close"></button>
     <div class="panels">
       <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-      <h3 class="title"><a href="../../../index.html">async_mqtt</a></h3>
+      <div class="title-row">
+        <h3 class="title"><a href="../../../index.html">async_mqtt</a></h3>
+        <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme" style="display:none">
+  <i class="fas fa-sun theme-icon-light"></i>
+  <i class="fas fa-moon theme-icon-dark"></i>
+</button>      </div>
       <ul class="nav-list">
         <ul class="nav-list">
         <li class="" data-depth="1">
@@ -196,365 +283,285 @@
     </div>
   </aside>
 </div>
-</div>
-  <div id="content">
+  </div>  <div id="content">
     <article class="doc max-width-reset">
   <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li>
-      <a href="../../../index.html" aria-label="Home: async_mqtt">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
-      </a>
-    </li>
-    <li><a href="operator_lshift.html"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/property.html">property</a>::operator&lt;&lt;</a></li>
-  </ul>
 </nav>
+  <div class="search-container">
+    <div id="search-field" class="field has-filter">
+      <input id="search-input" type="text" placeholder="Search the docs" >
+    </div>
+  </div>
 <div class="spirit-nav">
     <a class="disabled" accesskey="u" aria-disabled="true" tabindex="-1">
       <span class="material-symbols-outlined" title="Up:">arrow_upward</span>
     </a>
 </div></div>
-    <h1 class="page"><a href="../../async_mqtt.html">async_mqtt</a>::<a href="../../async_mqtt/property.html">property</a>::operator&lt;&lt;</h1>
   <div class="sect1">
-<h2 id="_members"><a class="anchor" href="#_members"></a>Members</h2>
+<h2 id="async_mqtt-property-operator_lshift"><a class="anchor" href="#async_mqtt-property-operator_lshift"></a><a href="../../async_mqtt.html" class="xref page">async_mqtt</a>::<a href="../property.html" class="xref page">property</a>::operator&lt;&lt;</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>output to the stream</p>
 </div>
+<div class="sect2">
+<h3 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-02.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-06e.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="id.html" class="xref page">id</a> v);
-  <a href="operator_lshift-02.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="id.html" class="xref page">id</a> v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0ec7.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="payload_format_indicator.html" class="xref page">payload_format_indicator</a> const&amp; v);
-  <a href="operator_lshift-0ec7.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0ec3.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="message_expiry_interval.html" class="xref page">message_expiry_interval</a> const&amp; v);
-  <a href="operator_lshift-0ec3.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0a2.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="content_type.html" class="xref page">content_type</a> const&amp; v);
-  <a href="operator_lshift-0a2.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0e6.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="response_topic.html" class="xref page">response_topic</a> const&amp; v);
-  <a href="operator_lshift-0e6.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-077.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="correlation_data.html" class="xref page">correlation_data</a> const&amp; v);
-  <a href="operator_lshift-077.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-015.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="subscription_identifier.html" class="xref page">subscription_identifier</a> const&amp; v);
-  <a href="operator_lshift-015.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-07c.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="session_expiry_interval.html" class="xref page">session_expiry_interval</a> const&amp; v);
-  <a href="operator_lshift-07c.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0af.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="assigned_client_identifier.html" class="xref page">assigned_client_identifier</a> const&amp; v);
-  <a href="operator_lshift-0af.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-016.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="server_keep_alive.html" class="xref page">server_keep_alive</a> const&amp; v);
-  <a href="operator_lshift-016.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-019.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="authentication_method.html" class="xref page">authentication_method</a> const&amp; v);
-  <a href="operator_lshift-019.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-04.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="authentication_data.html" class="xref page">authentication_data</a> const&amp; v);
-  <a href="operator_lshift-04.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-007.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="request_problem_information.html" class="xref page">request_problem_information</a> const&amp; v);
-  <a href="operator_lshift-007.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-050.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="will_delay_interval.html" class="xref page">will_delay_interval</a> const&amp; v);
-  <a href="operator_lshift-050.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
 <a href="operator_lshift-0b.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="request_response_information.html" class="xref page">request_response_information</a> const&amp; v);
-  <a href="operator_lshift-0b.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="payload_format_indicator.html" class="xref page">payload_format_indicator</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-09.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-0e5.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="response_information.html" class="xref page">response_information</a> const&amp; v);
-  <a href="operator_lshift-09.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="message_expiry_interval.html" class="xref page">message_expiry_interval</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0ab.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-02d.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="server_reference.html" class="xref page">server_reference</a> const&amp; v);
-  <a href="operator_lshift-0ab.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="content_type.html" class="xref page">content_type</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-03.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-0707.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="reason_string.html" class="xref page">reason_string</a> const&amp; v);
-  <a href="operator_lshift-03.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="response_topic.html" class="xref page">response_topic</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-05f.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="receive_maximum.html" class="xref page">receive_maximum</a> const&amp; v);
-  <a href="operator_lshift-05f.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-00d.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="topic_alias_maximum.html" class="xref page">topic_alias_maximum</a> const&amp; v);
-  <a href="operator_lshift-00d.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-01b.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="topic_alias.html" class="xref page">topic_alias</a> const&amp; v);
-  <a href="operator_lshift-01b.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-005.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="maximum_qos.html" class="xref page">maximum_qos</a> const&amp; v);
-  <a href="operator_lshift-005.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0d.html" class="xref page">operator<<</a>(
-    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="retain_available.html" class="xref page">retain_available</a> const&amp; v);
-  <a href="operator_lshift-0d.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
 <a href="operator_lshift-08.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="user_property.html" class="xref page">user_property</a> const&amp; v);
-  <a href="operator_lshift-08.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="correlation_data.html" class="xref page">correlation_data</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-070.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-03f.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="maximum_packet_size.html" class="xref page">maximum_packet_size</a> const&amp; v);
-  <a href="operator_lshift-070.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="subscription_identifier.html" class="xref page">subscription_identifier</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0ac.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-0e1.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="wildcard_subscription_available.html" class="xref page">wildcard_subscription_available</a> const&amp; v);
-  <a href="operator_lshift-0ac.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="session_expiry_interval.html" class="xref page">session_expiry_interval</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0e2.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-02a.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="subscription_identifier_available.html" class="xref page">subscription_identifier_available</a> const&amp; v);
-  <a href="operator_lshift-0e2.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="assigned_client_identifier.html" class="xref page">assigned_client_identifier</a> const&amp; v);</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>stream output operator</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
-<a href="operator_lshift-0a0.html" class="xref page">operator<<</a>(
+<a href="operator_lshift-061.html" class="xref page">operator<<</a>(
     <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
-    <a href="shared_subscription_available.html" class="xref page">shared_subscription_available</a> const&amp; v);
-  <a href="operator_lshift-0a0.html" class="xref page"><strong><em>» more...</em></strong></a></code></pre>
+    <a href="server_keep_alive.html" class="xref page">server_keep_alive</a> const&amp; v);</code></pre>
 </div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0f4.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="authentication_method.html" class="xref page">authentication_method</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-099.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="authentication_data.html" class="xref page">authentication_data</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-09e.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="request_problem_information.html" class="xref page">request_problem_information</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-04.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="will_delay_interval.html" class="xref page">will_delay_interval</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-031.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="request_response_information.html" class="xref page">request_response_information</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-05b.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="response_information.html" class="xref page">response_information</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0c5.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="server_reference.html" class="xref page">server_reference</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0f3.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="reason_string.html" class="xref page">reason_string</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-01.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="receive_maximum.html" class="xref page">receive_maximum</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0d.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="topic_alias_maximum.html" class="xref page">topic_alias_maximum</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0ef.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="topic_alias.html" class="xref page">topic_alias</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-00c.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="maximum_qos.html" class="xref page">maximum_qos</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0c0.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="retain_available.html" class="xref page">retain_available</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0a.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="user_property.html" class="xref page">user_property</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-000.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="maximum_packet_size.html" class="xref page">maximum_packet_size</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-058.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="wildcard_subscription_available.html" class="xref page">wildcard_subscription_available</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-0703.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="subscription_identifier_available.html" class="xref page">subscription_identifier_available</a> const&amp; v);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp"><a href="../../std.html" class="xref page">std</a>::ostream&amp;
+<a href="operator_lshift-069.html" class="xref page">operator<<</a>(
+    <a href="../../std.html" class="xref page">std</a>::ostream&amp; o,
+    <a href="shared_subscription_available.html" class="xref page">shared_subscription_available</a> const&amp; v);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_return_value"><a class="anchor" href="#_return_value"></a>Return Value</h3>
+<div class="paragraph">
+<p>output stream</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>o</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">output stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>v</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">target</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -566,6 +573,10 @@
   <script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
 <script async src="../../../../_/js/vendor/highlight.js"></script>
 <script async src="../../../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+<script async src="../../../../_/js/vendor/lunr.js"></script>
+<script async src="../../../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../../../.."
+  data-ui-root-path="../../../../_"></script>
+<script async src="../../../../search-index.js"></script>
 </div>
 </div>
   </body>
