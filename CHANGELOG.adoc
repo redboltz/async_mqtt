@@ -2,6 +2,9 @@
 
 = History
 
+== 10.3.1
+* Fixed packet_id related collection clean up process on sending publish error. #454
+
 == 10.3.0
 * Added get_qos2_publish_handled_pids(), restore_qos2_publish_handled_pids(), restore_packets(), and get_stored_packets() to client for convenient. #449
   * get_endpoint() can be omitted now.

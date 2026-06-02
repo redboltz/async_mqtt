@@ -468,6 +468,10 @@ process_send_packet(
                 );
                 if (packet_id != 0) {
                     pid_man_.release_id(packet_id);
+                    store_.erase_publish(packet_id);
+                    pid_puback_.erase(packet_id);
+                    pid_pubrec_.erase(packet_id);
+                    qos2_publish_processing_.erase(packet_id);
                     con_.on_packet_id_release(packet_id);
                 }
                 return false;
@@ -493,6 +497,10 @@ process_send_packet(
                     );
                     if (packet_id != 0) {
                         pid_man_.release_id(packet_id);
+                        store_.erase_publish(packet_id);
+                        pid_puback_.erase(packet_id);
+                        pid_pubrec_.erase(packet_id);
+                        qos2_publish_processing_.erase(packet_id);
                         con_.on_packet_id_release(packet_id);
                     }
                     return false;
@@ -540,6 +548,10 @@ process_send_packet(
                     );
                     if (packet_id != 0) {
                         pid_man_.release_id(packet_id);
+                        store_.erase_publish(packet_id);
+                        pid_puback_.erase(packet_id);
+                        pid_pubrec_.erase(packet_id);
+                        qos2_publish_processing_.erase(packet_id);
                         con_.on_packet_id_release(packet_id);
                     }
                     return false;

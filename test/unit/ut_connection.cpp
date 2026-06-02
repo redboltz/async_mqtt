@@ -409,6 +409,356 @@ BOOST_AUTO_TEST_CASE(v5_topic_alias_size_over_resend) {
     }
 }
 
+// When a QoS1 PUBLISH cannot be sent because the peer's Receive Maximum is
+// exceeded, the tentatively stored publish (and its pid_puback_ entry) must be
+// cleaned up. Otherwise the released packet_id leaves a dangling store entry.
+BOOST_AUTO_TEST_CASE(v5_receive_maximum_exceeded_recover_qos1) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+
+    // CONNECT with session_expiry_interval to enable the store.
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0,      // keep_alive
+        "cid1",
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
+    };
+    c.send(connect);
+
+    // CONNACK granting Receive Maximum of 1.
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success,
+            am::properties{
+                am::property::receive_maximum{1}
+            }
+        };
+        std::istringstream is{am::to_string(connack.const_buffer_sequence())};
+        c.recv(is);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connected);
+    BOOST_CHECK(c.get_receive_maximum_vacancy_for_send() == std::size_t{1});
+
+    // First PUBLISH consumes the single available slot.
+    auto pid_a = c.acquire_unique_packet_id();
+    auto pub_a = am::v5::publish_packet(
+        *pid_a,
+        "topic/a",
+        "A",
+        am::qos::at_least_once
+    );
+    c.send(pub_a);
+    BOOST_CHECK(c.get_receive_maximum_vacancy_for_send() == std::size_t{0});
+
+    // Second PUBLISH must fail with receive_maximum_exceeded.
+    auto pid_b = c.acquire_unique_packet_id();
+    auto pub_b = am::v5::publish_packet(
+        *pid_b,
+        "topic/b",
+        "B",
+        am::qos::at_least_once
+    );
+    auto events = c.send(pub_b);
+    BOOST_TEST(events.size() == 2);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::disconnect_reason_code::receive_maximum_exceeded);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+    std::visit(
+        am::overload {
+            [&](am::event::packet_id_released const& ev) {
+                BOOST_TEST(ev.get() == *pid_b);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[1]
+    );
+
+    // The failed publish must not have consumed a flow-control slot.
+    BOOST_CHECK(c.get_receive_maximum_vacancy_for_send() == std::size_t{0});
+
+    // The store must contain only publish A; publish B must have been erased.
+    {
+        auto packets = c.get_stored_packets();
+        BOOST_TEST(packets.size() == 1);
+        auto dup_a = pub_a;
+        dup_a.set_dup(true);
+        packets[0].visit(
+            am::overload {
+                [&](am::v5::publish_packet const& p) {
+                    BOOST_TEST(p == dup_a);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            }
+        );
+    }
+
+    // PUBACK for A frees the slot and clears the store.
+    {
+        auto puback = am::v5::puback_packet{*pid_a};
+        std::istringstream is{am::to_string(puback.const_buffer_sequence())};
+        c.recv(is);
+    }
+    BOOST_CHECK(c.get_receive_maximum_vacancy_for_send() == std::size_t{1});
+    BOOST_TEST(c.get_stored_packets().size() == 0);
+
+    // A subsequent PUBLISH (reusing a released packet_id) must be admitted and
+    // stored on its own, proving the released id carried no stale store entry.
+    auto pid_c = c.acquire_unique_packet_id();
+    auto pub_c = am::v5::publish_packet(
+        *pid_c,
+        "topic/c",
+        "C",
+        am::qos::at_least_once
+    );
+    auto events_c = c.send(pub_c);
+    BOOST_TEST(events_c.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::event::send const&) {
+                BOOST_TEST(true);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events_c[0]
+    );
+    {
+        auto packets = c.get_stored_packets();
+        BOOST_TEST(packets.size() == 1);
+        auto dup_c = pub_c;
+        dup_c.set_dup(true);
+        packets[0].visit(
+            am::overload {
+                [&](am::v5::publish_packet const& p) {
+                    BOOST_TEST(p == dup_c);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            }
+        );
+    }
+}
+
+// QoS2 variant: the stored publish and the pid_pubrec_ entry must be cleaned up
+// when Receive Maximum is exceeded.
+BOOST_AUTO_TEST_CASE(v5_receive_maximum_exceeded_recover_qos2) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0,      // keep_alive
+        "cid1",
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
+    };
+    c.send(connect);
+
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success,
+            am::properties{
+                am::property::receive_maximum{1}
+            }
+        };
+        std::istringstream is{am::to_string(connack.const_buffer_sequence())};
+        c.recv(is);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connected);
+
+    auto pid_a = c.acquire_unique_packet_id();
+    auto pub_a = am::v5::publish_packet(
+        *pid_a,
+        "topic/a",
+        "A",
+        am::qos::exactly_once
+    );
+    c.send(pub_a);
+
+    auto pid_b = c.acquire_unique_packet_id();
+    auto pub_b = am::v5::publish_packet(
+        *pid_b,
+        "topic/b",
+        "B",
+        am::qos::exactly_once
+    );
+    auto events = c.send(pub_b);
+    BOOST_TEST(events.size() == 2);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::disconnect_reason_code::receive_maximum_exceeded);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+    std::visit(
+        am::overload {
+            [&](am::event::packet_id_released const& ev) {
+                BOOST_TEST(ev.get() == *pid_b);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[1]
+    );
+
+    // Only publish A must remain in the store.
+    {
+        auto packets = c.get_stored_packets();
+        BOOST_TEST(packets.size() == 1);
+        auto dup_a = pub_a;
+        dup_a.set_dup(true);
+        packets[0].visit(
+            am::overload {
+                [&](am::v5::publish_packet const& p) {
+                    BOOST_TEST(p == dup_a);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            }
+        );
+    }
+}
+
+// When a QoS1 PUBLISH carries an out-of-range Topic Alias, sending fails after
+// the publish has already been added to the store. The store entry and the
+// pid_puback_ entry must be erased so the released packet_id leaves no trace.
+BOOST_AUTO_TEST_CASE(v5_topic_alias_range_over_recover) {
+    am::rv_connection<am::role::client> c{am::protocol_version::v5};
+
+    auto connect = am::v5::connect_packet{
+        true,   // clean_start
+        0,      // keep_alive
+        "cid1",
+        std::nullopt,
+        std::nullopt,
+        std::nullopt,
+        am::properties{
+            am::property::session_expiry_interval{am::session_never_expire}
+        }
+    };
+    c.send(connect);
+
+    {
+        auto connack = am::v5::connack_packet{
+            false,   // session_present
+            am::connect_reason_code::success,
+            am::properties{
+                am::property::topic_alias_maximum{2}
+            }
+        };
+        std::istringstream is{am::to_string(connack.const_buffer_sequence())};
+        c.recv(is);
+    }
+    BOOST_TEST(c.get_connection_status() == am::connection_status::connected);
+
+    // Topic Alias 5 exceeds the granted maximum of 2.
+    auto pid = c.acquire_unique_packet_id();
+    auto publish = am::v5::publish_packet(
+        *pid,
+        "topic/a",
+        "A",
+        am::qos::at_least_once,
+        am::properties{
+            am::property::topic_alias{5}
+        }
+    );
+    auto events = c.send(publish);
+    BOOST_TEST(events.size() == 2);
+    std::visit(
+        am::overload {
+            [&](am::error_code const& e) {
+                BOOST_TEST(e == am::mqtt_error::packet_not_allowed_to_send);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[0]
+    );
+    std::visit(
+        am::overload {
+            [&](am::event::packet_id_released const& ev) {
+                BOOST_TEST(ev.get() == *pid);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events[1]
+    );
+
+    // The store must be empty: the tentatively added publish was erased.
+    BOOST_TEST(c.get_stored_packets().size() == 0);
+
+    // The released packet_id must be reusable for a subsequent valid publish.
+    auto pid_next = c.acquire_unique_packet_id();
+    auto publish_next = am::v5::publish_packet(
+        *pid_next,
+        "topic/b",
+        "B",
+        am::qos::at_least_once
+    );
+    auto events_next = c.send(publish_next);
+    BOOST_TEST(events_next.size() == 1);
+    std::visit(
+        am::overload {
+            [&](am::event::send const&) {
+                BOOST_TEST(true);
+            },
+            [](auto const&) {
+                BOOST_TEST(false);
+            }
+        },
+        events_next[0]
+    );
+    {
+        auto packets = c.get_stored_packets();
+        BOOST_TEST(packets.size() == 1);
+        auto dup_next = publish_next;
+        dup_next.set_dup(true);
+        packets[0].visit(
+            am::overload {
+                [&](am::v5::publish_packet const& p) {
+                    BOOST_TEST(p == dup_next);
+                },
+                [](auto const&) {
+                    BOOST_TEST(false);
+                }
+            }
+        );
+    }
+}
+
 BOOST_AUTO_TEST_CASE(v5_invalid_suback) {
     am::rv_connection<am::role::client> c{am::protocol_version::v5};
     auto connect = am::v5::connect_packet{
