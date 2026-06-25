@@ -541,7 +541,10 @@ struct security {
                         priority = entry.second;
                     }
                 }
-            }
+            },
+            // ACL matching: a rule on "a/b/#" must not govern the bare parent
+            // topic "a/b", so opt out of multi-level wildcard parent matching.
+            false // match_parent_hash
         );
 
         return result_type;
@@ -569,7 +572,10 @@ struct security {
                         rit->second = entry.first;
                     }
                 }
-            }
+            },
+            // ACL matching: a rule on "a/b/#" must not govern the bare parent
+            // topic "a/b", so opt out of multi-level wildcard parent matching.
+            false // match_parent_hash
         );
 
         return result;

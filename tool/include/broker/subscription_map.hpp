@@ -340,8 +340,13 @@ protected:
         }
     }
 
+    // match_parent_hash controls whether a multi-level wildcard '#' also matches
+    // the parent level itself (e.g. topic "a/b" matched by filter "a/b/#").
+    // This is required for message routing (MQTT spec 4.7.1.2), but the broker
+    // ACL matching opts out of it to keep its own subsumption semantics, where a
+    // rule on "a/b/#" governs the "a/b/" subtree but not the bare parent "a/b".
     template <typename ThisType, typename Output>
-    static void find_match_impl(ThisType& self, std::string_view topic, Output&& callback) {
+    static void find_match_impl(ThisType& self, std::string_view topic, Output&& callback, bool match_parent_hash = true) {
         using iterator_type = decltype(self.map.end()); // const_iterator or iterator depends on self
 
         std::vector<iterator_type> entries;
@@ -385,19 +390,33 @@ protected:
 
         for (auto& entry : entries) {
             callback(entry->second.value);
+
+            // A multi-level wildcard '#' also matches the parent level itself.
+            // e.g. topic_filter "a/b/#" matches topic "a/b" (MQTT spec 4.7.1.2).
+            // The in-loop hash check above only inspects the *parent* node's hash
+            // child, so the hash child of the final matched node must be handled
+            // here, after the topic has been fully consumed.
+            if (match_parent_hash && entry->second.count.has_hash_child()) {
+                auto i = self.map.find(path_entry_key(entry->second.id, std::string_view("#")));
+                if (i != self.map.end()) {
+                    if (entry->second.id != self.root_node_id) {
+                        callback(i->second.value);
+                    }
+                }
+            }
         }
     }
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find_match(std::string_view topic, Output&& callback) const {
-        find_match_impl(*this, topic, std::forward<Output>(callback));
+    void find_match(std::string_view topic, Output&& callback, bool match_parent_hash = true) const {
+        find_match_impl(*this, topic, std::forward<Output>(callback), match_parent_hash);
     }
 
     // Find all topic filters and allow modification
     template<typename Output>
-    void modify_match(std::string_view topic, Output&& callback) {
-        find_match_impl(*this, topic, std::forward<Output>(callback));
+    void modify_match(std::string_view topic, Output&& callback, bool match_parent_hash = true) {
+        find_match_impl(*this, topic, std::forward<Output>(callback), match_parent_hash);
     }
 
     template<typename ThisType, typename Output>
@@ -570,14 +589,15 @@ public:
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find(std::string_view topic, Output&& callback) const {
+    void find(std::string_view topic, Output&& callback, bool match_parent_hash = true) const {
         this->find_match(
             topic,
             [&callback](std::optional<Value> const& value) {
                 if (value) {
                     callback(*value);
                 }
-            }
+            },
+            match_parent_hash
         );
     }
 
@@ -718,27 +738,29 @@ public:
 
     // Find all topic filters that match the specified topic
     template<typename Output>
-    void find(std::string_view topic, Output&& callback) const {
+    void find(std::string_view topic, Output&& callback, bool match_parent_hash = true) const {
         this->find_match(
             topic,
             [&callback]( Cont const &values ) {
                 for (auto const& i : values) {
                     callback(i.first, i.second);
                 }
-            }
+            },
+            match_parent_hash
         );
     }
 
     // Find all topic filters that match and allow modification
     template<typename Output>
-    void modify(std::string_view topic, Output&& callback) {
+    void modify(std::string_view topic, Output&& callback, bool match_parent_hash = true) {
         this->modify_match(
             topic,
             [&callback]( Cont &values ) {
                 for (auto& i : values) {
                     callback(i.first, i.second);
                 }
-            }
+            },
+            match_parent_hash
         );
     }
 

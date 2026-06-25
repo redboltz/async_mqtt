@@ -300,4 +300,91 @@ BOOST_AUTO_TEST_CASE(wildcard_multiple_matches) {
     BOOST_TEST(matches[0] == "message1");
 }
 
+// A multi-level wildcard '#' also matches the parent level itself, so a retained
+// message stored exactly at that level must be delivered on subscribe.
+// e.g. topic_filter "a/b/#" matches retained topic "a/b" (MQTT spec 4.7.1.2).
+// Delivery counts are checked with a multiset (not a set) so that an accidental
+// double-delivery of the parent-level value would also be detected.
+BOOST_AUTO_TEST_CASE(hash_matches_parent_level) {
+    am::retained_topic_map<std::string> map;
+
+    map.insert_or_assign("a/b", "parent");
+    map.insert_or_assign("a/b/c", "child");
+    map.insert_or_assign("a", "top");
+
+    auto collect = [&](std::string_view topic_filter) {
+        std::multiset<std::string> matches;
+        map.find(topic_filter, [&matches](std::string const& v) {
+            matches.insert(v);
+        });
+        return matches;
+    };
+
+    // "a/b/#" must match the parent level "a/b" as well as descendant "a/b/c",
+    // each exactly once.
+    {
+        auto matches = collect("a/b/#");
+        BOOST_TEST(matches.count("parent") == 1u); // parent-level, exactly once
+        BOOST_TEST(matches.count("child") == 1u);
+        BOOST_TEST(matches.size() == 2u);
+    }
+
+    // "a/#" must match "a" (parent), "a/b" and "a/b/c", each exactly once.
+    {
+        auto matches = collect("a/#");
+        BOOST_TEST(matches.count("top") == 1u); // parent-level
+        BOOST_TEST(matches.count("parent") == 1u);
+        BOOST_TEST(matches.count("child") == 1u);
+        BOOST_TEST(matches.size() == 3u);
+    }
+
+    // "#" must match everything, each exactly once.
+    {
+        auto matches = collect("#");
+        BOOST_TEST(matches.size() == 3u);
+    }
+
+    // "a/b/c/#" must match the parent-level retained topic "a/b/c" exactly once.
+    {
+        auto matches = collect("a/b/c/#");
+        BOOST_TEST(matches.count("child") == 1u); // parent-level match of "a/b/c"
+        BOOST_TEST(matches.size() == 1u);
+    }
+}
+
+// '#' at the root level must not match topics starting with '$',
+// but "$SYS/#" must match the parent level "$SYS".
+BOOST_AUTO_TEST_CASE(hash_parent_level_dollar) {
+    am::retained_topic_map<std::string> map;
+
+    map.insert_or_assign("$SYS", "sys-root");
+    map.insert_or_assign("$SYS/broker/uptime", "uptime");
+    map.insert_or_assign("a/b", "normal");
+
+    auto collect = [&](std::string_view topic_filter) {
+        std::multiset<std::string> matches;
+        map.find(topic_filter, [&matches](std::string const& v) {
+            matches.insert(v);
+        });
+        return matches;
+    };
+
+    // root "#" must not match "$SYS..." topics
+    {
+        auto matches = collect("#");
+        BOOST_TEST(matches.count("normal") == 1u);
+        BOOST_TEST(matches.count("sys-root") == 0u);
+        BOOST_TEST(matches.count("uptime") == 0u);
+        BOOST_TEST(matches.size() == 1u);
+    }
+
+    // "$SYS/#" must match its parent level "$SYS" and descendants, each once.
+    {
+        auto matches = collect("$SYS/#");
+        BOOST_TEST(matches.count("sys-root") == 1u); // parent-level
+        BOOST_TEST(matches.count("uptime") == 1u);
+        BOOST_TEST(matches.size() == 2u);
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
