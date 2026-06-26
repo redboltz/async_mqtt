@@ -6,6 +6,8 @@
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
 
+#include <set>
+
 #include <broker/subscription_map.hpp>
 
 BOOST_AUTO_TEST_SUITE(ut_subscription_map)
@@ -303,6 +305,154 @@ BOOST_AUTO_TEST_CASE( test_move_only ) {
     mi_t map;
     map.insert_or_assign("a/b/c", "123", my(1));
     map.insert_or_assign("a/b/c", "456", my(2));
+}
+
+// A multi-level wildcard '#' also matches the parent level itself.
+// e.g. topic_filter "a/b/#" must match topic "a/b" (MQTT spec 4.7.1.2).
+// https://github.com/redboltz/async_mqtt/issues (broker not forwarding "a/b" to "a/b/#")
+BOOST_AUTO_TEST_CASE( hash_matches_parent_level ) {
+    am::single_subscription_map<std::string> map;
+
+    std::vector<std::string> values = {
+        "a/b/#", "a/+", "a/#", "#", "x/y/z"
+    };
+    for (auto const& i : values) {
+        map.insert(i, i);
+    }
+
+    auto collect = [&](std::string_view topic) {
+        std::set<std::string> matches;
+        map.find(topic, [&matches](std::string const& a) {
+            matches.insert(a);
+        });
+        return matches;
+    };
+
+    // "a/b" must match "a/b/#" (parent level), "a/+" (single level) and "a/#", "#"
+    {
+        auto matches = collect("a/b");
+        BOOST_TEST(matches.count("a/b/#") == 1); // the regression: parent-level match
+        BOOST_TEST(matches.count("a/+") == 1);
+        BOOST_TEST(matches.count("a/#") == 1);
+        BOOST_TEST(matches.count("#") == 1);
+        BOOST_TEST(matches.size() == 4u);
+    }
+
+    // "a/b/c" must match "a/b/#" and "a/#", "#" but NOT "a/+"
+    {
+        auto matches = collect("a/b/c");
+        BOOST_TEST(matches.count("a/b/#") == 1);
+        BOOST_TEST(matches.count("a/#") == 1);
+        BOOST_TEST(matches.count("#") == 1);
+        BOOST_TEST(matches.count("a/+") == 0);
+        BOOST_TEST(matches.size() == 3u);
+    }
+
+    // "a" (the parent of "a/#") must match "a/#" and "#"
+    {
+        auto matches = collect("a");
+        BOOST_TEST(matches.count("a/#") == 1); // parent-level match
+        BOOST_TEST(matches.count("#") == 1);
+        BOOST_TEST(matches.size() == 2u);
+    }
+
+    // "x/y/z" exact match plus "#"; "x/y" must match "x/y/z"? no, but exists no "x/y/#"
+    {
+        auto matches = collect("x/y/z");
+        BOOST_TEST(matches.count("x/y/z") == 1);
+        BOOST_TEST(matches.count("#") == 1);
+        BOOST_TEST(matches.size() == 2u);
+    }
+}
+
+// '#' must not match topics starting with '$' when subscribed at the root level,
+// but "$SYS/#" must match "$SYS" (parent level) as well.
+BOOST_AUTO_TEST_CASE( hash_parent_level_dollar ) {
+    am::single_subscription_map<std::string> map;
+
+    std::vector<std::string> values = {
+        "#", "$SYS/#"
+    };
+    for (auto const& i : values) {
+        map.insert(i, i);
+    }
+
+    auto collect = [&](std::string_view topic) {
+        std::set<std::string> matches;
+        map.find(topic, [&matches](std::string const& a) {
+            matches.insert(a);
+        });
+        return matches;
+    };
+
+    // root level "#" must not match "$SYS/..." topics
+    {
+        auto matches = collect("$SYS/broker/uptime");
+        BOOST_TEST(matches.count("$SYS/#") == 1);
+        BOOST_TEST(matches.count("#") == 0);
+        BOOST_TEST(matches.size() == 1u);
+    }
+
+    // "$SYS/#" must match its parent level "$SYS"; root "#" must still be excluded
+    {
+        auto matches = collect("$SYS");
+        BOOST_TEST(matches.count("$SYS/#") == 1); // parent-level match
+        BOOST_TEST(matches.count("#") == 0);
+        BOOST_TEST(matches.size() == 1u);
+    }
+}
+
+// find()/modify() accept match_parent_hash to opt out of the parent-level '#'
+// match. The broker ACL relies on this: a rule on "a/b/#" governs the "a/b/"
+// subtree but must not govern the bare parent topic "a/b". Disabling the option
+// must not affect descendant matching (e.g. "a/b/c" still matches "a/b/#").
+BOOST_AUTO_TEST_CASE( hash_parent_level_opt_out ) {
+    am::multiple_subscription_map<std::string, int> map;
+
+    map.insert_or_assign("a/b/#", "abhash", 0);
+    map.insert_or_assign("a/#", "ahash", 0);
+    map.insert_or_assign("#", "roothash", 0);
+
+    auto collect = [&](std::string_view topic, bool match_parent_hash) {
+        std::set<std::string> matches;
+        map.find(
+            topic,
+            [&matches](std::string const& key, int /*value*/) {
+                matches.insert(key);
+            },
+            match_parent_hash
+        );
+        return matches;
+    };
+
+    // Default (match_parent_hash == true): "a/b" matches the parent level "a/b/#".
+    {
+        auto matches = collect("a/b", true);
+        BOOST_TEST(matches.count("abhash") == 1); // parent-level
+        BOOST_TEST(matches.count("ahash") == 1);
+        BOOST_TEST(matches.count("roothash") == 1);
+        BOOST_TEST(matches.size() == 3u);
+    }
+
+    // match_parent_hash == false: "a/b" no longer matches "a/b/#" (parent level),
+    // but still matches the shallower "a/#" and "#".
+    {
+        auto matches = collect("a/b", false);
+        BOOST_TEST(matches.count("abhash") == 0); // parent-level suppressed
+        BOOST_TEST(matches.count("ahash") == 1);
+        BOOST_TEST(matches.count("roothash") == 1);
+        BOOST_TEST(matches.size() == 2u);
+    }
+
+    // Descendant matching is unaffected by the option: "a/b/c" still matches
+    // "a/b/#" even with match_parent_hash == false.
+    {
+        auto matches = collect("a/b/c", false);
+        BOOST_TEST(matches.count("abhash") == 1); // descendant, via in-loop '#'
+        BOOST_TEST(matches.count("ahash") == 1);
+        BOOST_TEST(matches.count("roothash") == 1);
+        BOOST_TEST(matches.size() == 3u);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
