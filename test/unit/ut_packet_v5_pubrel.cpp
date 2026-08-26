@@ -9,6 +9,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <memory>
+
 #define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
 
 BOOST_AUTO_TEST_SUITE(ut_packet)
@@ -359,6 +361,22 @@ BOOST_AUTO_TEST_CASE(v5_pubrel_error) {
     {
         //                CP  RL  PID     RC  PL
         am::buffer buf{"\x62\x07\x12\x34\x00\xff\xff\xff\x80"sv}; // over property length
+        am::error_code ec;
+        am::v5::pubrel_packet{buf, ec};
+        BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
+    }
+    {
+        // GHSA-fwh8-wcr5-q65c (related hardening)
+        // remaining length claims a reason code but buffer ends after packet id.
+        // Must be rejected without reading past the end of the buffer.
+        //                CP  RL  PID
+        auto sv =       "\x62\x03\x00\x01"sv; // no reason code
+        // copy into an exactly-sized heap buffer: the view's backing storage
+        // is the string literal, whose terminating NUL lies just past the
+        // view's end and would mask an out-of-bounds read under AddressSanitizer
+        std::shared_ptr<char[]> sp{new char[sv.size()]};
+        std::copy(sv.begin(), sv.end(), sp.get());
+        am::buffer buf{sp.get(), sv.size(), sp};
         am::error_code ec;
         am::v5::pubrel_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

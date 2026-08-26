@@ -243,6 +243,12 @@ basic_pubcomp_packet<PacketIdBytes>::basic_pubcomp_packet(buffer buf, error_code
     }
 
     // reason_code
+    if (buf.empty()) {
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
+    }
     reason_code_.emplace(static_cast<pubcomp_reason_code>(buf.front()));
     buf.remove_prefix(1);
     switch (*reason_code_) {

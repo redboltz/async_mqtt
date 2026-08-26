@@ -175,6 +175,12 @@ connack_packet::connack_packet(buffer buf, error_code& ec) {
         return;
     }
     // reason_code
+    if (buf.empty()) {
+        ec = make_error_code(
+            disconnect_reason_code::malformed_packet
+        );
+        return;
+    }
     reason_code_ = static_cast<connect_reason_code>(buf.front());
     buf.remove_prefix(1);
     switch (reason_code_) {
