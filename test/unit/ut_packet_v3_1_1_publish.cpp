@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -325,98 +326,98 @@ BOOST_AUTO_TEST_CASE(v311_publish_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP
-        am::buffer buf{"\x32"sv}; // short
+        auto buf = make_exact_buffer("\x32"sv); // short
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x32\x01"sv}; // remaining length buf mismatch
+        auto buf = make_exact_buffer("\x32\x01"sv); // remaining length buf mismatch
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x32\x03"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\x32\x03"sv); // invalid remaining length
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x32\x01\x00"sv}; // short topic name length
+        auto buf = make_exact_buffer("\x32\x01\x00"sv); // short topic name length
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x32\x02\x02T"sv}; // mismatch topic name length
+        auto buf = make_exact_buffer("\x32\x02\x02T"sv); // mismatch topic name length
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x32\x00\x00\x00"sv}; // zero remaining length
+        auto buf = make_exact_buffer("\x32\x00\x00\x00"sv); // zero remaining length
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x30\x02\x00\x00"sv}; // no pid QoS0 valid
+        auto buf = make_exact_buffer("\x30\x02\x00\x00"sv); // no pid QoS0 valid
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x36\x02\x00\x00"sv}; // QoS3 invalid
+        auto buf = make_exact_buffer("\x36\x02\x00\x00"sv); // QoS3 invalid
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL
-        am::buffer buf{"\x32\x02\x00\x00"sv}; // no pid QoS1 invalid
+        auto buf = make_exact_buffer("\x32\x02\x00\x00"sv); // no pid QoS1 invalid
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL   TP PID
-        am::buffer buf{"\x32\x05\x00\x01T\x12\x34"sv}; // no payload (valid)
+        auto buf = make_exact_buffer("\x32\x05\x00\x01T\x12\x34"sv); // no payload (valid)
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  TPL     TP      PID
-        am::buffer buf{"\x32\x06\x00\x02\xc2\xc0\x12\x34"sv}; // invalid utf8 topic
+        auto buf = make_exact_buffer("\x32\x06\x00\x02\xc2\xc0\x12\x34"sv); // invalid utf8 topic
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL   TP PID
-        am::buffer buf{"\x32\x04\x00\x01T\x12"sv}; // invalid pid
+        auto buf = make_exact_buffer("\x32\x04\x00\x01T\x12"sv); // invalid pid
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  TPL   TP PID
-        am::buffer buf{"\x32\x05\x00\x01T\x12\x34\x00"sv}; // too long
+        auto buf = make_exact_buffer("\x32\x05\x00\x01T\x12\x34\x00"sv); // too long
         am::error_code ec;
         am::v3_1_1::publish_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

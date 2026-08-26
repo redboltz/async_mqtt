@@ -6,10 +6,9 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
-
-#include <memory>
 
 #define ASYNC_MQTT_UNIT_TEST_FOR_PACKET
 
@@ -118,67 +117,67 @@ BOOST_AUTO_TEST_CASE(v5_connack_error) {
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20"sv}; // short
+        auto buf = make_exact_buffer("\x20"sv); // short
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x01"sv}; // invalid reserved
+        auto buf = make_exact_buffer("\x20\x01"sv); // invalid reserved
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x00"sv}; // remaining length match short
+        auto buf = make_exact_buffer("\x20\x00"sv); // remaining length match short
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x02"sv}; // short
+        auto buf = make_exact_buffer("\x20\x02"sv); // short
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x02\x02\x00"sv}; // invalid reserved flag
+        auto buf = make_exact_buffer("\x20\x02\x02\x00"sv); // invalid reserved flag
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x02\x00\xff"sv}; // invalid reserved code
+        auto buf = make_exact_buffer("\x20\x02\x00\xff"sv); // invalid reserved code
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x03\x00\x00\x00"sv}; // zero property length
+        auto buf = make_exact_buffer("\x20\x03\x00\x00\x00"sv); // zero property length
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
-        am::buffer buf{"\x20\x06\x00\x00\xff\xff\xff\x80"sv}; // over property length
+        auto buf = make_exact_buffer("\x20\x06\x00\x00\xff\xff\xff\x80"sv); // over property length
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x03\x00\x00\x01"sv}; // short
+        auto buf = make_exact_buffer("\x20\x03\x00\x00\x01"sv); // short
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x20\x04\x00\x00\x00\x00"sv}; // long
+        auto buf = make_exact_buffer("\x20\x04\x00\x00\x00\x00"sv); // long
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
@@ -188,13 +187,7 @@ BOOST_AUTO_TEST_CASE(v5_connack_error) {
         // connack whose remaining length is 1 (acknowledge flags only, no reason code).
         // Must be rejected without reading past the end of the buffer.
         //                CP  RL  FLAGS
-        auto sv =       "\x20\x01\x00"sv; // no reason code
-        // copy into an exactly-sized heap buffer: the view's backing storage
-        // is the string literal, whose terminating NUL lies just past the
-        // view's end and would mask an out-of-bounds read under AddressSanitizer
-        std::shared_ptr<char[]> sp{new char[sv.size()]};
-        std::copy(sv.begin(), sv.end(), sp.get());
-        am::buffer buf{sp.get(), sv.size(), sp};
+        auto buf = make_exact_buffer("\x20\x01\x00"sv); // no reason code
         am::error_code ec;
         am::v5::connack_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

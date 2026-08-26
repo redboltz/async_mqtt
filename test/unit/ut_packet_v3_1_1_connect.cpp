@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -209,194 +210,194 @@ BOOST_AUTO_TEST_CASE(v311_connect_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
-        am::buffer buf{"\x10"sv}; // short
-        am::error_code ec;
-        am::v3_1_1::connect_packet{buf, ec};
-        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
-    }
-    {
-        //                CP  RL
-        am::buffer buf{"\x10\x01"sv}; // invalid reserved
+        auto buf = make_exact_buffer("\x10"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x10\x01\x00"sv}; // short
+        auto buf = make_exact_buffer("\x10\x01"sv); // invalid reserved
+        am::error_code ec;
+        am::v3_1_1::connect_packet{buf, ec};
+        BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
+    }
+    {
+        //                CP  RL
+        auto buf = make_exact_buffer("\x10\x01\x00"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V
-        am::buffer buf{"\x10\x07\x00\x04MQTT\x05"sv}; // invalid version
+        auto buf = make_exact_buffer("\x10\x07\x00\x04MQTT\x05"sv); // invalid version
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::unsupported_protocol_version);
     }
     {
         //                CP  RL  FIXED        V
-        am::buffer buf{"\x10\x07\x00\x04MQTT\x04"sv}; // short
+        auto buf = make_exact_buffer("\x10\x07\x00\x04MQTT\x04"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF
-        am::buffer buf{"\x10\x08\x00\x04MQTT\x04\x01"sv}; // invalid reserved flags
+        auto buf = make_exact_buffer("\x10\x08\x00\x04MQTT\x04\x01"sv); // invalid reserved flags
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF
-        am::buffer buf{"\x10\x08\x00\x04MQTT\x04\x00"sv}; // short
+        auto buf = make_exact_buffer("\x10\x08\x00\x04MQTT\x04\x00"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE
-        am::buffer buf{"\x10\x0a\x00\x04MQTT\x04\x00\x11\x22"sv}; // short
+        auto buf = make_exact_buffer("\x10\x0a\x00\x04MQTT\x04\x00\x11\x22"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL
-        am::buffer buf{"\x10\x0c\x00\x04MQTT\x04\x00\x11\x22\x00\x02"sv}; // short
+        auto buf = make_exact_buffer("\x10\x0c\x00\x04MQTT\x04\x00\x11\x22\x00\x02"sv); // short
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02\xc2\xc0"sv}; // invalid utf8 client identifier
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02\xc2\xc0"sv); // invalid utf8 client identifier
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02II"sv}; // valid
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x00\x11\x22\x00\x02II"sv); // valid
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x1c\x11\x22\x00\x02II"sv}; // invalid will qos
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x1c\x11\x22\x00\x02II"sv); // invalid will qos
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x04\x11\x22\x00\x02II"sv}; // no will topic length
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x04\x11\x22\x00\x02II"sv); // no will topic length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL
-        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02"sv}; // no will topic
+        auto buf = make_exact_buffer("\x10\x10\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02"sv); // no will topic
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT
-        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid utf8 will topic
+        auto buf = make_exact_buffer("\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv); // invalid utf8 will topic
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT
-        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT"sv}; // no will message length
+        auto buf = make_exact_buffer("\x10\x12\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT"sv); // no will message length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT  WML
-        am::buffer buf{"\x10\x14\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x01"sv}; // no will message
+        auto buf = make_exact_buffer("\x10\x14\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x01"sv); // no will message
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  WTL   WT  WML   WM
-        am::buffer buf{"\x10\x16\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x02WM"sv}; // valid
+        auto buf = make_exact_buffer("\x10\x16\x00\x04MQTT\x04\x04\x11\x22\x00\x02II\x00\x02WT\x00\x02WM"sv); // valid
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x20\x11\x22\x00\x02II"sv}; // invalid will retain
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x20\x11\x22\x00\x02II"sv); // invalid will retain
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI
-        am::buffer buf{"\x10\x0e\x00\x04MQTT\x04\x08\x11\x22\x00\x02II"sv}; // invalid will qos
+        auto buf = make_exact_buffer("\x10\x0e\x00\x04MQTT\x04\x08\x11\x22\x00\x02II"sv); // invalid will qos
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
-        am::buffer buf{"\x10\x0f\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x01"sv}; // invalid username length
+        auto buf = make_exact_buffer("\x10\x0f\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x01"sv); // invalid username length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
-        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x00"sv}; // zero username length (valid)
+        auto buf = make_exact_buffer("\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x00"sv); // zero username length (valid)
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL
-        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x01"sv}; // short username length
+        auto buf = make_exact_buffer("\x10\x10\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x01"sv); // short username length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  UNL   UN
-        am::buffer buf{"\x10\x12\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv}; // invalid utf8 username
+        auto buf = make_exact_buffer("\x10\x12\x00\x04MQTT\x04\x80\x11\x22\x00\x02II\x00\x02\xc2\xc0"sv); // invalid utf8 username
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
-        am::buffer buf{"\x10\x0f\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x01"sv}; // invalid password length
+        auto buf = make_exact_buffer("\x10\x0f\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x01"sv); // invalid password length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
-        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x00"sv}; // zero password length (valid)
+        auto buf = make_exact_buffer("\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x00"sv); // zero password length (valid)
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::error_code{});
     }
     {
         //                CP  RL  FIXED        V  CF  KALIVE  CIDL  CI  PWL
-        am::buffer buf{"\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x01"sv}; // short password length
+        auto buf = make_exact_buffer("\x10\x10\x00\x04MQTT\x04\x40\x11\x22\x00\x02II\x00\x01"sv); // short password length
         am::error_code ec;
         am::v3_1_1::connect_packet{buf, ec};
         BOOST_TEST(ec == am::connect_reason_code::malformed_packet);

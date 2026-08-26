@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -206,91 +207,91 @@ BOOST_AUTO_TEST_CASE(v5_disconnect_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP
-        am::buffer buf{"\xe0"sv}; // short
+        auto buf = make_exact_buffer("\xe0"sv); // short
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xe0\x00"sv}; // valid
+        auto buf = make_exact_buffer("\xe0\x00"sv); // valid
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  RC
-        am::buffer buf{"\xe0\x01\x00"sv}; // valid
+        auto buf = make_exact_buffer("\xe0\x01\x00"sv); // valid
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xe0\x00\x00"sv}; // remaining length zero buf non zero
+        auto buf = make_exact_buffer("\xe0\x00\x00"sv); // remaining length zero buf non zero
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xe0\x01"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\xe0\x01"sv); // invalid remaining length
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\xe0\x80\x80\x80\x80\x00"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\xe0\x80\x80\x80\x80\x00"sv); // invalid remaining length
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC
-        am::buffer buf{"\xe0\x01\x00"sv}; // valid
+        auto buf = make_exact_buffer("\xe0\x01\x00"sv); // valid
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  RC
-        am::buffer buf{"\xe0\x01\x92"sv}; // invalid rc
+        auto buf = make_exact_buffer("\xe0\x01\x92"sv); // invalid rc
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xe0\x02\x00\x01"sv}; // invalid property length
+        auto buf = make_exact_buffer("\xe0\x02\x00\x01"sv); // invalid property length
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xe0\x02\x00\x00"sv}; // zero property length (valid)
+        auto buf = make_exact_buffer("\xe0\x02\x00\x00"sv); // zero property length (valid)
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xe0\x03\x00\x00\x00"sv}; // property length mismatch
+        auto buf = make_exact_buffer("\xe0\x03\x00\x00\x00"sv); // property length mismatch
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  RC  PL
-        am::buffer buf{"\xe0\x05\x00\xff\xff\xff\x80"sv}; // invalid property length
+        auto buf = make_exact_buffer("\xe0\x05\x00\xff\xff\xff\x80"sv); // invalid property length
         am::error_code ec;
         am::v5::disconnect_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);

@@ -6,6 +6,7 @@
 
 #include "../common/test_main.hpp"
 #include "../common/global_fixture.hpp"
+#include "../common/exact_buffer.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -124,42 +125,42 @@ BOOST_AUTO_TEST_CASE(v311_pubcomp_error) {
     }
     {
         //                CP
-        am::buffer buf{"\x00"sv}; // invalid type
+        auto buf = make_exact_buffer("\x00"sv); // invalid type
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP
-        am::buffer buf{"\x70"sv}; // short
+        auto buf = make_exact_buffer("\x70"sv); // short
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x70\x01"sv}; // remaining length buf mismatch
+        auto buf = make_exact_buffer("\x70\x01"sv); // remaining length buf mismatch
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL
-        am::buffer buf{"\x70\x03"sv}; // invalid remaining length
+        auto buf = make_exact_buffer("\x70\x03"sv); // invalid remaining length
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
     }
     {
         //                CP  RL  PID
-        am::buffer buf{"\x70\x02\x12\x34"sv}; // valid
+        auto buf = make_exact_buffer("\x70\x02\x12\x34"sv); // valid
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::errc::success);
     }
     {
         //                CP  RL  PID
-        am::buffer buf{"\x70\x02\x12\x34\x56"sv}; // too long
+        auto buf = make_exact_buffer("\x70\x02\x12\x34\x56"sv); // too long
         am::error_code ec;
         am::v3_1_1::pubcomp_packet{buf, ec};
         BOOST_TEST(ec == am::disconnect_reason_code::malformed_packet);
